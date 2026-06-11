@@ -2205,8 +2205,6 @@ def phase_novelty_from_state(text: str) -> float:
 
 
 def atom_score_from_vector(vector: ProgressVector) -> float:
-    if vector.triggered:
-        return 1000.0
     score = 0.0
     if vector.reached:
         score += 10.0
@@ -2537,7 +2535,20 @@ def global_regressions(new: FullProgressVector, old_records: list[SeedProgressRe
 
 def improved_components_global(new: FullProgressVector, old_records: list[SeedProgressRecord], tcir: TCIR) -> list[str]:
     if new.triggered:
-        return ["trigger", "native_bucket", "native_dt"]
+        improved = ["trigger"]
+        old_object_identity = max((old.full_vector.object_identity_confidence for old in old_records), default=0.0)
+        old_lifecycle_prefix = max((old.full_vector.lifecycle_prefix for old in old_records), default=0)
+        if new.object_identity_confidence > old_object_identity:
+            improved.append("object_identity_confidence")
+        if new.lifecycle_prefix > old_lifecycle_prefix:
+            improved.append("lifecycle_prefix")
+        if any(
+            float(new.atom_vectors.get(atom.atom_id, {}).get("native_dt", INF))
+            < min((float(old.full_vector.atom_vectors.get(atom.atom_id, {}).get("native_dt", INF)) for old in old_records), default=INF)
+            for atom in tcir.atoms
+        ):
+            improved.extend(["native_bucket", "native_dt"])
+        return sorted(set(improved))
     if not old_records:
         return ["frontier_seed"] if new.root_or_event_aligned else []
     improved: list[str] = []
@@ -2607,7 +2618,9 @@ def progress_dominates_global(
         and item.comparable_key.object_identity_bucket == seed_progress.comparable_key.object_identity_bucket
     ]
     if record.triggered_T:
-        components = ["trigger", "native_bucket", "native_dt"]
+        components = improved_components_global(full, frontier, tcir)
+        if "trigger" not in components:
+            components.insert(0, "trigger")
         decision = ProgressDecision(record.seed_id, True, "triggered", atom_id, components, [], True, full.root_or_event_aligned, full.to_dict())
         return True, decision, seed_progress
 

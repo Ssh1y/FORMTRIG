@@ -14,6 +14,8 @@ from tools.formtrig_algorithm_core import (
     build_tcir,
     confidence_to_float,
     object_identity_confidence_from_state,
+    progress_dominates_global,
+    seed_progress_record,
 )
 
 
@@ -93,6 +95,8 @@ def test_anyof_trigger_keeps_atom_truth_separate():
     vector = build_full_progress_vector(rec("tag=65", triggered=True, target_id="T2_EQUALITY_DIRECT_ANYOF"), tcir, plans(tcir))
     assert vector.atom_observations["a1"]["status"] == "OBSERVED_TRUE"
     assert vector.atom_observations["a2"]["status"] == "OBSERVED_FALSE"
+    assert vector.atom_vectors["a1"]["atom_score"] > vector.atom_vectors["a2"]["atom_score"]
+    assert vector.atom_vectors["a2"]["atom_score"] < 1000.0
     assert vector.selected_branch == "a1"
     assert vector.group_progress[tcir.root_group_id]["satisfied"] is True
     assert vector.triggered is True
@@ -113,6 +117,32 @@ def test_guarded_trigger_keeps_guard_and_null_atoms_true():
 def test_object_identity_confidence_numeric_string():
     assert object_identity_confidence_from_state("object_identity_confidence=1.0") == 1.0
     assert object_identity_confidence_from_state("object_identity_confidence=0.8") == 0.8
+
+
+def test_triggered_lifecycle_records_object_identity_component():
+    tcir = build_tcir(
+        "create(obj) -> release(obj) -> use(obj) && SAME_OBJECT(obj)",
+        "compound-sequence-lifecycle",
+        "x.c:1;x.c:2;x.c:3;x.c:4",
+        target_id="T6_SAME_OBJECT_LIFECYCLE",
+    )
+    plan_by_atom = plans(tcir)
+    old = rec(
+        "lifecycle_prefix=2;object_identity_confidence=0.0;create=1;release=1;use=0",
+        triggered=False,
+        target_id="T6_SAME_OBJECT_LIFECYCLE",
+    )
+    new = rec(
+        "lifecycle_prefix=3;object_identity_confidence=1.0;create=1;release=1;use=1",
+        triggered=True,
+        target_id="T6_SAME_OBJECT_LIFECYCLE",
+    )
+    frontier = [seed_progress_record(old, tcir, plan_by_atom)]
+    accepted, decision, seed_progress = progress_dominates_global(new, frontier, tcir, plan_by_atom)
+    assert accepted is True
+    assert decision.reason == "triggered"
+    assert "object_identity_confidence" in decision.improved_components
+    assert seed_progress.full_vector.object_identity_confidence >= 0.5
 
 
 if __name__ == "__main__":
