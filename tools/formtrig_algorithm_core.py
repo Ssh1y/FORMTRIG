@@ -2073,15 +2073,50 @@ def atom_has_incoming_guard(atom: TCAtom, tcir: TCIR | None) -> bool:
     return any(edge.dst == atom.atom_id and edge.edge_type == "guard" for edge in tcir.edges)
 
 
-def symbolic_constant_value(name: str) -> str:
-    return {
+def decode_c_char_literal(token: str) -> int | None:
+    if not (token.startswith("'") and token.endswith("'")):
+        return None
+    body = token[1:-1]
+    escapes = {"n": "\n", "r": "\r", "t": "\t", "0": "\0", "\\": "\\", "'": "'", '"': '"'}
+    if body.startswith("\\"):
+        if len(body) >= 2 and body[1] in escapes:
+            return ord(escapes[body[1]])
+        if len(body) >= 2 and body[1] == "x":
+            try:
+                return int(body[2:], 16)
+            except ValueError:
+                return None
+    if len(body) == 1:
+        return ord(body)
+    return None
+
+
+def normalize_constant_token(token: str) -> tuple[str, str]:
+    raw = token.strip()
+    if raw.startswith("'") and raw.endswith("'"):
+        value = decode_c_char_literal(raw)
+        if value is not None:
+            return str(value), "char"
+        return raw[1:-1], "char"
+    if raw.startswith('"') and raw.endswith('"'):
+        return raw[1:-1], "string"
+    try:
+        return str(int(raw, 0)), "numeric"
+    except ValueError:
+        pass
+    symbolic = {
         "PALETTE": "3",
         "RGB": "2",
         "GRAY": "0",
         "READY": "READY",
         "PARTIAL": "PARTIAL",
         "NULL": "NULL",
-    }.get(name, name)
+    }.get(raw, raw)
+    return symbolic, "symbolic"
+
+
+def symbolic_constant_value(name: str) -> str:
+    return normalize_constant_token(name)[0]
 
 
 def infer_atom_truth_from_root_state(record: ReplayRecord, atom: TCAtom) -> tuple[bool | None, str, str]:
@@ -2094,15 +2129,20 @@ def infer_atom_truth_from_root_state(record: ReplayRecord, atom: TCAtom) -> tupl
                 if key in parsed:
                     value = parsed[key].lower()
                     return value in {"1", "true", "yes", "null"}, key, parsed[key]
-    match = re.search(r"([A-Za-z_][A-Za-z0-9_.>\-]*)\s*(==|!=)\s*([A-Za-z_][A-Za-z0-9_]*|0x[0-9A-Fa-f]+|\d+|'[^']*'|\"[^\"]*\")", expr)
+    match = re.search(r"([A-Za-z_][A-Za-z0-9_.>\-]*)\s*(==|!=)\s*([A-Za-z_][A-Za-z0-9_]*|0x[0-9A-Fa-f]+|\d+|'(?:\\.|[^'])*'|\"[^\"]*\")", expr)
     if match:
         lhs, op, rhs = match.groups()
         key = lhs.split("->")[-1].split(".")[-1]
-        rhs_value = symbolic_constant_value(rhs.strip("'\""))
+        rhs_value, rhs_kind = normalize_constant_token(rhs)
+        if rhs_kind == "string":
+            bool_key = f"{key}_{rhs_value}"
+            if bool_key in parsed:
+                equal = str(parsed[bool_key]).lower() in {"1", "true", "yes"}
+                return (equal if op == "==" else not equal), bool_key, parsed[bool_key]
         if key in parsed:
             equal = parsed[key] == rhs_value
             return (equal if op == "==" else not equal), key, parsed[key]
-    if record.triggered_T:
+    if record.triggered_T and len(atom.root_variables) <= 1 and not atom.root_events and not parse_root_state(record.tc_root_state):
         return True, "trigger_oracle", "1"
     return None, "", ""
 
@@ -2515,6 +2555,8 @@ def improved_components_global(new: FullProgressVector, old_records: list[SeedPr
             improved.append(f"root_signature:{atom.atom_id}")
     if new.object_identity_confidence > max((old.full_vector.object_identity_confidence for old in old_records), default=0.0):
         improved.append("object_identity_confidence")
+    elif new.triggered and new.object_identity_confidence > 0:
+        improved.append("object_identity_confidence")
     if new.phase_novelty > max((old.full_vector.phase_novelty for old in old_records), default=0.0):
         improved.append("phase_novelty")
     return sorted(set(item for item in improved if not item.startswith("coverage")))
@@ -2750,6 +2792,10 @@ def confidence_to_float(value: Any) -> float:
     if isinstance(value, (int, float)):
         return max(0.0, min(1.0, float(value)))
     text = str(value or "").strip().lower()
+    try:
+        return max(0.0, min(1.0, float(text)))
+    except ValueError:
+        pass
     return {
         "none": 0.0,
         "unknown": 0.0,
@@ -3200,6 +3246,10 @@ def parse_target_cmd(template: str, input_path: Path) -> list[str]:
     return shlex.split(template.replace("@@", str(input_path)))
 
 
+def target_cmd_uses_shell(template: str) -> bool:
+    return any(token in template for token in ["&&", "||", ";", "=", "$(", "`"]) or template.strip().startswith(("cd ", "env "))
+
+
 def json_records(text: str) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     for line in text.splitlines():
@@ -3253,13 +3303,14 @@ def run_target_cmd(target_cmd: str, data: bytes, timeout_s: float) -> dict[str, 
     start = time.time()
     try:
         proc = subprocess.run(
-            parse_target_cmd(target_cmd, input_path),
+            target_cmd.replace("@@", str(input_path)) if target_cmd_uses_shell(target_cmd) else parse_target_cmd(target_cmd, input_path),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
             errors="replace",
             timeout=timeout_s,
             check=False,
+            shell=target_cmd_uses_shell(target_cmd),
         )
         return normalize_runtime_signal(proc.stdout, proc.stderr, proc.returncode, time.time() - start)
     except subprocess.TimeoutExpired as exc:

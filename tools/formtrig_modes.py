@@ -613,6 +613,10 @@ def structured_mutation_row(
         "changed_use_context": bool(effect.get("changed_use_context", False)),
         "changed_lifecycle_prefix": bool(effect.get("changed_lifecycle_prefix", False)),
         "changed_object_identity_confidence": bool(effect.get("changed_object_identity_confidence", False)),
+        "parent_object_identity_confidence": effect.get("parent_object_identity_confidence", 0.0),
+        "child_object_identity_confidence": effect.get("child_object_identity_confidence", 0.0),
+        "parent_lifecycle_prefix": effect.get("parent_lifecycle_prefix", 0),
+        "child_lifecycle_prefix": effect.get("child_lifecycle_prefix", 0),
         "improved_components": list(effect.get("improved_components", decision.get("improved_components", [])) or []),
     }
     return {
