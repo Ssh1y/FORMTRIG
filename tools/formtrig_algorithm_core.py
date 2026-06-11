@@ -2164,6 +2164,24 @@ def atom_observation(record: ReplayRecord, atom: TCAtom, tcir: TCIR | None = Non
         return AtomObservation(atom.atom_id, "OBSERVED_TRUE", True, False, True, False, key, value, "root_state_or_trigger_true")
     if truth is False:
         return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, key, value, "root_state_false")
+    for event in atom.root_events:
+        for candidate in [event, f"{event}_reached", f"{event}_seen", f"{event}_event"]:
+            if candidate in parsed:
+                value = str(parsed[candidate]).lower()
+                is_false = value in {"0", "false", "no", "absent", "not_seen"}
+                return AtomObservation(
+                    atom.atom_id,
+                    "OBSERVED_FALSE" if is_false else "OBSERVED_TRUE",
+                    True,
+                    False,
+                    not is_false,
+                    is_false,
+                    candidate,
+                    parsed[candidate],
+                    "runtime_event_observed",
+                )
+    if atom.root_events and record.coverage_hash.startswith("gdb_probe:"):
+        return AtomObservation(atom.atom_id, "OBSERVED_TRUE", True, False, True, False, atom.root_events[0], "probe", "runtime_event_probe_observed")
     for root in atom.root_variables:
         candidates = [root, root.split("->")[-1].split(".")[-1]]
         for candidate in candidates:
@@ -2172,12 +2190,6 @@ def atom_observation(record: ReplayRecord, atom: TCAtom, tcir: TCIR | None = Non
             null_key = f"{candidate}_null"
             if null_key in parsed:
                 return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, null_key, parsed[null_key], "atom_root_observed_without_truth")
-    for event in atom.root_events:
-        for candidate in [event, f"{event}_reached", f"{event}_seen", f"{event}_event"]:
-            if candidate in parsed:
-                return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, candidate, parsed[candidate], "atom_event_observed_without_truth")
-    if atom.root_events and record.coverage_hash.startswith("gdb_probe:"):
-        return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, atom.root_events[0], "probe", "runtime_event_probe_observed")
     return AtomObservation(atom.atom_id, "NOT_OBSERVED", False, False, False, False, "", "", "no_atom_observation")
 
 
@@ -2331,31 +2343,51 @@ def reason_for_component(component: str, category: str) -> str:
     return "lifted-feature improvement"
 
 
+def progress_vector_satisfied(vector: ProgressVector) -> bool:
+    if vector.observation_status == "OBSERVED_TRUE":
+        return True
+    if vector.observation_status in {"OBSERVED_FALSE", "BLOCKED_BY_GUARD", "UNKNOWN_UNSTABLE", "NOT_OBSERVED"}:
+        return False
+    return False
+
+
 def group_score(group: TCGroup, atom_vectors: dict[str, ProgressVector], group_vectors: dict[str, GroupProgressVector]) -> GroupProgressVector:
     child_scores: dict[str, float] = {}
+    child_satisfied: dict[str, bool] = {}
     for child in group.children:
         if child in atom_vectors:
             child_scores[child] = atom_vectors[child].atom_score
+            child_satisfied[child] = progress_vector_satisfied(atom_vectors[child])
         elif child in group_vectors:
             child_scores[child] = group_vectors[child].score
+            child_satisfied[child] = group_vectors[child].satisfied
     if not child_scores:
         return GroupProgressVector(group.group_id, group.group_type, 0.0, False, "", {})
     if group.group_type == "ANY_OF":
-        selected = max(child_scores, key=lambda item: child_scores[item])
+        satisfied_children = [child for child, value in child_satisfied.items() if value]
+        selected = max(satisfied_children or list(child_scores), key=lambda item: child_scores[item])
         score = child_scores[selected]
-        satisfied = score >= 100.0
+        satisfied = bool(satisfied_children)
     elif group.group_type == "NOT":
         selected = next(iter(child_scores))
         score = -child_scores[selected]
-        satisfied = child_scores[selected] <= 0.0
+        satisfied = not child_satisfied.get(selected, False)
     elif group.group_type == "SEQUENCE":
         selected = ""
         score = sum(child_scores.values())
-        satisfied = all(value >= 100.0 for value in child_scores.values())
+        satisfied = all(child_satisfied.values())
+    elif group.group_type == "SAME_OBJECT":
+        selected = ""
+        score = min(child_scores.values()) + 0.1 * sum(child_scores.values())
+        satisfied = any(
+            vector.object_identity_confidence >= 0.5
+            for child, vector in atom_vectors.items()
+            if child in group.children
+        )
     else:
         selected = ""
         score = min(child_scores.values()) + 0.1 * sum(child_scores.values())
-        satisfied = all(value >= 20.0 for value in child_scores.values())
+        satisfied = all(child_satisfied.values())
     return GroupProgressVector(group.group_id, group.group_type, score, satisfied, selected, child_scores)
 
 

@@ -220,6 +220,26 @@ def validate_truth_primitives() -> list[str]:
         failures.append("T5_synthetic_null_not_true")
     if not t5_vec.group_progress.get(t5.root_group_id, {}).get("satisfied"):
         failures.append("T5_synthetic_group_not_satisfied")
+    t5_false = build_full_progress_vector(synthetic_record("T5_GUARDED_BINARY", "hdr=71;hdr_is_G=1;obj_null=0;use_reached=1"), t5, test_plans(t5))
+    if t5_false.atom_observations.get("a2", {}).get("status") != "OBSERVED_FALSE":
+        failures.append("T5_synthetic_false_null_not_false")
+    if t5_false.group_progress.get(t5.root_group_id, {}).get("satisfied"):
+        failures.append("T5_synthetic_allof_false_group_satisfied")
+    t6 = build_tcir(
+        "create(obj) -> release(obj) -> use(obj) && SAME_OBJECT(obj)",
+        "compound-sequence-lifecycle",
+        "x.c:1;x.c:2;x.c:3;x.c:4",
+        target_id="T6_SAME_OBJECT_LIFECYCLE",
+    )
+    t6_vec = build_full_progress_vector(
+        synthetic_record("T6_SAME_OBJECT_LIFECYCLE", "lifecycle_prefix=3;object_identity_confidence=1.0;create=1;release=1;use=1", True),
+        t6,
+        test_plans(t6),
+    )
+    if any(t6_vec.atom_observations.get(atom_id, {}).get("status") != "OBSERVED_TRUE" for atom_id in ["a1", "a2", "a3"]):
+        failures.append("T6_synthetic_lifecycle_event_truth_bad")
+    if not t6_vec.group_progress.get(t6.root_group_id, {}).get("satisfied"):
+        failures.append("T6_synthetic_sequence_group_not_satisfied")
     return failures
 
 
@@ -436,6 +456,14 @@ def validate_run(run_dir: Path, target_id: str, baseline: str, mode: str, comman
                     semantic.append(f"T6_trigger_object_identity_below_threshold:{run_dir}:{vector.get('object_identity_confidence')}")
                 if int(vector.get("lifecycle_prefix", 0)) < 3:
                     semantic.append(f"T6_trigger_lifecycle_prefix_bad:{run_dir}:{vector.get('lifecycle_prefix')}")
+                obs = vector.get("atom_observations", {})
+                if any(obs.get(atom_id, {}).get("status") != "OBSERVED_TRUE" for atom_id in ["a1", "a2", "a3"]):
+                    semantic.append(f"T6_trigger_lifecycle_event_truth_incorrect:{run_dir}:{obs}")
+                group = vector.get("group_progress", {})
+                if not any(item.get("group_type") == "SEQUENCE" and item.get("satisfied") for item in group.values()):
+                    semantic.append(f"T6_trigger_sequence_group_not_satisfied:{run_dir}:{group}")
+                if not any(item.get("group_type") == "SAME_OBJECT" and item.get("satisfied") for item in group.values()):
+                    semantic.append(f"T6_trigger_same_object_group_not_satisfied:{run_dir}:{group}")
         for row in mutation_rows:
             if row.get("decision_reason") == "triggered":
                 effect = row.get("effect", {})
@@ -444,7 +472,7 @@ def validate_run(run_dir: Path, target_id: str, baseline: str, mode: str, comman
                 if not effect.get("changed_object_identity_confidence"):
                     semantic.append(f"T6_effect_object_identity_not_changed:{run_dir}:{effect}")
                 improved = set(effect.get("improved_components", []))
-                if "object_identity_confidence" not in improved and "trigger" not in improved:
+                if "object_identity_confidence" not in improved:
                     semantic.append(f"T6_effect_missing_object_identity_improvement:{run_dir}:{effect}")
 
     status_path = run_dir / "status.json"

@@ -114,6 +114,40 @@ def test_guarded_trigger_keeps_guard_and_null_atoms_true():
     assert vector.group_progress[tcir.root_group_id]["satisfied"] is True
 
 
+def test_allof_group_truth_uses_atom_truth_not_score():
+    tcir = build_tcir("hdr == 'G' && ctx.obj == NULL", "binary-state-null", "x.c:1;x.c:2", target_id="T5_GUARDED_BINARY")
+    vector = build_full_progress_vector(
+        rec("hdr=71;hdr_is_G=1;obj_null=0;use_reached=1", triggered=False, target_id="T5_GUARDED_BINARY"),
+        tcir,
+        plans(tcir),
+    )
+    assert vector.atom_observations["a1"]["status"] == "OBSERVED_TRUE"
+    assert vector.atom_observations["a2"]["status"] == "OBSERVED_FALSE"
+    assert vector.group_progress[tcir.root_group_id]["satisfied"] is False
+
+
+def test_lifecycle_events_and_same_object_group_truth():
+    tcir = build_tcir(
+        "create(obj) -> release(obj) -> use(obj) && SAME_OBJECT(obj)",
+        "compound-sequence-lifecycle",
+        "x.c:1;x.c:2;x.c:3;x.c:4",
+        target_id="T6_SAME_OBJECT_LIFECYCLE",
+    )
+    vector = build_full_progress_vector(
+        rec(
+            "lifecycle_prefix=3;object_identity_confidence=1.0;create=1;release=1;use=1",
+            triggered=True,
+            target_id="T6_SAME_OBJECT_LIFECYCLE",
+        ),
+        tcir,
+        plans(tcir),
+    )
+    assert vector.atom_observations["a1"]["status"] == "OBSERVED_TRUE"
+    assert vector.atom_observations["a2"]["status"] == "OBSERVED_TRUE"
+    assert vector.atom_observations["a3"]["status"] == "OBSERVED_TRUE"
+    assert vector.group_progress[tcir.root_group_id]["satisfied"] is True
+
+
 def test_object_identity_confidence_numeric_string():
     assert object_identity_confidence_from_state("object_identity_confidence=1.0") == 1.0
     assert object_identity_confidence_from_state("object_identity_confidence=0.8") == 0.8
