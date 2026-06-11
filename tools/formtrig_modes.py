@@ -38,6 +38,7 @@ try:
         decompose_tc,
         dt_bucket,
         expression_from_meta,
+        generic_afl_style_mutators,
         is_strict_rnt,
         insert_non_dominated,
         load_replay_records,
@@ -55,6 +56,7 @@ try:
         seed_path_for_record,
         source_location_from_meta,
         target_meta_from_inventories,
+        typed_mutator_names,
         utc_now,
         write_csv,
         write_json,
@@ -83,6 +85,7 @@ except ModuleNotFoundError:
         decompose_tc,
         dt_bucket,
         expression_from_meta,
+        generic_afl_style_mutators,
         is_strict_rnt,
         insert_non_dominated,
         load_replay_records,
@@ -100,6 +103,7 @@ except ModuleNotFoundError:
         seed_path_for_record,
         source_location_from_meta,
         target_meta_from_inventories,
+        typed_mutator_names,
         utc_now,
         write_csv,
         write_json,
@@ -214,7 +218,7 @@ def replay_signal_to_record(
         source_manifest="formtrig_mode",
         source_seed=str(seed_path),
         producer=producer,
-        raw={"target_context_hash": str(signal.get("target_context_hash", ""))},
+        raw={key: str(value) for key, value in signal.items()},
     )
     record.dt_bucket = dt_bucket(record.native_DT)
     return record
@@ -236,6 +240,27 @@ def mutation_edge_from_records(parent: ReplayRecord, child: ReplayRecord, source
         child_lifecycle_prefix=lifecycle_prefix_score(child.tc_root_state),
         source=source,
     )
+
+
+def apply_baseline_to_plan(plan: AtomPlan, baseline: str) -> AtomPlan:
+    if baseline == "native_tc_dgf":
+        plan.use_native_dt = True
+        plan.use_lifted_features = False
+        plan.feature_extractors = ["native_DT"]
+        plan.priority_components = ["reach", "trigger", "native_bucket", "native_dt"]
+        plan.mutator_operators = generic_afl_style_mutators()
+        plan.plan_reason = "native_tc_dgf_native_dt_generic_mutation_only"
+        plan.graph_features = []
+        plan.graph_node_ids = []
+    elif baseline == "native_tc_dgf_typedmut":
+        plan.use_native_dt = True
+        plan.use_lifted_features = False
+        plan.feature_extractors = ["native_DT"]
+        plan.priority_components = ["reach", "trigger", "native_bucket", "native_dt"]
+        plan.plan_reason = "native_tc_dgf_typedmut_native_dt_with_typed_mutators"
+        plan.graph_features = []
+        plan.graph_node_ids = []
+    return plan
 
 
 def annotate_atoms(tcir: TCIR, records: list[ReplayRecord]) -> list[dict[str, Any]]:
@@ -276,7 +301,7 @@ def controlled_calibration_mutations(
             if len(edges) >= e_min:
                 break
             health = compute_signal_health(target_id, atom, rnt_records, fake_edges, thresholds=thresholds)
-            plan = build_coarse_atom_plan(target_id, atom, health)
+            plan = apply_baseline_to_plan(build_coarse_atom_plan(target_id, atom, health), args.baseline)
             proposals = propose_mutations(target_id, atom, plan, parent, seed_path, graph, max(1, args.calibration_mutations_per_seed))
             for proposal, data in proposals:
                 if len(edges) >= e_min:
@@ -347,16 +372,11 @@ def prepare_algorithm_state(
         health_rows.append(health.to_dict())
         coarse_plans.append(build_coarse_atom_plan(args.target_id, atom, health))
     graph = build_trigger_progress_graph(args.target_id, meta, tcir.atoms, rnt_records)
-    final_plans = [finalize_atom_plan(args.target_id, atom, health_by_atom[atom.atom_id], graph) for atom in tcir.atoms]
-    if args.baseline == "native_tc_dgf":
-        for plan in final_plans:
-            plan.use_native_dt = True
-            plan.use_lifted_features = False
-            plan.feature_extractors = ["native_DT"]
-            plan.priority_components = ["reach", "trigger", "native_bucket", "native_dt"]
-            plan.plan_reason = "native_tc_dgf_baseline"
-            plan.graph_features = []
-            plan.graph_node_ids = []
+    coarse_plans = [apply_baseline_to_plan(plan, args.baseline) for plan in coarse_plans]
+    final_plans = [
+        apply_baseline_to_plan(finalize_atom_plan(args.target_id, atom, health_by_atom[atom.atom_id], graph), args.baseline)
+        for atom in tcir.atoms
+    ]
     atoms = annotate_atoms(tcir, rnt_records)
     return {
         "thresholds": thresholds,
@@ -473,7 +493,6 @@ def initial_frontier(
     decisions: list[dict[str, Any]] = []
     progress_records: list[dict[str, Any]] = []
     snapshots: list[dict[str, Any]] = []
-    initialized = False
     for record in records:
         accepted, decision, seed_progress = progress_dominates_global(record, frontier, tcir, plan_by_atom)
         row = decision.to_dict()
@@ -484,28 +503,25 @@ def initial_frontier(
                 build_progress_record(record, atoms, plan_by_atom, graph, decision=decision, tcir=tcir, seed_progress=seed_progress).to_dict()
             )
             continue
-        if not initialized:
-            row["accepted"] = True
-            row["reason"] = "root-aligned state transition"
+        if accepted:
+            row["reason"] = "initial_frontier_seed"
             row["improved_components"] = []
             row["event_role"] = "initial_frontier"
+            decision.reason = "initial_frontier_seed"
+            decision.improved_components = []
             seed_progress.non_dominated_rank = 0
+            frontier, removed = insert_non_dominated(frontier, seed_progress, tcir)
             decisions.append(row)
             progress_records.append(
                 build_progress_record(record, atoms, plan_by_atom, graph, decision=decision, tcir=tcir, seed_progress=seed_progress).to_dict()
             )
-            frontier.append(seed_progress)
-            initialized = True
-            snapshots.append(frontier_snapshot(frontier, tcir, row["reason"], 0, record.seed_id, [atom.atom_id for atom in atoms]))
+            snapshots.append(frontier_snapshot(frontier, tcir, row["reason"], removed, record.seed_id, [atom.atom_id for atom in atoms]))
             continue
         row["event_role"] = "initial_corpus_dominance_check"
         decisions.append(row)
         progress_records.append(
             build_progress_record(record, atoms, plan_by_atom, graph, decision=decision, tcir=tcir, seed_progress=seed_progress).to_dict()
         )
-        if accepted:
-            frontier, removed = insert_non_dominated(frontier, seed_progress, tcir)
-            snapshots.append(frontier_snapshot(frontier, tcir, row["reason"], removed, record.seed_id, [atom.atom_id for atom in atoms]))
     return frontier, decisions, progress_records, snapshots
 
 
@@ -556,6 +572,7 @@ def save_trigger_evidence(
     replays: list[dict[str, Any]],
     effect: dict[str, Any],
     decision: dict[str, Any],
+    tcir: TCIR,
 ) -> Path:
     evidence_dir = out_dir / "trigger_evidence" / proposal.proposal_id.replace(":", "_")
     evidence_dir.mkdir(parents=True, exist_ok=True)
@@ -564,6 +581,14 @@ def save_trigger_evidence(
     write_json(evidence_dir / "child_replay_record.json", child_record.to_dict())
     write_json(evidence_dir / "effect.json", effect)
     write_json(evidence_dir / "decision.json", decision)
+    write_json(
+        evidence_dir / "target_status.json",
+        {
+            "target_id": child_record.target_id,
+            "atom_status": decision.get("vector", {}).get("atom_observations", {}),
+            "group_status": decision.get("vector", {}).get("group_progress", {}),
+        },
+    )
     for index, signal in enumerate(replays):
         append_jsonl(evidence_dir / "replays.jsonl", {"replay_index": index, **signal})
     return evidence_dir
@@ -575,15 +600,39 @@ def structured_mutation_row(
     proposal: Any,
     effect: dict[str, Any],
     decision: dict[str, Any],
+    baseline: str = "",
+    mode: str = "",
 ) -> dict[str, Any]:
+    precondition = proposal.details.get("precondition", {})
+    operator_family = proposal.details.get("operator_family", "")
+    effect_payload = {
+        "preserved_reach": bool(effect.get("preserved_reach", False)),
+        "triggered": bool(effect.get("triggered", False)),
+        "changed_root_state": bool(effect.get("changed_root_state", False)),
+        "changed_producer_state": bool(effect.get("changed_producer_state", False)),
+        "changed_use_context": bool(effect.get("changed_use_context", False)),
+        "changed_lifecycle_prefix": bool(effect.get("changed_lifecycle_prefix", False)),
+        "changed_object_identity_confidence": bool(effect.get("changed_object_identity_confidence", False)),
+        "improved_components": list(effect.get("improved_components", decision.get("improved_components", [])) or []),
+    }
     return {
         "event": "mutation_record",
         "target_id": proposal.target_id,
-        "operator_name": proposal.operator_name,
+        "baseline": baseline,
+        "mode": mode,
+        "parent_seed_id": parent.seed_id,
+        "child_seed_id": child.seed_id if child else "",
         "atom_id": proposal.atom_id,
-        "precondition": proposal.details.get("precondition", {}),
+        "operator_name": proposal.operator_name,
+        "operator_family": operator_family,
+        "precondition_satisfied": bool(precondition.get("satisfied", False)),
         "mutated_ranges": proposal.mutated_ranges,
         "influence_confidence": proposal.details.get("influence_confidence", 0.0),
+        "executed": proposal.executed,
+        "replay_verifiable": proposal.replay_verifiable,
+        "effect": effect_payload,
+        "decision_reason": decision.get("reason", ""),
+        "precondition": precondition,
         "parent_seed": parent.to_dict(),
         "child_seed": {
             "seed_id": child.seed_id if child else "",
@@ -592,13 +641,11 @@ def structured_mutation_row(
         },
         "child_replay_record": child.to_dict() if child else {},
         "proposal": proposal.to_dict(),
-        "effect": effect,
+        "raw_effect": effect,
         "decision": decision,
         # Compatibility fields for quick ad-hoc summaries.
-        "executed": proposal.executed,
         "kept": proposal.kept,
         "keep_reason": proposal.keep_reason,
-        "replay_verifiable": proposal.replay_verifiable,
     }
 
 
@@ -642,10 +689,10 @@ def execute_mutation_proposals(
             )
             for proposal, data in proposals:
                 if executed >= args.max_total_mutations:
-                    mutation_rows.append(structured_mutation_row(record, None, proposal, {}, {"accepted": False, "reason": "budget_exhausted"}))
+                    mutation_rows.append(structured_mutation_row(record, None, proposal, {}, {"accepted": False, "reason": "budget_exhausted"}, args.baseline, args.mode))
                     continue
                 if data is None:
-                    mutation_rows.append(structured_mutation_row(record, None, proposal, {}, {"accepted": False, "reason": proposal.keep_reason}))
+                    mutation_rows.append(structured_mutation_row(record, None, proposal, {}, {"accepted": False, "reason": proposal.keep_reason}, args.baseline, args.mode))
                     continue
                 out_seed = queue_dir / proposal.proposal_id.replace(":", "_")
                 out_seed.write_bytes(data)
@@ -662,24 +709,20 @@ def execute_mutation_proposals(
                     proposal.details["runtime_signal"] = signal
                     if new_record.triggered_T:
                         reproducible, replays = reproducible_trigger(args.target_cmd, data, args.per_exec_timeout, signal)
-                        decision = {
-                            "seed_id": new_record.seed_id,
-                            "accepted": reproducible,
-                            "reason": "triggered" if reproducible else "not_replay_stable",
-                            "atom_id": atom.atom_id,
-                            "improved_components": ["trigger"],
-                            "rejected_components": [] if reproducible else ["trigger_not_reproducible"],
-                            "replay_verifiable": reproducible,
-                            "root_or_event_aligned": True,
-                            "vector": {},
-                        }
+                        _, trigger_decision, seed_progress = progress_dominates_global(new_record, frontier, tcir, plan_by_atom)
+                        decision = trigger_decision.to_dict()
+                        decision["accepted"] = reproducible
+                        decision["reason"] = "triggered" if reproducible else "not_replay_stable"
+                        decision["rejected_components"] = [] if reproducible else ["trigger_not_reproducible"]
+                        decision["replay_verifiable"] = reproducible
+                        decision["details"]["replay_count"] = len(replays)
                         effect = mutation_operator_effect(record, new_record, type("Decision", (), decision)())
                         proposal.replay_verifiable = reproducible
                         proposal.kept = reproducible
                         proposal.keep_reason = decision["reason"]
                         proposal.details["operator_effect"] = effect
                         if reproducible:
-                            evidence_dir = save_trigger_evidence(out_dir, proposal, data, new_record, replays, effect, decision)
+                            evidence_dir = save_trigger_evidence(out_dir, proposal, data, new_record, replays, effect, decision, tcir)
                             trigger_success = {
                                 "target_id": args.target_id,
                                 "proposal_id": proposal.proposal_id,
@@ -689,7 +732,7 @@ def execute_mutation_proposals(
                                 "decision": decision,
                             }
                         decision_rows.append(decision)
-                        mutation_rows.append(structured_mutation_row(record, new_record, proposal, effect, decision))
+                        mutation_rows.append(structured_mutation_row(record, new_record, proposal, effect, decision, args.baseline, args.mode))
                         progress_records.append(
                             build_progress_record(
                                 new_record,
@@ -727,10 +770,10 @@ def execute_mutation_proposals(
                     if accepted:
                         frontier, removed = insert_non_dominated(frontier, seed_progress, tcir)
                         snapshots.append(frontier_snapshot(frontier, tcir, decision.reason, removed, new_record.seed_id, [atom.atom_id]))
-                    mutation_rows.append(structured_mutation_row(record, new_record, proposal, effect, decision.to_dict()))
+                    mutation_rows.append(structured_mutation_row(record, new_record, proposal, effect, decision.to_dict(), args.baseline, args.mode))
                 else:
                     proposal.keep_reason = "not_executed"
-                    mutation_rows.append(structured_mutation_row(record, None, proposal, {}, {"accepted": False, "reason": "not_executed"}))
+                    mutation_rows.append(structured_mutation_row(record, None, proposal, {}, {"accepted": False, "reason": "not_executed"}, args.baseline, args.mode))
     return mutation_rows, decision_rows, progress_records, snapshots, executed, trigger_success
 
 
@@ -888,15 +931,68 @@ def run_e2e_mode(args: argparse.Namespace) -> int:
         append_jsonl(progress_record_path, {"event": "dynamic_rnt_progress_record", **row})
     for row in import_snapshots:
         append_jsonl(snapshot_path, row)
-    (logs_dir / "mutation_records.jsonl").parent.mkdir(parents=True, exist_ok=True)
-    (logs_dir / "mutation_records.jsonl").touch()
-    for path in [progress_path, progress_record_path, snapshot_path]:
+    mutation_path = logs_dir / "mutation_records.jsonl"
+    mutations: list[dict[str, Any]] = []
+    mutation_decisions: list[dict[str, Any]] = []
+    mutation_progress_records: list[dict[str, Any]] = []
+    mutation_snapshots: list[dict[str, Any]] = []
+    executed = 0
+    trigger_success = None
+    if not args.dry_run:
+        args.execute_mutations = True
+        mutations, mutation_decisions, mutation_progress_records, mutation_snapshots, executed, trigger_success = execute_mutation_proposals(
+            args,
+            stream_records,
+            atoms,
+            plans,
+            frontier,
+            seed_dir,
+            out_dir,
+            graph_payload,
+            tcir,
+        )
+        for row in mutation_decisions:
+            append_jsonl(progress_path, {"event": "mutation_progress_decision", **row})
+        for row in mutation_progress_records:
+            append_jsonl(progress_record_path, {"event": "mutation_progress_record", **row})
+        for row in mutation_snapshots:
+            append_jsonl(snapshot_path, row)
+        for row in mutations:
+            append_jsonl(mutation_path, row)
+    mutation_path.parent.mkdir(parents=True, exist_ok=True)
+    mutation_path.touch()
+    for path in [progress_path, progress_record_path, snapshot_path, mutation_path]:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.touch(exist_ok=True)
+    write_json(
+        out_dir / "base_queue_stats.json",
+        {
+            "target_id": args.target_id,
+            "baseline": args.baseline,
+            "mode": "e2e_mode",
+            "input_records": len(stream_records),
+            "strict_rnt_records": len(rnt_records),
+            "dry_run": args.dry_run,
+        },
+    )
+    write_json(
+        out_dir / "trigger_progress_frontier_stats.json",
+        {
+            "target_id": args.target_id,
+            "baseline": args.baseline,
+            "mode": "e2e_mode",
+            "frontier_size": len(frontier),
+            "mutation_records": len(mutations),
+            "executed_mutations": executed,
+            "trigger_success": trigger_success,
+        },
+    )
+    shutil.copyfile(out_dir / "base_queue_stats.json", logs_dir / "base_queue_stats.json")
+    shutil.copyfile(out_dir / "trigger_progress_frontier_stats.json", logs_dir / "trigger_progress_frontier_stats.json")
     shutil.copyfile(progress_path, out_dir / "progress_decisions.jsonl")
     shutil.copyfile(progress_record_path, out_dir / "progress_records.jsonl")
     shutil.copyfile(snapshot_path, out_dir / "frontier_snapshots.jsonl")
-    shutil.copyfile(logs_dir / "mutation_records.jsonl", out_dir / "mutation_records.jsonl")
+    shutil.copyfile(mutation_path, out_dir / "mutation_records.jsonl")
     status = {
         "status": "complete",
         "mode": "e2e_mode",
@@ -906,7 +1002,10 @@ def run_e2e_mode(args: argparse.Namespace) -> int:
         "strict_rnt_records": len(rnt_records),
         "atoms": len(atoms),
         "frontier_size": len(frontier),
-        "progress_records": len(import_progress_records),
+        "progress_records": len(import_progress_records) + len(mutation_progress_records),
+        "mutation_records": len(mutations),
+        "executed_mutations": executed,
+        "trigger_success": trigger_success,
         "dry_run": args.dry_run,
         "out_dir": str(out_dir),
         "completed_utc": utc_now(),
@@ -932,7 +1031,7 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument("--per-exec-timeout", type=float, default=2.0)
         sp.add_argument("--thresholds", type=Path, default=Path("configs/signal_health_thresholds.yaml"))
         sp.add_argument("--calibration-mutations-per-seed", type=int, default=4)
-        sp.add_argument("--baseline", choices=["formtrig", "native_tc_dgf"], default="formtrig")
+        sp.add_argument("--baseline", choices=["formtrig", "native_tc_dgf", "native_tc_dgf_typedmut"], default="formtrig")
         common[name] = sp
     post = common["postreach_mode"]
     post.add_argument("--execute-mutations", action="store_true")
@@ -943,6 +1042,10 @@ def build_parser() -> argparse.ArgumentParser:
     e2e = common["e2e_mode"]
     e2e.add_argument("--rnt-stream", type=Path)
     e2e.add_argument("--dry-run", action="store_true")
+    e2e.add_argument("--max-seed-records", type=int, default=16)
+    e2e.add_argument("--max-mutation-proposals-per-seed", type=int, default=8)
+    e2e.add_argument("--max-total-mutations", type=int, default=64)
+    e2e.add_argument("--rng-seed", type=int, default=1337)
     return parser
 
 

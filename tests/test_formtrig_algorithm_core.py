@@ -234,10 +234,14 @@ def test_tcir_sequence_edges_are_explicit_only():
 
 
 def test_tcir_same_object_group():
-    tcir = build_tcir("SAME_OBJECT(obj)", "compound-sequence-lifecycle", "uaf.c:1")
-    assert tcir.groups[0].group_type == "SAME_OBJECT"
-    assert len(tcir.atoms) == 1
-    assert tcir.atoms[0].object_identity_edges
+    tcir = build_tcir(
+        "create(obj) before release(obj) before use(obj) && SAME_OBJECT(obj)",
+        "compound-sequence-lifecycle",
+        "uaf.c:1;uaf.c:2;uaf.c:3;uaf.c:4",
+    )
+    same_edges = [edge for edge in tcir.edges if edge.edge_type == "SAME_OBJECT"]
+    assert same_edges
+    assert all(edge.src != edge.dst for edge in same_edges)
 
 
 def test_signal_health_uses_rnt_only_and_parent_child_edges():

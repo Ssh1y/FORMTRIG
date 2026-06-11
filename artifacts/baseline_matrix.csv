@@ -1,0 +1,4 @@
+baseline,uses_native_DT,uses_lifted_DF,uses_typed_mutators,uses_TC_atoms,uses_producer_context,uses_lifecycle_context,allowed_mutators,forbidden_mutators
+native_tc_dgf,true,false,false,false,false,false,generic byte perturbation;generic byte increment;generic byte decrement;generic token insertion,arithmetic perturbation;boundary write;dictionary insertion;endian variants;error-path induction;event deletion;event duplication;event insertion;event reordering;guard-field perturbation;initialization-bypass mutation;numeric byte increment;object-identity alignment;operand replacement;optional-region deletion;phase-preserving mutation;repair hook;reset/cleanup-path mutation;token replacement
+native_tc_dgf_typedmut,true,false,true,true,false,false,native DT scheduling plus typed mutators,lifted features;producer context;lifecycle context
+formtrig,true,true,true,true,true,true,registry typed mutators plus generic fallback,

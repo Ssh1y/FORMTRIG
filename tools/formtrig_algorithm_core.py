@@ -32,6 +32,7 @@ TC_CATEGORIES = {
 }
 
 PROGRESS_REASONS = {
+    "initial_frontier_seed",
     "triggered",
     "native-distance improvement",
     "lifted-feature improvement",
@@ -62,8 +63,8 @@ ATOM_OBSERVATION_STATUSES = {
     "UNKNOWN_UNSTABLE",
 }
 TCIR_GROUP_TYPES = {"ALL_OF", "ANY_OF", "NOT", "GUARD", "SEQUENCE", "SAME_OBJECT", "OBSERVED_AT"}
-MIN_RNT_SAMPLES = 5
-MIN_MUTATION_EDGES = 16
+MIN_RNT_SAMPLES = 10
+MIN_MUTATION_EDGES = 32
 DEFAULT_SIGNAL_HEALTH_THRESHOLDS: dict[str, float | int] = {
     "N_min_RNT": MIN_RNT_SAMPLES,
     "E_min_edges": MIN_MUTATION_EDGES,
@@ -326,6 +327,10 @@ class SignalHealth:
     most_common_bucket_ratio: float
     reach_preserving_dt_delta_rate: float
     reach_preserving_dt_improvement_rate: float
+    raw_dt_delta_rate: float
+    bucket_dt_delta_rate: float
+    raw_dt_improve_rate: float
+    bucket_dt_improve_rate: float
     mutation_sensitivity: float
     improvement_rate: float
     root_alignment: float
@@ -355,6 +360,7 @@ class SignalHealth:
     def to_dict(self) -> dict[str, Any]:
         out = asdict(self)
         out["sample_size"] = self.rnt_count
+        out["dt_delta_rate"] = self.raw_dt_delta_rate
         out["dt_improvement_rate"] = self.dt_improve_rate
         out["failed_checks"] = list(self.failed_checks or self.reasons)
         return out
@@ -981,6 +987,12 @@ def build_tcir(
     parse_expr(expression, root_group)
 
     atom_by_id = {atom.atom_id: atom for atom in atoms}
+    same_object_specs: list[dict[str, Any]] = []
+    for atom in atoms:
+        match = re.match(r"^(?:SAME_OBJECT|same_object)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)$", atom.expression)
+        if match:
+            same_object_specs.append({"atom_id": atom.atom_id, "object": match.group(1)})
+
     for group in groups:
         atom_children = [atom_by_id[item] for item in group.children if item in atom_by_id]
         if group.group_type == "ALL_OF" and len(atom_children) > 1:
@@ -1009,13 +1021,45 @@ def build_tcir(
                 left.sequence_edges.append(right.atom_id)
         if group.group_type == "SAME_OBJECT":
             for left, right in zip(atom_children, atom_children[1:]):
-                edges.append(TCIREdge(left.atom_id, right.atom_id, "same_object", {"confidence": "required_by_group"}))
+                events = list(dict.fromkeys((left.root_events or [left.expression]) + (right.root_events or [right.expression])))
+                edges.append(
+                    TCIREdge(
+                        left.atom_id,
+                        right.atom_id,
+                        "SAME_OBJECT",
+                        {"type": "SAME_OBJECT", "events": events, "object": "", "confidence": "required_by_group"},
+                    )
+                )
                 left.object_identity_edges.append(right.atom_id)
                 right.object_identity_edges.append(left.atom_id)
-    for atom in atoms:
-        if atom.category == "compound-sequence-lifecycle":
-            edges.append(TCIREdge(atom.atom_id, atom.atom_id, "same_object", {"confidence": "required_for_lifecycle"}))
-            atom.object_identity_edges.append(atom.atom_id)
+    for spec in same_object_specs:
+        event_atoms = [
+            atom
+            for atom in atoms
+            if atom.atom_id != spec["atom_id"]
+            and atom.root_events
+            and any(root == spec["object"] or root.endswith(f"({spec['object']})") for root in atom.root_variables + [atom.expression])
+        ]
+        if not event_atoms:
+            event_atoms = [atom for atom in atoms if atom.atom_id != spec["atom_id"] and atom.root_events]
+        event_names = [event for atom in event_atoms for event in atom.root_events]
+        for left, right in zip(event_atoms, event_atoms[1:]):
+            edges.append(
+                TCIREdge(
+                    left.atom_id,
+                    right.atom_id,
+                    "SAME_OBJECT",
+                    {
+                        "type": "SAME_OBJECT",
+                        "events": event_names,
+                        "object": spec["object"],
+                        "predicate_atom": spec["atom_id"],
+                        "confidence": "required_by_same_object_predicate",
+                    },
+                )
+            )
+            left.object_identity_edges.append(right.atom_id)
+            right.object_identity_edges.append(left.atom_id)
     for edge_item in edges:
         if edge_item.edge_type == "guard" and edge_item.dst in atom_by_id:
             atom_by_id[edge_item.dst].guarded_by.append(edge_item.src)
@@ -1240,6 +1284,18 @@ def edge_dt_improved(edge: MutationEdge) -> bool:
     return edge.parent_dt is not None and edge.child_dt is not None and edge.child_dt < edge.parent_dt
 
 
+def edge_dt_bucket_changed(edge: MutationEdge) -> bool:
+    parent_bucket = dt_bucket(edge.parent_dt)
+    child_bucket = dt_bucket(edge.child_dt)
+    return parent_bucket is not None and child_bucket is not None and parent_bucket != child_bucket
+
+
+def edge_dt_bucket_improved(edge: MutationEdge) -> bool:
+    parent_bucket = dt_bucket(edge.parent_dt)
+    child_bucket = dt_bucket(edge.child_dt)
+    return parent_bucket is not None and child_bucket is not None and child_bucket < parent_bucket
+
+
 def edge_root_progress_aligned(edge: MutationEdge) -> bool:
     if edge.child_root_signature and edge.child_root_signature != edge.parent_root_signature:
         return True
@@ -1265,7 +1321,8 @@ def compute_signal_health(
     total = len(records)
     rnt = [record for record in records if is_strict_rnt(record)]
     triggered_count = sum(1 for record in records if record.triggered_T)
-    buckets = [record.dt_bucket for record in rnt if record.dt_bucket is not None]
+    atom_dt_values = [as_float(record.raw.get(f"native_DT_{atom.atom_id}"), record.native_DT) for record in rnt]
+    buckets = [dt_bucket(value) for value in atom_dt_values if dt_bucket(value) is not None]
     bucket_counts = Counter(buckets)
     most_common_ratio = 1.0
     if buckets:
@@ -1273,15 +1330,23 @@ def compute_signal_health(
     edges = mutation_edges if mutation_edges is not None else build_parent_child_edges(records)
     reach_preserving = [edge for edge in edges if edge.parent_reached and edge.child_reached]
     comparisons = len(reach_preserving)
-    dt_changes = sum(1 for edge in reach_preserving if edge_dt_changed(edge))
-    dt_improvements = sum(1 for edge in reach_preserving if edge_dt_improved(edge))
-    delta_rate = dt_changes / comparisons if comparisons else 0.0
-    improve_rate = dt_improvements / comparisons if comparisons else 0.0
+    raw_dt_changes = sum(1 for edge in reach_preserving if edge_dt_changed(edge))
+    raw_dt_improvements = sum(1 for edge in reach_preserving if edge_dt_improved(edge))
+    bucket_dt_changes = sum(1 for edge in reach_preserving if edge_dt_bucket_changed(edge))
+    bucket_dt_improvements = sum(1 for edge in reach_preserving if edge_dt_bucket_improved(edge))
+    raw_delta_rate = raw_dt_changes / comparisons if comparisons else 0.0
+    raw_improve_rate = raw_dt_improvements / comparisons if comparisons else 0.0
+    bucket_delta_rate = bucket_dt_changes / comparisons if comparisons else 0.0
+    bucket_improve_rate = bucket_dt_improvements / comparisons if comparisons else 0.0
     dt_improving_edges = [edge for edge in reach_preserving if edge_dt_improved(edge)]
     aligned_edges = sum(1 for edge in dt_improving_edges if edge_root_progress_aligned(edge))
     dt_root_alignment: float | None = aligned_edges / len(dt_improving_edges) if dt_improving_edges else None
     alignment_reason = "" if dt_improving_edges else "no_dt_improving_edges"
-    signal_improving = [edge for edge in edges if edge_dt_improved(edge) or edge_root_progress_aligned(edge)]
+    signal_improving = [
+        edge
+        for edge in edges
+        if edge_dt_improved(edge) or edge_dt_bucket_improved(edge) or edge_root_progress_aligned(edge)
+    ]
     mutation_reach_stability = (
         sum(1 for edge in signal_improving if edge.child_reached) / len(signal_improving)
         if signal_improving
@@ -1293,8 +1358,8 @@ def compute_signal_health(
         and len(bucket_counts) >= int(threshold_values["bucket_count_min"])
         and most_common_ratio <= float(threshold_values["most_common_bucket_ratio_max"])
     )
-    sensitive = delta_rate >= float(threshold_values["dt_delta_rate_min"])
-    improving = improve_rate >= float(threshold_values["dt_improvement_rate_min"])
+    sensitive = raw_delta_rate >= float(threshold_values["dt_delta_rate_min"]) or bucket_delta_rate >= float(threshold_values["dt_delta_rate_min"])
+    improving = raw_improve_rate >= float(threshold_values["dt_improvement_rate_min"]) or bucket_improve_rate >= float(threshold_values["dt_improvement_rate_min"])
     observations = [atom_observation(record, atom) for record in rnt]
     root_observability = (sum(1 for obs in observations if obs.observed) / len(observations)) if observations else 0.0
     root_observable = root_observability >= float(threshold_values["root_observability_min"])
@@ -1340,16 +1405,20 @@ def compute_signal_health(
         dt_entropy=dt_entropy_value,
         dt_bucket_count=len(bucket_counts),
         most_common_bucket_ratio=most_common_ratio,
-        reach_preserving_dt_delta_rate=delta_rate,
-        reach_preserving_dt_improvement_rate=improve_rate,
-        mutation_sensitivity=delta_rate,
-        improvement_rate=improve_rate,
+        reach_preserving_dt_delta_rate=raw_delta_rate,
+        reach_preserving_dt_improvement_rate=raw_improve_rate,
+        raw_dt_delta_rate=raw_delta_rate,
+        bucket_dt_delta_rate=bucket_delta_rate,
+        raw_dt_improve_rate=raw_improve_rate,
+        bucket_dt_improve_rate=bucket_improve_rate,
+        mutation_sensitivity=max(raw_delta_rate, bucket_delta_rate),
+        improvement_rate=max(raw_improve_rate, bucket_improve_rate),
         root_alignment=root_observability if dt_root_alignment is None else dt_root_alignment,
         reach_stability=reach_stability,
         root_observability=root_observability,
         dt_root_alignment=dt_root_alignment,
-        dt_delta_rate=delta_rate,
-        dt_improve_rate=improve_rate,
+        dt_delta_rate=raw_delta_rate,
+        dt_improve_rate=raw_improve_rate,
         mutation_reach_stability=mutation_reach_stability,
         native_status=native_status,
         sample_size_status=size_status,
@@ -1413,6 +1482,7 @@ def registry() -> dict[str, dict[str, list[dict[str, Any]]]]:
             "mutators": [
                 ("boundary write", "numeric_boundary", "Write near-boundary constants to candidate ranges.", ("candidate_input_influence_range",)),
                 ("arithmetic perturbation", "numeric_arithmetic", "Apply small arithmetic deltas.", ("candidate_input_influence_range",)),
+                ("numeric byte increment", "numeric_arithmetic", "Increment one byte near a numeric root.", ("candidate_input_influence_range",)),
                 ("endian variants", "numeric_encoding", "Try little/big-endian scalar encodings.", ("candidate_input_influence_range",)),
             ],
         },
@@ -1464,6 +1534,8 @@ def registry() -> dict[str, dict[str, list[dict[str, Any]]]]:
             ],
             "mutators": [
                 ("generic byte perturbation", "generic_local", "Apply bounded byte-level perturbation to candidate ranges.", ("candidate_input_influence_range",)),
+                ("generic byte increment", "generic_local", "Increment one byte in a candidate range.", ("candidate_input_influence_range",)),
+                ("generic byte decrement", "generic_local", "Decrement one byte in a candidate range.", ("candidate_input_influence_range",)),
                 ("generic token insertion", "generic_local", "Insert small constants or corpus tokens.", ("candidate_input_influence_range",)),
                 ("generic region deletion", "generic_local", "Delete bounded candidate ranges.", ("candidate_input_influence_range",)),
             ],
@@ -1494,6 +1566,22 @@ def registry() -> dict[str, dict[str, list[dict[str, Any]]]]:
             ],
         }
     return out
+
+
+def generic_afl_style_mutators() -> list[str]:
+    return ["generic byte perturbation", "generic byte increment", "generic byte decrement", "generic token insertion"]
+
+
+def typed_mutator_names() -> list[str]:
+    generic = set(generic_afl_style_mutators())
+    names: list[str] = []
+    for category, payload in registry().items():
+        if category == "generic":
+            continue
+        for item in payload["mutators"]:
+            if item["name"] not in generic and item["name"] not in names:
+                names.append(item["name"])
+    return names
 
 
 def operator_preconditions(name: str, family: str, required: tuple[str, ...]) -> tuple[str, ...]:
@@ -1542,6 +1630,9 @@ def operator_fallback(name: str, family: str) -> str:
 
 def operator_definition(operator_name: str, category: str) -> dict[str, Any]:
     for item in registry().get(category, registry()["generic"])["mutators"]:
+        if item["name"] == operator_name:
+            return dict(item)
+    for item in registry()["generic"]["mutators"]:
         if item["name"] == operator_name:
             return dict(item)
     return {
@@ -2033,8 +2124,20 @@ def atom_observation(record: ReplayRecord, atom: TCAtom, tcir: TCIR | None = Non
         return AtomObservation(atom.atom_id, "OBSERVED_TRUE", True, False, True, False, key, value, "root_state_or_trigger_true")
     if truth is False:
         return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, key, value, "root_state_false")
-    if root_signature(record.tc_root_state) or record.coverage_hash.startswith("gdb_probe:"):
-        return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, key, value, "root_or_event_observed_without_truth")
+    for root in atom.root_variables:
+        candidates = [root, root.split("->")[-1].split(".")[-1]]
+        for candidate in candidates:
+            if candidate in parsed:
+                return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, candidate, parsed[candidate], "atom_root_observed_without_truth")
+            null_key = f"{candidate}_null"
+            if null_key in parsed:
+                return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, null_key, parsed[null_key], "atom_root_observed_without_truth")
+    for event in atom.root_events:
+        for candidate in [event, f"{event}_reached", f"{event}_seen", f"{event}_event"]:
+            if candidate in parsed:
+                return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, candidate, parsed[candidate], "atom_event_observed_without_truth")
+    if atom.root_events and record.coverage_hash.startswith("gdb_probe:"):
+        return AtomObservation(atom.atom_id, "OBSERVED_FALSE", True, False, False, True, atom.root_events[0], "probe", "runtime_event_probe_observed")
     return AtomObservation(atom.atom_id, "NOT_OBSERVED", False, False, False, False, "", "", "no_atom_observation")
 
 
@@ -2092,6 +2195,8 @@ def progress_vector(record: ReplayRecord, atom: TCAtom, plan: AtomPlan, tcir: TC
     if sig:
         influence += 0.2
     observation = atom_observation(record, atom, tcir)
+    atom_native_dt = as_float(record.raw.get(f"native_DT_{atom.atom_id}"), record.native_DT)
+    atom_bucket = dt_bucket(atom_native_dt)
     vector = ProgressVector(
         target_id=record.target_id,
         seed_id=record.seed_id,
@@ -2099,8 +2204,8 @@ def progress_vector(record: ReplayRecord, atom: TCAtom, plan: AtomPlan, tcir: TC
         category=atom.category,
         reached=record.reached_R,
         triggered=record.triggered_T,
-        native_dt=record.native_DT,
-        native_bucket=record.dt_bucket,
+        native_dt=atom_native_dt,
+        native_bucket=atom_bucket,
         root_state=record.tc_root_state,
         root_signature=sig,
         lifecycle_prefix=lifecycle_prefix_score(record.tc_root_state),
@@ -2345,9 +2450,10 @@ def build_initial_frontier_records(
         accepted, decision, seed_progress = progress_dominates_global(record, frontier, tcir, plans)
         if not frontier and is_strict_rnt(record) and record.replay_stable:
             decision.accepted = True
-            decision.reason = "root-aligned state transition"
+            decision.reason = "initial_frontier_seed"
             frontier.append(seed_progress)
         elif accepted:
+            decision.reason = "initial_frontier_seed"
             frontier, _ = insert_non_dominated(frontier, seed_progress, tcir)
         decisions.append(decision)
     return frontier, decisions
@@ -2630,6 +2736,9 @@ def operator_family(operator_name: str, category: str) -> str:
     for item in registry().get(category, registry()["generic"])["mutators"]:
         if item["name"] == operator_name:
             return item.get("operator_family", "generic_local")
+    for item in registry()["generic"]["mutators"]:
+        if item["name"] == operator_name:
+            return item.get("operator_family", "generic_local")
     return "generic_local"
 
 
@@ -2701,6 +2810,17 @@ def propose_mutations(
     if not data:
         data = b"\x00"
     ranges = candidate_range_records(record, len(data), graph)
+    if plan.plan_reason.startswith("native_tc_dgf_native_dt_generic_mutation_only"):
+        ranges = [
+            {
+                "start": 0,
+                "length": min(len(data), 4096),
+                "confidence_label": "low",
+                "confidence": 0.1,
+                "runtime_event_id": "",
+                "source": "native_tc_dgf_whole_input_generic",
+            }
+        ]
     constants = constants_from_expression(atom.expression)
     proposals: list[tuple[MutationProposal, bytes | None]] = []
 
@@ -2816,7 +2936,7 @@ def propose_mutations(
                     )
                     if len(proposals) >= max_proposals:
                         break
-            elif op in {"arithmetic_perturbation", "guard_field_perturbation", "error_path_induction", "phase_preserving_mutation"}:
+            elif op in {"arithmetic_perturbation", "numeric_byte_increment", "guard_field_perturbation", "error_path_induction", "phase_preserving_mutation"}:
                 pos = min(local_start, len(buf) - 1)
                 if op == "error_path_induction":
                     buf[pos:min(end, pos + 8, len(buf))] = b"\x00" * max(1, min(end, pos + 8, len(buf)) - pos)
@@ -2827,10 +2947,16 @@ def propose_mutations(
                 if local_start + 4 <= len(buf):
                     buf[local_start : local_start + 4] = reversed(buf[local_start : local_start + 4])
                     add(operator, bytes(buf), range_record, local_start, 4)
-            elif op in {"generic_byte_perturbation", "generic_token_insertion", "generic_region_deletion"}:
+            elif op in {"generic_byte_perturbation", "generic_byte_increment", "generic_byte_decrement", "generic_token_insertion", "generic_region_deletion"}:
                 pos = min(local_start, len(buf) - 1)
                 if op == "generic_byte_perturbation":
                     buf[pos] ^= 0x1
+                    add(operator, bytes(buf), range_record, pos, 1)
+                elif op == "generic_byte_increment":
+                    buf[pos] = (buf[pos] + 1) & 0xFF
+                    add(operator, bytes(buf), range_record, pos, 1)
+                elif op == "generic_byte_decrement":
+                    buf[pos] = (buf[pos] - 1) & 0xFF
                     add(operator, bytes(buf), range_record, pos, 1)
                 elif op == "generic_token_insertion":
                     buf[pos:pos] = b"\x00"
