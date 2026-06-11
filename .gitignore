@@ -1,0 +1,37 @@
+build/
+*.o
+*.so
+*.a
+*.pyc
+__pycache__/
+
+# Local benchmark checkouts, third-party sources, and papers are inputs, not
+# FORMTRIG experiment implementation state.
+third_party/
+related_papers/
+experiments/magma_workspace/
+
+# Generated fuzzing outputs and corpora can become very large.
+experiments/results/
+experiments/seedbanks/
+experiments/tmp/
+results/
+paper_data/figures/
+paper_data/tables/
+artifacts/rnt_corpus/
+artifacts/cve_validation_logs/
+artifacts/**/*.log
+artifacts/**/*.raw
+
+# Keep formal metadata/inventory artifacts versionable.
+!artifacts/schema/
+!artifacts/schema/**
+!artifacts/*.csv
+!artifacts/*.json
+!artifacts/*.md
+!scripts/
+!scripts/**
+
+benchmarks/toys/bin/
+benchmarks/cve_sources/
+benchmarks/cve_build/

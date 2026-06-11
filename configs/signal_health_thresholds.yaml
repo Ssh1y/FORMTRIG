@@ -1,0 +1,12 @@
+N_min_RNT: 5
+E_min_edges: 16
+entropy_min: 0.25
+bucket_count_min: 2
+most_common_bucket_ratio_max: 0.95
+dt_delta_rate_min: 0.05
+dt_improvement_rate_min: 0.01
+root_observability_min: 0.5
+dt_root_alignment_min: 0.5
+mutation_reach_stability_min: 0.8
+object_identity_confidence_min: 0.5
+max_alt_branch_frontier_size: 2
