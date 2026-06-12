@@ -505,6 +505,7 @@ require_file "$work_dir/out/formtrig_runtime_event_map.csv"
 require_file "$work_dir/out/.formtrig/formtrig_lift.normalized"
 require_file "$work_dir/out/default/formtrig_lift_feature_audit.json"
 require_file "$work_dir/out/default/formtrig_diagnosis.json"
+require_file "$work_dir/out/default/formtrig_seed_readiness.json"
 if ! awk 'NF != 13 { exit 1 }' \
   "$work_dir/out/.formtrig/formtrig_lift.normalized"; then
   echo "campaign normalized lift spec did not include event ids" >&2
@@ -516,6 +517,23 @@ if ! grep -q '"status": "pass"' \
   echo "campaign lifted feature audit did not pass" >&2
   cat "$work_dir/out/default/formtrig_lift_feature_audit.json" >&2
   exit 26
+fi
+if ! grep -q '"status": "pass"' \
+  "$work_dir/out/default/formtrig_seed_readiness.json"; then
+  echo "campaign seed readiness did not pass for native smoke seed" >&2
+  cat "$work_dir/out/default/formtrig_seed_readiness.json" >&2
+  exit 46
+fi
+if ! grep -q '"rnt": 1' "$work_dir/out/default/formtrig_seed_readiness.json"; then
+  echo "campaign seed readiness did not find a reached non-trigger seed" >&2
+  cat "$work_dir/out/default/formtrig_seed_readiness.json" >&2
+  exit 47
+fi
+if ! grep -q '"spec_lifted": 1' \
+  "$work_dir/out/default/formtrig_seed_readiness.json"; then
+  echo "campaign seed readiness did not observe spec-driven lifted signal" >&2
+  cat "$work_dir/out/default/formtrig_seed_readiness.json" >&2
+  exit 48
 fi
 
 summary_queued_progress="$(json_number formtrig_queued_progress "$summary")"

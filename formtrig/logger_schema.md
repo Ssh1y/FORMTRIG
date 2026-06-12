@@ -111,6 +111,26 @@ interpretation. It reports:
   `semantic_role_collapse`, `no_spec_lifted_signal`, `constant_lift_signal`,
   `no_new_non_dominated_progress`, or `queued_tc_rooted_progress`.
 
+## Seed Readiness
+
+`scripts/run_formtrig_seed_readiness.sh` replays the initial seed corpus through
+the native target before AFL++ starts. It writes `formtrig_seed_readiness.json`
+with:
+
+- per-seed `reached`, `triggered`, `rnt`, `spec_lifted`,
+  `heuristic_lifted`, `manual_lifted`, `components`, `atom_signals`, and
+  `role_signals`.
+- aggregate `reached`, `triggered`, `rnt`, and lifted-source counters.
+- `status` and `diagnosis`, such as `ready`, `no_seed_files`,
+  `no_formtrig_runtime_signal`, `seed_does_not_reach_target`,
+  `no_reached_non_trigger_seed`, `no_spec_lifted_signal`,
+  `heuristic_lift_used`, or `manual_target_lift_used`.
+
+Campaigns run this preflight by default in warning mode. Formal RNT-seeded
+experiments should use `--seed-preflight require`; this fails before AFL++ if
+the initial corpus cannot produce reached non-trigger, spec-driven,
+BindingSpec-grounded runtime signal.
+
 ## LLVM Site Map
 
 When `FORMTRIG_SITE_MAP` is set at compile time, the LLVM pass appends one TSV

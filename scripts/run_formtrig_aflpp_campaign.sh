@@ -14,6 +14,9 @@ target_site_ids=""
 site_map=""
 runtime_lift_spec=""
 duration="60"
+seed_preflight="warn"
+seed_preflight_max="32"
+seed_preflight_timeout="2"
 extra_afl_args=()
 
 usage() {
@@ -27,6 +30,9 @@ options:
   --site-map FILE      LLVM FORMTRIG_SITE_MAP TSV for runtime event-map audit
   --target-site-ids S  comma-separated LLVM FORMTRIG site ids for known TC line
   --duration SEC       AFL++ -V time budget in seconds (default: 60)
+  --seed-preflight M   off|warn|require native seed readiness check (default: warn)
+  --seed-preflight-max N       max seeds to replay before fuzzing (default: 32)
+  --seed-preflight-timeout SEC per-seed replay timeout (default: 2)
   --aflpp-dir DIR      AFL++ checkout/build directory
   --afl-arg ARG        extra afl-fuzz argument, repeatable
 
@@ -34,6 +40,7 @@ outputs:
   OUT/default/fuzzer_stats
   OUT/default/formtrig_progress.jsonl
   OUT/default/formtrig_summary.json
+  OUT/default/formtrig_seed_readiness.json when seed preflight is enabled
   OUT/formtrig_lift_audit.csv when --lift-spec is set
 EOF
 }
@@ -83,6 +90,18 @@ while [[ $# -gt 0 ]]; do
       duration="${2:-}"
       shift 2
       ;;
+    --seed-preflight)
+      seed_preflight="${2:-}"
+      shift 2
+      ;;
+    --seed-preflight-max)
+      seed_preflight_max="${2:-}"
+      shift 2
+      ;;
+    --seed-preflight-timeout)
+      seed_preflight_timeout="${2:-}"
+      shift 2
+      ;;
     --aflpp-dir)
       aflpp_dir="${2:-}"
       afl_fuzz="$aflpp_dir/afl-fuzz"
@@ -125,6 +144,15 @@ if [[ -n "$binding_spec" && -z "$site_map" ]]; then
   echo "--binding-spec requires --site-map so source bindings are runtime-grounded" >&2
   exit 2
 fi
+
+case "$seed_preflight" in
+  off|warn|require)
+    ;;
+  *)
+    echo "--seed-preflight must be off, warn, or require" >&2
+    exit 2
+    ;;
+esac
 
 if ! grep -a -q "FORMTRIG native signal channel enabled" "$afl_fuzz"; then
   echo "AFL++ checkout is not patched for FORMTRIG native guidance." >&2
@@ -208,6 +236,32 @@ if [[ -n "$target_site_ids" ]]; then
   env_args+=(FORMTRIG_TARGET_SITE_IDS="$target_site_ids")
 fi
 
+seed_readiness=""
+if [[ "$seed_preflight" != "off" ]]; then
+  seed_readiness="$out_dir/.formtrig/formtrig_seed_readiness.json"
+  seed_args=(
+    --in "$seed_dir"
+    --out "$seed_readiness"
+    --target-bug "$target_bug"
+    --max-seeds "$seed_preflight_max"
+    --timeout "$seed_preflight_timeout"
+  )
+  if [[ -n "$runtime_lift_spec" ]]; then
+    seed_args+=(--lift-spec "$runtime_lift_spec")
+  fi
+  if [[ -n "$target_site_ids" ]]; then
+    seed_args+=(--target-site-ids "$target_site_ids")
+  fi
+  if ! "$repo_root/scripts/run_formtrig_seed_readiness.sh" \
+      "${seed_args[@]}" -- "$@"; then
+    if [[ "$seed_preflight" == "require" ]]; then
+      echo "FORMTRIG seed readiness failed: $seed_readiness" >&2
+      exit 6
+    fi
+    echo "FORMTRIG seed readiness warning: $seed_readiness" >&2
+  fi
+fi
+
 env "${env_args[@]}" "$afl_fuzz" \
   -i "$seed_dir" -o "$out_dir" -V "$duration" "${extra_afl_args[@]}" -- "$@"
 
@@ -215,6 +269,9 @@ stats="$out_dir/default/fuzzer_stats"
 progress="$out_dir/default/formtrig_progress.jsonl"
 require_file "$stats"
 require_file "$progress"
+if [[ -n "$seed_readiness" ]]; then
+  cp "$seed_readiness" "$out_dir/default/formtrig_seed_readiness.json"
+fi
 
 "$out_dir/.formtrig/formtrig_progress_summary" "$stats" "$progress" \
   > "$out_dir/default/formtrig_summary.json"
@@ -245,6 +302,9 @@ echo "  stats=$stats"
 echo "  progress=$progress"
 echo "  summary=$out_dir/default/formtrig_summary.json"
 echo "  diagnosis=$out_dir/default/formtrig_diagnosis.json"
+if [[ -n "$seed_readiness" ]]; then
+  echo "  seed_readiness=$out_dir/default/formtrig_seed_readiness.json"
+fi
 if [[ -n "$lift_spec" ]]; then
   echo "  binding_audit=$out_dir/formtrig_lift_audit.csv"
 fi

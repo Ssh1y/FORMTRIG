@@ -22,7 +22,8 @@ Or use the repository campaign wrapper:
 ./scripts/run_formtrig_aflpp_campaign.sh \
   --in seeds --out results/run1 --target-bug <tc-label> \
   --category binary-null --binding-spec binding_spec.yaml \
-  --site-map site_map.tsv --target-site-ids 12345,67890 --duration 1800 \
+  --site-map site_map.tsv --target-site-ids 12345,67890 \
+  --seed-preflight require --duration 1800 \
   -- ./target @@
 ```
 
@@ -101,6 +102,15 @@ separates target-not-reached, insufficient binding, role collapse, constant
 lifted signal, dominance rejection, source leakage, and true queued TC-rooted
 progress.
 
+Before fuzzing, the runner also executes
+`scripts/run_formtrig_seed_readiness.sh` unless `--seed-preflight off` is set.
+The preflight writes `OUT/default/formtrig_seed_readiness.json` after the run
+starts, and always leaves the same JSON under `OUT/.formtrig/` even if
+`--seed-preflight require` aborts before AFL++. For formal RNT-seeded
+experiments, use `--seed-preflight require` so a campaign fails fast when the
+seed corpus has no reached non-trigger seed, no spec-driven lifted signal, or
+manual/heuristic lifted source leakage.
+
 `run_native_formtrig_smoke.sh` checks the native runtime role signal, manual
 lifted-component gating, high-level BindingSpec compilation, a
 `FORMTRIG_LIFT_SPEC` role binding, native binding-tier audit, AFL++ queue
@@ -109,4 +119,4 @@ resolution, generated lift-spec audit, runtime event-map quality gate,
 semantic-role collapse rejection, typed mutation execution, progress-summary
 generation, lifted-feature provenance audit, separated accept/reject/stability
 reasons, campaign diagnosis fields, spec/heuristic/manual source separation,
-and that `afl-fuzz` was built with `NO_PYTHON=1`.
+seed readiness preflight, and that `afl-fuzz` was built with `NO_PYTHON=1`.
