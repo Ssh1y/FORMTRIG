@@ -13,6 +13,11 @@ from audit_lift_bindings import (
     graph_binding_audit,
     write_runtime_template,
 )
+from binding_spec import (
+    binding_spec_to_graph_and_runtime_map,
+    load_json_or_yaml,
+    validate_binding_spec,
+)
 from compile_lift_spec import (
     Binding,
     apply_source_relocations,
@@ -112,9 +117,17 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--trigger-graph",
         action="append",
-        required=True,
         type=Path,
         help="Trigger-progress graph JSON. May be passed multiple times.",
+    )
+    parser.add_argument(
+        "--binding-spec",
+        action="append",
+        type=Path,
+        help=(
+            "External BindingSpec JSON/YAML. Materialized into a temporary "
+            "trigger graph and runtime map before audit."
+        ),
     )
     parser.add_argument("--runtime-map", type=Path, help="Manual/existing runtime-map JSON")
     parser.add_argument("--site-map", type=Path, help="FORMTRIG_SITE_MAP output")
@@ -146,16 +159,52 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = build_arg_parser().parse_args(argv)
+    if not args.trigger_graph and not args.binding_spec:
+        raise SystemExit("at least one --trigger-graph or --binding-spec is required")
     runtime_map = load_runtime_map(args.runtime_map)
     site_map = parse_site_map(args.site_map)
 
     merged = {}  # type: Dict[str, Dict[str, Any]]
     audits = []  # type: List[Dict[str, Any]]
-    for graph in args.trigger_graph:
+    graph_paths = list(args.trigger_graph or [])
+    generated_graphs = []  # type: List[Path]
+    if args.binding_spec:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        generated_dir = args.output.parent / f"{args.output.stem}.binding_specs"
+        generated_dir.mkdir(parents=True, exist_ok=True)
+        for spec_path in args.binding_spec:
+            spec = load_json_or_yaml(spec_path)
+            failures = validate_binding_spec(spec)
+            if failures:
+                raise SystemExit(
+                    f"{spec_path}: invalid BindingSpec: "
+                    + json.dumps(failures, sort_keys=True)
+                )
+            graph, spec_runtime_map = binding_spec_to_graph_and_runtime_map(spec)
+            target_id = str(graph.get("target_id") or spec_path.stem)
+            graph_path = generated_dir / f"{target_id}.trigger_graph.json"
+            graph_path.write_text(json.dumps(graph, indent=2, sort_keys=True) + "\n")
+            generated_graphs.append(graph_path)
+            graph_paths.append(graph_path)
+            for key, value in spec_runtime_map.get("runtime_events", {}).items():
+                merged[str(key)] = value
+                runtime_map[str(key)] = Binding(
+                    str(value.get("event_kind", "*")),
+                    str(value.get("site_id", "*")),
+                    str(value.get("source", f"{spec_path}:{key}")),
+                    {
+                        str(k): v
+                        for k, v in value.items()
+                        if k not in {"event_kind", "site_id", "source"}
+                    },
+                )
+
+    for graph in graph_paths:
         bindings, audit = materialize_graph_bindings(
             graph, runtime_map, site_map, source_roots=args.source_root
         )
-        merged.update(bindings)
+        for key, value in bindings.items():
+            merged.setdefault(key, value)
         audits.append(audit)
 
     ready_count = sum(
@@ -168,6 +217,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         "summary": {
             "graphs": len(audits),
             "bindings": len(merged),
+            "generated_graphs": [str(path) for path in generated_graphs],
             "runnable": sum(1 for item in audits if item["runnable"]),
             "ready": ready_count,
             "mutation_ready": sum(1 for item in audits if item["mutation_ready"]),

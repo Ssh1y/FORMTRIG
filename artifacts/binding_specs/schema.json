@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FORMTRIG BindingSpec",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["tc_id", "tc", "atoms", "bindings"],
+  "properties": {
+    "tc_id": {"type": "string", "minLength": 1},
+    "target": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "project": {"type": "string"},
+        "binary": {"type": "string"},
+        "command": {"type": "string"},
+        "source_locations": {
+          "type": "array",
+          "items": {"type": ["string", "object"]}
+        }
+      }
+    },
+    "tc": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["expression", "category"],
+      "properties": {
+        "expression": {"type": "string", "minLength": 1},
+        "category": {
+          "enum": [
+            "numeric-margin",
+            "equality/magic",
+            "binary-state-null",
+            "compound-sequence-lifecycle"
+          ]
+        },
+        "composition": {"type": ["string", "object", "array", "null"]}
+      }
+    },
+    "atoms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["id", "expr", "kind"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "expr": {"type": "string", "minLength": 1},
+          "kind": {"type": "string", "minLength": 1},
+          "root": {"type": ["string", "object", "null"]},
+          "source_locations": {
+            "type": "array",
+            "items": {"type": ["string", "object"]}
+          }
+        }
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "roots": {"$ref": "#/$defs/bindingList"},
+        "guards": {"$ref": "#/$defs/bindingList"},
+        "producers": {"$ref": "#/$defs/bindingList"},
+        "uses": {"$ref": "#/$defs/bindingList"},
+        "lifecycle_events": {"$ref": "#/$defs/bindingList"},
+        "same_object": {"$ref": "#/$defs/bindingList"},
+        "input_influence": {"$ref": "#/$defs/bindingList"},
+        "repair_hooks": {"$ref": "#/$defs/bindingList"}
+      }
+    }
+  },
+  "$defs": {
+    "observeAt": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "file": {"type": "string"},
+        "line": {"type": ["integer", "string"]},
+        "column": {"type": ["integer", "string"]},
+        "function": {"type": "string"},
+        "role": {"type": "string"},
+        "event_kind": {"type": ["string", "integer"]},
+        "site_id": {"type": ["string", "integer"]},
+        "runtime_event_id": {"type": "string"},
+        "value_mode": {"type": "string"},
+        "component_kind": {"type": ["string", "integer"]},
+        "direction": {"type": "string"},
+        "priority": {"type": ["integer", "string"]},
+        "confidence": {"type": ["string", "number"]}
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "atom": {"type": "string"},
+        "expr": {"type": "string"},
+        "event": {"type": "string"},
+        "role": {"type": "string"},
+        "observe_at": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/observeAt"}
+        },
+        "ranges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["start", "length"],
+            "properties": {
+              "start": {"type": ["integer", "string"]},
+              "length": {"type": ["integer", "string"]},
+              "confidence": {"type": ["string", "number"]}
+            }
+          }
+        }
+      }
+    },
+    "bindingList": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/binding"}
+    }
+  }
+}
