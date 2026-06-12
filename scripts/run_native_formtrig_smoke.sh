@@ -55,6 +55,30 @@ fi
 
 "$repo_root/scripts/run_formtrig_source_site_smoke.sh" >/dev/null
 
+"$repo_root/scripts/prepare_formtrig_native_env.sh" \
+  --out "$work_dir/native_env" >/dev/null
+cat > "$work_dir/native_env/env_target.c" <<'TARGET'
+#include <stdio.h>
+
+int main(int argc, char **argv) {
+  if (argc != 2) return 2;
+  FILE *f = fopen(argv[1], "rb");
+  if (!f) return 2;
+  unsigned char b = 0;
+  fread(&b, 1, 1, f);
+  fclose(f);
+  return b == 42 ? 0 : 1;
+}
+TARGET
+bash -c 'source "$1" && $CC $CFLAGS "$2" $LDFLAGS -o "$3"' _ \
+  "$work_dir/native_env/formtrig_native_env.sh" \
+  "$work_dir/native_env/env_target.c" \
+  "$work_dir/native_env/env_target"
+if [[ ! -s "$work_dir/native_env/site_map.tsv" ]]; then
+  echo "prepared native build environment did not emit a site map" >&2
+  exit 40
+fi
+
 mkdir -p "$work_dir/in" "$work_dir/out"
 printf '\377' > "$work_dir/in/seed"
 
@@ -98,6 +122,38 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_lift_feature_audit.c" \
   -o "$work_dir/formtrig_lift_feature_audit"
+
+cat > "$work_dir/initial_only_stats" <<'STATS'
+execs_done : 1
+corpus_count : 1
+formtrig_seen_execs : 1
+formtrig_reached_execs : 1
+formtrig_triggered_execs : 0
+formtrig_queued_progress : 0
+formtrig_frontier_updates : 1
+formtrig_typed_execs : 0
+formtrig_typed_finds : 0
+formtrig_stability_checks : 0
+formtrig_stability_failures : 0
+STATS
+cat > "$work_dir/initial_only_progress.jsonl" <<'PROGRESS'
+{"event":"frontier_accept","reason":"initial_frontier_seed","reached":true,"triggered":false,"lifted":true,"components":1,"actionable_components":1,"atom_signals":1,"role_bits":1,"d_f":1,"source_flags":2}
+PROGRESS
+"$work_dir/formtrig_progress_summary" "$work_dir/initial_only_stats" \
+  "$work_dir/initial_only_progress.jsonl" \
+  > "$work_dir/initial_only_summary.json"
+if ! grep -q '"progress_status": "not_progressing"' \
+  "$work_dir/initial_only_summary.json"; then
+  echo "progress summary counted initial frontier seed as progress" >&2
+  cat "$work_dir/initial_only_summary.json" >&2
+  exit 41
+fi
+if ! grep -q '"frontier_progress_accept_events": 0' \
+  "$work_dir/initial_only_summary.json"; then
+  echo "progress summary did not separate initial and progress accepts" >&2
+  cat "$work_dir/initial_only_summary.json" >&2
+  exit 42
+fi
 
 cat > "$work_dir/site_map.tsv" <<'SITEMAP'
 101	cmp	known_tc	7	icmp	bench/known_tc.c	42	11

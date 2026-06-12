@@ -30,6 +30,20 @@ The target must be linked with `formtrig/runtime/formtrig_runtime.c` and include
 `formtrig/include` so it can publish `formtrig_shm_record_t` through the native
 shared-memory ABI.
 
+For real Make/CMake targets, prepare a source-able native build environment
+instead of hand-copying compiler/linker flags:
+
+```sh
+./scripts/prepare_formtrig_native_env.sh --out build/formtrig-native \
+  --clang /usr/bin/clang-18 --clang++ /usr/bin/clang++-18
+. build/formtrig-native/formtrig_native_env.sh
+# then configure/build the target with CC/CXX/CFLAGS/CXXFLAGS/LDFLAGS from env
+```
+
+The prepared environment pins AFL++'s backend clang to the same LLVM version
+used to build the FORMTRIG pass, writes `FORMTRIG_SITE_MAP`, and links the
+native runtime archive into the target.
+
 For source-line TC experiments, build the target with the LLVM pass and
 `FORMTRIG_SITE_MAP=/path/to/site_map.tsv`. Then resolve known TC source
 locations with the native helper:
@@ -40,6 +54,12 @@ locations with the native helper:
 cc -std=c11 -Iformtrig/include formtrig/tools/formtrig_site_map.c \
   -o formtrig_site_map
 ./formtrig_site_map --file bug.c --line 123 --kind cmp --emit env site_map.tsv
+./formtrig_site_map --file bug.c --line 123 --kind cmp \
+  --emit binding-spec --tc-id BUG001 --tc-category numeric-margin \
+  --tc-expr 'len > cap' --atom 1 --atom-kind numeric-margin \
+  --atom-expr 'len > cap' --atom-root len \
+  --role root_observe --component 3 --priority 10 --direction lower \
+  --value-mode distance site_map.tsv > BUG001.binding.yaml
 ```
 
 `build_formtrig_llvm_pass.sh` prints the clang arguments needed for the local
@@ -51,8 +71,12 @@ The printed `FORMTRIG_TARGET_SITE_IDS=...` value can be passed to
 high-level BindingSpec manifest matching `formtrig/binding_specs/schema.json`.
 The runner compiles that manifest with `formtrig_binding_spec_compile` into
 runtime-facing `FORMTRIG_LIFT_SPEC` rows before any fuzzing starts. The same
-site-map helper can still emit draft low-level rows with `--emit lift-spec` for
-debugging, but those rows are not the first-class experiment input.
+site-map helper can emit a first-pass high-level BindingSpec with
+`--emit binding-spec`; for binary/null and lifecycle targets this auto-generated
+root-only manifest is intentionally insufficient until producer/use or
+lifecycle-event bindings are added. It can also emit draft low-level rows with
+`--emit lift-spec` for debugging, but those rows are not the first-class
+experiment input.
 BindingSpec `atoms[].kind` is emitted as low-level `atom_category` metadata, and
 the binding gates use it per atom. The `--category` option is only a fallback for
 legacy single-class specs.

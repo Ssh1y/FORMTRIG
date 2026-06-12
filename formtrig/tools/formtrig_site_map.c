@@ -26,6 +26,12 @@ typedef struct query {
   uint32_t line;
   uint32_t line_window;
   const char *emit;
+  const char *tc_id;
+  const char *tc_category;
+  const char *tc_expression;
+  const char *atom_kind;
+  const char *atom_expression;
+  const char *atom_root;
   uint32_t atom_id;
   const char *role;
   uint32_t component_kind;
@@ -38,7 +44,8 @@ typedef struct query {
 
 static void usage(const char *argv0) {
   fprintf(stderr,
-          "usage: %s [filters] [--emit csv|ids|env|lift-spec] <site-map.tsv>\n"
+          "usage: %s [filters] [--emit csv|ids|env|lift-spec|binding-spec] "
+          "<site-map.tsv>\n"
           "\n"
           "filters:\n"
           "  --file SUBSTR       match source file substring\n"
@@ -57,6 +64,16 @@ static void usage(const char *argv0) {
           "  --value X           optional constant value\n"
           "  --confidence X      optional confidence, default 1.0\n",
           argv0);
+  fprintf(stderr,
+          "\n"
+          "binding-spec output options:\n"
+          "  --tc-id ID          target/TC id for generated BindingSpec\n"
+          "  --tc-category CAT   TC category, defaults to --atom-kind\n"
+          "  --tc-expr EXPR      full TC expression/description\n"
+          "  --atom-kind CAT     per-atom category\n"
+          "  --atom-expr EXPR    atom expression, defaults to --tc-expr\n"
+          "  --atom-root ROOT    root variable/event expression, defaults to "
+          "--atom-expr\n");
 }
 
 static int parse_u32(const char *s, uint32_t *out) {
@@ -146,6 +163,97 @@ static void print_lift_spec_row(const site_row_t *row, const query_t *q) {
          row->site_id);
 }
 
+static void print_yaml_quoted(const char *s) {
+  putchar('\'');
+  if (!s) s = "";
+  for (; *s; s++) {
+    if (*s == '\'') putchar('\'');
+    putchar(*s);
+  }
+  putchar('\'');
+}
+
+static const char *query_tc_category(const query_t *q) {
+  return q->tc_category ? q->tc_category : q->atom_kind;
+}
+
+static const char *query_atom_expression(const query_t *q) {
+  return q->atom_expression ? q->atom_expression : q->tc_expression;
+}
+
+static const char *query_atom_root(const query_t *q) {
+  return q->atom_root ? q->atom_root : query_atom_expression(q);
+}
+
+static int validate_binding_spec_query(const query_t *q) {
+  return validate_lift_spec_query(q) && q->tc_id && q->tc_expression &&
+         query_tc_category(q) && q->atom_kind && query_atom_expression(q) &&
+         query_atom_root(q);
+}
+
+static void print_binding_spec_header(const query_t *q) {
+  printf("tc_id: ");
+  print_yaml_quoted(q->tc_id);
+  printf("\n");
+  printf("tc:\n");
+  printf("  category: ");
+  print_yaml_quoted(query_tc_category(q));
+  printf("\n");
+  printf("  expression: ");
+  print_yaml_quoted(q->tc_expression);
+  printf("\n");
+  printf("atoms:\n");
+  printf("  - id: %u\n", q->atom_id);
+  printf("    expr: ");
+  print_yaml_quoted(query_atom_expression(q));
+  printf("\n");
+  printf("    kind: ");
+  print_yaml_quoted(q->atom_kind);
+  printf("\n");
+  printf("    root: ");
+  print_yaml_quoted(query_atom_root(q));
+  printf("\n");
+  printf("bindings:\n");
+}
+
+static void print_binding_spec_row(const site_row_t *row, const query_t *q) {
+  printf("  - id: ");
+  char id[128];
+  snprintf(id, sizeof(id), "%s_%u", q->role ? q->role : "binding",
+           row->site_id);
+  print_yaml_quoted(id);
+  printf("\n");
+  printf("    atom: %u\n", q->atom_id);
+  printf("    role: ");
+  print_yaml_quoted(q->role);
+  printf("\n");
+  printf("    expr: ");
+  print_yaml_quoted(query_atom_expression(q));
+  printf("\n");
+  printf("    observe_at:\n");
+  printf("      kind: ");
+  print_yaml_quoted(row->kind);
+  printf("\n");
+  printf("      function: ");
+  print_yaml_quoted(row->function);
+  printf("\n");
+  printf("      file: ");
+  print_yaml_quoted(row->file);
+  printf("\n");
+  printf("      line: %u\n", row->line);
+  printf("      column: %u\n", row->column);
+  printf("    component: %u\n", q->component_kind);
+  printf("    priority: %u\n", q->priority);
+  printf("    direction: ");
+  print_yaml_quoted(q->direction);
+  printf("\n");
+  printf("    value_mode: ");
+  print_yaml_quoted(q->value_mode);
+  printf("\n");
+  printf("    value: %.17g\n", q->value);
+  printf("    confidence: %.17g\n", q->confidence);
+}
+
 int main(int argc, char **argv) {
   query_t q;
   memset(&q, 0, sizeof(q));
@@ -173,6 +281,18 @@ int main(int argc, char **argv) {
       }
     } else if (!strcmp(argv[i], "--emit") && i + 1 < argc) {
       q.emit = argv[++i];
+    } else if (!strcmp(argv[i], "--tc-id") && i + 1 < argc) {
+      q.tc_id = argv[++i];
+    } else if (!strcmp(argv[i], "--tc-category") && i + 1 < argc) {
+      q.tc_category = argv[++i];
+    } else if (!strcmp(argv[i], "--tc-expr") && i + 1 < argc) {
+      q.tc_expression = argv[++i];
+    } else if (!strcmp(argv[i], "--atom-kind") && i + 1 < argc) {
+      q.atom_kind = argv[++i];
+    } else if (!strcmp(argv[i], "--atom-expr") && i + 1 < argc) {
+      q.atom_expression = argv[++i];
+    } else if (!strcmp(argv[i], "--atom-root") && i + 1 < argc) {
+      q.atom_root = argv[++i];
     } else if (!strcmp(argv[i], "--atom") && i + 1 < argc) {
       if (!parse_u32(argv[++i], &q.atom_id)) {
         usage(argv[0]);
@@ -221,12 +341,18 @@ int main(int argc, char **argv) {
   }
 
   if (strcmp(q.emit, "csv") && strcmp(q.emit, "ids") &&
-      strcmp(q.emit, "env") && strcmp(q.emit, "lift-spec")) {
+      strcmp(q.emit, "env") && strcmp(q.emit, "lift-spec") &&
+      strcmp(q.emit, "binding-spec")) {
     usage(argv[0]);
     return 2;
   }
 
   if (!strcmp(q.emit, "lift-spec") && !validate_lift_spec_query(&q)) {
+    usage(argv[0]);
+    return 2;
+  }
+
+  if (!strcmp(q.emit, "binding-spec") && !validate_binding_spec_query(&q)) {
     usage(argv[0]);
     return 2;
   }
@@ -252,6 +378,8 @@ int main(int argc, char **argv) {
 
   if (!strcmp(q.emit, "csv")) print_csv_header();
   if (!strcmp(q.emit, "env")) printf("FORMTRIG_TARGET_SITE_IDS=");
+  if (!strcmp(q.emit, "binding-spec") && match_count)
+    print_binding_spec_header(&q);
 
   uint32_t emitted = 0;
   for (uint32_t i = 0; i < row_count; i++) {
@@ -263,6 +391,8 @@ int main(int argc, char **argv) {
       printf("%u", rows[i].site_id);
     } else if (!strcmp(q.emit, "lift-spec")) {
       print_lift_spec_row(&rows[i], &q);
+    } else if (!strcmp(q.emit, "binding-spec")) {
+      print_binding_spec_row(&rows[i], &q);
     }
     emitted++;
   }

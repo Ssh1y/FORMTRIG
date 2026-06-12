@@ -31,7 +31,7 @@ mkdir -p "$work_dir"
 
 pass_out="$work_dir/formtrig_pass.so"
 pass_build="$("$repo_root/scripts/build_formtrig_llvm_pass.sh" "$pass_out")"
-pass_args_line="$(printf '%s\n' "$pass_build" | awk -F= '/^FORMTRIG_CLANG_PASS_ARGS=/ { print $2 }')"
+pass_args_line="$(printf '%s\n' "$pass_build" | sed -n 's/^FORMTRIG_CLANG_PASS_ARGS=//p')"
 if [[ -z "$pass_args_line" ]]; then
   echo "FORMTRIG pass build did not report clang pass args" >&2
   printf '%s\n' "$pass_build" >&2
@@ -42,6 +42,9 @@ read -r -a pass_args <<< "$pass_args_line"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
   "$repo_root/formtrig/tools/formtrig_site_map.c" \
   -o "$work_dir/formtrig_site_map"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
+  "$repo_root/formtrig/tools/formtrig_binding_spec_compile.c" \
+  -o "$work_dir/formtrig_binding_spec_compile"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
   "$repo_root/formtrig/tools/formtrig_lift_spec_audit.c" \
   -o "$work_dir/formtrig_lift_spec_audit"
@@ -95,12 +98,45 @@ fi
   --line "$tc_line" --kind cmp --emit lift-spec --atom 1 \
   --role root_observe --component 3 --priority 10 --direction lower \
   --value-mode distance "$site_map" > "$work_dir/source_site.lift"
+"$work_dir/formtrig_site_map" --file source_site_target.c \
+  --line "$tc_line" --kind cmp --emit binding-spec \
+  --tc-id source_site_numeric --tc-category numeric-margin \
+  --tc-expr 'b < 100' --atom 1 --atom-kind numeric-margin \
+  --atom-expr 'b < 100' --atom-root b \
+  --role root_observe --component 3 --priority 10 --direction lower \
+  --value-mode distance "$site_map" > "$work_dir/source_site_binding.yml"
+"$work_dir/formtrig_binding_spec_compile" --site-map "$site_map" \
+  --out "$work_dir/source_site_binding.lift" \
+  "$work_dir/source_site_binding.yml"
+if ! grep -q 'atom_category 1 numeric-margin' \
+  "$work_dir/source_site_binding.lift"; then
+  echo "source-site BindingSpec did not preserve per-atom category" >&2
+  cat "$work_dir/source_site_binding.yml" >&2
+  cat "$work_dir/source_site_binding.lift" >&2
+  exit 12
+fi
+if ! grep -q 'role_component 7 .* root_observe 3 1 10 lower distance' \
+  "$work_dir/source_site_binding.lift"; then
+  echo "source-site BindingSpec did not compile to root_observe lift row" >&2
+  cat "$work_dir/source_site_binding.yml" >&2
+  cat "$work_dir/source_site_binding.lift" >&2
+  exit 13
+fi
 "$work_dir/formtrig_lift_spec_audit" --category numeric \
   "$work_dir/source_site.lift" > "$work_dir/source_site_audit.csv"
 if ! grep -q '1,numeric-margin,B1,true' "$work_dir/source_site_audit.csv"; then
   echo "generated source-site lift spec did not pass B1 numeric audit" >&2
   cat "$work_dir/source_site_audit.csv" >&2
   exit 5
+fi
+"$work_dir/formtrig_lift_spec_audit" --category generic \
+  "$work_dir/source_site_binding.lift" \
+  > "$work_dir/source_site_binding_audit.csv"
+if ! grep -q '1,numeric-margin,B1,true' \
+  "$work_dir/source_site_binding_audit.csv"; then
+  echo "source-site BindingSpec output did not pass B1 numeric audit" >&2
+  cat "$work_dir/source_site_binding_audit.csv" >&2
+  exit 14
 fi
 "$work_dir/formtrig_binding_map" --category numeric --site-map "$site_map" \
   --normalized-spec "$work_dir/source_site.normalized.lift" \
@@ -110,6 +146,16 @@ if ! grep -q ',exact,0x00000000,B1,true,ok,' \
   echo "source-site runtime event-map gate did not allow numeric binding" >&2
   cat "$work_dir/source_site_event_map.csv" >&2
   exit 8
+fi
+"$work_dir/formtrig_binding_map" --category generic --site-map "$site_map" \
+  --normalized-spec "$work_dir/source_site_binding.normalized.lift" \
+  "$work_dir/source_site_binding.lift" \
+  > "$work_dir/source_site_binding_event_map.csv"
+if ! grep -q ',exact,0x00000000,B1,true,ok,' \
+  "$work_dir/source_site_binding_event_map.csv"; then
+  echo "source-site BindingSpec runtime event-map gate did not allow numeric binding" >&2
+  cat "$work_dir/source_site_binding_event_map.csv" >&2
+  exit 15
 fi
 
 printf '\x78' > "$work_dir/seed"

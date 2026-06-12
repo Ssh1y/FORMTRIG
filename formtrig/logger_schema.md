@@ -107,10 +107,17 @@ and source line. It can emit:
 - `csv`: matching rows plus `mapping_status` (`exact`, `ambiguous`, `missing`).
 - `ids`: comma-separated site ids.
 - `env`: `FORMTRIG_TARGET_SITE_IDS=...` for source-line TC campaigns.
+- `binding-spec`: a first-pass high-level BindingSpec manifest for the matched
+  source event and requested atom/role.
 - `lift-spec`: draft `role_component` rows for `FORMTRIG_LIFT_SPEC`.
 
-Draft lift-spec rows are only binding inputs. They must still pass the native
-binding-tier audit before a lifted plan is trusted.
+Source-line generated BindingSpecs are intended to remove the site-id handoff
+from experiment setup. They still represent only the roles requested on the
+command line: a generated root-only BindingSpec can satisfy B1 numeric/equality
+binding, but binary/null and lifecycle targets remain blocked until explicit
+producer/use or lifecycle-event bindings are added. Draft lift-spec rows are
+only binding inputs. They must still pass the native binding-tier audit before a
+lifted plan is trusted.
 
 ## BindingSpec And Runtime Event Map
 

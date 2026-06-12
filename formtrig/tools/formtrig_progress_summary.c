@@ -19,6 +19,7 @@ typedef struct summary {
   uint64_t progress_events;
   uint64_t saved_progress_events;
   uint64_t frontier_accept_events;
+  uint64_t frontier_progress_accept_events;
   uint64_t frontier_reject_events;
   uint64_t stability_confirmed_events;
   uint64_t stability_reject_events;
@@ -235,6 +236,10 @@ static void ingest_progress_line(summary_t *s, const char *line) {
 
   if (json_string_field(line, "reason", reason, sizeof(reason))) {
     add_reason(s, reason);
+    if (!strcmp(event, "frontier_accept") &&
+        strcmp(reason, "initial_frontier_seed") &&
+        strcmp(reason, "non_dominated_frontier_seed"))
+      s->frontier_progress_accept_events++;
     if (!strcmp(event, "frontier_accept") ||
         !strcmp(event, "calibrated_frontier") ||
         !strcmp(event, "saved_progress"))
@@ -324,7 +329,7 @@ static int summary_d_f_constant(const summary_t *s) {
 static const char *summary_progress_status(const summary_t *s) {
   if (s->formtrig_triggered_execs || s->triggered_events) return "triggered";
   if (s->formtrig_queued_progress || s->saved_progress_events ||
-      s->frontier_accept_events)
+      s->frontier_progress_accept_events)
     return "progress_queued";
   return "not_progressing";
 }
@@ -333,7 +338,7 @@ static const char *summary_limiting_reason(const summary_t *s) {
   if (s->formtrig_triggered_execs || s->triggered_events)
     return "terminal_triggered";
   if (s->formtrig_queued_progress || s->saved_progress_events ||
-      s->frontier_accept_events)
+      s->frontier_progress_accept_events)
     return "none";
   if (!s->formtrig_seen_execs && !s->progress_events)
     return "no_formtrig_signal";
@@ -398,6 +403,8 @@ static void print_summary(const summary_t *s) {
          (unsigned long long)s->saved_progress_events);
   printf("  \"frontier_accept_events\": %llu,\n",
          (unsigned long long)s->frontier_accept_events);
+  printf("  \"frontier_progress_accept_events\": %llu,\n",
+         (unsigned long long)s->frontier_progress_accept_events);
   printf("  \"frontier_reject_events\": %llu,\n",
          (unsigned long long)s->frontier_reject_events);
   printf("  \"stability_confirmed_events\": %llu,\n",
