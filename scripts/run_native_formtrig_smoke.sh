@@ -177,6 +177,30 @@ if [[ "${summary_role_signals:-0}" -le 0 ]]; then
   exit 8
 fi
 
+if ! grep -Eq '"progress_status": "(progress_queued|triggered)"' "$summary"; then
+  echo "FORMTRIG progress summary did not classify progress or trigger" >&2
+  cat "$summary" >&2
+  exit 12
+fi
+
+if ! grep -Eq '"limiting_reason": "(none|terminal_triggered)"' "$summary"; then
+  echo "FORMTRIG progress summary reported an unexpected limiting reason" >&2
+  cat "$summary" >&2
+  exit 13
+fi
+
+if ! grep -q '"accept_reason_counts"' "$summary"; then
+  echo "FORMTRIG progress summary did not separate accept reasons" >&2
+  cat "$summary" >&2
+  exit 14
+fi
+
+if ! grep -q '"reject_reason_counts"' "$summary"; then
+  echo "FORMTRIG progress summary did not separate reject reasons" >&2
+  cat "$summary" >&2
+  exit 15
+fi
+
 cat <<EOF
 FORMTRIG native smoke passed
   queued_progress=$queued_progress

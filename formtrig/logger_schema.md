@@ -53,3 +53,24 @@ Example:
 ```json
 {"reached":true,"crash_predicate":false,"D_T":1,"D_F":7,"D_F_lifted":7,"trace_signature":"0x31f4b20e0b9c8a1d","target_hit_count":1,"hot_byte_ranges":[{"start":0,"len":1,"influence":1}],"df_source":{"mode":1,"kind":7,"site_id":123,"predicate":37,"outcome":0,"after_reach":true,"distance":7,"a":15,"b":8,"linked_count":1},"lift_stats":{"candidates":2,"linked":1,"reject_pointer":0,"reject_zero":0,"reject_noslice":1,"reject_prereach":0}}
 ```
+
+## AFL++ Progress Summary
+
+`formtrig/tools/formtrig_progress_summary.c` consumes AFL++ `fuzzer_stats` and
+`formtrig_progress.jsonl` and emits one campaign-level JSON object. The summary
+keeps aggregate counters from AFL++ and adds experiment-facing diagnostics:
+
+- `progress_status`: `triggered`, `progress_queued`, or `not_progressing`.
+- `limiting_reason`: first coarse explanation when no FORMTRIG progress was
+  queued, such as `no_formtrig_signal`, `target_not_reached`,
+  `no_actionable_component`, `constant_d_f`, `dominance_rejected`, or
+  `progress_not_replay_stable`.
+- `d_f_constant`: whether all observed finite `D_F` values were identical.
+- `has_lifted_signal`, `has_actionable_component`, `has_atom_signal`,
+  `has_role_signal`: quick checks for the native lift signal chain.
+- `reason_counts`: all logged reasons.
+- `accept_reason_counts`, `reject_reason_counts`, `stability_reason_counts`:
+  reasons split by queue admission, frontier rejection, and replay stability.
+
+These summary diagnostics are audit data. They do not feed back into fuzzing
+decisions and they do not use trigger-oracle state to score non-trigger inputs.

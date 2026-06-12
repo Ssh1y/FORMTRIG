@@ -32,4 +32,5 @@ shared-memory ABI.
 `run_native_formtrig_smoke.sh` checks the native runtime role signal, a
 `FORMTRIG_LIFT_SPEC` role binding, native binding-tier audit, AFL++ queue
 admission by FORMTRIG progress, typed mutation execution, progress-summary
-generation, and that `afl-fuzz` was built with `NO_PYTHON=1`.
+generation, separated accept/reject/stability reasons, campaign diagnosis
+fields, and that `afl-fuzz` was built with `NO_PYTHON=1`.

@@ -47,7 +47,13 @@ typedef struct summary {
   uint64_t formtrig_stability_checks;
   uint64_t formtrig_stability_failures;
   reason_bucket_t reasons[MAX_REASON_BUCKETS];
+  reason_bucket_t accept_reasons[MAX_REASON_BUCKETS];
+  reason_bucket_t reject_reasons[MAX_REASON_BUCKETS];
+  reason_bucket_t stability_reasons[MAX_REASON_BUCKETS];
   uint32_t reason_count;
+  uint32_t accept_reason_count;
+  uint32_t reject_reason_count;
+  uint32_t stability_reason_count;
 } summary_t;
 
 static void usage(const char *argv0) {
@@ -153,18 +159,30 @@ static int json_string_field(const char *line, const char *key, char *out,
   return *p == '"';
 }
 
-static void add_reason(summary_t *s, const char *reason) {
+static void add_reason_bucket(reason_bucket_t *buckets, uint32_t *count,
+                              const char *reason) {
   if (!reason || !*reason) reason = "unknown";
-  for (uint32_t i = 0; i < s->reason_count; i++) {
-    if (!strcmp(s->reasons[i].reason, reason)) {
-      s->reasons[i].count++;
+  for (uint32_t i = 0; i < *count; i++) {
+    if (!strcmp(buckets[i].reason, reason)) {
+      buckets[i].count++;
       return;
     }
   }
-  if (s->reason_count >= MAX_REASON_BUCKETS) return;
-  reason_bucket_t *bucket = &s->reasons[s->reason_count++];
+  if (*count >= MAX_REASON_BUCKETS) return;
+  reason_bucket_t *bucket = &buckets[(*count)++];
   snprintf(bucket->reason, sizeof(bucket->reason), "%s", reason);
   bucket->count = 1;
+}
+
+static void add_reason(summary_t *s, const char *reason) {
+  add_reason_bucket(s->reasons, &s->reason_count, reason);
+}
+
+static uint64_t reason_count(const reason_bucket_t *buckets, uint32_t count,
+                             const char *reason) {
+  for (uint32_t i = 0; i < count; i++)
+    if (!strcmp(buckets[i].reason, reason)) return buckets[i].count;
+  return 0;
 }
 
 static void ingest_stats_line(summary_t *s, const char *line) {
@@ -209,8 +227,19 @@ static void ingest_progress_line(summary_t *s, const char *line) {
     if (!strcmp(event, "typed_stage_end")) s->typed_stage_end_events++;
   }
 
-  if (json_string_field(line, "reason", reason, sizeof(reason)))
+  if (json_string_field(line, "reason", reason, sizeof(reason))) {
     add_reason(s, reason);
+    if (!strcmp(event, "frontier_accept") ||
+        !strcmp(event, "calibrated_frontier") ||
+        !strcmp(event, "saved_progress"))
+      add_reason_bucket(s->accept_reasons, &s->accept_reason_count, reason);
+    if (!strcmp(event, "frontier_reject"))
+      add_reason_bucket(s->reject_reasons, &s->reject_reason_count, reason);
+    if (!strcmp(event, "stability_confirmed") ||
+        !strcmp(event, "stability_reject"))
+      add_reason_bucket(s->stability_reasons, &s->stability_reason_count,
+                        reason);
+  }
 
   if (json_bool_field(line, "reached", &boolean_value) && boolean_value)
     s->reached_events++;
@@ -267,6 +296,59 @@ static void print_json_string(FILE *out, const char *s) {
   fputc('"', out);
 }
 
+static int summary_d_f_constant(const summary_t *s) {
+  return s->d_f_count > 1 && s->d_f_min == s->d_f_max;
+}
+
+static const char *summary_progress_status(const summary_t *s) {
+  if (s->formtrig_triggered_execs || s->triggered_events) return "triggered";
+  if (s->formtrig_queued_progress || s->saved_progress_events ||
+      s->frontier_accept_events)
+    return "progress_queued";
+  return "not_progressing";
+}
+
+static const char *summary_limiting_reason(const summary_t *s) {
+  if (s->formtrig_triggered_execs || s->triggered_events)
+    return "terminal_triggered";
+  if (s->formtrig_queued_progress || s->saved_progress_events ||
+      s->frontier_accept_events)
+    return "none";
+  if (!s->formtrig_seen_execs && !s->progress_events)
+    return "no_formtrig_signal";
+  if (!s->formtrig_reached_execs && !s->reached_events)
+    return "target_not_reached";
+  if (!s->actionable_component_events)
+    return "no_actionable_component";
+  if (!s->atom_signal_events) return "no_atom_signal";
+  if (!s->role_signal_events) return "no_role_signal";
+  if (s->stability_reject_events || s->formtrig_stability_failures)
+    return "progress_not_replay_stable";
+  if (summary_d_f_constant(s)) return "constant_d_f";
+  if (reason_count(s->reject_reasons, s->reject_reason_count,
+                   "dominated_by_existing_frontier") ||
+      s->frontier_reject_events)
+    return "dominance_rejected";
+  if (!s->formtrig_typed_execs && !s->typed_stage_start_events)
+    return "typed_mutation_not_run";
+  return "no_progress_queued";
+}
+
+static void print_reason_object(const char *name, const reason_bucket_t *reasons,
+                                uint32_t reason_count_value) {
+  printf("  ");
+  print_json_string(stdout, name);
+  printf(": {");
+  for (uint32_t i = 0; i < reason_count_value; i++) {
+    if (i) printf(",");
+    printf("\n    ");
+    print_json_string(stdout, reasons[i].reason);
+    printf(": %llu", (unsigned long long)reasons[i].count);
+  }
+  if (reason_count_value) printf("\n  ");
+  printf("}");
+}
+
 static void print_summary(const summary_t *s) {
   printf("{\n");
   printf("  \"execs_done\": %llu,\n", (unsigned long long)s->execs_done);
@@ -319,6 +401,22 @@ static void print_summary(const summary_t *s) {
          (unsigned long long)s->atom_signal_events);
   printf("  \"role_signal_events\": %llu,\n",
          (unsigned long long)s->role_signal_events);
+  printf("  \"progress_status\": ");
+  print_json_string(stdout, summary_progress_status(s));
+  printf(",\n");
+  printf("  \"limiting_reason\": ");
+  print_json_string(stdout, summary_limiting_reason(s));
+  printf(",\n");
+  printf("  \"d_f_constant\": %s,\n",
+         summary_d_f_constant(s) ? "true" : "false");
+  printf("  \"has_lifted_signal\": %s,\n",
+         s->lifted_events ? "true" : "false");
+  printf("  \"has_actionable_component\": %s,\n",
+         s->actionable_component_events ? "true" : "false");
+  printf("  \"has_atom_signal\": %s,\n",
+         s->atom_signal_events ? "true" : "false");
+  printf("  \"has_role_signal\": %s,\n",
+         s->role_signal_events ? "true" : "false");
   if (s->d_f_count) {
     printf("  \"d_f_min\": %.17g,\n", s->d_f_min);
     printf("  \"d_f_max\": %.17g,\n", s->d_f_max);
@@ -326,15 +424,17 @@ static void print_summary(const summary_t *s) {
     printf("  \"d_f_min\": null,\n");
     printf("  \"d_f_max\": null,\n");
   }
-  printf("  \"reason_counts\": {");
-  for (uint32_t i = 0; i < s->reason_count; i++) {
-    if (i) printf(",");
-    printf("\n    ");
-    print_json_string(stdout, s->reasons[i].reason);
-    printf(": %llu", (unsigned long long)s->reasons[i].count);
-  }
-  if (s->reason_count) printf("\n  ");
-  printf("}\n");
+  print_reason_object("reason_counts", s->reasons, s->reason_count);
+  printf(",\n");
+  print_reason_object("accept_reason_counts", s->accept_reasons,
+                      s->accept_reason_count);
+  printf(",\n");
+  print_reason_object("reject_reason_counts", s->reject_reasons,
+                      s->reject_reason_count);
+  printf(",\n");
+  print_reason_object("stability_reason_counts", s->stability_reasons,
+                      s->stability_reason_count);
+  printf("\n");
   printf("}\n");
 }
 
