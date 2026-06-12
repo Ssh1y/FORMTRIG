@@ -138,12 +138,16 @@ typedef struct {
   int crash_predicate;
   int binary_sink;
   int manual_lifted;
+  int manual_api_lifted;
   int manual_direct;
   uint8_t d_f_direct_kind;
   uint32_t target_hit_count;
   double d_t;
   double d_f_direct;
   double d_f_lifted;
+  double d_f_spec_lifted;
+  double d_f_heuristic_lifted;
+  double d_f_manual_lifted;
   formtrig_df_source_t df_source;
   uint32_t lift_candidate_count;
   uint32_t lift_linked_count;
@@ -193,6 +197,7 @@ static uint32_t g_target_sites[FORMTRIG_TARGET_SITE_CAP];
 static uint32_t g_target_site_count = UINT32_MAX;
 static int g_debug_events = -1;
 static int g_debug_predicate_snapshot = -1;
+static int g_allow_heuristic_lift = -1;
 static uint32_t g_lift_window = 0;
 static uint32_t g_sink_lookback = 0;
 static uint32_t g_debug_event_window = 0;
@@ -204,6 +209,9 @@ static int g_probe_specs_loaded = 0;
 
 static void apply_probe_specs_to_event(const formtrig_event_t *event);
 static void reset_probe_spec_runtime_state(void);
+static void remember_df_source_with_distance(const formtrig_event_t *event,
+                                             uint32_t linked, uint8_t mode,
+                                             double distance);
 
 static int env_truthy(const char *env) {
   return env && (*env == '1' || *env == 'y' || *env == 'Y' || *env == 't' ||
@@ -235,6 +243,35 @@ static int lift_crash_predicate(void) {
   if (g_lift_crash_predicate >= 0) return g_lift_crash_predicate;
   g_lift_crash_predicate = env_truthy(getenv("FORMTRIG_LIFT_CRASH_PREDICATE"));
   return g_lift_crash_predicate;
+}
+
+static int manual_lift_api_allowed(void) {
+  return env_truthy(getenv("FORMTRIG_ALLOW_MANUAL_LIFT"));
+}
+
+static int heuristic_lift_allowed(void) {
+  if (g_allow_heuristic_lift >= 0) return g_allow_heuristic_lift;
+  g_allow_heuristic_lift =
+      env_truthy(getenv("FORMTRIG_ALLOW_HEURISTIC_LIFT"));
+  return g_allow_heuristic_lift;
+}
+
+static int manual_component_requires_lift_permission(uint32_t kind,
+                                                     uint32_t flags) {
+  if (flags & FORMTRIG_COMPONENT_LIFTED) return 1;
+  switch (kind) {
+    case FORMTRIG_COMPONENT_LIFTED_DISTANCE:
+    case FORMTRIG_COMPONENT_BOUNDARY_MARGIN:
+    case FORMTRIG_COMPONENT_OPERAND_INFLUENCE:
+    case FORMTRIG_COMPONENT_GUARD_PROGRESS:
+    case FORMTRIG_COMPONENT_PRODUCER_USE:
+    case FORMTRIG_COMPONENT_LIFECYCLE_PREFIX:
+    case FORMTRIG_COMPONENT_OBJECT_IDENTITY:
+    case FORMTRIG_COMPONENT_EVENT_PHASE:
+      return 1;
+    default:
+      return 0;
+  }
 }
 
 int formtrig_suppress_canary_events(void) {
@@ -600,11 +637,72 @@ static void reset_state(formtrig_state_t *s) {
   s->d_t = FORMTRIG_INF;
   s->d_f_direct = FORMTRIG_INF;
   s->d_f_lifted = FORMTRIG_INF;
+  s->d_f_spec_lifted = FORMTRIG_INF;
+  s->d_f_heuristic_lifted = FORMTRIG_INF;
+  s->d_f_manual_lifted = FORMTRIG_INF;
   s->trace_signature = 1469598103934665603ULL;
 }
 
 static double min_double(double a, double b) {
   return a < b ? a : b;
+}
+
+static int finite_lift(double distance) {
+  return distance < FORMTRIG_INF / 2.0;
+}
+
+static double selected_lifted_distance(void) {
+  double selected = FORMTRIG_INF;
+  if (finite_lift(g_state.d_f_spec_lifted))
+    selected = min_double(selected, g_state.d_f_spec_lifted);
+  if (heuristic_lift_allowed() && finite_lift(g_state.d_f_heuristic_lifted))
+    selected = min_double(selected, g_state.d_f_heuristic_lifted);
+  if (manual_lift_api_allowed() && finite_lift(g_state.d_f_manual_lifted))
+    selected = min_double(selected, g_state.d_f_manual_lifted);
+  return selected;
+}
+
+static uint32_t selected_lifted_source_flags(void) {
+  uint32_t flags = 0;
+  if (finite_lift(g_state.d_f_spec_lifted))
+    flags |= FORMTRIG_SOURCE_SPEC_LIFTED;
+  if (heuristic_lift_allowed() && finite_lift(g_state.d_f_heuristic_lifted))
+    flags |= FORMTRIG_SOURCE_HEURISTIC_LIFTED;
+  if (manual_lift_api_allowed() && finite_lift(g_state.d_f_manual_lifted))
+    flags |= FORMTRIG_SOURCE_MANUAL_TARGET;
+  return flags;
+}
+
+static uint32_t component_lift_source_flags(void) {
+  uint32_t flags = 0;
+  for (uint32_t i = 0; i < g_state.component_count; i++) {
+    if (g_state.components[i].flags & FORMTRIG_COMPONENT_SPEC_LIFTED)
+      flags |= FORMTRIG_SOURCE_SPEC_LIFTED;
+    if (g_state.components[i].flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED)
+      flags |= FORMTRIG_SOURCE_HEURISTIC_LIFTED;
+    if (g_state.components[i].flags & FORMTRIG_COMPONENT_MANUAL_TARGET)
+      flags |= FORMTRIG_SOURCE_MANUAL_TARGET;
+  }
+  return flags;
+}
+
+static uint32_t runtime_lift_source_flags(void) {
+  return selected_lifted_source_flags() | component_lift_source_flags();
+}
+
+static void refresh_selected_lifted_distance(void) {
+  g_state.d_f_lifted = selected_lifted_distance();
+}
+
+static void record_heuristic_lifted_distance(const formtrig_event_t *event,
+                                             uint32_t linked, uint8_t mode,
+                                             double distance) {
+  if (!finite_lift(distance)) return;
+  if (distance < g_state.d_f_heuristic_lifted) {
+    g_state.d_f_heuristic_lifted = distance;
+    remember_df_source_with_distance(event, linked, mode, distance);
+  }
+  refresh_selected_lifted_distance();
 }
 
 static double abs_i64_as_double(int64_t v) {
@@ -797,11 +895,12 @@ static void remember_source_target_safety_margin(uint32_t kind,
   if (!g_state.reached || g_state.manual_lifted ||
       !informative_safety_distance(distance))
     return;
-  if (g_state.d_f_lifted < FORMTRIG_INF / 2.0 &&
-      distance > g_state.d_f_lifted)
+  if (g_state.d_f_heuristic_lifted < FORMTRIG_INF / 2.0 &&
+      distance > g_state.d_f_heuristic_lifted)
     return;
 
-  g_state.d_f_lifted = distance;
+  g_state.d_f_heuristic_lifted = distance;
+  refresh_selected_lifted_distance();
   g_state.df_source.kind = kind;
   g_state.df_source.site_id = site_id;
   g_state.df_source.predicate = predicate;
@@ -1063,9 +1162,7 @@ static int synthesize_null_pointer_producer_lift(int sink_satisfied,
       g_state.lift_sink_ptr = ptr_value;
       g_state.lift_load_in_live_object = selected_load_score > 0 ? 1u : 0u;
 
-      g_state.d_f_lifted = min_double(g_state.d_f_lifted, source_distance);
-      if (g_state.d_f_lifted == source_distance)
-        remember_df_source_with_distance(source, linked, 6u, source_distance);
+      record_heuristic_lifted_distance(source, linked, 6u, source_distance);
       g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, 16u);
       g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, cmp->site_id);
       g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, load->site_id);
@@ -1138,8 +1235,7 @@ static void synthesize_lifted_binary_distance(int sink_satisfied,
   }
 
   if (linked && finite_distance(best)) {
-    g_state.d_f_lifted = min_double(g_state.d_f_lifted, best);
-    if (g_state.d_f_lifted == best) remember_df_source(best_event, linked, 1u);
+    record_heuristic_lifted_distance(best_event, linked, 1u, best);
     g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, 13u);
     g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, linked);
     g_state.trace_signature =
@@ -1216,10 +1312,8 @@ static int synthesize_live_pointer_producer_lift(void) {
   g_state.lift_load_in_live_object = 1u;
   g_state.lift_linked_count += best_linked;
 
-  g_state.d_f_lifted = min_double(g_state.d_f_lifted, best_distance);
-  if (g_state.d_f_lifted == best_distance)
-    remember_df_source_with_distance(best_source, best_linked, 7u,
-                                     best_distance);
+  record_heuristic_lifted_distance(best_source, best_linked, 7u,
+                                   best_distance);
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, 17u);
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, best_load_site);
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, best_store_site);
@@ -1359,7 +1453,7 @@ static int post_reach_fallback_rank(const formtrig_event_t *event) {
 static int synthesize_post_reach_margin_fallback(void) {
   if (!source_target_site_mode() || !g_state.reached || g_state.manual_lifted)
     return 0;
-  if (g_state.d_f_lifted < FORMTRIG_INF / 2.0) return 0;
+  if (g_state.d_f_heuristic_lifted < FORMTRIG_INF / 2.0) return 0;
 
   uint32_t newest = g_state.ring_count;
   if (!newest) return 0;
@@ -1396,8 +1490,7 @@ static int synthesize_post_reach_margin_fallback(void) {
 
   if (!best_event || !finite_distance(best_distance)) return 0;
 
-  g_state.d_f_lifted = best_distance;
-  remember_df_source_with_distance(best_event, 1u, 8u, best_distance);
+  record_heuristic_lifted_distance(best_event, 1u, 8u, best_distance);
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, 18u);
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature,
                                         (uint64_t)(uint32_t)best_rank);
@@ -1409,6 +1502,7 @@ static int synthesize_post_reach_margin_fallback(void) {
 
 static double final_df(void) {
   double df = FORMTRIG_INF;
+  refresh_selected_lifted_distance();
   int lifted_valid = g_state.d_f_lifted < FORMTRIG_INF / 2.0;
   int direct_valid = g_state.d_f_direct < FORMTRIG_INF / 2.0;
   int direct_zero = direct_valid && g_state.d_f_direct == 0.0;
@@ -2057,14 +2151,16 @@ static void record_probe_component(const formtrig_probe_spec_t *spec,
     context_hash = component_source_id(spec->component_kind, spec->atom_id,
                                        spec->priority);
 
-  uint32_t flags = spec->direction_flag | FORMTRIG_COMPONENT_LIFTED;
+  uint32_t flags = spec->direction_flag | FORMTRIG_COMPONENT_LIFTED |
+                   FORMTRIG_COMPONENT_SPEC_LIFTED;
   state_record_component_best_role(spec->component_kind, spec->atom_id,
                                    spec->role, spec->priority, flags,
                                    source_id, context_hash, value,
                                    spec->confidence);
   if ((spec->direction_flag & FORMTRIG_COMPONENT_LOWER_IS_BETTER) &&
-      value < g_state.d_f_lifted) {
-    g_state.d_f_lifted = value;
+      value < g_state.d_f_spec_lifted) {
+    g_state.d_f_spec_lifted = value;
+    refresh_selected_lifted_distance();
     remember_df_source_with_distance(event, 1u, 10u, value);
   }
   g_state.manual_lifted = 1;
@@ -2140,7 +2236,16 @@ static void publish_shm(void) {
   rec->flags = 0;
   if (g_state.reached) rec->flags |= FORMTRIG_FLAG_REACHED;
   if (g_state.crash_predicate) rec->flags |= FORMTRIG_FLAG_CRASH_PREDICATE;
-  if (g_state.d_f_lifted < FORMTRIG_INF / 2.0) rec->flags |= FORMTRIG_FLAG_LIFTED;
+  refresh_selected_lifted_distance();
+  uint32_t source_flags = runtime_lift_source_flags();
+  if (source_flags) rec->flags |= FORMTRIG_FLAG_LIFTED;
+  if (source_flags & FORMTRIG_SOURCE_SPEC_LIFTED)
+    rec->flags |= FORMTRIG_FLAG_SPEC_LIFTED;
+  if (source_flags & FORMTRIG_SOURCE_HEURISTIC_LIFTED)
+    rec->flags |= FORMTRIG_FLAG_HEURISTIC_LIFTED;
+  if (source_flags & FORMTRIG_SOURCE_MANUAL_TARGET)
+    rec->flags |= FORMTRIG_FLAG_MANUAL_LIFTED;
+  rec->source_flags = source_flags;
   rec->target_hit_count = g_state.target_hit_count;
   rec->trace_signature = g_state.trace_signature;
   rec->d_t = g_state.d_t < FORMTRIG_INF / 2.0
@@ -2150,11 +2255,27 @@ static void publish_shm(void) {
   rec->d_f_lifted = g_state.d_f_lifted < FORMTRIG_INF / 2.0
                         ? g_state.d_f_lifted
                         : -1.0;
+  rec->d_f_spec_lifted = g_state.d_f_spec_lifted < FORMTRIG_INF / 2.0
+                             ? g_state.d_f_spec_lifted
+                             : -1.0;
+  rec->d_f_heuristic_lifted =
+      g_state.d_f_heuristic_lifted < FORMTRIG_INF / 2.0
+          ? g_state.d_f_heuristic_lifted
+          : -1.0;
+  rec->d_f_manual_lifted = g_state.d_f_manual_lifted < FORMTRIG_INF / 2.0
+                               ? g_state.d_f_manual_lifted
+                               : -1.0;
   rec->hot_range_count = g_state.hot_range_count;
   for (uint32_t i = 0; i < g_state.component_count; i++) {
     formtrig_progress_component_t *component = &g_state.components[i];
     if (component->flags & FORMTRIG_COMPONENT_LIFTED)
       rec->flags |= FORMTRIG_FLAG_LIFTED;
+    if (component->flags & FORMTRIG_COMPONENT_SPEC_LIFTED)
+      rec->flags |= FORMTRIG_FLAG_SPEC_LIFTED;
+    if (component->flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED)
+      rec->flags |= FORMTRIG_FLAG_HEURISTIC_LIFTED;
+    if (component->flags & FORMTRIG_COMPONENT_MANUAL_TARGET)
+      rec->flags |= FORMTRIG_FLAG_MANUAL_LIFTED;
     publish_component_role(rec, component->kind, component->atom_id,
                            component->role, component->priority,
                            component->flags, component->source_id,
@@ -2192,7 +2313,16 @@ static void publish_shm(void) {
   if (g_state.d_f_lifted < FORMTRIG_INF / 2.0) {
     publish_component(
         rec, FORMTRIG_COMPONENT_LIFTED_DISTANCE, 0u, 10u,
-        FORMTRIG_COMPONENT_LOWER_IS_BETTER | FORMTRIG_COMPONENT_LIFTED,
+        FORMTRIG_COMPONENT_LOWER_IS_BETTER | FORMTRIG_COMPONENT_LIFTED |
+            ((source_flags & FORMTRIG_SOURCE_SPEC_LIFTED)
+                 ? FORMTRIG_COMPONENT_SPEC_LIFTED
+                 : 0u) |
+            ((source_flags & FORMTRIG_SOURCE_HEURISTIC_LIFTED)
+                 ? FORMTRIG_COMPONENT_HEURISTIC_LIFTED
+                 : 0u) |
+            ((source_flags & FORMTRIG_SOURCE_MANUAL_TARGET)
+                 ? FORMTRIG_COMPONENT_MANUAL_TARGET
+                 : 0u),
         component_source_id(FORMTRIG_COMPONENT_LIFTED_DISTANCE,
                             g_state.df_source.site_id,
                             g_state.df_source.mode),
@@ -2204,9 +2334,15 @@ static void publish_shm(void) {
 
   if (g_state.df_source.mode && g_state.df_source.mode != 4u &&
       g_state.df_source.distance < FORMTRIG_INF / 2.0) {
+    uint32_t lifted_source_flag =
+        g_state.df_source.mode == 10u
+            ? FORMTRIG_COMPONENT_SPEC_LIFTED
+            : (g_state.df_source.mode == 3u ? FORMTRIG_COMPONENT_MANUAL_TARGET
+                                            : FORMTRIG_COMPONENT_HEURISTIC_LIFTED);
     publish_component(
         rec, FORMTRIG_COMPONENT_BOUNDARY_MARGIN, 0u, 20u,
-        FORMTRIG_COMPONENT_LOWER_IS_BETTER | FORMTRIG_COMPONENT_LIFTED,
+        FORMTRIG_COMPONENT_LOWER_IS_BETTER | FORMTRIG_COMPONENT_LIFTED |
+            lifted_source_flag,
         component_source_id(FORMTRIG_COMPONENT_BOUNDARY_MARGIN,
                             g_state.df_source.site_id,
                             g_state.df_source.kind),
@@ -2232,7 +2368,8 @@ static void publish_shm(void) {
       publish_component(
           rec, FORMTRIG_COMPONENT_OPERAND_INFLUENCE, 0u, 40u,
           FORMTRIG_COMPONENT_HIGHER_IS_BETTER | FORMTRIG_COMPONENT_LIFTED |
-              FORMTRIG_COMPONENT_INPUT_INFLUENCE,
+              FORMTRIG_COMPONENT_INPUT_INFLUENCE |
+              FORMTRIG_COMPONENT_HEURISTIC_LIFTED,
           component_source_id(FORMTRIG_COMPONENT_OPERAND_INFLUENCE,
                               best_start, best_len),
           component_source_id(FORMTRIG_COMPONENT_OPERAND_INFLUENCE,
@@ -2281,6 +2418,27 @@ static void write_jsonl(void) {
   else
     fprintf(f, "null");
 
+  fprintf(f, ",\"D_F_spec_lifted\":");
+  if (g_state.d_f_spec_lifted < FORMTRIG_INF / 2.0)
+    fprintf(f, "%.17g", g_state.d_f_spec_lifted);
+  else
+    fprintf(f, "null");
+
+  fprintf(f, ",\"D_F_heuristic_lifted\":");
+  if (g_state.d_f_heuristic_lifted < FORMTRIG_INF / 2.0)
+    fprintf(f, "%.17g", g_state.d_f_heuristic_lifted);
+  else
+    fprintf(f, "null");
+
+  fprintf(f, ",\"D_F_manual_lifted\":");
+  if (g_state.d_f_manual_lifted < FORMTRIG_INF / 2.0)
+    fprintf(f, "%.17g", g_state.d_f_manual_lifted);
+  else
+    fprintf(f, "null");
+
+  fprintf(f, ",\"lift_source_flags\":%" PRIu32,
+          runtime_lift_source_flags());
+
   fprintf(f,
           ",\"trace_signature\":\"0x%016" PRIx64
           "\",\"target_hit_count\":%" PRIu32 ",\"hot_byte_ranges\":[",
@@ -2318,7 +2476,15 @@ static void write_jsonl(void) {
 
   fprintf(f,
           "],\"uses_trigger_oracle\":false,"
-          "\"uses_target_id_specific_rule\":false");
+          "\"uses_target_id_specific_rule\":%s,"
+          "\"uses_runtime_heuristic\":%s,"
+          "\"uses_spec_lifted\":%s,"
+          "\"uses_manual_target\":%s",
+          g_state.manual_api_lifted ? "true" : "false",
+          g_state.d_f_heuristic_lifted < FORMTRIG_INF / 2.0 ? "true"
+                                                             : "false",
+          g_state.d_f_spec_lifted < FORMTRIG_INF / 2.0 ? "true" : "false",
+          g_state.manual_api_lifted ? "true" : "false");
 
   fprintf(f, ",\"atom_signals\":[");
   for (uint32_t i = 0; i < g_state.atom_signal_count; i++) {
@@ -2518,9 +2684,12 @@ void formtrig_record_direct_margin(double distance, const char *kind) {
 
 void formtrig_record_lifted_distance(double distance, const char *kind) {
   (void)kind;
+  if (!manual_lift_api_allowed()) return;
   if (distance < 0.0) distance = 0.0;
-  g_state.d_f_lifted = distance;
+  g_state.d_f_manual_lifted = distance;
+  refresh_selected_lifted_distance();
   g_state.manual_lifted = 1;
+  g_state.manual_api_lifted = 1;
   g_state.df_source.kind = 12u;
   g_state.df_source.site_id = 0;
   g_state.df_source.predicate = 0;
@@ -2540,9 +2709,17 @@ void formtrig_record_progress_component(uint32_t kind, uint32_t atom_id,
                                         uint64_t source_id,
                                         uint64_t context_hash, double value,
                                         double confidence) {
+  if (manual_component_requires_lift_permission(kind, flags) &&
+      !manual_lift_api_allowed())
+    return;
+  if (manual_component_requires_lift_permission(kind, flags))
+    flags |= FORMTRIG_COMPONENT_MANUAL_TARGET;
   state_record_component(kind, atom_id, priority, flags, source_id,
                          context_hash, value, confidence);
-  if (flags & FORMTRIG_COMPONENT_LIFTED) g_state.manual_lifted = 1;
+  if (manual_component_requires_lift_permission(kind, flags)) {
+    g_state.manual_lifted = 1;
+    g_state.manual_api_lifted = 1;
+  }
   publish_shm();
 }
 
@@ -2551,9 +2728,17 @@ void formtrig_record_role_component(uint32_t kind, uint32_t atom_id,
                                     uint32_t flags, uint64_t source_id,
                                     uint64_t context_hash, double value,
                                     double confidence) {
+  if (manual_component_requires_lift_permission(kind, flags) &&
+      !manual_lift_api_allowed())
+    return;
+  if (manual_component_requires_lift_permission(kind, flags))
+    flags |= FORMTRIG_COMPONENT_MANUAL_TARGET;
   state_record_component_role(kind, atom_id, role, priority, flags, source_id,
                               context_hash, value, confidence);
-  if (flags & FORMTRIG_COMPONENT_LIFTED) g_state.manual_lifted = 1;
+  if (manual_component_requires_lift_permission(kind, flags)) {
+    g_state.manual_lifted = 1;
+    g_state.manual_api_lifted = 1;
+  }
   publish_shm();
 }
 

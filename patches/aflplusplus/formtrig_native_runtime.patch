@@ -5,7 +5,7 @@ index 88816e8..198fb51 100644
 @@ -45,6 +45,11 @@ ifdef NO_SPLICING
    override CFLAGS_OPT += -DNO_SPLICING
  endif
-
+ 
 +FORMTRIG_RUNTIME_ROOT ?= $(firstword $(wildcard $(CURDIR)/../formtrig) $(wildcard $(CURDIR)/../../../formtrig))
 +ifneq "$(FORMTRIG_RUNTIME_ROOT)" ""
 +  override CFLAGS += -I$(FORMTRIG_RUNTIME_ROOT)/include
@@ -15,7 +15,7 @@ index 88816e8..198fb51 100644
    $(info Compiling ASAN version of binaries)
    override CFLAGS += $(ASAN_CFLAGS)
 diff --git a/include/afl-fuzz.h b/include/afl-fuzz.h
-index ef84a18..c7ec81f 100644
+index ef84a18..59521f7 100644
 --- a/include/afl-fuzz.h
 +++ b/include/afl-fuzz.h
 @@ -46,6 +46,11 @@
@@ -27,13 +27,13 @@ index ef84a18..c7ec81f 100644
 +#ifndef FORMTRIG_INF
 +  #define FORMTRIG_INF 1.0e300
 +#endif
-
+ 
  #include <stdio.h>
  #include <unistd.h>
-@@ -150,6 +155,28 @@ struct tainted {
-
+@@ -150,6 +155,30 @@ struct tainted {
+ 
  };
-
+ 
 +typedef struct formtrig_queue_meta {
 +
 +  u8 seen, reached, triggered, lifted, stable;
@@ -42,6 +42,8 @@ index ef84a18..c7ec81f 100644
 +  u64 trace_signature;
 +
 +  double d_t, d_f, d_f_lifted;
++  double d_f_spec_lifted, d_f_heuristic_lifted, d_f_manual_lifted;
++  u32    source_flags;
 +
 +  formtrig_hot_range_t hot_ranges[FORMTRIG_MAX_HOT_RANGES];
 +  formtrig_progress_component_t components[FORMTRIG_MAX_PROGRESS_COMPONENTS];
@@ -57,21 +59,21 @@ index ef84a18..c7ec81f 100644
 +} formtrig_frontier_entry_t;
 +
  struct queue_entry {
-
+ 
    u8 *fname;                            /* File name for the test case      */
-@@ -198,6 +225,8 @@ struct queue_entry {
+@@ -198,6 +227,8 @@ struct queue_entry {
    double perf_score,                    /* performance score                */
        weight;
-
+ 
 +  formtrig_queue_meta_t formtrig;       /* FORMTRIG runtime progress signal */
 +
    u8 *testcase_buf;                     /* The testcase buffer, if loaded.  */
-
+ 
    u8             *cmplog_colorinput;    /* the result buf of colorization   */
-@@ -546,6 +575,30 @@ typedef struct afl_state {
+@@ -546,6 +577,30 @@ typedef struct afl_state {
        *virgin_tmout,                    /* Bits we haven't seen in tmouts   */
        *virgin_crash;                    /* Bits we haven't seen in crashes  */
-
+ 
 +  u8 formtrig_enabled;                  /* Native FORMTRIG queue guidance   */
 +  s32 formtrig_shm_fd;                  /* FORMTRIG signal shm descriptor   */
 +  u8 *formtrig_shm_area,                /* FORMTRIG signal shm mapping      */
@@ -99,7 +101,7 @@ index ef84a18..c7ec81f 100644
    double *alias_probability;            /* alias weighted probabilities     */
    u32    *alias_table;                /* alias weighted random lookup table */
    u32     active_items;                 /* enabled entries in the queue     */
-@@ -1099,6 +1152,20 @@ void destroy_queue(afl_state_t *);
+@@ -1099,6 +1154,20 @@ void destroy_queue(afl_state_t *);
  void update_bitmap_score(afl_state_t *, struct queue_entry *);
  void cull_queue(afl_state_t *);
  u32  calculate_score(afl_state_t *, struct queue_entry *);
@@ -117,12 +119,12 @@ index ef84a18..c7ec81f 100644
 +void formtrig_log_progress(afl_state_t *, const char *,
 +                           const char *, const formtrig_queue_meta_t *, u32,
 +                           u64);
-
+ 
  /* Bitmap */
-
-@@ -1328,4 +1395,3 @@ void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q, u8 *mem);
+ 
+@@ -1328,4 +1397,3 @@ void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q, u8 *mem);
  #endif
-
+ 
  #endif
 -
 diff --git a/include/envs.h b/include/envs.h
@@ -139,7 +141,7 @@ index 0007d5a..9ef509f 100644
      "AFL_NYX_DISABLE_SNAPSHOT_MODE",
 @@ -261,4 +262,3 @@ static char *afl_environment_variables[] = {
  extern char *afl_environment_variables[];
-
+ 
  #endif
 -
 diff --git a/src/afl-fuzz-bitmap.c b/src/afl-fuzz-bitmap.c
@@ -149,7 +151,7 @@ index 87157ca..91cf517 100644
 @@ -452,6 +452,58 @@ void write_crash_readme(afl_state_t *afl) {
     save or queue the input test case for further analysis if so. Returns 1 if
     entry is saved, 0 otherwise. */
-
+ 
 +static u8 formtrig_confirm_replay_stable(afl_state_t *afl, void *mem, u32 len,
 +                                         const formtrig_queue_meta_t *base) {
 +
@@ -204,9 +206,9 @@ index 87157ca..91cf517 100644
 +
  u8 __attribute__((hot))
  save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
-
+ 
 @@ -465,10 +517,12 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
-
+ 
    u8  fn[PATH_MAX];
    u8 *queue_fn = "";
 -  u8  new_bits = 0, keeping = 0, res, classified = 0, is_timeout = 0,
@@ -217,13 +219,13 @@ index 87157ca..91cf517 100644
    u64 cksum = 0;
 +  formtrig_queue_meta_t formtrig_saved_signal;
 +  memset(&formtrig_saved_signal, 0, sizeof(formtrig_saved_signal));
-
+ 
    /* Update path frequency. */
-
+ 
 @@ -507,6 +561,22 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
-
+ 
      if (likely(!new_bits)) {
-
+ 
 +      if (formtrig_should_save(afl)) {
 +
 +        formtrig_saved_signal = afl->formtrig_last;
@@ -242,23 +244,23 @@ index 87157ca..91cf517 100644
 +
        if (unlikely(afl->crash_mode)) { ++afl->total_crashes; }
        return 0;
-
+ 
 @@ -532,8 +602,10 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
      ck_write(fd, mem, len, queue_fn);
      close(fd);
      add_to_queue(afl, queue_fn, len, 0);
 +    formtrig_apply_last_to_queue(afl, afl->queue_top);
 +    formtrig_saved_signal = afl->queue_top->formtrig;
-
+ 
 -    if (unlikely(afl->fuzz_mode) &&
 +    if (!formtrig_keep && unlikely(afl->fuzz_mode) &&
          likely(afl->switch_fuzz_mode && !afl->non_instrumented_mode)) {
-
+ 
        if (afl->afl_env.afl_no_ui) {
 @@ -609,6 +681,58 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
-
+ 
      }
-
+ 
 +    if (formtrig_keep) {
 +
 +      ++afl->formtrig_stability_checks;
@@ -312,21 +314,21 @@ index 87157ca..91cf517 100644
 +    }
 +
      if (likely(afl->q_testcase_max_cache_size)) {
-
+ 
        queue_testcase_store_mem(afl, afl->queue_top, mem);
 @@ -878,4 +1002,3 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
    return keeping;
-
+ 
  }
 -
 diff --git a/src/afl-fuzz-one.c b/src/afl-fuzz-one.c
-index 2ad4697..b058c8c 100644
+index 2ad4697..cfd8c5a 100644
 --- a/src/afl-fuzz-one.c
 +++ b/src/afl-fuzz-one.c
-@@ -71,6 +71,451 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
-
+@@ -71,6 +71,486 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
+ 
  }
-
+ 
 +#define FORMTRIG_TYPED_MUTATION_MAX 16u
 +#define FORMTRIG_TYPED_OPS 8u
 +#define FORMTRIG_TYPED_RANGE_WINDOW 64u
@@ -334,6 +336,26 @@ index 2ad4697..b058c8c 100644
 +static u8 formtrig_fuzz_one_finite(double v) {
 +
 +  return v == v && v > -FORMTRIG_INF && v < FORMTRIG_INF;
++
++}
++
++static u8 formtrig_fuzz_one_env_truthy(const char *env) {
++
++  return env && env[0] &&
++         (env[0] == '1' || env[0] == 'y' || env[0] == 'Y' ||
++          env[0] == 't' || env[0] == 'T');
++
++}
++
++static u8 formtrig_fuzz_one_allow_heuristic_lift(void) {
++
++  return formtrig_fuzz_one_env_truthy(getenv("FORMTRIG_ALLOW_HEURISTIC_LIFT"));
++
++}
++
++static u8 formtrig_fuzz_one_allow_manual_lift(void) {
++
++  return formtrig_fuzz_one_env_truthy(getenv("FORMTRIG_ALLOW_MANUAL_LIFT"));
 +
 +}
 +
@@ -357,6 +379,21 @@ index 2ad4697..b058c8c 100644
 +  if (!formtrig_fuzz_one_finite(c->value) || c->value < 0.0) { return 0; }
 +  /* Hot ranges guide typed mutations but do not make R-only states progress. */
 +  if (c->flags & FORMTRIG_COMPONENT_INPUT_INFLUENCE) { return 0; }
++  if ((c->flags & FORMTRIG_COMPONENT_LIFTED) &&
++      !(c->flags & FORMTRIG_COMPONENT_NATIVE)) {
++
++    if (!c->atom_id) { return 0; }
++    if (c->flags & FORMTRIG_COMPONENT_SPEC_LIFTED) {
++      /* FORMTRIG-main: BindingSpec-generated TC-root progress. */
++    } else if (c->flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED) {
++      if (!formtrig_fuzz_one_allow_heuristic_lift()) { return 0; }
++    } else if (c->flags & FORMTRIG_COMPONENT_MANUAL_TARGET) {
++      if (!formtrig_fuzz_one_allow_manual_lift()) { return 0; }
++    } else {
++      return 0;
++    }
++
++  }
 +  if (!formtrig_fuzz_one_finite(c->confidence) || c->confidence <= 0.0) {
 +
 +    return 0;
@@ -775,10 +812,10 @@ index 2ad4697..b058c8c 100644
  /* Helper function to see if a particular change (xor_val = old ^ new) could
     be a product of deterministic bit flips with the lengths and stepovers
     attempted by afl-fuzz. This is used to avoid dupes in some of the
-@@ -545,6 +990,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
-
+@@ -545,6 +1025,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
+ 
    }
-
+ 
 +  if (formtrig_typed_mutation_stage(afl, in_buf, out_buf, len)) {
 +
 +    goto abandon_entry;
@@ -788,10 +825,10 @@ index 2ad4697..b058c8c 100644
    /* Skip right away if -d is given, if it has not been chosen sufficiently
       often to warrant the expensive deterministic stage (fuzz_level), or
       if it has gone through deterministic testing in earlier, resumed runs
-@@ -3656,6 +4107,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
-
+@@ -3656,6 +4142,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
+ 
    }
-
+ 
 +  if (formtrig_typed_mutation_stage(afl, in_buf, out_buf, len)) {
 +
 +    goto abandon_entry;
@@ -799,15 +836,15 @@ index 2ad4697..b058c8c 100644
 +  }
 +
    /* Go to pacemker fuzzing if MOpt is doing well */
-
+ 
    cur_ms_lv = get_cur_time();
-@@ -6213,4 +6670,3 @@ u8 fuzz_one(afl_state_t *afl) {
+@@ -6213,4 +6705,3 @@ u8 fuzz_one(afl_state_t *afl) {
    return (key_val_lv_1 | key_val_lv_2);
-
+ 
  }
 -
 diff --git a/src/afl-fuzz-queue.c b/src/afl-fuzz-queue.c
-index 48fd33e..af78397 100644
+index 48fd33e..821aa03 100644
 --- a/src/afl-fuzz-queue.c
 +++ b/src/afl-fuzz-queue.c
 @@ -26,6 +26,7 @@
@@ -815,13 +852,13 @@ index 48fd33e..af78397 100644
  #include <ctype.h>
  #include <math.h>
 +#include <sys/mman.h>
-
+ 
  #ifdef _STANDALONE_MODULE
  void minimize_bits(afl_state_t *afl, u8 *dst, u8 *src) {
-@@ -43,6 +44,933 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
-
+@@ -43,6 +44,989 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
+ 
  #endif
-
+ 
 +static u8 formtrig_env_enabled(void) {
 +
 +  const char *env = getenv("AFL_FORMTRIG");
@@ -842,6 +879,26 @@ index 48fd33e..af78397 100644
 +  return env && env[0] &&
 +         (env[0] == '0' || env[0] == 'n' || env[0] == 'N' ||
 +          env[0] == 'f' || env[0] == 'F');
++
++}
++
++static u8 formtrig_env_truthy(const char *env) {
++
++  return env && env[0] &&
++         (env[0] == '1' || env[0] == 'y' || env[0] == 'Y' ||
++          env[0] == 't' || env[0] == 'T');
++
++}
++
++static u8 formtrig_allow_heuristic_lift(void) {
++
++  return formtrig_env_truthy(getenv("FORMTRIG_ALLOW_HEURISTIC_LIFT"));
++
++}
++
++static u8 formtrig_allow_manual_lift(void) {
++
++  return formtrig_env_truthy(getenv("FORMTRIG_ALLOW_MANUAL_LIFT"));
 +
 +}
 +
@@ -932,8 +989,16 @@ index 48fd33e..af78397 100644
 +
 +static double formtrig_meta_df(const formtrig_queue_meta_t *m) {
 +
-+  if (m->lifted && formtrig_finite(m->d_f_lifted) && m->d_f_lifted >= 0.0)
-+    return m->d_f_lifted;
++  if (m->lifted && formtrig_finite(m->d_f_spec_lifted) &&
++      m->d_f_spec_lifted >= 0.0)
++    return m->d_f_spec_lifted;
++  if (formtrig_allow_heuristic_lift() &&
++      formtrig_finite(m->d_f_heuristic_lifted) &&
++      m->d_f_heuristic_lifted >= 0.0)
++    return m->d_f_heuristic_lifted;
++  if (formtrig_allow_manual_lift() && formtrig_finite(m->d_f_manual_lifted) &&
++      m->d_f_manual_lifted >= 0.0)
++    return m->d_f_manual_lifted;
 +  if (formtrig_finite(m->d_f) && m->d_f >= 0.0) return m->d_f;
 +  return FORMTRIG_INF;
 +
@@ -962,6 +1027,22 @@ index 48fd33e..af78397 100644
 +  if (c->flags & FORMTRIG_COMPONENT_INPUT_INFLUENCE) {
 +
 +    return 0;
++
++  }
++
++  if ((c->flags & FORMTRIG_COMPONENT_LIFTED) &&
++      !(c->flags & FORMTRIG_COMPONENT_NATIVE)) {
++
++    if (!c->atom_id) { return 0; }
++    if (c->flags & FORMTRIG_COMPONENT_SPEC_LIFTED) {
++      /* FORMTRIG-main: BindingSpec-generated TC-root progress. */
++    } else if (c->flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED) {
++      if (!formtrig_allow_heuristic_lift()) { return 0; }
++    } else if (c->flags & FORMTRIG_COMPONENT_MANUAL_TARGET) {
++      if (!formtrig_allow_manual_lift()) { return 0; }
++    } else {
++      return 0;
++    }
 +
 +  }
 +
@@ -1193,14 +1274,22 @@ index 48fd33e..af78397 100644
 +  formtrig_json_double(f, m ? m->d_f : FORMTRIG_INF);
 +  fputs(",\"d_f_lifted\":", f);
 +  formtrig_json_double(f, m ? m->d_f_lifted : FORMTRIG_INF);
++  fputs(",\"d_f_spec_lifted\":", f);
++  formtrig_json_double(f, m ? m->d_f_spec_lifted : FORMTRIG_INF);
++  fputs(",\"d_f_heuristic_lifted\":", f);
++  formtrig_json_double(f, m ? m->d_f_heuristic_lifted : FORMTRIG_INF);
++  fputs(",\"d_f_manual_lifted\":", f);
++  formtrig_json_double(f, m ? m->d_f_manual_lifted : FORMTRIG_INF);
 +  fprintf(f,
 +          ",\"components\":%u,\"atom_signals\":%u,"
 +          "\"actionable_components\":%u,"
 +          "\"hot_ranges\":%u,\"target_hit_count\":%u,"
++          "\"source_flags\":%u,"
 +          "\"trace_signature\":\"%016llx\",\"aux\":%llu",
 +          component_count, atom_signal_count, actionable,
 +          m ? m->hot_range_count : 0,
 +          m ? m->target_hit_count : 0,
++          m ? m->source_flags : 0,
 +          (unsigned long long)(m ? m->trace_signature : 0),
 +          (unsigned long long)aux);
 +
@@ -1491,6 +1580,10 @@ index 48fd33e..af78397 100644
 +  meta.d_t = rec->d_t;
 +  meta.d_f = rec->d_f;
 +  meta.d_f_lifted = rec->d_f_lifted;
++  meta.d_f_spec_lifted = rec->d_f_spec_lifted;
++  meta.d_f_heuristic_lifted = rec->d_f_heuristic_lifted;
++  meta.d_f_manual_lifted = rec->d_f_manual_lifted;
++  meta.source_flags = rec->source_flags;
 +  if (meta.hot_range_count > FORMTRIG_MAX_HOT_RANGES)
 +    meta.hot_range_count = FORMTRIG_MAX_HOT_RANGES;
 +  memcpy(meta.hot_ranges, rec->hot_ranges,
@@ -1750,20 +1843,20 @@ index 48fd33e..af78397 100644
 +}
 +
  /* select next queue entry based on alias algo - fast! */
-
+ 
  inline u32 select_next_queue_entry(afl_state_t *afl) {
-@@ -80,6 +1008,7 @@ double compute_weight(afl_state_t *afl, struct queue_entry *q,
+@@ -80,6 +1064,7 @@ double compute_weight(afl_state_t *afl, struct queue_entry *q,
    if (unlikely(weight < 0.1)) { weight = 0.1; }
    if (unlikely(q->favored)) { weight *= 5; }
    if (unlikely(!q->was_fuzzed)) { weight *= 2; }
 +  weight *= formtrig_queue_weight_multiplier(q);
-
+ 
    return weight;
-
-@@ -1167,6 +2096,15 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
-
+ 
+@@ -1167,6 +2152,15 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
+ 
    }
-
+ 
 +  perf_score =
 +      (u32)((double)perf_score * formtrig_queue_weight_multiplier(q));
 +  if (perf_score > afl->havoc_max_mult * 100) {
@@ -1774,11 +1867,11 @@ index 48fd33e..af78397 100644
 +  if (!perf_score) { perf_score = 1; }
 +
    return perf_score;
-
+ 
  }
-@@ -1451,4 +2389,3 @@ inline void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q,
+@@ -1451,4 +2445,3 @@ inline void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q,
    }
-
+ 
  }
 -
 diff --git a/src/afl-fuzz-run.c b/src/afl-fuzz-run.c
@@ -1786,13 +1879,13 @@ index ac4fb4a..df4d285 100644
 --- a/src/afl-fuzz-run.c
 +++ b/src/afl-fuzz-run.c
 @@ -58,7 +58,9 @@ fuzz_run_target(afl_state_t *afl, afl_forkserver_t *fsrv, u32 timeout) {
-
+ 
  #endif
-
+ 
 +  if (fsrv == &afl->fsrv) { formtrig_prepare_run(afl); }
    fsrv_run_result_t res = afl_fsrv_run_target(fsrv, timeout, &afl->stop_soon);
 +  if (fsrv == &afl->fsrv) { formtrig_capture_last(afl); }
-
+ 
  #ifdef PROFILING
    clock_gettime(CLOCK_REALTIME, &spec);
 @@ -414,6 +416,8 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
@@ -1801,31 +1894,31 @@ index ac4fb4a..df4d285 100644
    u8 *old_sn = afl->stage_name;
 +  formtrig_queue_meta_t formtrig_first_signal;
 +  memset(&formtrig_first_signal, 0, sizeof(formtrig_first_signal));
-
+ 
    if (unlikely(afl->shm.cmplog_mode)) { q->exec_cksum = 0; }
-
+ 
 @@ -471,6 +475,11 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
         we want to bail out quickly. */
-
+ 
      if (afl->stop_soon || fault != afl->crash_mode) { goto abort_calibration; }
 +    if (!formtrig_first_signal.seen && afl->formtrig_last.seen) {
 +
 +      formtrig_first_signal = afl->formtrig_last;
 +
 +    }
-
+ 
      if (!afl->non_instrumented_mode && !afl->stage_cur &&
          !count_bytes(afl, afl->fsrv.trace_bits)) {
 @@ -514,6 +523,11 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
         we want to bail out quickly. */
-
+ 
      if (afl->stop_soon || fault != afl->crash_mode) { goto abort_calibration; }
 +    if (!formtrig_first_signal.seen && afl->formtrig_last.seen) {
 +
 +      formtrig_first_signal = afl->formtrig_last;
 +
 +    }
-
+ 
      if (!afl->non_instrumented_mode && !afl->stage_cur &&
          !count_bytes(afl, afl->fsrv.trace_bits)) {
 @@ -610,6 +624,27 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
@@ -1853,12 +1946,12 @@ index ac4fb4a..df4d285 100644
 +    }
 +
 +  }
-
+ 
    afl->total_bitmap_size += q->bitmap_size;
    ++afl->total_bitmap_entries;
 @@ -1110,4 +1145,3 @@ common_fuzz_stuff(afl_state_t *afl, u8 *out_buf, u32 len) {
    return 0;
-
+ 
  }
 -
 diff --git a/src/afl-fuzz-state.c b/src/afl-fuzz-state.c
@@ -1884,12 +1977,12 @@ index 5a6b95c..8ec86eb 100644
    if (afl->orig_cmp_map) { ck_free(afl->orig_cmp_map); }
    if (afl->cmplog_binary) { ck_free(afl->cmplog_binary); }
 +  formtrig_deinit(afl);
-
+ 
    afl_free(afl->queue_buf);
    afl_free(afl->out_buf);
 @@ -748,4 +756,3 @@ void afl_states_request_skip(void) {
    LIST_FOREACH(&afl_states, afl_state_t, { el->skip_requested = 1; });
-
+ 
  }
 -
 diff --git a/src/afl-fuzz-stats.c b/src/afl-fuzz-stats.c
@@ -1897,9 +1990,9 @@ index 3d0a9b9..f36df96 100644
 --- a/src/afl-fuzz-stats.c
 +++ b/src/afl-fuzz-stats.c
 @@ -385,6 +385,36 @@ void write_stats_file(afl_state_t *afl, u32 t_bytes, double bitmap_cvg,
-
+ 
    /* ignore errors */
-
+ 
 +  if (afl->formtrig_enabled) {
 +
 +    fprintf(f,
@@ -1931,11 +2024,11 @@ index 3d0a9b9..f36df96 100644
 +  }
 +
    if (afl->debug) {
-
+ 
      u32 i = 0;
 @@ -2376,4 +2406,3 @@ void show_init_stats(afl_state_t *afl) {
  #undef IB
-
+ 
  }
 -
 diff --git a/utils/aflpp_driver/aflpp_driver.c b/utils/aflpp_driver/aflpp_driver.c
@@ -1945,7 +2038,7 @@ index 4e8f466..c6e4054 100644
 @@ -73,6 +73,10 @@ extern unsigned char *__afl_fuzz_ptr;
  extern unsigned char *__afl_area_ptr;
  extern unsigned int   __afl_map_size;
-
+ 
 +__attribute__((weak)) void formtrig_register_input(const void *data,
 +                                                   size_t      len);
 +__attribute__((weak)) void formtrig_finalize(void);
@@ -1956,7 +2049,7 @@ index 4e8f466..c6e4054 100644
 @@ -83,6 +87,17 @@ __attribute__((weak)) int     LLVMFuzzerInitialize(int *argc, char ***argv);
  __attribute__((weak)) int     LLVMFuzzerRunDriver(
          int *argc, char ***argv, int (*callback)(const uint8_t *data, size_t size));
-
+ 
 +static inline int ExecuteOneInput(
 +    int (*callback)(const uint8_t *data, size_t size), const uint8_t *data,
 +    size_t size) {
@@ -1973,33 +2066,33 @@ index 4e8f466..c6e4054 100644
  // https://github.com/google/sanitizers/wiki/AddressSanitizerManualPoisoning
 @@ -252,7 +267,7 @@ static int ExecuteFilesOnyByOne(int argc, char **argv,
        prev_length = length;
-
+ 
        printf("Reading %zu bytes from %s\n", length, argv[i]);
 -      callback(buf, length);
 +      ExecuteOneInput(callback, buf, length);
        printf("Execution successful.\n");
-
+ 
      }
 @@ -403,7 +418,7 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
-
+ 
          prev_length = length;
-
+ 
 -        if (unlikely(callback(__afl_fuzz_ptr, length) == -1)) {
 +        if (unlikely(ExecuteOneInput(callback, __afl_fuzz_ptr, length) == -1)) {
-
+ 
            memset(__afl_area_ptr, 0, __afl_map_size);
            __afl_area_ptr[0] = 1;
 @@ -418,7 +433,7 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
-
+ 
      while (__afl_persistent_loop(N)) {
-
+ 
 -      callback(__afl_fuzz_ptr, *__afl_fuzz_len);
 +      ExecuteOneInput(callback, __afl_fuzz_ptr, *__afl_fuzz_len);
-
+ 
      }
-
+ 
 @@ -433,4 +448,3 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
  }
-
+ 
  #endif
 -

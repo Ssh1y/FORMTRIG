@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 #define FORMTRIG_SHM_MAGIC 0x46545249u
-#define FORMTRIG_SHM_VERSION 4u
+#define FORMTRIG_SHM_VERSION 5u
 #define FORMTRIG_SHM_OFFSET (FORMTRIG_AFL_MAP_SIZE + 16u)
 #define FORMTRIG_SHM_SIZE 4096u
 #define FORMTRIG_MAX_HOT_RANGES 8u
@@ -76,10 +76,13 @@ typedef struct formtrig_shm_record {
   double d_t;
   double d_f;
   double d_f_lifted;
+  double d_f_spec_lifted;
+  double d_f_heuristic_lifted;
+  double d_f_manual_lifted;
   uint32_t hot_range_count;
   uint32_t component_count;
   uint32_t atom_signal_count;
-  uint32_t reserved;
+  uint32_t source_flags;
   formtrig_source_record_t source;
   formtrig_hot_range_t hot_ranges[FORMTRIG_MAX_HOT_RANGES];
   formtrig_progress_component_t components[FORMTRIG_MAX_PROGRESS_COMPONENTS];
@@ -89,7 +92,17 @@ typedef struct formtrig_shm_record {
 enum {
   FORMTRIG_FLAG_REACHED = 1u << 0,
   FORMTRIG_FLAG_CRASH_PREDICATE = 1u << 1,
-  FORMTRIG_FLAG_LIFTED = 1u << 2
+  FORMTRIG_FLAG_LIFTED = 1u << 2,
+  FORMTRIG_FLAG_SPEC_LIFTED = 1u << 3,
+  FORMTRIG_FLAG_HEURISTIC_LIFTED = 1u << 4,
+  FORMTRIG_FLAG_MANUAL_LIFTED = 1u << 5
+};
+
+enum {
+  FORMTRIG_SOURCE_NATIVE = 1u << 0,
+  FORMTRIG_SOURCE_SPEC_LIFTED = 1u << 1,
+  FORMTRIG_SOURCE_HEURISTIC_LIFTED = 1u << 2,
+  FORMTRIG_SOURCE_MANUAL_TARGET = 1u << 3
 };
 
 enum {
@@ -129,7 +142,10 @@ enum {
   FORMTRIG_COMPONENT_TC_ROOTED = 1u << 2,
   FORMTRIG_COMPONENT_NATIVE = 1u << 3,
   FORMTRIG_COMPONENT_LIFTED = 1u << 4,
-  FORMTRIG_COMPONENT_INPUT_INFLUENCE = 1u << 5
+  FORMTRIG_COMPONENT_INPUT_INFLUENCE = 1u << 5,
+  FORMTRIG_COMPONENT_SPEC_LIFTED = 1u << 6,
+  FORMTRIG_COMPONENT_HEURISTIC_LIFTED = 1u << 7,
+  FORMTRIG_COMPONENT_MANUAL_TARGET = 1u << 8
 };
 
 #ifdef __cplusplus

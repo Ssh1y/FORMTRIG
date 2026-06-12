@@ -33,6 +33,12 @@ typedef struct summary {
   uint64_t atom_signal_events;
   uint64_t role_signal_events;
   uint64_t d_f_count;
+  uint64_t d_f_spec_lifted_count;
+  uint64_t d_f_heuristic_lifted_count;
+  uint64_t d_f_manual_lifted_count;
+  uint64_t spec_lifted_events;
+  uint64_t heuristic_lifted_events;
+  uint64_t manual_lifted_events;
   double d_f_min;
   double d_f_max;
   uint64_t execs_done;
@@ -265,6 +271,21 @@ static void ingest_progress_line(summary_t *s, const char *line) {
     if (s->d_f_count == 0 || d_value > s->d_f_max) s->d_f_max = d_value;
     s->d_f_count++;
   }
+
+  if (json_double_field(line, "d_f_spec_lifted", &d_value) && d_value >= 0.0)
+    s->d_f_spec_lifted_count++;
+  if (json_double_field(line, "d_f_heuristic_lifted", &d_value) &&
+      d_value >= 0.0)
+    s->d_f_heuristic_lifted_count++;
+  if (json_double_field(line, "d_f_manual_lifted", &d_value) &&
+      d_value >= 0.0)
+    s->d_f_manual_lifted_count++;
+
+  if (json_u64_field(line, "source_flags", &u64_value)) {
+    if (u64_value & 2u) s->spec_lifted_events++;
+    if (u64_value & 4u) s->heuristic_lifted_events++;
+    if (u64_value & 8u) s->manual_lifted_events++;
+  }
 }
 
 static int read_lines(const char *path, void (*fn)(summary_t *, const char *),
@@ -392,6 +413,18 @@ static void print_summary(const summary_t *s) {
   printf("  \"reached_events\": %llu,\n",
          (unsigned long long)s->reached_events);
   printf("  \"lifted_events\": %llu,\n", (unsigned long long)s->lifted_events);
+  printf("  \"spec_lifted_events\": %llu,\n",
+         (unsigned long long)s->spec_lifted_events);
+  printf("  \"heuristic_lifted_events\": %llu,\n",
+         (unsigned long long)s->heuristic_lifted_events);
+  printf("  \"manual_lifted_events\": %llu,\n",
+         (unsigned long long)s->manual_lifted_events);
+  printf("  \"d_f_spec_lifted_count\": %llu,\n",
+         (unsigned long long)s->d_f_spec_lifted_count);
+  printf("  \"d_f_heuristic_lifted_count\": %llu,\n",
+         (unsigned long long)s->d_f_heuristic_lifted_count);
+  printf("  \"d_f_manual_lifted_count\": %llu,\n",
+         (unsigned long long)s->d_f_manual_lifted_count);
   printf("  \"stable_events\": %llu,\n", (unsigned long long)s->stable_events);
   printf("  \"component_events\": %llu,\n",
          (unsigned long long)s->component_events);

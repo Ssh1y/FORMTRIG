@@ -64,6 +64,7 @@ typedef struct site_role_set {
 
 typedef struct atom_summary {
   uint32_t atom_id;
+  enum ft_category category;
   uint32_t roles;
   uint32_t collapsed;
   uint32_t missing;
@@ -80,6 +81,8 @@ static atom_summary_t atoms[MAX_ATOMS];
 static uint32_t atom_count;
 static site_role_set_t site_roles[MAX_SITE_ROLES];
 static uint32_t site_role_count;
+
+static atom_summary_t *atom_slot(uint32_t atom_id);
 
 static void usage(const char *argv0) {
   fprintf(stderr,
@@ -294,6 +297,17 @@ static void parse_spec_line(char *line) {
   char *op = strtok_r(line, " \t\r\n,", &saveptr);
   if (!op || !*op) return;
 
+  if (!strcmp(op, "atom_category") || !strcmp(op, "atom-category") ||
+      !strcmp(op, "atom_kind") || !strcmp(op, "atom-kind")) {
+    char *atom_text = next_token(&saveptr);
+    char *category_text = next_token(&saveptr);
+    uint32_t atom_id = 0;
+    if (!parse_u32(atom_text, &atom_id)) return;
+    atom_summary_t *atom = atom_slot(atom_id);
+    if (atom) atom->category = parse_category(category_text);
+    return;
+  }
+
   if (!strcmp(op, "role_component") || !strcmp(op, "role-event") ||
       !strcmp(op, "role_event")) {
     binding_row_t *b = new_binding(op);
@@ -463,7 +477,13 @@ static const char *atom_reason(const atom_summary_t *atom,
   return "ok";
 }
 
-static void resolve_bindings(enum ft_category category) {
+static enum ft_category effective_atom_category(const atom_summary_t *atom,
+                                                enum ft_category fallback) {
+  if (atom && atom->category != FT_CATEGORY_GENERIC) return atom->category;
+  return fallback;
+}
+
+static void resolve_bindings(enum ft_category fallback_category) {
   for (uint32_t i = 0; i < binding_count; i++) {
     binding_row_t *b = &bindings[i];
     uint32_t matches = 0;
@@ -507,7 +527,8 @@ static void resolve_bindings(enum ft_category category) {
 
   for (uint32_t i = 0; i < atom_count; i++) {
     atoms[i].tier = binding_tier(&atoms[i]);
-    atoms[i].reason = atom_reason(&atoms[i], category);
+    atoms[i].reason = atom_reason(
+        &atoms[i], effective_atom_category(&atoms[i], fallback_category));
     atoms[i].lift_allowed = !strcmp(atoms[i].reason, "ok");
   }
 
@@ -532,7 +553,10 @@ static void print_header(void) {
          "column,opcode\n");
 }
 
-static void print_binding(const binding_row_t *b, enum ft_category category) {
+static void print_binding(const binding_row_t *b,
+                          enum ft_category fallback_category) {
+  atom_summary_t *atom = atom_slot(b->atom_id);
+  enum ft_category category = effective_atom_category(atom, fallback_category);
   printf("%u,%u,%s,%s,%u,", b->binding_id, b->atom_id,
          category_name(category), role_name(b->role), b->event_kind);
   if (b->site_id == UINT32_MAX)

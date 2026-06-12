@@ -9,8 +9,15 @@ set. Required fields:
 - `D_T`: direct binary target/crash distance.
 - `D_F`: synthesized FORMTRIG distance from generic runtime safety semantics.
   It is not derived from benchmark oracles such as Magma canaries.
-- `D_F_lifted`: producer/slice-based lifted post-reach distance, or `null` if
-  no bounded dynamic lift was available.
+- `D_F_lifted`: selected lifted distance used by the current runtime mode.
+  FORMTRIG-main selects BindingSpec-driven lift by default.
+- `D_F_spec_lifted`: BindingSpec/runtime-event-map generated lifted distance.
+- `D_F_heuristic_lifted`: runtime-synthesized exploratory lift from generic
+  event-ring heuristics. It is not FORMTRIG-main guidance unless
+  `FORMTRIG_ALLOW_HEURISTIC_LIFT=1` is set.
+- `D_F_manual_lifted`: explicit target/manual API lifted distance. It is
+  disabled by default and is not FORMTRIG-main guidance.
+- `lift_source_flags`: bitset over `FORMTRIG_SOURCE_*` source classes.
 - `trace_signature`: 64-bit hex signature over post-reach events.
 - `target_hit_count`: number of target hits in the execution.
 - `hot_byte_ranges`: bounded list of byte ranges and finite-difference
@@ -24,7 +31,10 @@ set. Required fields:
 - `uses_trigger_oracle`: always `false` for feature computation. The terminal
   `crash_predicate` flag is reported separately and is not a non-trigger
   progress feature.
-- `uses_target_id_specific_rule`: always `false` for generic runtime lifting.
+- `uses_target_id_specific_rule`: `true` only when explicit manual target lift
+  APIs are enabled and used.
+- `uses_runtime_heuristic`, `uses_spec_lifted`, and `uses_manual_target`:
+  source-separation audit fields for lifted progress.
 - `atom_signals`: per-atom role summary for the AFL++ fast path. Role bits
   distinguish root observation, guard, producer, desired/opposite producer,
   use, lifecycle event, same-object, and input-influence evidence.
@@ -102,10 +112,22 @@ and source line. It can emit:
 Draft lift-spec rows are only binding inputs. They must still pass the native
 binding-tier audit before a lifted plan is trusted.
 
-## Binding And Runtime Event Map
+## BindingSpec And Runtime Event Map
 
-`FORMTRIG_LIFT_SPEC` is the current native BindingSpec input format. It binds
-TC atoms to runtime-observable roles through instrumented event kinds and site
+The first-class experiment input is a high-level BindingSpec manifest matching
+`formtrig/binding_specs/schema.json`. It names the TC, atoms, root expressions,
+semantic binding roles, role expressions, and `observe_at` source locations.
+The native runtime does not parse this manifest in the fuzzing hot path.
+Campaign setup compiles it once into the lower-level `FORMTRIG_LIFT_SPEC` row
+format:
+
+```sh
+formtrig_binding_spec_compile --site-map site_map.tsv \
+  --out formtrig.lift binding_spec.yaml
+```
+
+`FORMTRIG_LIFT_SPEC` is the runtime-facing probe-spec format. It binds TC atoms
+to runtime-observable roles through instrumented event kinds and resolved site
 ids. The runtime consumes this file directly, but campaigns should first map it
 against the LLVM site map:
 
@@ -114,6 +136,19 @@ formtrig_binding_map --category binary-null \
   --site-map site_map.tsv --normalized-spec formtrig.normalized.lift \
   formtrig.lift > formtrig_runtime_event_map.csv
 ```
+
+Low-level specs may include per-atom category metadata:
+
+```text
+atom_category 1 equality-magic
+atom_category 2 binary-state-null
+```
+
+The high-level BindingSpec compiler emits these rows from `atoms[].kind`.
+`--category` remains only a fallback for legacy single-class specs. Binding
+quality gates compute minimum tier per atom, so mixed TCs such as
+`equality/magic && binary-state-null` do not incorrectly apply one global tier
+to every atom.
 
 The resulting runtime event map includes:
 
@@ -126,7 +161,7 @@ The resulting runtime event map includes:
 - `semantic_role_collapse` when multiple semantic roles for an atom collapse
   onto the same runtime site.
 
-When `--normalized-spec` is used, the tool writes a runtime-facing
+When `--normalized-spec` is used, the tool writes the runtime-facing
 `FORMTRIG_LIFT_SPEC` whose component `source_id` and `context_hash` are the
 stable `event_id` from the runtime event map. AFL++ progress logs can therefore
 trace each lifted component back to a specific BindingSpec row and LLVM site.
@@ -150,3 +185,17 @@ AFL++ progress logs use `source_id` values present in the runtime event map. For
 non-trigger accepted lifted progress, at least one lifted component must map
 back to a BindingSpec/runtime event id. Unmapped lifted progress fails the
 campaign because it is not runtime-grounded FORMTRIG progress.
+
+## Lift Source Separation
+
+Runtime and AFL++ logs separate lifted signal sources:
+
+- `FORMTRIG_SOURCE_SPEC_LIFTED`: BindingSpec/event-map generated components.
+- `FORMTRIG_SOURCE_HEURISTIC_LIFTED`: generic runtime synthesized lift.
+- `FORMTRIG_SOURCE_MANUAL_TARGET`: explicit target/manual API lift.
+
+FORMTRIG-main uses only nonzero-atom lifted components marked
+`FORMTRIG_COMPONENT_SPEC_LIFTED`. `FORMTRIG_COMPONENT_HEURISTIC_LIFTED` is
+enabled only by `FORMTRIG_ALLOW_HEURISTIC_LIFT=1`; manual target lift is enabled
+only by `FORMTRIG_ALLOW_MANUAL_LIFT=1`. Scalar atom-0 lifted distances are
+logged for diagnosis but are not actionable frontier components.

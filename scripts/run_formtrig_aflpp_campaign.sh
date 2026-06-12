@@ -9,6 +9,7 @@ out_dir=""
 target_bug=""
 category="generic"
 lift_spec=""
+binding_spec=""
 target_site_ids=""
 site_map=""
 runtime_lift_spec=""
@@ -21,6 +22,7 @@ usage: $0 --in DIR --out DIR --target-bug LABEL [options] -- TARGET [ARGS...]
 
 options:
   --category NAME      numeric|equality|binary-null|lifecycle|generic
+  --binding-spec FILE  high-level FORMTRIG BindingSpec manifest to compile
   --lift-spec FILE     FORMTRIG_LIFT_SPEC file to export and audit
   --site-map FILE      LLVM FORMTRIG_SITE_MAP TSV for runtime event-map audit
   --target-site-ids S  comma-separated LLVM FORMTRIG site ids for known TC line
@@ -63,6 +65,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --lift-spec)
       lift_spec="${2:-}"
+      shift 2
+      ;;
+    --binding-spec)
+      binding_spec="${2:-}"
       shift 2
       ;;
     --target-site-ids)
@@ -110,6 +116,16 @@ fi
 require_file "$seed_dir"
 require_file "$afl_fuzz"
 
+if [[ -n "$binding_spec" && -n "$lift_spec" ]]; then
+  echo "--binding-spec and --lift-spec are mutually exclusive" >&2
+  exit 2
+fi
+
+if [[ -n "$binding_spec" && -z "$site_map" ]]; then
+  echo "--binding-spec requires --site-map so source bindings are runtime-grounded" >&2
+  exit 2
+fi
+
 if ! grep -a -q "FORMTRIG native signal channel enabled" "$afl_fuzz"; then
   echo "AFL++ checkout is not patched for FORMTRIG native guidance." >&2
   echo "Run: $repo_root/patches/aflplusplus/apply_formtrig_patch.sh" >&2
@@ -126,6 +142,20 @@ mkdir -p "$out_dir/.formtrig"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
   "$repo_root/formtrig/tools/formtrig_progress_summary.c" \
   -o "$out_dir/.formtrig/formtrig_progress_summary"
+
+if [[ -n "$binding_spec" ]]; then
+  require_file "$binding_spec"
+  require_file "$site_map"
+  lift_spec="$out_dir/.formtrig/formtrig_binding.lift"
+  cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
+    "$repo_root/formtrig/tools/formtrig_binding_spec_compile.c" \
+    -o "$out_dir/.formtrig/formtrig_binding_spec_compile"
+  if ! "$out_dir/.formtrig/formtrig_binding_spec_compile" \
+    --site-map "$site_map" --out "$lift_spec" "$binding_spec"; then
+    echo "FORMTRIG BindingSpec compilation failed: $binding_spec" >&2
+    exit 4
+  fi
+fi
 
 if [[ -n "$lift_spec" ]]; then
   require_file "$lift_spec"
@@ -201,6 +231,10 @@ echo "  progress=$progress"
 echo "  summary=$out_dir/default/formtrig_summary.json"
 if [[ -n "$lift_spec" ]]; then
   echo "  binding_audit=$out_dir/formtrig_lift_audit.csv"
+fi
+if [[ -n "$binding_spec" ]]; then
+  echo "  binding_spec=$binding_spec"
+  echo "  compiled_lift_spec=$out_dir/.formtrig/formtrig_binding.lift"
 fi
 if [[ -n "$site_map" ]]; then
   echo "  runtime_event_map=$out_dir/formtrig_runtime_event_map.csv"

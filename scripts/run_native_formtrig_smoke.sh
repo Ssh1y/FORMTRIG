@@ -90,6 +90,9 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_site_map.c" \
   -o "$work_dir/formtrig_site_map"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Werror "$repo_root/formtrig/tools/formtrig_binding_spec_compile.c" \
+  -o "$work_dir/formtrig_binding_spec_compile"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_binding_map.c" \
   -o "$work_dir/formtrig_binding_map"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
@@ -123,6 +126,183 @@ role_component 8 102 guard 5 1 20 higher hit 1.0 1.0
 role_component 8 103 desired_producer 6 1 30 higher hit 1.0 1.0
 role_component 8 104 use 6 1 40 higher hit 1.0 1.0
 SPEC
+
+cat > "$work_dir/binary_binding_spec.yml" <<'SPEC'
+tc_id: native_afl_smoke
+tc:
+  category: binary-state-null
+  expression: root == NULL
+atoms:
+  - id: 1
+    expr: root == NULL
+    kind: binary-state-null
+    root: root
+bindings:
+  - id: root_state
+    atom: 1
+    role: root_observe
+    expr: guard <= 8
+    observe_at:
+      kind: cmp
+      function: known_tc
+      file: known_tc.c
+      line: 42
+      column: 11
+    component: boundary_margin
+    priority: 10
+    direction: lower
+    value_mode: distance
+    value: 1.0
+    confidence: 1.0
+  - id: guard_path
+    atom: 1
+    role: guard
+    expr: guard <= 32
+    observe_at:
+      kind: branch
+      function: known_tc
+      file: known_tc.c
+      line: 42
+      column: 19
+    component: guard_progress
+    priority: 20
+    direction: higher
+    value_mode: hit
+    value: 1.0
+    confidence: 1.0
+  - id: desired_producer
+    atom: 1
+    role: desired_producer
+    expr: desired_state
+    observe_at:
+      kind: branch
+      function: known_tc
+      file: known_tc.c
+      line: 42
+      column: 27
+    component: producer_use
+    priority: 30
+    direction: higher
+    value_mode: hit
+    value: 1.0
+    confidence: 1.0
+  - id: use_context
+    atom: 1
+    role: use
+    expr: use_reached
+    observe_at:
+      kind: branch
+      function: known_tc
+      file: known_tc.c
+      line: 42
+      column: 35
+    component: producer_use
+    priority: 40
+    direction: higher
+    value_mode: hit
+    value: 1.0
+    confidence: 1.0
+SPEC
+
+"$work_dir/formtrig_binding_spec_compile" --site-map "$work_dir/site_map.tsv" \
+  --out "$work_dir/binary_binding_compiled.lift" \
+  "$work_dir/binary_binding_spec.yml"
+if ! grep -q 'atom_category 1 binary-state-null' \
+  "$work_dir/binary_binding_compiled.lift"; then
+  echo "BindingSpec compiler did not emit atom category metadata" >&2
+  cat "$work_dir/binary_binding_compiled.lift" >&2
+  exit 31
+fi
+if ! grep -q 'role_component 7 101 root_observe 3 1 10 lower distance' \
+  "$work_dir/binary_binding_compiled.lift"; then
+  echo "BindingSpec compiler did not emit root_observe lift row" >&2
+  cat "$work_dir/binary_binding_compiled.lift" >&2
+  exit 27
+fi
+if ! grep -q 'role_component 8 104 use 6 1 40 higher hit' \
+  "$work_dir/binary_binding_compiled.lift"; then
+  echo "BindingSpec compiler did not emit use lift row" >&2
+  cat "$work_dir/binary_binding_compiled.lift" >&2
+  exit 28
+fi
+
+cat > "$work_dir/bad_binding_spec.yml" <<'SPEC'
+tc_id: bad_native_afl_smoke
+tc:
+  category: binary-state-null
+  expression: root == NULL
+atoms:
+  - id: 1
+    expr: root == NULL
+    kind: binary-state-null
+    root: root
+bindings:
+  - id: missing_expr
+    atom: 1
+    role: root_observe
+    observe_at:
+      kind: cmp
+      function: known_tc
+      file: known_tc.c
+      line: 42
+      column: 11
+    component: boundary_margin
+    priority: 10
+    direction: lower
+    value_mode: distance
+SPEC
+if "$work_dir/formtrig_binding_spec_compile" --site-map "$work_dir/site_map.tsv" \
+  --out "$work_dir/bad_binding_compiled.lift" \
+  "$work_dir/bad_binding_spec.yml" 2>"$work_dir/bad_binding.err"; then
+  echo "BindingSpec compiler allowed a binding without semantic expr" >&2
+  cat "$work_dir/bad_binding_compiled.lift" >&2
+  exit 29
+fi
+if ! grep -q 'missing semantic expression' "$work_dir/bad_binding.err"; then
+  echo "BindingSpec compiler did not explain missing semantic expr" >&2
+  cat "$work_dir/bad_binding.err" >&2
+  exit 30
+fi
+
+cat > "$work_dir/mixed_lift_spec.txt" <<'SPEC'
+atom_category 1 equality-magic
+atom_category 2 binary-state-null
+role_component 7 101 root_observe 3 1 10 lower distance 1.0 1.0
+role_component 8 102 root_observe 3 2 10 lower distance 1.0 1.0
+role_component 8 103 desired_producer 6 2 30 higher hit 1.0 1.0
+role_component 8 104 use 6 2 40 higher hit 1.0 1.0
+SPEC
+"$work_dir/formtrig_lift_spec_audit" --category binary-null \
+  "$work_dir/mixed_lift_spec.txt" > "$work_dir/mixed_lift_audit.csv"
+if ! grep -q '1,equality-magic,B1,true' \
+  "$work_dir/mixed_lift_audit.csv"; then
+  echo "lift spec audit did not apply per-atom equality category" >&2
+  cat "$work_dir/mixed_lift_audit.csv" >&2
+  exit 32
+fi
+if ! grep -q '2,binary-state-null,B2,true' \
+  "$work_dir/mixed_lift_audit.csv"; then
+  echo "lift spec audit did not apply per-atom binary category" >&2
+  cat "$work_dir/mixed_lift_audit.csv" >&2
+  exit 33
+fi
+"$work_dir/formtrig_binding_map" --category binary-null \
+  --site-map "$work_dir/site_map.tsv" \
+  --normalized-spec "$work_dir/mixed_lift.normalized" \
+  "$work_dir/mixed_lift_spec.txt" \
+  > "$work_dir/mixed_runtime_event_map.csv"
+if ! grep -q '1,equality-magic,root_observe' \
+  "$work_dir/mixed_runtime_event_map.csv"; then
+  echo "runtime event-map gate did not preserve equality atom category" >&2
+  cat "$work_dir/mixed_runtime_event_map.csv" >&2
+  exit 34
+fi
+if ! grep -q '2,binary-state-null,use' \
+  "$work_dir/mixed_runtime_event_map.csv"; then
+  echo "runtime event-map gate did not preserve binary atom category" >&2
+  cat "$work_dir/mixed_runtime_event_map.csv" >&2
+  exit 35
+fi
 
 "$work_dir/formtrig_lift_spec_audit" --category binary-null \
   "$work_dir/binary_lift_spec.txt" > "$work_dir/binary_lift_audit.csv"
@@ -234,7 +414,7 @@ FORMTRIG_NO_CRASH=1 "$repo_root/scripts/run_formtrig_aflpp_campaign.sh" \
   --out "$work_dir/out" \
   --target-bug native_afl_smoke \
   --category binary-null \
-  --lift-spec "$work_dir/binary_lift_spec.txt" \
+  --binding-spec "$work_dir/binary_binding_spec.yml" \
   --site-map "$work_dir/site_map.tsv" \
   --target-site-ids "$site_ids" \
   --duration 2 \
@@ -273,6 +453,9 @@ summary_queued_progress="$(json_number formtrig_queued_progress "$summary")"
 summary_typed_execs="$(json_number formtrig_typed_execs "$summary")"
 summary_atom_signals="$(json_number atom_signal_events "$summary")"
 summary_role_signals="$(json_number role_signal_events "$summary")"
+summary_spec_lifted="$(json_number spec_lifted_events "$summary")"
+summary_heuristic_lifted="$(json_number heuristic_lifted_events "$summary")"
+summary_manual_lifted="$(json_number manual_lifted_events "$summary")"
 
 if [[ "${queued_progress:-0}" -le 0 ]]; then
   echo "FORMTRIG did not queue progress" >&2
@@ -301,6 +484,30 @@ if [[ "${summary_role_signals:-0}" -le 0 ]]; then
   echo "AFL++ progress summary did not capture role bits" >&2
   cat "$summary" >&2
   exit 8
+fi
+
+if [[ "${summary_spec_lifted:-0}" -le 0 ]]; then
+  echo "progress summary did not report spec-driven lifted source" >&2
+  cat "$summary" >&2
+  exit 36
+fi
+
+if [[ "${summary_heuristic_lifted:-0}" -ne 0 ]]; then
+  echo "FORMTRIG-main smoke unexpectedly used heuristic lifted source" >&2
+  cat "$summary" >&2
+  exit 37
+fi
+
+if [[ "${summary_manual_lifted:-0}" -ne 0 ]]; then
+  echo "FORMTRIG-main smoke unexpectedly used manual target lifted source" >&2
+  cat "$summary" >&2
+  exit 38
+fi
+
+if ! grep -q '"source_flags":2' "$progress"; then
+  echo "progress log did not mark BindingSpec source flags" >&2
+  tail -n 20 "$progress" >&2
+  exit 39
 fi
 
 if ! grep -Eq '"progress_status": "(progress_queued|triggered)"' "$summary"; then

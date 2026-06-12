@@ -21,6 +21,7 @@ enum ft_category {
 
 typedef struct atom_binding {
   uint32_t atom_id;
+  enum ft_category category;
   uint32_t roles;
   uint32_t event_count;
   uint32_t location_only_count;
@@ -50,10 +51,16 @@ static int has_role(const atom_binding_t *atom, uint32_t role) {
   return atom && (atom->roles & role_bit(role)) != 0u;
 }
 
-static atom_binding_t *atom_slot(uint32_t atom_id) {
-  if (!atom_id) return NULL;
+static atom_binding_t *existing_atom(uint32_t atom_id) {
   for (uint32_t i = 0; i < atom_count; i++)
     if (atoms[i].atom_id == atom_id) return &atoms[i];
+  return NULL;
+}
+
+static atom_binding_t *atom_slot(uint32_t atom_id) {
+  if (!atom_id) return NULL;
+  atom_binding_t *existing = existing_atom(atom_id);
+  if (existing) return existing;
   if (atom_count >= MAX_ATOMS) return NULL;
   atom_binding_t *atom = &atoms[atom_count++];
   memset(atom, 0, sizeof(*atom));
@@ -189,6 +196,17 @@ static void parse_line(char *line) {
   char *op = strtok_r(line, " \t\r\n,", &saveptr);
   if (!op) return;
 
+  if (!strcmp(op, "atom_category") || !strcmp(op, "atom-category") ||
+      !strcmp(op, "atom_kind") || !strcmp(op, "atom-kind")) {
+    char *atom_text = next_token(&saveptr);
+    char *category_text = next_token(&saveptr);
+    uint32_t atom_id = 0;
+    if (!parse_u32(atom_text, &atom_id)) return;
+    atom_binding_t *atom = atom_slot(atom_id);
+    if (atom) atom->category = parse_category(category_text);
+    return;
+  }
+
   if (!strcmp(op, "role_component") || !strcmp(op, "role-event") ||
       !strcmp(op, "role_event")) {
     char *event_kind = next_token(&saveptr);
@@ -291,7 +309,7 @@ static int compare_atoms(const void *a, const void *b) {
 }
 
 int main(int argc, char **argv) {
-  enum ft_category category = FT_CATEGORY_GENERIC;
+  enum ft_category fallback_category = FT_CATEGORY_GENERIC;
   const char *path = NULL;
 
   for (int i = 1; i < argc; i++) {
@@ -300,7 +318,7 @@ int main(int argc, char **argv) {
         usage(argv[0]);
         return 2;
       }
-      category = parse_category(argv[i]);
+      fallback_category = parse_category(argv[i]);
       continue;
     }
     if (!path)
@@ -334,6 +352,9 @@ int main(int argc, char **argv) {
   for (uint32_t i = 0; i < atom_count; i++) {
     atom_binding_t *atom = &atoms[i];
     uint32_t tier = binding_tier(atom);
+    enum ft_category category =
+        atom->category == FT_CATEGORY_GENERIC ? fallback_category
+                                              : atom->category;
     const char *reason = decision_reason(atom, category, tier);
     int allowed = !strcmp(reason, "ok");
     if (!allowed) failures++;
