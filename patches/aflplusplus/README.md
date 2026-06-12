@@ -58,12 +58,16 @@ collapse, and insufficient binding tiers fail the campaign before fuzzing. On a
 passing map, the runner emits a normalized runtime lift spec under
 `OUT/.formtrig/formtrig_lift.normalized` and exports that file as
 `FORMTRIG_LIFT_SPEC`, so RuntimeSignal component `source_id`/`context_hash`
-values match the runtime event-map `event_id`.
+values match the runtime event-map `event_id`. After fuzzing, the runner writes
+`OUT/default/formtrig_lift_feature_audit.json` and fails the campaign if
+accepted non-trigger lifted progress cannot be traced back to a mapped runtime
+event id.
 
 `run_native_formtrig_smoke.sh` checks the native runtime role signal, a
 `FORMTRIG_LIFT_SPEC` role binding, native binding-tier audit, AFL++ queue
 admission by FORMTRIG progress, LLVM pass build, source-line site-map
 resolution, generated lift-spec audit, runtime event-map quality gate,
 semantic-role collapse rejection, typed mutation execution, progress-summary
-generation, separated accept/reject/stability reasons, campaign diagnosis
-fields, and that `afl-fuzz` was built with `NO_PYTHON=1`.
+generation, lifted-feature provenance audit, separated accept/reject/stability
+reasons, campaign diagnosis fields, and that `afl-fuzz` was built with
+`NO_PYTHON=1`.

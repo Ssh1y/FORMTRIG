@@ -144,6 +144,9 @@ if [[ -n "$lift_spec" ]]; then
     cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
       "$repo_root/formtrig/tools/formtrig_binding_map.c" \
       -o "$out_dir/.formtrig/formtrig_binding_map"
+    cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
+      "$repo_root/formtrig/tools/formtrig_lift_feature_audit.c" \
+      -o "$out_dir/.formtrig/formtrig_lift_feature_audit"
     if ! "$out_dir/.formtrig/formtrig_binding_map" --category "$category" \
       --site-map "$site_map" --normalized-spec "$runtime_lift_spec" "$lift_spec" \
       > "$out_dir/formtrig_runtime_event_map.csv"; then
@@ -183,6 +186,15 @@ require_file "$progress"
 "$out_dir/.formtrig/formtrig_progress_summary" "$stats" "$progress" \
   > "$out_dir/default/formtrig_summary.json"
 
+if [[ -n "$site_map" ]]; then
+  if ! "$out_dir/.formtrig/formtrig_lift_feature_audit" \
+    "$out_dir/formtrig_runtime_event_map.csv" "$progress" \
+    > "$out_dir/default/formtrig_lift_feature_audit.json"; then
+    echo "FORMTRIG lifted feature provenance audit failed: $out_dir/default/formtrig_lift_feature_audit.json" >&2
+    exit 5
+  fi
+fi
+
 echo "FORMTRIG campaign complete"
 echo "  stats=$stats"
 echo "  progress=$progress"
@@ -193,4 +205,5 @@ fi
 if [[ -n "$site_map" ]]; then
   echo "  runtime_event_map=$out_dir/formtrig_runtime_event_map.csv"
   echo "  runtime_lift_spec=$runtime_lift_spec"
+  echo "  lift_feature_audit=$out_dir/default/formtrig_lift_feature_audit.json"
 fi

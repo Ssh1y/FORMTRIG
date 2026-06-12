@@ -135,3 +135,18 @@ The campaign runner treats missing runtime events, role collapse, and
 insufficient binding tier as hard failures for lifted plans. This is the
 runtime-grounded quality gate between BindingSpec and the AFL++ RuntimeSignal
 ABI; it is intentionally separate from target-specific repair or format logic.
+
+## Lifted Feature Audit
+
+When a campaign has both `--lift-spec` and `--site-map`, the runner also emits:
+
+```text
+OUT/default/formtrig_lift_feature_audit.json
+```
+
+This audit reads `formtrig_runtime_event_map.csv` and
+`formtrig_progress.jsonl`. It verifies that nonzero-atom lifted components in
+AFL++ progress logs use `source_id` values present in the runtime event map. For
+non-trigger accepted lifted progress, at least one lifted component must map
+back to a BindingSpec/runtime event id. Unmapped lifted progress fails the
+campaign because it is not runtime-grounded FORMTRIG progress.

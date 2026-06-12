@@ -92,18 +92,21 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_binding_map.c" \
   -o "$work_dir/formtrig_binding_map"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Werror "$repo_root/formtrig/tools/formtrig_lift_feature_audit.c" \
+  -o "$work_dir/formtrig_lift_feature_audit"
 
 cat > "$work_dir/site_map.tsv" <<'SITEMAP'
 101	cmp	known_tc	7	icmp	bench/known_tc.c	42	11
-102	cmp	known_tc	8	icmp	bench/known_tc.c	42	19
-103	cmp	known_tc	9	icmp	bench/known_tc.c	42	27
-104	cmp	known_tc	10	icmp	bench/known_tc.c	42	35
+102	branch	known_tc	8	br	bench/known_tc.c	42	19
+103	branch	known_tc	9	br	bench/known_tc.c	42	27
+104	branch	known_tc	10	br	bench/known_tc.c	42	35
 201	binary	helper	3	add	bench/helper.c	9	5
 SITEMAP
 
 site_ids="$("$work_dir/formtrig_site_map" --file known_tc.c --line 42 \
   --kind cmp --emit ids "$work_dir/site_map.tsv")"
-if [[ "$site_ids" != "101,102,103,104" ]]; then
+if [[ "$site_ids" != "101" ]]; then
   echo "site-map tool did not resolve source line to site ids" >&2
   echo "site_ids=$site_ids" >&2
   exit 16
@@ -115,7 +118,7 @@ fi
   "$work_dir/site_map.tsv" > "$work_dir/generated_numeric_lift_spec.txt"
 
 cat > "$work_dir/binary_lift_spec.txt" <<'SPEC'
-role_component 8 101 root_observe 3 1 10 lower distance 1.0 1.0
+role_component 7 101 root_observe 3 1 10 lower distance 1.0 1.0
 role_component 8 102 guard 5 1 20 higher hit 1.0 1.0
 role_component 8 103 desired_producer 6 1 30 higher hit 1.0 1.0
 role_component 8 104 use 6 1 40 higher hit 1.0 1.0
@@ -135,7 +138,7 @@ fi
   --normalized-spec "$work_dir/binary_lift.normalized" \
   "$work_dir/binary_lift_spec.txt" \
   > "$work_dir/runtime_event_map.csv"
-if ! grep -q 'binary-state-null,root_observe,8,101,' \
+if ! grep -q 'binary-state-null,root_observe,7,101,' \
   "$work_dir/runtime_event_map.csv"; then
   echo "runtime event map did not include root binding" >&2
   cat "$work_dir/runtime_event_map.csv" >&2
@@ -151,6 +154,32 @@ if ! awk 'NF != 13 { exit 1 }' "$work_dir/binary_lift.normalized"; then
   echo "normalized lift spec did not include source/context event ids" >&2
   cat "$work_dir/binary_lift.normalized" >&2
   exit 22
+fi
+root_event_id="$(
+  awk -F ',' '$4 == "root_observe" { print $7; exit }' \
+    "$work_dir/runtime_event_map.csv"
+)"
+root_source_id="$(
+  awk 'NR == 1 { print $(NF - 1) }' "$work_dir/binary_lift.normalized"
+)"
+cat > "$work_dir/progress_mapped.jsonl" <<PROGRESS
+{"event":"frontier_accept","reason":"non_dominated_frontier_seed","triggered":false,"lifted":1,"component_values":[{"kind":3,"atom_id":1,"role":1,"priority":10,"flags":21,"source_id":$root_source_id,"context_hash":"0000000000000000","value":4,"confidence":1}]}
+PROGRESS
+"$work_dir/formtrig_lift_feature_audit" "$work_dir/runtime_event_map.csv" \
+  "$work_dir/progress_mapped.jsonl" > "$work_dir/lift_feature_audit_ok.json"
+if ! grep -q '"status": "pass"' "$work_dir/lift_feature_audit_ok.json"; then
+  echo "lift feature audit rejected mapped lifted component" >&2
+  cat "$work_dir/lift_feature_audit_ok.json" >&2
+  exit 24
+fi
+cat > "$work_dir/progress_unmapped.jsonl" <<'PROGRESS'
+{"event":"frontier_accept","reason":"non_dominated_frontier_seed","triggered":false,"lifted":1,"component_values":[{"kind":3,"atom_id":1,"role":1,"priority":10,"flags":21,"source_id":999999,"context_hash":"0000000000000000","value":4,"confidence":1}]}
+PROGRESS
+if "$work_dir/formtrig_lift_feature_audit" "$work_dir/runtime_event_map.csv" \
+  "$work_dir/progress_unmapped.jsonl" > "$work_dir/lift_feature_audit_bad.json"; then
+  echo "lift feature audit allowed unmapped lifted component" >&2
+  cat "$work_dir/lift_feature_audit_bad.json" >&2
+  exit 25
 fi
 
 cat > "$work_dir/collapsed_lift_spec.txt" <<'SPEC'
@@ -226,11 +255,18 @@ summary="$work_dir/out/default/formtrig_summary.json"
 require_file "$summary"
 require_file "$work_dir/out/formtrig_runtime_event_map.csv"
 require_file "$work_dir/out/.formtrig/formtrig_lift.normalized"
+require_file "$work_dir/out/default/formtrig_lift_feature_audit.json"
 if ! awk 'NF != 13 { exit 1 }' \
   "$work_dir/out/.formtrig/formtrig_lift.normalized"; then
   echo "campaign normalized lift spec did not include event ids" >&2
   cat "$work_dir/out/.formtrig/formtrig_lift.normalized" >&2
   exit 23
+fi
+if ! grep -q '"status": "pass"' \
+  "$work_dir/out/default/formtrig_lift_feature_audit.json"; then
+  echo "campaign lifted feature audit did not pass" >&2
+  cat "$work_dir/out/default/formtrig_lift_feature_audit.json" >&2
+  exit 26
 fi
 
 summary_queued_progress="$(json_number formtrig_queued_progress "$summary")"
