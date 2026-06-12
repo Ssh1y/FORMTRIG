@@ -1256,6 +1256,7 @@ index 48fd33e..821aa03 100644
 +  u32 actionable = formtrig_actionable_component_count(m);
 +  const formtrig_progress_component_t *first =
 +      formtrig_first_actionable_component(m);
++  u8 have_signal = m && m->seen;
 +
 +  fprintf(f,
 +          "{\"event\":\"%s\",\"reason\":\"%s\",\"execs_done\":%llu,"
@@ -1269,17 +1270,17 @@ index 48fd33e..821aa03 100644
 +          (unsigned long long)afl->formtrig_frontier_updates,
 +          m ? m->seen : 0, m ? m->reached : 0, m ? m->triggered : 0,
 +          m ? m->lifted : 0, m ? m->stable : 0);
-+  formtrig_json_double(f, m ? m->d_t : FORMTRIG_INF);
++  formtrig_json_double(f, have_signal ? m->d_t : FORMTRIG_INF);
 +  fputs(",\"d_f\":", f);
-+  formtrig_json_double(f, m ? m->d_f : FORMTRIG_INF);
++  formtrig_json_double(f, have_signal ? m->d_f : FORMTRIG_INF);
 +  fputs(",\"d_f_lifted\":", f);
-+  formtrig_json_double(f, m ? m->d_f_lifted : FORMTRIG_INF);
++  formtrig_json_double(f, have_signal ? m->d_f_lifted : FORMTRIG_INF);
 +  fputs(",\"d_f_spec_lifted\":", f);
-+  formtrig_json_double(f, m ? m->d_f_spec_lifted : FORMTRIG_INF);
++  formtrig_json_double(f, have_signal ? m->d_f_spec_lifted : FORMTRIG_INF);
 +  fputs(",\"d_f_heuristic_lifted\":", f);
-+  formtrig_json_double(f, m ? m->d_f_heuristic_lifted : FORMTRIG_INF);
++  formtrig_json_double(f, have_signal ? m->d_f_heuristic_lifted : FORMTRIG_INF);
 +  fputs(",\"d_f_manual_lifted\":", f);
-+  formtrig_json_double(f, m ? m->d_f_manual_lifted : FORMTRIG_INF);
++  formtrig_json_double(f, have_signal ? m->d_f_manual_lifted : FORMTRIG_INF);
 +  fprintf(f,
 +          ",\"components\":%u,\"atom_signals\":%u,"
 +          "\"actionable_components\":%u,"

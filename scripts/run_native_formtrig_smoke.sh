@@ -411,7 +411,7 @@ root_source_id="$(
   awk 'NR == 1 { print $(NF - 1) }' "$work_dir/binary_lift.normalized"
 )"
 cat > "$work_dir/progress_mapped.jsonl" <<PROGRESS
-{"event":"frontier_accept","reason":"non_dominated_frontier_seed","triggered":false,"lifted":1,"component_values":[{"kind":3,"atom_id":1,"role":1,"priority":10,"flags":21,"source_id":$root_source_id,"context_hash":"0000000000000000","value":4,"confidence":1}]}
+{"event":"frontier_accept","reason":"non_dominated_frontier_seed","triggered":false,"lifted":1,"source_flags":2,"component_values":[{"kind":3,"atom_id":1,"role":1,"priority":10,"flags":85,"source_id":$root_source_id,"context_hash":"0000000000000000","value":4,"confidence":1}]}
 PROGRESS
 "$work_dir/formtrig_lift_feature_audit" "$work_dir/runtime_event_map.csv" \
   "$work_dir/progress_mapped.jsonl" > "$work_dir/lift_feature_audit_ok.json"
@@ -420,14 +420,25 @@ if ! grep -q '"status": "pass"' "$work_dir/lift_feature_audit_ok.json"; then
   cat "$work_dir/lift_feature_audit_ok.json" >&2
   exit 24
 fi
-cat > "$work_dir/progress_unmapped.jsonl" <<'PROGRESS'
+cat > "$work_dir/progress_unmapped_generic.jsonl" <<'PROGRESS'
 {"event":"frontier_accept","reason":"non_dominated_frontier_seed","triggered":false,"lifted":1,"component_values":[{"kind":3,"atom_id":1,"role":1,"priority":10,"flags":21,"source_id":999999,"context_hash":"0000000000000000","value":4,"confidence":1}]}
 PROGRESS
-if "$work_dir/formtrig_lift_feature_audit" "$work_dir/runtime_event_map.csv" \
-  "$work_dir/progress_unmapped.jsonl" > "$work_dir/lift_feature_audit_bad.json"; then
-  echo "lift feature audit allowed unmapped lifted component" >&2
-  cat "$work_dir/lift_feature_audit_bad.json" >&2
+if ! "$work_dir/formtrig_lift_feature_audit" "$work_dir/runtime_event_map.csv" \
+  "$work_dir/progress_unmapped_generic.jsonl" \
+  > "$work_dir/lift_feature_audit_generic.json"; then
+  echo "lift feature audit rejected non-spec lifted component" >&2
+  cat "$work_dir/lift_feature_audit_generic.json" >&2
   exit 25
+fi
+cat > "$work_dir/progress_unmapped_spec.jsonl" <<'PROGRESS'
+{"event":"frontier_accept","reason":"non_dominated_frontier_seed","triggered":false,"lifted":1,"source_flags":2,"component_values":[{"kind":3,"atom_id":1,"role":1,"priority":10,"flags":85,"source_id":999999,"context_hash":"0000000000000000","value":4,"confidence":1}]}
+PROGRESS
+if "$work_dir/formtrig_lift_feature_audit" "$work_dir/runtime_event_map.csv" \
+  "$work_dir/progress_unmapped_spec.jsonl" \
+  > "$work_dir/lift_feature_audit_bad.json"; then
+  echo "lift feature audit allowed unmapped spec-driven lifted component" >&2
+  cat "$work_dir/lift_feature_audit_bad.json" >&2
+  exit 26
 fi
 
 cat > "$work_dir/collapsed_lift_spec.txt" <<'SPEC'

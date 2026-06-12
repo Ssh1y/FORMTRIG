@@ -17,7 +17,11 @@ set. Required fields:
   `FORMTRIG_ALLOW_HEURISTIC_LIFT=1` is set.
 - `D_F_manual_lifted`: explicit target/manual API lifted distance. It is
   disabled by default and is not FORMTRIG-main guidance.
-- `lift_source_flags`: bitset over `FORMTRIG_SOURCE_*` source classes.
+- `lift_source_flags`: bitset over `FORMTRIG_SOURCE_*` source classes that were
+  eligible for guidance in the current run mode.
+- `observed_lift_source_flags`: bitset over all lifted source classes observed
+  by the runtime, including heuristic/manual sources that were not allowed to
+  guide FORMTRIG-main.
 - `trace_signature`: 64-bit hex signature over post-reach events.
 - `target_hit_count`: number of target hits in the execution.
 - `hot_byte_ranges`: bounded list of byte ranges and finite-difference
@@ -34,7 +38,10 @@ set. Required fields:
 - `uses_target_id_specific_rule`: `true` only when explicit manual target lift
   APIs are enabled and used.
 - `uses_runtime_heuristic`, `uses_spec_lifted`, and `uses_manual_target`:
-  source-separation audit fields for lifted progress.
+  source-separation audit fields for guidance actually used by the current run
+  mode.
+- `observed_runtime_heuristic` and `observed_manual_target`: raw-source audit
+  fields showing whether disabled exploratory/manual sources were observed.
 - `atom_signals`: per-atom role summary for the AFL++ fast path. Role bits
   distinguish root observation, guard, producer, desired/opposite producer,
   use, lifecycle event, same-object, and input-influence evidence.
@@ -234,11 +241,12 @@ OUT/default/formtrig_lift_feature_audit.json
 ```
 
 This audit reads `formtrig_runtime_event_map.csv` and
-`formtrig_progress.jsonl`. It verifies that nonzero-atom lifted components in
-AFL++ progress logs use `source_id` values present in the runtime event map. For
-non-trigger accepted lifted progress, at least one lifted component must map
-back to a BindingSpec/runtime event id. Unmapped lifted progress fails the
-campaign because it is not runtime-grounded FORMTRIG progress.
+`formtrig_progress.jsonl`. It verifies that nonzero-atom spec-lifted components
+in AFL++ progress logs use `source_id` values present in the runtime event map.
+For non-trigger accepted spec-lifted progress, at least one spec-lifted component
+must map back to a BindingSpec/runtime event id. Accepted heuristic/manual lifted
+progress fails FORMTRIG-main provenance because it is not BindingSpec-grounded
+guidance; ignored heuristic/manual observations are reported separately.
 
 ## Lift Source Separation
 

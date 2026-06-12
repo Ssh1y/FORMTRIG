@@ -21,8 +21,18 @@ typedef struct audit_state {
   uint64_t nonzero_lifted_components;
   uint64_t mapped_lifted_components;
   uint64_t unmapped_lifted_components;
+  uint64_t spec_lifted_components;
+  uint64_t spec_lifted_atom_components;
+  uint64_t mapped_spec_lifted_components;
+  uint64_t unmapped_spec_lifted_components;
+  uint64_t heuristic_lifted_components;
+  uint64_t manual_lifted_components;
   uint64_t accepted_unmapped_lifted_events;
   uint64_t accepted_without_mapped_lifted_events;
+  uint64_t accepted_unmapped_spec_lifted_events;
+  uint64_t accepted_without_mapped_spec_lifted_events;
+  uint64_t accepted_heuristic_lifted_events;
+  uint64_t accepted_manual_lifted_events;
   uint64_t unmapped_source_ids[MAX_UNMAPPED];
   uint32_t unmapped_source_id_count;
 } audit_state_t;
@@ -185,14 +195,23 @@ static void ingest_progress_line(audit_state_t *s, const char *line) {
   int accepted = 0;
   uint64_t line_mapped_lifted = 0;
   uint64_t line_unmapped_lifted = 0;
+  uint64_t line_mapped_spec_lifted = 0;
+  uint64_t line_unmapped_spec_lifted = 0;
+  uint64_t source_flags = 0;
 
   s->progress_events++;
   if (json_string_field(line, "event", event, sizeof(event)))
     accepted = event_is_accepting(event);
   (void)json_bool_field(line, "triggered", &triggered);
   (void)json_bool_field(line, "lifted", &lifted_line);
+  (void)json_u64_field(line, "source_flags", &source_flags);
   if (accepted) s->accepted_events++;
   if (accepted && lifted_line && !triggered) s->accepted_lifted_events++;
+  if (accepted && !triggered &&
+      (source_flags & FORMTRIG_SOURCE_HEURISTIC_LIFTED))
+    s->accepted_heuristic_lifted_events++;
+  if (accepted && !triggered && (source_flags & FORMTRIG_SOURCE_MANUAL_TARGET))
+    s->accepted_manual_lifted_events++;
 
   const char *array = strstr(line, "\"component_values\":[");
   if (!array) return;
@@ -218,16 +237,37 @@ static void ingest_progress_line(audit_state_t *s, const char *line) {
     (void)json_u64_field(object, "source_id", &source_id);
 
     if ((flags & FORMTRIG_COMPONENT_LIFTED) != 0u) {
+      int source_known = event_id_known(s, source_id);
+
       s->lifted_components++;
+      if ((flags & FORMTRIG_COMPONENT_SPEC_LIFTED) != 0u)
+        s->spec_lifted_components++;
+      if ((flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED) != 0u)
+        s->heuristic_lifted_components++;
+      if ((flags & FORMTRIG_COMPONENT_MANUAL_TARGET) != 0u)
+        s->manual_lifted_components++;
+
       if (atom_id != 0u) {
         s->nonzero_lifted_components++;
-        if (event_id_known(s, source_id)) {
+        if (source_known) {
           s->mapped_lifted_components++;
           line_mapped_lifted++;
         } else {
           s->unmapped_lifted_components++;
           line_unmapped_lifted++;
           remember_unmapped(s, source_id);
+        }
+
+        if ((flags & FORMTRIG_COMPONENT_SPEC_LIFTED) != 0u) {
+          s->spec_lifted_atom_components++;
+          if (source_known) {
+            s->mapped_spec_lifted_components++;
+            line_mapped_spec_lifted++;
+          } else {
+            s->unmapped_spec_lifted_components++;
+            line_unmapped_spec_lifted++;
+            remember_unmapped(s, source_id);
+          }
         }
       }
     }
@@ -238,6 +278,10 @@ static void ingest_progress_line(audit_state_t *s, const char *line) {
   if (accepted && lifted_line && !triggered) {
     if (line_unmapped_lifted) s->accepted_unmapped_lifted_events++;
     if (!line_mapped_lifted) s->accepted_without_mapped_lifted_events++;
+    if (line_unmapped_spec_lifted) s->accepted_unmapped_spec_lifted_events++;
+    if ((source_flags & FORMTRIG_SOURCE_SPEC_LIFTED) &&
+        !line_mapped_spec_lifted)
+      s->accepted_without_mapped_spec_lifted_events++;
   }
 }
 
@@ -272,10 +316,30 @@ static void print_json(const audit_state_t *s, int pass) {
          (unsigned long long)s->mapped_lifted_components);
   printf("  \"unmapped_lifted_components\": %llu,\n",
          (unsigned long long)s->unmapped_lifted_components);
+  printf("  \"spec_lifted_components\": %llu,\n",
+         (unsigned long long)s->spec_lifted_components);
+  printf("  \"spec_lifted_atom_components\": %llu,\n",
+         (unsigned long long)s->spec_lifted_atom_components);
+  printf("  \"mapped_spec_lifted_components\": %llu,\n",
+         (unsigned long long)s->mapped_spec_lifted_components);
+  printf("  \"unmapped_spec_lifted_components\": %llu,\n",
+         (unsigned long long)s->unmapped_spec_lifted_components);
+  printf("  \"heuristic_lifted_components\": %llu,\n",
+         (unsigned long long)s->heuristic_lifted_components);
+  printf("  \"manual_lifted_components\": %llu,\n",
+         (unsigned long long)s->manual_lifted_components);
   printf("  \"accepted_unmapped_lifted_events\": %llu,\n",
          (unsigned long long)s->accepted_unmapped_lifted_events);
   printf("  \"accepted_without_mapped_lifted_events\": %llu,\n",
          (unsigned long long)s->accepted_without_mapped_lifted_events);
+  printf("  \"accepted_unmapped_spec_lifted_events\": %llu,\n",
+         (unsigned long long)s->accepted_unmapped_spec_lifted_events);
+  printf("  \"accepted_without_mapped_spec_lifted_events\": %llu,\n",
+         (unsigned long long)s->accepted_without_mapped_spec_lifted_events);
+  printf("  \"accepted_heuristic_lifted_events\": %llu,\n",
+         (unsigned long long)s->accepted_heuristic_lifted_events);
+  printf("  \"accepted_manual_lifted_events\": %llu,\n",
+         (unsigned long long)s->accepted_manual_lifted_events);
   printf("  \"unmapped_source_ids\": [");
   for (uint32_t i = 0; i < s->unmapped_source_id_count; i++) {
     if (i) printf(", ");
@@ -296,9 +360,11 @@ int main(int argc, char **argv) {
   if (!load_event_map(&s, argv[1])) return 2;
   if (!load_progress(&s, argv[2])) return 2;
 
-  int pass = s.unmapped_lifted_components == 0 &&
-             s.accepted_unmapped_lifted_events == 0 &&
-             s.accepted_without_mapped_lifted_events == 0;
+  int pass = s.unmapped_spec_lifted_components == 0 &&
+             s.accepted_unmapped_spec_lifted_events == 0 &&
+             s.accepted_without_mapped_spec_lifted_events == 0 &&
+             s.accepted_heuristic_lifted_events == 0 &&
+             s.accepted_manual_lifted_events == 0;
   print_json(&s, pass);
   return pass ? 0 : 1;
 }

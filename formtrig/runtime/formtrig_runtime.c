@@ -678,9 +678,11 @@ static uint32_t component_lift_source_flags(void) {
   for (uint32_t i = 0; i < g_state.component_count; i++) {
     if (g_state.components[i].flags & FORMTRIG_COMPONENT_SPEC_LIFTED)
       flags |= FORMTRIG_SOURCE_SPEC_LIFTED;
-    if (g_state.components[i].flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED)
+    if (heuristic_lift_allowed() &&
+        (g_state.components[i].flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED))
       flags |= FORMTRIG_SOURCE_HEURISTIC_LIFTED;
-    if (g_state.components[i].flags & FORMTRIG_COMPONENT_MANUAL_TARGET)
+    if (manual_lift_api_allowed() &&
+        (g_state.components[i].flags & FORMTRIG_COMPONENT_MANUAL_TARGET))
       flags |= FORMTRIG_SOURCE_MANUAL_TARGET;
   }
   return flags;
@@ -688,6 +690,25 @@ static uint32_t component_lift_source_flags(void) {
 
 static uint32_t runtime_lift_source_flags(void) {
   return selected_lifted_source_flags() | component_lift_source_flags();
+}
+
+static uint32_t observed_lift_source_flags(void) {
+  uint32_t flags = 0;
+  if (finite_lift(g_state.d_f_spec_lifted))
+    flags |= FORMTRIG_SOURCE_SPEC_LIFTED;
+  if (finite_lift(g_state.d_f_heuristic_lifted))
+    flags |= FORMTRIG_SOURCE_HEURISTIC_LIFTED;
+  if (finite_lift(g_state.d_f_manual_lifted) || g_state.manual_api_lifted)
+    flags |= FORMTRIG_SOURCE_MANUAL_TARGET;
+  for (uint32_t i = 0; i < g_state.component_count; i++) {
+    if (g_state.components[i].flags & FORMTRIG_COMPONENT_SPEC_LIFTED)
+      flags |= FORMTRIG_SOURCE_SPEC_LIFTED;
+    if (g_state.components[i].flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED)
+      flags |= FORMTRIG_SOURCE_HEURISTIC_LIFTED;
+    if (g_state.components[i].flags & FORMTRIG_COMPONENT_MANUAL_TARGET)
+      flags |= FORMTRIG_SOURCE_MANUAL_TARGET;
+  }
+  return flags;
 }
 
 static void refresh_selected_lifted_distance(void) {
@@ -2163,7 +2184,6 @@ static void record_probe_component(const formtrig_probe_spec_t *spec,
     refresh_selected_lifted_distance();
     remember_df_source_with_distance(event, 1u, 10u, value);
   }
-  g_state.manual_lifted = 1;
   if (event->input_len)
     prioritize_hot_range(event->input_start, event->input_len, 3.0);
 }
@@ -2436,8 +2456,11 @@ static void write_jsonl(void) {
   else
     fprintf(f, "null");
 
-  fprintf(f, ",\"lift_source_flags\":%" PRIu32,
-          runtime_lift_source_flags());
+  uint32_t source_flags = runtime_lift_source_flags();
+  uint32_t observed_source_flags = observed_lift_source_flags();
+  fprintf(f, ",\"lift_source_flags\":%" PRIu32, source_flags);
+  fprintf(f, ",\"observed_lift_source_flags\":%" PRIu32,
+          observed_source_flags);
 
   fprintf(f,
           ",\"trace_signature\":\"0x%016" PRIx64
@@ -2479,12 +2502,17 @@ static void write_jsonl(void) {
           "\"uses_target_id_specific_rule\":%s,"
           "\"uses_runtime_heuristic\":%s,"
           "\"uses_spec_lifted\":%s,"
-          "\"uses_manual_target\":%s",
-          g_state.manual_api_lifted ? "true" : "false",
-          g_state.d_f_heuristic_lifted < FORMTRIG_INF / 2.0 ? "true"
-                                                             : "false",
-          g_state.d_f_spec_lifted < FORMTRIG_INF / 2.0 ? "true" : "false",
-          g_state.manual_api_lifted ? "true" : "false");
+          "\"uses_manual_target\":%s,"
+          "\"observed_runtime_heuristic\":%s,"
+          "\"observed_manual_target\":%s",
+          (source_flags & FORMTRIG_SOURCE_MANUAL_TARGET) ? "true" : "false",
+          (source_flags & FORMTRIG_SOURCE_HEURISTIC_LIFTED) ? "true" : "false",
+          (source_flags & FORMTRIG_SOURCE_SPEC_LIFTED) ? "true" : "false",
+          (source_flags & FORMTRIG_SOURCE_MANUAL_TARGET) ? "true" : "false",
+          (observed_source_flags & FORMTRIG_SOURCE_HEURISTIC_LIFTED) ? "true"
+                                                                    : "false",
+          (observed_source_flags & FORMTRIG_SOURCE_MANUAL_TARGET) ? "true"
+                                                                 : "false");
 
   fprintf(f, ",\"atom_signals\":[");
   for (uint32_t i = 0; i < g_state.atom_signal_count; i++) {
