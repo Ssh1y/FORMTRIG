@@ -29,6 +29,16 @@ stat_value() {
   }' "$2"
 }
 
+json_number() {
+  awk -F ':' -v key="\"$1\"" '{
+    lhs = $1
+    rhs = $2
+    gsub(/^[ \t]+|[ \t]+$/, "", lhs)
+    gsub(/^[ \t]+|[ \t,]+$/, "", rhs)
+    if (lhs == key) print rhs
+  }' "$2"
+}
+
 require_file "$afl_fuzz"
 require_file "$afl_cc"
 
@@ -71,6 +81,9 @@ FORMTRIG_LIFT_SPEC="$work_dir/role_spec.txt" "$work_dir/role_spec_smoke"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_lift_spec_audit.c" \
   -o "$work_dir/formtrig_lift_spec_audit"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Werror "$repo_root/formtrig/tools/formtrig_progress_summary.c" \
+  -o "$work_dir/formtrig_progress_summary"
 
 cat > "$work_dir/binary_lift_spec.txt" <<'SPEC'
 role_component 8 101 root_observe 3 1 10 lower distance 1.0 1.0
@@ -123,6 +136,14 @@ typed_execs="$(stat_value formtrig_typed_execs "$stats")"
 typed_finds="$(stat_value formtrig_typed_finds "$stats")"
 stability_checks="$(stat_value formtrig_stability_checks "$stats")"
 
+"$work_dir/formtrig_progress_summary" "$stats" "$progress" \
+  > "$work_dir/summary.json"
+
+summary_queued_progress="$(json_number formtrig_queued_progress "$work_dir/summary.json")"
+summary_typed_execs="$(json_number formtrig_typed_execs "$work_dir/summary.json")"
+summary_atom_signals="$(json_number atom_signal_events "$work_dir/summary.json")"
+summary_role_signals="$(json_number role_signal_events "$work_dir/summary.json")"
+
 if [[ "${queued_progress:-0}" -le 0 ]]; then
   echo "FORMTRIG did not queue progress" >&2
   exit 5
@@ -133,13 +154,22 @@ if [[ "${typed_execs:-0}" -le 0 ]]; then
   exit 6
 fi
 
-if ! grep -q '"atom_signals":[1-9]' "$progress"; then
-  echo "AFL++ progress log did not capture atom signals" >&2
+if [[ "${summary_queued_progress:-0}" -le 0 ||
+      "${summary_typed_execs:-0}" -le 0 ]]; then
+  echo "FORMTRIG progress summary missed queue or typed execution" >&2
+  cat "$work_dir/summary.json" >&2
   exit 7
 fi
 
-if ! grep -q '"role_bits":[1-9]' "$progress"; then
-  echo "AFL++ progress log did not capture role bits" >&2
+if [[ "${summary_atom_signals:-0}" -le 0 ]]; then
+  echo "AFL++ progress summary did not capture atom signals" >&2
+  cat "$work_dir/summary.json" >&2
+  exit 7
+fi
+
+if [[ "${summary_role_signals:-0}" -le 0 ]]; then
+  echo "AFL++ progress summary did not capture role bits" >&2
+  cat "$work_dir/summary.json" >&2
   exit 8
 fi
 
