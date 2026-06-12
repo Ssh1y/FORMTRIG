@@ -15,6 +15,12 @@ set. Required fields:
 - `target_hit_count`: number of target hits in the execution.
 - `hot_byte_ranges`: bounded list of byte ranges and finite-difference
   influence scores.
+- `components`: TC-rooted native or lifted progress components. Each component
+  includes `kind`, `atom_id`, semantic `role`, priority, direction/source flags,
+  source id, context hash, value, and confidence.
+- `atom_signals`: per-atom role summary for the AFL++ fast path. Role bits
+  distinguish root observation, guard, producer, desired/opposite producer,
+  use, lifecycle event, same-object, and input-influence evidence.
 - `df_source`: optional object explaining the selected FORMTRIG distance source.
   `mode=1` means producer-linked lifted comparison, `mode=2` manual direct
   margin, `mode=3` manual lifted distance, `mode=4` direct binary sink,

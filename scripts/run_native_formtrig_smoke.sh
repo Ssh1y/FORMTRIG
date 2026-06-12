@@ -68,6 +68,40 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -o "$work_dir/role_spec_smoke" -lrt -lm
 FORMTRIG_LIFT_SPEC="$work_dir/role_spec.txt" "$work_dir/role_spec_smoke"
 
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Werror "$repo_root/formtrig/tools/formtrig_lift_spec_audit.c" \
+  -o "$work_dir/formtrig_lift_spec_audit"
+
+cat > "$work_dir/binary_lift_spec.txt" <<'SPEC'
+role_component 8 101 root_observe 3 1 10 lower distance 1.0 1.0
+role_component 8 102 guard 5 1 20 higher hit 1.0 1.0
+role_component 8 103 desired_producer 6 1 30 higher hit 1.0 1.0
+role_component 8 104 use 6 1 40 higher hit 1.0 1.0
+SPEC
+
+"$work_dir/formtrig_lift_spec_audit" --category binary-null \
+  "$work_dir/binary_lift_spec.txt" > "$work_dir/binary_lift_audit.csv"
+
+if ! grep -q '1,binary-state-null,B2,true' "$work_dir/binary_lift_audit.csv"; then
+  echo "lift spec audit did not allow a B2 binary binding" >&2
+  cat "$work_dir/binary_lift_audit.csv" >&2
+  exit 9
+fi
+
+if "$work_dir/formtrig_lift_spec_audit" --category binary-null \
+  "$work_dir/role_spec.txt" > "$work_dir/insufficient_lift_audit.csv"; then
+  echo "lift spec audit allowed an insufficient binary binding" >&2
+  cat "$work_dir/insufficient_lift_audit.csv" >&2
+  exit 10
+fi
+
+if ! grep -q 'insufficient_binding_tier' \
+  "$work_dir/insufficient_lift_audit.csv"; then
+  echo "lift spec audit did not explain insufficient binding" >&2
+  cat "$work_dir/insufficient_lift_audit.csv" >&2
+  exit 11
+fi
+
 AFL_PATH="$aflpp_dir" "$afl_cc" -I"$repo_root/formtrig/include" \
   "$repo_root/formtrig/tests/native_afl_role_target.c" \
   "$repo_root/formtrig/runtime/formtrig_runtime.c" \

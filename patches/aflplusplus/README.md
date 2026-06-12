@@ -21,5 +21,6 @@ The target must be linked with `formtrig/runtime/formtrig_runtime.c` and include
 shared-memory ABI.
 
 `run_native_formtrig_smoke.sh` checks the native runtime role signal, a
-`FORMTRIG_LIFT_SPEC` role binding, AFL++ queue admission by FORMTRIG progress,
-typed mutation execution, and that `afl-fuzz` was built with `NO_PYTHON=1`.
+`FORMTRIG_LIFT_SPEC` role binding, native binding-tier audit, AFL++ queue
+admission by FORMTRIG progress, typed mutation execution, and that `afl-fuzz`
+was built with `NO_PYTHON=1`.
