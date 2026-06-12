@@ -611,6 +611,31 @@ if ! grep -q '"has_tc_rooted_progress": true' \
   exit 45
 fi
 
+mkdir -p "$work_dir/manifest_case"
+cat > "$work_dir/manifest_case/native_manifest.txt" <<'MANIFEST'
+target_id: native_afl_smoke
+category: binary-null
+seed_dir: ../in
+out_dir: ../manifest_out
+duration: 1
+seed_preflight: require
+binding_spec: ../binary_binding_spec.yml
+site_map: ../site_map.tsv
+target_site_ids: 101
+target_cwd: ..
+target_cmd: ./native_afl_role_target @@
+MANIFEST
+"$repo_root/scripts/run_formtrig_native_manifest.sh" \
+  "$work_dir/manifest_case/native_manifest.txt" >/dev/null
+require_file "$work_dir/manifest_out/default/formtrig_seed_readiness.json"
+require_file "$work_dir/manifest_out/default/formtrig_diagnosis.json"
+if ! grep -q '"status": "pass"' \
+  "$work_dir/manifest_out/default/formtrig_seed_readiness.json"; then
+  echo "manifest runner seed readiness did not pass" >&2
+  cat "$work_dir/manifest_out/default/formtrig_seed_readiness.json" >&2
+  exit 49
+fi
+
 if ! grep -Eq '"progress_status": "(progress_queued|triggered)"' "$summary"; then
   echo "FORMTRIG progress summary did not classify progress or trigger" >&2
   cat "$summary" >&2

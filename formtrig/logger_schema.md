@@ -131,6 +131,14 @@ experiments should use `--seed-preflight require`; this fails before AFL++ if
 the initial corpus cannot produce reached non-trigger, spec-driven,
 BindingSpec-grounded runtime signal.
 
+`scripts/run_formtrig_native_manifest.sh` is a thin experiment wrapper around
+the same artifacts. It reads a line-oriented manifest, optionally generates a
+first-pass BindingSpec from a source site, then invokes the campaign runner. It
+does not change runtime semantics; all authoritative evidence remains in
+`formtrig_seed_readiness.json`, `formtrig_runtime_event_map.csv`,
+`formtrig_lift_feature_audit.json`, `formtrig_summary.json`, and
+`formtrig_diagnosis.json`.
+
 ## LLVM Site Map
 
 When `FORMTRIG_SITE_MAP` is set at compile time, the LLVM pass appends one TSV

@@ -1,5 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 
+#include "formtrig/formtrig_abi.h"
+
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -34,6 +36,7 @@ typedef struct query {
   const char *atom_root;
   uint32_t atom_id;
   const char *role;
+  const char *component_text;
   uint32_t component_kind;
   uint32_t priority;
   const char *direction;
@@ -94,6 +97,33 @@ static int parse_double(const char *s, double *out) {
   if (errno || end == s || *end != '\0') return 0;
   *out = v;
   return 1;
+}
+
+static int eq(const char *a, const char *b) {
+  return a && b && strcmp(a, b) == 0;
+}
+
+static uint32_t component_kind_from_text(const char *s) {
+  if (!s || !*s) return 0;
+  uint32_t numeric = 0;
+  if (parse_u32(s, &numeric)) return numeric;
+  if (eq(s, "native_distance")) return FORMTRIG_COMPONENT_NATIVE_DISTANCE;
+  if (eq(s, "lifted_distance")) return FORMTRIG_COMPONENT_LIFTED_DISTANCE;
+  if (eq(s, "boundary_margin") || eq(s, "root_state"))
+    return FORMTRIG_COMPONENT_BOUNDARY_MARGIN;
+  if (eq(s, "operand_influence") || eq(s, "input_influence"))
+    return FORMTRIG_COMPONENT_OPERAND_INFLUENCE;
+  if (eq(s, "guard_progress") || eq(s, "guard"))
+    return FORMTRIG_COMPONENT_GUARD_PROGRESS;
+  if (eq(s, "producer_use") || eq(s, "producer") || eq(s, "use"))
+    return FORMTRIG_COMPONENT_PRODUCER_USE;
+  if (eq(s, "lifecycle_prefix") || eq(s, "lifecycle"))
+    return FORMTRIG_COMPONENT_LIFECYCLE_PREFIX;
+  if (eq(s, "object_identity") || eq(s, "same_object"))
+    return FORMTRIG_COMPONENT_OBJECT_IDENTITY;
+  if (eq(s, "event_phase") || eq(s, "phase"))
+    return FORMTRIG_COMPONENT_EVENT_PHASE;
+  return 0;
 }
 
 static void copy_field(char *dst, size_t dst_size, const char *src) {
@@ -242,7 +272,14 @@ static void print_binding_spec_row(const site_row_t *row, const query_t *q) {
   printf("\n");
   printf("      line: %u\n", row->line);
   printf("      column: %u\n", row->column);
-  printf("    component: %u\n", q->component_kind);
+  printf("    component: ");
+  uint32_t numeric_component = 0;
+  if (q->component_text && !parse_u32(q->component_text, &numeric_component)) {
+    print_yaml_quoted(q->component_text);
+    printf("\n");
+  } else {
+    printf("%u\n", q->component_kind);
+  }
   printf("    priority: %u\n", q->priority);
   printf("    direction: ");
   print_yaml_quoted(q->direction);
@@ -301,7 +338,9 @@ int main(int argc, char **argv) {
     } else if (!strcmp(argv[i], "--role") && i + 1 < argc) {
       q.role = argv[++i];
     } else if (!strcmp(argv[i], "--component") && i + 1 < argc) {
-      if (!parse_u32(argv[++i], &q.component_kind)) {
+      q.component_text = argv[++i];
+      q.component_kind = component_kind_from_text(q.component_text);
+      if (!q.component_kind) {
         usage(argv[0]);
         return 2;
       }

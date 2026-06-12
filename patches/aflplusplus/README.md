@@ -27,6 +27,33 @@ Or use the repository campaign wrapper:
   -- ./target @@
 ```
 
+For repeatable experiments, prefer a small line-oriented manifest and let the
+repository runner assemble BindingSpec compilation, seed readiness, AFL++,
+summary, and diagnosis:
+
+```text
+target_id: BUG001
+category: numeric
+seed_dir: seeds
+out_dir: results/BUG001/formtrig
+duration: 1800
+seed_preflight: require
+binding_spec: BUG001.binding.yaml
+site_map: build/formtrig-native/site_map.tsv
+target_site_ids: 12345
+target_cmd: ./build/target @@
+```
+
+Run it with:
+
+```sh
+./scripts/run_formtrig_native_manifest.sh BUG001.manifest
+```
+
+The manifest also supports generating a first-pass high-level BindingSpec from
+one source site using `source_file`, `source_line`, `source_kind`, `tc_expr`,
+`atom_*`, `role`, `component`, `priority`, `direction`, and `value_mode`.
+
 The target must be linked with `formtrig/runtime/formtrig_runtime.c` and include
 `formtrig/include` so it can publish `formtrig_shm_record_t` through the native
 shared-memory ABI.
