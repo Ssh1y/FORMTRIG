@@ -1,0 +1,272 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <errno.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ROWS 8192u
+
+typedef struct site_row {
+  uint32_t site_id;
+  char kind[32];
+  char function[160];
+  uint32_t inst_no;
+  char opcode[64];
+  char file[256];
+  uint32_t line;
+  uint32_t column;
+} site_row_t;
+
+typedef struct query {
+  const char *file_substr;
+  const char *function_substr;
+  const char *kind;
+  uint32_t line;
+  uint32_t line_window;
+  const char *emit;
+  uint32_t atom_id;
+  const char *role;
+  uint32_t component_kind;
+  uint32_t priority;
+  const char *direction;
+  const char *value_mode;
+  double value;
+  double confidence;
+} query_t;
+
+static void usage(const char *argv0) {
+  fprintf(stderr,
+          "usage: %s [filters] [--emit csv|ids|env|lift-spec] <site-map.tsv>\n"
+          "\n"
+          "filters:\n"
+          "  --file SUBSTR       match source file substring\n"
+          "  --function SUBSTR   match function substring\n"
+          "  --kind KIND         match pass kind, e.g. cmp, branch, binary\n"
+          "  --line N            match source line\n"
+          "  --line-window N     allow +/- N around --line\n"
+          "\n"
+          "lift-spec output options:\n"
+          "  --atom ID           atom id for generated role_component rows\n"
+          "  --role ROLE         root_observe|guard|producer|use|...\n"
+          "  --component KIND    FORMTRIG component kind number\n"
+          "  --priority N        component priority\n"
+          "  --direction DIR     lower|higher\n"
+          "  --value-mode MODE   distance|hit|outcome|not_outcome|a|b|c\n"
+          "  --value X           optional constant value\n"
+          "  --confidence X      optional confidence, default 1.0\n",
+          argv0);
+}
+
+static int parse_u32(const char *s, uint32_t *out) {
+  if (!s || !out) return 0;
+  char *end = NULL;
+  errno = 0;
+  unsigned long v = strtoul(s, &end, 0);
+  if (errno || end == s || *end != '\0' || v > UINT32_MAX) return 0;
+  *out = (uint32_t)v;
+  return 1;
+}
+
+static int parse_double(const char *s, double *out) {
+  if (!s || !out) return 0;
+  char *end = NULL;
+  errno = 0;
+  double v = strtod(s, &end);
+  if (errno || end == s || *end != '\0') return 0;
+  *out = v;
+  return 1;
+}
+
+static void copy_field(char *dst, size_t dst_size, const char *src) {
+  if (!dst || !dst_size) return;
+  if (!src) src = "";
+  snprintf(dst, dst_size, "%s", src);
+}
+
+static int read_row(char *line, site_row_t *row) {
+  char *fields[8] = {0};
+  char *saveptr = NULL;
+  for (uint32_t i = 0; i < 8u; i++) {
+    fields[i] = strtok_r(i ? NULL : line, "\t\r\n", &saveptr);
+    if (!fields[i]) return 0;
+  }
+
+  if (!parse_u32(fields[0], &row->site_id)) return 0;
+  copy_field(row->kind, sizeof(row->kind), fields[1]);
+  copy_field(row->function, sizeof(row->function), fields[2]);
+  if (!parse_u32(fields[3], &row->inst_no)) return 0;
+  copy_field(row->opcode, sizeof(row->opcode), fields[4]);
+  copy_field(row->file, sizeof(row->file), fields[5]);
+  if (!parse_u32(fields[6], &row->line)) row->line = 0;
+  if (!parse_u32(fields[7], &row->column)) row->column = 0;
+  return 1;
+}
+
+static int row_matches(const site_row_t *row, const query_t *q) {
+  if (q->file_substr && !strstr(row->file, q->file_substr)) return 0;
+  if (q->function_substr && !strstr(row->function, q->function_substr))
+    return 0;
+  if (q->kind && strcmp(row->kind, q->kind)) return 0;
+  if (q->line) {
+    uint32_t lo = q->line > q->line_window ? q->line - q->line_window : 0;
+    uint32_t hi = q->line + q->line_window;
+    if (row->line < lo || row->line > hi) return 0;
+  }
+  return 1;
+}
+
+static const char *mapping_status(uint32_t matches) {
+  if (!matches) return "missing";
+  if (matches == 1u) return "exact";
+  return "ambiguous";
+}
+
+static void print_csv_header(void) {
+  printf("site_id,kind,function,inst_no,opcode,file,line,column,"
+         "mapping_status\n");
+}
+
+static void print_csv_row(const site_row_t *row, uint32_t matches) {
+  printf("%u,%s,%s,%u,%s,%s,%u,%u,%s\n", row->site_id, row->kind,
+         row->function, row->inst_no, row->opcode, row->file, row->line,
+         row->column, mapping_status(matches));
+}
+
+static int validate_lift_spec_query(const query_t *q) {
+  return q->atom_id && q->role && q->component_kind && q->priority &&
+         q->direction && q->value_mode;
+}
+
+static void print_lift_spec_row(const site_row_t *row, const query_t *q) {
+  printf("role_component * %u %s %u %u %u %s %s %.17g %.17g %u %u\n",
+         row->site_id, q->role, q->component_kind, q->atom_id, q->priority,
+         q->direction, q->value_mode, q->value, q->confidence, row->site_id,
+         row->site_id);
+}
+
+int main(int argc, char **argv) {
+  query_t q;
+  memset(&q, 0, sizeof(q));
+  q.emit = "csv";
+  q.confidence = 1.0;
+  q.value = 1.0;
+
+  const char *path = NULL;
+  for (int i = 1; i < argc; i++) {
+    if (!strcmp(argv[i], "--file") && i + 1 < argc) {
+      q.file_substr = argv[++i];
+    } else if (!strcmp(argv[i], "--function") && i + 1 < argc) {
+      q.function_substr = argv[++i];
+    } else if (!strcmp(argv[i], "--kind") && i + 1 < argc) {
+      q.kind = argv[++i];
+    } else if (!strcmp(argv[i], "--line") && i + 1 < argc) {
+      if (!parse_u32(argv[++i], &q.line)) {
+        usage(argv[0]);
+        return 2;
+      }
+    } else if (!strcmp(argv[i], "--line-window") && i + 1 < argc) {
+      if (!parse_u32(argv[++i], &q.line_window)) {
+        usage(argv[0]);
+        return 2;
+      }
+    } else if (!strcmp(argv[i], "--emit") && i + 1 < argc) {
+      q.emit = argv[++i];
+    } else if (!strcmp(argv[i], "--atom") && i + 1 < argc) {
+      if (!parse_u32(argv[++i], &q.atom_id)) {
+        usage(argv[0]);
+        return 2;
+      }
+    } else if (!strcmp(argv[i], "--role") && i + 1 < argc) {
+      q.role = argv[++i];
+    } else if (!strcmp(argv[i], "--component") && i + 1 < argc) {
+      if (!parse_u32(argv[++i], &q.component_kind)) {
+        usage(argv[0]);
+        return 2;
+      }
+    } else if (!strcmp(argv[i], "--priority") && i + 1 < argc) {
+      if (!parse_u32(argv[++i], &q.priority)) {
+        usage(argv[0]);
+        return 2;
+      }
+    } else if (!strcmp(argv[i], "--direction") && i + 1 < argc) {
+      q.direction = argv[++i];
+    } else if (!strcmp(argv[i], "--value-mode") && i + 1 < argc) {
+      q.value_mode = argv[++i];
+    } else if (!strcmp(argv[i], "--value") && i + 1 < argc) {
+      if (!parse_double(argv[++i], &q.value)) {
+        usage(argv[0]);
+        return 2;
+      }
+    } else if (!strcmp(argv[i], "--confidence") && i + 1 < argc) {
+      if (!parse_double(argv[++i], &q.confidence)) {
+        usage(argv[0]);
+        return 2;
+      }
+    } else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
+      usage(argv[0]);
+      return 0;
+    } else if (!path) {
+      path = argv[i];
+    } else {
+      usage(argv[0]);
+      return 2;
+    }
+  }
+
+  if (!path) {
+    usage(argv[0]);
+    return 2;
+  }
+
+  if (strcmp(q.emit, "csv") && strcmp(q.emit, "ids") &&
+      strcmp(q.emit, "env") && strcmp(q.emit, "lift-spec")) {
+    usage(argv[0]);
+    return 2;
+  }
+
+  if (!strcmp(q.emit, "lift-spec") && !validate_lift_spec_query(&q)) {
+    usage(argv[0]);
+    return 2;
+  }
+
+  FILE *f = fopen(path, "r");
+  if (!f) {
+    perror(path);
+    return 2;
+  }
+
+  static site_row_t rows[MAX_ROWS];
+  uint32_t row_count = 0;
+  uint32_t match_count = 0;
+  char line[1024];
+  while (fgets(line, sizeof(line), f)) {
+    site_row_t row;
+    memset(&row, 0, sizeof(row));
+    if (!read_row(line, &row)) continue;
+    if (row_count < MAX_ROWS) rows[row_count++] = row;
+    if (row_matches(&row, &q)) match_count++;
+  }
+  fclose(f);
+
+  if (!strcmp(q.emit, "csv")) print_csv_header();
+  if (!strcmp(q.emit, "env")) printf("FORMTRIG_TARGET_SITE_IDS=");
+
+  uint32_t emitted = 0;
+  for (uint32_t i = 0; i < row_count; i++) {
+    if (!row_matches(&rows[i], &q)) continue;
+    if (!strcmp(q.emit, "csv")) {
+      print_csv_row(&rows[i], match_count);
+    } else if (!strcmp(q.emit, "ids") || !strcmp(q.emit, "env")) {
+      if (emitted) putchar(',');
+      printf("%u", rows[i].site_id);
+    } else if (!strcmp(q.emit, "lift-spec")) {
+      print_lift_spec_row(&rows[i], &q);
+    }
+    emitted++;
+  }
+
+  if (!strcmp(q.emit, "ids") || !strcmp(q.emit, "env")) putchar('\n');
+  return emitted ? 0 : 1;
+}

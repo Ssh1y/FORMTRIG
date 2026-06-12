@@ -74,3 +74,23 @@ keeps aggregate counters from AFL++ and adds experiment-facing diagnostics:
 
 These summary diagnostics are audit data. They do not feed back into fuzzing
 decisions and they do not use trigger-oracle state to score non-trigger inputs.
+
+## LLVM Site Map
+
+When `FORMTRIG_SITE_MAP` is set at compile time, the LLVM pass appends one TSV
+row for each instrumented site:
+
+```text
+site_id kind function inst_no opcode file line column
+```
+
+`formtrig/tools/formtrig_site_map.c` filters this map by file, function, kind,
+and source line. It can emit:
+
+- `csv`: matching rows plus `mapping_status` (`exact`, `ambiguous`, `missing`).
+- `ids`: comma-separated site ids.
+- `env`: `FORMTRIG_TARGET_SITE_IDS=...` for source-line TC campaigns.
+- `lift-spec`: draft `role_component` rows for `FORMTRIG_LIFT_SPEC`.
+
+Draft lift-spec rows are only binding inputs. They must still pass the native
+binding-tier audit before a lifted plan is trusted.

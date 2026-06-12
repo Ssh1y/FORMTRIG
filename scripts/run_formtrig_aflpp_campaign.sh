@@ -9,6 +9,7 @@ out_dir=""
 target_bug=""
 category="generic"
 lift_spec=""
+target_site_ids=""
 duration="60"
 extra_afl_args=()
 
@@ -19,6 +20,7 @@ usage: $0 --in DIR --out DIR --target-bug LABEL [options] -- TARGET [ARGS...]
 options:
   --category NAME      numeric|equality|binary-null|lifecycle|generic
   --lift-spec FILE     FORMTRIG_LIFT_SPEC file to export and audit
+  --target-site-ids S  comma-separated LLVM FORMTRIG site ids for known TC line
   --duration SEC       AFL++ -V time budget in seconds (default: 60)
   --aflpp-dir DIR      AFL++ checkout/build directory
   --afl-arg ARG        extra afl-fuzz argument, repeatable
@@ -58,6 +60,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --lift-spec)
       lift_spec="${2:-}"
+      shift 2
+      ;;
+    --target-site-ids)
+      target_site_ids="${2:-}"
       shift 2
       ;;
     --duration)
@@ -138,6 +144,10 @@ env_args=(
 
 if [[ -n "$lift_spec" ]]; then
   env_args+=(FORMTRIG_LIFT_SPEC="$lift_spec")
+fi
+
+if [[ -n "$target_site_ids" ]]; then
+  env_args+=(FORMTRIG_TARGET_SITE_IDS="$target_site_ids")
 fi
 
 env "${env_args[@]}" "$afl_fuzz" \

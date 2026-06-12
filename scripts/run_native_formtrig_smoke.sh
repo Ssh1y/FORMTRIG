@@ -84,6 +84,28 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_progress_summary.c" \
   -o "$work_dir/formtrig_progress_summary"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Werror "$repo_root/formtrig/tools/formtrig_site_map.c" \
+  -o "$work_dir/formtrig_site_map"
+
+cat > "$work_dir/site_map.tsv" <<'SITEMAP'
+101	cmp	known_tc	7	icmp	bench/known_tc.c	42	11
+102	cmp	known_tc	8	icmp	bench/known_tc.c	42	19
+201	binary	helper	3	add	bench/helper.c	9	5
+SITEMAP
+
+site_ids="$("$work_dir/formtrig_site_map" --file known_tc.c --line 42 \
+  --kind cmp --emit ids "$work_dir/site_map.tsv")"
+if [[ "$site_ids" != "101,102" ]]; then
+  echo "site-map tool did not resolve source line to site ids" >&2
+  echo "site_ids=$site_ids" >&2
+  exit 16
+fi
+
+"$work_dir/formtrig_site_map" --file known_tc.c --line 42 --kind cmp \
+  --emit lift-spec --atom 7 --role root_observe --component 3 \
+  --priority 10 --direction lower --value-mode distance \
+  "$work_dir/site_map.tsv" > "$work_dir/generated_numeric_lift_spec.txt"
 
 cat > "$work_dir/binary_lift_spec.txt" <<'SPEC'
 role_component 8 101 root_observe 3 1 10 lower distance 1.0 1.0
@@ -99,6 +121,16 @@ if ! grep -q '1,binary-state-null,B2,true' "$work_dir/binary_lift_audit.csv"; th
   echo "lift spec audit did not allow a B2 binary binding" >&2
   cat "$work_dir/binary_lift_audit.csv" >&2
   exit 9
+fi
+
+"$work_dir/formtrig_lift_spec_audit" --category numeric \
+  "$work_dir/generated_numeric_lift_spec.txt" \
+  > "$work_dir/generated_numeric_lift_audit.csv"
+if ! grep -q '7,numeric-margin,B1,true' \
+  "$work_dir/generated_numeric_lift_audit.csv"; then
+  echo "site-map generated lift spec did not produce a valid B1 numeric binding" >&2
+  cat "$work_dir/generated_numeric_lift_audit.csv" >&2
+  exit 17
 fi
 
 if "$work_dir/formtrig_lift_spec_audit" --category binary-null \
@@ -126,6 +158,7 @@ FORMTRIG_NO_CRASH=1 "$repo_root/scripts/run_formtrig_aflpp_campaign.sh" \
   --target-bug native_afl_smoke \
   --category binary-null \
   --lift-spec "$work_dir/binary_lift_spec.txt" \
+  --target-site-ids "$site_ids" \
   --duration 2 \
   --aflpp-dir "$aflpp_dir" \
   -- "$work_dir/native_afl_role_target" @@ >/dev/null
