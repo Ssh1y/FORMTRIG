@@ -11,6 +11,7 @@ import random
 import shutil
 import time
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,7 @@ try:
         AtomPlan,
         MutationEdge,
         ProgressVector,
+        ProgressDecision,
         ReplayRecord,
         SeedProgressRecord,
         TCAtom,
@@ -48,11 +50,14 @@ try:
         progress_dominates,
         progress_dominates_global,
         propose_mutations,
+        parse_root_state,
         read_csv,
         registry,
         replay_record_from_row,
         root_signature,
         run_target_cmd,
+        select_focus_atoms,
+        select_frontier_seed,
         seed_path_for_record,
         source_location_from_meta,
         target_meta_from_inventories,
@@ -66,6 +71,7 @@ except ModuleNotFoundError:
         AtomPlan,
         MutationEdge,
         ProgressVector,
+        ProgressDecision,
         ReplayRecord,
         SeedProgressRecord,
         TCAtom,
@@ -95,11 +101,14 @@ except ModuleNotFoundError:
         progress_dominates,
         progress_dominates_global,
         propose_mutations,
+        parse_root_state,
         read_csv,
         registry,
         replay_record_from_row,
         root_signature,
         run_target_cmd,
+        select_focus_atoms,
+        select_frontier_seed,
         seed_path_for_record,
         source_location_from_meta,
         target_meta_from_inventories,
@@ -188,14 +197,58 @@ def replay_signal_to_record(
     seed_path: Path,
     producer: str,
     signal: dict[str, Any],
+    meta: dict[str, str] | None = None,
+    tcir: TCIR | None = None,
+    graph: TriggerProgressGraph | None = None,
+    enable_lifted: bool = True,
+    replay_verified: bool = False,
 ) -> ReplayRecord:
     reached = bool(signal.get("reached")) if signal.get("reached") is not None else parent.reached_R
     triggered = bool(signal.get("triggered")) if signal.get("triggered") is not None else bool(signal.get("sanitizer_error"))
-    native_dt = signal.get("native_DT")
-    try:
-        native_text = "" if native_dt is None else str(float(native_dt))
-    except (TypeError, ValueError):
-        native_text = ""
+    reached_count = signal_count(signal, "reached_count", "reached")
+    triggered_count = signal_count(signal, "triggered_count", "triggered")
+    native_text = as_float_text(signal.get("native_DT"))
+    lifted: dict[str, Any] = {}
+    if enable_lifted and meta is not None:
+        lifted = lift_runtime_signal(target_id, data, signal, meta, tcir, graph)
+    elif signal.get("lifted_DF") is not None or signal.get("root_state"):
+        lifted = {
+            "D_F": signal.get("lifted_DF"),
+            "df_source": signal.get("df_source") or "legacy_target_cmd_lift",
+            "root_state": signal.get("root_state", ""),
+            "hot_ranges": signal.get("hot_ranges", []),
+            "debug_events": signal.get("debug_events", []),
+        }
+    lifted_df = lifted.get("D_F")
+    lifted_text = as_float_text(lifted_df)
+    raw_signal: dict[str, str] = {}
+    for key, value in signal.items():
+        if isinstance(value, (dict, list, tuple)):
+            raw_signal[key] = json.dumps(value, sort_keys=True)
+        else:
+            raw_signal[key] = "" if value is None else str(value)
+    if native_text:
+        raw_signal["native_DT"] = native_text
+    if lifted_text:
+        raw_signal["lifted_DF"] = lifted_text
+        raw_signal["progress_distance_source"] = str(lifted.get("df_source") or "FORMTRIG_lifted_DF")
+        raw_signal["coarse_D_T"] = native_text
+    if lifted.get("df_source"):
+        raw_signal["df_source"] = str(lifted.get("df_source"))
+    if lifted.get("hot_ranges") is not None:
+        raw_signal["hot_ranges"] = json.dumps(lifted.get("hot_ranges", []), sort_keys=True)
+    if lifted.get("debug_events") is not None:
+        raw_signal["debug_events"] = json.dumps(lifted.get("debug_events", []), sort_keys=True)
+    if lifted.get("lift_context") is not None:
+        raw_signal["lift_context"] = json.dumps(lifted.get("lift_context", {}), sort_keys=True)
+    root_state = str(lifted.get("root_state") or signal.get("root_state") or parent.tc_root_state)
+    coverage_hash = str(signal.get("trace_signature") or parent.coverage_hash)
+    if lifted.get("root_state"):
+        lifted_sig = hashlib.sha256(str(lifted.get("root_state", "")).encode()).hexdigest()[:16]
+        coverage_hash = f"{coverage_hash};lifted:{lifted_sig}"
+    metadata_status = "executed_mutation"
+    if reached and not triggered:
+        metadata_status = "formal_replay_verified_rnt" if replay_verified else "single_replay_reached"
     record = ReplayRecord(
         target_id=target_id,
         seed_id=seed_id,
@@ -204,24 +257,204 @@ def replay_signal_to_record(
         input_size=len(data),
         reached_R=reached,
         triggered_T=triggered,
-        reached_count=1 if reached else 0,
-        triggered_count=1 if triggered else 0,
+        reached_count=reached_count,
+        triggered_count=triggered_count,
         time_s=0.0,
-        coverage_hash=str(signal.get("trace_signature") or parent.coverage_hash),
+        coverage_hash=coverage_hash,
         native_DT=float(native_text) if native_text else parent.native_DT,
         dt_bucket=None,
-        tc_root_state=str(signal.get("root_state") or parent.tc_root_state),
-        replay_hash=sha256_bytes(json.dumps(signal, sort_keys=True).encode()),
+        tc_root_state=root_state,
+        replay_hash=sha256_bytes(json.dumps({"raw": signal, "lifted": lifted}, sort_keys=True).encode()),
         replay_status="executed_mutation",
-        metadata_status="formal_replay_verified_rnt" if reached and not triggered else "executed_mutation",
+        metadata_status=metadata_status,
         source_seedbank=str(seed_path.parent),
         source_manifest="formtrig_mode",
         source_seed=str(seed_path),
         producer=producer,
-        raw={key: str(value) for key, value in signal.items()},
+        raw=raw_signal,
     )
     record.dt_bucket = dt_bucket(record.native_DT)
     return record
+
+
+def replay_signal_to_initial_record(
+    record: ReplayRecord,
+    data: bytes,
+    seed_path: Path,
+    signal: dict[str, Any],
+    meta: dict[str, str] | None = None,
+    tcir: TCIR | None = None,
+    graph: TriggerProgressGraph | None = None,
+) -> ReplayRecord:
+    lifted = replay_signal_to_record(
+        record.target_id,
+        record.seed_id,
+        record,
+        data,
+        seed_path,
+        record.producer or "initial_lift",
+        signal,
+        meta=meta,
+        tcir=tcir,
+        graph=graph,
+        replay_verified=True,
+    )
+    lifted.parent_seed_id = record.parent_seed_id
+    lifted.replay_status = "kept_rnt_initial_lift" if lifted.reached_R and not lifted.triggered_T else "initial_lift_replay"
+    lifted.metadata_status = "formal_replay_verified_rnt_initial_lift" if lifted.reached_R and not lifted.triggered_T else "initial_lift_replay"
+    lifted.source_seedbank = record.source_seedbank
+    lifted.source_manifest = record.source_manifest
+    lifted.source_seed = record.source_seed
+    lifted.raw["initial_lift"] = "1"
+    return lifted
+
+
+def initial_lift_limit(args: argparse.Namespace) -> int:
+    configured = int(getattr(args, "lift_initial_records", -1))
+    if configured >= 0:
+        return configured
+    if getattr(args, "execute_mutations", False) and getattr(args, "target_cmd", ""):
+        return max(0, int(getattr(args, "max_seed_records", 0)))
+    return 0
+
+
+def signal_count(signal: dict[str, Any], count_key: str, bool_key: str) -> int:
+    value = signal.get(count_key)
+    try:
+        if value is not None and str(value) != "":
+            return int(value)
+    except (TypeError, ValueError):
+        pass
+    return 1 if bool(signal.get(bool_key)) else 0
+
+
+def as_float_text(value: Any) -> str:
+    try:
+        if value is None or str(value) == "":
+            return ""
+        return str(float(value))
+    except (TypeError, ValueError):
+        return ""
+
+
+def format_root_field_value(value: Any) -> str:
+    return str(value).replace(";", "_").replace(",", "_").replace(" ", "_")
+
+
+def merge_lift_root_fields(root_state: str, fields: list[tuple[str, Any]], *, override: bool = False) -> str:
+    if not fields:
+        return root_state
+    ordered: list[tuple[str, str]] = []
+    positions: dict[str, int] = {}
+    for item in root_state.split(";"):
+        if "=" in item:
+            key, value = item.split("=", 1)
+            positions[key] = len(ordered)
+            ordered.append((key, value))
+    for key, value in fields:
+        formatted = format_root_field_value(value)
+        if key in positions:
+            if override:
+                ordered[positions[key]] = (key, formatted)
+        else:
+            positions[key] = len(ordered)
+            ordered.append((key, formatted))
+    return ";".join(f"{key}={value}" for key, value in ordered)
+
+
+def non_oracle_root_fields(root_state: Any) -> list[tuple[str, Any]]:
+    parsed = parse_root_state(str(root_state or ""))
+    fields: list[tuple[str, Any]] = []
+    for key, value in parsed.items():
+        upper = key.upper()
+        if upper in {"R", "T"} or upper.endswith("_R") or upper.endswith("_T"):
+            continue
+        fields.append((key, value))
+    return fields
+
+
+def lift_runtime_signal(
+    target_id: str,
+    data: bytes,
+    signal: dict[str, Any],
+    meta: dict[str, str],
+    tcir: TCIR | None,
+    graph: TriggerProgressGraph | None,
+) -> dict[str, Any]:
+    reached_count = signal_count(signal, "reached_count", "reached")
+    triggered_count = signal_count(signal, "triggered_count", "triggered")
+    try:
+        from tools.magma_replay_json import base_root_fields, lifted_observation, root_state_string
+    except ModuleNotFoundError:
+        from magma_replay_json import base_root_fields, lifted_observation, root_state_string  # type: ignore
+
+    lifted = lifted_observation(target_id, data, reached_count, triggered_count if triggered_count > 0 else 0, meta)
+    root_state = str(lifted.get("root_state") or root_state_string(base_root_fields(target_id, reached_count)))
+    extra_fields: list[tuple[str, Any]] = non_oracle_root_fields(signal.get("root_state", ""))
+    if signal.get("hit_probe"):
+        extra_fields.append(("hit_probe", signal.get("hit_probe") or "none"))
+    if signal.get("normal_timed_out") is not None:
+        extra_fields.append(("replay_timed_out", int(bool(signal.get("normal_timed_out")))))
+    if signal.get("gdb_timed_out") is not None:
+        extra_fields.append(("gdb_timed_out", int(bool(signal.get("gdb_timed_out")))))
+    root_state = merge_lift_root_fields(root_state, extra_fields, override=True)
+    lifted["root_state"] = root_state
+    lifted["lift_context"] = {
+        "tcir_schema": getattr(tcir, "schema_version", ""),
+        "atom_count": len(getattr(tcir, "atoms", []) or []),
+        "graph_nodes": len(getattr(graph, "nodes", []) or []),
+    }
+    return lifted
+
+
+def lift_initial_replay_records(
+    args: argparse.Namespace,
+    records: list[ReplayRecord],
+    seed_dir: Path,
+    out_dir: Path,
+    meta: dict[str, str],
+    tcir: TCIR,
+    graph: TriggerProgressGraph | None,
+) -> tuple[list[ReplayRecord], list[dict[str, Any]]]:
+    limit = initial_lift_limit(args)
+    if limit <= 0 or not getattr(args, "target_cmd", ""):
+        return records, []
+    lifted_by_seed: dict[str, ReplayRecord] = {}
+    rows: list[dict[str, Any]] = []
+    for record in [item for item in records if is_strict_rnt(item) and item.replay_stable][:limit]:
+        seed_path = seed_path_for_record(seed_dir, record)
+        if not seed_path.exists():
+            rows.append({"event": "initial_lift_skip", "seed_id": record.seed_id, "reason": "seed_path_missing", "path": str(seed_path)})
+            continue
+        data = seed_path.read_bytes()
+        signal = run_target_cmd(args.target_cmd, data, args.per_exec_timeout)
+        lifted = replay_signal_to_initial_record(record, data, seed_path, signal, meta=meta, tcir=tcir, graph=graph)
+        lifted_by_seed[record.seed_id] = lifted
+        rows.append(
+            {
+                "event": "initial_lift_replay",
+                "target_id": record.target_id,
+                "seed_id": record.seed_id,
+                "path": str(seed_path),
+                "original_root_state": record.tc_root_state,
+                "lifted_root_state": lifted.tc_root_state,
+                "original_native_DT": record.native_DT,
+                "native_DT": lifted.native_DT,
+                "lifted_DF": lifted.raw.get("lifted_DF", ""),
+                "reached": lifted.reached_R,
+                "triggered": lifted.triggered_T,
+                "df_source": lifted.raw.get("df_source", ""),
+                "trace_signature": lifted.coverage_hash,
+            }
+        )
+    if rows:
+        log_path = out_dir / "logs" / "initial_lift_records.jsonl"
+        for row in rows:
+            append_jsonl(log_path, row)
+        shutil.copyfile(log_path, out_dir / "initial_lift_records.jsonl")
+    if not lifted_by_seed:
+        return records, rows
+    return [lifted_by_seed.get(record.seed_id, record) for record in records], rows
 
 
 def mutation_edge_from_records(parent: ReplayRecord, child: ReplayRecord, source: str) -> MutationEdge:
@@ -274,6 +507,8 @@ def annotate_atoms(tcir: TCIR, records: list[ReplayRecord]) -> list[dict[str, An
 def controlled_calibration_mutations(
     args: argparse.Namespace,
     target_id: str,
+    meta: dict[str, str],
+    tcir: TCIR,
     atoms: list[Any],
     rnt_records: list[ReplayRecord],
     seed_dir: Path,
@@ -291,7 +526,8 @@ def controlled_calibration_mutations(
     calib_dir = out_dir / "calibration_seeds"
     calib_dir.mkdir(parents=True, exist_ok=True)
     max_seed_records = int(getattr(args, "max_seed_records", 16))
-    fake_records = rnt_records[: max(1, min(len(rnt_records), max_seed_records))]
+    calibration_seed_budget = max(max_seed_records, e_min)
+    fake_records = rnt_records[: max(1, min(len(rnt_records), calibration_seed_budget))]
     fake_edges: list[MutationEdge] = []
     for parent in fake_records:
         if len(edges) >= e_min:
@@ -312,7 +548,19 @@ def controlled_calibration_mutations(
                 child_path = calib_dir / proposal.proposal_id.replace(":", "_")
                 child_path.write_bytes(data)
                 signal = run_target_cmd(args.target_cmd, data, args.per_exec_timeout)
-                child = replay_signal_to_record(target_id, proposal.proposal_id, parent, data, child_path, proposal.operator_name, signal)
+                child = replay_signal_to_record(
+                    target_id,
+                    proposal.proposal_id,
+                    parent,
+                    data,
+                    child_path,
+                    proposal.operator_name,
+                    signal,
+                    meta=meta,
+                    tcir=tcir,
+                    graph=graph,
+                    replay_verified=True,
+                )
                 edge = mutation_edge_from_records(parent, child, "controlled_calibration")
                 edges.append(edge)
                 fake_edges.append(edge)
@@ -355,6 +603,8 @@ def prepare_algorithm_state(
         calibration_edges, calibration_rows, insufficient_rows = controlled_calibration_mutations(
             args,
             args.target_id,
+            meta,
+            tcir,
             tcir.atoms,
             rnt_records,
             seed_dir,
@@ -653,8 +903,35 @@ def structured_mutation_row(
     }
 
 
+def stable_progress(first: ReplayRecord, confirmed: ReplayRecord, decision: ProgressDecision) -> tuple[bool, list[str]]:
+    failures: list[str] = []
+    if first.reached_R != confirmed.reached_R:
+        failures.append("reach_changed")
+    if first.triggered_T != confirmed.triggered_T:
+        failures.append("trigger_changed")
+    if not confirmed.reached_R:
+        failures.append("confirm_not_reached")
+    first_sig = root_signature(first.tc_root_state)
+    confirmed_sig = root_signature(confirmed.tc_root_state)
+    if first_sig != confirmed_sig:
+        failures.append("root_signature_changed")
+    first_lift = first.raw.get("lifted_DF", "")
+    confirmed_lift = confirmed.raw.get("lifted_DF", "")
+    if "lifted_df" in decision.improved_components and first_lift != confirmed_lift:
+        failures.append("lifted_df_changed")
+    first_native = "" if first.native_DT is None else f"{first.native_DT:.12g}"
+    confirmed_native = "" if confirmed.native_DT is None else f"{confirmed.native_DT:.12g}"
+    if "native_dt" in decision.improved_components and first_native != confirmed_native:
+        failures.append("native_dt_changed")
+    if any(item in decision.improved_components for item in ["lifecycle_prefix", "phase_novelty", "object_identity_confidence"]):
+        if lifecycle_prefix_score(first.tc_root_state) != lifecycle_prefix_score(confirmed.tc_root_state):
+            failures.append("lifecycle_prefix_changed")
+    return not failures, failures
+
+
 def execute_mutation_proposals(
     args: argparse.Namespace,
+    meta: dict[str, str],
     records: list[ReplayRecord],
     atom_dicts: list[dict[str, Any]],
     plans: list[AtomPlan],
@@ -676,11 +953,35 @@ def execute_mutation_proposals(
     queue_dir = out_dir / "queue"
     queue_dir.mkdir(parents=True, exist_ok=True)
     rng = random.Random(args.rng_seed)
-    candidate_records = [record for record in records if record.reached_R and not record.triggered_T and record.replay_stable]
-    rng.shuffle(candidate_records)
-    for record in candidate_records[: args.max_seed_records]:
+    initial_ids = [item.record.seed_id for item in frontier if item.record.reached_R and not item.record.triggered_T and item.record.replay_stable]
+    rng.shuffle(initial_ids)
+    allowed_initial_ids = set(initial_ids[: max(1, args.max_seed_records)])
+    expanded: set[str] = set()
+
+    while executed < args.max_total_mutations:
+        eligible = [
+            item
+            for item in frontier
+            if item.record.seed_id not in expanded
+            and item.record.reached_R
+            and not item.record.triggered_T
+            and item.record.replay_stable
+            and (
+                item.record.seed_id in allowed_initial_ids
+                or item.record.source_manifest == "formtrig_mode"
+                or item.record.parent_seed_id not in {"", "ROOT"}
+            )
+        ]
+        parent_progress = select_frontier_seed(eligible, tcir, plan_by_atom)
+        if parent_progress is None:
+            break
+        record = parent_progress.record
+        expanded.add(record.seed_id)
         seed_path = seed_path_for_record(seed_dir, record)
-        for atom in atoms:
+        if record.source_manifest == "formtrig_mode" and record.source_seed:
+            seed_path = Path(record.source_seed)
+        focus_atom_ids = select_focus_atoms(parent_progress, tcir, plan_by_atom)
+        for atom in [item for item in atoms if item.atom_id in focus_atom_ids]:
             plan = plan_by_atom[atom.atom_id]
             proposals = propose_mutations(
                 args.target_id,
@@ -693,8 +994,7 @@ def execute_mutation_proposals(
             )
             for proposal, data in proposals:
                 if executed >= args.max_total_mutations:
-                    mutation_rows.append(structured_mutation_row(record, None, proposal, {}, {"accepted": False, "reason": "budget_exhausted"}, args.baseline, args.mode))
-                    continue
+                    return mutation_rows, decision_rows, progress_records, snapshots, executed, trigger_success
                 if data is None:
                     mutation_rows.append(structured_mutation_row(record, None, proposal, {}, {"accepted": False, "reason": proposal.keep_reason}, args.baseline, args.mode))
                     continue
@@ -704,7 +1004,18 @@ def execute_mutation_proposals(
                 if args.execute_mutations and args.target_cmd:
                     signal = run_target_cmd(args.target_cmd, data, args.per_exec_timeout)
                     executed += 1
-                    new_record = replay_signal_to_record(record.target_id, proposal.proposal_id, record, data, out_seed, proposal.operator_name, signal)
+                    new_record = replay_signal_to_record(
+                        record.target_id,
+                        proposal.proposal_id,
+                        record,
+                        data,
+                        out_seed,
+                        proposal.operator_name,
+                        signal,
+                        meta=meta,
+                        tcir=tcir,
+                        graph=graph,
+                    )
                     proposal.executed = True
                     proposal.changed_target_root_event = (
                         new_record.tc_root_state != record.tc_root_state
@@ -752,7 +1063,44 @@ def execute_mutation_proposals(
                             return mutation_rows, decision_rows, progress_records, snapshots, executed, trigger_success
                         continue
 
-                    accepted, decision, seed_progress = progress_dominates_global(new_record, frontier, tcir, plan_by_atom)
+                    tentative_record = replace(new_record, metadata_status="formal_replay_verified_rnt")
+                    accepted, decision, seed_progress = progress_dominates_global(tentative_record, frontier, tcir, plan_by_atom, require_replay_stability=False)
+                    if accepted:
+                        confirm_signal = run_target_cmd(args.target_cmd, data, args.per_exec_timeout)
+                        confirmed_record = replay_signal_to_record(
+                            record.target_id,
+                            proposal.proposal_id,
+                            record,
+                            data,
+                            out_seed,
+                            proposal.operator_name,
+                            confirm_signal,
+                            meta=meta,
+                            tcir=tcir,
+                            graph=graph,
+                            replay_verified=True,
+                        )
+                        stable, failures = stable_progress(new_record, confirmed_record, decision)
+                        proposal.details["confirm_runtime_signal"] = confirm_signal
+                        decision.details["replay_count"] = 2
+                        if stable:
+                            new_record = confirmed_record
+                            accepted, decision, seed_progress = progress_dominates_global(new_record, frontier, tcir, plan_by_atom)
+                            decision.details["replay_count"] = 2
+                        else:
+                            accepted = False
+                            decision = ProgressDecision(
+                                seed_id=new_record.seed_id,
+                                accepted=False,
+                                reason="not_replay_stable",
+                                atom_id=atom.atom_id,
+                                improved_components=[],
+                                rejected_components=["replay_stability", *failures],
+                                replay_verifiable=False,
+                                root_or_event_aligned=seed_progress.full_vector.root_or_event_aligned,
+                                vector=seed_progress.full_vector.to_dict(),
+                                details={"replay_count": 2, "stable_progress_failures": failures},
+                            )
                     proposal.replay_verifiable = decision.replay_verifiable
                     proposal.kept = accepted
                     proposal.keep_reason = decision.reason
@@ -792,6 +1140,12 @@ def run_postreach_mode(args: argparse.Namespace) -> int:
     if not records:
         append_event(events, "postreach_mode", args.target_id, "mode_error", {"error": f"no metadata records: {metadata_path}"})
         raise SystemExit(f"no metadata records: {metadata_path}")
+    bootstrap_expression = expression_from_meta(meta)
+    bootstrap_category = category_from_meta(meta, records[0].raw.get("tc_category", "numeric-margin") if records else "numeric-margin")
+    bootstrap_secondary = [meta["secondary_tc_category"]] if meta.get("secondary_tc_category") else []
+    bootstrap_tcir = build_tcir(bootstrap_expression, bootstrap_category, source_location_from_meta(meta), bootstrap_secondary, target_id=args.target_id)
+    bootstrap_graph = build_trigger_progress_graph(args.target_id, meta, bootstrap_tcir.atoms, [])
+    records, initial_lift_rows = lift_initial_replay_records(args, records, seed_dir, out_dir, meta, bootstrap_tcir, bootstrap_graph)
     state = prepare_algorithm_state(args, meta, records, seed_dir, out_dir)
     tcir = state["tcir"]
     atoms = state["atoms"]
@@ -828,6 +1182,7 @@ def run_postreach_mode(args: argparse.Namespace) -> int:
         append_jsonl(snapshot_path, row)
     mutations, mutation_decisions, mutation_progress_records, mutation_snapshots, executed, trigger_success = execute_mutation_proposals(
         args,
+        meta,
         records,
         atoms,
         plans,
@@ -862,6 +1217,7 @@ def run_postreach_mode(args: argparse.Namespace) -> int:
         "metadata_csv": str(metadata_path),
         "seed_dir": str(seed_dir),
         "records": len(records),
+        "initial_lift_records": len([row for row in initial_lift_rows if row.get("event") == "initial_lift_replay"]),
         "rnt_records": len(rnt_records),
         "atoms": len(atoms),
         "frontier_size": len(frontier),
@@ -946,6 +1302,7 @@ def run_e2e_mode(args: argparse.Namespace) -> int:
         args.execute_mutations = True
         mutations, mutation_decisions, mutation_progress_records, mutation_snapshots, executed, trigger_success = execute_mutation_proposals(
             args,
+            meta,
             stream_records,
             atoms,
             plans,
@@ -1035,6 +1392,7 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument("--per-exec-timeout", type=float, default=2.0)
         sp.add_argument("--thresholds", type=Path, default=Path("configs/signal_health_thresholds.yaml"))
         sp.add_argument("--calibration-mutations-per-seed", type=int, default=4)
+        sp.add_argument("--lift-initial-records", type=int, default=-1)
         sp.add_argument("--baseline", choices=["formtrig", "native_tc_dgf", "native_tc_dgf_typedmut"], default="formtrig")
         common[name] = sp
     post = common["postreach_mode"]

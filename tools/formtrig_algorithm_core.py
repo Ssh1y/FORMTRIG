@@ -300,9 +300,10 @@ class ReplayRecord:
     @property
     def replay_stable(self) -> bool:
         status = f"{self.replay_status} {self.metadata_status}".lower()
+        if self.triggered_T:
+            return self.reached_R and "timeout" not in status
         return (
             self.reached_R
-            and not self.triggered_T
             and "timeout" not in status
             and "crash" not in status
             and ("kept_rnt" in status or "verified_rnt" in status or "rnt" in status)
@@ -410,6 +411,9 @@ class ProgressVector:
     triggered: bool
     native_dt: float | None
     native_bucket: int | None
+    lifted_df: float | None
+    lifted_bucket: int | None
+    distance_source: str
     root_state: str
     root_signature: str
     lifecycle_prefix: int
@@ -429,6 +433,9 @@ class ProgressVector:
             "trigger": self.triggered,
             "native_bucket": self.native_bucket,
             "native_dt": self.native_dt,
+            "lifted_bucket": self.lifted_bucket,
+            "lifted_df": self.lifted_df,
+            "distance_source": self.distance_source,
             "root_signature": self.root_signature,
             "root_alignment": self.root_or_event_aligned,
             "lifecycle_prefix": self.lifecycle_prefix,
@@ -642,22 +649,33 @@ def entropy(values: Iterable[Any]) -> float:
     return -sum((count / total) * math.log2(count / total) for count in counts.values())
 
 
-def category_from_expression(expression: str, default: str = "numeric-margin") -> str:
+def category_from_expression(expression: str, default: str = "numeric-margin", allow_default_override: bool = True) -> str:
     expr = expression.lower()
     expr_without_literals = re.sub(r"'(?:\\.|[^'])*'|\"(?:\\.|[^\"])*\"", " LIT ", expr)
+    expr_for_numeric_ops = expr_without_literals.replace("->", ".")
+    default = default if default in TC_CATEGORIES else "numeric-margin"
     if re.search(r"\bnull\b|\bnullptr\b|==\s*0\b|!\s*[a-zA-Z_]", expr):
         return "binary-state-null"
     if any(token in expr for token in ["use_after", "free", "release", "delete", "lifecycle", "same_object", "same object", "state &&"]):
         return "compound-sequence-lifecycle"
-    if (
+    equality_like = (
         any(token in expr for token in ["strcmp", "memcmp", "magic", "checksum", "hash"])
         or re.search(r"(?:==|!=)\s*(0x[0-9a-f]+|\d+|'[^']*'|\"[^\"]*\"|[a-zA-Z_][a-zA-Z0-9_]*)", expr)
         or re.search(r"(0x[0-9a-f]+|\d+|'[^']*'|\"[^\"]*\"|[a-zA-Z_][a-zA-Z0-9_]*)\s*(?:==|!=)", expr)
-    ):
-        return "equality/magic"
-    if any(op in expr_without_literals for op in [">", "<", ">=", "<=", "+", "-", "*", "/", "%", "sizeof"]):
+    )
+    numeric_like = any(op in expr_for_numeric_ops for op in [">", "<", ">=", "<=", "+", "-", "*", "/", "%", "sizeof"])
+    if allow_default_override:
+        if default == "numeric-margin" and numeric_like:
+            return "numeric-margin"
+        if default == "equality/magic" and equality_like:
+            return "equality/magic"
+        if default == "compound-sequence-lifecycle" and (numeric_like or equality_like):
+            return "compound-sequence-lifecycle"
+    if numeric_like:
         return "numeric-margin"
-    return default if default in TC_CATEGORIES else "numeric-margin"
+    if equality_like:
+        return "equality/magic"
+    return default
 
 
 def split_top_level(text: str, delimiters: list[str]) -> list[str]:
@@ -867,7 +885,7 @@ def build_tcir(
     def add_atom(expr: str, group: TCGroup, reason: str) -> TCAtom:
         nonlocal atom_index
         atom_index += 1
-        category = category_from_expression(expr, default_category)
+        category = category_from_expression(expr, default_category, allow_default_override=False)
         source = source_locations[min(atom_index - 1, len(source_locations) - 1)]
         atom = TCAtom(
             atom_id=f"a{atom_index}",
@@ -985,6 +1003,12 @@ def build_tcir(
 
     root_group = add_group(infer_group_type(expression), expression)
     parse_expr(expression, root_group)
+
+    if len(atoms) == 1:
+        atoms[0].category = category_from_expression(atoms[0].expression, default_category, allow_default_override=True)
+        for node in nodes:
+            if node.node_id == atoms[0].atom_id:
+                node.attrs["category"] = atoms[0].category
 
     atom_by_id = {atom.atom_id: atom for atom in atoms}
     same_object_specs: list[dict[str, Any]] = []
@@ -1143,6 +1167,24 @@ def decompose_tc_v2_string_split(
     return atoms
 
 
+def normalize_replay_root_state(row: dict[str, str]) -> str:
+    state = row.get("tc_root_state", "")
+    target_id = row.get("target_id", "")
+    if not target_id or not state:
+        return state
+    parts = {}
+    for item in re.split(r"[;,]", state):
+        if "=" not in item:
+            continue
+        key, value = item.split("=", 1)
+        parts[key.strip()] = value.strip()
+    if parts and set(parts).issubset({"R", "T"}) and f"{target_id}_R" not in parts:
+        reached = row.get("reached_count") or parts.get("R", "0")
+        triggered = row.get("triggered_count") or parts.get("T", "0")
+        return f"{target_id}_R={reached};{target_id}_T={triggered};{state}"
+    return state
+
+
 def replay_record_from_row(row: dict[str, str]) -> ReplayRecord:
     native = as_float(row.get("native_DT"), None)
     return ReplayRecord(
@@ -1159,7 +1201,7 @@ def replay_record_from_row(row: dict[str, str]) -> ReplayRecord:
         coverage_hash=row.get("coverage_hash", ""),
         native_DT=native,
         dt_bucket=dt_bucket(native),
-        tc_root_state=row.get("tc_root_state", ""),
+        tc_root_state=normalize_replay_root_state(row),
         replay_hash=row.get("replay_hash", ""),
         replay_status=row.get("replay_status", ""),
         metadata_status=row.get("metadata_status", ""),
@@ -1187,7 +1229,11 @@ def parse_root_state(text: str) -> dict[str, str]:
 
 def root_signature(text: str) -> str:
     parsed = parse_root_state(text)
-    filtered = {k: v for k, v in parsed.items() if k.upper() not in {"R", "T"}}
+    filtered = {
+        k: v
+        for k, v in parsed.items()
+        if k.upper() not in {"R", "T"} and not re.match(r"^[A-Za-z0-9_]+_[RT]$", k)
+    }
     if not filtered:
         return ""
     return json.dumps(filtered, sort_keys=True, separators=(",", ":"))
@@ -1660,6 +1706,8 @@ def evaluate_operator_preconditions(
             checks[precondition] = record.reached_R
         elif precondition == "replay_available":
             checks[precondition] = record.replay_stable
+        elif "root_or_producer" in precondition:
+            checks[precondition] = bool(atom.root_variables or atom.root_events or root_signature(record.tc_root_state))
         elif "candidate_input_influence_range" in precondition:
             checks[precondition] = "candidate_input_influence_range" in node_types or record.input_size > 0
         elif "guard" in precondition:
@@ -1672,7 +1720,7 @@ def evaluate_operator_preconditions(
             checks[precondition] = "lifecycle_phase" in node_types or bool(atom.root_events)
         elif "repair_hook" in precondition:
             checks[precondition] = "repair_hook" in node_types
-        elif "operand_visible" in precondition or "numeric_root" in precondition or "root_or_producer" in precondition:
+        elif "operand_visible" in precondition or "numeric_root" in precondition:
             checks[precondition] = bool(atom.root_variables or atom.root_events or root_signature(record.tc_root_state))
         elif "low_confidence_generic" in precondition:
             checks[precondition] = True
@@ -1696,6 +1744,29 @@ def priority_components(category: str) -> list[str]:
     if category == "compound-sequence-lifecycle":
         return ["reach", "trigger", "lifecycle_prefix", "root_alignment", "root_signature", "native_bucket", "coverage"]
     return ["reach", "trigger", "root_alignment", "native_bucket", "native_dt", "influence_confidence", "coverage"]
+
+
+def plan_priority_components(category: str, use_native_dt: bool, use_lifted_features: bool) -> list[str]:
+    components = priority_components(category)
+    if use_lifted_features:
+        out: list[str] = []
+        inserted = False
+        for item in components:
+            if item in {"native_bucket", "native_dt"}:
+                if not inserted:
+                    out.extend(["lifted_bucket", "lifted_df"])
+                    inserted = True
+                if use_native_dt:
+                    out.append(item)
+                continue
+            out.append(item)
+        if not inserted:
+            insert_at = 2 if "trigger" in out else 1
+            out[insert_at:insert_at] = ["lifted_bucket", "lifted_df"]
+        return list(dict.fromkeys(out))
+    if not use_native_dt:
+        return [item for item in components if item not in {"native_bucket", "native_dt"}]
+    return components
 
 
 def graph_features_for_atom(atom: TCAtom, graph: TriggerProgressGraph | None) -> list[dict[str, Any]]:
@@ -1759,7 +1830,7 @@ def build_atom_plan(
         use_lifted_features=use_lifted,
         feature_extractors=[item["name"] for item in reg["features"]],
         mutator_operators=[item["name"] for item in reg["mutators"]],
-        priority_components=priority_components(atom.category),
+        priority_components=plan_priority_components(atom.category, use_native, use_lifted),
         actionability=health.to_dict(),
         plan_reason=reason,
         planning_phase=planning_phase,
@@ -1790,6 +1861,126 @@ def edge(src: str, dst: str, edge_type: str, **attrs: Any) -> dict[str, Any]:
     payload = {"src": src, "dst": dst, "type": edge_type}
     payload.update(attrs)
     return payload
+
+
+def parse_external_repair_hooks(raw: Any) -> list[dict[str, Any]]:
+    if raw is None:
+        return []
+    payload = raw
+    if isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            return []
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError:
+            payload = [
+                {"name": item.strip(), "kind": "external_format_repair", "configured": True}
+                for item in re.split(r"[;,]", text)
+                if item.strip()
+            ]
+    if isinstance(payload, dict):
+        payload = [payload]
+    if not isinstance(payload, list):
+        return []
+    hooks: list[dict[str, Any]] = []
+    for index, item in enumerate(payload):
+        if isinstance(item, str):
+            item = {"name": item, "kind": "external_format_repair", "configured": True}
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or item.get("id") or f"external_repair_hook_{index + 1}").strip()
+        if not name:
+            continue
+        hook = dict(item)
+        hook["name"] = name
+        hook.setdefault("kind", "external_format_repair")
+        hook.setdefault("configured", True)
+        hook.setdefault("confidence", "medium")
+        hook.setdefault("source", "external_metadata")
+        hooks.append(hook)
+    return hooks
+
+
+def repair_hooks_for_target(target_meta: dict[str, Any]) -> list[dict[str, Any]]:
+    return parse_external_repair_hooks(
+        target_meta.get("repair_hooks")
+        or target_meta.get("external_repair_hooks")
+        or target_meta.get("format_repair_hooks")
+    )
+
+
+def explicit_producer_specs(target_meta: dict[str, Any]) -> list[dict[str, Any]]:
+    raw = (
+        target_meta.get("producer_contexts")
+        or target_meta.get("producer_bindings")
+        or target_meta.get("producer_sources")
+        or target_meta.get("producers")
+    )
+    if not raw:
+        single = {
+            key: target_meta.get(key)
+            for key in (
+                "producer_label",
+                "producer_source_location",
+                "producer_runtime_event_id",
+                "producer_confidence",
+            )
+            if target_meta.get(key)
+        }
+        if single:
+            raw = [single]
+    if not raw:
+        return []
+    payload = raw
+    if isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            return []
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError:
+            payload = [{"label": item.strip()} for item in re.split(r"[;,]", text) if item.strip()]
+    if isinstance(payload, dict):
+        payload = [payload]
+    if not isinstance(payload, list):
+        return []
+    out: list[dict[str, Any]] = []
+    for index, item in enumerate(payload):
+        if isinstance(item, str):
+            item = {"label": item}
+        if not isinstance(item, dict):
+            continue
+        label = str(
+            item.get("label")
+            or item.get("name")
+            or item.get("producer")
+            or item.get("id")
+            or f"producer_{index + 1}"
+        ).strip()
+        source_location = str(
+            item.get("source_location")
+            or item.get("location")
+            or item.get("producer_source_location")
+            or ""
+        ).strip()
+        runtime_event_id = str(
+            item.get("runtime_event_id")
+            or item.get("event_id")
+            or item.get("producer_runtime_event_id")
+            or ""
+        ).strip()
+        if not label or (not source_location and not runtime_event_id):
+            continue
+        out.append(
+            {
+                "label": label,
+                "source_location": source_location,
+                "runtime_event_id": runtime_event_id,
+                "confidence": item.get("confidence") or item.get("producer_confidence") or "medium",
+            }
+        )
+    return out
 
 
 def build_trigger_progress_graph(
@@ -1898,22 +2089,46 @@ def build_trigger_progress_graph(
             if prev:
                 edges.append(edge(prev, phase_node, "order_constraint", order="lifecycle_prefix"))
             prev = phase_node
-    producer_keys = sorted({record.producer or record.source_seedbank for record in records if record.producer or record.source_seedbank})
-    if not producer_keys:
-        producer_keys = ["unknown_producer"]
-    for producer in producer_keys[:32]:
-        prod_node = f"producer:{stable_id(producer)}"
+    producer_ids: list[str] = []
+    for producer in explicit_producer_specs(target_meta)[:32]:
+        label = producer["label"]
+        prod_node = f"producer:{stable_id(label, producer.get('source_location', ''), producer.get('runtime_event_id', ''))}"
         add_node(
             node(
                 prod_node,
                 "producer_context",
-                producer,
-                runtime_event_id=f"producer:{stable_id(target_id, producer)}",
-                source_location="",
-                confidence="medium" if producer != "unknown_producer" else "low",
+                label,
+                runtime_event_id=producer.get("runtime_event_id", ""),
+                source_location=producer.get("source_location", ""),
+                confidence=producer.get("confidence", "medium"),
+                source="external_metadata",
+                binding_required=True,
             )
         )
+        producer_ids.append(prod_node)
         edges.append(edge(prod_node, target_node, "may_enable_target"))
+    provenance_keys = sorted(
+        {
+            record.producer or record.source_seedbank
+            for record in records
+            if record.producer or record.source_seedbank
+        }
+    )
+    for producer in provenance_keys[:32]:
+        prov_node = f"provenance:{stable_id(producer)}"
+        add_node(
+            node(
+                prov_node,
+                "input_provenance_context",
+                producer,
+                runtime_event_id="",
+                source_location="",
+                confidence="low",
+                source="replay_metadata",
+                binding_required=False,
+            )
+        )
+        edges.append(edge(prov_node, target_node, "seedbank_provenance"))
 
     guard_node = f"guard:{stable_id(source_location)}"
     add_node(
@@ -1939,7 +2154,7 @@ def build_trigger_progress_graph(
     )
     edges.append(edge(guard_node, use_node, "guards_use"))
     edges.append(edge(use_node, target_node, "observes_target"))
-    for prod in [item["id"] for item in nodes if item["type"] == "producer_context"]:
+    for prod in producer_ids:
         edges.append(edge(prod, guard_node, "order_before", order="producer_before_guard"))
     edges.append(edge(guard_node, use_node, "order_before", order="guard_before_use"))
 
@@ -1964,6 +2179,11 @@ def build_trigger_progress_graph(
                 continue
             confidence_label = range_record.get("confidence_label", "medium")
             range_node = f"range:{stable_id(record.seed_id, record.content_sha256, start, range_len, index)}"
+            range_extra = {
+                key: range_record[key]
+                for key in ["mutation_strategy", "insert_token", "length_target", "integer_values", "integer_width", "integer_endian", "root_priority"]
+                if key in range_record
+            }
             add_node(
                 node(
                     range_node,
@@ -1976,6 +2196,9 @@ def build_trigger_progress_graph(
                     confidence_score=confidence_to_float(range_record.get("confidence", confidence_label)),
                     runtime_event_id=range_record.get("runtime_event_id", f"seed:{stable_id(record.seed_id, record.replay_hash)}"),
                     source=range_record.get("source", "replay_metadata"),
+                    range_kind=range_record.get("range_kind", "replay_range"),
+                    format_family=range_record.get("format_family", "unknown"),
+                    **range_extra,
                 )
             )
             edges.append(edge(range_node, guard_node, "candidate_influences"))
@@ -1995,27 +2218,6 @@ def build_trigger_progress_graph(
         repair_hooks=repair_hooks,
         confidence_summary=dict(confidence_counts),
     )
-
-
-def repair_hooks_for_target(target_meta: dict[str, str]) -> list[dict[str, Any]]:
-    fmt = " ".join(
-        [
-            target_meta.get("expected_input_format", ""),
-            target_meta.get("program", ""),
-            target_meta.get("project", ""),
-        ]
-    ).lower()
-    hooks: list[dict[str, Any]] = []
-    if any(token in fmt for token in ["png", "zip", "pdf", "mp4", "jpeg", "xml", "archive"]):
-        hooks.append(
-            {
-                "name": "format_repair_hook_available_if_configured",
-                "kind": "external_or_project_format_repair",
-                "configured": False,
-                "confidence": "low",
-            }
-        )
-    return hooks
 
 
 def parse_range_metadata(record: ReplayRecord) -> list[dict[str, Any]]:
@@ -2054,14 +2256,31 @@ def parse_range_metadata(record: ReplayRecord) -> list[dict[str, Any]]:
         if start < 0 or length <= 0 or start >= record.input_size:
             continue
         confidence = confidence_to_float(item.get("confidence", item.get("confidence_label", "medium")))
+        range_kind = str(item.get("range_kind", "replay_range"))
+        source = str(item.get("source", "replay_metadata"))
+        runtime_event_id = str(item.get("runtime_event_id", f"seed:{stable_id(record.seed_id, start, length)}"))
+        format_family = str(item.get("format_family", "unknown") or "unknown")
+        if format_family == "unknown" and (
+            range_kind.startswith("png_")
+            or "png" in source.lower()
+            or runtime_event_id in {"IHDR", "IHDR_width", "IHDR_bit_depth", "IHDR_color_type", "IHDR_interlace", "PLTE", "PLTE_length", "IDAT"}
+        ):
+            format_family = "png"
         ranges.append(
             {
                 "start": start,
                 "length": min(length, max(0, record.input_size - start)),
                 "confidence": confidence,
                 "confidence_label": item.get("confidence_label", "verified" if confidence >= 0.8 else "medium"),
-                "runtime_event_id": item.get("runtime_event_id", f"seed:{stable_id(record.seed_id, start, length)}"),
-                "source": item.get("source", "replay_metadata"),
+                "runtime_event_id": runtime_event_id,
+                "source": source,
+                "range_kind": range_kind,
+                "format_family": format_family,
+                **{
+                    key: item[key]
+                    for key in ["mutation_strategy", "insert_token", "length_target", "integer_values", "integer_width", "integer_endian", "root_priority"]
+                    if key in item
+                },
             }
         )
     return ranges[:8]
@@ -2117,6 +2336,53 @@ def normalize_constant_token(token: str) -> tuple[str, str]:
 
 def symbolic_constant_value(name: str) -> str:
     return normalize_constant_token(name)[0]
+
+
+def atom_native_dt_from_root_state(record: ReplayRecord, atom: TCAtom) -> float | None:
+    parsed = parse_root_state(record.tc_root_state)
+    match = re.search(
+        r"([A-Za-z_][A-Za-z0-9_.>\-]*)\s*(==|!=|<=|>=|<|>)\s*"
+        r"([A-Za-z_][A-Za-z0-9_]*|0x[0-9A-Fa-f]+|\d+|'(?:\\.|[^'])*'|\"[^\"]*\")",
+        atom.expression,
+    )
+    if not match:
+        return None
+    lhs, op, rhs = match.groups()
+    key = lhs.split("->")[-1].split(".")[-1]
+    if key not in parsed:
+        return None
+    rhs_value, rhs_kind = normalize_constant_token(rhs)
+    try:
+        observed = int(str(parsed[key]), 0)
+        target = int(rhs_value, 0)
+    except ValueError:
+        if rhs_kind in {"char", "string", "symbolic"}:
+            observed_text = str(parsed[key])
+            target_text = str(rhs_value)
+            if len(target_text) == 1 and observed_text.isdigit():
+                target_ord = ord(target_text)
+                try:
+                    return float(abs(int(observed_text) - target_ord))
+                except ValueError:
+                    return None
+            if op == "==":
+                return 0.0 if observed_text == target_text else 1.0
+            if op == "!=":
+                return 0.0 if observed_text != target_text else 1.0
+        return None
+    if op == "==":
+        return float(abs(observed - target))
+    if op == "!=":
+        return 0.0 if observed != target else 1.0
+    if op == "<":
+        return float(max(0, observed - target + 1))
+    if op == "<=":
+        return float(max(0, observed - target))
+    if op == ">":
+        return float(max(0, target - observed + 1))
+    if op == ">=":
+        return float(max(0, target - observed))
+    return None
 
 
 def infer_atom_truth_from_root_state(record: ReplayRecord, atom: TCAtom) -> tuple[bool | None, str, str]:
@@ -2226,8 +2492,9 @@ def atom_score_from_vector(vector: ProgressVector) -> float:
         score += 20.0
     elif vector.observation_status == "BLOCKED_BY_GUARD":
         score -= 5.0
-    if vector.native_bucket is not None:
-        score += max(0.0, 20.0 - float(vector.native_bucket))
+    distance_bucket = vector.lifted_bucket if vector.distance_source == "lifted_DF" else vector.native_bucket
+    if distance_bucket is not None:
+        score += max(0.0, 20.0 - float(distance_bucket))
     score += vector.lifecycle_prefix * 5.0
     score += vector.influence_confidence * 5.0
     score += vector.object_identity_confidence * 10.0
@@ -2245,8 +2512,22 @@ def progress_vector(record: ReplayRecord, atom: TCAtom, plan: AtomPlan, tcir: TC
     if sig:
         influence += 0.2
     observation = atom_observation(record, atom, tcir)
-    atom_native_dt = as_float(record.raw.get(f"native_DT_{atom.atom_id}"), record.native_DT)
+    atom_native_dt = as_float(record.raw.get(f"native_DT_{atom.atom_id}"), None)
+    if atom_native_dt is None:
+        atom_native_dt = record.native_DT
     atom_bucket = dt_bucket(atom_native_dt)
+    lifted_df = as_float(record.raw.get(f"lifted_DF_{atom.atom_id}"), None)
+    if lifted_df is None:
+        lifted_df = atom_native_dt_from_root_state(record, atom)
+    if lifted_df is None:
+        lifted_df = as_float(record.raw.get("lifted_DF"), None)
+    lifted_bucket = dt_bucket(lifted_df)
+    if plan.use_lifted_features and lifted_df is not None:
+        distance_source = "lifted_DF"
+    elif plan.use_native_dt and atom_native_dt is not None:
+        distance_source = "native_DT"
+    else:
+        distance_source = ""
     vector = ProgressVector(
         target_id=record.target_id,
         seed_id=record.seed_id,
@@ -2256,6 +2537,9 @@ def progress_vector(record: ReplayRecord, atom: TCAtom, plan: AtomPlan, tcir: TC
         triggered=record.triggered_T,
         native_dt=atom_native_dt,
         native_bucket=atom_bucket,
+        lifted_df=lifted_df,
+        lifted_bucket=lifted_bucket,
+        distance_source=distance_source,
         root_state=record.tc_root_state,
         root_signature=sig,
         lifecycle_prefix=lifecycle_prefix_score(record.tc_root_state),
@@ -2277,7 +2561,7 @@ def component_improved(component: str, new: ProgressVector, old_vectors: list[Pr
         if not old_vectors:
             return new.triggered
         return new.triggered and not any(old.triggered for old in old_vectors)
-    if component in {"native_bucket", "native_dt"}:
+    if component in {"native_bucket", "native_dt", "lifted_bucket", "lifted_df"}:
         value = new.component(component)
         if value is None:
             return False
@@ -2316,7 +2600,7 @@ def component_regressed(component: str, new: ProgressVector, old_vectors: list[P
         return not new.reached
     if component == "trigger":
         return False
-    if component in {"native_bucket", "native_dt"}:
+    if component in {"native_bucket", "native_dt", "lifted_bucket", "lifted_df"}:
         value = new.component(component)
         old_values = [old.component(component) for old in old_vectors if old.component(component) is not None]
         if value is None or not old_values:
@@ -2332,8 +2616,12 @@ def component_regressed(component: str, new: ProgressVector, old_vectors: list[P
 
 
 def reason_for_component(component: str, category: str) -> str:
-    if component in {"native_bucket", "native_dt", "trigger"}:
+    if component == "trigger":
+        return "triggered"
+    if component in {"native_bucket", "native_dt"}:
         return "native-distance improvement"
+    if component in {"lifted_bucket", "lifted_df"}:
+        return "lifted-feature improvement"
     if component in {"root_signature", "root_alignment"}:
         return "root-aligned state transition"
     if component == "lifecycle_prefix" or category == "compound-sequence-lifecycle":
@@ -2351,6 +2639,23 @@ def progress_vector_satisfied(vector: ProgressVector) -> bool:
     return False
 
 
+def branch_selection_key(
+    child: str,
+    child_scores: dict[str, float],
+    atom_vectors: dict[str, ProgressVector],
+    group_vectors: dict[str, GroupProgressVector],
+    order: dict[str, int],
+) -> tuple[float, float, float, int]:
+    vector = atom_vectors.get(child)
+    if vector is None and child not in group_vectors:
+        return (child_scores[child], -INF, -INF, -order.get(child, 0))
+    lifted_bucket = vector.lifted_bucket if vector else None
+    lifted_df = vector.lifted_df if vector else None
+    bucket_rank = -float(lifted_bucket) if lifted_bucket is not None else -INF
+    distance_rank = -float(lifted_df) if lifted_df is not None else -INF
+    return (child_scores[child], bucket_rank, distance_rank, -order.get(child, 0))
+
+
 def group_score(group: TCGroup, atom_vectors: dict[str, ProgressVector], group_vectors: dict[str, GroupProgressVector]) -> GroupProgressVector:
     child_scores: dict[str, float] = {}
     child_satisfied: dict[str, bool] = {}
@@ -2365,7 +2670,11 @@ def group_score(group: TCGroup, atom_vectors: dict[str, ProgressVector], group_v
         return GroupProgressVector(group.group_id, group.group_type, 0.0, False, "", {})
     if group.group_type == "ANY_OF":
         satisfied_children = [child for child, value in child_satisfied.items() if value]
-        selected = max(satisfied_children or list(child_scores), key=lambda item: child_scores[item])
+        order = {child: idx for idx, child in enumerate(group.children)}
+        selected = max(
+            satisfied_children or list(child_scores),
+            key=lambda item: branch_selection_key(item, child_scores, atom_vectors, group_vectors, order),
+        )
         score = child_scores[selected]
         satisfied = bool(satisfied_children)
     elif group.group_type == "NOT":
@@ -2467,7 +2776,22 @@ def vector_dominated_by(new: FullProgressVector, old: FullProgressVector, tcir: 
     if full_vector_score(old, tcir) == full_vector_score(new, tcir):
         old_atoms = old.atom_vectors
         new_atoms = new.atom_vectors
-        if all(float(old_atoms.get(atom.atom_id, {}).get("atom_score", 0.0)) >= float(new_atoms.get(atom.atom_id, {}).get("atom_score", 0.0)) for atom in tcir.atoms):
+        def atom_not_worse(atom: TCAtom) -> bool:
+            old_vec = old_atoms.get(atom.atom_id, {})
+            new_vec = new_atoms.get(atom.atom_id, {})
+            old_score = float(old_vec.get("atom_score", 0.0))
+            new_score = float(new_vec.get("atom_score", 0.0))
+            if old_score > new_score:
+                return True
+            if old_score < new_score:
+                return False
+            old_dt = as_float(old_vec.get("native_dt"), None)
+            new_dt = as_float(new_vec.get("native_dt"), None)
+            if old_dt is not None and new_dt is not None and old_dt > new_dt + 1e-9:
+                return False
+            return True
+
+        if all(atom_not_worse(atom) for atom in tcir.atoms):
             return True
     return False
 
@@ -2518,11 +2842,7 @@ def build_initial_frontier_records(
     decisions: list[ProgressDecision] = []
     for record in rnt_records:
         accepted, decision, seed_progress = progress_dominates_global(record, frontier, tcir, plans)
-        if not frontier and is_strict_rnt(record) and record.replay_stable:
-            decision.accepted = True
-            decision.reason = "initial_frontier_seed"
-            frontier.append(seed_progress)
-        elif accepted:
+        if accepted:
             decision.reason = "initial_frontier_seed"
             frontier, _ = insert_non_dominated(frontier, seed_progress, tcir)
         decisions.append(decision)
@@ -2580,9 +2900,28 @@ def improved_components_global(new: FullProgressVector, old_records: list[SeedPr
             for atom in tcir.atoms
         ):
             improved.extend(["native_bucket", "native_dt"])
+        if any(
+            as_float(new.atom_vectors.get(atom.atom_id, {}).get("lifted_df"), INF)
+            < min((as_float(old.full_vector.atom_vectors.get(atom.atom_id, {}).get("lifted_df"), INF) for old in old_records), default=INF)
+            for atom in tcir.atoms
+        ):
+            improved.extend(["lifted_bucket", "lifted_df"])
         return sorted(set(improved))
     if not old_records:
-        return ["frontier_seed"] if new.root_or_event_aligned else []
+        improved: list[str] = []
+        if new.lifecycle_prefix > 0:
+            improved.append("lifecycle_prefix")
+        if new.object_identity_confidence > 0:
+            improved.append("object_identity_confidence")
+        if new.phase_novelty > 0:
+            improved.append("phase_novelty")
+        for atom in tcir.atoms:
+            new_vec = new.atom_vectors.get(atom.atom_id, {})
+            if new_vec.get("root_signature"):
+                improved.append(f"root_signature:{atom.atom_id}")
+            if float(new_vec.get("atom_score", 0.0)) > (10.0 if new.reached else 0.0):
+                improved.append(f"atom_progress:{atom.atom_id}")
+        return sorted(set(improved))
     improved: list[str] = []
     old_best = max(full_vector_score(old.full_vector, tcir) for old in old_records)
     if full_vector_score(new, tcir) > old_best:
@@ -2592,6 +2931,38 @@ def improved_components_global(new: FullProgressVector, old_records: list[SeedPr
         old_atom_best = max(float(old.full_vector.atom_vectors.get(atom.atom_id, {}).get("atom_score", 0.0)) for old in old_records)
         if float(new_vec.get("atom_score", 0.0)) > old_atom_best:
             improved.append(f"atom_progress:{atom.atom_id}")
+        new_dt = as_float(new_vec.get("native_dt"), None)
+        old_dts = [
+            value
+            for old in old_records
+            if (value := as_float(old.full_vector.atom_vectors.get(atom.atom_id, {}).get("native_dt"), None)) is not None
+        ]
+        if new_dt is not None and (not old_dts or new_dt + 1e-9 < min(old_dts)):
+            improved.append("native_dt")
+        new_bucket = as_int(new_vec.get("native_bucket"), None)
+        old_buckets = [
+            value
+            for old in old_records
+            if (value := as_int(old.full_vector.atom_vectors.get(atom.atom_id, {}).get("native_bucket"), None)) is not None
+        ]
+        if new_bucket is not None and (not old_buckets or new_bucket < min(old_buckets)):
+            improved.append("native_bucket")
+        new_lifted_df = as_float(new_vec.get("lifted_df"), None)
+        old_lifted_dfs = [
+            value
+            for old in old_records
+            if (value := as_float(old.full_vector.atom_vectors.get(atom.atom_id, {}).get("lifted_df"), None)) is not None
+        ]
+        if new_lifted_df is not None and (not old_lifted_dfs or new_lifted_df + 1e-9 < min(old_lifted_dfs)):
+            improved.append("lifted_df")
+        new_lifted_bucket = as_int(new_vec.get("lifted_bucket"), None)
+        old_lifted_buckets = [
+            value
+            for old in old_records
+            if (value := as_int(old.full_vector.atom_vectors.get(atom.atom_id, {}).get("lifted_bucket"), None)) is not None
+        ]
+        if new_lifted_bucket is not None and (not old_lifted_buckets or new_lifted_bucket < min(old_lifted_buckets)):
+            improved.append("lifted_bucket")
         if new_vec.get("root_signature") and new_vec.get("root_signature") not in {
             old.full_vector.atom_vectors.get(atom.atom_id, {}).get("root_signature", "") for old in old_records
         }:
@@ -2608,14 +2979,16 @@ def improved_components_global(new: FullProgressVector, old_records: list[SeedPr
 def reason_for_global_components(components: list[str], tcir: TCIR) -> str:
     if any(item == "trigger" for item in components):
         return "triggered"
+    if any(item in {"lifted_bucket", "lifted_df"} for item in components):
+        return "lifted-feature improvement"
     if any(item in {"native_bucket", "native_dt"} for item in components):
         return "native-distance improvement"
-    if any(item.startswith("root_signature") or item == "group_progress" for item in components):
-        return "root-aligned state transition"
-    if any(item in {"phase_novelty", "object_identity_confidence"} for item in components) or any(
+    if any(item in {"lifecycle_prefix", "phase_novelty", "object_identity_confidence"} for item in components) or any(
         atom.category == "compound-sequence-lifecycle" for atom in tcir.atoms
     ):
         return "lifecycle-prefix improvement"
+    if any(item.startswith("root_signature") or item == "group_progress" for item in components):
+        return "root-aligned state transition"
     if any(item.startswith("atom_progress") for item in components):
         return "lifted-feature improvement"
     return "influence-confidence improvement"
@@ -2627,6 +3000,7 @@ def progress_dominates_global(
     tcir: TCIR,
     plans: dict[str, AtomPlan],
     mode: str = "postreach_mode",
+    require_replay_stability: bool = True,
 ) -> tuple[bool, ProgressDecision, SeedProgressRecord]:
     seed_progress = seed_progress_record(record, tcir, plans)
     full = seed_progress.full_vector
@@ -2634,7 +3008,7 @@ def progress_dominates_global(
     if not full.reached:
         decision = ProgressDecision(record.seed_id, False, "not_reached", atom_id, [], ["reach"], record.replay_stable, full.root_or_event_aligned, full.to_dict())
         return False, decision, seed_progress
-    if not record.replay_stable and not record.triggered_T:
+    if require_replay_stability and not record.replay_stable and not record.triggered_T:
         decision = ProgressDecision(record.seed_id, False, "not_replay_stable", atom_id, [], ["replay_stability"], False, full.root_or_event_aligned, full.to_dict())
         return False, decision, seed_progress
     if not full.root_or_event_aligned and not record.triggered_T:
@@ -2862,14 +3236,22 @@ def candidate_range_records(record: ReplayRecord, data_len: int, graph: TriggerP
         length = as_int(item.get("length"), 0)
         if 0 <= start < data_len and length > 0:
             label = item.get("confidence", "low")
+            confidence = confidence_to_float(item.get("confidence_score", label))
             ranges.append(
                 {
                     "start": start,
                     "length": min(length, data_len - start),
                     "confidence_label": label,
-                    "confidence": confidence_to_float(label),
+                    "confidence": confidence,
                     "runtime_event_id": item.get("runtime_event_id", ""),
-                    "source": "trigger_progress_graph",
+                    "source": item.get("source", "trigger_progress_graph"),
+                    "range_kind": item.get("range_kind", "graph_range"),
+                    "format_family": item.get("format_family", "unknown"),
+                    **{
+                        key: item[key]
+                        for key in ["mutation_strategy", "insert_token", "length_target", "integer_values", "integer_width", "integer_endian", "root_priority"]
+                        if key in item
+                    },
                 }
             )
     if not ranges and data_len:
@@ -2886,6 +3268,460 @@ def candidate_range_records(record: ReplayRecord, data_len: int, graph: TriggerP
     return ranges[:8]
 
 
+def input_format_family(data: bytes) -> str:
+    stripped = data.lstrip()
+    upper = stripped[:256].upper()
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "png"
+    if data.startswith(b"%PDF") or b"%PDF" in data[:32]:
+        return "pdf"
+    if stripped.startswith(b"<?XML") or stripped.startswith(b"<!DOCTYPE") or stripped.startswith(b"<"):
+        return "xml"
+    if any(token in upper for token in [b"CREATE ", b"SELECT ", b"INSERT ", b"ANALYZE", b"WHERE "]):
+        return "sql"
+    if stripped and sum(1 for byte in stripped[:256] if byte in b"\t\r\n" or 32 <= byte <= 126) >= max(1, len(stripped[:256]) * 3 // 4):
+        return "text"
+    return "binary"
+
+
+def missing_event_tokens(record: ReplayRecord, atom: TCAtom, *, include_root_events: bool = True) -> list[bytes]:
+    parsed = parse_root_state(record.tc_root_state)
+    tokens: list[bytes] = []
+    family = str(parsed.get("format_family", "")).lower()
+    if family == "png":
+        if parsed.get("exif_seen") in {"0", "false", "False"}:
+            import zlib
+
+            payload = b"II*\x00\x08\x00\x00\x00\x00\x00"
+            chunk_type = b"eXIf"
+            tokens.append(len(payload).to_bytes(4, "big") + chunk_type + payload + zlib.crc32(chunk_type + payload).to_bytes(4, "big"))
+    if family == "xml":
+        if parsed.get("xml_doctype_seen") in {"0", "false", "False"}:
+            tokens.append(b'<!DOCTYPE r [ <!ENTITY % ext SYSTEM "file:///tmp/formtrig.dtd"> %ext; ]><r/>')
+        elif parsed.get("xml_parameter_entity_seen") in {"0", "false", "False"}:
+            tokens.append(b' <!ENTITY % ext SYSTEM "file:///tmp/formtrig.dtd"> %ext; ')
+        elif parsed.get("xml_external_entity_seen") in {"0", "false", "False"}:
+            tokens.append(b' SYSTEM "file:///tmp/formtrig.dtd" ')
+        elif parsed.get("xml_entity_ref_seen") in {"0", "false", "False"}:
+            tokens.append(b" %ext; ")
+    if family == "pdf":
+        if parsed.get("pdf_glyph_seen") in {"0", "false", "False"}:
+            tokens.extend([b"/BuildGlyph { } ", b"/BuildChar { } ", b"glyph "])
+        if parsed.get("pdf_charprocs_seen") in {"0", "false", "False"}:
+            tokens.append(b"/CharProcs << >> ")
+        if parsed.get("pdf_type3_seen") in {"0", "false", "False"}:
+            tokens.append(b"/Subtype /Type3 ")
+    if family in {"sql", "sqlite"} or any(key in parsed for key in ["select_where_seen", "order_by_seen", "where_term_count"]):
+        sql_intent = str(parsed.get("sql_expression_intent", ""))
+        if parsed.get("sql_blob_seen") in {"0", "false", "False"} and sql_intent == "blob":
+            tokens.append(b" SELECT zeroblob(16); ")
+        if parsed.get("sql_generated_column_seen") in {"0", "false", "False"} and sql_intent == "generated_column":
+            tokens.append(b" CREATE TABLE ftg_gen(a INT,b INT GENERATED ALWAYS AS (a+1)); INSERT INTO ftg_gen(a) VALUES(1); SELECT b FROM ftg_gen; ")
+        if parsed.get("sql_select_seen") in {"0", "false", "False"} and sql_intent == "select":
+            tokens.append(b" SELECT 1; ")
+        if parsed.get("sql_distinct_seen") in {"0", "false", "False"} and sql_intent == "select_distinct":
+            tokens.append(b" SELECT DISTINCT 1; ")
+        if parsed.get("sql_window_seen") in {"0", "false", "False"} and sql_intent == "window":
+            tokens.append(b" SELECT row_number() OVER (); ")
+        if parsed.get("sql_quoted_token_seen") in {"0", "false", "False"} and sql_intent == "quoted_token":
+            tokens.append(b" SELECT 'formtrig'; ")
+        if not sql_intent:
+            if parsed.get("select_where_seen") in {"0", "false", "False"}:
+                tokens.append(b" SELECT * FROM t1 WHERE a=1 ")
+            if parsed.get("order_by_seen") in {"0", "false", "False"}:
+                tokens.append(b" ORDER BY a ")
+            if as_int(parsed.get("where_term_count"), 0) < 2:
+                tokens.append(b" AND b=1 ")
+            if as_int(parsed.get("index_column_count"), 0) < 2:
+                tokens.append(b", b")
+    if include_root_events and family in {"text", "record_text", "kv_text", "regex_text", "lua", "php"}:
+        stopwords = {
+            "a",
+            "an",
+            "the",
+            "and",
+            "or",
+            "of",
+            "to",
+            "in",
+            "where",
+            "while",
+            "before",
+            "after",
+            "input",
+            "state",
+        }
+        phase_terms = {
+            "create",
+            "creates",
+            "init",
+            "open",
+            "alloc",
+            "parse",
+            "record",
+            "comment",
+            "buffer",
+            "set",
+            "config",
+            "field",
+            "keyword",
+            "path",
+            "free",
+            "release",
+            "delete",
+            "destroy",
+            "cleanup",
+            "teardown",
+            "use",
+            "read",
+            "compare",
+            "match",
+        }
+        root_tokens: list[str] = []
+        for root in atom.root_variables:
+            token = re.sub(r"[^A-Za-z0-9_:-]+", " ", root).strip()
+            if len(token) >= 2 and token.lower() not in stopwords and token not in root_tokens:
+                root_tokens.append(token)
+        root_tokens.sort(key=lambda item: (0 if item.lower() in phase_terms else 1, atom.root_variables.index(item) if item in atom.root_variables else 99))
+        for token in root_tokens[:8]:
+            tokens.append((" " + token + " ").encode("ascii", errors="ignore"))
+    if include_root_events:
+        for event in atom.root_events:
+            token = re.sub(r"[^A-Za-z0-9_]+", " ", event).strip()
+            if token:
+                tokens.append((" " + token + " ").encode("ascii", errors="ignore"))
+    unique: list[bytes] = []
+    for token in tokens:
+        if token and token not in unique:
+            unique.append(token)
+    return unique[:8]
+
+
+def range_with_defaults(
+    start: int,
+    length: int,
+    data_len: int,
+    *,
+    confidence: float,
+    source: str,
+    range_kind: str,
+    format_family: str,
+    runtime_event_id: str = "",
+    extra: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    if start < 0 or length <= 0 or start >= data_len:
+        return None
+    item = {
+        "start": start,
+        "length": min(length, data_len - start),
+        "confidence": confidence,
+        "confidence_label": "verified" if confidence >= 0.95 else ("high" if confidence >= 0.75 else "medium"),
+        "runtime_event_id": runtime_event_id or f"{format_family}:{range_kind}:{start}:{length}",
+        "source": source,
+        "range_kind": range_kind,
+        "format_family": format_family,
+    }
+    if extra:
+        item.update(extra)
+    return item
+
+
+def png_chunk_ranges(data: bytes, atom: TCAtom) -> list[dict[str, Any]]:
+    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return []
+    ranges: list[dict[str, Any]] = []
+    pos = 8
+    while pos + 12 <= len(data) and len(ranges) < 16:
+        length = int.from_bytes(data[pos : pos + 4], "big", signed=False)
+        chunk_type_raw = data[pos + 4 : pos + 8]
+        if not re.match(rb"^[A-Za-z]{4}$", chunk_type_raw):
+            break
+        data_start = pos + 8
+        data_end = data_start + length
+        crc_start = data_end
+        chunk_end = crc_start + 4
+        if chunk_end > len(data):
+            break
+        chunk_type = chunk_type_raw.decode("ascii", errors="replace")
+        base_extra = {
+            "chunk_type": chunk_type,
+            "chunk_start": pos,
+            "chunk_data_start": data_start,
+            "chunk_length": length,
+            "chunk_total_length": chunk_end - pos,
+            "chunk_crc_start": crc_start,
+        }
+        if length > 0:
+            ranges.append(
+                range_with_defaults(
+                    data_start,
+                    length,
+                    len(data),
+                    confidence=0.9 if chunk_type not in {"IDAT"} else 0.75,
+                    source="content_aware_png_chunk_payload",
+                    range_kind=f"png_chunk_payload:{chunk_type}",
+                    format_family="png",
+                    runtime_event_id=f"png:{chunk_type}:{pos}",
+                    extra=base_extra,
+                )
+            )
+        if chunk_type == "IHDR" and length >= 13:
+            for field_name, field_start, field_len in [
+                ("png_width", data_start, 4),
+                ("png_height", data_start + 4, 4),
+                ("png_bit_depth", data_start + 8, 1),
+                ("png_color_type", data_start + 9, 1),
+                ("png_interlace", data_start + 12, 1),
+            ]:
+                ranges.append(
+                    range_with_defaults(
+                        field_start,
+                        field_len,
+                        len(data),
+                        confidence=0.95,
+                        source="content_aware_png_ihdr_field",
+                        range_kind=field_name,
+                        format_family="png",
+                        runtime_event_id=f"png:IHDR:{field_name}",
+                        extra=base_extra,
+                    )
+                )
+        pos = chunk_end
+        if chunk_type == "IEND":
+            break
+    out = [item for item in ranges if item is not None]
+    if atom.category == "numeric-margin":
+        field_priority = {"png_width": 0, "png_height": 1, "png_bit_depth": 2, "png_color_type": 3, "png_interlace": 4}
+        chunk_priority = {"IHDR": 5, "PLTE": 6, "tEXt": 7, "iCCP": 8, "IDAT": 9}
+    elif atom.category == "binary-state-null":
+        field_priority = {"png_color_type": 0, "png_width": 4, "png_height": 5, "png_bit_depth": 6, "png_interlace": 7}
+        chunk_priority = {"PLTE": 1, "tRNS": 2, "iCCP": 3, "tEXt": 8, "IHDR": 9, "IDAT": 10}
+    else:
+        field_priority = {"png_color_type": 0, "png_width": 3, "png_height": 4}
+        chunk_priority = {"tEXt": 1, "PLTE": 2, "IHDR": 5, "iCCP": 6, "IDAT": 7}
+    out.sort(key=lambda item: (field_priority.get(str(item.get("range_kind", "")), chunk_priority.get(str(item.get("chunk_type", "")), 99)), item["start"], item["length"]))
+    return out[:8]
+
+
+def token_ranges(data: bytes, atom: TCAtom, family: str) -> list[dict[str, Any]]:
+    text = data.decode("utf-8", errors="surrogateescape")
+    if not text:
+        return []
+    ranges: list[dict[str, Any]] = []
+
+    def add_match(match: re.Match[str], group: int, kind: str, confidence: float) -> None:
+        if len(ranges) >= 16:
+            return
+        start_char, end_char = match.span(group)
+        start = len(text[:start_char].encode("utf-8", errors="surrogateescape"))
+        end = len(text[:end_char].encode("utf-8", errors="surrogateescape"))
+        item = range_with_defaults(
+            start,
+            end - start,
+            len(data),
+            confidence=confidence,
+            source=f"content_aware_{family}_{kind}",
+            range_kind=kind,
+            format_family=family,
+            runtime_event_id=f"{family}:{kind}:{start}",
+        )
+        if item:
+            ranges.append(item)
+
+    for match in re.finditer(r"'([^']*)'|\"([^\"]*)\"", text):
+        group = 1 if match.group(1) is not None else 2
+        add_match(match, group, "quoted_value", 0.85)
+    if family == "sql":
+        for match in re.finditer(r"(?<![A-Za-z_])(\d{1,12})(?![A-Za-z_])", text):
+            add_match(match, 1, "numeric_literal", 0.9)
+    elif family == "xml":
+        for match in re.finditer(r"\b([A-Za-z_][A-Za-z0-9_:-]{1,32})\b", text):
+            token = match.group(1)
+            if token.lower() in {"xml", "doctype", "element", "attlist"}:
+                continue
+            add_match(match, 1, "xml_token", 0.65)
+    else:
+        for match in re.finditer(r"\b([A-Za-z_][A-Za-z0-9_:-]{1,32}|\d{1,12})\b", text):
+            add_match(match, 1, "text_token", 0.6)
+    if atom.category == "numeric-margin":
+        ranges.sort(key=lambda item: (0 if item.get("range_kind") == "numeric_literal" else 1, item["start"]))
+    elif atom.category == "equality/magic":
+        ranges.sort(key=lambda item: (0 if item.get("range_kind") in {"quoted_value", "xml_token"} else 1, item["start"]))
+    else:
+        ranges.sort(key=lambda item: (0 if item.get("range_kind") in {"numeric_literal", "quoted_value"} else 1, item["start"]))
+    return ranges[:8]
+
+
+def content_aware_candidate_ranges(data: bytes, atom: TCAtom) -> list[dict[str, Any]]:
+    family = input_format_family(data)
+    if family == "png":
+        ranges = png_chunk_ranges(data, atom)
+    elif family in {"xml", "sql", "text"}:
+        ranges = token_ranges(data, atom, family)
+    else:
+        ranges = []
+    if ranges:
+        return ranges
+    if len(data) > 32:
+        return [
+            {
+                "start": min(32, len(data) - 1),
+                "length": min(64, max(1, len(data) - min(32, len(data) - 1))),
+                "confidence_label": "low",
+                "confidence": 0.2,
+                "runtime_event_id": "content_aware_safe_tail_fallback",
+                "source": "content_aware_safe_tail_fallback",
+                "range_kind": "safe_tail",
+                "format_family": family,
+            }
+        ]
+    return []
+
+
+def is_whole_input_low_confidence(range_record: dict[str, Any]) -> bool:
+    source = str(range_record.get("source", ""))
+    return source.endswith("whole_input_fallback") or confidence_to_float(range_record.get("confidence", 0.0)) <= 0.11
+
+
+def merge_candidate_ranges(
+    graph_ranges: list[dict[str, Any]],
+    content_ranges: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    if content_ranges and (not graph_ranges or all(is_whole_input_low_confidence(item) for item in graph_ranges)):
+        return content_ranges[:8]
+    def source_priority(item: dict[str, Any]) -> int:
+        source = str(item.get("source", "")).lower()
+        if "lifted_observer" in source or "replay" in source or "trigger_progress_graph" in source:
+            return 0
+        if "content_aware" in source:
+            return 1
+        return 2
+
+    by_key: dict[tuple[int, int, str], dict[str, Any]] = {}
+    for item in graph_ranges + content_ranges:
+        key = (
+            as_int(item.get("start"), 0),
+            as_int(item.get("length"), 0),
+            str(item.get("range_kind", "")),
+        )
+        current = by_key.get(key)
+        if current is None:
+            by_key[key] = item
+            continue
+        item_rank = (-confidence_to_float(item.get("confidence", 0.0)), source_priority(item))
+        current_rank = (-confidence_to_float(current.get("confidence", 0.0)), source_priority(current))
+        if item_rank < current_rank:
+            by_key[key] = item
+    merged = list(by_key.values())
+    merged.sort(key=lambda item: (-confidence_to_float(item.get("confidence", 0.0)), source_priority(item), as_int(item.get("start"), 0)))
+    return merged[:8]
+
+
+def fit_value_to_length(value: bytes, length: int, fallback: bytes = b"\x00") -> bytes:
+    if length <= 0:
+        return b""
+    if not value:
+        value = fallback
+    repeated = (value * ((length // len(value)) + 1))[:length]
+    return repeated
+
+
+def integer_boundary_values(raw: Any) -> list[int]:
+    if raw is None or raw == "":
+        return []
+    if isinstance(raw, (int, float)):
+        return [int(raw)]
+    if isinstance(raw, list):
+        out: list[int] = []
+        for item in raw:
+            out.extend(integer_boundary_values(item))
+        return list(dict.fromkeys(out))
+    text = str(raw).strip()
+    if not text:
+        return []
+    if text.startswith("["):
+        try:
+            parsed = json.loads(text)
+            return integer_boundary_values(parsed)
+        except json.JSONDecodeError:
+            pass
+    out = []
+    for token in re.split(r"\s*[,;|]\s*", text):
+        if not token:
+            continue
+        try:
+            out.append(int(token, 0))
+        except ValueError:
+            continue
+    return list(dict.fromkeys(out))
+
+
+def png_chunk_metadata_for_range(data: bytes, start: int) -> dict[str, Any] | None:
+    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return None
+    pos = 8
+    while pos + 12 <= len(data):
+        length = int.from_bytes(data[pos : pos + 4], "big", signed=False)
+        chunk_type_raw = data[pos + 4 : pos + 8]
+        if not re.match(rb"^[A-Za-z]{4}$", chunk_type_raw):
+            return None
+        data_start = pos + 8
+        crc_start = data_start + length
+        chunk_end = crc_start + 4
+        if chunk_end > len(data):
+            return None
+        if pos <= start < crc_start:
+            return {
+                "chunk_type": chunk_type_raw.decode("ascii", errors="replace"),
+                "chunk_start": pos,
+                "chunk_data_start": data_start,
+                "chunk_length": length,
+                "chunk_total_length": chunk_end - pos,
+                "chunk_crc_start": crc_start,
+            }
+        pos = chunk_end
+        if chunk_type_raw == b"IEND":
+            return None
+    return None
+
+
+def repair_png_crc(data: bytes, range_record: dict[str, Any]) -> bytes:
+    if range_record.get("format_family") != "png" and not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return data
+    chunk_start = as_int(range_record.get("chunk_start"), -1)
+    chunk_length = as_int(range_record.get("chunk_length"), -1)
+    crc_start = as_int(range_record.get("chunk_crc_start"), -1)
+    if chunk_start < 0 or chunk_length < 0 or crc_start < 0:
+        inferred = png_chunk_metadata_for_range(data, as_int(range_record.get("start"), -1))
+        if inferred:
+            chunk_start = as_int(inferred.get("chunk_start"), -1)
+            chunk_length = as_int(inferred.get("chunk_length"), -1)
+            crc_start = as_int(inferred.get("chunk_crc_start"), -1)
+    if chunk_start < 0 or chunk_length < 0 or crc_start < 0:
+        return data
+    if chunk_start + 8 + chunk_length + 4 > len(data) or crc_start + 4 > len(data):
+        return data
+    import zlib
+
+    repaired = bytearray(data)
+    crc_payload = repaired[chunk_start + 4 : chunk_start + 8 + chunk_length]
+    repaired[crc_start : crc_start + 4] = zlib.crc32(crc_payload).to_bytes(4, "big", signed=False)
+    return bytes(repaired)
+
+
+def png_chunk_delete_span(range_record: dict[str, Any]) -> tuple[int, int] | None:
+    if range_record.get("format_family") != "png":
+        return None
+    chunk_type = str(range_record.get("chunk_type", ""))
+    if chunk_type in {"IHDR", "IEND"}:
+        return None
+    start = as_int(range_record.get("chunk_start"), -1)
+    length = as_int(range_record.get("chunk_total_length"), 0)
+    if start < 0 or length <= 0:
+        return None
+    return start, length
+
+
 def propose_mutations(
     target_id: str,
     atom: TCAtom,
@@ -2900,7 +3736,7 @@ def propose_mutations(
     data = seed_path.read_bytes()
     if not data:
         data = b"\x00"
-    ranges = candidate_range_records(record, len(data), graph)
+    ranges = merge_candidate_ranges(candidate_range_records(record, len(data), graph), content_aware_candidate_ranges(data, atom))
     if plan.plan_reason.startswith("native_tc_dgf_native_dt_generic_mutation_only"):
         ranges = [
             {
@@ -2910,9 +3746,38 @@ def propose_mutations(
                 "confidence": 0.1,
                 "runtime_event_id": "",
                 "source": "native_tc_dgf_whole_input_generic",
+                "range_kind": "whole_input",
+                "format_family": input_format_family(data),
             }
         ]
     constants = constants_from_expression(atom.expression)
+    event_tokens = missing_event_tokens(record, atom)
+    lifted_event_tokens = missing_event_tokens(record, atom, include_root_events=False)
+    mutation_tokens = list(dict.fromkeys(constants + event_tokens))
+    effective_operators: list[str] = []
+    lift_guided_operators: set[str] = set()
+    seen_operator_keys: set[str] = set()
+    if lifted_event_tokens:
+        for operator in ["event insertion", "generic token insertion"]:
+            key = canonical_operator_name(operator)
+            if key not in seen_operator_keys:
+                effective_operators.append(operator)
+                lift_guided_operators.add(operator)
+                seen_operator_keys.add(key)
+    for operator in plan.mutator_operators:
+        key = canonical_operator_name(operator)
+        if key not in seen_operator_keys:
+            effective_operators.append(operator)
+            seen_operator_keys.add(key)
+    operator_cap = max(1, math.ceil(max_proposals / max(1, len(effective_operators))))
+    operator_counts: Counter[str] = Counter()
+    integer_value_offsets: Counter[tuple[int, int, str]] = Counter()
+    integer_range_keys = {
+        (as_int(item.get("start"), 0), as_int(item.get("length"), 0), str(item.get("range_kind", "")))
+        for item in ranges
+        if str(item.get("mutation_strategy", "")).lower() == "integer_boundary"
+    }
+    diversify_integer_ranges = len(integer_range_keys) > 1
     proposals: list[tuple[MutationProposal, bytes | None]] = []
 
     def add(
@@ -2925,6 +3790,8 @@ def propose_mutations(
     ) -> None:
         if len(proposals) >= max_proposals:
             return
+        if operator_counts[operator] >= operator_cap:
+            return
         proposal_id = f"m:{atom.atom_id}:{len(proposals):06d}:{stable_id(record.seed_id, atom.atom_id, operator, len(proposals))}"
         family = operator_family(operator, atom.category)
         detail_payload = details or {}
@@ -2933,7 +3800,12 @@ def propose_mutations(
         detail_payload.setdefault("influence_confidence", confidence_to_float(range_record.get("confidence")))
         detail_payload.setdefault("influence_confidence_label", range_record.get("confidence_label", "unknown"))
         detail_payload.setdefault("range_source", range_record.get("source", "unknown"))
+        detail_payload.setdefault("range_kind", range_record.get("range_kind", "unknown"))
+        detail_payload.setdefault("format_family", range_record.get("format_family", input_format_family(data)))
         detail_payload.setdefault("runtime_event_id", range_record.get("runtime_event_id", ""))
+        if operator in lift_guided_operators:
+            detail_payload.setdefault("lift_guided_operator", True)
+            detail_payload.setdefault("missing_event_token_count", len(lifted_event_tokens))
         proposals.append(
             (
                 MutationProposal(
@@ -2950,6 +3822,9 @@ def propose_mutations(
                             "confidence": detail_payload["influence_confidence"],
                             "confidence_label": detail_payload["influence_confidence_label"],
                             "runtime_event_id": detail_payload["runtime_event_id"],
+                            "source": detail_payload["range_source"],
+                            "range_kind": detail_payload["range_kind"],
+                            "format_family": detail_payload["format_family"],
                         }
                     ],
                     executed=False,
@@ -2962,9 +3837,12 @@ def propose_mutations(
                 mutated,
             )
         )
+        operator_counts[operator] += 1
 
     def add_skipped(operator: str, precondition: dict[str, Any]) -> None:
         if len(proposals) >= max_proposals:
+            return
+        if operator_counts[operator] >= operator_cap:
             return
         proposal_id = f"m:{atom.atom_id}:{len(proposals):06d}:{stable_id(record.seed_id, atom.atom_id, operator, 'skip')}"
         proposals.append(
@@ -2992,14 +3870,31 @@ def propose_mutations(
                 None,
             )
         )
+        operator_counts[operator] += 1
 
-    for operator in plan.mutator_operators:
+    def range_priority_for_operator(op: str, range_record: dict[str, Any]) -> tuple[int, float, int]:
+        range_kind = str(range_record.get("range_kind", "")).lower()
+        mutation_strategy = str(range_record.get("mutation_strategy", "")).lower()
+        event_insert_site = (
+            "insert" in range_kind
+            or any(token in range_kind for token in ["phase", "prefix", "token", "doctype", "stream"])
+        )
+        if op in {"event_insertion", "event_duplication", "generic_token_insertion"} and event_insert_site:
+            primary = 0
+        elif op in {"boundary_write", "operand_replacement"} and mutation_strategy == "integer_boundary":
+            primary = as_int(range_record.get("root_priority"), 0)
+        else:
+            primary = as_int(range_record.get("root_priority"), 1)
+        return (primary, -confidence_to_float(range_record.get("confidence", 0.0)), as_int(range_record.get("start"), 0))
+
+    for operator in effective_operators:
         op = canonical_operator_name(operator)
         precondition = evaluate_operator_preconditions(operator, atom, record, graph)
         if not precondition["satisfied"]:
             add_skipped(operator, precondition)
             continue
-        for range_record in ranges:
+        operator_ranges = sorted(ranges, key=lambda item: range_priority_for_operator(op, item))
+        for range_record in operator_ranges:
             if len(proposals) >= max_proposals:
                 break
             start = as_int(range_record.get("start"), 0)
@@ -3007,63 +3902,230 @@ def propose_mutations(
             end = start + length
             buf = bytearray(data)
             local_start = start
+            family = str(range_record.get("format_family", input_format_family(data)))
+            range_kind = str(range_record.get("range_kind", ""))
+            mutation_strategy = str(range_record.get("mutation_strategy", ""))
+            structured_text = family in {"xml", "sql", "text", "record_text", "kv_text", "regex_text", "pdf"}
+            png_range = family == "png"
+            big_endian_numeric_field = png_range and range_kind in {
+                "png_width",
+                "png_height",
+                "png_plte_length",
+                "png_chunk_length",
+            }
+            integer_strategy = mutation_strategy == "integer_boundary"
+            integer_width = as_int(range_record.get("integer_width"), length)
+            integer_endian = str(range_record.get("integer_endian", "big")).lower()
+            if integer_endian not in {"big", "little"}:
+                integer_endian = "big"
+
+            def repaired(mutated: bytes) -> bytes:
+                return repair_png_crc(mutated, range_record)
+
+            def add_integer_boundary_proposals() -> bool:
+                if not integer_strategy:
+                    return False
+                if op in {"generic_token_insertion", "generic_region_deletion"}:
+                    return False
+                write_width = max(1, min(integer_width, length, len(buf) - local_start))
+                if write_width <= 0:
+                    return True
+                max_value = (1 << (8 * write_width)) - 1
+                values = integer_boundary_values(range_record.get("integer_values")) or [0, 1, max_value]
+                value_key = (local_start, length, str(range_record.get("range_kind", "")))
+                offset = integer_value_offsets[value_key] % len(values)
+                ordered_values = values[offset:] + values[:offset]
+                values_for_this_range = ordered_values[:1] if diversify_integer_ranges else ordered_values
+                for int_value in values_for_this_range:
+                    local_buf = bytearray(data)
+                    pos = min(local_start, len(local_buf) - write_width)
+                    encoded = (int(int_value) & max_value).to_bytes(write_width, integer_endian, signed=False)
+                    local_buf[pos : pos + write_width] = encoded
+                    add(
+                        operator,
+                        repaired(bytes(local_buf)),
+                        range_record,
+                        pos,
+                        write_width,
+                        {
+                            "mutation_strategy": mutation_strategy,
+                            "integer_value": int(int_value),
+                            "integer_width": write_width,
+                            "integer_endian": integer_endian,
+                            "format_preserving_projection": True,
+                            "integer_boundary_applied_to_operator": op,
+                        },
+                    )
+                    integer_value_offsets[value_key] += 1
+                    if len(proposals) >= max_proposals or operator_counts[operator] >= operator_cap:
+                        break
+                return True
+
+            if add_integer_boundary_proposals():
+                continue
+
             if op in {"boundary_write", "operand_replacement", "dictionary_insertion", "token_replacement"}:
-                values = constants or [b"\x00", b"\x01", b"\xff", b"\x7f", b"\x80"]
-                for value in values[:3]:
+                if integer_strategy:
+                    write_width = max(1, min(integer_width, length, len(buf) - local_start))
+                    if write_width <= 0:
+                        continue
+                    max_value = (1 << (8 * write_width)) - 1
+                    values = integer_boundary_values(range_record.get("integer_values")) or [0, 1, max_value]
+                    for int_value in values:
+                        buf = bytearray(data)
+                        pos = min(local_start, len(buf) - write_width)
+                        encoded = (int(int_value) & max_value).to_bytes(write_width, integer_endian, signed=False)
+                        buf[pos : pos + write_width] = encoded
+                        add(
+                            operator,
+                            repaired(bytes(buf)),
+                            range_record,
+                            pos,
+                            write_width,
+                            {
+                                "mutation_strategy": mutation_strategy,
+                                "integer_value": int(int_value),
+                                "integer_width": write_width,
+                                "integer_endian": integer_endian,
+                                "format_preserving_projection": True,
+                            },
+                        )
+                        if len(proposals) >= max_proposals:
+                            break
+                    continue
+                if structured_text and mutation_strategy == "text_length_expansion":
+                    token_text = str(range_record.get("insert_token", "formtrig"))
+                    insert_value = token_text.encode("ascii", errors="ignore") or b"formtrig"
                     buf = bytearray(data)
-                    pos = min(local_start, len(buf))
-                    if op == "dictionary_insertion":
-                        buf[pos:pos] = value
-                    else:
-                        write_len = min(len(value), max(1, len(buf) - pos))
-                        buf[pos : pos + write_len] = value[:write_len]
+                    insert_pos = min(max(local_start + max(1, length), local_start), len(buf))
+                    buf[insert_pos:insert_pos] = insert_value
                     add(
                         operator,
                         bytes(buf),
                         range_record,
+                        insert_pos,
+                        len(insert_value),
+                        {
+                            "mutation_strategy": mutation_strategy,
+                            "inserted_event_token": insert_value.decode("latin1", errors="replace"),
+                            "format_preserving_projection": True,
+                        },
+                    )
+                    if len(proposals) >= max_proposals:
+                        break
+                values = mutation_tokens or [b"\x00", b"\x01", b"\xff", b"\x7f", b"\x80"]
+                for value in values[:3]:
+                    buf = bytearray(data)
+                    pos = min(local_start, len(buf))
+                    if op == "dictionary_insertion" and not (png_range or structured_text):
+                        buf[pos:pos] = value
+                        actual_len = len(value)
+                    else:
+                        write_len = min(max(1, length), max(1, len(buf) - pos))
+                        if png_range:
+                            write_len = min(write_len, max(1, min(length, len(buf) - pos)))
+                        elif structured_text:
+                            write_len = min(write_len, max(1, min(length, len(buf) - pos)))
+                        buf[pos : pos + write_len] = fit_value_to_length(value, write_len, b"0")
+                        actual_len = write_len
+                    add(
+                        operator,
+                        repaired(bytes(buf)),
+                        range_record,
                         pos,
-                        max(1, min(len(value), len(buf) - pos)),
-                        {"constant": value.hex()},
+                        max(1, actual_len),
+                        {"constant": value.hex(), "format_preserving_projection": bool(png_range or structured_text)},
                     )
                     if len(proposals) >= max_proposals:
                         break
             elif op in {"arithmetic_perturbation", "numeric_byte_increment", "guard_field_perturbation", "error_path_induction", "phase_preserving_mutation"}:
                 pos = min(local_start, len(buf) - 1)
+                if big_endian_numeric_field and op in {"arithmetic_perturbation", "numeric_byte_increment"}:
+                    pos = min(max(local_start, end - 1), len(buf) - 1)
                 if op == "error_path_induction":
-                    buf[pos:min(end, pos + 8, len(buf))] = b"\x00" * max(1, min(end, pos + 8, len(buf)) - pos)
+                    write_end = min(end, pos + 8, len(buf))
+                    if structured_text and range_kind in {"numeric_literal", "quoted_value", "xml_token", "text_token"}:
+                        fill = b"0" if range_kind == "numeric_literal" else b"A"
+                        buf[pos:write_end] = fill * max(1, write_end - pos)
+                    else:
+                        buf[pos:write_end] = b"\x00" * max(1, write_end - pos)
                 else:
-                    buf[pos] = (buf[pos] + 1) & 0xFF
-                add(operator, bytes(buf), range_record, pos, 1)
+                    if structured_text and 48 <= buf[pos] <= 57:
+                        buf[pos] = 48 + ((buf[pos] - 47) % 10)
+                    elif structured_text and (65 <= buf[pos] <= 90 or 97 <= buf[pos] <= 122):
+                        base = 65 if 65 <= buf[pos] <= 90 else 97
+                        buf[pos] = base + ((buf[pos] - base + 1) % 26)
+                    else:
+                        buf[pos] = (buf[pos] + 1) & 0xFF
+                add(operator, repaired(bytes(buf)), range_record, pos, 1)
             elif op == "endian_variants":
                 if local_start + 4 <= len(buf):
                     buf[local_start : local_start + 4] = reversed(buf[local_start : local_start + 4])
-                    add(operator, bytes(buf), range_record, local_start, 4)
+                    add(operator, repaired(bytes(buf)), range_record, local_start, 4)
             elif op in {"generic_byte_perturbation", "generic_byte_increment", "generic_byte_decrement", "generic_token_insertion", "generic_region_deletion"}:
                 pos = min(local_start, len(buf) - 1)
                 if op == "generic_byte_perturbation":
                     buf[pos] ^= 0x1
-                    add(operator, bytes(buf), range_record, pos, 1)
+                    add(operator, repaired(bytes(buf)), range_record, pos, 1)
                 elif op == "generic_byte_increment":
                     buf[pos] = (buf[pos] + 1) & 0xFF
-                    add(operator, bytes(buf), range_record, pos, 1)
+                    add(operator, repaired(bytes(buf)), range_record, pos, 1)
                 elif op == "generic_byte_decrement":
                     buf[pos] = (buf[pos] - 1) & 0xFF
-                    add(operator, bytes(buf), range_record, pos, 1)
+                    add(operator, repaired(bytes(buf)), range_record, pos, 1)
                 elif op == "generic_token_insertion":
-                    buf[pos:pos] = b"\x00"
-                    add(operator, bytes(buf), range_record, pos, 1)
+                    if structured_text and mutation_tokens:
+                        value = mutation_tokens[0]
+                        insert_pos = len(buf) if family == "sql" else pos
+                        buf[insert_pos:insert_pos] = value
+                        add(operator, repaired(bytes(buf)), range_record, insert_pos, len(value), {"inserted_event_token": value.decode("latin1", errors="replace"), "format_preserving_projection": True})
+                    elif png_range or structured_text:
+                        buf[pos] = ord("0") if structured_text else (buf[pos] ^ 0x1)
+                        add(operator, repaired(bytes(buf)), range_record, pos, 1, {"format_preserving_projection": True})
+                    else:
+                        buf[pos:pos] = b"\x00"
+                        add(operator, bytes(buf), range_record, pos, 1)
                 else:
                     delete_len = max(1, min(length, 16, len(buf) - pos))
-                    del buf[pos : pos + delete_len]
-                    add(operator, bytes(buf), range_record, pos, delete_len)
+                    if png_range or structured_text:
+                        fill = b"0" if range_kind == "numeric_literal" else b" "
+                        buf[pos : pos + delete_len] = fill * delete_len
+                        add(operator, repaired(bytes(buf)), range_record, pos, delete_len, {"format_preserving_projection": True})
+                    else:
+                        del buf[pos : pos + delete_len]
+                        add(operator, bytes(buf), range_record, pos, delete_len)
             elif op in {"optional_region_deletion", "initialization_bypass_mutation", "reset_cleanup_path_mutation", "event_deletion"}:
-                delete_len = max(1, min(length, 32, len(buf) - local_start))
-                del buf[local_start : local_start + delete_len]
-                add(operator, bytes(buf), range_record, local_start, delete_len)
+                delete_span = png_chunk_delete_span(range_record)
+                if delete_span:
+                    delete_start, delete_len = delete_span
+                    del buf[delete_start : delete_start + delete_len]
+                    add(operator, bytes(buf), range_record, delete_start, delete_len, {"format_preserving_projection": True, "deleted_png_chunk": range_record.get("chunk_type", "")})
+                else:
+                    delete_len = max(1, min(length, 32, len(buf) - local_start))
+                    if structured_text:
+                        fill = b"0" if range_kind == "numeric_literal" else b" "
+                        buf[local_start : local_start + delete_len] = fill * delete_len
+                        add(operator, bytes(buf), range_record, local_start, delete_len, {"format_preserving_projection": True})
+                    elif png_range:
+                        buf[local_start : local_start + delete_len] = b"\x00" * delete_len
+                        add(operator, repaired(bytes(buf)), range_record, local_start, delete_len, {"format_preserving_projection": True})
+                    else:
+                        del buf[local_start : local_start + delete_len]
+                        add(operator, bytes(buf), range_record, local_start, delete_len)
             elif op in {"event_insertion", "event_duplication"}:
-                chunk = bytes(buf[local_start : min(end, local_start + 16)]) or b"\x00"
-                buf[local_start:local_start] = chunk
-                add(operator, bytes(buf), range_record, local_start, len(chunk))
+                chunk = event_tokens[0] if event_tokens else (bytes(buf[local_start : min(end, local_start + 16)]) or b"\x00")
+                if png_range or structured_text:
+                    if event_tokens:
+                        insert_pos = len(buf) if family == "sql" else local_start
+                        buf[insert_pos:insert_pos] = chunk
+                        add(operator, repaired(bytes(buf)), range_record, insert_pos, len(chunk), {"inserted_event_token": chunk.decode("latin1", errors="replace"), "format_preserving_projection": True})
+                    else:
+                        write_len = min(len(chunk), max(1, min(length, len(buf) - local_start)))
+                        buf[local_start : local_start + write_len] = fit_value_to_length(chunk, write_len, b"0")
+                        add(operator, repaired(bytes(buf)), range_record, local_start, write_len, {"format_preserving_projection": True})
+                else:
+                    buf[local_start:local_start] = chunk
+                    add(operator, bytes(buf), range_record, local_start, len(chunk))
             elif op == "object_identity_alignment":
                 id_pos = local_start + 1 if local_start + 1 < len(buf) else local_start
                 candidates: list[tuple[int, int, str]] = []
@@ -3076,17 +4138,21 @@ def propose_mutations(
                         break
                     buf = bytearray(data)
                     buf[pos] = value
-                    add(operator, bytes(buf), range_record, pos, 1, {"strategy": strategy, "value": int(value)})
+                    add(operator, repaired(bytes(buf)), range_record, pos, 1, {"strategy": strategy, "value": int(value)})
             elif op == "event_reordering":
                 span = min(length, 32, len(buf) - local_start)
                 if span >= 4:
                     half = span // 2
-                    buf[local_start : local_start + span] = (
-                        buf[local_start + half : local_start + span] + buf[local_start : local_start + half]
-                    )
-                    add(operator, bytes(buf), range_record, local_start, span)
+                    if structured_text or png_range:
+                        buf[local_start : local_start + span] = reversed(buf[local_start : local_start + span])
+                        add(operator, repaired(bytes(buf)), range_record, local_start, span, {"format_preserving_projection": True})
+                    else:
+                        buf[local_start : local_start + span] = (
+                            buf[local_start + half : local_start + span] + buf[local_start : local_start + half]
+                        )
+                        add(operator, bytes(buf), range_record, local_start, span)
             elif op == "repair_hook":
-                add(operator, bytes(buf), range_record, local_start, 0, {"configured": False})
+                add(operator, repaired(bytes(buf)), range_record, local_start, 0, {"configured": False})
     return proposals[:max_proposals]
 
 
@@ -3128,6 +4194,9 @@ def atom_progress_record(
         "atom_type": atom.category,
         "native_DT_raw": record.native_DT,
         "native_DT_bucket": record.dt_bucket,
+        "lifted_DF_raw": vec.lifted_df,
+        "lifted_DF_bucket": vec.lifted_bucket,
+        "distance_source": vec.distance_source,
         "native_actionable": plan.use_native_dt,
         "lifted_features": {
             "enabled": plan.use_lifted_features,
@@ -3331,6 +4400,8 @@ def normalize_runtime_signal(stdout: str, stderr: str, returncode: int, elapsed_
         "sanitizer_error": sanitizer_error,
         "reached": last.get("reached"),
         "triggered": last.get("triggered", last.get("crash_predicate")),
+        "reached_count": last.get("reached_count"),
+        "triggered_count": last.get("triggered_count"),
         "native_DT": last.get("D_T", last.get("d_t")),
         "lifted_DF": last.get("D_F", last.get("d_f", last.get("d_f_lifted"))),
         "root_state": last.get("root_state", last.get("state_hash", "")),
@@ -3338,6 +4409,9 @@ def normalize_runtime_signal(stdout: str, stderr: str, returncode: int, elapsed_
         "df_source": last.get("df_source"),
         "hot_ranges": last.get("hot_ranges", last.get("hot_byte_ranges", [])),
         "debug_events": last.get("debug_events", []),
+        "raw_root_events": last.get("raw_root_events", []),
+        "hit_probe": last.get("hit_probe", ""),
+        "monitor_row": last.get("monitor_row", ""),
     }
 
 

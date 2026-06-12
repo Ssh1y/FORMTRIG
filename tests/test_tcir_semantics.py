@@ -55,6 +55,36 @@ def test_null_check_is_binary_without_numeric_secondary_tag():
     assert atom.secondary_categories == []
 
 
+def test_numeric_manifest_category_dominates_numeric_equality_shape():
+    tcir = build_tcir("row_factor_l == ((size_t)1 << (sizeof(png_uint_32) * 8))", "numeric-margin", "x.c:1")
+    atom = tcir.atoms[0]
+    assert atom.category == "numeric-margin"
+
+
+def test_lifecycle_manifest_category_dominates_scalar_relation_shape():
+    tcir = build_tcir("pNew->nLSlot < (pNew->nLTerm+1)", "compound-sequence-lifecycle", "x.c:1")
+    atom = tcir.atoms[0]
+    assert atom.category == "compound-sequence-lifecycle"
+
+
+def test_mixed_tc_uses_per_atom_categories_not_target_primary():
+    tcir = build_tcir(
+        "flag == 1 && len > cap && ctx.obj == NULL",
+        "compound-sequence-lifecycle",
+        "x.c:1;x.c:2;x.c:3",
+    )
+    categories = {atom.expression: atom.category for atom in tcir.atoms}
+    assert categories["flag == 1"] == "equality/magic"
+    assert categories["len > cap"] == "numeric-margin"
+    assert categories["ctx.obj == NULL"] == "binary-state-null"
+
+
+def test_pointer_field_equality_is_not_numeric_from_arrow():
+    tcir = build_tcir("obj->state == READY && len > cap", "compound-sequence-lifecycle", "x.c:1;x.c:2")
+    categories = {atom.expression: atom.category for atom in tcir.atoms}
+    assert categories["obj->state == READY"] == "equality/magic"
+
+
 def test_same_object_links_multiple_event_atoms():
     tcir = build_tcir(
         "create(obj) before release(obj) before use(obj) && SAME_OBJECT(obj)",

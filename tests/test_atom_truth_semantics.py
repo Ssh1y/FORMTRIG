@@ -102,6 +102,15 @@ def test_anyof_trigger_keeps_atom_truth_separate():
     assert vector.triggered is True
 
 
+def test_anyof_branch_selection_uses_atom_local_root_distance_as_tiebreaker():
+    tcir = build_tcir("tag == 'A' || tag == 'B'", "equality/magic", "x.c:1;x.c:2", target_id="T2_EQUALITY_DIRECT_ANYOF")
+    vector = build_full_progress_vector(rec("tag=67", target_id="T2_EQUALITY_DIRECT_ANYOF"), tcir, plans(tcir))
+    assert vector.atom_observations["a1"]["status"] == "OBSERVED_FALSE"
+    assert vector.atom_observations["a2"]["status"] == "OBSERVED_FALSE"
+    assert vector.atom_vectors["a2"]["lifted_df"] < vector.atom_vectors["a1"]["lifted_df"]
+    assert vector.selected_branch == "a2"
+
+
 def test_guarded_trigger_keeps_guard_and_null_atoms_true():
     tcir = build_tcir("hdr == 'G' && ctx.obj == NULL", "binary-state-null", "x.c:1;x.c:2", target_id="T5_GUARDED_BINARY")
     vector = build_full_progress_vector(
