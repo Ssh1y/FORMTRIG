@@ -120,11 +120,15 @@ AFL_PATH="$aflpp_dir" "$afl_cc" -I"$repo_root/formtrig/include" \
   "$repo_root/formtrig/runtime/formtrig_runtime.c" \
   -o "$work_dir/native_afl_role_target" -lrt -lm
 
-AFL_NO_UI=1 AFL_SKIP_CPUFREQ=1 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
-  AFL_NO_AFFINITY=1 AFL_FORMTRIG=1 FORMTRIG_TARGET_BUG=native_afl_smoke \
-  FORMTRIG_NO_CRASH=1 FORMTRIG_PROGRESS_LOG=1 \
-  "$afl_fuzz" -i "$work_dir/in" -o "$work_dir/out" -V 2 -- \
-  "$work_dir/native_afl_role_target" @@ >/dev/null
+FORMTRIG_NO_CRASH=1 "$repo_root/scripts/run_formtrig_aflpp_campaign.sh" \
+  --in "$work_dir/in" \
+  --out "$work_dir/out" \
+  --target-bug native_afl_smoke \
+  --category binary-null \
+  --lift-spec "$work_dir/binary_lift_spec.txt" \
+  --duration 2 \
+  --aflpp-dir "$aflpp_dir" \
+  -- "$work_dir/native_afl_role_target" @@ >/dev/null
 
 stats="$work_dir/out/default/fuzzer_stats"
 progress="$work_dir/out/default/formtrig_progress.jsonl"
@@ -136,13 +140,13 @@ typed_execs="$(stat_value formtrig_typed_execs "$stats")"
 typed_finds="$(stat_value formtrig_typed_finds "$stats")"
 stability_checks="$(stat_value formtrig_stability_checks "$stats")"
 
-"$work_dir/formtrig_progress_summary" "$stats" "$progress" \
-  > "$work_dir/summary.json"
+summary="$work_dir/out/default/formtrig_summary.json"
+require_file "$summary"
 
-summary_queued_progress="$(json_number formtrig_queued_progress "$work_dir/summary.json")"
-summary_typed_execs="$(json_number formtrig_typed_execs "$work_dir/summary.json")"
-summary_atom_signals="$(json_number atom_signal_events "$work_dir/summary.json")"
-summary_role_signals="$(json_number role_signal_events "$work_dir/summary.json")"
+summary_queued_progress="$(json_number formtrig_queued_progress "$summary")"
+summary_typed_execs="$(json_number formtrig_typed_execs "$summary")"
+summary_atom_signals="$(json_number atom_signal_events "$summary")"
+summary_role_signals="$(json_number role_signal_events "$summary")"
 
 if [[ "${queued_progress:-0}" -le 0 ]]; then
   echo "FORMTRIG did not queue progress" >&2
@@ -157,19 +161,19 @@ fi
 if [[ "${summary_queued_progress:-0}" -le 0 ||
       "${summary_typed_execs:-0}" -le 0 ]]; then
   echo "FORMTRIG progress summary missed queue or typed execution" >&2
-  cat "$work_dir/summary.json" >&2
+  cat "$summary" >&2
   exit 7
 fi
 
 if [[ "${summary_atom_signals:-0}" -le 0 ]]; then
   echo "AFL++ progress summary did not capture atom signals" >&2
-  cat "$work_dir/summary.json" >&2
+  cat "$summary" >&2
   exit 7
 fi
 
 if [[ "${summary_role_signals:-0}" -le 0 ]]; then
   echo "AFL++ progress summary did not capture role bits" >&2
-  cat "$work_dir/summary.json" >&2
+  cat "$summary" >&2
   exit 8
 fi
 
