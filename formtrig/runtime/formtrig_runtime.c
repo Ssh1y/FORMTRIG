@@ -1413,10 +1413,8 @@ static double final_df(void) {
   int direct_valid = g_state.d_f_direct < FORMTRIG_INF / 2.0;
   int direct_zero = direct_valid && g_state.d_f_direct == 0.0;
   int lifted_zero = lifted_valid && g_state.d_f_lifted == 0.0;
-  int direct_zero_confirmed =
-      direct_zero && (g_state.manual_direct || g_state.crash_predicate);
-  int lifted_zero_confirmed =
-      lifted_zero && (g_state.manual_lifted || g_state.crash_predicate);
+  int direct_zero_confirmed = direct_zero && g_state.crash_predicate;
+  int lifted_zero_confirmed = lifted_zero && g_state.crash_predicate;
   /* A zero sub-signal is terminal only after the TC oracle confirms it. */
   double direct_df =
       direct_zero && !direct_zero_confirmed ? 1.0 : g_state.d_f_direct;
@@ -2064,6 +2062,11 @@ static void record_probe_component(const formtrig_probe_spec_t *spec,
                                    spec->role, spec->priority, flags,
                                    source_id, context_hash, value,
                                    spec->confidence);
+  if ((spec->direction_flag & FORMTRIG_COMPONENT_LOWER_IS_BETTER) &&
+      value < g_state.d_f_lifted) {
+    g_state.d_f_lifted = value;
+    remember_df_source_with_distance(event, 1u, 10u, value);
+  }
   g_state.manual_lifted = 1;
   if (event->input_len)
     prioritize_hot_range(event->input_start, event->input_len, 3.0);
@@ -2306,7 +2309,18 @@ static void write_jsonl(void) {
             component->context_hash, component->value, component->confidence);
   }
 
-  fprintf(f, "],\"atom_signals\":[");
+  fprintf(f, "],\"feature_source_event_ids\":[");
+  for (uint32_t i = 0; i < g_state.component_count; i++) {
+    formtrig_progress_component_t *component = &g_state.components[i];
+    if (i) fputc(',', f);
+    fprintf(f, "%" PRIu64, component->source_id);
+  }
+
+  fprintf(f,
+          "],\"uses_trigger_oracle\":false,"
+          "\"uses_target_id_specific_rule\":false");
+
+  fprintf(f, ",\"atom_signals\":[");
   for (uint32_t i = 0; i < g_state.atom_signal_count; i++) {
     formtrig_atom_signal_t *signal = &g_state.atom_signals[i];
     if (i) fputc(',', f);
@@ -2483,6 +2497,7 @@ void formtrig_record_direct_binary(int satisfied) {
 }
 
 void formtrig_record_direct_margin(double distance, const char *kind) {
+  (void)kind;
   if (distance < 0.0) distance = 0.0;
   g_state.d_f_direct = distance;
   g_state.d_f_direct_kind = FORMTRIG_DIRECT_MANUAL;
@@ -2502,6 +2517,7 @@ void formtrig_record_direct_margin(double distance, const char *kind) {
 }
 
 void formtrig_record_lifted_distance(double distance, const char *kind) {
+  (void)kind;
   if (distance < 0.0) distance = 0.0;
   g_state.d_f_lifted = distance;
   g_state.manual_lifted = 1;

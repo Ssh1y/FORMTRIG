@@ -131,7 +131,9 @@ if ! grep -q '1,binary-state-null,B2,true' "$work_dir/binary_lift_audit.csv"; th
 fi
 
 "$work_dir/formtrig_binding_map" --category binary-null \
-  --site-map "$work_dir/site_map.tsv" "$work_dir/binary_lift_spec.txt" \
+  --site-map "$work_dir/site_map.tsv" \
+  --normalized-spec "$work_dir/binary_lift.normalized" \
+  "$work_dir/binary_lift_spec.txt" \
   > "$work_dir/runtime_event_map.csv"
 if ! grep -q 'binary-state-null,root_observe,8,101,' \
   "$work_dir/runtime_event_map.csv"; then
@@ -144,6 +146,11 @@ if ! grep -q ',exact,0x00000000,B2,true,ok,' \
   echo "runtime event map did not mark B2 binary binding as exact/allowed" >&2
   cat "$work_dir/runtime_event_map.csv" >&2
   exit 19
+fi
+if ! awk 'NF != 13 { exit 1 }' "$work_dir/binary_lift.normalized"; then
+  echo "normalized lift spec did not include source/context event ids" >&2
+  cat "$work_dir/binary_lift.normalized" >&2
+  exit 22
 fi
 
 cat > "$work_dir/collapsed_lift_spec.txt" <<'SPEC'
@@ -218,6 +225,13 @@ stability_checks="$(stat_value formtrig_stability_checks "$stats")"
 summary="$work_dir/out/default/formtrig_summary.json"
 require_file "$summary"
 require_file "$work_dir/out/formtrig_runtime_event_map.csv"
+require_file "$work_dir/out/.formtrig/formtrig_lift.normalized"
+if ! awk 'NF != 13 { exit 1 }' \
+  "$work_dir/out/.formtrig/formtrig_lift.normalized"; then
+  echo "campaign normalized lift spec did not include event ids" >&2
+  cat "$work_dir/out/.formtrig/formtrig_lift.normalized" >&2
+  exit 23
+fi
 
 summary_queued_progress="$(json_number formtrig_queued_progress "$summary")"
 summary_typed_execs="$(json_number formtrig_typed_execs "$summary")"

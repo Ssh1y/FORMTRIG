@@ -45,6 +45,9 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
   "$repo_root/formtrig/tools/formtrig_lift_spec_audit.c" \
   -o "$work_dir/formtrig_lift_spec_audit"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
+  "$repo_root/formtrig/tools/formtrig_binding_map.c" \
+  -o "$work_dir/formtrig_binding_map"
 
 cat > "$work_dir/source_site_target.c" <<'TARGET'
 #include "formtrig/formtrig_runtime.h"
@@ -60,9 +63,7 @@ int main(int argc, char **argv) {
   size_t n = fread(&b, 1, 1, f);
   fclose(f);
   formtrig_register_input(&b, n);
-  if (b < 100) {
-    formtrig_record_direct_margin((double)(100 - b), "source_site");
-  }
+  if (b < 100) return 1;
   formtrig_finalize();
   return 0;
 }
@@ -101,9 +102,19 @@ if ! grep -q '1,numeric-margin,B1,true' "$work_dir/source_site_audit.csv"; then
   cat "$work_dir/source_site_audit.csv" >&2
   exit 5
 fi
+"$work_dir/formtrig_binding_map" --category numeric --site-map "$site_map" \
+  --normalized-spec "$work_dir/source_site.normalized.lift" \
+  "$work_dir/source_site.lift" > "$work_dir/source_site_event_map.csv"
+if ! grep -q ',exact,0x00000000,B1,true,ok,' \
+  "$work_dir/source_site_event_map.csv"; then
+  echo "source-site runtime event-map gate did not allow numeric binding" >&2
+  cat "$work_dir/source_site_event_map.csv" >&2
+  exit 8
+fi
 
 printf '\x78' > "$work_dir/seed"
 FORMTRIG_TARGET_SITE_IDS="$site_ids" \
+  FORMTRIG_LIFT_SPEC="$work_dir/source_site.normalized.lift" \
   FORMTRIG_LOG="$work_dir/runtime.jsonl" \
   "$work_dir/source_site_target" "$work_dir/seed"
 
@@ -117,6 +128,29 @@ if ! grep -q '"D_F":21' "$work_dir/runtime.jsonl"; then
   echo "source-site target did not preserve the expected lifted margin" >&2
   cat "$work_dir/runtime.jsonl" >&2
   exit 7
+fi
+if ! grep -q '"components":\[{' "$work_dir/runtime.jsonl"; then
+  echo "source-site target did not emit lifted components" >&2
+  cat "$work_dir/runtime.jsonl" >&2
+  exit 9
+fi
+event_id="$(
+  awk -F ',' 'NR == 2 { print $7 }' "$work_dir/source_site_event_map.csv"
+)"
+source_id="$(
+  awk 'NR == 1 { print $(NF - 1) }' "$work_dir/source_site.normalized.lift"
+)"
+if [[ -z "$event_id" || -z "$source_id" ]]; then
+  echo "source-site normalized spec did not carry an event id" >&2
+  cat "$work_dir/source_site_event_map.csv" >&2
+  cat "$work_dir/source_site.normalized.lift" >&2
+  exit 10
+fi
+if ! grep -q "\"source_id\":$source_id" "$work_dir/runtime.jsonl"; then
+  echo "source-site lifted component did not reference runtime event-map id" >&2
+  echo "event_id=$event_id source_id=$source_id" >&2
+  cat "$work_dir/runtime.jsonl" >&2
+  exit 11
 fi
 
 cat <<EOF

@@ -11,6 +11,7 @@ category="generic"
 lift_spec=""
 target_site_ids=""
 site_map=""
+runtime_lift_spec=""
 duration="60"
 extra_afl_args=()
 
@@ -128,6 +129,7 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
 
 if [[ -n "$lift_spec" ]]; then
   require_file "$lift_spec"
+  runtime_lift_spec="$lift_spec"
   cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
     "$repo_root/formtrig/tools/formtrig_lift_spec_audit.c" \
     -o "$out_dir/.formtrig/formtrig_lift_spec_audit"
@@ -138,15 +140,17 @@ if [[ -n "$lift_spec" ]]; then
   fi
   if [[ -n "$site_map" ]]; then
     require_file "$site_map"
+    runtime_lift_spec="$out_dir/.formtrig/formtrig_lift.normalized"
     cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
       "$repo_root/formtrig/tools/formtrig_binding_map.c" \
       -o "$out_dir/.formtrig/formtrig_binding_map"
     if ! "$out_dir/.formtrig/formtrig_binding_map" --category "$category" \
-      --site-map "$site_map" "$lift_spec" \
+      --site-map "$site_map" --normalized-spec "$runtime_lift_spec" "$lift_spec" \
       > "$out_dir/formtrig_runtime_event_map.csv"; then
       echo "FORMTRIG runtime event-map binding gate failed: $out_dir/formtrig_runtime_event_map.csv" >&2
       exit 4
     fi
+    require_file "$runtime_lift_spec"
   fi
 fi
 
@@ -160,8 +164,8 @@ env_args=(
   FORMTRIG_PROGRESS_LOG="${FORMTRIG_PROGRESS_LOG:-1}"
 )
 
-if [[ -n "$lift_spec" ]]; then
-  env_args+=(FORMTRIG_LIFT_SPEC="$lift_spec")
+if [[ -n "$runtime_lift_spec" ]]; then
+  env_args+=(FORMTRIG_LIFT_SPEC="$runtime_lift_spec")
 fi
 
 if [[ -n "$target_site_ids" ]]; then
@@ -188,4 +192,5 @@ if [[ -n "$lift_spec" ]]; then
 fi
 if [[ -n "$site_map" ]]; then
   echo "  runtime_event_map=$out_dir/formtrig_runtime_event_map.csv"
+  echo "  runtime_lift_spec=$runtime_lift_spec"
 fi

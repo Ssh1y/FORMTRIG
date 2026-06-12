@@ -43,6 +43,9 @@ typedef struct binding_row {
   uint32_t priority;
   char direction[16];
   char value_mode[32];
+  char value[64];
+  char confidence[64];
+  char phase_index[32];
   char op[32];
   uint64_t event_id;
   uint32_t collapsed_with;
@@ -81,7 +84,8 @@ static uint32_t site_role_count;
 static void usage(const char *argv0) {
   fprintf(stderr,
           "usage: %s --category numeric|equality|binary-null|lifecycle "
-          "--site-map site_map.tsv <FORMTRIG_LIFT_SPEC>\n",
+          "--site-map site_map.tsv [--normalized-spec OUT] "
+          "<FORMTRIG_LIFT_SPEC>\n",
           argv0);
 }
 
@@ -276,6 +280,8 @@ static binding_row_t *new_binding(const char *op) {
   b->role = FORMTRIG_ROLE_UNKNOWN;
   b->site_id = UINT32_MAX;
   b->event_kind = UINT32_MAX;
+  copy_field(b->value, sizeof(b->value), "1.0");
+  copy_field(b->confidence, sizeof(b->confidence), "1.0");
   copy_field(b->op, sizeof(b->op), op);
   return b;
 }
@@ -300,6 +306,8 @@ static void parse_spec_line(char *line) {
     char *priority = next_token(&saveptr);
     char *direction = next_token(&saveptr);
     char *value_mode = next_token(&saveptr);
+    char *value = next_token(&saveptr);
+    char *confidence = next_token(&saveptr);
 
     if (!parse_u32(event_kind, &b->event_kind) ||
         !parse_u32(site_id, &b->site_id) ||
@@ -312,6 +320,8 @@ static void parse_spec_line(char *line) {
     b->role = parse_role(role);
     copy_field(b->direction, sizeof(b->direction), direction);
     copy_field(b->value_mode, sizeof(b->value_mode), value_mode);
+    copy_field(b->value, sizeof(b->value), value);
+    copy_field(b->confidence, sizeof(b->confidence), confidence);
     return;
   }
 
@@ -325,6 +335,8 @@ static void parse_spec_line(char *line) {
     char *priority = next_token(&saveptr);
     char *direction = next_token(&saveptr);
     char *value_mode = next_token(&saveptr);
+    char *value = next_token(&saveptr);
+    char *confidence = next_token(&saveptr);
 
     if (!parse_u32(event_kind, &b->event_kind) ||
         !parse_u32(site_id, &b->site_id) ||
@@ -336,6 +348,8 @@ static void parse_spec_line(char *line) {
     }
     copy_field(b->direction, sizeof(b->direction), direction);
     copy_field(b->value_mode, sizeof(b->value_mode), value_mode);
+    copy_field(b->value, sizeof(b->value), value);
+    copy_field(b->confidence, sizeof(b->confidence), confidence);
     return;
   }
 
@@ -347,7 +361,8 @@ static void parse_spec_line(char *line) {
     char *component = next_token(&saveptr);
     char *atom = next_token(&saveptr);
     char *priority = next_token(&saveptr);
-    (void)next_token(&saveptr); /* phase index */
+    char *phase_index = next_token(&saveptr);
+    char *confidence = next_token(&saveptr);
     if (!parse_u32(event_kind, &b->event_kind) ||
         !parse_u32(site_id, &b->site_id) ||
         !parse_u32(component, &b->component_kind) ||
@@ -359,6 +374,8 @@ static void parse_spec_line(char *line) {
     b->role = FORMTRIG_ROLE_LIFECYCLE_EVENT;
     copy_field(b->direction, sizeof(b->direction), "higher");
     copy_field(b->value_mode, sizeof(b->value_mode), "hit");
+    copy_field(b->phase_index, sizeof(b->phase_index), phase_index);
+    copy_field(b->confidence, sizeof(b->confidence), confidence);
   }
 }
 
@@ -536,9 +553,54 @@ static void print_binding(const binding_row_t *b, enum ft_category category) {
   putchar('\n');
 }
 
+static int write_normalized_spec(const char *path) {
+  FILE *f = fopen(path, "w");
+  if (!f) {
+    perror(path);
+    return 0;
+  }
+
+  for (uint32_t i = 0; i < binding_count; i++) {
+    const binding_row_t *b = &bindings[i];
+    if (!b->lift_allowed) {
+      fclose(f);
+      return 0;
+    }
+    if (!strcmp(b->op, "phase") || !strcmp(b->op, "prefix")) {
+      fprintf(f, "phase %u %u %u %u %u %s %s %llu\n", b->event_kind,
+              b->site_id, b->component_kind, b->atom_id, b->priority,
+              b->phase_index[0] ? b->phase_index : "1",
+              b->confidence[0] ? b->confidence : "1.0",
+              (unsigned long long)b->event_id);
+      continue;
+    }
+    if (b->role == FORMTRIG_ROLE_UNKNOWN) {
+      fprintf(f, "component %u %u %u %u %u %s %s %s %s %llu %llu\n",
+              b->event_kind, b->site_id, b->component_kind, b->atom_id,
+              b->priority, b->direction, b->value_mode,
+              b->value[0] ? b->value : "1.0",
+              b->confidence[0] ? b->confidence : "1.0",
+              (unsigned long long)b->event_id,
+              (unsigned long long)b->event_id);
+    } else {
+      fprintf(f, "role_component %u %u %s %u %u %u %s %s %s %s %llu %llu\n",
+              b->event_kind, b->site_id, role_name(b->role),
+              b->component_kind, b->atom_id, b->priority, b->direction,
+              b->value_mode, b->value[0] ? b->value : "1.0",
+              b->confidence[0] ? b->confidence : "1.0",
+              (unsigned long long)b->event_id,
+              (unsigned long long)b->event_id);
+    }
+  }
+
+  fclose(f);
+  return 1;
+}
+
 int main(int argc, char **argv) {
   enum ft_category category = FT_CATEGORY_GENERIC;
   const char *site_map = NULL;
+  const char *normalized_spec = NULL;
   const char *spec = NULL;
 
   for (int i = 1; i < argc; i++) {
@@ -554,6 +616,12 @@ int main(int argc, char **argv) {
         return 2;
       }
       site_map = argv[i];
+    } else if (!strcmp(argv[i], "--normalized-spec")) {
+      if (++i >= argc) {
+        usage(argv[0]);
+        return 2;
+      }
+      normalized_spec = argv[i];
     } else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
       usage(argv[0]);
       return 0;
@@ -583,5 +651,7 @@ int main(int argc, char **argv) {
     print_binding(&bindings[i], category);
     if (!bindings[i].lift_allowed) failures++;
   }
+  if (!failures && normalized_spec && !write_normalized_spec(normalized_spec))
+    return 2;
   return failures ? 1 : 0;
 }

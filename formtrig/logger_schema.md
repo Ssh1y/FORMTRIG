@@ -18,6 +18,13 @@ set. Required fields:
 - `components`: TC-rooted native or lifted progress components. Each component
   includes `kind`, `atom_id`, semantic `role`, priority, direction/source flags,
   source id, context hash, value, and confidence.
+- `feature_source_event_ids`: the component source ids used by lifted features.
+  For normalized BindingSpecs these ids match `formtrig_runtime_event_map.csv`
+  `event_id` values.
+- `uses_trigger_oracle`: always `false` for feature computation. The terminal
+  `crash_predicate` flag is reported separately and is not a non-trigger
+  progress feature.
+- `uses_target_id_specific_rule`: always `false` for generic runtime lifting.
 - `atom_signals`: per-atom role summary for the AFL++ fast path. Role bits
   distinguish root observation, guard, producer, desired/opposite producer,
   use, lifecycle event, same-object, and input-influence evidence.
@@ -104,7 +111,8 @@ against the LLVM site map:
 
 ```sh
 formtrig_binding_map --category binary-null \
-  --site-map site_map.tsv formtrig.lift > formtrig_runtime_event_map.csv
+  --site-map site_map.tsv --normalized-spec formtrig.normalized.lift \
+  formtrig.lift > formtrig_runtime_event_map.csv
 ```
 
 The resulting runtime event map includes:
@@ -117,6 +125,11 @@ The resulting runtime event map includes:
 - `lift_allowed` and `reason`.
 - `semantic_role_collapse` when multiple semantic roles for an atom collapse
   onto the same runtime site.
+
+When `--normalized-spec` is used, the tool writes a runtime-facing
+`FORMTRIG_LIFT_SPEC` whose component `source_id` and `context_hash` are the
+stable `event_id` from the runtime event map. AFL++ progress logs can therefore
+trace each lifted component back to a specific BindingSpec row and LLVM site.
 
 The campaign runner treats missing runtime events, role collapse, and
 insufficient binding tier as hard failures for lifted plans. This is the

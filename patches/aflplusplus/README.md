@@ -54,7 +54,11 @@ the normal binding-tier audit before the campaign runs.
 When both `--lift-spec` and `--site-map` are provided, the campaign runner also
 builds `formtrig/tools/formtrig_binding_map.c` and writes
 `formtrig_runtime_event_map.csv`. Missing runtime events, semantic role
-collapse, and insufficient binding tiers fail the campaign before fuzzing.
+collapse, and insufficient binding tiers fail the campaign before fuzzing. On a
+passing map, the runner emits a normalized runtime lift spec under
+`OUT/.formtrig/formtrig_lift.normalized` and exports that file as
+`FORMTRIG_LIFT_SPEC`, so RuntimeSignal component `source_id`/`context_hash`
+values match the runtime event-map `event_id`.
 
 `run_native_formtrig_smoke.sh` checks the native runtime role signal, a
 `FORMTRIG_LIFT_SPEC` role binding, native binding-tier audit, AFL++ queue
