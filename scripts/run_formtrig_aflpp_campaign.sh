@@ -10,6 +10,7 @@ target_bug=""
 category="generic"
 lift_spec=""
 target_site_ids=""
+site_map=""
 duration="60"
 extra_afl_args=()
 
@@ -20,6 +21,7 @@ usage: $0 --in DIR --out DIR --target-bug LABEL [options] -- TARGET [ARGS...]
 options:
   --category NAME      numeric|equality|binary-null|lifecycle|generic
   --lift-spec FILE     FORMTRIG_LIFT_SPEC file to export and audit
+  --site-map FILE      LLVM FORMTRIG_SITE_MAP TSV for runtime event-map audit
   --target-site-ids S  comma-separated LLVM FORMTRIG site ids for known TC line
   --duration SEC       AFL++ -V time budget in seconds (default: 60)
   --aflpp-dir DIR      AFL++ checkout/build directory
@@ -64,6 +66,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --target-site-ids)
       target_site_ids="${2:-}"
+      shift 2
+      ;;
+    --site-map)
+      site_map="${2:-}"
       shift 2
       ;;
     --duration)
@@ -130,6 +136,18 @@ if [[ -n "$lift_spec" ]]; then
     echo "FORMTRIG lift binding audit failed: $out_dir/formtrig_lift_audit.csv" >&2
     exit 4
   fi
+  if [[ -n "$site_map" ]]; then
+    require_file "$site_map"
+    cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
+      "$repo_root/formtrig/tools/formtrig_binding_map.c" \
+      -o "$out_dir/.formtrig/formtrig_binding_map"
+    if ! "$out_dir/.formtrig/formtrig_binding_map" --category "$category" \
+      --site-map "$site_map" "$lift_spec" \
+      > "$out_dir/formtrig_runtime_event_map.csv"; then
+      echo "FORMTRIG runtime event-map binding gate failed: $out_dir/formtrig_runtime_event_map.csv" >&2
+      exit 4
+    fi
+  fi
 fi
 
 env_args=(
@@ -167,4 +185,7 @@ echo "  progress=$progress"
 echo "  summary=$out_dir/default/formtrig_summary.json"
 if [[ -n "$lift_spec" ]]; then
   echo "  binding_audit=$out_dir/formtrig_lift_audit.csv"
+fi
+if [[ -n "$site_map" ]]; then
+  echo "  runtime_event_map=$out_dir/formtrig_runtime_event_map.csv"
 fi

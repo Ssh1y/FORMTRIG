@@ -22,7 +22,7 @@ Or use the repository campaign wrapper:
 ./scripts/run_formtrig_aflpp_campaign.sh \
   --in seeds --out results/run1 --target-bug <tc-label> \
   --category binary-null --lift-spec formtrig.lift \
-  --target-site-ids 12345,67890 --duration 1800 \
+  --site-map site_map.tsv --target-site-ids 12345,67890 --duration 1800 \
   -- ./target @@
 ```
 
@@ -35,19 +35,31 @@ For source-line TC experiments, build the target with the LLVM pass and
 locations with the native helper:
 
 ```sh
+./scripts/build_formtrig_llvm_pass.sh build/formtrig_pass.so
+./scripts/run_formtrig_source_site_smoke.sh
 cc -std=c11 -Iformtrig/include formtrig/tools/formtrig_site_map.c \
   -o formtrig_site_map
 ./formtrig_site_map --file bug.c --line 123 --kind cmp --emit env site_map.tsv
 ```
+
+`build_formtrig_llvm_pass.sh` prints the clang arguments needed for the local
+LLVM version. LLVM 11 uses legacy `-Xclang -load`; LLVM 12+ uses
+`-fpass-plugin`.
 
 The printed `FORMTRIG_TARGET_SITE_IDS=...` value can be passed to
 `run_formtrig_aflpp_campaign.sh --target-site-ids ...`. The same helper can emit
 draft `FORMTRIG_LIFT_SPEC` rows with `--emit lift-spec`; those rows still need
 the normal binding-tier audit before the campaign runs.
 
+When both `--lift-spec` and `--site-map` are provided, the campaign runner also
+builds `formtrig/tools/formtrig_binding_map.c` and writes
+`formtrig_runtime_event_map.csv`. Missing runtime events, semantic role
+collapse, and insufficient binding tiers fail the campaign before fuzzing.
+
 `run_native_formtrig_smoke.sh` checks the native runtime role signal, a
 `FORMTRIG_LIFT_SPEC` role binding, native binding-tier audit, AFL++ queue
-admission by FORMTRIG progress, source-line site-map resolution, generated
-lift-spec audit, typed mutation execution, progress-summary generation,
-separated accept/reject/stability reasons, campaign diagnosis fields, and that
-`afl-fuzz` was built with `NO_PYTHON=1`.
+admission by FORMTRIG progress, LLVM pass build, source-line site-map
+resolution, generated lift-spec audit, runtime event-map quality gate,
+semantic-role collapse rejection, typed mutation execution, progress-summary
+generation, separated accept/reject/stability reasons, campaign diagnosis
+fields, and that `afl-fuzz` was built with `NO_PYTHON=1`.

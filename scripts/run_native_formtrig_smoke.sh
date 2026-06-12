@@ -53,6 +53,8 @@ if ldd "$afl_fuzz" 2>/dev/null | grep -qi python; then
   exit 3
 fi
 
+"$repo_root/scripts/run_formtrig_source_site_smoke.sh" >/dev/null
+
 mkdir -p "$work_dir/in" "$work_dir/out"
 printf '\377' > "$work_dir/in/seed"
 
@@ -87,16 +89,21 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_site_map.c" \
   -o "$work_dir/formtrig_site_map"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Werror "$repo_root/formtrig/tools/formtrig_binding_map.c" \
+  -o "$work_dir/formtrig_binding_map"
 
 cat > "$work_dir/site_map.tsv" <<'SITEMAP'
 101	cmp	known_tc	7	icmp	bench/known_tc.c	42	11
 102	cmp	known_tc	8	icmp	bench/known_tc.c	42	19
+103	cmp	known_tc	9	icmp	bench/known_tc.c	42	27
+104	cmp	known_tc	10	icmp	bench/known_tc.c	42	35
 201	binary	helper	3	add	bench/helper.c	9	5
 SITEMAP
 
 site_ids="$("$work_dir/formtrig_site_map" --file known_tc.c --line 42 \
   --kind cmp --emit ids "$work_dir/site_map.tsv")"
-if [[ "$site_ids" != "101,102" ]]; then
+if [[ "$site_ids" != "101,102,103,104" ]]; then
   echo "site-map tool did not resolve source line to site ids" >&2
   echo "site_ids=$site_ids" >&2
   exit 16
@@ -121,6 +128,40 @@ if ! grep -q '1,binary-state-null,B2,true' "$work_dir/binary_lift_audit.csv"; th
   echo "lift spec audit did not allow a B2 binary binding" >&2
   cat "$work_dir/binary_lift_audit.csv" >&2
   exit 9
+fi
+
+"$work_dir/formtrig_binding_map" --category binary-null \
+  --site-map "$work_dir/site_map.tsv" "$work_dir/binary_lift_spec.txt" \
+  > "$work_dir/runtime_event_map.csv"
+if ! grep -q 'binary-state-null,root_observe,8,101,' \
+  "$work_dir/runtime_event_map.csv"; then
+  echo "runtime event map did not include root binding" >&2
+  cat "$work_dir/runtime_event_map.csv" >&2
+  exit 18
+fi
+if ! grep -q ',exact,0x00000000,B2,true,ok,' \
+  "$work_dir/runtime_event_map.csv"; then
+  echo "runtime event map did not mark B2 binary binding as exact/allowed" >&2
+  cat "$work_dir/runtime_event_map.csv" >&2
+  exit 19
+fi
+
+cat > "$work_dir/collapsed_lift_spec.txt" <<'SPEC'
+role_component 8 101 guard 5 1 20 higher hit 1.0 1.0
+role_component 8 101 use 6 1 40 higher hit 1.0 1.0
+SPEC
+if "$work_dir/formtrig_binding_map" --category binary-null \
+  --site-map "$work_dir/site_map.tsv" "$work_dir/collapsed_lift_spec.txt" \
+  > "$work_dir/collapsed_runtime_event_map.csv"; then
+  echo "runtime event-map gate allowed collapsed guard/use binding" >&2
+  cat "$work_dir/collapsed_runtime_event_map.csv" >&2
+  exit 20
+fi
+if ! grep -q 'semantic_role_collapse' \
+  "$work_dir/collapsed_runtime_event_map.csv"; then
+  echo "runtime event-map gate did not explain collapsed guard/use binding" >&2
+  cat "$work_dir/collapsed_runtime_event_map.csv" >&2
+  exit 21
 fi
 
 "$work_dir/formtrig_lift_spec_audit" --category numeric \
@@ -158,6 +199,7 @@ FORMTRIG_NO_CRASH=1 "$repo_root/scripts/run_formtrig_aflpp_campaign.sh" \
   --target-bug native_afl_smoke \
   --category binary-null \
   --lift-spec "$work_dir/binary_lift_spec.txt" \
+  --site-map "$work_dir/site_map.tsv" \
   --target-site-ids "$site_ids" \
   --duration 2 \
   --aflpp-dir "$aflpp_dir" \
@@ -175,6 +217,7 @@ stability_checks="$(stat_value formtrig_stability_checks "$stats")"
 
 summary="$work_dir/out/default/formtrig_summary.json"
 require_file "$summary"
+require_file "$work_dir/out/formtrig_runtime_event_map.csv"
 
 summary_queued_progress="$(json_number formtrig_queued_progress "$summary")"
 summary_typed_execs="$(json_number formtrig_typed_execs "$summary")"

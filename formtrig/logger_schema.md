@@ -94,3 +94,31 @@ and source line. It can emit:
 
 Draft lift-spec rows are only binding inputs. They must still pass the native
 binding-tier audit before a lifted plan is trusted.
+
+## Binding And Runtime Event Map
+
+`FORMTRIG_LIFT_SPEC` is the current native BindingSpec input format. It binds
+TC atoms to runtime-observable roles through instrumented event kinds and site
+ids. The runtime consumes this file directly, but campaigns should first map it
+against the LLVM site map:
+
+```sh
+formtrig_binding_map --category binary-null \
+  --site-map site_map.tsv formtrig.lift > formtrig_runtime_event_map.csv
+```
+
+The resulting runtime event map includes:
+
+- `binding_id`, `atom_id`, semantic `role`, event kind, site id, and stable
+  `event_id`.
+- source mapping fields from `FORMTRIG_SITE_MAP`.
+- `mapping_status`: `exact`, `ambiguous`, or `missing`.
+- `binding_tier`: B0 through B4.
+- `lift_allowed` and `reason`.
+- `semantic_role_collapse` when multiple semantic roles for an atom collapse
+  onto the same runtime site.
+
+The campaign runner treats missing runtime events, role collapse, and
+insufficient binding tier as hard failures for lifted plans. This is the
+runtime-grounded quality gate between BindingSpec and the AFL++ RuntimeSignal
+ABI; it is intentionally separate from target-specific repair or format logic.
