@@ -95,7 +95,11 @@ passing map, the runner emits a normalized runtime lift spec under
 values match the runtime event-map `event_id`. After fuzzing, the runner writes
 `OUT/default/formtrig_lift_feature_audit.json` and fails the campaign if
 accepted non-trigger lifted progress cannot be traced back to a mapped runtime
-event id.
+event id. The runner also writes `OUT/default/formtrig_diagnosis.json`, which is
+the preferred first file to inspect when a run has zero queued progress. It
+separates target-not-reached, insufficient binding, role collapse, constant
+lifted signal, dominance rejection, source leakage, and true queued TC-rooted
+progress.
 
 `run_native_formtrig_smoke.sh` checks the native runtime role signal, manual
 lifted-component gating, high-level BindingSpec compilation, a

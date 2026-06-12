@@ -78,6 +78,9 @@ Example:
 keeps aggregate counters from AFL++ and adds experiment-facing diagnostics:
 
 - `progress_status`: `triggered`, `progress_queued`, or `not_progressing`.
+  Initial frontier admission does not count as `progress_queued`.
+- `frontier_progress_accept_events`: accepted non-initial frontier updates.
+  This excludes `initial_frontier_seed`, which is only setup state.
 - `limiting_reason`: first coarse explanation when no FORMTRIG progress was
   queued, such as `no_formtrig_signal`, `target_not_reached`,
   `no_actionable_component`, `constant_d_f`, `dominance_rejected`, or
@@ -91,6 +94,22 @@ keeps aggregate counters from AFL++ and adds experiment-facing diagnostics:
 
 These summary diagnostics are audit data. They do not feed back into fuzzing
 decisions and they do not use trigger-oracle state to score non-trigger inputs.
+
+`formtrig/tools/formtrig_campaign_diagnose.c` consumes the campaign summary,
+the runtime event map, and the lifted-feature provenance audit, then writes
+`formtrig_diagnosis.json`. This is the experiment-readiness gate for result
+interpretation. It reports:
+
+- `experiment_ready`: true only when runtime signal reached the target,
+  spec-driven lifted signal exists, actionable atom/role components are present,
+  binding rows are exact/allowed, provenance passes, and heuristic/manual lifted
+  sources did not enter FORMTRIG-main.
+- `has_tc_rooted_progress`: true only for trigger or accepted non-initial
+  progress, not for initial frontier seeds.
+- `diagnosis`: a single primary explanation such as
+  `seed_does_not_reach_target`, `insufficient_binding`,
+  `semantic_role_collapse`, `no_spec_lifted_signal`, `constant_lift_signal`,
+  `no_new_non_dominated_progress`, or `queued_tc_rooted_progress`.
 
 ## LLVM Site Map
 

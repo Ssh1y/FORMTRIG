@@ -142,6 +142,9 @@ mkdir -p "$out_dir/.formtrig"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
   "$repo_root/formtrig/tools/formtrig_progress_summary.c" \
   -o "$out_dir/.formtrig/formtrig_progress_summary"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
+  "$repo_root/formtrig/tools/formtrig_campaign_diagnose.c" \
+  -o "$out_dir/.formtrig/formtrig_campaign_diagnose"
 
 if [[ -n "$binding_spec" ]]; then
   require_file "$binding_spec"
@@ -225,10 +228,23 @@ if [[ -n "$site_map" ]]; then
   fi
 fi
 
+diagnosis_args=("$out_dir/default/formtrig_summary.json")
+if [[ -n "$site_map" ]]; then
+  diagnosis_args+=("$out_dir/formtrig_runtime_event_map.csv")
+else
+  diagnosis_args+=("-")
+fi
+if [[ -n "$site_map" ]]; then
+  diagnosis_args+=("$out_dir/default/formtrig_lift_feature_audit.json")
+fi
+"$out_dir/.formtrig/formtrig_campaign_diagnose" "${diagnosis_args[@]}" \
+  > "$out_dir/default/formtrig_diagnosis.json"
+
 echo "FORMTRIG campaign complete"
 echo "  stats=$stats"
 echo "  progress=$progress"
 echo "  summary=$out_dir/default/formtrig_summary.json"
+echo "  diagnosis=$out_dir/default/formtrig_diagnosis.json"
 if [[ -n "$lift_spec" ]]; then
   echo "  binding_audit=$out_dir/formtrig_lift_audit.csv"
 fi

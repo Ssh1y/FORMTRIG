@@ -111,6 +111,9 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_progress_summary.c" \
   -o "$work_dir/formtrig_progress_summary"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Werror "$repo_root/formtrig/tools/formtrig_campaign_diagnose.c" \
+  -o "$work_dir/formtrig_campaign_diagnose"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_site_map.c" \
   -o "$work_dir/formtrig_site_map"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
@@ -153,6 +156,15 @@ if ! grep -q '"frontier_progress_accept_events": 0' \
   echo "progress summary did not separate initial and progress accepts" >&2
   cat "$work_dir/initial_only_summary.json" >&2
   exit 42
+fi
+"$work_dir/formtrig_campaign_diagnose" \
+  "$work_dir/initial_only_summary.json" - \
+  > "$work_dir/initial_only_diagnosis.json"
+if ! grep -q '"has_tc_rooted_progress": false' \
+  "$work_dir/initial_only_diagnosis.json"; then
+  echo "campaign diagnosis counted initial frontier seed as progress" >&2
+  cat "$work_dir/initial_only_diagnosis.json" >&2
+  exit 43
 fi
 
 cat > "$work_dir/site_map.tsv" <<'SITEMAP'
@@ -492,6 +504,7 @@ require_file "$summary"
 require_file "$work_dir/out/formtrig_runtime_event_map.csv"
 require_file "$work_dir/out/.formtrig/formtrig_lift.normalized"
 require_file "$work_dir/out/default/formtrig_lift_feature_audit.json"
+require_file "$work_dir/out/default/formtrig_diagnosis.json"
 if ! awk 'NF != 13 { exit 1 }' \
   "$work_dir/out/.formtrig/formtrig_lift.normalized"; then
   echo "campaign normalized lift spec did not include event ids" >&2
@@ -564,6 +577,20 @@ if ! grep -q '"source_flags":2' "$progress"; then
   echo "progress log did not mark BindingSpec source flags" >&2
   tail -n 20 "$progress" >&2
   exit 39
+fi
+
+if ! grep -q '"status": "ready"' \
+  "$work_dir/out/default/formtrig_diagnosis.json"; then
+  echo "campaign diagnosis did not mark native smoke ready" >&2
+  cat "$work_dir/out/default/formtrig_diagnosis.json" >&2
+  exit 44
+fi
+
+if ! grep -q '"has_tc_rooted_progress": true' \
+  "$work_dir/out/default/formtrig_diagnosis.json"; then
+  echo "campaign diagnosis missed queued TC-rooted progress" >&2
+  cat "$work_dir/out/default/formtrig_diagnosis.json" >&2
+  exit 45
 fi
 
 if ! grep -Eq '"progress_status": "(progress_queued|triggered)"' "$summary"; then
