@@ -26,6 +26,11 @@ void formtrig_record_progress_component(uint32_t kind, uint32_t atom_id,
                                         uint64_t source_id,
                                         uint64_t context_hash, double value,
                                         double confidence);
+void formtrig_record_role_component(uint32_t kind, uint32_t atom_id,
+                                    uint32_t role, uint32_t priority,
+                                    uint32_t flags, uint64_t source_id,
+                                    uint64_t context_hash, double value,
+                                    double confidence);
 void formtrig_record_oob_margin(int64_t index, int64_t length, int64_t access_size);
 void formtrig_record_divisor(int64_t divisor);
 void formtrig_record_modular_add(uint64_t lhs, uint64_t rhs, unsigned bit_width);

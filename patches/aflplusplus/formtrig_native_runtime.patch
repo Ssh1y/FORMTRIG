@@ -1,0 +1,2005 @@
+diff --git a/GNUmakefile b/GNUmakefile
+index 88816e8..198fb51 100644
+--- a/GNUmakefile
++++ b/GNUmakefile
+@@ -45,6 +45,11 @@ ifdef NO_SPLICING
+   override CFLAGS_OPT += -DNO_SPLICING
+ endif
+
++FORMTRIG_RUNTIME_ROOT ?= $(firstword $(wildcard $(CURDIR)/../formtrig) $(wildcard $(CURDIR)/../../../formtrig))
++ifneq "$(FORMTRIG_RUNTIME_ROOT)" ""
++  override CFLAGS += -I$(FORMTRIG_RUNTIME_ROOT)/include
++endif
++
+ ifdef ASAN_BUILD
+   $(info Compiling ASAN version of binaries)
+   override CFLAGS += $(ASAN_CFLAGS)
+diff --git a/include/afl-fuzz.h b/include/afl-fuzz.h
+index ef84a18..c7ec81f 100644
+--- a/include/afl-fuzz.h
++++ b/include/afl-fuzz.h
+@@ -46,6 +46,11 @@
+ #include "sharedmem.h"
+ #include "forkserver.h"
+ #include "common.h"
++#include "formtrig/formtrig_abi.h"
++
++#ifndef FORMTRIG_INF
++  #define FORMTRIG_INF 1.0e300
++#endif
+
+ #include <stdio.h>
+ #include <unistd.h>
+@@ -150,6 +155,28 @@ struct tainted {
+
+ };
+
++typedef struct formtrig_queue_meta {
++
++  u8 seen, reached, triggered, lifted, stable;
++
++  u32 target_hit_count, hot_range_count, component_count, atom_signal_count;
++  u64 trace_signature;
++
++  double d_t, d_f, d_f_lifted;
++
++  formtrig_hot_range_t hot_ranges[FORMTRIG_MAX_HOT_RANGES];
++  formtrig_progress_component_t components[FORMTRIG_MAX_PROGRESS_COMPONENTS];
++  formtrig_atom_signal_t atom_signals[FORMTRIG_MAX_ATOM_SIGNALS];
++
++} formtrig_queue_meta_t;
++
++typedef struct formtrig_frontier_entry {
++
++  formtrig_queue_meta_t vector;
++  u32                   queue_id;
++
++} formtrig_frontier_entry_t;
++
+ struct queue_entry {
+
+   u8 *fname;                            /* File name for the test case      */
+@@ -198,6 +225,8 @@ struct queue_entry {
+   double perf_score,                    /* performance score                */
+       weight;
+
++  formtrig_queue_meta_t formtrig;       /* FORMTRIG runtime progress signal */
++
+   u8 *testcase_buf;                     /* The testcase buffer, if loaded.  */
+
+   u8             *cmplog_colorinput;    /* the result buf of colorization   */
+@@ -546,6 +575,30 @@ typedef struct afl_state {
+       *virgin_tmout,                    /* Bits we haven't seen in tmouts   */
+       *virgin_crash;                    /* Bits we haven't seen in crashes  */
+
++  u8 formtrig_enabled;                  /* Native FORMTRIG queue guidance   */
++  s32 formtrig_shm_fd;                  /* FORMTRIG signal shm descriptor   */
++  u8 *formtrig_shm_area,                /* FORMTRIG signal shm mapping      */
++      *formtrig_shm_path;               /* POSIX shm name exported to target*/
++
++  formtrig_queue_meta_t formtrig_last;  /* Last target-run FORMTRIG signal  */
++  double formtrig_best_df,              /* Best non-terminal lifted distance*/
++      formtrig_best_dt;                 /* Best non-coarse native distance  */
++  formtrig_frontier_entry_t             /* Native lifted vector frontier    */
++      formtrig_frontier[FORMTRIG_FRONTIER_MAX];
++  u32 formtrig_frontier_count;          /* Active FORMTRIG frontier slots   */
++  u64 formtrig_seen_execs,              /* Runs publishing FORMTRIG signal  */
++      formtrig_reached_execs,           /* Runs reaching TC root            */
++      formtrig_triggered_execs,         /* Runs satisfying terminal flag     */
++      formtrig_queued_progress,         /* Queue entries kept by FORMTRIG   */
++      formtrig_frontier_updates,        /* Vector-frontier improvements     */
++      formtrig_typed_execs,             /* Execs spent on typed mutations   */
++      formtrig_typed_finds,             /* Finds from typed mutations       */
++      formtrig_typed_skips,             /* Queue entries without typed plan */
++      formtrig_stability_checks,        /* Replay checks before progress use*/
++      formtrig_stability_failures,      /* Unstable FORMTRIG progress       */
++      formtrig_progress_log_events,     /* Structured FORMTRIG log entries  */
++      formtrig_progress_log_dropped;    /* Entries skipped by log cap       */
++
+   double *alias_probability;            /* alias weighted probabilities     */
+   u32    *alias_table;                /* alias weighted random lookup table */
+   u32     active_items;                 /* enabled entries in the queue     */
+@@ -1099,6 +1152,20 @@ void destroy_queue(afl_state_t *);
+ void update_bitmap_score(afl_state_t *, struct queue_entry *);
+ void cull_queue(afl_state_t *);
+ u32  calculate_score(afl_state_t *, struct queue_entry *);
++void formtrig_init(afl_state_t *);
++void formtrig_deinit(afl_state_t *);
++void formtrig_prepare_run(afl_state_t *);
++void formtrig_capture_last(afl_state_t *);
++void formtrig_apply_last_to_queue(afl_state_t *, struct queue_entry *);
++u8   formtrig_should_save(afl_state_t *);
++void formtrig_note_saved(afl_state_t *);
++void formtrig_note_calibrated(afl_state_t *);
++u8   formtrig_progress_stable(const formtrig_queue_meta_t *,
++                              const formtrig_queue_meta_t *);
++double formtrig_queue_weight_multiplier(const struct queue_entry *);
++void formtrig_log_progress(afl_state_t *, const char *,
++                           const char *, const formtrig_queue_meta_t *, u32,
++                           u64);
+
+ /* Bitmap */
+
+@@ -1328,4 +1395,3 @@ void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q, u8 *mem);
+ #endif
+
+ #endif
+-
+diff --git a/include/envs.h b/include/envs.h
+index 0007d5a..9ef509f 100644
+--- a/include/envs.h
++++ b/include/envs.h
+@@ -189,6 +189,7 @@ static char *afl_environment_variables[] = {
+     "AFL_MAPSIZE",
+     "AFL_MAX_DET_EXTRAS",
+     "AFL_NO_X86",  // not really an env but we dont want to warn on it
++    "AFL_FORMTRIG",
+     "AFL_NOOPT",
+     "AFL_NYX_AUX_SIZE",
+     "AFL_NYX_DISABLE_SNAPSHOT_MODE",
+@@ -261,4 +262,3 @@ static char *afl_environment_variables[] = {
+ extern char *afl_environment_variables[];
+
+ #endif
+-
+diff --git a/src/afl-fuzz-bitmap.c b/src/afl-fuzz-bitmap.c
+index 87157ca..91cf517 100644
+--- a/src/afl-fuzz-bitmap.c
++++ b/src/afl-fuzz-bitmap.c
+@@ -452,6 +452,58 @@ void write_crash_readme(afl_state_t *afl) {
+    save or queue the input test case for further analysis if so. Returns 1 if
+    entry is saved, 0 otherwise. */
+
++static u8 formtrig_confirm_replay_stable(afl_state_t *afl, void *mem, u32 len,
++                                         const formtrig_queue_meta_t *base) {
++
++  if (!afl->formtrig_enabled || !base || !base->seen) { return 0; }
++
++  ++afl->formtrig_stability_checks;
++
++  void *confirm_mem = mem;
++  u32   confirm_len = write_to_testcase(afl, &confirm_mem, len, 0);
++  if (unlikely(!confirm_len)) {
++
++    ++afl->formtrig_stability_failures;
++    formtrig_log_progress(afl, "stability_reject",
++                          "write_to_testcase_failed", base, 0, len);
++    return 0;
++
++  }
++
++  u8 confirm_fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
++  if (afl->stop_soon) {
++
++    ++afl->formtrig_stability_failures;
++    formtrig_log_progress(afl, "stability_reject", "stop_requested", base, 0,
++                          len);
++    return 0;
++
++  }
++
++  if (confirm_fault != afl->crash_mode) {
++
++    ++afl->formtrig_stability_failures;
++    formtrig_log_progress(afl, "stability_reject", "fault_changed", base, 0,
++                          len);
++    return 0;
++
++  }
++
++  if (!formtrig_progress_stable(base, &afl->formtrig_last)) {
++
++    ++afl->formtrig_stability_failures;
++    formtrig_log_progress(afl, "stability_reject",
++                          "progress_not_replay_stable", base, 0, len);
++    return 0;
++
++  }
++
++  formtrig_log_progress(afl, "stability_confirmed", "progress_replay_stable",
++                        base, 0, len);
++  return 1;
++
++}
++
+ u8 __attribute__((hot))
+ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+
+@@ -465,10 +517,12 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+
+   u8  fn[PATH_MAX];
+   u8 *queue_fn = "";
+-  u8  new_bits = 0, keeping = 0, res, classified = 0, is_timeout = 0,
+-     need_hash = 1;
++  u8  new_bits = 0, keeping = 0, formtrig_keep = 0, res, classified = 0,
++     is_timeout = 0, need_hash = 1;
+   s32 fd;
+   u64 cksum = 0;
++  formtrig_queue_meta_t formtrig_saved_signal;
++  memset(&formtrig_saved_signal, 0, sizeof(formtrig_saved_signal));
+
+   /* Update path frequency. */
+
+@@ -507,6 +561,22 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+
+     if (likely(!new_bits)) {
+
++      if (formtrig_should_save(afl)) {
++
++        formtrig_saved_signal = afl->formtrig_last;
++        if (!formtrig_confirm_replay_stable(afl, mem, len,
++                                            &formtrig_saved_signal)) {
++
++          if (unlikely(afl->crash_mode)) { ++afl->total_crashes; }
++          return 0;
++
++        }
++
++        formtrig_keep = 1;
++        goto save_to_queue;
++
++      }
++
+       if (unlikely(afl->crash_mode)) { ++afl->total_crashes; }
+       return 0;
+
+@@ -532,8 +602,10 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+     ck_write(fd, mem, len, queue_fn);
+     close(fd);
+     add_to_queue(afl, queue_fn, len, 0);
++    formtrig_apply_last_to_queue(afl, afl->queue_top);
++    formtrig_saved_signal = afl->queue_top->formtrig;
+
+-    if (unlikely(afl->fuzz_mode) &&
++    if (!formtrig_keep && unlikely(afl->fuzz_mode) &&
+         likely(afl->switch_fuzz_mode && !afl->non_instrumented_mode)) {
+
+       if (afl->afl_env.afl_no_ui) {
+@@ -609,6 +681,58 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+
+     }
+
++    if (formtrig_keep) {
++
++      ++afl->formtrig_stability_checks;
++      if (formtrig_should_save(afl) &&
++          formtrig_progress_stable(&formtrig_saved_signal,
++                                   &afl->formtrig_last)) {
++
++        afl->queue_top->formtrig = afl->formtrig_last;
++        afl->queue_top->formtrig.stable = 1;
++        formtrig_note_saved(afl);
++
++      } else {
++
++        ++afl->formtrig_stability_failures;
++        formtrig_log_progress(afl, "stability_reject",
++                              "queue_calibration_regressed",
++                              &formtrig_saved_signal,
++                              afl->queue_top ? afl->queue_top->id : 0, len);
++        afl->queue_top->disabled = 1;
++        if (afl->active_items) { --afl->active_items; }
++        if (afl->pending_not_fuzzed) { --afl->pending_not_fuzzed; }
++        if (afl->queue_top->len > 4 && afl->ready_for_splicing_count) {
++
++          --afl->ready_for_splicing_count;
++
++        }
++        return 0;
++
++      }
++
++    } else if (formtrig_should_save(afl)) {
++
++      ++afl->formtrig_stability_checks;
++      if (formtrig_progress_stable(&formtrig_saved_signal,
++                                   &afl->formtrig_last)) {
++
++        afl->queue_top->formtrig = afl->formtrig_last;
++        afl->queue_top->formtrig.stable = 1;
++        formtrig_note_saved(afl);
++
++      } else {
++
++        ++afl->formtrig_stability_failures;
++        formtrig_log_progress(afl, "stability_reject",
++                              "coverage_queue_progress_regressed",
++                              &formtrig_saved_signal,
++                              afl->queue_top ? afl->queue_top->id : 0, len);
++
++      }
++
++    }
++
+     if (likely(afl->q_testcase_max_cache_size)) {
+
+       queue_testcase_store_mem(afl, afl->queue_top, mem);
+@@ -878,4 +1002,3 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+   return keeping;
+
+ }
+-
+diff --git a/src/afl-fuzz-one.c b/src/afl-fuzz-one.c
+index 2ad4697..b058c8c 100644
+--- a/src/afl-fuzz-one.c
++++ b/src/afl-fuzz-one.c
+@@ -71,6 +71,451 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
+
+ }
+
++#define FORMTRIG_TYPED_MUTATION_MAX 16u
++#define FORMTRIG_TYPED_OPS 8u
++#define FORMTRIG_TYPED_RANGE_WINDOW 64u
++
++static u8 formtrig_fuzz_one_finite(double v) {
++
++  return v == v && v > -FORMTRIG_INF && v < FORMTRIG_INF;
++
++}
++
++static u8 formtrig_fuzz_one_lower(const formtrig_progress_component_t *c) {
++
++  return (c->flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER) != 0;
++
++}
++
++static u8 formtrig_fuzz_one_higher(const formtrig_progress_component_t *c) {
++
++  return (c->flags & FORMTRIG_COMPONENT_HIGHER_IS_BETTER) != 0;
++
++}
++
++static u8 formtrig_fuzz_one_actionable(
++    const formtrig_progress_component_t *c) {
++
++  if (!c) { return 0; }
++  if (!(c->flags & FORMTRIG_COMPONENT_TC_ROOTED)) { return 0; }
++  if (!formtrig_fuzz_one_finite(c->value) || c->value < 0.0) { return 0; }
++  /* Hot ranges guide typed mutations but do not make R-only states progress. */
++  if (c->flags & FORMTRIG_COMPONENT_INPUT_INFLUENCE) { return 0; }
++  if (!formtrig_fuzz_one_finite(c->confidence) || c->confidence <= 0.0) {
++
++    return 0;
++
++  }
++
++  u8 lower = formtrig_fuzz_one_lower(c);
++  u8 higher = formtrig_fuzz_one_higher(c);
++  if (lower == higher) { return 0; }
++
++  if (lower && c->kind == FORMTRIG_COMPONENT_NATIVE_DISTANCE &&
++      (c->flags & FORMTRIG_COMPONENT_NATIVE) &&
++      c->value > 0.999999999 && c->value < 1.000000001) {
++
++    return 0;
++
++  }
++
++  return 1;
++
++}
++
++static u32 formtrig_fuzz_one_component_count(
++    const formtrig_queue_meta_t *m) {
++
++  if (!m) { return 0; }
++  u32 count = m->component_count;
++  return count > FORMTRIG_MAX_PROGRESS_COMPONENTS
++             ? FORMTRIG_MAX_PROGRESS_COMPONENTS
++             : count;
++
++}
++
++static u32 formtrig_typed_actionable_count(const formtrig_queue_meta_t *m) {
++
++  u32 actionable = 0;
++  u32 count = formtrig_fuzz_one_component_count(m);
++  for (u32 i = 0; i < count; ++i) {
++
++    if (formtrig_fuzz_one_actionable(&m->components[i])) { ++actionable; }
++
++  }
++
++  return actionable;
++
++}
++
++static const formtrig_progress_component_t *formtrig_typed_component(
++    const formtrig_queue_meta_t *m, u32 nth) {
++
++  u32 count = formtrig_fuzz_one_component_count(m);
++  for (u32 i = 0; i < count; ++i) {
++
++    const formtrig_progress_component_t *component = &m->components[i];
++    if (!formtrig_fuzz_one_actionable(component)) { continue; }
++    if (!nth--) { return component; }
++
++  }
++
++  return NULL;
++
++}
++
++static u8 formtrig_hot_range_valid(const formtrig_hot_range_t *range,
++                                   u32 len, u32 *start, u32 *span) {
++
++  if (!range || !len || !range->len || range->start >= len) { return 0; }
++  if (!formtrig_fuzz_one_finite(range->influence) ||
++      range->influence <= 0.0) {
++
++    return 0;
++
++  }
++
++  u32 clipped = range->len;
++  if (clipped > len - range->start) { clipped = len - range->start; }
++  if (!clipped) { return 0; }
++  if (clipped > FORMTRIG_TYPED_RANGE_WINDOW) {
++
++    clipped = FORMTRIG_TYPED_RANGE_WINDOW;
++
++  }
++
++  *start = range->start;
++  *span = clipped;
++  return 1;
++
++}
++
++static u32 formtrig_typed_hot_range_count(const formtrig_queue_meta_t *m,
++                                          u32 len) {
++
++  if (!m || !len) { return 0; }
++  u32 count = m->hot_range_count;
++  if (count > FORMTRIG_MAX_HOT_RANGES) { count = FORMTRIG_MAX_HOT_RANGES; }
++
++  u32 valid = 0;
++  for (u32 i = 0; i < count; ++i) {
++
++    u32 start = 0, span = 0;
++    if (formtrig_hot_range_valid(&m->hot_ranges[i], len, &start, &span)) {
++
++      ++valid;
++
++    }
++
++  }
++
++  return valid;
++
++}
++
++static u8 formtrig_typed_hot_range(const formtrig_queue_meta_t *m, u32 len,
++                                   u32 nth, u32 *start, u32 *span) {
++
++  if (!m || !len) { return 0; }
++  u32 count = m->hot_range_count;
++  if (count > FORMTRIG_MAX_HOT_RANGES) { count = FORMTRIG_MAX_HOT_RANGES; }
++
++  for (u32 i = 0; i < count; ++i) {
++
++    if (!formtrig_hot_range_valid(&m->hot_ranges[i], len, start, span)) {
++
++      continue;
++
++    }
++
++    if (!nth--) { return 1; }
++
++  }
++
++  return 0;
++
++}
++
++static u16 formtrig_read16_le(const u8 *mem) {
++
++  return (u16)mem[0] | ((u16)mem[1] << 8);
++
++}
++
++static void formtrig_write16_le(u8 *mem, u16 v) {
++
++  mem[0] = (u8)v;
++  mem[1] = (u8)(v >> 8);
++
++}
++
++static u32 formtrig_read32_le(const u8 *mem) {
++
++  return (u32)mem[0] | ((u32)mem[1] << 8) | ((u32)mem[2] << 16) |
++         ((u32)mem[3] << 24);
++
++}
++
++static void formtrig_write32_le(u8 *mem, u32 v) {
++
++  mem[0] = (u8)v;
++  mem[1] = (u8)(v >> 8);
++  mem[2] = (u8)(v >> 16);
++  mem[3] = (u8)(v >> 24);
++
++}
++
++static void formtrig_apply_distance_mutation(u8 *out_buf, u32 len, u32 start,
++                                             u32 span, u32 iter) {
++
++  u32 off = start + ((iter * 2654435761u) % span);
++
++  switch (iter % FORMTRIG_TYPED_OPS) {
++
++    case 0:
++      out_buf[off] ^= 0x01;
++      break;
++    case 1:
++      out_buf[off]++;
++      break;
++    case 2:
++      out_buf[off]--;
++      break;
++    case 3:
++      out_buf[off] = 0x00;
++      break;
++    case 4:
++      out_buf[off] = 0xff;
++      break;
++    case 5:
++      if (off + 1 < len) {
++
++        u16 v = formtrig_read16_le(out_buf + off);
++        formtrig_write16_le(out_buf + off, (u16)(v + 1));
++
++      } else {
++
++        out_buf[off] += 16;
++
++      }
++      break;
++    case 6:
++      if (off + 1 < len) {
++
++        u16 v = formtrig_read16_le(out_buf + off);
++        formtrig_write16_le(out_buf + off, (u16)(v - 1));
++
++      } else {
++
++        out_buf[off] -= 16;
++
++      }
++      break;
++    default:
++      if (off + 3 < len) {
++
++        u32 v = formtrig_read32_le(out_buf + off);
++        formtrig_write32_le(out_buf + off, v + ((iter & 1) ? 16u : 1u));
++
++      } else {
++
++        out_buf[off] ^= 0x80;
++
++      }
++      break;
++
++  }
++
++}
++
++static void formtrig_apply_state_mutation(u8 *out_buf, u32 start, u32 span,
++                                          u32 iter) {
++
++  u32 off = start + ((iter * 1103515245u + 12345u) % span);
++
++  switch (iter % FORMTRIG_TYPED_OPS) {
++
++    case 0:
++      out_buf[off] ^= 0xff;
++      break;
++    case 1:
++      out_buf[off] ^= (u8)(1u << (iter & 7u));
++      break;
++    case 2:
++      out_buf[off] = 0x00;
++      break;
++    case 3:
++      out_buf[off] = 0xff;
++      break;
++    case 4:
++      out_buf[off]++;
++      break;
++    case 5:
++      out_buf[off]--;
++      break;
++    case 6:
++      if (span > 1) {
++
++        u32 other = start + ((off - start + 1) % span);
++        u8  tmp = out_buf[off];
++        out_buf[off] = out_buf[other];
++        out_buf[other] = tmp;
++
++      } else {
++
++        out_buf[off] ^= 0x55;
++
++      }
++      break;
++    default:
++      if (span > 1) {
++
++        u32 other = start + ((off - start + span - 1) % span);
++        out_buf[off] = out_buf[other];
++
++      } else {
++
++        out_buf[off] ^= 0xaa;
++
++      }
++      break;
++
++  }
++
++}
++
++static u8 formtrig_typed_mutation_stage(afl_state_t *afl, const u8 *in_buf,
++                                        u8 *out_buf, u32 len) {
++
++  if (!afl->formtrig_enabled) { return 0; }
++
++  const formtrig_queue_meta_t *m = &afl->queue_cur->formtrig;
++  u32 queue_id = afl->queue_cur ? afl->queue_cur->id : 0;
++  const char *skip_reason = NULL;
++  if (!m->seen) {
++
++    skip_reason = "no_runtime_signal";
++
++  } else if (!m->stable) {
++
++    skip_reason = "not_replay_stable";
++
++  } else if (!m->reached) {
++
++    skip_reason = "not_reached";
++
++  } else if (m->triggered) {
++
++    skip_reason = "already_triggered";
++
++  } else if (!len) {
++
++    skip_reason = "zero_length_input";
++
++  }
++
++  if (skip_reason) {
++
++    ++afl->formtrig_typed_skips;
++    formtrig_log_progress(afl, "typed_skip", skip_reason, m, queue_id, len);
++    return 0;
++
++  }
++
++  u32 component_count = formtrig_typed_actionable_count(m);
++  u32 range_count = formtrig_typed_hot_range_count(m, len);
++  if (!component_count) {
++
++    ++afl->formtrig_typed_skips;
++    formtrig_log_progress(afl, "typed_skip", "no_actionable_component", m,
++                          queue_id, len);
++    return 0;
++
++  }
++
++  if (!range_count) {
++
++    ++afl->formtrig_typed_skips;
++    formtrig_log_progress(afl, "typed_skip", "no_valid_hot_range", m,
++                          queue_id, len);
++    return 0;
++
++  }
++
++  u32 stage_max = component_count * range_count * FORMTRIG_TYPED_OPS;
++  if (stage_max > FORMTRIG_TYPED_MUTATION_MAX) {
++
++    stage_max = FORMTRIG_TYPED_MUTATION_MAX;
++
++  }
++
++  afl->stage_name = "formtrig typed";
++  afl->stage_short = "ftgtype";
++  afl->stage_max = stage_max;
++  afl->stage_val_type = STAGE_VAL_NONE;
++  formtrig_log_progress(afl, "typed_stage_start", "planned", m, queue_id,
++                        stage_max);
++
++  u64 orig_hit_cnt = afl->queued_items + afl->saved_crashes;
++
++  for (afl->stage_cur = 0; afl->stage_cur < afl->stage_max;
++       ++afl->stage_cur) {
++
++    const formtrig_progress_component_t *component =
++        formtrig_typed_component(m, afl->stage_cur % component_count);
++    u32 start = 0, span = 0;
++    if (!component ||
++        !formtrig_typed_hot_range(m, len,
++                                  (afl->stage_cur / component_count) %
++                                      range_count,
++                                  &start, &span)) {
++
++      continue;
++
++    }
++
++    memcpy(out_buf, in_buf, len);
++    afl->stage_cur_byte = start + (afl->stage_cur % span);
++    afl->stage_cur_val = (s32)component->kind;
++
++    if (formtrig_fuzz_one_lower(component)) {
++
++      formtrig_apply_distance_mutation(out_buf, len, start, span,
++                                       afl->stage_cur);
++
++    } else {
++
++      formtrig_apply_state_mutation(out_buf, start, span, afl->stage_cur);
++
++    }
++
++    if (!memcmp(out_buf, in_buf, len)) { continue; }
++
++#ifdef INTROSPECTION
++    snprintf(afl->mutation, sizeof(afl->mutation),
++             "%s FORMTRIG_TYPED kind=%u atom=%u role=%u off=%u",
++             afl->queue_cur->fname, component->kind, component->atom_id,
++             component->role, afl->stage_cur_byte);
++#endif
++
++    ++afl->formtrig_typed_execs;
++    if (common_fuzz_stuff(afl, out_buf, len)) { return 1; }
++
++  }
++
++  u64 new_hit_cnt = afl->queued_items + afl->saved_crashes;
++  afl->formtrig_typed_finds += new_hit_cnt - orig_hit_cnt;
++  formtrig_log_progress(afl, "typed_stage_end", "completed", m, queue_id,
++                        new_hit_cnt - orig_hit_cnt);
++#ifdef INTROSPECTION
++  afl->queue_cur->stats_mutated += stage_max;
++#endif
++
++  memcpy(out_buf, in_buf, len);
++  return 0;
++
++}
++
+ /* Helper function to see if a particular change (xor_val = old ^ new) could
+    be a product of deterministic bit flips with the lengths and stepovers
+    attempted by afl-fuzz. This is used to avoid dupes in some of the
+@@ -545,6 +990,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
+
+   }
+
++  if (formtrig_typed_mutation_stage(afl, in_buf, out_buf, len)) {
++
++    goto abandon_entry;
++
++  }
++
+   /* Skip right away if -d is given, if it has not been chosen sufficiently
+      often to warrant the expensive deterministic stage (fuzz_level), or
+      if it has gone through deterministic testing in earlier, resumed runs
+@@ -3656,6 +4107,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
+
+   }
+
++  if (formtrig_typed_mutation_stage(afl, in_buf, out_buf, len)) {
++
++    goto abandon_entry;
++
++  }
++
+   /* Go to pacemker fuzzing if MOpt is doing well */
+
+   cur_ms_lv = get_cur_time();
+@@ -6213,4 +6670,3 @@ u8 fuzz_one(afl_state_t *afl) {
+   return (key_val_lv_1 | key_val_lv_2);
+
+ }
+-
+diff --git a/src/afl-fuzz-queue.c b/src/afl-fuzz-queue.c
+index 48fd33e..af78397 100644
+--- a/src/afl-fuzz-queue.c
++++ b/src/afl-fuzz-queue.c
+@@ -26,6 +26,7 @@
+ #include <limits.h>
+ #include <ctype.h>
+ #include <math.h>
++#include <sys/mman.h>
+
+ #ifdef _STANDALONE_MODULE
+ void minimize_bits(afl_state_t *afl, u8 *dst, u8 *src) {
+@@ -43,6 +44,933 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
+
+ #endif
+
++static u8 formtrig_env_enabled(void) {
++
++  const char *env = getenv("AFL_FORMTRIG");
++  if (!env || !env[0]) { env = getenv("FORMTRIG_AFLPP"); }
++  return env && (env[0] == '1' || env[0] == 'y' || env[0] == 'Y' ||
++                 env[0] == 't' || env[0] == 'T');
++
++}
++
++static u8 formtrig_finite(double v) {
++
++  return isfinite(v) && v > -FORMTRIG_INF / 2.0 && v < FORMTRIG_INF / 2.0;
++
++}
++
++static u8 formtrig_env_disabled(const char *env) {
++
++  return env && env[0] &&
++         (env[0] == '0' || env[0] == 'n' || env[0] == 'N' ||
++          env[0] == 'f' || env[0] == 'F');
++
++}
++
++static u8 formtrig_noncoarse_one(double v) {
++
++  return formtrig_finite(v) && fabs(v - 1.0) > 1.0e-9;
++
++}
++
++static void formtrig_clear_record(formtrig_shm_record_t *rec) {
++
++  memset(rec, 0, sizeof(*rec));
++
++}
++
++void formtrig_init(afl_state_t *afl) {
++
++  if (!formtrig_env_enabled()) { return; }
++
++  char path[64];
++  snprintf(path, sizeof(path), "/formtrig_%d_%ld", getpid(), random());
++
++  int fd = shm_open(path, O_CREAT | O_RDWR | O_EXCL, DEFAULT_PERMISSION);
++  if (unlikely(fd < 0)) { PFATAL("FORMTRIG shm_open() failed"); }
++
++  if (unlikely(ftruncate(fd, FORMTRIG_SHM_SIZE))) {
++
++    shm_unlink(path);
++    close(fd);
++    PFATAL("FORMTRIG ftruncate() failed");
++
++  }
++
++  void *area =
++      mmap(0, FORMTRIG_SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
++  if (unlikely(area == MAP_FAILED || !area)) {
++
++    shm_unlink(path);
++    close(fd);
++    PFATAL("FORMTRIG mmap() failed");
++
++  }
++
++  afl->formtrig_enabled = 1;
++  afl->formtrig_shm_fd = fd;
++  afl->formtrig_shm_area = (u8 *)area;
++  afl->formtrig_shm_path = ck_strdup((u8 *)path);
++  formtrig_clear_record((formtrig_shm_record_t *)area);
++  setenv(FORMTRIG_SHM_ENV_VAR, path, 1);
++  OKF("FORMTRIG native signal channel enabled");
++
++}
++
++void formtrig_deinit(afl_state_t *afl) {
++
++  if (afl->formtrig_shm_area) {
++
++    munmap(afl->formtrig_shm_area, FORMTRIG_SHM_SIZE);
++    afl->formtrig_shm_area = NULL;
++
++  }
++
++  if (afl->formtrig_shm_fd >= 0) {
++
++    close(afl->formtrig_shm_fd);
++    afl->formtrig_shm_fd = -1;
++
++  }
++
++  if (afl->formtrig_shm_path) {
++
++    shm_unlink((char *)afl->formtrig_shm_path);
++    ck_free(afl->formtrig_shm_path);
++    afl->formtrig_shm_path = NULL;
++
++  }
++
++  unsetenv(FORMTRIG_SHM_ENV_VAR);
++
++}
++
++void formtrig_prepare_run(afl_state_t *afl) {
++
++  if (!afl->formtrig_enabled || !afl->formtrig_shm_area) { return; }
++  formtrig_clear_record((formtrig_shm_record_t *)afl->formtrig_shm_area);
++
++}
++
++static double formtrig_meta_df(const formtrig_queue_meta_t *m) {
++
++  if (m->lifted && formtrig_finite(m->d_f_lifted) && m->d_f_lifted >= 0.0)
++    return m->d_f_lifted;
++  if (formtrig_finite(m->d_f) && m->d_f >= 0.0) return m->d_f;
++  return FORMTRIG_INF;
++
++}
++
++static u8 formtrig_component_lower(const formtrig_progress_component_t *c) {
++
++  return c && (c->flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER);
++
++}
++
++static u8 formtrig_component_higher(const formtrig_progress_component_t *c) {
++
++  return c && (c->flags & FORMTRIG_COMPONENT_HIGHER_IS_BETTER);
++
++}
++
++static u8 formtrig_component_actionable(
++    const formtrig_progress_component_t *c) {
++
++  if (!c || !(c->flags & FORMTRIG_COMPONENT_TC_ROOTED)) { return 0; }
++  if (!formtrig_finite(c->value)) { return 0; }
++  if (c->confidence <= 0.0) { return 0; }
++  /* Input influence selects mutation ranges. By itself it is supporting
++     evidence, not TC-root progress for admission or dominance. */
++  if (c->flags & FORMTRIG_COMPONENT_INPUT_INFLUENCE) {
++
++    return 0;
++
++  }
++
++  u8 lower = formtrig_component_lower(c);
++  u8 higher = formtrig_component_higher(c);
++  if (lower == higher) { return 0; }
++
++  if (lower && c->value < 0.0) { return 0; }
++  if (higher && c->value <= 0.0) { return 0; }
++
++  /* A native binary distance of exactly 1 only says R=1,T=0. It is not
++     FORMTRIG progress and must not admit a non-trigger queue entry. */
++  if ((c->flags & FORMTRIG_COMPONENT_NATIVE) && lower &&
++      !formtrig_noncoarse_one(c->value)) {
++
++    return 0;
++
++  }
++
++  return 1;
++
++}
++
++static u8 formtrig_same_component_slot(
++    const formtrig_progress_component_t *a,
++    const formtrig_progress_component_t *b) {
++
++  return a && b && a->kind == b->kind && a->atom_id == b->atom_id &&
++         a->role == b->role && a->source_id == b->source_id &&
++         a->context_hash == b->context_hash;
++
++}
++
++static u8 formtrig_same_atom_context(
++    const formtrig_progress_component_t *a,
++    const formtrig_progress_component_t *b) {
++
++  return a && b && a->atom_id == b->atom_id && a->role == b->role &&
++         a->context_hash == b->context_hash;
++
++}
++
++static u32 formtrig_meta_component_count(const formtrig_queue_meta_t *m) {
++
++  if (!m) { return 0; }
++  return m->component_count > FORMTRIG_MAX_PROGRESS_COMPONENTS
++             ? FORMTRIG_MAX_PROGRESS_COMPONENTS
++             : m->component_count;
++
++}
++
++static u32 formtrig_meta_atom_signal_count(const formtrig_queue_meta_t *m) {
++
++  if (!m) { return 0; }
++  return m->atom_signal_count > FORMTRIG_MAX_ATOM_SIGNALS
++             ? FORMTRIG_MAX_ATOM_SIGNALS
++             : m->atom_signal_count;
++
++}
++
++static const formtrig_progress_component_t *formtrig_find_component(
++    const formtrig_queue_meta_t *m,
++    const formtrig_progress_component_t *slot) {
++
++  u32 count = formtrig_meta_component_count(m);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *component = &m->components[i];
++    if (formtrig_same_component_slot(component, slot)) { return component; }
++
++  }
++
++  return NULL;
++
++}
++
++static int formtrig_compare_component(
++    const formtrig_progress_component_t *candidate,
++    const formtrig_progress_component_t *frontier) {
++
++  if (!candidate || !frontier) { return 0; }
++  double eps = 1.0e-9;
++  if (formtrig_component_lower(candidate)) {
++
++    if (candidate->value + eps < frontier->value) { return 1; }
++    if (candidate->value > frontier->value + eps) { return -1; }
++    return 0;
++
++  }
++
++  if (formtrig_component_higher(candidate)) {
++
++    if (candidate->value > frontier->value + eps) { return 1; }
++    if (candidate->value + eps < frontier->value) { return -1; }
++    return 0;
++
++  }
++
++  return 0;
++
++}
++
++static u32 formtrig_actionable_component_count(const formtrig_queue_meta_t *m) {
++
++  u32 actionable = 0;
++  u32 count = formtrig_meta_component_count(m);
++  for (u32 i = 0; i < count; i++) {
++
++    if (formtrig_component_actionable(&m->components[i])) { ++actionable; }
++
++  }
++
++  return actionable;
++
++}
++
++static const formtrig_progress_component_t *formtrig_first_actionable_component(
++    const formtrig_queue_meta_t *m) {
++
++  u32 count = formtrig_meta_component_count(m);
++  for (u32 i = 0; i < count; i++) {
++
++    if (formtrig_component_actionable(&m->components[i])) {
++
++      return &m->components[i];
++
++    }
++
++  }
++
++  return NULL;
++
++}
++
++static u64 formtrig_log_limit(void) {
++
++  const char *env = getenv("FORMTRIG_PROGRESS_LOG_LIMIT");
++  if (!env || !env[0]) { return 4096; }
++
++  char *end = NULL;
++  u64   limit = strtoull(env, &end, 10);
++  if (end == env) { return 4096; }
++  return limit;
++
++}
++
++static u8 formtrig_log_event_is_critical(const char *event) {
++
++  if (!event) { return 0; }
++  return !strcmp(event, "saved_progress") ||
++         !strcmp(event, "calibrated_frontier") ||
++         !strcmp(event, "stability_confirmed") ||
++         !strcmp(event, "stability_reject") ||
++         !strcmp(event, "typed_skip") ||
++         !strcmp(event, "typed_stage_start") ||
++         !strcmp(event, "typed_stage_end");
++
++}
++
++static u8 formtrig_log_allowed(afl_state_t *afl, const char *event) {
++
++  if (!afl || !afl->formtrig_enabled || !afl->out_dir) { return 0; }
++  if (formtrig_env_disabled(getenv("FORMTRIG_PROGRESS_LOG"))) { return 0; }
++
++  u64 limit = formtrig_log_limit();
++  if (!formtrig_log_event_is_critical(event) && limit &&
++      afl->formtrig_progress_log_events >= limit) {
++
++    ++afl->formtrig_progress_log_dropped;
++    return 0;
++
++  }
++
++  ++afl->formtrig_progress_log_events;
++  return 1;
++
++}
++
++static void formtrig_json_double(FILE *f, double v) {
++
++  if (formtrig_finite(v)) {
++
++    fprintf(f, "%.17g", v);
++
++  } else {
++
++    fputs("null", f);
++
++  }
++
++}
++
++void formtrig_log_progress(afl_state_t *afl, const char *event,
++                           const char *reason,
++                           const formtrig_queue_meta_t *m, u32 queue_id,
++                           u64 aux) {
++
++  if (!formtrig_log_allowed(afl, event)) { return; }
++
++  u8 *path = alloc_printf("%s/formtrig_progress.jsonl", afl->out_dir);
++  FILE *f = fopen((char *)path, "a");
++  if (!f) {
++
++    ck_free(path);
++    return;
++
++  }
++
++  u32 component_count = formtrig_meta_component_count(m);
++  u32 atom_signal_count = formtrig_meta_atom_signal_count(m);
++  u32 actionable = formtrig_actionable_component_count(m);
++  const formtrig_progress_component_t *first =
++      formtrig_first_actionable_component(m);
++
++  fprintf(f,
++          "{\"event\":\"%s\",\"reason\":\"%s\",\"execs_done\":%llu,"
++          "\"queue_id\":%u,\"queued_items\":%u,\"frontier_count\":%u,"
++          "\"frontier_updates\":%llu,\"seen\":%u,\"reached\":%u,"
++          "\"triggered\":%u,\"lifted\":%u,\"stable\":%u,"
++          "\"d_t\":",
++          event ? event : "unknown", reason ? reason : "unknown",
++          (unsigned long long)afl->fsrv.total_execs, queue_id,
++          afl->queued_items, afl->formtrig_frontier_count,
++          (unsigned long long)afl->formtrig_frontier_updates,
++          m ? m->seen : 0, m ? m->reached : 0, m ? m->triggered : 0,
++          m ? m->lifted : 0, m ? m->stable : 0);
++  formtrig_json_double(f, m ? m->d_t : FORMTRIG_INF);
++  fputs(",\"d_f\":", f);
++  formtrig_json_double(f, m ? m->d_f : FORMTRIG_INF);
++  fputs(",\"d_f_lifted\":", f);
++  formtrig_json_double(f, m ? m->d_f_lifted : FORMTRIG_INF);
++  fprintf(f,
++          ",\"components\":%u,\"atom_signals\":%u,"
++          "\"actionable_components\":%u,"
++          "\"hot_ranges\":%u,\"target_hit_count\":%u,"
++          "\"trace_signature\":\"%016llx\",\"aux\":%llu",
++          component_count, atom_signal_count, actionable,
++          m ? m->hot_range_count : 0,
++          m ? m->target_hit_count : 0,
++          (unsigned long long)(m ? m->trace_signature : 0),
++          (unsigned long long)aux);
++
++  if (first) {
++
++    fprintf(f,
++            ",\"first_actionable\":{\"kind\":%u,\"atom_id\":%u,"
++            "\"role\":%u,\"priority\":%u,\"flags\":%u,\"source_id\":%llu,"
++            "\"context_hash\":\"%016llx\",\"value\":",
++            first->kind, first->atom_id, first->role, first->priority,
++            first->flags, (unsigned long long)first->source_id,
++            (unsigned long long)first->context_hash);
++    formtrig_json_double(f, first->value);
++    fputs(",\"confidence\":", f);
++    formtrig_json_double(f, first->confidence);
++    fputs("}", f);
++
++  }
++
++  fputs(",\"component_values\":[", f);
++  for (u32 i = 0; m && i < component_count; i++) {
++
++    const formtrig_progress_component_t *component = &m->components[i];
++    if (i) { fputc(',', f); }
++    fprintf(f,
++            "{\"kind\":%u,\"atom_id\":%u,\"role\":%u,"
++            "\"priority\":%u,\"flags\":%u,"
++            "\"source_id\":%llu,\"context_hash\":\"%016llx\",\"value\":",
++            component->kind, component->atom_id, component->role,
++            component->priority, component->flags,
++            (unsigned long long)component->source_id,
++            (unsigned long long)component->context_hash);
++    formtrig_json_double(f, component->value);
++    fputs(",\"confidence\":", f);
++    formtrig_json_double(f, component->confidence);
++    fputc('}', f);
++
++  }
++  fputc(']', f);
++
++  fputs(",\"atom_signal_values\":[", f);
++  for (u32 i = 0; m && i < atom_signal_count; i++) {
++
++    const formtrig_atom_signal_t *signal = &m->atom_signals[i];
++    if (i) { fputc(',', f); }
++    fprintf(f,
++            "{\"atom_id\":%u,\"role_bits\":%u,\"event_bits\":%u,"
++            "\"lifecycle_prefix\":%u,\"root_value_bucket\":%u,"
++            "\"object_id_bucket\":%u,\"guard_bits\":%u,"
++            "\"producer_bits\":%u,\"use_bits\":%u,\"flags\":%u}",
++            signal->atom_id, signal->role_bits, signal->event_bits,
++            signal->lifecycle_prefix, signal->root_value_bucket,
++            signal->object_id_bucket, signal->guard_bits,
++            signal->producer_bits, signal->use_bits, signal->flags);
++
++  }
++  fputc(']', f);
++
++  fputs("}\n", f);
++  fclose(f);
++  ck_free(path);
++
++}
++
++static u8 formtrig_vector_has_same_atom_context(
++    const formtrig_queue_meta_t *m,
++    const formtrig_progress_component_t *slot) {
++
++  u32 count = formtrig_meta_component_count(m);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *component = &m->components[i];
++    if (formtrig_component_actionable(component) &&
++        formtrig_same_atom_context(component, slot)) {
++
++      return 1;
++
++    }
++
++  }
++
++  return 0;
++
++}
++
++static u8 formtrig_vector_covers(const formtrig_queue_meta_t *older,
++                                 const formtrig_queue_meta_t *candidate) {
++
++  u8  saw_candidate_component = 0;
++  u32 count = formtrig_meta_component_count(candidate);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *candidate_component =
++        &candidate->components[i];
++    if (!formtrig_component_actionable(candidate_component)) { continue; }
++    saw_candidate_component = 1;
++
++    const formtrig_progress_component_t *older_component =
++        formtrig_find_component(older, candidate_component);
++    if (!older_component || !formtrig_component_actionable(older_component)) {
++
++      return 0;
++
++    }
++
++    if (formtrig_compare_component(candidate_component, older_component) > 0) {
++
++      return 0;
++
++    }
++
++  }
++
++  return saw_candidate_component;
++
++}
++
++static u8 formtrig_vector_dominates(const formtrig_queue_meta_t *candidate,
++                                    const formtrig_queue_meta_t *older) {
++
++  if (!formtrig_vector_covers(candidate, older)) { return 0; }
++
++  u32 count = formtrig_meta_component_count(candidate);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *candidate_component =
++        &candidate->components[i];
++    if (!formtrig_component_actionable(candidate_component)) { continue; }
++
++    const formtrig_progress_component_t *older_component =
++        formtrig_find_component(older, candidate_component);
++    if (!older_component) { return 1; }
++    if (formtrig_compare_component(candidate_component, older_component) > 0) {
++
++      return 1;
++
++    }
++
++  }
++
++  return 0;
++
++}
++
++static u8 formtrig_shared_high_priority_regression(
++    const formtrig_queue_meta_t *candidate,
++    const formtrig_queue_meta_t *older) {
++
++  u32 best_improved_priority = UINT_MAX;
++  u32 count = formtrig_meta_component_count(candidate);
++
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *candidate_component =
++        &candidate->components[i];
++    if (!formtrig_component_actionable(candidate_component)) { continue; }
++
++    const formtrig_progress_component_t *older_component =
++        formtrig_find_component(older, candidate_component);
++    if (!older_component ||
++        formtrig_compare_component(candidate_component, older_component) > 0) {
++
++      if (candidate_component->priority < best_improved_priority)
++        best_improved_priority = candidate_component->priority;
++
++    }
++
++  }
++
++  if (best_improved_priority == UINT_MAX) { return 0; }
++
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *candidate_component =
++        &candidate->components[i];
++    if (!formtrig_component_actionable(candidate_component)) { continue; }
++    if (candidate_component->priority >= best_improved_priority) { continue; }
++
++    const formtrig_progress_component_t *older_component =
++        formtrig_find_component(older, candidate_component);
++    if (older_component &&
++        formtrig_compare_component(candidate_component, older_component) < 0) {
++
++      return 1;
++
++    }
++
++  }
++
++  count = formtrig_meta_component_count(older);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *older_component =
++        &older->components[i];
++    if (!formtrig_component_actionable(older_component)) { continue; }
++    if (older_component->priority >= best_improved_priority) { continue; }
++    if (!formtrig_vector_has_same_atom_context(candidate, older_component)) {
++      continue;
++    }
++    if (!formtrig_find_component(candidate, older_component)) { return 1; }
++
++  }
++
++  return 0;
++
++}
++
++static const char *formtrig_frontier_reason(afl_state_t *afl,
++                                            const formtrig_queue_meta_t *m,
++                                            u8 *accepted) {
++
++  if (accepted) { *accepted = 0; }
++
++  if (!afl || !afl->formtrig_enabled) { return "formtrig_disabled"; }
++  if (!m || !m->seen) { return "no_runtime_signal"; }
++  if (!m->reached) { return "not_reached"; }
++  if (m->triggered) {
++
++    if (accepted) { *accepted = 1; }
++    return "triggered";
++
++  }
++
++  if (!formtrig_actionable_component_count(m)) {
++
++    return "no_actionable_component";
++
++  }
++
++  u8 dominates_existing = 0;
++  for (u32 i = 0; i < afl->formtrig_frontier_count; i++) {
++
++    const formtrig_queue_meta_t *older = &afl->formtrig_frontier[i].vector;
++
++    if (formtrig_vector_covers(older, m)) {
++
++      return "dominated_by_existing_frontier";
++
++    }
++
++    if (formtrig_shared_high_priority_regression(m, older)) {
++
++      return "high_priority_regression";
++
++    }
++
++    if (formtrig_vector_dominates(m, older)) { dominates_existing = 1; }
++
++  }
++
++  if (afl->formtrig_frontier_count >= FORMTRIG_FRONTIER_MAX &&
++      !dominates_existing) {
++
++    return "frontier_full";
++
++  }
++
++  if (accepted) { *accepted = 1; }
++  if (!afl->formtrig_frontier_count) { return "frontier_empty_seed"; }
++  if (dominates_existing) { return "dominates_existing_frontier"; }
++  return "non_dominated_frontier_seed";
++
++}
++
++void formtrig_capture_last(afl_state_t *afl) {
++
++  memset(&afl->formtrig_last, 0, sizeof(afl->formtrig_last));
++  if (!afl->formtrig_enabled || !afl->formtrig_shm_area) { return; }
++
++  const formtrig_shm_record_t *rec =
++      (const formtrig_shm_record_t *)(const void *)afl->formtrig_shm_area;
++  if (rec->magic != FORMTRIG_SHM_MAGIC ||
++      rec->version != FORMTRIG_SHM_VERSION) {
++
++    return;
++
++  }
++
++  formtrig_queue_meta_t meta;
++  memset(&meta, 0, sizeof(meta));
++  meta.seen = 1;
++  meta.reached = (rec->flags & FORMTRIG_FLAG_REACHED) ? 1 : 0;
++  meta.triggered = (rec->flags & FORMTRIG_FLAG_CRASH_PREDICATE) ? 1 : 0;
++  meta.lifted = (rec->flags & FORMTRIG_FLAG_LIFTED) ? 1 : 0;
++  meta.target_hit_count = rec->target_hit_count;
++  meta.hot_range_count = rec->hot_range_count;
++  meta.trace_signature = rec->trace_signature;
++  meta.d_t = rec->d_t;
++  meta.d_f = rec->d_f;
++  meta.d_f_lifted = rec->d_f_lifted;
++  if (meta.hot_range_count > FORMTRIG_MAX_HOT_RANGES)
++    meta.hot_range_count = FORMTRIG_MAX_HOT_RANGES;
++  memcpy(meta.hot_ranges, rec->hot_ranges,
++         sizeof(formtrig_hot_range_t) * meta.hot_range_count);
++  meta.component_count = rec->component_count;
++  if (meta.component_count > FORMTRIG_MAX_PROGRESS_COMPONENTS)
++    meta.component_count = FORMTRIG_MAX_PROGRESS_COMPONENTS;
++  memcpy(meta.components, rec->components,
++         sizeof(formtrig_progress_component_t) * meta.component_count);
++  meta.atom_signal_count = rec->atom_signal_count;
++  if (meta.atom_signal_count > FORMTRIG_MAX_ATOM_SIGNALS)
++    meta.atom_signal_count = FORMTRIG_MAX_ATOM_SIGNALS;
++  memcpy(meta.atom_signals, rec->atom_signals,
++         sizeof(formtrig_atom_signal_t) * meta.atom_signal_count);
++  afl->formtrig_last = meta;
++
++  ++afl->formtrig_seen_execs;
++  if (meta.reached) { ++afl->formtrig_reached_execs; }
++  if (meta.triggered) { ++afl->formtrig_triggered_execs; }
++
++}
++
++void formtrig_apply_last_to_queue(afl_state_t *afl, struct queue_entry *q) {
++
++  if (!q || !afl->formtrig_last.seen) { return; }
++  q->formtrig = afl->formtrig_last;
++
++}
++
++u8 formtrig_should_save(afl_state_t *afl) {
++
++  const formtrig_queue_meta_t *m = &afl->formtrig_last;
++  u8 accepted = 0;
++  const char *reason = formtrig_frontier_reason(afl, m, &accepted);
++  if (!accepted && m->seen && m->reached) {
++
++    formtrig_log_progress(afl, "frontier_reject", reason, m, 0, 0);
++
++  }
++
++  return accepted;
++
++}
++
++u8 formtrig_progress_stable(const formtrig_queue_meta_t *baseline,
++                            const formtrig_queue_meta_t *confirmed) {
++
++  if (!baseline || !confirmed) { return 0; }
++  if (!baseline->seen || !baseline->reached) { return 0; }
++  if (!confirmed->seen || !confirmed->reached) { return 0; }
++
++  if (baseline->triggered || confirmed->triggered) {
++
++    return baseline->triggered && confirmed->triggered;
++
++  }
++
++  u8  saw_actionable = 0;
++  u32 count = formtrig_meta_component_count(baseline);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *base_component =
++        &baseline->components[i];
++    if (!formtrig_component_actionable(base_component)) { continue; }
++    saw_actionable = 1;
++
++    const formtrig_progress_component_t *confirm_component =
++        formtrig_find_component(confirmed, base_component);
++    if (!confirm_component ||
++        !formtrig_component_actionable(confirm_component)) {
++
++      return 0;
++
++    }
++
++    if (formtrig_compare_component(confirm_component, base_component) < 0) {
++
++      return 0;
++
++    }
++
++  }
++
++  return saw_actionable;
++
++}
++
++static u8 formtrig_update_scalar_best(afl_state_t *afl) {
++
++  const formtrig_queue_meta_t *m = &afl->formtrig_last;
++  if (!afl->formtrig_enabled || !m->seen || !m->reached) { return 0; }
++  if (m->triggered) { return 0; }
++
++  u8 changed = 0;
++
++  double df = formtrig_meta_df(m);
++  if ((m->lifted || formtrig_noncoarse_one(df)) &&
++      formtrig_finite(df) && df < afl->formtrig_best_df) {
++
++    afl->formtrig_best_df = df;
++    changed = 1;
++
++  }
++
++  if (formtrig_noncoarse_one(m->d_t) && m->d_t > 0.0 &&
++      m->d_t < afl->formtrig_best_dt) {
++
++    afl->formtrig_best_dt = m->d_t;
++    changed = 1;
++
++  }
++
++  return changed;
++
++}
++
++static u8 formtrig_update_frontier(afl_state_t *afl,
++                                   const formtrig_queue_meta_t *m,
++                                   u32 queue_id, const char *event) {
++
++  if (!afl->formtrig_enabled || !m->seen || !m->reached) { return 0; }
++  if (m->triggered) { return 0; }
++  u8 accepted = 0;
++  const char *reason = formtrig_frontier_reason(afl, m, &accepted);
++  if (!accepted) {
++
++    formtrig_log_progress(afl, "frontier_reject", reason, m, queue_id, 0);
++    return 0;
++
++  }
++
++  if (!strcmp(reason, "frontier_empty_seed") && event &&
++      !strcmp(event, "calibrated_frontier")) {
++
++    reason = "initial_frontier_seed";
++
++  }
++
++  u8 changed = 0;
++  for (u32 i = 0; i < afl->formtrig_frontier_count;) {
++
++    if (formtrig_vector_dominates(m, &afl->formtrig_frontier[i].vector)) {
++
++      u32 tail = afl->formtrig_frontier_count - i - 1;
++      if (tail) {
++
++        memmove(&afl->formtrig_frontier[i], &afl->formtrig_frontier[i + 1],
++                sizeof(afl->formtrig_frontier[0]) * tail);
++
++      }
++      --afl->formtrig_frontier_count;
++      changed = 1;
++      continue;
++
++    }
++
++    ++i;
++
++  }
++
++  if (afl->formtrig_frontier_count >= FORMTRIG_FRONTIER_MAX) {
++
++    if (changed) {
++
++      formtrig_log_progress(afl, event ? event : "frontier_accept", reason, m,
++                            queue_id, changed);
++
++    }
++
++    return changed;
++
++  }
++
++  formtrig_frontier_entry_t *entry =
++      &afl->formtrig_frontier[afl->formtrig_frontier_count++];
++  memset(entry, 0, sizeof(*entry));
++  entry->vector = *m;
++  entry->queue_id = queue_id;
++  changed = 1;
++
++  if (changed) { ++afl->formtrig_frontier_updates; }
++  formtrig_log_progress(afl, event ? event : "frontier_accept", reason, m,
++                        queue_id, changed);
++  return changed;
++
++}
++
++void formtrig_note_saved(afl_state_t *afl) {
++
++  u32 queue_id = afl->queue_top ? afl->queue_top->id : 0;
++  u8  changed = formtrig_update_frontier(afl, &afl->formtrig_last, queue_id,
++                                         "saved_progress");
++  (void)formtrig_update_scalar_best(afl);
++
++  if (changed || afl->formtrig_last.triggered) {
++
++    ++afl->formtrig_queued_progress;
++    if (afl->formtrig_last.triggered) {
++
++      formtrig_log_progress(afl, "saved_progress", "triggered",
++                            &afl->formtrig_last, queue_id, 0);
++
++    }
++
++  }
++
++}
++
++void formtrig_note_calibrated(afl_state_t *afl) {
++
++  u32 queue_id = afl->queue_cur ? afl->queue_cur->id : 0;
++  (void)formtrig_update_frontier(afl, &afl->formtrig_last, queue_id,
++                                 "calibrated_frontier");
++  (void)formtrig_update_scalar_best(afl);
++
++}
++
++double formtrig_queue_weight_multiplier(const struct queue_entry *q) {
++
++  if (!q || !q->formtrig.seen || !q->formtrig.reached) { return 1.0; }
++  if (!q->formtrig.stable) { return 1.0; }
++  if (q->formtrig.triggered) { return 16.0; }
++
++  double multiplier = 1.0;
++  u32    count = q->formtrig.component_count;
++  if (count > FORMTRIG_MAX_PROGRESS_COMPONENTS)
++    count = FORMTRIG_MAX_PROGRESS_COMPONENTS;
++
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *component =
++        &q->formtrig.components[i];
++    if (!formtrig_component_actionable(component)) { continue; }
++
++    double priority_scale = 32.0 / (double)(component->priority + 32u);
++    double confidence = component->confidence;
++    if (confidence > 1.0) { confidence = 1.0; }
++    if (confidence < 0.1) { confidence = 0.1; }
++
++    if (formtrig_component_lower(component)) {
++
++      multiplier += 8.0 * priority_scale * confidence /
++                    (1.0 + log2(component->value + 2.0));
++
++    } else if (formtrig_component_higher(component)) {
++
++      double progress = component->value > 64.0 ? 64.0 : component->value;
++      multiplier += 2.0 * priority_scale * confidence * log2(progress + 1.0);
++
++    }
++
++  }
++
++  if (multiplier > 16.0) { multiplier = 16.0; }
++  return multiplier;
++
++}
++
+ /* select next queue entry based on alias algo - fast! */
+
+ inline u32 select_next_queue_entry(afl_state_t *afl) {
+@@ -80,6 +1008,7 @@ double compute_weight(afl_state_t *afl, struct queue_entry *q,
+   if (unlikely(weight < 0.1)) { weight = 0.1; }
+   if (unlikely(q->favored)) { weight *= 5; }
+   if (unlikely(!q->was_fuzzed)) { weight *= 2; }
++  weight *= formtrig_queue_weight_multiplier(q);
+
+   return weight;
+
+@@ -1167,6 +2096,15 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
+
+   }
+
++  perf_score =
++      (u32)((double)perf_score * formtrig_queue_weight_multiplier(q));
++  if (perf_score > afl->havoc_max_mult * 100) {
++
++    perf_score = afl->havoc_max_mult * 100;
++
++  }
++  if (!perf_score) { perf_score = 1; }
++
+   return perf_score;
+
+ }
+@@ -1451,4 +2389,3 @@ inline void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q,
+   }
+
+ }
+-
+diff --git a/src/afl-fuzz-run.c b/src/afl-fuzz-run.c
+index ac4fb4a..df4d285 100644
+--- a/src/afl-fuzz-run.c
++++ b/src/afl-fuzz-run.c
+@@ -58,7 +58,9 @@ fuzz_run_target(afl_state_t *afl, afl_forkserver_t *fsrv, u32 timeout) {
+
+ #endif
+
++  if (fsrv == &afl->fsrv) { formtrig_prepare_run(afl); }
+   fsrv_run_result_t res = afl_fsrv_run_target(fsrv, timeout, &afl->stop_soon);
++  if (fsrv == &afl->fsrv) { formtrig_capture_last(afl); }
+
+ #ifdef PROFILING
+   clock_gettime(CLOCK_REALTIME, &spec);
+@@ -414,6 +416,8 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
+   s32 old_sc = afl->stage_cur, old_sm = afl->stage_max;
+   u32 use_tmout = afl->fsrv.exec_tmout;
+   u8 *old_sn = afl->stage_name;
++  formtrig_queue_meta_t formtrig_first_signal;
++  memset(&formtrig_first_signal, 0, sizeof(formtrig_first_signal));
+
+   if (unlikely(afl->shm.cmplog_mode)) { q->exec_cksum = 0; }
+
+@@ -471,6 +475,11 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
+        we want to bail out quickly. */
+
+     if (afl->stop_soon || fault != afl->crash_mode) { goto abort_calibration; }
++    if (!formtrig_first_signal.seen && afl->formtrig_last.seen) {
++
++      formtrig_first_signal = afl->formtrig_last;
++
++    }
+
+     if (!afl->non_instrumented_mode && !afl->stage_cur &&
+         !count_bytes(afl, afl->fsrv.trace_bits)) {
+@@ -514,6 +523,11 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
+        we want to bail out quickly. */
+
+     if (afl->stop_soon || fault != afl->crash_mode) { goto abort_calibration; }
++    if (!formtrig_first_signal.seen && afl->formtrig_last.seen) {
++
++      formtrig_first_signal = afl->formtrig_last;
++
++    }
+
+     if (!afl->non_instrumented_mode && !afl->stage_cur &&
+         !count_bytes(afl, afl->fsrv.trace_bits)) {
+@@ -610,6 +624,27 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
+   q->bitmap_size = count_bytes(afl, afl->fsrv.trace_bits);
+   q->handicap = handicap;
+   q->cal_failed = 0;
++  formtrig_apply_last_to_queue(afl, q);
++  if (formtrig_should_save(afl)) {
++
++    ++afl->formtrig_stability_checks;
++    if (formtrig_progress_stable(&formtrig_first_signal,
++                                 &afl->formtrig_last)) {
++
++      q->formtrig = afl->formtrig_last;
++      q->formtrig.stable = 1;
++      formtrig_note_calibrated(afl);
++
++    } else {
++
++      ++afl->formtrig_stability_failures;
++      formtrig_log_progress(afl, "stability_reject",
++                            "calibration_progress_regressed",
++                            &formtrig_first_signal, q ? q->id : 0, q->len);
++
++    }
++
++  }
+
+   afl->total_bitmap_size += q->bitmap_size;
+   ++afl->total_bitmap_entries;
+@@ -1110,4 +1145,3 @@ common_fuzz_stuff(afl_state_t *afl, u8 *out_buf, u32 len) {
+   return 0;
+
+ }
+-
+diff --git a/src/afl-fuzz-state.c b/src/afl-fuzz-state.c
+index 5a6b95c..8ec86eb 100644
+--- a/src/afl-fuzz-state.c
++++ b/src/afl-fuzz-state.c
+@@ -109,6 +109,13 @@ void afl_state_init(afl_state_t *afl, uint32_t map_size) {
+   afl->min_length = 1;
+   afl->max_length = MAX_FILE;
+   afl->switch_fuzz_mode = STRATEGY_SWITCH_TIME * 1000;
++  afl->formtrig_shm_fd = -1;
++  afl->formtrig_best_df = FORMTRIG_INF;
++  afl->formtrig_best_dt = FORMTRIG_INF;
++  afl->formtrig_frontier_count = 0;
++  afl->formtrig_progress_log_events = 0;
++  afl->formtrig_progress_log_dropped = 0;
++  formtrig_init(afl);
+ #ifndef NO_SPLICING
+   afl->use_splicing = 1;
+ #endif
+@@ -686,6 +693,7 @@ void afl_state_deinit(afl_state_t *afl) {
+   if (afl->pass_stats) { ck_free(afl->pass_stats); }
+   if (afl->orig_cmp_map) { ck_free(afl->orig_cmp_map); }
+   if (afl->cmplog_binary) { ck_free(afl->cmplog_binary); }
++  formtrig_deinit(afl);
+
+   afl_free(afl->queue_buf);
+   afl_free(afl->out_buf);
+@@ -748,4 +756,3 @@ void afl_states_request_skip(void) {
+   LIST_FOREACH(&afl_states, afl_state_t, { el->skip_requested = 1; });
+
+ }
+-
+diff --git a/src/afl-fuzz-stats.c b/src/afl-fuzz-stats.c
+index 3d0a9b9..f36df96 100644
+--- a/src/afl-fuzz-stats.c
++++ b/src/afl-fuzz-stats.c
+@@ -385,6 +385,36 @@ void write_stats_file(afl_state_t *afl, u32 t_bytes, double bitmap_cvg,
+
+   /* ignore errors */
+
++  if (afl->formtrig_enabled) {
++
++    fprintf(f,
++            "formtrig_seen_execs      : %llu\n"
++            "formtrig_reached_execs   : %llu\n"
++            "formtrig_triggered_execs : %llu\n"
++            "formtrig_queued_progress : %llu\n"
++            "formtrig_frontier_count  : %u\n"
++            "formtrig_frontier_updates: %llu\n"
++            "formtrig_typed_execs     : %llu\n"
++            "formtrig_typed_finds     : %llu\n"
++            "formtrig_typed_skips     : %llu\n"
++            "formtrig_stability_checks: %llu\n"
++            "formtrig_stability_failures: %llu\n"
++            "formtrig_progress_log_events: %llu\n"
++            "formtrig_progress_log_dropped: %llu\n"
++            "formtrig_best_df         : %.17g\n"
++            "formtrig_best_dt         : %.17g\n",
++            afl->formtrig_seen_execs, afl->formtrig_reached_execs,
++            afl->formtrig_triggered_execs, afl->formtrig_queued_progress,
++            afl->formtrig_frontier_count, afl->formtrig_frontier_updates,
++            afl->formtrig_typed_execs, afl->formtrig_typed_finds,
++            afl->formtrig_typed_skips, afl->formtrig_stability_checks,
++            afl->formtrig_stability_failures,
++            afl->formtrig_progress_log_events,
++            afl->formtrig_progress_log_dropped, afl->formtrig_best_df,
++            afl->formtrig_best_dt);
++
++  }
++
+   if (afl->debug) {
+
+     u32 i = 0;
+@@ -2376,4 +2406,3 @@ void show_init_stats(afl_state_t *afl) {
+ #undef IB
+
+ }
+-
+diff --git a/utils/aflpp_driver/aflpp_driver.c b/utils/aflpp_driver/aflpp_driver.c
+index 4e8f466..c6e4054 100644
+--- a/utils/aflpp_driver/aflpp_driver.c
++++ b/utils/aflpp_driver/aflpp_driver.c
+@@ -73,6 +73,10 @@ extern unsigned char *__afl_fuzz_ptr;
+ extern unsigned char *__afl_area_ptr;
+ extern unsigned int   __afl_map_size;
+
++__attribute__((weak)) void formtrig_register_input(const void *data,
++                                                   size_t      len);
++__attribute__((weak)) void formtrig_finalize(void);
++
+ // libFuzzer interface is thin, so we don't include any libFuzzer headers.
+ /* Using the weak attributed on LLVMFuzzerTestOneInput() breaks oss-fuzz but
+    on the other hand this is what Google needs to make LLVMFuzzerRunDriver()
+@@ -83,6 +87,17 @@ __attribute__((weak)) int     LLVMFuzzerInitialize(int *argc, char ***argv);
+ __attribute__((weak)) int     LLVMFuzzerRunDriver(
+         int *argc, char ***argv, int (*callback)(const uint8_t *data, size_t size));
+
++static inline int ExecuteOneInput(
++    int (*callback)(const uint8_t *data, size_t size), const uint8_t *data,
++    size_t size) {
++
++  if (formtrig_register_input) { formtrig_register_input(data, size); }
++  int ret = callback(data, size);
++  if (formtrig_finalize) { formtrig_finalize(); }
++  return ret;
++
++}
++
+ // Default nop ASan hooks for manual poisoning when not linking the ASan
+ // runtime
+ // https://github.com/google/sanitizers/wiki/AddressSanitizerManualPoisoning
+@@ -252,7 +267,7 @@ static int ExecuteFilesOnyByOne(int argc, char **argv,
+       prev_length = length;
+
+       printf("Reading %zu bytes from %s\n", length, argv[i]);
+-      callback(buf, length);
++      ExecuteOneInput(callback, buf, length);
+       printf("Execution successful.\n");
+
+     }
+@@ -403,7 +418,7 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
+
+         prev_length = length;
+
+-        if (unlikely(callback(__afl_fuzz_ptr, length) == -1)) {
++        if (unlikely(ExecuteOneInput(callback, __afl_fuzz_ptr, length) == -1)) {
+
+           memset(__afl_area_ptr, 0, __afl_map_size);
+           __afl_area_ptr[0] = 1;
+@@ -418,7 +433,7 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
+
+     while (__afl_persistent_loop(N)) {
+
+-      callback(__afl_fuzz_ptr, *__afl_fuzz_len);
++      ExecuteOneInput(callback, __afl_fuzz_ptr, *__afl_fuzz_len);
+
+     }
+
+@@ -433,4 +448,3 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
+ }
+
+ #endif
+-

@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include "formtrig/formtrig_runtime.h"
 
 #include <errno.h>
@@ -117,6 +119,7 @@ typedef struct {
   uint32_t site_id;
   uint32_t component_kind;
   uint32_t atom_id;
+  uint32_t role;
   uint32_t priority;
   uint32_t direction_flag;
   uint32_t value_mode;
@@ -172,6 +175,8 @@ typedef struct {
   uint32_t hot_range_count;
   formtrig_progress_component_t components[FORMTRIG_MAX_PROGRESS_COMPONENTS];
   uint32_t component_count;
+  formtrig_atom_signal_t atom_signals[FORMTRIG_MAX_ATOM_SIGNALS];
+  uint32_t atom_signal_count;
   int finalized;
 } formtrig_state_t;
 
@@ -1486,10 +1491,96 @@ static uint64_t component_source_id(uint32_t kind, uint32_t site_id,
   return sig;
 }
 
-static void state_record_component(uint32_t kind, uint32_t atom_id,
-                                   uint32_t priority, uint32_t flags,
-                                   uint64_t source_id, uint64_t context_hash,
-                                   double value, double confidence) {
+static uint32_t default_role_for_component(uint32_t kind) {
+  switch (kind) {
+    case FORMTRIG_COMPONENT_GUARD_PROGRESS:
+      return FORMTRIG_ROLE_GUARD;
+    case FORMTRIG_COMPONENT_PRODUCER_USE:
+      return FORMTRIG_ROLE_PRODUCER;
+    case FORMTRIG_COMPONENT_LIFECYCLE_PREFIX:
+    case FORMTRIG_COMPONENT_EVENT_PHASE:
+      return FORMTRIG_ROLE_LIFECYCLE_EVENT;
+    case FORMTRIG_COMPONENT_OBJECT_IDENTITY:
+      return FORMTRIG_ROLE_SAME_OBJECT;
+    case FORMTRIG_COMPONENT_OPERAND_INFLUENCE:
+      return FORMTRIG_ROLE_INPUT_INFLUENCE;
+    default:
+      return FORMTRIG_ROLE_UNKNOWN;
+  }
+}
+
+static uint32_t role_bit(uint32_t role) {
+  if (role == FORMTRIG_ROLE_UNKNOWN || role > 31u) return 0;
+  return 1u << (role - 1u);
+}
+
+static formtrig_atom_signal_t *atom_signal_slot(formtrig_atom_signal_t *signals,
+                                                uint32_t *count,
+                                                uint32_t atom_id) {
+  if (!signals || !count || !atom_id) return NULL;
+  for (uint32_t i = 0; i < *count; i++) {
+    if (signals[i].atom_id == atom_id) return &signals[i];
+  }
+  if (*count >= FORMTRIG_MAX_ATOM_SIGNALS) return NULL;
+  formtrig_atom_signal_t *slot = &signals[(*count)++];
+  memset(slot, 0, sizeof(*slot));
+  slot->atom_id = atom_id;
+  return slot;
+}
+
+static void update_atom_signal_array(formtrig_atom_signal_t *signals,
+                                     uint32_t *count, uint32_t atom_id,
+                                     uint32_t role, uint32_t kind,
+                                     uint64_t source_id, double value) {
+  formtrig_atom_signal_t *signal = atom_signal_slot(signals, count, atom_id);
+  if (!signal) return;
+
+  signal->flags |= FORMTRIG_ATOM_SIGNAL_OBSERVED;
+  signal->role_bits |= role_bit(role);
+  if (source_id) signal->event_bits |= 1u << (source_id & 31u);
+
+  uint32_t bucket = (uint32_t)distance_bucket_for_signature(value);
+  switch (role) {
+    case FORMTRIG_ROLE_ROOT_OBSERVE:
+      signal->root_value_bucket = bucket;
+      signal->flags |= FORMTRIG_ATOM_SIGNAL_HAS_ROOT_VALUE;
+      break;
+    case FORMTRIG_ROLE_GUARD:
+      signal->guard_bits |= value > 0.0 ? 2u : 1u;
+      break;
+    case FORMTRIG_ROLE_PRODUCER:
+      signal->producer_bits |= 1u;
+      break;
+    case FORMTRIG_ROLE_DESIRED_PRODUCER:
+      signal->producer_bits |= 2u;
+      break;
+    case FORMTRIG_ROLE_OPPOSITE_PRODUCER:
+      signal->producer_bits |= 4u;
+      break;
+    case FORMTRIG_ROLE_USE:
+      signal->use_bits |= value > 0.0 ? 2u : 1u;
+      break;
+    case FORMTRIG_ROLE_LIFECYCLE_EVENT:
+      if (value > (double)signal->lifecycle_prefix)
+        signal->lifecycle_prefix = (uint32_t)value;
+      break;
+    case FORMTRIG_ROLE_SAME_OBJECT:
+      signal->object_id_bucket = bucket;
+      signal->flags |= FORMTRIG_ATOM_SIGNAL_HAS_OBJECT_ID;
+      break;
+    case FORMTRIG_ROLE_INPUT_INFLUENCE:
+      signal->event_bits |= 1u << ((kind + 17u) & 31u);
+      break;
+    default:
+      break;
+  }
+}
+
+static void state_record_component_role(uint32_t kind, uint32_t atom_id,
+                                        uint32_t role, uint32_t priority,
+                                        uint32_t flags, uint64_t source_id,
+                                        uint64_t context_hash, double value,
+                                        double confidence) {
   if (g_state.component_count >= FORMTRIG_MAX_PROGRESS_COMPONENTS) return;
   if (!isfinite(value) || value <= -FORMTRIG_INF / 2.0 ||
       value >= FORMTRIG_INF / 2.0)
@@ -1505,6 +1596,7 @@ static void state_record_component(uint32_t kind, uint32_t atom_id,
   if (confidence > 1.0) confidence = 1.0;
   if (kind == FORMTRIG_COMPONENT_OPERAND_INFLUENCE)
     flags |= FORMTRIG_COMPONENT_INPUT_INFLUENCE;
+  if (role == FORMTRIG_ROLE_UNKNOWN) role = default_role_for_component(kind);
   if (!source_id) source_id = component_source_id(kind, atom_id, priority);
   if (!context_hash) context_hash = component_source_id(kind, atom_id, priority);
 
@@ -1512,22 +1604,36 @@ static void state_record_component(uint32_t kind, uint32_t atom_id,
       &g_state.components[g_state.component_count++];
   component->kind = kind;
   component->atom_id = atom_id;
+  component->role = role;
   component->priority = priority;
   component->flags = flags | FORMTRIG_COMPONENT_TC_ROOTED;
+  component->reserved = 0;
   component->source_id = source_id;
   component->context_hash = context_hash;
   component->value = value;
   component->confidence = confidence;
+  update_atom_signal_array(g_state.atom_signals, &g_state.atom_signal_count,
+                           atom_id, role, kind, source_id, value);
 
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, 20u);
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, kind);
+  g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, role);
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, source_id);
   g_state.trace_signature =
       fnv_mix_u64(g_state.trace_signature, distance_bucket_for_signature(value));
 }
 
-static void publish_component(formtrig_shm_record_t *rec, uint32_t kind,
-                              uint32_t atom_id, uint32_t priority,
+static void state_record_component(uint32_t kind, uint32_t atom_id,
+                                   uint32_t priority, uint32_t flags,
+                                   uint64_t source_id, uint64_t context_hash,
+                                   double value, double confidence) {
+  state_record_component_role(kind, atom_id, FORMTRIG_ROLE_UNKNOWN, priority,
+                              flags, source_id, context_hash, value,
+                              confidence);
+}
+
+static void publish_component_role(formtrig_shm_record_t *rec, uint32_t kind,
+                              uint32_t atom_id, uint32_t role, uint32_t priority,
                               uint32_t flags, uint64_t source_id,
                               uint64_t context_hash, double value,
                               double confidence) {
@@ -1537,17 +1643,31 @@ static void publish_component(formtrig_shm_record_t *rec, uint32_t kind,
     return;
   if (kind == FORMTRIG_COMPONENT_OPERAND_INFLUENCE)
     flags |= FORMTRIG_COMPONENT_INPUT_INFLUENCE;
+  if (role == FORMTRIG_ROLE_UNKNOWN) role = default_role_for_component(kind);
 
   formtrig_progress_component_t *component =
       &rec->components[rec->component_count++];
   component->kind = kind;
   component->atom_id = atom_id;
+  component->role = role;
   component->priority = priority;
   component->flags = flags | FORMTRIG_COMPONENT_TC_ROOTED;
+  component->reserved = 0;
   component->source_id = source_id;
   component->context_hash = context_hash;
   component->value = value;
   component->confidence = confidence;
+  update_atom_signal_array(rec->atom_signals, &rec->atom_signal_count, atom_id,
+                           role, kind, source_id, value);
+}
+
+static void publish_component(formtrig_shm_record_t *rec, uint32_t kind,
+                              uint32_t atom_id, uint32_t priority,
+                              uint32_t flags, uint64_t source_id,
+                              uint64_t context_hash, double value,
+                              double confidence) {
+  publish_component_role(rec, kind, atom_id, FORMTRIG_ROLE_UNKNOWN, priority,
+                         flags, source_id, context_hash, value, confidence);
 }
 
 static int parse_u32_token(const char *token, uint32_t *out) {
@@ -1616,6 +1736,38 @@ static uint32_t parse_value_mode_token(const char *token) {
   return UINT32_MAX;
 }
 
+static uint32_t parse_role_token(const char *token) {
+  if (!token || !*token) return FORMTRIG_ROLE_UNKNOWN;
+  if (strcmp(token, "root") == 0 || strcmp(token, "root_observe") == 0 ||
+      strcmp(token, "root-observe") == 0 || strcmp(token, "1") == 0)
+    return FORMTRIG_ROLE_ROOT_OBSERVE;
+  if (strcmp(token, "guard") == 0 || strcmp(token, "2") == 0)
+    return FORMTRIG_ROLE_GUARD;
+  if (strcmp(token, "producer") == 0 || strcmp(token, "3") == 0)
+    return FORMTRIG_ROLE_PRODUCER;
+  if (strcmp(token, "desired_producer") == 0 ||
+      strcmp(token, "desired-producer") == 0 || strcmp(token, "4") == 0)
+    return FORMTRIG_ROLE_DESIRED_PRODUCER;
+  if (strcmp(token, "opposite_producer") == 0 ||
+      strcmp(token, "opposite-producer") == 0 || strcmp(token, "5") == 0)
+    return FORMTRIG_ROLE_OPPOSITE_PRODUCER;
+  if (strcmp(token, "use") == 0 || strcmp(token, "6") == 0)
+    return FORMTRIG_ROLE_USE;
+  if (strcmp(token, "lifecycle") == 0 ||
+      strcmp(token, "lifecycle_event") == 0 ||
+      strcmp(token, "lifecycle-event") == 0 || strcmp(token, "7") == 0)
+    return FORMTRIG_ROLE_LIFECYCLE_EVENT;
+  if (strcmp(token, "same_object") == 0 ||
+      strcmp(token, "same-object") == 0 ||
+      strcmp(token, "object_identity") == 0 ||
+      strcmp(token, "object-identity") == 0 || strcmp(token, "8") == 0)
+    return FORMTRIG_ROLE_SAME_OBJECT;
+  if (strcmp(token, "input_influence") == 0 ||
+      strcmp(token, "input-influence") == 0 || strcmp(token, "9") == 0)
+    return FORMTRIG_ROLE_INPUT_INFLUENCE;
+  return FORMTRIG_ROLE_UNKNOWN;
+}
+
 static char *next_spec_token(char **saveptr) {
   return strtok_r(NULL, " \t\r\n,", saveptr);
 }
@@ -1633,6 +1785,45 @@ static void load_probe_spec_line(char *line) {
   memset(&spec, 0, sizeof(spec));
   spec.confidence = 1.0;
 
+  if (strcmp(op, "role_component") == 0 || strcmp(op, "role-event") == 0 ||
+      strcmp(op, "role_event") == 0) {
+    char *event_kind = next_spec_token(&saveptr);
+    char *site_id = next_spec_token(&saveptr);
+    char *role = next_spec_token(&saveptr);
+    char *component_kind = next_spec_token(&saveptr);
+    char *atom_id = next_spec_token(&saveptr);
+    char *priority = next_spec_token(&saveptr);
+    char *direction = next_spec_token(&saveptr);
+    char *value_mode = next_spec_token(&saveptr);
+    char *value = next_spec_token(&saveptr);
+    char *confidence = next_spec_token(&saveptr);
+
+    spec.kind = FORMTRIG_SPEC_EVENT;
+    spec.role = parse_role_token(role);
+    if (spec.role == FORMTRIG_ROLE_UNKNOWN ||
+        !parse_u32_token(event_kind, &spec.event_kind) ||
+        !parse_u32_token(site_id, &spec.site_id) ||
+        !parse_u32_token(component_kind, &spec.component_kind) ||
+        !parse_u32_token(atom_id, &spec.atom_id) ||
+        !parse_u32_token(priority, &spec.priority))
+      return;
+    spec.direction_flag = parse_direction_token(direction);
+    spec.value_mode = parse_value_mode_token(value_mode);
+    if (!spec.direction_flag || spec.value_mode == UINT32_MAX) return;
+    if (value && !parse_double_token(value, &spec.value)) return;
+    if (confidence && !parse_double_token(confidence, &spec.confidence))
+      return;
+
+    char *source_id = next_spec_token(&saveptr);
+    char *context_hash = next_spec_token(&saveptr);
+    if (source_id && !parse_u64_token(source_id, &spec.source_id)) return;
+    if (context_hash && !parse_u64_token(context_hash, &spec.context_hash))
+      return;
+
+    g_probe_specs[g_probe_spec_count++] = spec;
+    return;
+  }
+
   if (strcmp(op, "component") == 0 || strcmp(op, "event") == 0) {
     char *event_kind = next_spec_token(&saveptr);
     char *site_id = next_spec_token(&saveptr);
@@ -1645,6 +1836,7 @@ static void load_probe_spec_line(char *line) {
     char *confidence = next_spec_token(&saveptr);
 
     spec.kind = FORMTRIG_SPEC_EVENT;
+    spec.role = FORMTRIG_ROLE_UNKNOWN;
     if (!parse_u32_token(event_kind, &spec.event_kind) ||
         !parse_u32_token(site_id, &spec.site_id) ||
         !parse_u32_token(component_kind, &spec.component_kind) ||
@@ -1678,6 +1870,7 @@ static void load_probe_spec_line(char *line) {
     char *confidence = next_spec_token(&saveptr);
 
     spec.kind = FORMTRIG_SPEC_PHASE;
+    spec.role = FORMTRIG_ROLE_LIFECYCLE_EVENT;
     spec.direction_flag = FORMTRIG_COMPONENT_HIGHER_IS_BETTER;
     spec.value_mode = FORMTRIG_SPEC_VALUE_HIT;
     if (!parse_u32_token(event_kind, &spec.event_kind) ||
@@ -1797,19 +1990,22 @@ static double probe_spec_event_value(const formtrig_probe_spec_t *spec,
   }
 }
 
-static void state_record_component_best(uint32_t kind, uint32_t atom_id,
-                                        uint32_t priority, uint32_t flags,
-                                        uint64_t source_id,
-                                        uint64_t context_hash, double value,
-                                        double confidence) {
+static void state_record_component_best_role(uint32_t kind, uint32_t atom_id,
+                                             uint32_t role, uint32_t priority,
+                                             uint32_t flags, uint64_t source_id,
+                                             uint64_t context_hash,
+                                             double value,
+                                             double confidence) {
   if (!isfinite(value) || value < 0.0 || value >= FORMTRIG_INF / 2.0)
     return;
+  if (role == FORMTRIG_ROLE_UNKNOWN) role = default_role_for_component(kind);
   if (!source_id) source_id = component_source_id(kind, atom_id, priority);
   if (!context_hash) context_hash = component_source_id(kind, atom_id, priority);
 
   for (uint32_t i = 0; i < g_state.component_count; i++) {
     formtrig_progress_component_t *component = &g_state.components[i];
     if (component->kind != kind || component->atom_id != atom_id ||
+        component->role != role ||
         component->source_id != source_id ||
         component->context_hash != context_hash)
       continue;
@@ -1830,8 +2026,11 @@ static void state_record_component_best(uint32_t kind, uint32_t atom_id,
       changed = 1;
     }
     if (changed) {
+      update_atom_signal_array(g_state.atom_signals, &g_state.atom_signal_count,
+                               atom_id, role, kind, source_id, value);
       g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, 20u);
       g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, kind);
+      g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, role);
       g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, source_id);
       g_state.trace_signature = fnv_mix_u64(
           g_state.trace_signature, distance_bucket_for_signature(value));
@@ -1839,8 +2038,8 @@ static void state_record_component_best(uint32_t kind, uint32_t atom_id,
     return;
   }
 
-  state_record_component(kind, atom_id, priority, flags, source_id,
-                         context_hash, value, confidence);
+  state_record_component_role(kind, atom_id, role, priority, flags, source_id,
+                              context_hash, value, confidence);
 }
 
 static void record_probe_component(const formtrig_probe_spec_t *spec,
@@ -1861,9 +2060,10 @@ static void record_probe_component(const formtrig_probe_spec_t *spec,
                                        spec->priority);
 
   uint32_t flags = spec->direction_flag | FORMTRIG_COMPONENT_LIFTED;
-  state_record_component_best(spec->component_kind, spec->atom_id,
-                              spec->priority, flags, source_id, context_hash,
-                              value, spec->confidence);
+  state_record_component_best_role(spec->component_kind, spec->atom_id,
+                                   spec->role, spec->priority, flags,
+                                   source_id, context_hash, value,
+                                   spec->confidence);
   g_state.manual_lifted = 1;
   if (event->input_len)
     prioritize_hot_range(event->input_start, event->input_len, 3.0);
@@ -1952,10 +2152,11 @@ static void publish_shm(void) {
     formtrig_progress_component_t *component = &g_state.components[i];
     if (component->flags & FORMTRIG_COMPONENT_LIFTED)
       rec->flags |= FORMTRIG_FLAG_LIFTED;
-    publish_component(rec, component->kind, component->atom_id,
-                      component->priority, component->flags,
-                      component->source_id, component->context_hash,
-                      component->value, component->confidence);
+    publish_component_role(rec, component->kind, component->atom_id,
+                           component->role, component->priority,
+                           component->flags, component->source_id,
+                           component->context_hash, component->value,
+                           component->confidence);
   }
   if (g_state.df_source.mode) {
     rec->source.kind = g_state.df_source.kind;
@@ -2088,6 +2289,39 @@ static void write_jsonl(void) {
                ",\"influence\":%.17g}",
             g_state.hot_ranges[i].start, g_state.hot_ranges[i].len,
             g_state.hot_ranges[i].influence);
+  }
+
+  fprintf(f, "],\"components\":[");
+  for (uint32_t i = 0; i < g_state.component_count; i++) {
+    formtrig_progress_component_t *component = &g_state.components[i];
+    if (i) fputc(',', f);
+    fprintf(f,
+            "{\"kind\":%" PRIu32 ",\"atom_id\":%" PRIu32
+            ",\"role\":%" PRIu32 ",\"priority\":%" PRIu32
+            ",\"flags\":%" PRIu32 ",\"source_id\":%" PRIu64
+            ",\"context_hash\":\"0x%016" PRIx64
+            "\",\"value\":%.17g,\"confidence\":%.17g}",
+            component->kind, component->atom_id, component->role,
+            component->priority, component->flags, component->source_id,
+            component->context_hash, component->value, component->confidence);
+  }
+
+  fprintf(f, "],\"atom_signals\":[");
+  for (uint32_t i = 0; i < g_state.atom_signal_count; i++) {
+    formtrig_atom_signal_t *signal = &g_state.atom_signals[i];
+    if (i) fputc(',', f);
+    fprintf(f,
+            "{\"atom_id\":%" PRIu32 ",\"role_bits\":%" PRIu32
+            ",\"event_bits\":%" PRIu32 ",\"lifecycle_prefix\":%" PRIu32
+            ",\"root_value_bucket\":%" PRIu32
+            ",\"object_id_bucket\":%" PRIu32
+            ",\"guard_bits\":%" PRIu32 ",\"producer_bits\":%" PRIu32
+            ",\"use_bits\":%" PRIu32 ",\"flags\":%" PRIu32 "}",
+            signal->atom_id, signal->role_bits, signal->event_bits,
+            signal->lifecycle_prefix, signal->root_value_bucket,
+            signal->object_id_bucket, (uint32_t)signal->guard_bits,
+            (uint32_t)signal->producer_bits, (uint32_t)signal->use_bits,
+            (uint32_t)signal->flags);
   }
 
   fprintf(f, "],\"df_source\":");
@@ -2292,6 +2526,17 @@ void formtrig_record_progress_component(uint32_t kind, uint32_t atom_id,
                                         double confidence) {
   state_record_component(kind, atom_id, priority, flags, source_id,
                          context_hash, value, confidence);
+  if (flags & FORMTRIG_COMPONENT_LIFTED) g_state.manual_lifted = 1;
+  publish_shm();
+}
+
+void formtrig_record_role_component(uint32_t kind, uint32_t atom_id,
+                                    uint32_t role, uint32_t priority,
+                                    uint32_t flags, uint64_t source_id,
+                                    uint64_t context_hash, double value,
+                                    double confidence) {
+  state_record_component_role(kind, atom_id, role, priority, flags, source_id,
+                              context_hash, value, confidence);
   if (flags & FORMTRIG_COMPONENT_LIFTED) g_state.manual_lifted = 1;
   publish_shm();
 }
