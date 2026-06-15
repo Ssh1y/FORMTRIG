@@ -71,5 +71,6 @@ This run is valid 30-minute positive evidence under the native acceptance gate:
 - The binding-signal diagnosis reported both triggered and non-trigger
   candidate `D_F` delta, with `lift_delta_only_on_triggered_candidates=false`.
 
-This completes the 30-minute PNG006 acceptance step. The 2-hour PNG006 run is
-still pending before treating this case as long-horizon evidence.
+This completes the 30-minute PNG006 acceptance step. The 2-hour PNG006 run was
+later completed and recorded in
+`artifacts/formtrig_native_readiness/png006_exif_2h_20260615.md`.

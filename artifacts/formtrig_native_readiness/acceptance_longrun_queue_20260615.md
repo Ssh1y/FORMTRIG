@@ -68,8 +68,8 @@ Completed 30-minute evidence:
 
 ### Magma: PNG006
 
-Current status: 30-minute native acceptance passed with external eXIf insertion
-hook from the BindingSpec. The 2-hour run remains pending.
+Current status: 2-hour native acceptance passed with external eXIf insertion
+hook from the BindingSpec.
 
 Runner:
 
@@ -97,6 +97,20 @@ Completed 30-minute evidence:
 - Result: pass with `run_time=1800`, `execs_done=9527259`,
   `accepted_non_trigger=1`, `saved_non_trigger=1`, `spec_lifted=1273466`,
   `heuristic_lifted=0`, and `manual_lifted=0`.
+
+Completed 2-hour evidence:
+
+- Run root: `/tmp/formtrig_png006_exif_longrun_20260615T1250Z`
+- Strict gate: `/tmp/formtrig_png006_exif_longrun_20260615T1250Z/gate_2h/gate_summary.csv`
+- Evidence note: `artifacts/formtrig_native_readiness/png006_exif_2h_20260615.md`
+- Result: pass with `run_time=7200`, `execs_done=29754905`,
+  `reached=26319188`, `terminal_triggered=17276659`,
+  `queued_progress=1919630`, `accepted_non_trigger=1`,
+  `saved_non_trigger=1`, `spec_lifted=3844204`,
+  `heuristic_lifted=0`, and `manual_lifted=0`.
+- Stability caveat: the run had `formtrig_stability_failures=2` from rejected
+  `queue_calibration_regressed` candidates and one typed
+  `not_replay_stable` skip. The accepted progress still passed the strict gate.
 
 ## Negative / Blocked Queue
 
