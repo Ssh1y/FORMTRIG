@@ -1,0 +1,28 @@
+{
+  "baseline_contract": {
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ CmpLog instrumentation plus matching cmplog binary",
+    "mechanism": "comparison operand logging and comparison-guided mutation from AFL++",
+    "scope": "faithful AFL++ CmpLog baseline for visible scalar/string comparison feedback"
+  },
+  "elapsed_s": 1800.186119193997,
+  "resolved_cmd": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+    "-o",
+    "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/aflplusplus_cmplog_1800s/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "1800",
+    "-c",
+    "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/libcoap_oscore_conf_replay_cmplog",
+    "--",
+    "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/libcoap_oscore_conf_replay_aflpp",
+    "@@"
+  ],
+  "returncode": 0,
+  "run_record": "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/aflplusplus_cmplog_1800s/run_record.json",
+  "status": "complete"
+}

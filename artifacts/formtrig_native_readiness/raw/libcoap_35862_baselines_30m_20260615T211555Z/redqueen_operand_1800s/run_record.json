@@ -1,0 +1,44 @@
+{
+  "baseline": "redqueen_operand",
+  "baseline_contract": {
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "budget": 1800,
+  "command_line": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+    "-o",
+    "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/redqueen_operand_1800s/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "1800",
+    "-c",
+    "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/libcoap_oscore_conf_replay_cmplog",
+    "--",
+    "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/libcoap_oscore_conf_replay_aflpp",
+    "@@"
+  ],
+  "config_path": "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/redqueen_operand_1800s/run_config.json",
+  "fuzzer_stats": "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/redqueen_operand_1800s/fuzzer_out/default/fuzzer_stats",
+  "run_id": "LIBCOAP_CVE_2023_35862:redqueen_operand:rep1",
+  "seed_set_id": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+  "stats": {
+    "corpus_count": 143,
+    "execs_done": 7902220,
+    "execs_per_sec": "4390.10",
+    "run_time": 1800,
+    "saved_crashes": 0,
+    "saved_hangs": 15
+  },
+  "success": false,
+  "target_id": "LIBCOAP_CVE_2023_35862",
+  "tc_category": "equality-magic",
+  "timeout": true,
+  "trigger_execs": null,
+  "trigger_time_s": null
+}

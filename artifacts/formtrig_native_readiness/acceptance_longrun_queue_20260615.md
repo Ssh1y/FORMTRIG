@@ -193,6 +193,14 @@ Baseline comparison queue:
   `artifacts/formtrig_native_readiness/libcoap_35862_baseline_smoke_20260615.md`.
   This confirms the runner can build and launch the baseline artifacts; it is
   not a long-run comparison result.
+- Faithful AFL++-family 30-minute non-ASAN baseline runs are recorded in
+  `artifacts/formtrig_native_readiness/libcoap_35862_baselines_30m_20260615.md`.
+  Results: `aflplusplus_vanilla`, `aflplusplus_cmplog`, and `redqueen_operand`
+  all completed `run_time=1800` with `saved_crashes=0`; hangs were `20`, `16`,
+  and `15`, respectively. This is executable baseline evidence, not final SOTA
+  evidence, because non-ASAN native crash accounting is not equivalent to the
+  ASAN terminal oracle and because repetitions plus 2-hour runs are still
+  required.
 
 Faithful AFL++-family baseline runner:
 

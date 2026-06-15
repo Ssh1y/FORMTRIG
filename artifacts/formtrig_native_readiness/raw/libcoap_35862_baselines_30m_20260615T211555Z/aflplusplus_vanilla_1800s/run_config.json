@@ -1,0 +1,31 @@
+{
+  "afl_arg": [],
+  "afl_fuzz": "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+  "baseline": "aflplusplus_vanilla",
+  "baseline_contract": {
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "budget_sec": 1800,
+  "cmplog_binary": "",
+  "env": [],
+  "memory_limit": "none",
+  "mode": "execute",
+  "out_dir": "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/aflplusplus_vanilla_1800s",
+  "rep": 1,
+  "seed_corpus": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+  "standard_event_schema": {
+    "baseline": "baseline identifier",
+    "details": "event-specific object",
+    "event": "run_start|tool_resolution|fuzzer_start|fuzzer_exit|run_complete|run_error",
+    "rep": "integer repetition id",
+    "target_id": "target identifier",
+    "time_utc": "ISO-8601 UTC timestamp"
+  },
+  "target_cmd": "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/libcoap_oscore_conf_replay_aflpp @@",
+  "target_id": "LIBCOAP_CVE_2023_35862",
+  "tc_category": "equality-magic",
+  "timeout_grace_sec": 5
+}

@@ -1,0 +1,42 @@
+{
+  "baseline": "aflplusplus_vanilla",
+  "baseline_contract": {
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "budget": 1800,
+  "command_line": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+    "-o",
+    "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/aflplusplus_vanilla_1800s/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "1800",
+    "--",
+    "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/libcoap_oscore_conf_replay_aflpp",
+    "@@"
+  ],
+  "config_path": "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/aflplusplus_vanilla_1800s/run_config.json",
+  "fuzzer_stats": "/tmp/formtrig_libcoap_35862_baselines_30m_20260615T211555Z/runs/aflplusplus_vanilla_1800s/fuzzer_out/default/fuzzer_stats",
+  "run_id": "LIBCOAP_CVE_2023_35862:aflplusplus_vanilla:rep1",
+  "seed_set_id": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+  "stats": {
+    "corpus_count": 139,
+    "execs_done": 7233966,
+    "execs_per_sec": "4018.87",
+    "run_time": 1800,
+    "saved_crashes": 0,
+    "saved_hangs": 20
+  },
+  "success": false,
+  "target_id": "LIBCOAP_CVE_2023_35862",
+  "tc_category": "equality-magic",
+  "timeout": true,
+  "trigger_execs": null,
+  "trigger_time_s": null
+}

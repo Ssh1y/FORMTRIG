@@ -1,0 +1,155 @@
+[1/34] Building C object CMakeFiles/coap-3.dir/src/coap_dtls.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[2/34] Building C object CMakeFiles/coap-3.dir/src/coap_event.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[3/34] Building C object CMakeFiles/coap-3.dir/src/coap_asn1.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[4/34] Building C object CMakeFiles/coap-3.dir/src/coap_encode.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[5/34] Building C object CMakeFiles/coap-3.dir/src/coap_async.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[6/34] Building C object CMakeFiles/coap-3.dir/src/coap_hashkey.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[7/34] Building C object CMakeFiles/coap-3.dir/src/coap_layers.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[8/34] Building C object CMakeFiles/coap-3.dir/src/coap_mem.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[9/34] Building C object CMakeFiles/coap-3.dir/src/coap_address.c.o
+Hooking 10 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[10/34] Building C object CMakeFiles/coap-3.dir/src/coap_cache.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[11/34] Building C object CMakeFiles/coap-3.dir/src/coap_netif.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[12/34] Building C object CMakeFiles/coap-3.dir/src/coap_notls.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[13/34] Building C object CMakeFiles/coap-3.dir/src/coap_prng.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[14/34] Building C object CMakeFiles/coap-3.dir/src/coap_str.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[15/34] Building C object CMakeFiles/coap-3.dir/src/coap_tcp.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[16/34] Building C object CMakeFiles/coap-3.dir/src/coap_debug.c.o
+Hooking 15 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[17/34] Building C object CMakeFiles/coap-3.dir/src/coap_option.c.o
+Hooking 6 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[18/34] Building C object CMakeFiles/coap-3.dir/src/coap_time.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[19/34] Building C object CMakeFiles/coap-3.dir/src/coap_ws.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[20/34] Building C object CMakeFiles/coap-3.dir/src/coap_io.c.o
+Hooking 10 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[21/34] Building C object CMakeFiles/coap-3.dir/src/coap_subscribe.c.o
+Hooking 1 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[22/34] Building C object CMakeFiles/coap-3.dir/src/coap_uri.c.o
+Hooking 7 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[23/34] Building C object CMakeFiles/coap-3.dir/src/coap_oscore.c.o
+Hooking 7 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[24/34] Building C object CMakeFiles/coap-3.dir/src/oscore/oscore.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[25/34] Building C object CMakeFiles/coap-3.dir/src/oscore/oscore_cbor.c.o
+/home/cwh/FORMTRIG/benchmarks/cve_build/libcoap-cve-2023-35862-src/src/oscore/oscore_cbor.c:211:42: warning: unused parameter 'buf_len' [-Wunused-parameter]
+  211 | get_byte(const uint8_t **buffer, size_t *buf_len) {
+      |                                          ^
+Hooking 3 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+1 warning generated.
+[26/34] Building C object CMakeFiles/coap-3.dir/src/pdu.c.o
+Hooking 9 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[27/34] Building C object CMakeFiles/coap-3.dir/src/coap_session.c.o
+Hooking 7 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[28/34] Building C object CMakeFiles/coap-3.dir/src/oscore/oscore_crypto.c.o
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[29/34] Building C object CMakeFiles/coap-3.dir/src/oscore/oscore_cose.c.o
+Hooking 7 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[30/34] Building C object CMakeFiles/coap-3.dir/src/resource.c.o
+Hooking 3 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[31/34] Building C object CMakeFiles/coap-3.dir/src/oscore/oscore_context.c.o
+Hooking 2 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[32/34] Building C object CMakeFiles/coap-3.dir/src/block.c.o
+Hooking 4 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[33/34] Building C object CMakeFiles/coap-3.dir/src/net.c.o
+Hooking 14 switch instructions
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
+[34/34] Linking C static library libcoap-3.a
+Running cmplog-switches-pass by andreafioraldi@gmail.com
+Running cmplog-instructions-pass by andreafioraldi@gmail.com
+Running cmplog-routines-pass by andreafioraldi@gmail.com
