@@ -26,10 +26,12 @@
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #endif
 
+#include <cerrno>
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 using namespace llvm;
@@ -48,6 +50,14 @@ static uint32_t hashString(const std::string &s) {
 
 static PointerType *i8PtrTy(LLVMContext &C) {
   return PointerType::getUnqual(Type::getInt8Ty(C));
+}
+
+static bool startsWith(StringRef S, StringRef Prefix) {
+#if LLVM_VERSION_MAJOR >= 18
+  return S.starts_with(Prefix);
+#else
+  return S.startswith(Prefix);
+#endif
 }
 
 class FormtrigInstrumenter {
@@ -92,8 +102,8 @@ class FormtrigInstrumenter {
 
     for (Function &F : M) {
       if (F.isDeclaration()) continue;
-      if (F.getName().startswith("formtrig") ||
-          F.getName().startswith("__formtrig"))
+      if (startsWith(F.getName(), "formtrig") ||
+          startsWith(F.getName(), "__formtrig"))
         continue;
 
       uint32_t FunctionClass = classifyFunction(F.getName());
@@ -110,6 +120,7 @@ class FormtrigInstrumenter {
         if (InstrumentCmp && (isa<ICmpInst>(&I))) {
           auto *CI = cast<ICmpInst>(&I);
           if (!CI->getType()->isIntegerTy(1)) continue;
+          if (!siteAllowed(SiteId)) continue;
           emitSiteMap(I, SiteId, CurInstNo, "cmp");
           instrumentCmp(CI, SiteId, FunctionClass);
           Changed = true;
@@ -119,6 +130,7 @@ class FormtrigInstrumenter {
         if (InstrumentBranch && (isa<BranchInst>(&I))) {
           auto *BI = cast<BranchInst>(&I);
           if (BI->isConditional()) {
+            if (!siteAllowed(SiteId)) continue;
             emitSiteMap(I, SiteId, CurInstNo, "branch");
             instrumentBranch(BI, SiteId);
             Changed = true;
@@ -128,6 +140,7 @@ class FormtrigInstrumenter {
 
         if (InstrumentMem && (isa<LoadInst>(&I))) {
           auto *LI = cast<LoadInst>(&I);
+          if (!siteAllowed(SiteId)) continue;
           emitSiteMap(I, SiteId, CurInstNo, "load");
           instrumentLoad(M, LI, SiteId);
           Changed = true;
@@ -136,6 +149,7 @@ class FormtrigInstrumenter {
 
 	        if (InstrumentMem && (isa<StoreInst>(&I))) {
 	          auto *SI = cast<StoreInst>(&I);
+	          if (!siteAllowed(SiteId)) continue;
 	          emitSiteMap(I, SiteId, CurInstNo, "store");
 	          instrumentStore(M, SI, SiteId);
 	          Changed = true;
@@ -144,6 +158,7 @@ class FormtrigInstrumenter {
 
 	        if (InstrumentMem && (isa<MemTransferInst>(&I))) {
 	          auto *MTI = cast<MemTransferInst>(&I);
+	          if (!siteAllowed(SiteId)) continue;
 	          emitSiteMap(I, SiteId, CurInstNo, "memtransfer");
 	          instrumentMemTransfer(MTI, SiteId);
 	          Changed = true;
@@ -152,6 +167,7 @@ class FormtrigInstrumenter {
 
         if ((InstrumentArith || InstrumentDiv) && (isa<BinaryOperator>(&I))) {
           auto *BO = cast<BinaryOperator>(&I);
+          if (!siteAllowed(SiteId)) continue;
           if (instrumentBinary(BO, SiteId)) {
             emitSiteMap(I, SiteId, CurInstNo, "binary");
             Changed = true;
@@ -166,12 +182,17 @@ class FormtrigInstrumenter {
 	          StringRef Name = Callee->getName();
 	          if (InstrumentMem && isMemTransferCall(Name) &&
 	              Call->arg_size() >= 3) {
+	            if (!siteAllowed(SiteId)) continue;
 	            emitSiteMap(I, SiteId, CurInstNo, "memtransfer_call");
 	            instrumentMemTransferCall(Call, SiteId);
 	            Changed = true;
 	          }
-	          if (Name == "malloc" && Call->arg_size() == 1) MallocCalls.push_back(Call);
-	          if (Name == "free" && Call->arg_size() == 1) FreeCalls.push_back(Call);
+	          if (Name == "malloc" && Call->arg_size() == 1 &&
+	              siteAllowed(hashString(callKey(Call, "malloc"))))
+	            MallocCalls.push_back(Call);
+	          if (Name == "free" && Call->arg_size() == 1 &&
+	              siteAllowed(hashString(callKey(Call, "free"))))
+	            FreeCalls.push_back(Call);
 	        }
       }
     }
@@ -208,6 +229,8 @@ class FormtrigInstrumenter {
   bool InstrumentArith = true;
   bool InstrumentAlloc = false;
   bool InlineGuard = true;
+  bool HasSiteFilter = false;
+  std::unordered_set<uint32_t> InstrumentSiteIds;
 
   static bool envFlag(const char *Name, bool DefaultValue) {
     const char *Value = getenv(Name);
@@ -226,6 +249,60 @@ class FormtrigInstrumenter {
         Name.contains("compress") || Name.contains("decompress"))
       return 1u;
     return 0u;
+  }
+
+  void addSiteIdToken(const std::string &Token) {
+    if (Token.empty()) return;
+    errno = 0;
+    char *End = nullptr;
+    unsigned long Value = strtoul(Token.c_str(), &End, 0);
+    if (errno || End == Token.c_str() || (End && *End) || Value == 0 ||
+        Value > 0xfffffffful)
+      return;
+    InstrumentSiteIds.insert(static_cast<uint32_t>(Value));
+    HasSiteFilter = true;
+  }
+
+  void parseSiteIdList(const char *Text) {
+    if (!Text || !*Text) return;
+    HasSiteFilter = true;
+    std::string Token;
+    for (const char *P = Text; *P; P++) {
+      char C = *P;
+      if (C == ',' || C == ';' || C == ':' || C == '\n' || C == '\r' ||
+          C == '\t' || C == ' ') {
+        addSiteIdToken(Token);
+        Token.clear();
+      } else {
+        Token.push_back(C);
+      }
+    }
+    addSiteIdToken(Token);
+  }
+
+  void loadSiteIdFile(const char *Path) {
+    if (!Path || !*Path) return;
+    HasSiteFilter = true;
+    std::ifstream In(Path);
+    if (!In) return;
+    std::string Line;
+    while (std::getline(In, Line)) {
+      std::string Token;
+      for (char C : Line) {
+        if (C == '#') break;
+        if (C == ',' || C == ';' || C == ':' || C == '\t' || C == ' ') {
+          addSiteIdToken(Token);
+          Token.clear();
+        } else {
+          Token.push_back(C);
+        }
+      }
+      addSiteIdToken(Token);
+    }
+  }
+
+  bool siteAllowed(uint32_t SiteId) const {
+    return !HasSiteFilter || InstrumentSiteIds.count(SiteId);
   }
 
   void configureInstrumentation() {
@@ -284,6 +361,8 @@ class FormtrigInstrumenter {
     InstrumentArith = envFlag("FORMTRIG_INSTRUMENT_ARITH", InstrumentArith);
     InstrumentAlloc = envFlag("FORMTRIG_INSTRUMENT_ALLOC", InstrumentAlloc);
     InlineGuard = envFlag("FORMTRIG_INLINE_GUARD", true);
+    parseSiteIdList(getenv("FORMTRIG_INSTRUMENT_SITE_IDS"));
+    loadSiteIdFile(getenv("FORMTRIG_INSTRUMENT_SITE_ID_FILE"));
   }
 
   static std::string callKey(CallInst *Call, const char *Kind) {
@@ -312,10 +391,10 @@ class FormtrigInstrumenter {
     if (!OS) return;
 
     std::string File = "";
+    if (const Module *M = I.getModule()) File = M->getSourceFileName();
     unsigned Line = 0;
     unsigned Column = 0;
     if (DebugLoc Loc = I.getDebugLoc()) {
-      File = Loc->getFilename().str();
       Line = Loc.getLine();
       Column = Loc.getCol();
     }
@@ -441,9 +520,9 @@ class FormtrigInstrumenter {
 	  }
 
 	  bool isMemTransferCall(StringRef Name) {
-	    return Name == "memcpy" || Name == "memmove" || Name == "bcopy" ||
-	           Name.startswith("memcpy@") || Name.startswith("memmove@");
-	  }
+    return Name == "memcpy" || Name == "memmove" || Name == "bcopy" ||
+           startsWith(Name, "memcpy@") || startsWith(Name, "memmove@");
+  }
 
 	  void instrumentMemTransfer(MemTransferInst *MTI, uint32_t SiteId) {
 	    IRBuilder<> B(MTI);

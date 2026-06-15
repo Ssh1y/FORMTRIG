@@ -1,0 +1,14 @@
+{
+  "created_at_utc": "2026-06-10T14:56:32Z",
+  "formal_replay_log": "artifacts/rnt_collection_logs/magma_corpus_replay/libpng_libpng_read_fuzzer.corpus_replay.log",
+  "metadata_status": "formal_replay_verified_rnt",
+  "native_DT_semantics": "binary R/T oracle distance for Phase4 RNT corpus; full native-DT trajectory is computed in diagnostics",
+  "native_DT_status": "computed",
+  "producer": "magma_initial_corpus_replay",
+  "seed_count": 4,
+  "source_seedbank": "experiments/magma_workspace/magma/targets/libpng/corpus/libpng_read_fuzzer",
+  "suite": "magma",
+  "target_id": "PNG006",
+  "tc_root_state_status": "computed",
+  "unique_rnt_seed_count": 4
+}

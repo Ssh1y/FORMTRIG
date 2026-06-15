@@ -105,6 +105,36 @@ fi
   --atom-expr 'b < 100' --atom-root b \
   --role root_observe --component 3 --priority 10 --direction lower \
   --value-mode distance "$site_map" > "$work_dir/source_site_binding.yml"
+"$work_dir/formtrig_site_map" --file source_site_target.c \
+  --line "$tc_line" --kind cmp --emit binding-context \
+  --tc-id source_site_numeric --tc-category numeric-margin \
+  --tc-expr 'b < 100' --atom 1 --atom-kind numeric-margin \
+  --atom-expr 'b < 100' --atom-root b \
+  "$site_map" > "$work_dir/source_site_binding_context.json"
+if ! grep -q '"schema": "formtrig_binding_context_v1"' \
+  "$work_dir/source_site_binding_context.json"; then
+  echo "source-site binding context did not declare the expected schema" >&2
+  cat "$work_dir/source_site_binding_context.json" >&2
+  exit 16
+fi
+if ! grep -q '"minimum_binding_tier": "B1"' \
+  "$work_dir/source_site_binding_context.json"; then
+  echo "source-site binding context did not carry numeric minimum tier" >&2
+  cat "$work_dir/source_site_binding_context.json" >&2
+  exit 17
+fi
+if ! grep -q '"role": "root_observe"' \
+  "$work_dir/source_site_binding_context.json"; then
+  echo "source-site binding context did not include root_observe requirement" >&2
+  cat "$work_dir/source_site_binding_context.json" >&2
+  exit 18
+fi
+if ! grep -q '"formtrig_binding_signal_diagnose D_F entropy' \
+  "$work_dir/source_site_binding_context.json"; then
+  echo "source-site binding context did not list dynamic signal gate" >&2
+  cat "$work_dir/source_site_binding_context.json" >&2
+  exit 19
+fi
 "$work_dir/formtrig_binding_spec_compile" --site-map "$site_map" \
   --out "$work_dir/source_site_binding.lift" \
   "$work_dir/source_site_binding.yml"

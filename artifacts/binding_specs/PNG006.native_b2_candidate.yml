@@ -1,0 +1,94 @@
+tc_id: 'PNG006'
+target:
+  project: 'magma/libpng'
+  binary: 'libpng_read_fuzzer'
+  command: './libpng_read_fuzzer @@'
+tc:
+  category: 'binary-state-null'
+  expression: 'info_ptr->eXIf_buf != NULL && (mask & info_ptr->free_me & PNG_FREE_EXIF) == 0'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'info_ptr->eXIf_buf != NULL'
+    kind: 'binary-state-null'
+    root: 'info_ptr->eXIf_buf'
+  - id: 2
+    expr: '(mask & info_ptr->free_me & PNG_FREE_EXIF) == 0'
+    kind: 'equality-magic'
+    root: 'info_ptr->free_me & PNG_FREE_EXIF'
+bindings:
+  - id: 'exif_buf_root_observe'
+    atom: 1
+    role: 'root_observe'
+    expr: 'info_ptr->eXIf_buf != NULL observed at PNG006 canary'
+    observe_at:
+      kind: 'cmp'
+      function: 'png_free_data'
+      file: 'png.c'
+      line: 620
+      inst_no: 462
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    observe_window: 'any'
+  - id: 'exif_buf_desired_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'png_handle_eXIf reached eXIf buffer allocation path'
+    observe_at:
+      kind: 'branch'
+      function: 'png_handle_eXIf'
+      file: 'pngrutil.c'
+      line: 2081
+      inst_no: 79
+    component: 'producer_use'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'hit'
+    observe_window: 'any'
+  - id: 'exif_buf_use_context'
+    atom: 1
+    role: 'use'
+    expr: 'png_free_data reached eXIf free/use context'
+    observe_at:
+      kind: 'branch'
+      function: 'png_free_data'
+      file: 'png.c'
+      line: 623
+      inst_no: 521
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    observe_window: 'any'
+  - id: 'free_me_flag_root_observe'
+    atom: 2
+    role: 'root_observe'
+    expr: 'PNG_FREE_EXIF bit is absent from info_ptr->free_me at PNG006 canary'
+    observe_at:
+      kind: 'cmp'
+      function: 'png_free_data'
+      file: 'png.c'
+      line: 620
+      inst_no: 475
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    observe_window: 'any'
+  - id: 'free_me_flag_use_context'
+    atom: 2
+    role: 'use'
+    expr: 'png_free_data reached PNG_FREE_EXIF decision context'
+    observe_at:
+      kind: 'branch'
+      function: 'png_free_data'
+      file: 'png.c'
+      line: 623
+      inst_no: 521
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    observe_window: 'any'

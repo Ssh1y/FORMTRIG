@@ -173,6 +173,9 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
   "$repo_root/formtrig/tools/formtrig_campaign_diagnose.c" \
   -o "$out_dir/.formtrig/formtrig_campaign_diagnose"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra -Werror \
+  "$repo_root/formtrig/tools/formtrig_binding_signal_diagnose.c" \
+  -o "$out_dir/.formtrig/formtrig_binding_signal_diagnose"
 
 if [[ -n "$binding_spec" ]]; then
   require_file "$binding_spec"
@@ -215,18 +218,96 @@ if [[ -n "$lift_spec" ]]; then
       exit 4
     fi
     require_file "$runtime_lift_spec"
+    if [[ -z "$target_site_ids" ]]; then
+      target_site_ids="$(awk -F, '
+        NR > 1 && $4 == "root_observe" && $6 != "*" && $6 != "" {
+          if (seen[$6]++) next;
+          out = out ? out "," $6 : $6;
+        }
+        END { print out }
+      ' "$out_dir/formtrig_runtime_event_map.csv")"
+      if [[ -z "$target_site_ids" ]]; then
+        target_site_ids="$(awk -F, '
+          NR > 1 && $6 != "*" && $6 != "" {
+            if (seen[$6]++) next;
+            out = out ? out "," $6 : $6;
+          }
+          END { print out }
+        ' "$out_dir/formtrig_runtime_event_map.csv")"
+      fi
+    fi
   fi
 fi
+
+pre_reach_events=0
+if [[ -n "$runtime_lift_spec" ]] &&
+   grep -Eq '(^|[[:space:],])(pre_reach|pre-reach|before_reach|before-reach|any|both)([[:space:],]|$)' "$runtime_lift_spec"; then
+  pre_reach_events=1
+fi
+
+mutation_hook="${FORMTRIG_TYPED_MUTATION_HOOK:-}"
+mutation_hook_source="environment"
+if [[ -z "$mutation_hook" ]]; then
+  mutation_hook_source="none"
+fi
+if [[ -n "$mutation_hook" && "$mutation_hook" != /* ]]; then
+  mutation_hook="$(pwd)/$mutation_hook"
+fi
+if [[ -z "$mutation_hook" && -n "$lift_spec" ]]; then
+  mutation_hook="$(awk '$1 == "mutation_hook" { print $2; exit }' "$lift_spec")"
+  if [[ -n "$mutation_hook" && "$mutation_hook" != /* ]]; then
+    mutation_hook="$repo_root/$mutation_hook"
+  fi
+  if [[ -n "$mutation_hook" ]]; then
+    mutation_hook_source="binding_spec"
+  fi
+fi
+if [[ -n "$mutation_hook" ]]; then
+  require_file "$mutation_hook"
+  if [[ ! -x "$mutation_hook" ]]; then
+    echo "FORMTRIG mutation hook is not executable: $mutation_hook" >&2
+    exit 4
+  fi
+fi
+
+hook_sha256=""
+if [[ -n "$mutation_hook" ]]; then
+  hook_sha256="$(sha256sum "$mutation_hook" | awk '{ print $1 }')"
+fi
+{
+  printf '{\n'
+  if [[ -n "$mutation_hook" ]]; then
+    printf '  "enabled": true,\n'
+    printf '  "source": "%s",\n' "$mutation_hook_source"
+    printf '  "path": "%s",\n' "$mutation_hook"
+    printf '  "sha256": "%s"\n' "$hook_sha256"
+  else
+    printf '  "enabled": false,\n'
+    printf '  "source": "none",\n'
+    printf '  "path": null,\n'
+    printf '  "sha256": null\n'
+  fi
+  printf '}\n'
+} > "$out_dir/formtrig_mutation_hook.json"
 
 env_args=(
   AFL_FORMTRIG=1
   AFL_NO_UI="${AFL_NO_UI:-1}"
   AFL_SKIP_CPUFREQ="${AFL_SKIP_CPUFREQ:-1}"
   AFL_NO_AFFINITY="${AFL_NO_AFFINITY:-1}"
+  AFL_DISABLE_TRIM="${AFL_DISABLE_TRIM:-1}"
   AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES="${AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES:-1}"
   FORMTRIG_TARGET_BUG="$target_bug"
   FORMTRIG_PROGRESS_LOG="${FORMTRIG_PROGRESS_LOG:-1}"
+  FORMTRIG_ALLOW_HEURISTIC_LIFT=0
+  FORMTRIG_OBSERVE_HEURISTIC_LIFT=0
+  FORMTRIG_ALLOW_MANUAL_LIFT=0
+  FORMTRIG_PRE_REACH_EVENTS="$pre_reach_events"
 )
+
+if [[ -n "$mutation_hook" ]]; then
+  env_args+=(FORMTRIG_TYPED_MUTATION_HOOK="$mutation_hook")
+fi
 
 if [[ -n "$runtime_lift_spec" ]]; then
   env_args+=(FORMTRIG_LIFT_SPEC="$runtime_lift_spec")
@@ -271,6 +352,11 @@ require_file "$stats"
 require_file "$progress"
 if [[ -n "$seed_readiness" ]]; then
   cp "$seed_readiness" "$out_dir/default/formtrig_seed_readiness.json"
+  seed_signal_entropy="${seed_readiness%.json}.signal_entropy.json"
+  if [[ -s "$seed_signal_entropy" ]]; then
+    cp "$seed_signal_entropy" \
+      "$out_dir/default/formtrig_seed_signal_entropy.json"
+  fi
 fi
 
 "$out_dir/.formtrig/formtrig_progress_summary" "$stats" "$progress" \
@@ -283,6 +369,11 @@ if [[ -n "$site_map" ]]; then
     echo "FORMTRIG lifted feature provenance audit failed: $out_dir/default/formtrig_lift_feature_audit.json" >&2
     exit 5
   fi
+  if ! "$out_dir/.formtrig/formtrig_binding_signal_diagnose" \
+    "$out_dir/formtrig_runtime_event_map.csv" "$progress" \
+    > "$out_dir/default/formtrig_binding_signal_diagnosis.json"; then
+    echo "FORMTRIG binding signal diagnosis found non-actionable lift dynamics: $out_dir/default/formtrig_binding_signal_diagnosis.json" >&2
+  fi
 fi
 
 diagnosis_args=("$out_dir/default/formtrig_summary.json")
@@ -294,6 +385,9 @@ fi
 if [[ -n "$site_map" ]]; then
   diagnosis_args+=("$out_dir/default/formtrig_lift_feature_audit.json")
 fi
+if [[ -n "$site_map" ]]; then
+  diagnosis_args+=("$out_dir/default/formtrig_binding_signal_diagnosis.json")
+fi
 "$out_dir/.formtrig/formtrig_campaign_diagnose" "${diagnosis_args[@]}" \
   > "$out_dir/default/formtrig_diagnosis.json"
 
@@ -304,6 +398,9 @@ echo "  summary=$out_dir/default/formtrig_summary.json"
 echo "  diagnosis=$out_dir/default/formtrig_diagnosis.json"
 if [[ -n "$seed_readiness" ]]; then
   echo "  seed_readiness=$out_dir/default/formtrig_seed_readiness.json"
+  if [[ -s "$out_dir/default/formtrig_seed_signal_entropy.json" ]]; then
+    echo "  seed_signal_entropy=$out_dir/default/formtrig_seed_signal_entropy.json"
+  fi
 fi
 if [[ -n "$lift_spec" ]]; then
   echo "  binding_audit=$out_dir/formtrig_lift_audit.csv"
@@ -316,4 +413,5 @@ if [[ -n "$site_map" ]]; then
   echo "  runtime_event_map=$out_dir/formtrig_runtime_event_map.csv"
   echo "  runtime_lift_spec=$runtime_lift_spec"
   echo "  lift_feature_audit=$out_dir/default/formtrig_lift_feature_audit.json"
+  echo "  binding_signal_diagnosis=$out_dir/default/formtrig_binding_signal_diagnosis.json"
 fi

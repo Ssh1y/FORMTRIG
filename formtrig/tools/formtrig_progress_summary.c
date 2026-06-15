@@ -18,11 +18,16 @@ typedef struct reason_bucket {
 typedef struct summary {
   uint64_t progress_events;
   uint64_t saved_progress_events;
+  uint64_t saved_triggered_progress_events;
+  uint64_t saved_non_trigger_progress_events;
+  uint64_t calibrated_frontier_events;
   uint64_t frontier_accept_events;
   uint64_t frontier_progress_accept_events;
   uint64_t frontier_reject_events;
   uint64_t stability_confirmed_events;
   uint64_t stability_reject_events;
+  uint64_t typed_skip_events;
+  uint64_t typed_skip_not_replay_stable_events;
   uint64_t typed_stage_start_events;
   uint64_t typed_stage_end_events;
   uint64_t triggered_events;
@@ -37,13 +42,25 @@ typedef struct summary {
   uint64_t d_f_spec_lifted_count;
   uint64_t d_f_heuristic_lifted_count;
   uint64_t d_f_manual_lifted_count;
+  uint64_t used_d_f_spec_lifted_count;
+  uint64_t used_d_f_heuristic_lifted_count;
+  uint64_t used_d_f_manual_lifted_count;
+  uint64_t observed_d_f_spec_lifted_count;
+  uint64_t observed_d_f_heuristic_lifted_count;
+  uint64_t observed_d_f_manual_lifted_count;
   uint64_t spec_lifted_events;
   uint64_t heuristic_lifted_events;
   uint64_t manual_lifted_events;
+  uint64_t observed_spec_lifted_events;
+  uint64_t observed_heuristic_lifted_events;
+  uint64_t observed_manual_lifted_events;
   double d_f_min;
   double d_f_max;
+  double d_f_spec_lifted_min;
+  double d_f_spec_lifted_max;
   uint64_t execs_done;
   uint64_t corpus_count;
+  uint64_t afl_saved_crashes;
   uint64_t formtrig_seen_execs;
   uint64_t formtrig_reached_execs;
   uint64_t formtrig_triggered_execs;
@@ -195,6 +212,7 @@ static uint64_t reason_count(const reason_bucket_t *buckets, uint32_t count,
 static void ingest_stats_line(summary_t *s, const char *line) {
   (void)read_u64_field(line, "execs_done", &s->execs_done);
   (void)read_u64_field(line, "corpus_count", &s->corpus_count);
+  (void)read_u64_field(line, "saved_crashes", &s->afl_saved_crashes);
   (void)read_u64_field(line, "formtrig_seen_execs", &s->formtrig_seen_execs);
   (void)read_u64_field(line, "formtrig_reached_execs",
                        &s->formtrig_reached_execs);
@@ -219,30 +237,44 @@ static void ingest_progress_line(summary_t *s, const char *line) {
   char reason[96] = {0};
   int boolean_value = 0;
   uint64_t u64_value = 0;
+  uint64_t source_flags = 0;
+  uint64_t observed_source_flags = 0;
   double d_value = 0.0;
+  int line_triggered = 0;
 
   s->progress_events++;
+  (void)json_u64_field(line, "source_flags", &source_flags);
+  (void)json_u64_field(line, "observed_source_flags", &observed_source_flags);
+  if (json_bool_field(line, "triggered", &boolean_value) && boolean_value)
+    line_triggered = 1;
 
   if (json_string_field(line, "event", event, sizeof(event))) {
-    if (!strcmp(event, "saved_progress")) s->saved_progress_events++;
+    if (!strcmp(event, "saved_progress")) {
+      s->saved_progress_events++;
+      if (line_triggered)
+        s->saved_triggered_progress_events++;
+      else
+        s->saved_non_trigger_progress_events++;
+    }
     if (!strcmp(event, "frontier_accept")) s->frontier_accept_events++;
-    if (!strcmp(event, "calibrated_frontier")) s->frontier_accept_events++;
+    if (!strcmp(event, "calibrated_frontier"))
+      s->calibrated_frontier_events++;
     if (!strcmp(event, "frontier_reject")) s->frontier_reject_events++;
     if (!strcmp(event, "stability_confirmed")) s->stability_confirmed_events++;
     if (!strcmp(event, "stability_reject")) s->stability_reject_events++;
+    if (!strcmp(event, "typed_skip")) s->typed_skip_events++;
     if (!strcmp(event, "typed_stage_start")) s->typed_stage_start_events++;
     if (!strcmp(event, "typed_stage_end")) s->typed_stage_end_events++;
   }
 
   if (json_string_field(line, "reason", reason, sizeof(reason))) {
     add_reason(s, reason);
+    if (!strcmp(event, "typed_skip") && !strcmp(reason, "not_replay_stable"))
+      s->typed_skip_not_replay_stable_events++;
     if (!strcmp(event, "frontier_accept") &&
-        strcmp(reason, "initial_frontier_seed") &&
-        strcmp(reason, "non_dominated_frontier_seed"))
+        strcmp(reason, "initial_frontier_seed"))
       s->frontier_progress_accept_events++;
-    if (!strcmp(event, "frontier_accept") ||
-        !strcmp(event, "calibrated_frontier") ||
-        !strcmp(event, "saved_progress"))
+    if (!strcmp(event, "frontier_accept") || !strcmp(event, "saved_progress"))
       add_reason_bucket(s->accept_reasons, &s->accept_reason_count, reason);
     if (!strcmp(event, "frontier_reject"))
       add_reason_bucket(s->reject_reasons, &s->reject_reason_count, reason);
@@ -254,8 +286,7 @@ static void ingest_progress_line(summary_t *s, const char *line) {
 
   if (json_bool_field(line, "reached", &boolean_value) && boolean_value)
     s->reached_events++;
-  if (json_bool_field(line, "triggered", &boolean_value) && boolean_value)
-    s->triggered_events++;
+  if (line_triggered) s->triggered_events++;
   if (json_bool_field(line, "lifted", &boolean_value) && boolean_value)
     s->lifted_events++;
   if (json_bool_field(line, "stable", &boolean_value) && boolean_value)
@@ -277,20 +308,36 @@ static void ingest_progress_line(summary_t *s, const char *line) {
     s->d_f_count++;
   }
 
-  if (json_double_field(line, "d_f_spec_lifted", &d_value) && d_value >= 0.0)
+  if (json_double_field(line, "d_f_spec_lifted", &d_value) && d_value >= 0.0) {
+    if (s->d_f_spec_lifted_count == 0 ||
+        d_value < s->d_f_spec_lifted_min)
+      s->d_f_spec_lifted_min = d_value;
+    if (s->d_f_spec_lifted_count == 0 ||
+        d_value > s->d_f_spec_lifted_max)
+      s->d_f_spec_lifted_max = d_value;
     s->d_f_spec_lifted_count++;
-  if (json_double_field(line, "d_f_heuristic_lifted", &d_value) &&
-      d_value >= 0.0)
-    s->d_f_heuristic_lifted_count++;
-  if (json_double_field(line, "d_f_manual_lifted", &d_value) &&
-      d_value >= 0.0)
-    s->d_f_manual_lifted_count++;
-
-  if (json_u64_field(line, "source_flags", &u64_value)) {
-    if (u64_value & 2u) s->spec_lifted_events++;
-    if (u64_value & 4u) s->heuristic_lifted_events++;
-    if (u64_value & 8u) s->manual_lifted_events++;
+    if (source_flags & 2u) s->used_d_f_spec_lifted_count++;
+    if (observed_source_flags & 2u) s->observed_d_f_spec_lifted_count++;
   }
+  if (json_double_field(line, "d_f_heuristic_lifted", &d_value) &&
+      d_value >= 0.0) {
+    s->d_f_heuristic_lifted_count++;
+    if (source_flags & 4u) s->used_d_f_heuristic_lifted_count++;
+    if (observed_source_flags & 4u) s->observed_d_f_heuristic_lifted_count++;
+  }
+  if (json_double_field(line, "d_f_manual_lifted", &d_value) &&
+      d_value >= 0.0) {
+    s->d_f_manual_lifted_count++;
+    if (source_flags & 8u) s->used_d_f_manual_lifted_count++;
+    if (observed_source_flags & 8u) s->observed_d_f_manual_lifted_count++;
+  }
+
+  if (source_flags & 2u) s->spec_lifted_events++;
+  if (source_flags & 4u) s->heuristic_lifted_events++;
+  if (source_flags & 8u) s->manual_lifted_events++;
+  if (observed_source_flags & 2u) s->observed_spec_lifted_events++;
+  if (observed_source_flags & 4u) s->observed_heuristic_lifted_events++;
+  if (observed_source_flags & 8u) s->observed_manual_lifted_events++;
 }
 
 static int read_lines(const char *path, void (*fn)(summary_t *, const char *),
@@ -326,20 +373,52 @@ static int summary_d_f_constant(const summary_t *s) {
   return s->d_f_count > 1 && s->d_f_min == s->d_f_max;
 }
 
+static int summary_spec_d_f_constant(const summary_t *s) {
+  return s->used_d_f_spec_lifted_count > 1 &&
+         s->d_f_spec_lifted_min == s->d_f_spec_lifted_max;
+}
+
+static int summary_has_queued_progress(const summary_t *s) {
+  return s->formtrig_queued_progress || s->saved_progress_events;
+}
+
+static int summary_terminal_triggered(const summary_t *s) {
+  return s->formtrig_triggered_execs || s->triggered_events ||
+         s->afl_saved_crashes;
+}
+
+static uint64_t summary_terminal_triggered_count(const summary_t *s) {
+  uint64_t runtime_triggered = s->formtrig_triggered_execs;
+  if (s->triggered_events > runtime_triggered)
+    runtime_triggered = s->triggered_events;
+  return runtime_triggered + s->afl_saved_crashes;
+}
+
+static int summary_has_frontier_progress(const summary_t *s) {
+  return s->frontier_progress_accept_events != 0;
+}
+
+static int summary_has_non_trigger_progress(const summary_t *s) {
+  return s->saved_non_trigger_progress_events ||
+         s->frontier_progress_accept_events;
+}
+
+static int summary_has_tc_rooted_progress(const summary_t *s) {
+  return summary_terminal_triggered(s) || summary_has_queued_progress(s) ||
+         summary_has_frontier_progress(s);
+}
+
 static const char *summary_progress_status(const summary_t *s) {
-  if (s->formtrig_triggered_execs || s->triggered_events) return "triggered";
-  if (s->formtrig_queued_progress || s->saved_progress_events ||
-      s->frontier_progress_accept_events)
-    return "progress_queued";
+  if (summary_terminal_triggered(s)) return "triggered";
+  if (summary_has_queued_progress(s)) return "progress_queued";
+  if (summary_has_frontier_progress(s)) return "frontier_progress_observed";
   return "not_progressing";
 }
 
 static const char *summary_limiting_reason(const summary_t *s) {
-  if (s->formtrig_triggered_execs || s->triggered_events)
-    return "terminal_triggered";
-  if (s->formtrig_queued_progress || s->saved_progress_events ||
-      s->frontier_progress_accept_events)
-    return "none";
+  if (summary_terminal_triggered(s)) return "terminal_triggered";
+  if (summary_has_queued_progress(s)) return "none";
+  if (summary_has_frontier_progress(s)) return "frontier_progress_not_queued";
   if (!s->formtrig_seen_execs && !s->progress_events)
     return "no_formtrig_signal";
   if (!s->formtrig_reached_execs && !s->reached_events)
@@ -350,11 +429,23 @@ static const char *summary_limiting_reason(const summary_t *s) {
   if (!s->role_signal_events) return "no_role_signal";
   if (s->stability_reject_events || s->formtrig_stability_failures)
     return "progress_not_replay_stable";
+  if (reason_count(s->reasons, s->reason_count, "no_valid_hot_range") &&
+      !s->typed_stage_start_events)
+    return "no_valid_hot_range";
+  if (summary_spec_d_f_constant(s) &&
+      (s->formtrig_typed_execs || s->typed_stage_start_events))
+    return "typed_mutation_no_lift_delta";
+  if (summary_spec_d_f_constant(s)) return "constant_spec_d_f";
   if (summary_d_f_constant(s)) return "constant_d_f";
+  if (reason_count(s->reject_reasons, s->reject_reason_count,
+                   "high_priority_regression"))
+    return "high_priority_regression";
   if (reason_count(s->reject_reasons, s->reject_reason_count,
                    "dominated_by_existing_frontier") ||
       s->frontier_reject_events)
     return "dominance_rejected";
+  if (s->typed_skip_not_replay_stable_events && !s->typed_stage_start_events)
+    return "typed_stage_parent_not_replay_stable";
   if (!s->formtrig_typed_execs && !s->typed_stage_start_events)
     return "typed_mutation_not_run";
   return "no_progress_queued";
@@ -379,12 +470,16 @@ static void print_summary(const summary_t *s) {
   printf("{\n");
   printf("  \"execs_done\": %llu,\n", (unsigned long long)s->execs_done);
   printf("  \"corpus_count\": %llu,\n", (unsigned long long)s->corpus_count);
+  printf("  \"afl_saved_crashes\": %llu,\n",
+         (unsigned long long)s->afl_saved_crashes);
   printf("  \"formtrig_seen_execs\": %llu,\n",
          (unsigned long long)s->formtrig_seen_execs);
   printf("  \"formtrig_reached_execs\": %llu,\n",
          (unsigned long long)s->formtrig_reached_execs);
   printf("  \"formtrig_triggered_execs\": %llu,\n",
          (unsigned long long)s->formtrig_triggered_execs);
+  printf("  \"terminal_triggered_execs\": %llu,\n",
+         (unsigned long long)summary_terminal_triggered_count(s));
   printf("  \"formtrig_queued_progress\": %llu,\n",
          (unsigned long long)s->formtrig_queued_progress);
   printf("  \"formtrig_frontier_updates\": %llu,\n",
@@ -401,16 +496,37 @@ static void print_summary(const summary_t *s) {
          (unsigned long long)s->progress_events);
   printf("  \"saved_progress_events\": %llu,\n",
          (unsigned long long)s->saved_progress_events);
+  printf("  \"saved_triggered_progress_events\": %llu,\n",
+         (unsigned long long)s->saved_triggered_progress_events);
+  printf("  \"saved_non_trigger_progress_events\": %llu,\n",
+         (unsigned long long)s->saved_non_trigger_progress_events);
+  printf("  \"calibrated_frontier_events\": %llu,\n",
+         (unsigned long long)s->calibrated_frontier_events);
   printf("  \"frontier_accept_events\": %llu,\n",
          (unsigned long long)s->frontier_accept_events);
   printf("  \"frontier_progress_accept_events\": %llu,\n",
          (unsigned long long)s->frontier_progress_accept_events);
+  printf("  \"non_trigger_progress_events\": %llu,\n",
+         (unsigned long long)(s->saved_non_trigger_progress_events +
+                              s->frontier_progress_accept_events));
+  printf("  \"has_tc_rooted_progress\": %s,\n",
+         summary_has_tc_rooted_progress(s) ? "true" : "false");
+  printf("  \"has_queued_progress\": %s,\n",
+         summary_has_queued_progress(s) ? "true" : "false");
+  printf("  \"has_frontier_progress\": %s,\n",
+         summary_has_frontier_progress(s) ? "true" : "false");
+  printf("  \"has_non_trigger_progress\": %s,\n",
+         summary_has_non_trigger_progress(s) ? "true" : "false");
   printf("  \"frontier_reject_events\": %llu,\n",
          (unsigned long long)s->frontier_reject_events);
   printf("  \"stability_confirmed_events\": %llu,\n",
          (unsigned long long)s->stability_confirmed_events);
   printf("  \"stability_reject_events\": %llu,\n",
          (unsigned long long)s->stability_reject_events);
+  printf("  \"typed_skip_events\": %llu,\n",
+         (unsigned long long)s->typed_skip_events);
+  printf("  \"typed_skip_not_replay_stable_events\": %llu,\n",
+         (unsigned long long)s->typed_skip_not_replay_stable_events);
   printf("  \"typed_stage_start_events\": %llu,\n",
          (unsigned long long)s->typed_stage_start_events);
   printf("  \"typed_stage_end_events\": %llu,\n",
@@ -426,12 +542,30 @@ static void print_summary(const summary_t *s) {
          (unsigned long long)s->heuristic_lifted_events);
   printf("  \"manual_lifted_events\": %llu,\n",
          (unsigned long long)s->manual_lifted_events);
+  printf("  \"observed_spec_lifted_events\": %llu,\n",
+         (unsigned long long)s->observed_spec_lifted_events);
+  printf("  \"observed_heuristic_lifted_events\": %llu,\n",
+         (unsigned long long)s->observed_heuristic_lifted_events);
+  printf("  \"observed_manual_lifted_events\": %llu,\n",
+         (unsigned long long)s->observed_manual_lifted_events);
   printf("  \"d_f_spec_lifted_count\": %llu,\n",
          (unsigned long long)s->d_f_spec_lifted_count);
   printf("  \"d_f_heuristic_lifted_count\": %llu,\n",
          (unsigned long long)s->d_f_heuristic_lifted_count);
   printf("  \"d_f_manual_lifted_count\": %llu,\n",
          (unsigned long long)s->d_f_manual_lifted_count);
+  printf("  \"used_d_f_spec_lifted_count\": %llu,\n",
+         (unsigned long long)s->used_d_f_spec_lifted_count);
+  printf("  \"used_d_f_heuristic_lifted_count\": %llu,\n",
+         (unsigned long long)s->used_d_f_heuristic_lifted_count);
+  printf("  \"used_d_f_manual_lifted_count\": %llu,\n",
+         (unsigned long long)s->used_d_f_manual_lifted_count);
+  printf("  \"observed_d_f_spec_lifted_count\": %llu,\n",
+         (unsigned long long)s->observed_d_f_spec_lifted_count);
+  printf("  \"observed_d_f_heuristic_lifted_count\": %llu,\n",
+         (unsigned long long)s->observed_d_f_heuristic_lifted_count);
+  printf("  \"observed_d_f_manual_lifted_count\": %llu,\n",
+         (unsigned long long)s->observed_d_f_manual_lifted_count);
   printf("  \"stable_events\": %llu,\n", (unsigned long long)s->stable_events);
   printf("  \"component_events\": %llu,\n",
          (unsigned long long)s->component_events);
@@ -449,6 +583,8 @@ static void print_summary(const summary_t *s) {
   printf(",\n");
   printf("  \"d_f_constant\": %s,\n",
          summary_d_f_constant(s) ? "true" : "false");
+  printf("  \"d_f_spec_lifted_constant\": %s,\n",
+         summary_spec_d_f_constant(s) ? "true" : "false");
   printf("  \"has_lifted_signal\": %s,\n",
          s->lifted_events ? "true" : "false");
   printf("  \"has_actionable_component\": %s,\n",
@@ -463,6 +599,14 @@ static void print_summary(const summary_t *s) {
   } else {
     printf("  \"d_f_min\": null,\n");
     printf("  \"d_f_max\": null,\n");
+  }
+  if (s->d_f_spec_lifted_count) {
+    printf("  \"d_f_spec_lifted_min\": %.17g,\n", s->d_f_spec_lifted_min);
+    printf("  \"d_f_spec_lifted_max\": %.17g,\n",
+           s->d_f_spec_lifted_max);
+  } else {
+    printf("  \"d_f_spec_lifted_min\": null,\n");
+    printf("  \"d_f_spec_lifted_max\": null,\n");
   }
   print_reason_object("reason_counts", s->reasons, s->reason_count);
   printf(",\n");
@@ -488,6 +632,8 @@ int main(int argc, char **argv) {
   memset(&s, 0, sizeof(s));
   s.d_f_min = DBL_MAX;
   s.d_f_max = -DBL_MAX;
+  s.d_f_spec_lifted_min = DBL_MAX;
+  s.d_f_spec_lifted_max = -DBL_MAX;
 
   if (!read_lines(argv[1], ingest_stats_line, &s)) return 2;
   if (!read_lines(argv[2], ingest_progress_line, &s)) return 2;

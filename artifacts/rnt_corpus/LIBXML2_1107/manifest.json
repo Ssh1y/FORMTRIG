@@ -1,0 +1,38 @@
+{
+  "attempt_count": 1,
+  "attempts": [
+    {
+      "command": [
+        "benchmarks/cve_build/libxml2-a7511af0-asan/libxml2_regexp_strdup_fail_replay",
+        "/home/cwh/FORMTRIG/benchmarks/cve_seeds/libxml2/regexp_nonfail_seed.bin"
+      ],
+      "content_sha256": "022a6979e6dab7aa5ae4c3e5e45f7e977112a7e63593820dbec1ec738a24f93c",
+      "gdb_available": true,
+      "gdb_log": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBXML2_1107/replay_logs/attempt_0000_022a6979e6dab7aa.gdb.log",
+      "gdb_returncode": 0,
+      "gdb_timed_out": false,
+      "hit_probe": "xmlRegNewParserCtxt",
+      "reached_R": true,
+      "replay_log": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBXML2_1107/replay_logs/attempt_0000_022a6979e6dab7aa.replay.log",
+      "replay_returncode": 0,
+      "replay_timed_out": false,
+      "seed": "/home/cwh/FORMTRIG/benchmarks/cve_seeds/libxml2/regexp_nonfail_seed.bin",
+      "status": "kept_rnt",
+      "triggered_T": false
+    }
+  ],
+  "candidate_seed_count": 1,
+  "created_at_utc": "2026-06-10T14:24:50Z",
+  "metadata_status": "formal_replay_verified_rnt",
+  "native_DT_status": "computed",
+  "probes": [
+    "xmlRegNewParserCtxt",
+    "xmlregexp.c:740"
+  ],
+  "reach_probe": "gdb_breakpoint",
+  "seed_count": 1,
+  "suite": "cve",
+  "target_id": "LIBXML2_1107",
+  "tc_root_state_status": "computed",
+  "unique_rnt_seed_count": 1
+}

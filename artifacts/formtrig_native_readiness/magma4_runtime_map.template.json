@@ -1,0 +1,325 @@
+{
+  "runtime_events": {
+    "lifecycle:aliased": {
+      "event_kind": "",
+      "graph_nodes": [
+        "phase:aliased"
+      ],
+      "node_types": [
+        "lifecycle_phase"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:lifecycle:aliased"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "src/where.c:2769:8#whereLoopAddBtreeIndex"
+      ],
+      "target_ids": [
+        "SQL013"
+      ]
+    },
+    "lifecycle:configured": {
+      "event_kind": "",
+      "graph_nodes": [
+        "phase:configured"
+      ],
+      "node_types": [
+        "lifecycle_phase"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:lifecycle:configured"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "src/where.c:2769:8#whereLoopAddBtreeIndex"
+      ],
+      "target_ids": [
+        "SQL013"
+      ]
+    },
+    "lifecycle:producer": {
+      "event_kind": "",
+      "graph_nodes": [
+        "phase:producer"
+      ],
+      "node_types": [
+        "lifecycle_phase"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:lifecycle:producer"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "src/where.c:2769:8#whereLoopAddBtreeIndex"
+      ],
+      "target_ids": [
+        "SQL013"
+      ]
+    },
+    "lifecycle:released_or_skipped": {
+      "event_kind": "",
+      "graph_nodes": [
+        "phase:released_or_skipped"
+      ],
+      "node_types": [
+        "lifecycle_phase"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:lifecycle:released_or_skipped"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "src/where.c:2769:8#whereLoopAddBtreeIndex"
+      ],
+      "target_ids": [
+        "SQL013"
+      ]
+    },
+    "lifecycle:used_or_violated": {
+      "event_kind": "",
+      "graph_nodes": [
+        "phase:used_or_violated"
+      ],
+      "node_types": [
+        "lifecycle_phase"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:lifecycle:used_or_violated"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "src/where.c:2769:8#whereLoopAddBtreeIndex"
+      ],
+      "target_ids": [
+        "SQL013"
+      ]
+    },
+    "producer:1cbe9d375af0bba2": {
+      "event_kind": "",
+      "graph_nodes": [
+        "producer:ed64f080f3d07db8"
+      ],
+      "node_types": [
+        "producer_context"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:producer:1cbe9d375af0bba2"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [],
+      "target_ids": [
+        "PNG001"
+      ]
+    },
+    "producer:6779136a19e7be60": {
+      "event_kind": "",
+      "graph_nodes": [
+        "producer:098a133cc310a585"
+      ],
+      "node_types": [
+        "producer_context"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:producer:6779136a19e7be60"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [],
+      "target_ids": [
+        "SQL013"
+      ]
+    },
+    "producer:d4e77dcc26b37afb": {
+      "event_kind": "",
+      "graph_nodes": [
+        "producer:ed64f080f3d07db8"
+      ],
+      "node_types": [
+        "producer_context"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:producer:d4e77dcc26b37afb"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [],
+      "target_ids": [
+        "PNG007"
+      ]
+    },
+    "producer:fcd49d9f8291d809": {
+      "event_kind": "",
+      "graph_nodes": [
+        "producer:ed0e741adab56df1"
+      ],
+      "node_types": [
+        "producer_context"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:producer:fcd49d9f8291d809"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [],
+      "target_ids": [
+        "XML017"
+      ]
+    },
+    "source:parser.c:8326:8#xmlParseInternalSubset": {
+      "event_kind": "",
+      "graph_nodes": [
+        "guard:beae0c2ede6bda54",
+        "use:04f4812eef60bfdf"
+      ],
+      "node_types": [
+        "guard_context",
+        "use_context"
+      ],
+      "reason": [
+        "no_site_map"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "parser.c:8326:8#xmlParseInternalSubset"
+      ],
+      "target_ids": [
+        "XML017"
+      ]
+    },
+    "source:pngrtran.c:1967:8#png_read_transform_info": {
+      "event_kind": "",
+      "graph_nodes": [
+        "guard:9fb1769ad00f3a13",
+        "use:15a1263ed94ea1e6"
+      ],
+      "node_types": [
+        "guard_context",
+        "use_context"
+      ],
+      "reason": [
+        "no_site_map"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "pngrtran.c:1967:8#png_read_transform_info;pngset.c:609:8#png_set_PLTE"
+      ],
+      "target_ids": [
+        "PNG007"
+      ]
+    },
+    "source:pngrutil.c:3174:8#png_check_chunk_length": {
+      "event_kind": "",
+      "graph_nodes": [
+        "guard:43726bda346ec0b9",
+        "use:626666ce643abd4b"
+      ],
+      "node_types": [
+        "guard_context",
+        "use_context"
+      ],
+      "reason": [
+        "no_site_map"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "pngrutil.c:3174:8#png_check_chunk_length"
+      ],
+      "target_ids": [
+        "PNG001"
+      ]
+    },
+    "source:pngset.c:609:8#png_set_PLTE": {
+      "event_kind": "",
+      "graph_nodes": [
+        "guard:9fb1769ad00f3a13",
+        "use:15a1263ed94ea1e6"
+      ],
+      "node_types": [
+        "guard_context",
+        "use_context"
+      ],
+      "reason": [
+        "no_site_map"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "pngrtran.c:1967:8#png_read_transform_info;pngset.c:609:8#png_set_PLTE"
+      ],
+      "target_ids": [
+        "PNG007"
+      ]
+    },
+    "source:src/where.c:2769:8#whereLoopAddBtreeIndex": {
+      "event_kind": "",
+      "graph_nodes": [
+        "phase:producer",
+        "phase:configured",
+        "phase:aliased",
+        "phase:released_or_skipped",
+        "phase:used_or_violated",
+        "guard:2ff09465693f9d5c",
+        "use:147b575496ddd406"
+      ],
+      "node_types": [
+        "lifecycle_phase",
+        "guard_context",
+        "use_context"
+      ],
+      "reason": [
+        "unmapped_runtime_event_id:lifecycle:producer",
+        "unmapped_runtime_event_id:lifecycle:configured",
+        "unmapped_runtime_event_id:lifecycle:aliased",
+        "unmapped_runtime_event_id:lifecycle:released_or_skipped",
+        "unmapped_runtime_event_id:lifecycle:used_or_violated",
+        "no_site_map"
+      ],
+      "required_for": [
+        "progress"
+      ],
+      "site_id": 0,
+      "source_locations": [
+        "src/where.c:2769:8#whereLoopAddBtreeIndex"
+      ],
+      "target_ids": [
+        "SQL013"
+      ]
+    }
+  }
+}

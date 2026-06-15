@@ -177,7 +177,7 @@ mkdir -p "$out_root"
 
 summary_csv="$out_root/batch_summary.csv"
 summary_jsonl="$out_root/batch_summary.jsonl"
-printf 'manifest,target_id,status,experiment_ready,diagnosis,progress_status,execs_done,reached,triggered,queued_progress,spec_lifted,heuristic_lifted,manual_lifted,d_f_constant,out_dir,log\n' > "$summary_csv"
+printf 'manifest,target_id,status,experiment_ready,pretrigger_lift_guidance_ready,diagnosis,progress_status,has_non_trigger_progress,non_trigger_progress,saved_non_trigger_progress,saved_triggered_progress,execs_done,reached,triggered,queued_progress,spec_lifted,heuristic_lifted,manual_lifted,d_f_constant,out_dir,log\n' > "$summary_csv"
 : > "$summary_jsonl"
 
 failures=0
@@ -220,6 +220,11 @@ for manifest in "${manifests[@]}"; do
   experiment_ready="false"
   diagnosis="missing_diagnosis"
   progress_status="unknown"
+  pretrigger_lift_guidance_ready="false"
+  has_non_trigger_progress="false"
+  non_trigger_progress=0
+  saved_non_trigger=0
+  saved_triggered=0
   execs_done=0
   reached=0
   triggered=0
@@ -235,8 +240,17 @@ for manifest in "${manifests[@]}"; do
     [[ -z "$(trim "$experiment_ready")" ]] &&
       experiment_ready="$(json_number "$diagnosis_path" experiment_ready)"
     progress_status="$(json_string "$diagnosis_path" progress_status)"
+    pretrigger_lift_guidance_ready="$(json_string "$diagnosis_path" pretrigger_lift_guidance_ready)"
+    [[ -z "$(trim "$pretrigger_lift_guidance_ready")" ]] &&
+      pretrigger_lift_guidance_ready="$(json_number "$diagnosis_path" pretrigger_lift_guidance_ready)"
+    has_non_trigger_progress="$(json_string "$diagnosis_path" has_non_trigger_progress)"
+    [[ -z "$(trim "$has_non_trigger_progress")" ]] &&
+      has_non_trigger_progress="$(json_number "$diagnosis_path" has_non_trigger_progress)"
   fi
   if [[ -f "$summary_path" ]]; then
+    non_trigger_progress="$(json_number "$summary_path" non_trigger_progress_events)"
+    saved_non_trigger="$(json_number "$summary_path" saved_non_trigger_progress_events)"
+    saved_triggered="$(json_number "$summary_path" saved_triggered_progress_events)"
     execs_done="$(json_number "$summary_path" execs_done)"
     reached="$(json_number "$summary_path" formtrig_reached_execs)"
     triggered="$(json_number "$summary_path" formtrig_triggered_execs)"
@@ -249,6 +263,11 @@ for manifest in "${manifests[@]}"; do
 
   [[ -z "$diagnosis" ]] && diagnosis="unknown"
   [[ -z "$progress_status" ]] && progress_status="unknown"
+  [[ -z "$pretrigger_lift_guidance_ready" ]] && pretrigger_lift_guidance_ready="false"
+  [[ -z "$has_non_trigger_progress" ]] && has_non_trigger_progress="false"
+  [[ -z "$non_trigger_progress" ]] && non_trigger_progress=0
+  [[ -z "$saved_non_trigger" ]] && saved_non_trigger=0
+  [[ -z "$saved_triggered" ]] && saved_triggered=0
   [[ -z "$execs_done" ]] && execs_done=0
   [[ -z "$reached" ]] && reached=0
   [[ -z "$triggered" ]] && triggered=0
@@ -263,8 +282,12 @@ for manifest in "${manifests[@]}"; do
     csv_escape "$target_id"; printf ','
     csv_escape "$status"; printf ','
     csv_escape "$experiment_ready"; printf ','
+    csv_escape "$pretrigger_lift_guidance_ready"; printf ','
     csv_escape "$diagnosis"; printf ','
     csv_escape "$progress_status"; printf ','
+    csv_escape "$has_non_trigger_progress"; printf ','
+    printf '%s,%s,%s,' "$non_trigger_progress" "$saved_non_trigger" \
+      "$saved_triggered"
     printf '%s,%s,%s,%s,%s,%s,%s,' "$execs_done" "$reached" "$triggered" \
       "$queued" "$spec" "$heuristic" "$manual"
     csv_escape "$d_f_constant"; printf ','
@@ -280,11 +303,17 @@ for manifest in "${manifests[@]}"; do
   json_escape "$status" >> "$summary_jsonl"
   printf ',"experiment_ready":' >> "$summary_jsonl"
   json_escape "$experiment_ready" >> "$summary_jsonl"
+  printf ',"pretrigger_lift_guidance_ready":%s' \
+    "$pretrigger_lift_guidance_ready" >> "$summary_jsonl"
   printf ',"diagnosis":' >> "$summary_jsonl"
   json_escape "$diagnosis" >> "$summary_jsonl"
-  printf ',"execs_done":%s,"reached":%s,"triggered":%s,"queued_progress":%s,"spec_lifted":%s,"heuristic_lifted":%s,"manual_lifted":%s,"out_dir":' \
-    "$execs_done" "$reached" "$triggered" "$queued" "$spec" "$heuristic" \
-    "$manual" >> "$summary_jsonl"
+  printf ',"progress_status":' >> "$summary_jsonl"
+  json_escape "$progress_status" >> "$summary_jsonl"
+  printf ',"has_non_trigger_progress":%s,"non_trigger_progress":%s,"saved_non_trigger_progress":%s,"saved_triggered_progress":%s,"execs_done":%s,"reached":%s,"triggered":%s,"queued_progress":%s,"spec_lifted":%s,"heuristic_lifted":%s,"manual_lifted":%s,"out_dir":' \
+    "$has_non_trigger_progress" "$non_trigger_progress" \
+    "$saved_non_trigger" "$saved_triggered" "$execs_done" "$reached" \
+    "$triggered" "$queued" "$spec" "$heuristic" "$manual" \
+    >> "$summary_jsonl"
   json_escape "$run_dir/out" >> "$summary_jsonl"
   printf ',"log":' >> "$summary_jsonl"
   json_escape "$log" >> "$summary_jsonl"

@@ -7,6 +7,19 @@ clang_bin="${CLANG:-clang}"
 cxx_bin="${CXX:-}"
 llvm_config="${LLVM_CONFIG:-}"
 out_dir=""
+clang_explicit=0
+cxx_explicit=0
+llvm_config_explicit=0
+
+if [[ -n "${CLANG:-}" ]]; then
+  clang_explicit=1
+fi
+if [[ -n "${CXX:-}" ]]; then
+  cxx_explicit=1
+fi
+if [[ -n "${LLVM_CONFIG:-}" ]]; then
+  llvm_config_explicit=1
+fi
 
 usage() {
   cat >&2 <<EOF
@@ -55,14 +68,17 @@ while [[ $# -gt 0 ]]; do
       ;;
     --clang)
       clang_bin="${2:-}"
+      clang_explicit=1
       shift 2
       ;;
     --clang++)
       cxx_bin="${2:-}"
+      cxx_explicit=1
       shift 2
       ;;
     --llvm-config)
       llvm_config="${2:-}"
+      llvm_config_explicit=1
       shift 2
       ;;
     --help|-h)
@@ -85,6 +101,31 @@ fi
 mkdir -p "$out_dir"
 out_dir="$(cd "$out_dir" && pwd)"
 
+afl_cc="$aflpp_dir/afl-cc"
+afl_cxx="$aflpp_dir/afl-c++"
+afl_fuzz="$aflpp_dir/afl-fuzz"
+
+if [[ -x "$afl_cc" ]] &&
+   { [[ "$clang_explicit" == "0" ]] ||
+     [[ "$cxx_explicit" == "0" ]] ||
+     [[ "$llvm_config_explicit" == "0" ]]; }; then
+  afl_help="$("$afl_cc" -hh 2>&1 || true)"
+  afl_llvm_bin="$(printf '%s\n' "$afl_help" | sed -n \
+    's/.*binary path "\([^"]*\)".*/\1/p' | head -n 1)"
+  if [[ -n "$afl_llvm_bin" ]]; then
+    if [[ "$clang_explicit" == "0" && -x "$afl_llvm_bin/clang" ]]; then
+      clang_bin="$afl_llvm_bin/clang"
+    fi
+    if [[ "$cxx_explicit" == "0" && -x "$afl_llvm_bin/clang++" ]]; then
+      cxx_bin="$afl_llvm_bin/clang++"
+    fi
+    if [[ "$llvm_config_explicit" == "0" &&
+          -x "$afl_llvm_bin/llvm-config" ]]; then
+      llvm_config="$afl_llvm_bin/llvm-config"
+    fi
+  fi
+fi
+
 if [[ -z "$cxx_bin" ]]; then
   if [[ "$clang_bin" == *clang-* ]]; then
     cxx_bin="${clang_bin/clang-/clang++-}"
@@ -106,9 +147,6 @@ if [[ -z "$llvm_config" ]]; then
   fi
 fi
 
-afl_cc="$aflpp_dir/afl-cc"
-afl_cxx="$aflpp_dir/afl-c++"
-afl_fuzz="$aflpp_dir/afl-fuzz"
 require_file "$afl_cc"
 require_file "$afl_cxx"
 require_file "$afl_fuzz"

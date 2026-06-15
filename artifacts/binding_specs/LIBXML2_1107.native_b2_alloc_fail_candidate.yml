@@ -1,0 +1,104 @@
+tc_id: 'LIBXML2_1107'
+target:
+  project: 'libxml2'
+  binary: 'libxml2_regexp_strdup_fail_replay'
+  command: './libxml2_regexp_strdup_fail_replay @@'
+tc:
+  category: 'binary-state-null'
+  expression: 'ret->string == NULL before strlen(ret->string) in xmlRegNewParserCtxt'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'ret->string == NULL'
+    kind: 'binary-state-null'
+    root: 'ret->string'
+bindings:
+  - id: 'ret_string_root_null_check'
+    atom: 1
+    role: 'root_observe'
+    expr: 'ret->string nullness is checked after the unsafe strlen use'
+    observe_at:
+      kind: 'cmp'
+      function: 'xmlRegNewParserCtxt'
+      file: 'xmlregexp.c'
+      line: 741
+      inst_no: 39
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 1.0
+    observe_window: 'any'
+  - id: 'ret_string_desired_producer_fail_count'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'the harness-selected malloc failure index is closest to the xmlStrdup allocation for ret->string'
+    observe_at:
+      kind: 'cmp'
+      function: 'hook_malloc'
+      file: 'benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c'
+      line: 15
+      inst_no: 15
+    component: 'producer_use'
+    priority: 20
+    direction: 'lower'
+    value_mode: 'distance_to_b'
+    value: 2.0
+    confidence: 1.0
+    observe_window: 'any'
+  - id: 'ret_string_use_strlen_load'
+    atom: 1
+    role: 'use'
+    expr: 'strlen consumes ret->string in xmlRegNewParserCtxt'
+    observe_at:
+      kind: 'load'
+      function: 'xmlRegNewParserCtxt'
+      file: 'xmlregexp.c'
+      line: 740
+      inst_no: 31
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 1.0
+    observe_window: 'any'
+  - id: 'malloc_fail_count_guard'
+    atom: 1
+    role: 'guard'
+    expr: 'harness allocation-failure guard checks whether the input-selected fail count is enabled'
+    observe_at:
+      kind: 'cmp'
+      function: 'hook_malloc'
+      file: 'benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c'
+      line: 15
+      inst_no: 10
+    component: 'guard'
+    priority: 15
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'malloc_fail_byte_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'input byte 0 selects which malloc call should fail'
+    observe_at:
+      kind: 'cmp'
+      function: 'hook_malloc'
+      file: 'benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c'
+      line: 15
+      inst_no: 10
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 1.0
+    observe_window: 'any'
+    range_start: 0
+    range_len: 1
+    mutation_hint: 'set_byte'
+    mutation_value: 2

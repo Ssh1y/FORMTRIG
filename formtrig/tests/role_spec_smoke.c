@@ -13,7 +13,8 @@ int main(void) {
   if (!area) return 2;
   __afl_area_ptr = area;
 
-  setenv("FORMTRIG_LIFT_SPEC", "/tmp/formtrig_role_spec.txt", 1);
+  if (!getenv("FORMTRIG_LIFT_SPEC"))
+    setenv("FORMTRIG_LIFT_SPEC", "/tmp/formtrig_role_spec.txt", 1);
   formtrig_reset();
   formtrig_target_hit("site");
   __formtrig_log_branch(123, 1);

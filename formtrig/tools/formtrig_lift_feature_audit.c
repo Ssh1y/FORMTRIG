@@ -27,6 +27,8 @@ typedef struct audit_state {
   uint64_t unmapped_spec_lifted_components;
   uint64_t heuristic_lifted_components;
   uint64_t manual_lifted_components;
+  uint64_t observed_heuristic_lifted_events;
+  uint64_t observed_manual_lifted_events;
   uint64_t accepted_unmapped_lifted_events;
   uint64_t accepted_without_mapped_lifted_events;
   uint64_t accepted_unmapped_spec_lifted_events;
@@ -198,6 +200,7 @@ static void ingest_progress_line(audit_state_t *s, const char *line) {
   uint64_t line_mapped_spec_lifted = 0;
   uint64_t line_unmapped_spec_lifted = 0;
   uint64_t source_flags = 0;
+  uint64_t observed_source_flags = 0;
 
   s->progress_events++;
   if (json_string_field(line, "event", event, sizeof(event)))
@@ -205,6 +208,11 @@ static void ingest_progress_line(audit_state_t *s, const char *line) {
   (void)json_bool_field(line, "triggered", &triggered);
   (void)json_bool_field(line, "lifted", &lifted_line);
   (void)json_u64_field(line, "source_flags", &source_flags);
+  (void)json_u64_field(line, "observed_source_flags", &observed_source_flags);
+  if (observed_source_flags & FORMTRIG_SOURCE_HEURISTIC_LIFTED)
+    s->observed_heuristic_lifted_events++;
+  if (observed_source_flags & FORMTRIG_SOURCE_MANUAL_TARGET)
+    s->observed_manual_lifted_events++;
   if (accepted) s->accepted_events++;
   if (accepted && lifted_line && !triggered) s->accepted_lifted_events++;
   if (accepted && !triggered &&
@@ -328,6 +336,10 @@ static void print_json(const audit_state_t *s, int pass) {
          (unsigned long long)s->heuristic_lifted_components);
   printf("  \"manual_lifted_components\": %llu,\n",
          (unsigned long long)s->manual_lifted_components);
+  printf("  \"observed_heuristic_lifted_events\": %llu,\n",
+         (unsigned long long)s->observed_heuristic_lifted_events);
+  printf("  \"observed_manual_lifted_events\": %llu,\n",
+         (unsigned long long)s->observed_manual_lifted_events);
   printf("  \"accepted_unmapped_lifted_events\": %llu,\n",
          (unsigned long long)s->accepted_unmapped_lifted_events);
   printf("  \"accepted_without_mapped_lifted_events\": %llu,\n",

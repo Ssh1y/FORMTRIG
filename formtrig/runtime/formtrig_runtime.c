@@ -42,10 +42,24 @@
 #define FORMTRIG_SPEC_VALUE_A 5u
 #define FORMTRIG_SPEC_VALUE_B 6u
 #define FORMTRIG_SPEC_VALUE_C 7u
+#define FORMTRIG_SPEC_VALUE_DISTANCE_TO_A 8u
+#define FORMTRIG_SPEC_VALUE_DISTANCE_TO_B 9u
+#define FORMTRIG_SPEC_VALUE_DISTANCE_TO_C 10u
+#define FORMTRIG_SPEC_VALUE_ABSENT 11u
+
+#define FORMTRIG_SPEC_WINDOW_POST_REACH 0u
+#define FORMTRIG_SPEC_WINDOW_PRE_REACH 1u
+#define FORMTRIG_SPEC_WINDOW_ANY 2u
 
 #define FORMTRIG_SPEC_WILDCARD UINT32_MAX
 
+#ifndef FORMTRIG_USE_AFL_MAP_FALLBACK
+#define FORMTRIG_USE_AFL_MAP_FALLBACK 0
+#endif
+
+#if FORMTRIG_USE_AFL_MAP_FALLBACK
 extern unsigned char *__afl_area_ptr __attribute__((weak));
+#endif
 
 uint8_t __formtrig_active = 0;
 uint8_t __formtrig_pre_reach_enabled = 0;
@@ -64,6 +78,7 @@ typedef struct {
   uint8_t has_dynamic_producer;
   uint8_t after_reach;
   uint8_t site_class;
+  uint8_t reach_boundary;
 } formtrig_event_t;
 
 typedef struct {
@@ -127,6 +142,10 @@ typedef struct {
   uint32_t phase_prefix;
   uint32_t range_start;
   uint32_t range_len;
+  uint32_t mutation_hint;
+  uint32_t mutation_value;
+  uint32_t observe_window;
+  uint32_t observed_count;
   uint64_t source_id;
   uint64_t context_hash;
   double value;
@@ -187,6 +206,7 @@ typedef struct {
 static formtrig_state_t g_state;
 static int g_track_alloc_pre_reach = -1;
 static int g_record_pre_reach_events = -1;
+static int g_record_all_pre_reach_events = -1;
 static int g_lift_crash_predicate = -1;
 static int g_suppress_canary_events = -1;
 static int g_source_objective = -1;
@@ -198,6 +218,7 @@ static uint32_t g_target_site_count = UINT32_MAX;
 static int g_debug_events = -1;
 static int g_debug_predicate_snapshot = -1;
 static int g_allow_heuristic_lift = -1;
+static int g_observe_heuristic_lift = -1;
 static uint32_t g_lift_window = 0;
 static uint32_t g_sink_lookback = 0;
 static uint32_t g_debug_event_window = 0;
@@ -208,6 +229,8 @@ static uint32_t g_probe_spec_count = 0;
 static int g_probe_specs_loaded = 0;
 
 static void apply_probe_specs_to_event(const formtrig_event_t *event);
+static void ensure_probe_specs_loaded(void);
+static int pre_reach_event_capture_enabled(uint32_t kind, uint32_t site_id);
 static void reset_probe_spec_runtime_state(void);
 static void remember_df_source_with_distance(const formtrig_event_t *event,
                                              uint32_t linked, uint8_t mode,
@@ -228,8 +251,20 @@ static int track_alloc_pre_reach(void) {
 static int record_pre_reach_events(void) {
   if (g_record_pre_reach_events >= 0) return g_record_pre_reach_events;
   const char *env = getenv("FORMTRIG_PRE_REACH_EVENTS");
-  g_record_pre_reach_events = env ? env_truthy(env) : 0;
+  g_record_pre_reach_events =
+      env ? (env_truthy(env) || strcmp(env, "all") == 0 ||
+             strcmp(env, "full") == 0 || strcmp(env, "raw") == 0)
+          : 0;
   return g_record_pre_reach_events;
+}
+
+static int record_all_pre_reach_events(void) {
+  if (g_record_all_pre_reach_events >= 0) return g_record_all_pre_reach_events;
+  const char *env = getenv("FORMTRIG_PRE_REACH_EVENTS");
+  g_record_all_pre_reach_events =
+      env && (strcmp(env, "all") == 0 || strcmp(env, "full") == 0 ||
+              strcmp(env, "raw") == 0);
+  return g_record_all_pre_reach_events;
 }
 
 static int source_objective_enabled(void);
@@ -254,6 +289,14 @@ static int heuristic_lift_allowed(void) {
   g_allow_heuristic_lift =
       env_truthy(getenv("FORMTRIG_ALLOW_HEURISTIC_LIFT"));
   return g_allow_heuristic_lift;
+}
+
+static int heuristic_lift_observed(void) {
+  if (heuristic_lift_allowed()) return 1;
+  if (g_observe_heuristic_lift >= 0) return g_observe_heuristic_lift;
+  g_observe_heuristic_lift =
+      env_truthy(getenv("FORMTRIG_OBSERVE_HEURISTIC_LIFT"));
+  return g_observe_heuristic_lift;
 }
 
 static int manual_component_requires_lift_permission(uint32_t kind,
@@ -405,20 +448,30 @@ static uint32_t sink_lookback(void) {
   return g_sink_lookback;
 }
 
-static void add_hot_range(uint32_t start, uint32_t len, double influence) {
+static void add_hot_range_hint(uint32_t start, uint32_t len, double influence,
+                               uint32_t hint_kind, uint32_t hint_value) {
   if (!len) return;
 
   uint64_t end = (uint64_t)start + (uint64_t)len;
   for (uint32_t i = 0; i < g_state.hot_range_count; i++) {
     formtrig_hot_range_t *r = &g_state.hot_ranges[i];
     uint64_t r_end = (uint64_t)r->start + (uint64_t)r->len;
-    if (end <= r->start || r_end <= start) continue;
+    int exact = r->start == start && r->len == len;
+    if (hint_kind || r->hint_kind) {
+      if (!exact) continue;
+    } else if (end <= r->start || r_end <= start) {
+      continue;
+    }
     uint32_t new_start = start < r->start ? start : r->start;
     uint64_t new_end = end > r_end ? end : r_end;
     r->start = new_start;
     r->len = new_end > UINT32_MAX ? UINT32_MAX - new_start
                                    : (uint32_t)(new_end - new_start);
     if (influence > r->influence) r->influence = influence;
+    if (hint_kind && (influence >= r->influence || !r->hint_kind)) {
+      r->hint_kind = hint_kind;
+      r->hint_value = hint_value;
+    }
     return;
   }
 
@@ -427,18 +480,35 @@ static void add_hot_range(uint32_t start, uint32_t len, double influence) {
   r->start = start;
   r->len = len;
   r->influence = influence;
+  r->hint_kind = hint_kind;
+  r->hint_value = hint_value;
 }
 
-static void prioritize_hot_range(uint32_t start, uint32_t len, double influence) {
+static void add_hot_range(uint32_t start, uint32_t len, double influence) {
+  add_hot_range_hint(start, len, influence, FORMTRIG_MUTATION_HINT_NONE, 0u);
+}
+
+static void prioritize_hot_range_hint(uint32_t start, uint32_t len,
+                                      double influence, uint32_t hint_kind,
+                                      uint32_t hint_value) {
   if (!len) return;
-  add_hot_range(start, len, influence);
+  add_hot_range_hint(start, len, influence, hint_kind, hint_value);
 
   uint64_t end = (uint64_t)start + (uint64_t)len;
   for (uint32_t i = 0; i < g_state.hot_range_count; i++) {
     formtrig_hot_range_t *r = &g_state.hot_ranges[i];
     uint64_t r_end = (uint64_t)r->start + (uint64_t)r->len;
-    if (end <= r->start || r_end <= start) continue;
+    int exact = r->start == start && r->len == len;
+    if (hint_kind || r->hint_kind) {
+      if (!exact) continue;
+    } else if (end <= r->start || r_end <= start) {
+      continue;
+    }
     if (influence > r->influence) r->influence = influence;
+    if (hint_kind && (influence >= r->influence || !r->hint_kind)) {
+      r->hint_kind = hint_kind;
+      r->hint_value = hint_value;
+    }
     if (i > 0) {
       formtrig_hot_range_t saved = *r;
       memmove(&g_state.hot_ranges[1], &g_state.hot_ranges[0],
@@ -447,6 +517,12 @@ static void prioritize_hot_range(uint32_t start, uint32_t len, double influence)
     }
     return;
   }
+}
+
+static void prioritize_hot_range(uint32_t start, uint32_t len,
+                                 double influence) {
+  prioritize_hot_range_hint(start, len, influence,
+                            FORMTRIG_MUTATION_HINT_NONE, 0u);
 }
 
 static int range_overlaps(uintptr_t a_base, size_t a_size, uintptr_t b_base,
@@ -626,6 +702,16 @@ int formtrig_target_selected(const char *label) {
   return target_label_matches(label);
 }
 
+static uint32_t label_site_id(const char *label) {
+  uint32_t hash = 2166136261u;
+  if (!label) label = "";
+  while (*label) {
+    hash ^= (unsigned char)*label++;
+    hash *= 16777619u;
+  }
+  return hash ? hash : 1u;
+}
+
 static uint64_t fnv_mix_u64(uint64_t sig, uint64_t value) {
   sig ^= value;
   sig *= 1099511628211ULL;
@@ -676,6 +762,7 @@ static uint32_t selected_lifted_source_flags(void) {
 static uint32_t component_lift_source_flags(void) {
   uint32_t flags = 0;
   for (uint32_t i = 0; i < g_state.component_count; i++) {
+    if (!(g_state.components[i].flags & FORMTRIG_COMPONENT_LIFTED)) continue;
     if (g_state.components[i].flags & FORMTRIG_COMPONENT_SPEC_LIFTED)
       flags |= FORMTRIG_SOURCE_SPEC_LIFTED;
     if (heuristic_lift_allowed() &&
@@ -685,6 +772,13 @@ static uint32_t component_lift_source_flags(void) {
         (g_state.components[i].flags & FORMTRIG_COMPONENT_MANUAL_TARGET))
       flags |= FORMTRIG_SOURCE_MANUAL_TARGET;
   }
+  return flags;
+}
+
+static uint32_t sanitize_manual_component_flags(uint32_t flags) {
+  flags &= ~(FORMTRIG_COMPONENT_SPEC_LIFTED |
+             FORMTRIG_COMPONENT_HEURISTIC_LIFTED);
+  flags |= FORMTRIG_COMPONENT_MANUAL_TARGET;
   return flags;
 }
 
@@ -715,9 +809,14 @@ static void refresh_selected_lifted_distance(void) {
   g_state.d_f_lifted = selected_lifted_distance();
 }
 
+static void observe_manual_lift_api_attempt(void) {
+  g_state.manual_api_lifted = 1;
+}
+
 static void record_heuristic_lifted_distance(const formtrig_event_t *event,
                                              uint32_t linked, uint8_t mode,
                                              double distance) {
+  if (!heuristic_lift_observed()) return;
   if (!finite_lift(distance)) return;
   if (distance < g_state.d_f_heuristic_lifted) {
     g_state.d_f_heuristic_lifted = distance;
@@ -766,24 +865,41 @@ static void push_event_full_class_with_input(
   maybe_target_site_hit(site_id);
   if (__formtrig_suppress) return;
   int reached = g_state.reached;
-  if (!reached && !record_pre_reach_events()) return;
+  if (!reached && !pre_reach_event_capture_enabled(kind, site_id)) return;
+  uint8_t reach_boundary =
+      (uint8_t)(reached && target_site_matches(site_id) &&
+                g_state.target_hit_count == 1u &&
+                g_state.ring_count == g_state.target_epoch_start);
+
+  formtrig_event_t local_event;
+  memset(&local_event, 0, sizeof(local_event));
+  local_event.kind = kind;
+  local_event.site_id = site_id;
+  local_event.input_start = input_start;
+  local_event.input_len = input_len;
+  local_event.a = a;
+  local_event.b = b;
+  local_event.c = c;
+  local_event.distance = distance;
+  local_event.is_write = is_write;
+  local_event.has_dynamic_producer = has_dynamic_producer;
+  local_event.after_reach = (uint8_t)reached;
+  local_event.site_class = site_class;
+  local_event.reach_boundary = reach_boundary;
+
+  if (!reached && !record_all_pre_reach_events()) {
+    apply_probe_specs_to_event(&local_event);
+    return;
+  }
 
   uint32_t slot = g_state.ring_count % FORMTRIG_RING_CAP;
-  g_state.ring[slot].kind = kind;
-  g_state.ring[slot].site_id = site_id;
-  g_state.ring[slot].input_start = input_start;
-  g_state.ring[slot].input_len = input_len;
-  g_state.ring[slot].a = a;
-  g_state.ring[slot].b = b;
-  g_state.ring[slot].c = c;
-  g_state.ring[slot].distance = distance;
-  g_state.ring[slot].is_write = is_write;
-  g_state.ring[slot].has_dynamic_producer = has_dynamic_producer;
-  g_state.ring[slot].after_reach = (uint8_t)reached;
-  g_state.ring[slot].site_class = site_class;
+  g_state.ring[slot] = local_event;
   g_state.ring_count++;
 
-  if (!reached) return;
+  if (!reached) {
+    apply_probe_specs_to_event(&g_state.ring[slot]);
+    return;
+  }
 
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, kind);
   g_state.trace_signature = fnv_mix_u64(g_state.trace_signature, site_id);
@@ -913,6 +1029,7 @@ static void remember_source_target_safety_margin(uint32_t kind,
                                                  double distance,
                                                  uint8_t outcome) {
   if (!source_target_site_mode() || !target_site_matches(site_id)) return;
+  if (!heuristic_lift_observed()) return;
   if (!g_state.reached || g_state.manual_lifted ||
       !informative_safety_distance(distance))
     return;
@@ -1199,6 +1316,7 @@ static int synthesize_null_pointer_producer_lift(int sink_satisfied,
 
 static void synthesize_lifted_binary_distance(int sink_satisfied,
                                               int strict_reached_sink) {
+  if (!heuristic_lift_observed()) return;
   if (g_state.manual_lifted || !g_state.binary_sink) return;
 
   double best = FORMTRIG_INF;
@@ -1273,6 +1391,7 @@ static int event_loads_pointer_field(const formtrig_event_t *event) {
 }
 
 static int synthesize_live_pointer_producer_lift(void) {
+  if (!heuristic_lift_observed()) return 0;
   if (!source_objective_enabled() || !g_state.reached || g_state.manual_lifted)
     return 0;
 
@@ -1472,6 +1591,7 @@ static int post_reach_fallback_rank(const formtrig_event_t *event) {
 }
 
 static int synthesize_post_reach_margin_fallback(void) {
+  if (!heuristic_lift_observed()) return 0;
   if (!source_target_site_mode() || !g_state.reached || g_state.manual_lifted)
     return 0;
   if (g_state.d_f_heuristic_lifted < FORMTRIG_INF / 2.0) return 0;
@@ -1524,17 +1644,29 @@ static int synthesize_post_reach_margin_fallback(void) {
 static double final_df(void) {
   double df = FORMTRIG_INF;
   refresh_selected_lifted_distance();
+  int spec_valid = g_state.d_f_spec_lifted < FORMTRIG_INF / 2.0;
   int lifted_valid = g_state.d_f_lifted < FORMTRIG_INF / 2.0;
   int direct_valid = g_state.d_f_direct < FORMTRIG_INF / 2.0;
+  int spec_zero = spec_valid && g_state.d_f_spec_lifted == 0.0;
   int direct_zero = direct_valid && g_state.d_f_direct == 0.0;
   int lifted_zero = lifted_valid && g_state.d_f_lifted == 0.0;
+  int spec_zero_confirmed = spec_zero && g_state.crash_predicate;
   int direct_zero_confirmed = direct_zero && g_state.crash_predicate;
   int lifted_zero_confirmed = lifted_zero && g_state.crash_predicate;
   /* A zero sub-signal is terminal only after the TC oracle confirms it. */
+  double spec_df =
+      spec_zero && !spec_zero_confirmed ? 1.0 : g_state.d_f_spec_lifted;
   double direct_df =
       direct_zero && !direct_zero_confirmed ? 1.0 : g_state.d_f_direct;
   double lifted_df =
       lifted_zero && !lifted_zero_confirmed ? 1.0 : g_state.d_f_lifted;
+
+  /*
+   * FORMTRIG-main is spec-driven: once BindingSpec-derived D_F exists, do not
+   * collapse it with native/direct binary distances. Those distances remain
+   * available as D_T/components for auditing and ablations.
+   */
+  if (spec_valid) return spec_df;
 
   if (g_state.binary_sink) {
     if (lifted_valid)
@@ -1578,8 +1710,12 @@ static formtrig_shm_record_t *dedicated_shm_record(void) {
 static formtrig_shm_record_t *shm_record(void) {
   formtrig_shm_record_t *dedicated = dedicated_shm_record();
   if (dedicated) return dedicated;
+#if FORMTRIG_USE_AFL_MAP_FALLBACK
   if (&__afl_area_ptr == NULL || __afl_area_ptr == NULL) return NULL;
   return (formtrig_shm_record_t *)(void *)(__afl_area_ptr + FORMTRIG_SHM_OFFSET);
+#else
+  return NULL;
+#endif
 }
 
 static void clear_shm(void) {
@@ -1592,6 +1728,11 @@ static void clear_shm(void) {
   rec->d_t = FORMTRIG_INF;
   rec->d_f = FORMTRIG_INF;
   rec->d_f_lifted = -1.0;
+  rec->d_f_spec_lifted = -1.0;
+  rec->d_f_heuristic_lifted = -1.0;
+  rec->d_f_manual_lifted = -1.0;
+  rec->source_flags = 0;
+  rec->observed_source_flags = 0;
   rec->trace_signature = 1469598103934665603ULL;
 }
 
@@ -1625,6 +1766,109 @@ static uint32_t default_role_for_component(uint32_t kind) {
 static uint32_t role_bit(uint32_t role) {
   if (role == FORMTRIG_ROLE_UNKNOWN || role > 31u) return 0;
   return 1u << (role - 1u);
+}
+
+static int role_counts_for_spec_df(uint32_t role) {
+  switch (role) {
+    case FORMTRIG_ROLE_ROOT_OBSERVE:
+    case FORMTRIG_ROLE_GUARD:
+    case FORMTRIG_ROLE_PRODUCER:
+    case FORMTRIG_ROLE_DESIRED_PRODUCER:
+    case FORMTRIG_ROLE_OPPOSITE_PRODUCER:
+    case FORMTRIG_ROLE_USE:
+    case FORMTRIG_ROLE_LIFECYCLE_EVENT:
+    case FORMTRIG_ROLE_SAME_OBJECT:
+      return 1;
+    default:
+      return 0;
+  }
+}
+
+static uint32_t expected_spec_role_bits_for_atom(uint32_t atom_id) {
+  if (!atom_id) return 0;
+  ensure_probe_specs_loaded();
+
+  uint32_t bits = 0;
+  for (uint32_t i = 0; i < g_probe_spec_count; i++) {
+    const formtrig_probe_spec_t *spec = &g_probe_specs[i];
+    if (spec->kind != FORMTRIG_SPEC_EVENT &&
+        spec->kind != FORMTRIG_SPEC_PHASE)
+      continue;
+    if (spec->atom_id != atom_id) continue;
+
+    uint32_t role = spec->role == FORMTRIG_ROLE_UNKNOWN
+                        ? default_role_for_component(spec->component_kind)
+                        : spec->role;
+    if (role_counts_for_spec_df(role)) bits |= role_bit(role);
+  }
+  return bits;
+}
+
+static int component_matches_role(const formtrig_progress_component_t *component,
+                                  uint32_t atom_id, uint32_t role) {
+  return component && component->atom_id == atom_id &&
+         component->role == role &&
+         (component->flags & FORMTRIG_COMPONENT_SPEC_LIFTED);
+}
+
+static int component_value_satisfies_goal(
+    const formtrig_progress_component_t *component) {
+  if (!component || !isfinite(component->value)) return 0;
+
+  if (component->flags & FORMTRIG_COMPONENT_HIGHER_IS_BETTER)
+    return component->value > 0.0;
+  if (component->flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER)
+    return component->value <= 0.0;
+  return 0;
+}
+
+static int satisfied_spec_role_for_atom(uint32_t atom_id, uint32_t role) {
+  for (uint32_t i = 0; i < g_state.component_count; i++) {
+    const formtrig_progress_component_t *component = &g_state.components[i];
+    if (!component_matches_role(component, atom_id, role)) continue;
+    if (component_value_satisfies_goal(component)) return 1;
+  }
+  return 0;
+}
+
+static double spec_role_graph_distance(void) {
+  double best = FORMTRIG_INF;
+
+  for (uint32_t i = 0; i < g_state.atom_signal_count; i++) {
+    const formtrig_atom_signal_t *signal = &g_state.atom_signals[i];
+    uint32_t expected = expected_spec_role_bits_for_atom(signal->atom_id);
+    uint32_t required = 0;
+    uint32_t missing = 0;
+
+    for (uint32_t role = FORMTRIG_ROLE_ROOT_OBSERVE;
+         role <= FORMTRIG_ROLE_SAME_OBJECT; role++) {
+      if (!(expected & role_bit(role))) continue;
+      if (!role_counts_for_spec_df(role)) continue;
+      required++;
+      if (!satisfied_spec_role_for_atom(signal->atom_id, role)) missing++;
+    }
+
+    if (required < 2) continue;
+    if (!(signal->role_bits & expected)) continue;
+
+    /*
+     * Keep zero reserved for terminal TC satisfaction. For non-trigger
+     * scheduling, a fully satisfied role graph is distance 1; each missing
+     * BindingSpec role adds one step.
+     */
+    best = min_double(best, (double)missing + 1.0);
+  }
+
+  return best;
+}
+
+static void refresh_spec_role_graph_distance(void) {
+  double role_df = spec_role_graph_distance();
+  if (!finite_lift(role_df)) return;
+  if (role_df < g_state.d_f_spec_lifted) {
+    g_state.d_f_spec_lifted = role_df;
+    refresh_selected_lifted_distance();
+  }
 }
 
 static formtrig_atom_signal_t *atom_signal_slot(formtrig_atom_signal_t *signals,
@@ -1662,13 +1906,13 @@ static void update_atom_signal_array(formtrig_atom_signal_t *signals,
       signal->guard_bits |= value > 0.0 ? 2u : 1u;
       break;
     case FORMTRIG_ROLE_PRODUCER:
-      signal->producer_bits |= 1u;
+      if (value > 0.0) signal->producer_bits |= 1u;
       break;
     case FORMTRIG_ROLE_DESIRED_PRODUCER:
-      signal->producer_bits |= 2u;
+      if (value > 0.0) signal->producer_bits |= 2u;
       break;
     case FORMTRIG_ROLE_OPPOSITE_PRODUCER:
-      signal->producer_bits |= 4u;
+      if (value > 0.0) signal->producer_bits |= 4u;
       break;
     case FORMTRIG_ROLE_USE:
       signal->use_bits |= value > 0.0 ? 2u : 1u;
@@ -1683,6 +1927,9 @@ static void update_atom_signal_array(formtrig_atom_signal_t *signals,
       break;
     case FORMTRIG_ROLE_INPUT_INFLUENCE:
       signal->event_bits |= 1u << ((kind + 17u) & 31u);
+      break;
+    case FORMTRIG_ROLE_REPAIR_HOOK:
+      signal->event_bits |= 1u << ((kind + 23u) & 31u);
       break;
     default:
       break;
@@ -1846,6 +2093,79 @@ static uint32_t parse_value_mode_token(const char *token) {
     return FORMTRIG_SPEC_VALUE_B;
   if (strcmp(token, "c") == 0 || strcmp(token, "7") == 0)
     return FORMTRIG_SPEC_VALUE_C;
+  if (strcmp(token, "distance_to_a") == 0 ||
+      strcmp(token, "distance-to-a") == 0 ||
+      strcmp(token, "target_distance_a") == 0 ||
+      strcmp(token, "target-distance-a") == 0 ||
+      strcmp(token, "abs_to_a") == 0 || strcmp(token, "abs-to-a") == 0 ||
+      strcmp(token, "8") == 0)
+    return FORMTRIG_SPEC_VALUE_DISTANCE_TO_A;
+  if (strcmp(token, "distance_to_b") == 0 ||
+      strcmp(token, "distance-to-b") == 0 ||
+      strcmp(token, "target_distance_b") == 0 ||
+      strcmp(token, "target-distance-b") == 0 ||
+      strcmp(token, "abs_to_b") == 0 || strcmp(token, "abs-to-b") == 0 ||
+      strcmp(token, "9") == 0)
+    return FORMTRIG_SPEC_VALUE_DISTANCE_TO_B;
+  if (strcmp(token, "distance_to_c") == 0 ||
+      strcmp(token, "distance-to-c") == 0 ||
+      strcmp(token, "target_distance_c") == 0 ||
+      strcmp(token, "target-distance-c") == 0 ||
+      strcmp(token, "abs_to_c") == 0 || strcmp(token, "abs-to-c") == 0 ||
+      strcmp(token, "10") == 0)
+    return FORMTRIG_SPEC_VALUE_DISTANCE_TO_C;
+  if (strcmp(token, "absent") == 0 || strcmp(token, "not_hit") == 0 ||
+      strcmp(token, "not-hit") == 0 || strcmp(token, "not_observed") == 0 ||
+      strcmp(token, "not-observed") == 0 || strcmp(token, "11") == 0)
+    return FORMTRIG_SPEC_VALUE_ABSENT;
+  return UINT32_MAX;
+}
+
+static uint32_t parse_mutation_hint_token(const char *token) {
+  if (!token || !*token) return FORMTRIG_MUTATION_HINT_NONE;
+  uint32_t numeric = 0;
+  if (parse_u32_token(token, &numeric)) return numeric;
+  if (strcmp(token, "none") == 0 || strcmp(token, "default") == 0)
+    return FORMTRIG_MUTATION_HINT_NONE;
+  if (strcmp(token, "set_byte") == 0 || strcmp(token, "set-byte") == 0 ||
+      strcmp(token, "byte") == 0)
+    return FORMTRIG_MUTATION_HINT_SET_BYTE;
+  if (strcmp(token, "clear") == 0 || strcmp(token, "zero") == 0)
+    return FORMTRIG_MUTATION_HINT_CLEAR;
+  if (strcmp(token, "fill") == 0)
+    return FORMTRIG_MUTATION_HINT_FILL;
+  if (strcmp(token, "delete") == 0 || strcmp(token, "delete_like") == 0 ||
+      strcmp(token, "delete-like") == 0)
+    return FORMTRIG_MUTATION_HINT_DELETE;
+  if (strcmp(token, "insert_byte") == 0 || strcmp(token, "insert-byte") == 0 ||
+      strcmp(token, "insert") == 0)
+    return FORMTRIG_MUTATION_HINT_INSERT_BYTE;
+  if (strcmp(token, "write_u16_le") == 0 ||
+      strcmp(token, "write-u16-le") == 0 || strcmp(token, "u16le") == 0)
+    return FORMTRIG_MUTATION_HINT_WRITE_U16_LE;
+  if (strcmp(token, "write_u32_le") == 0 ||
+      strcmp(token, "write-u32-le") == 0 || strcmp(token, "u32le") == 0)
+    return FORMTRIG_MUTATION_HINT_WRITE_U32_LE;
+  if (strcmp(token, "xor_byte") == 0 || strcmp(token, "xor-byte") == 0 ||
+      strcmp(token, "xor") == 0)
+    return FORMTRIG_MUTATION_HINT_XOR_BYTE;
+  return UINT32_MAX;
+}
+
+static uint32_t parse_observe_window_token(const char *token) {
+  if (!token || !*token) return UINT32_MAX;
+  if (strcmp(token, "post_reach") == 0 || strcmp(token, "post-reach") == 0 ||
+      strcmp(token, "after_reach") == 0 || strcmp(token, "after-reach") == 0 ||
+      strcmp(token, "post") == 0 || strcmp(token, "0") == 0)
+    return FORMTRIG_SPEC_WINDOW_POST_REACH;
+  if (strcmp(token, "pre_reach") == 0 || strcmp(token, "pre-reach") == 0 ||
+      strcmp(token, "before_reach") == 0 ||
+      strcmp(token, "before-reach") == 0 || strcmp(token, "pre") == 0 ||
+      strcmp(token, "1") == 0)
+    return FORMTRIG_SPEC_WINDOW_PRE_REACH;
+  if (strcmp(token, "any") == 0 || strcmp(token, "both") == 0 ||
+      strcmp(token, "2") == 0)
+    return FORMTRIG_SPEC_WINDOW_ANY;
   return UINT32_MAX;
 }
 
@@ -1878,11 +2198,44 @@ static uint32_t parse_role_token(const char *token) {
   if (strcmp(token, "input_influence") == 0 ||
       strcmp(token, "input-influence") == 0 || strcmp(token, "9") == 0)
     return FORMTRIG_ROLE_INPUT_INFLUENCE;
+  if (strcmp(token, "repair_hook") == 0 ||
+      strcmp(token, "repair-hook") == 0 || strcmp(token, "10") == 0)
+    return FORMTRIG_ROLE_REPAIR_HOOK;
   return FORMTRIG_ROLE_UNKNOWN;
 }
 
 static char *next_spec_token(char **saveptr) {
   return strtok_r(NULL, " \t\r\n,", saveptr);
+}
+
+static int parse_probe_spec_tail(char **saveptr, formtrig_probe_spec_t *spec) {
+  char *token = next_spec_token(saveptr);
+  if (!token) return 1;
+
+  uint32_t window = parse_observe_window_token(token);
+  if (window != UINT32_MAX) {
+    spec->observe_window = window;
+    return 1;
+  }
+
+  if (!parse_u64_token(token, &spec->source_id)) return 0;
+
+  token = next_spec_token(saveptr);
+  if (!token) return 1;
+  window = parse_observe_window_token(token);
+  if (window != UINT32_MAX) {
+    spec->observe_window = window;
+    return 1;
+  }
+
+  if (!parse_u64_token(token, &spec->context_hash)) return 0;
+
+  token = next_spec_token(saveptr);
+  if (!token) return 1;
+  window = parse_observe_window_token(token);
+  if (window == UINT32_MAX) return 0;
+  spec->observe_window = window;
+  return 1;
 }
 
 static void load_probe_spec_line(char *line) {
@@ -1927,11 +2280,7 @@ static void load_probe_spec_line(char *line) {
     if (confidence && !parse_double_token(confidence, &spec.confidence))
       return;
 
-    char *source_id = next_spec_token(&saveptr);
-    char *context_hash = next_spec_token(&saveptr);
-    if (source_id && !parse_u64_token(source_id, &spec.source_id)) return;
-    if (context_hash && !parse_u64_token(context_hash, &spec.context_hash))
-      return;
+    if (!parse_probe_spec_tail(&saveptr, &spec)) return;
 
     g_probe_specs[g_probe_spec_count++] = spec;
     return;
@@ -1963,11 +2312,7 @@ static void load_probe_spec_line(char *line) {
     if (confidence && !parse_double_token(confidence, &spec.confidence))
       return;
 
-    char *source_id = next_spec_token(&saveptr);
-    char *context_hash = next_spec_token(&saveptr);
-    if (source_id && !parse_u64_token(source_id, &spec.source_id)) return;
-    if (context_hash && !parse_u64_token(context_hash, &spec.context_hash))
-      return;
+    if (!parse_probe_spec_tail(&saveptr, &spec)) return;
 
     g_probe_specs[g_probe_spec_count++] = spec;
     return;
@@ -1997,9 +2342,9 @@ static void load_probe_spec_line(char *line) {
     if (confidence && !parse_double_token(confidence, &spec.confidence))
       return;
 
-    char *context_hash = next_spec_token(&saveptr);
-    if (context_hash && !parse_u64_token(context_hash, &spec.context_hash))
-      return;
+    if (!parse_probe_spec_tail(&saveptr, &spec)) return;
+    if (!spec.context_hash) spec.context_hash = spec.source_id;
+    if (!spec.source_id) spec.source_id = spec.context_hash;
 
     g_probe_specs[g_probe_spec_count++] = spec;
     return;
@@ -2012,6 +2357,8 @@ static void load_probe_spec_line(char *line) {
     char *start = next_spec_token(&saveptr);
     char *len = next_spec_token(&saveptr);
     char *influence = next_spec_token(&saveptr);
+    char *mutation_hint = next_spec_token(&saveptr);
+    char *mutation_value = next_spec_token(&saveptr);
 
     spec.kind = FORMTRIG_SPEC_RANGE;
     spec.value = 1.0;
@@ -2025,6 +2372,14 @@ static void load_probe_spec_line(char *line) {
       return;
     if (influence && !parse_double_token(influence, &spec.value)) return;
     if (!isfinite(spec.value) || spec.value <= 0.0) return;
+    if (mutation_hint) {
+      spec.mutation_hint = parse_mutation_hint_token(mutation_hint);
+      if (spec.mutation_hint == UINT32_MAX) return;
+    }
+    if (mutation_value &&
+        !parse_u32_token(mutation_value, &spec.mutation_value))
+      return;
+    if (!parse_probe_spec_tail(&saveptr, &spec)) return;
 
     g_probe_specs[g_probe_spec_count++] = spec;
   }
@@ -2051,19 +2406,28 @@ static void reset_probe_spec_runtime_state(void) {
   ensure_probe_specs_loaded();
   for (uint32_t i = 0; i < g_probe_spec_count; i++) {
     g_probe_specs[i].phase_prefix = 0;
+    g_probe_specs[i].observed_count = 0;
     if (g_probe_specs[i].kind == FORMTRIG_SPEC_RANGE &&
         g_probe_specs[i].event_kind == FORMTRIG_SPEC_WILDCARD &&
         g_probe_specs[i].site_id == FORMTRIG_SPEC_WILDCARD) {
-      prioritize_hot_range(g_probe_specs[i].range_start,
-                           g_probe_specs[i].range_len,
-                           g_probe_specs[i].value);
+      prioritize_hot_range_hint(g_probe_specs[i].range_start,
+                                g_probe_specs[i].range_len,
+                                g_probe_specs[i].value,
+                                g_probe_specs[i].mutation_hint,
+                                g_probe_specs[i].mutation_value);
     }
   }
 }
 
 static int probe_spec_matches(const formtrig_probe_spec_t *spec,
                               const formtrig_event_t *event) {
-  if (!spec || !event || !event->after_reach) return 0;
+  if (!spec || !event) return 0;
+  if (spec->observe_window == FORMTRIG_SPEC_WINDOW_POST_REACH &&
+      !event->after_reach)
+    return 0;
+  if (spec->observe_window == FORMTRIG_SPEC_WINDOW_PRE_REACH &&
+      event->after_reach && !event->reach_boundary)
+    return 0;
   if (event->kind == 1u || event->kind == 2u) return 0;
   if (spec->event_kind != FORMTRIG_SPEC_WILDCARD &&
       spec->event_kind != event->kind)
@@ -2072,6 +2436,28 @@ static int probe_spec_matches(const formtrig_probe_spec_t *spec,
       spec->site_id != event->site_id)
     return 0;
   return 1;
+}
+
+static int pre_reach_event_capture_enabled(uint32_t kind, uint32_t site_id) {
+  if (!record_pre_reach_events()) return 0;
+  if (record_all_pre_reach_events()) return 1;
+
+  formtrig_event_t event;
+  memset(&event, 0, sizeof(event));
+  event.kind = kind;
+  event.site_id = site_id;
+  event.after_reach = 0;
+
+  ensure_probe_specs_loaded();
+  for (uint32_t i = 0; i < g_probe_spec_count; i++) {
+    formtrig_probe_spec_t *spec = &g_probe_specs[i];
+    if (spec->kind != FORMTRIG_SPEC_EVENT &&
+        spec->kind != FORMTRIG_SPEC_PHASE &&
+        spec->kind != FORMTRIG_SPEC_RANGE)
+      continue;
+    if (probe_spec_matches(spec, &event)) return 1;
+  }
+  return 0;
 }
 
 static double probe_spec_event_value(const formtrig_probe_spec_t *spec,
@@ -2098,6 +2484,14 @@ static double probe_spec_event_value(const formtrig_probe_spec_t *spec,
       return u64_to_double_saturated(event->b);
     case FORMTRIG_SPEC_VALUE_C:
       return u64_to_double_saturated(event->c);
+    case FORMTRIG_SPEC_VALUE_DISTANCE_TO_A:
+      return fabs(u64_to_double_saturated(event->a) - spec->value);
+    case FORMTRIG_SPEC_VALUE_DISTANCE_TO_B:
+      return fabs(u64_to_double_saturated(event->b) - spec->value);
+    case FORMTRIG_SPEC_VALUE_DISTANCE_TO_C:
+      return fabs(u64_to_double_saturated(event->c) - spec->value);
+    case FORMTRIG_SPEC_VALUE_ABSENT:
+      return 0.0;
     default:
       return FORMTRIG_INF;
   }
@@ -2160,12 +2554,13 @@ static void record_probe_component(const formtrig_probe_spec_t *spec,
                                    double value) {
   uint64_t source_id = spec->source_id;
   uint64_t context_hash = spec->context_hash;
+  uint32_t site_id = event ? event->site_id : spec->site_id;
   if (!source_id) {
     if (spec->kind == FORMTRIG_SPEC_PHASE)
       source_id = component_source_id(spec->component_kind, spec->atom_id,
                                       spec->priority);
     else
-      source_id = component_source_id(spec->component_kind, event->site_id,
+      source_id = component_source_id(spec->component_kind, site_id,
                                       spec->atom_id);
   }
   if (!context_hash)
@@ -2178,13 +2573,14 @@ static void record_probe_component(const formtrig_probe_spec_t *spec,
                                    spec->role, spec->priority, flags,
                                    source_id, context_hash, value,
                                    spec->confidence);
+  refresh_spec_role_graph_distance();
   if ((spec->direction_flag & FORMTRIG_COMPONENT_LOWER_IS_BETTER) &&
       value < g_state.d_f_spec_lifted) {
     g_state.d_f_spec_lifted = value;
     refresh_selected_lifted_distance();
-    remember_df_source_with_distance(event, 1u, 10u, value);
+    if (event) remember_df_source_with_distance(event, 1u, 10u, value);
   }
-  if (event->input_len)
+  if (event && event->input_len)
     prioritize_hot_range(event->input_start, event->input_len, 3.0);
 }
 
@@ -2220,6 +2616,7 @@ static void apply_probe_specs_to_event(const formtrig_event_t *event) {
   for (uint32_t i = 0; i < g_probe_spec_count; i++) {
     formtrig_probe_spec_t *spec = &g_probe_specs[i];
     if (!probe_spec_matches(spec, event)) continue;
+    spec->observed_count++;
 
     if (spec->kind == FORMTRIG_SPEC_EVENT) {
       double value = probe_spec_event_value(spec, event);
@@ -2237,8 +2634,25 @@ static void apply_probe_specs_to_event(const formtrig_event_t *event) {
     }
 
     if (spec->kind == FORMTRIG_SPEC_RANGE) {
-      prioritize_hot_range(spec->range_start, spec->range_len, spec->value);
+      prioritize_hot_range_hint(spec->range_start, spec->range_len, spec->value,
+                                spec->mutation_hint, spec->mutation_value);
     }
+  }
+}
+
+static void record_absent_probe_components(void) {
+  ensure_probe_specs_loaded();
+  if (!g_probe_spec_count || !g_state.reached) return;
+
+  for (uint32_t i = 0; i < g_probe_spec_count; i++) {
+    formtrig_probe_spec_t *spec = &g_probe_specs[i];
+    if (spec->kind != FORMTRIG_SPEC_EVENT ||
+        spec->value_mode != FORMTRIG_SPEC_VALUE_ABSENT ||
+        spec->observed_count)
+      continue;
+
+    double value = spec->value > 0.0 ? spec->value : 1.0;
+    record_probe_component(spec, NULL, value);
   }
 }
 
@@ -2246,6 +2660,10 @@ static void publish_shm(void) {
   if (!g_state.reached) return;
   if (!g_state.finalized && !g_state.crash_predicate && !publish_eager())
     return;
+
+  record_absent_probe_components();
+  refresh_spec_role_graph_distance();
+  refresh_selected_lifted_distance();
 
   formtrig_shm_record_t *rec = shm_record();
   if (!rec) return;
@@ -2256,7 +2674,6 @@ static void publish_shm(void) {
   rec->flags = 0;
   if (g_state.reached) rec->flags |= FORMTRIG_FLAG_REACHED;
   if (g_state.crash_predicate) rec->flags |= FORMTRIG_FLAG_CRASH_PREDICATE;
-  refresh_selected_lifted_distance();
   uint32_t source_flags = runtime_lift_source_flags();
   if (source_flags) rec->flags |= FORMTRIG_FLAG_LIFTED;
   if (source_flags & FORMTRIG_SOURCE_SPEC_LIFTED)
@@ -2266,6 +2683,7 @@ static void publish_shm(void) {
   if (source_flags & FORMTRIG_SOURCE_MANUAL_TARGET)
     rec->flags |= FORMTRIG_FLAG_MANUAL_LIFTED;
   rec->source_flags = source_flags;
+  rec->observed_source_flags = observed_lift_source_flags();
   rec->target_hit_count = g_state.target_hit_count;
   rec->trace_signature = g_state.trace_signature;
   rec->d_t = g_state.d_t < FORMTRIG_INF / 2.0
@@ -2288,14 +2706,6 @@ static void publish_shm(void) {
   rec->hot_range_count = g_state.hot_range_count;
   for (uint32_t i = 0; i < g_state.component_count; i++) {
     formtrig_progress_component_t *component = &g_state.components[i];
-    if (component->flags & FORMTRIG_COMPONENT_LIFTED)
-      rec->flags |= FORMTRIG_FLAG_LIFTED;
-    if (component->flags & FORMTRIG_COMPONENT_SPEC_LIFTED)
-      rec->flags |= FORMTRIG_FLAG_SPEC_LIFTED;
-    if (component->flags & FORMTRIG_COMPONENT_HEURISTIC_LIFTED)
-      rec->flags |= FORMTRIG_FLAG_HEURISTIC_LIFTED;
-    if (component->flags & FORMTRIG_COMPONENT_MANUAL_TARGET)
-      rec->flags |= FORMTRIG_FLAG_MANUAL_LIFTED;
     publish_component_role(rec, component->kind, component->atom_id,
                            component->role, component->priority,
                            component->flags, component->source_id,
@@ -2373,7 +2783,7 @@ static void publish_shm(void) {
         g_state.df_source.linked_count ? 0.9 : 0.5);
   }
 
-  if (g_state.hot_range_count) {
+  if (g_state.hot_range_count && heuristic_lift_observed()) {
     double max_influence = 0.0;
     uint32_t best_start = 0u;
     uint32_t best_len = 0u;
@@ -2470,9 +2880,11 @@ static void write_jsonl(void) {
   for (uint32_t i = 0; i < g_state.hot_range_count; i++) {
     if (i) fputc(',', f);
     fprintf(f, "{\"start\":%" PRIu32 ",\"len\":%" PRIu32
-               ",\"influence\":%.17g}",
+               ",\"influence\":%.17g,\"hint_kind\":%" PRIu32
+               ",\"hint_value\":%" PRIu32 "}",
             g_state.hot_ranges[i].start, g_state.hot_ranges[i].len,
-            g_state.hot_ranges[i].influence);
+            g_state.hot_ranges[i].influence, g_state.hot_ranges[i].hint_kind,
+            g_state.hot_ranges[i].hint_value);
   }
 
   fprintf(f, "],\"components\":[");
@@ -2649,13 +3061,15 @@ void formtrig_target_hit(const char *label) {
   __formtrig_active = 1;
   __formtrig_pre_reach_enabled = 1;
   g_state.target_hit_count++;
-  push_event(1u, g_state.target_hit_count, 0, 0, 0.0);
+  push_event(FORMTRIG_EVENT_TARGET_HIT, g_state.target_hit_count, 0, 0, 0.0);
   g_state.target_epoch_start = g_state.ring_count;
   publish_shm();
 }
 
 void formtrig_crash_predicate(int satisfied, const char *label) {
   if (!target_label_matches(label)) return;
+  push_event_full(FORMTRIG_EVENT_CANARY, label_site_id(label),
+                  satisfied ? 1u : 0u, 0, 0, satisfied ? 0.0 : 1.0, 0, 0);
   if (lift_crash_predicate()) g_state.binary_sink = 1;
   if (satisfied) {
     g_state.crash_predicate = 1;
@@ -2663,7 +3077,8 @@ void formtrig_crash_predicate(int satisfied, const char *label) {
   } else if (g_state.reached && g_state.d_t >= FORMTRIG_INF / 2.0) {
     g_state.d_t = 1.0;
   }
-  push_event(2u, satisfied ? 1u : 0u, 0, 0, satisfied ? 0.0 : 1.0);
+  push_event(FORMTRIG_EVENT_CRASH_PREDICATE, satisfied ? 1u : 0u, 0, 0,
+             satisfied ? 0.0 : 1.0);
   if (lift_crash_predicate()) synthesize_lifted_binary_distance(satisfied, 1);
   if (debug_predicate_snapshot()) write_jsonl();
   publish_shm();
@@ -2712,6 +3127,8 @@ void formtrig_record_direct_margin(double distance, const char *kind) {
 
 void formtrig_record_lifted_distance(double distance, const char *kind) {
   (void)kind;
+  observe_manual_lift_api_attempt();
+  publish_shm();
   if (!manual_lift_api_allowed()) return;
   if (distance < 0.0) distance = 0.0;
   g_state.d_f_manual_lifted = distance;
@@ -2728,7 +3145,7 @@ void formtrig_record_lifted_distance(double distance, const char *kind) {
   g_state.df_source.outcome = distance == 0.0 ? 1u : 0u;
   g_state.df_source.after_reach = g_state.reached ? 1u : 0u;
   g_state.df_source.mode = 3u;
-  push_event(12u, 0, 0, 0, distance);
+  push_event(FORMTRIG_EVENT_MANUAL_LIFT, 0, 0, 0, distance);
   publish_shm();
 }
 
@@ -2737,14 +3154,14 @@ void formtrig_record_progress_component(uint32_t kind, uint32_t atom_id,
                                         uint64_t source_id,
                                         uint64_t context_hash, double value,
                                         double confidence) {
-  if (manual_component_requires_lift_permission(kind, flags) &&
-      !manual_lift_api_allowed())
-    return;
-  if (manual_component_requires_lift_permission(kind, flags))
-    flags |= FORMTRIG_COMPONENT_MANUAL_TARGET;
+  observe_manual_lift_api_attempt();
+  publish_shm();
+  if (!manual_lift_api_allowed()) return;
+  uint32_t manual_lifted = manual_component_requires_lift_permission(kind, flags);
+  flags = sanitize_manual_component_flags(flags);
   state_record_component(kind, atom_id, priority, flags, source_id,
                          context_hash, value, confidence);
-  if (manual_component_requires_lift_permission(kind, flags)) {
+  if (manual_lifted) {
     g_state.manual_lifted = 1;
     g_state.manual_api_lifted = 1;
   }
@@ -2756,14 +3173,14 @@ void formtrig_record_role_component(uint32_t kind, uint32_t atom_id,
                                     uint32_t flags, uint64_t source_id,
                                     uint64_t context_hash, double value,
                                     double confidence) {
-  if (manual_component_requires_lift_permission(kind, flags) &&
-      !manual_lift_api_allowed())
-    return;
-  if (manual_component_requires_lift_permission(kind, flags))
-    flags |= FORMTRIG_COMPONENT_MANUAL_TARGET;
+  observe_manual_lift_api_attempt();
+  publish_shm();
+  if (!manual_lift_api_allowed()) return;
+  uint32_t manual_lifted = manual_component_requires_lift_permission(kind, flags);
+  flags = sanitize_manual_component_flags(flags);
   state_record_component_role(kind, atom_id, role, priority, flags, source_id,
                               context_hash, value, confidence);
-  if (manual_component_requires_lift_permission(kind, flags)) {
+  if (manual_lifted) {
     g_state.manual_lifted = 1;
     g_state.manual_api_lifted = 1;
   }
@@ -2826,7 +3243,9 @@ void *__formtrig_malloc(size_t size, uint32_t site_id) {
   void *ptr = malloc(size);
   maybe_target_site_hit(site_id);
   if (__formtrig_suppress) return ptr;
-  if (!__formtrig_active && !track_alloc_pre_reach()) return ptr;
+  if (!__formtrig_active && !track_alloc_pre_reach() &&
+      !pre_reach_event_capture_enabled(5u, site_id))
+    return ptr;
   if (ptr) {
     for (uint32_t i = 0; i < FORMTRIG_OBJECT_CAP; i++) {
       if (!g_state.objects[i].live) {
@@ -2849,7 +3268,8 @@ void __formtrig_free(void *ptr, uint32_t site_id) {
     free(ptr);
     return;
   }
-  if (!__formtrig_active && !track_alloc_pre_reach()) {
+  if (!__formtrig_active && !track_alloc_pre_reach() &&
+      !pre_reach_event_capture_enabled(6u, site_id)) {
     free(ptr);
     return;
   }
@@ -2873,7 +3293,7 @@ void __formtrig_log_cmp_ex(uint32_t site_id, uint32_t predicate, uint64_t lhs,
   }
   maybe_target_site_hit(site_id);
   int active = __formtrig_active;
-  if (!active && !record_pre_reach_events()) return;
+  if (!active && !pre_reach_event_capture_enabled(7u, site_id)) return;
   uint32_t input_start = 0;
   uint32_t input_len = 0;
   uint32_t event_input_start = 0;
@@ -2913,7 +3333,7 @@ void __formtrig_log_branch(uint32_t site_id, uint8_t outcome) {
   }
   maybe_target_site_hit(site_id);
   int active = __formtrig_active;
-  if (!active && !record_pre_reach_events()) return;
+  if (!active && !pre_reach_event_capture_enabled(8u, site_id)) return;
   push_event(8u, site_id, outcome, 0, outcome ? 0.0 : 1.0);
   if (active) publish_shm();
 }
@@ -2926,7 +3346,7 @@ void __formtrig_log_mem_access(uint32_t site_id, const void *ptr, size_t size,
   }
   maybe_target_site_hit(site_id);
   int active = __formtrig_active;
-  if (!active && !record_pre_reach_events()) return;
+  if (!active && !pre_reach_event_capture_enabled(9u, site_id)) return;
   uintptr_t p = (uintptr_t)ptr;
   uint32_t input_start = 0;
   uint32_t input_len = 0;
@@ -2979,7 +3399,7 @@ void __formtrig_log_mem_transfer(uint32_t site_id, const void *dst,
   }
   maybe_target_site_hit(site_id);
   int active = __formtrig_active;
-  if (!active && !record_pre_reach_events()) return;
+  if (!active && !pre_reach_event_capture_enabled(15u, site_id)) return;
   uintptr_t d = (uintptr_t)dst;
   uintptr_t s = (uintptr_t)src;
   int bulk_input_setup =
@@ -3002,7 +3422,7 @@ void __formtrig_log_div(uint32_t site_id, int64_t divisor) {
   }
   maybe_target_site_hit(site_id);
   int active = __formtrig_active;
-  if (!active && !record_pre_reach_events()) return;
+  if (!active && !pre_reach_event_capture_enabled(10u, site_id)) return;
   double d = abs_i64_as_double(divisor);
   if (active && !g_state.manual_direct) {
     g_state.d_f_direct = min_double(g_state.d_f_direct, d);
@@ -3027,7 +3447,7 @@ void __formtrig_log_arith(uint32_t site_id, uint32_t opcode, uint64_t lhs,
   }
   maybe_target_site_hit(site_id);
   int active = __formtrig_active;
-  if (!active && !record_pre_reach_events()) return;
+  if (!active && !pre_reach_event_capture_enabled(11u, site_id)) return;
   double d = FORMTRIG_INF;
   uint64_t mask = bit_mask(bit_width);
   lhs &= mask;

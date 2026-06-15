@@ -4,6 +4,7 @@ build/
 *.a
 *.pyc
 __pycache__/
+.venv-deepseek/
 
 # Local benchmark checkouts, third-party sources, and papers are inputs, not
 # FORMTRIG experiment implementation state.
@@ -35,3 +36,9 @@ artifacts/**/*.raw
 benchmarks/toys/bin/
 benchmarks/cve_sources/
 benchmarks/cve_build/
+
+# Local configure/preflight outputs.
+config.log
+preflight_package.tar.gz
+preflight_v*_package.tar.gz
+preflight_v*_checks.json

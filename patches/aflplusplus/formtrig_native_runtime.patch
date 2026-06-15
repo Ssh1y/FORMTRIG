@@ -5,7 +5,7 @@ index 88816e8..198fb51 100644
 @@ -45,6 +45,11 @@ ifdef NO_SPLICING
    override CFLAGS_OPT += -DNO_SPLICING
  endif
- 
+
 +FORMTRIG_RUNTIME_ROOT ?= $(firstword $(wildcard $(CURDIR)/../formtrig) $(wildcard $(CURDIR)/../../../formtrig))
 +ifneq "$(FORMTRIG_RUNTIME_ROOT)" ""
 +  override CFLAGS += -I$(FORMTRIG_RUNTIME_ROOT)/include
@@ -15,7 +15,7 @@ index 88816e8..198fb51 100644
    $(info Compiling ASAN version of binaries)
    override CFLAGS += $(ASAN_CFLAGS)
 diff --git a/include/afl-fuzz.h b/include/afl-fuzz.h
-index ef84a18..59521f7 100644
+index ef84a18..270906e 100644
 --- a/include/afl-fuzz.h
 +++ b/include/afl-fuzz.h
 @@ -46,6 +46,11 @@
@@ -27,13 +27,13 @@ index ef84a18..59521f7 100644
 +#ifndef FORMTRIG_INF
 +  #define FORMTRIG_INF 1.0e300
 +#endif
- 
+
  #include <stdio.h>
  #include <unistd.h>
 @@ -150,6 +155,30 @@ struct tainted {
- 
+
  };
- 
+
 +typedef struct formtrig_queue_meta {
 +
 +  u8 seen, reached, triggered, lifted, stable;
@@ -43,7 +43,7 @@ index ef84a18..59521f7 100644
 +
 +  double d_t, d_f, d_f_lifted;
 +  double d_f_spec_lifted, d_f_heuristic_lifted, d_f_manual_lifted;
-+  u32    source_flags;
++  u32    source_flags, observed_source_flags;
 +
 +  formtrig_hot_range_t hot_ranges[FORMTRIG_MAX_HOT_RANGES];
 +  formtrig_progress_component_t components[FORMTRIG_MAX_PROGRESS_COMPONENTS];
@@ -59,25 +59,26 @@ index ef84a18..59521f7 100644
 +} formtrig_frontier_entry_t;
 +
  struct queue_entry {
- 
+
    u8 *fname;                            /* File name for the test case      */
 @@ -198,6 +227,8 @@ struct queue_entry {
    double perf_score,                    /* performance score                */
        weight;
- 
+
 +  formtrig_queue_meta_t formtrig;       /* FORMTRIG runtime progress signal */
 +
    u8 *testcase_buf;                     /* The testcase buffer, if loaded.  */
- 
+
    u8             *cmplog_colorinput;    /* the result buf of colorization   */
-@@ -546,6 +577,30 @@ typedef struct afl_state {
+@@ -546,6 +577,31 @@ typedef struct afl_state {
        *virgin_tmout,                    /* Bits we haven't seen in tmouts   */
        *virgin_crash;                    /* Bits we haven't seen in crashes  */
- 
+
 +  u8 formtrig_enabled;                  /* Native FORMTRIG queue guidance   */
 +  s32 formtrig_shm_fd;                  /* FORMTRIG signal shm descriptor   */
 +  u8 *formtrig_shm_area,                /* FORMTRIG signal shm mapping      */
 +      *formtrig_shm_path;               /* POSIX shm name exported to target*/
++  u8 formtrig_defer_calibration_frontier; /* Delay provisional queue inserts */
 +
 +  formtrig_queue_meta_t formtrig_last;  /* Last target-run FORMTRIG signal  */
 +  double formtrig_best_df,              /* Best non-terminal lifted distance*/
@@ -101,7 +102,7 @@ index ef84a18..59521f7 100644
    double *alias_probability;            /* alias weighted probabilities     */
    u32    *alias_table;                /* alias weighted random lookup table */
    u32     active_items;                 /* enabled entries in the queue     */
-@@ -1099,6 +1154,20 @@ void destroy_queue(afl_state_t *);
+@@ -1099,6 +1155,20 @@ void destroy_queue(afl_state_t *);
  void update_bitmap_score(afl_state_t *, struct queue_entry *);
  void cull_queue(afl_state_t *);
  u32  calculate_score(afl_state_t *, struct queue_entry *);
@@ -119,12 +120,12 @@ index ef84a18..59521f7 100644
 +void formtrig_log_progress(afl_state_t *, const char *,
 +                           const char *, const formtrig_queue_meta_t *, u32,
 +                           u64);
- 
+
  /* Bitmap */
- 
-@@ -1328,4 +1397,3 @@ void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q, u8 *mem);
+
+@@ -1328,4 +1398,3 @@ void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q, u8 *mem);
  #endif
- 
+
  #endif
 -
 diff --git a/include/envs.h b/include/envs.h
@@ -141,17 +142,17 @@ index 0007d5a..9ef509f 100644
      "AFL_NYX_DISABLE_SNAPSHOT_MODE",
 @@ -261,4 +262,3 @@ static char *afl_environment_variables[] = {
  extern char *afl_environment_variables[];
- 
+
  #endif
 -
 diff --git a/src/afl-fuzz-bitmap.c b/src/afl-fuzz-bitmap.c
-index 87157ca..91cf517 100644
+index 87157ca..508b19b 100644
 --- a/src/afl-fuzz-bitmap.c
 +++ b/src/afl-fuzz-bitmap.c
 @@ -452,6 +452,58 @@ void write_crash_readme(afl_state_t *afl) {
     save or queue the input test case for further analysis if so. Returns 1 if
     entry is saved, 0 otherwise. */
- 
+
 +static u8 formtrig_confirm_replay_stable(afl_state_t *afl, void *mem, u32 len,
 +                                         const formtrig_queue_meta_t *base) {
 +
@@ -206,9 +207,9 @@ index 87157ca..91cf517 100644
 +
  u8 __attribute__((hot))
  save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
- 
+
 @@ -465,10 +517,12 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
- 
+
    u8  fn[PATH_MAX];
    u8 *queue_fn = "";
 -  u8  new_bits = 0, keeping = 0, res, classified = 0, is_timeout = 0,
@@ -219,13 +220,13 @@ index 87157ca..91cf517 100644
    u64 cksum = 0;
 +  formtrig_queue_meta_t formtrig_saved_signal;
 +  memset(&formtrig_saved_signal, 0, sizeof(formtrig_saved_signal));
- 
+
    /* Update path frequency. */
- 
+
 @@ -507,6 +561,22 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
- 
+
      if (likely(!new_bits)) {
- 
+
 +      if (formtrig_should_save(afl)) {
 +
 +        formtrig_saved_signal = afl->formtrig_last;
@@ -244,32 +245,57 @@ index 87157ca..91cf517 100644
 +
        if (unlikely(afl->crash_mode)) { ++afl->total_crashes; }
        return 0;
- 
-@@ -532,8 +602,10 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+
+@@ -514,6 +584,12 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+
+   save_to_queue:
+
++    if (!formtrig_saved_signal.seen && afl->formtrig_last.seen) {
++
++      formtrig_saved_signal = afl->formtrig_last;
++
++    }
++
+ #ifndef SIMPLE_FILES
+
+     queue_fn =
+@@ -532,8 +608,10 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
      ck_write(fd, mem, len, queue_fn);
      close(fd);
      add_to_queue(afl, queue_fn, len, 0);
 +    formtrig_apply_last_to_queue(afl, afl->queue_top);
 +    formtrig_saved_signal = afl->queue_top->formtrig;
- 
+
 -    if (unlikely(afl->fuzz_mode) &&
 +    if (!formtrig_keep && unlikely(afl->fuzz_mode) &&
          likely(afl->switch_fuzz_mode && !afl->non_instrumented_mode)) {
- 
+
        if (afl->afl_env.afl_no_ui) {
-@@ -609,6 +681,58 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
- 
+@@ -600,8 +678,13 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
      }
- 
+
+     /* Try to calibrate inline; this also calls update_bitmap_score() when
+-       successful. */
++       successful. FORMTRIG-only queue candidates are provisional until the
++       post-calibration replay check below confirms the lifted vector again. */
++    u8 formtrig_defer_frontier_prev =
++        afl->formtrig_defer_calibration_frontier;
++    afl->formtrig_defer_calibration_frontier = 1;
+     res = calibrate_case(afl, afl->queue_top, mem, afl->queue_cycle - 1, 0);
++    afl->formtrig_defer_calibration_frontier = formtrig_defer_frontier_prev;
+
+     if (unlikely(res == FSRV_RUN_ERROR)) {
+
+@@ -609,6 +692,53 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+
+     }
+
 +    if (formtrig_keep) {
 +
 +      ++afl->formtrig_stability_checks;
-+      if (formtrig_should_save(afl) &&
-+          formtrig_progress_stable(&formtrig_saved_signal,
-+                                   &afl->formtrig_last)) {
++      if (afl->queue_top->formtrig.stable && formtrig_should_save(afl)) {
 +
-+        afl->queue_top->formtrig = afl->formtrig_last;
-+        afl->queue_top->formtrig.stable = 1;
++        afl->formtrig_last = afl->queue_top->formtrig;
 +        formtrig_note_saved(afl);
 +
 +      } else {
@@ -294,11 +320,9 @@ index 87157ca..91cf517 100644
 +    } else if (formtrig_should_save(afl)) {
 +
 +      ++afl->formtrig_stability_checks;
-+      if (formtrig_progress_stable(&formtrig_saved_signal,
-+                                   &afl->formtrig_last)) {
++      if (afl->queue_top->formtrig.stable) {
 +
-+        afl->queue_top->formtrig = afl->formtrig_last;
-+        afl->queue_top->formtrig.stable = 1;
++        afl->formtrig_last = afl->queue_top->formtrig;
 +        formtrig_note_saved(afl);
 +
 +      } else {
@@ -314,24 +338,28 @@ index 87157ca..91cf517 100644
 +    }
 +
      if (likely(afl->q_testcase_max_cache_size)) {
- 
+
        queue_testcase_store_mem(afl, afl->queue_top, mem);
-@@ -878,4 +1002,3 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+@@ -878,4 +1008,3 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
    return keeping;
- 
+
  }
 -
 diff --git a/src/afl-fuzz-one.c b/src/afl-fuzz-one.c
-index 2ad4697..cfd8c5a 100644
+index 2ad4697..771bd79 100644
 --- a/src/afl-fuzz-one.c
 +++ b/src/afl-fuzz-one.c
-@@ -71,6 +71,486 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
- 
+@@ -71,6 +71,1003 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
+
  }
- 
-+#define FORMTRIG_TYPED_MUTATION_MAX 16u
-+#define FORMTRIG_TYPED_OPS 8u
-+#define FORMTRIG_TYPED_RANGE_WINDOW 64u
+
++#define FORMTRIG_TYPED_MUTATION_DEFAULT_MAX 128u
++#define FORMTRIG_TYPED_MUTATION_HARD_MAX 4096u
++#define FORMTRIG_TYPED_OPS 16u
++#define FORMTRIG_TYPED_RANGE_WINDOW_DEFAULT 256u
++#define FORMTRIG_TYPED_RANGE_WINDOW_HARD_MAX 4096u
++#define FORMTRIG_TYPED_RANGE_SAMPLES_DEFAULT 4u
++#define FORMTRIG_TYPED_RANGE_SAMPLES_HARD_MAX 64u
 +
 +static u8 formtrig_fuzz_one_finite(double v) {
 +
@@ -344,6 +372,225 @@ index 2ad4697..cfd8c5a 100644
 +  return env && env[0] &&
 +         (env[0] == '1' || env[0] == 'y' || env[0] == 'Y' ||
 +          env[0] == 't' || env[0] == 'T');
++
++}
++
++static u32 formtrig_fuzz_one_env_u32(const char *name, u32 fallback, u32 min,
++                                     u32 max) {
++
++  const char *env = getenv(name);
++  if (!env || !env[0]) { return fallback; }
++
++  char *end = NULL;
++  unsigned long value = strtoul(env, &end, 10);
++  if (end == env || *end || value < min || value > max) { return fallback; }
++  return (u32)value;
++
++}
++
++static u32 formtrig_typed_mutation_max(void) {
++
++  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_MUTATION_MAX",
++                                   FORMTRIG_TYPED_MUTATION_DEFAULT_MAX, 1u,
++                                   FORMTRIG_TYPED_MUTATION_HARD_MAX);
++
++}
++
++static u32 formtrig_typed_range_window(void) {
++
++  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_RANGE_WINDOW",
++                                   FORMTRIG_TYPED_RANGE_WINDOW_DEFAULT, 1u,
++                                   FORMTRIG_TYPED_RANGE_WINDOW_HARD_MAX);
++
++}
++
++static u32 formtrig_typed_range_samples(void) {
++
++  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_RANGE_SAMPLES",
++                                   FORMTRIG_TYPED_RANGE_SAMPLES_DEFAULT, 1u,
++                                   FORMTRIG_TYPED_RANGE_SAMPLES_HARD_MAX);
++
++}
++
++static const char *formtrig_typed_mutation_hook(void) {
++
++  const char *hook = getenv("FORMTRIG_TYPED_MUTATION_HOOK");
++  return hook && hook[0] ? hook : NULL;
++
++}
++
++static u8 formtrig_write_all_to_file(const char *path, const u8 *buf,
++                                     u32 len) {
++
++  int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0600);
++  if (fd < 0) { return 0; }
++
++  u32 written = 0;
++  while (written < len) {
++
++    ssize_t ret = write(fd, buf + written, len - written);
++    if (ret < 0) {
++
++      if (errno == EINTR) { continue; }
++      close(fd);
++      return 0;
++
++    }
++    if (!ret) {
++
++      close(fd);
++      return 0;
++
++    }
++    written += (u32)ret;
++
++  }
++
++  if (close(fd)) { return 0; }
++  return 1;
++
++}
++
++static u8 *formtrig_read_file_alloc(const char *path, u32 *out_len) {
++
++  *out_len = 0;
++  struct stat st;
++  if (stat(path, &st) || st.st_size <= 0 || st.st_size > MAX_FILE) {
++
++    return NULL;
++
++  }
++
++  u32 len = (u32)st.st_size;
++  u8 *buf = ck_alloc(len);
++  int fd = open(path, O_RDONLY);
++  if (fd < 0) {
++
++    ck_free(buf);
++    return NULL;
++
++  }
++
++  u32 got = 0;
++  while (got < len) {
++
++    ssize_t ret = read(fd, buf + got, len - got);
++    if (ret < 0) {
++
++      if (errno == EINTR) { continue; }
++      close(fd);
++      ck_free(buf);
++      return NULL;
++
++    }
++    if (!ret) { break; }
++    got += (u32)ret;
++
++  }
++
++  close(fd);
++  if (got != len) {
++
++    ck_free(buf);
++    return NULL;
++
++  }
++
++  *out_len = len;
++  return buf;
++
++}
++
++static u8 formtrig_make_temp_path(afl_state_t *afl, const char *suffix,
++                                  char *path, size_t path_len) {
++
++  const char *dir = afl && afl->tmp_dir ? (const char *)afl->tmp_dir : "/tmp";
++  int ret = snprintf(path, path_len, "%s/.formtrig_%s_%u_%llu_XXXXXX", dir,
++                     suffix ? suffix : "typed", getpid(),
++                     afl ? (unsigned long long)afl->fsrv.total_execs : 0ULL);
++  if (ret < 0 || (size_t)ret >= path_len) { return 0; }
++
++  int fd = mkstemp(path);
++  if (fd < 0) { return 0; }
++  close(fd);
++  return 1;
++
++}
++
++static u8 *formtrig_run_typed_mutation_hook(
++    afl_state_t *afl, const u8 *in_buf, const u8 *mut_buf, u32 len, u32 start,
++    u32 span, u32 off, u32 op, u32 sample, u32 hint_kind, u32 hint_value,
++    const formtrig_progress_component_t *component, u32 *hook_len) {
++
++  *hook_len = 0;
++  const char *hook = formtrig_typed_mutation_hook();
++  if (!hook) { return NULL; }
++
++  char orig_path[PATH_MAX], mut_path[PATH_MAX], out_path[PATH_MAX];
++  orig_path[0] = mut_path[0] = out_path[0] = '\0';
++  if (!formtrig_make_temp_path(afl, "orig", orig_path, sizeof(orig_path)) ||
++      !formtrig_make_temp_path(afl, "mut", mut_path, sizeof(mut_path)) ||
++      !formtrig_make_temp_path(afl, "out", out_path, sizeof(out_path))) {
++
++    if (orig_path[0]) { unlink(orig_path); }
++    if (mut_path[0]) { unlink(mut_path); }
++    if (out_path[0]) { unlink(out_path); }
++    return NULL;
++
++  }
++
++  u8 ok = formtrig_write_all_to_file(orig_path, in_buf, len) &&
++          formtrig_write_all_to_file(mut_path, mut_buf, len) &&
++          formtrig_write_all_to_file(out_path, (const u8 *)"", 0);
++  if (!ok) {
++
++    unlink(orig_path);
++    unlink(mut_path);
++    unlink(out_path);
++    return NULL;
++
++  }
++
++  char len_s[32], start_s[32], span_s[32], off_s[32], op_s[32], sample_s[32],
++      hint_kind_s[32], hint_value_s[32], kind_s[32], atom_s[32], role_s[32];
++  snprintf(len_s, sizeof(len_s), "%u", len);
++  snprintf(start_s, sizeof(start_s), "%u", start);
++  snprintf(span_s, sizeof(span_s), "%u", span);
++  snprintf(off_s, sizeof(off_s), "%u", off);
++  snprintf(op_s, sizeof(op_s), "%u", op);
++  snprintf(sample_s, sizeof(sample_s), "%u", sample);
++  snprintf(hint_kind_s, sizeof(hint_kind_s), "%u", hint_kind);
++  snprintf(hint_value_s, sizeof(hint_value_s), "%u", hint_value);
++  snprintf(kind_s, sizeof(kind_s), "%u", component ? component->kind : 0u);
++  snprintf(atom_s, sizeof(atom_s), "%u", component ? component->atom_id : 0u);
++  snprintf(role_s, sizeof(role_s), "%u", component ? component->role : 0u);
++
++  pid_t pid = fork();
++  if (pid == 0) {
++
++    execl(hook, hook, orig_path, mut_path, out_path, len_s, start_s, span_s,
++          off_s, op_s, sample_s, hint_kind_s, hint_value_s, kind_s, atom_s,
++          role_s, (char *)NULL);
++    _exit(127);
++
++  }
++
++  u8 success = 0;
++  if (pid > 0) {
++
++    int status = 0;
++    while (waitpid(pid, &status, 0) < 0 && errno == EINTR) {}
++    success = WIFEXITED(status) && WEXITSTATUS(status) == 0;
++
++  }
++
++  u8 *hook_buf = NULL;
++  if (success) { hook_buf = formtrig_read_file_alloc(out_path, hook_len); }
++
++  unlink(orig_path);
++  unlink(mut_path);
++  unlink(out_path);
++  return hook_buf;
 +
 +}
 +
@@ -458,7 +705,8 @@ index 2ad4697..cfd8c5a 100644
 +}
 +
 +static u8 formtrig_hot_range_valid(const formtrig_hot_range_t *range,
-+                                   u32 len, u32 *start, u32 *span) {
++                                   u32 len, u32 *start, u32 *span,
++                                   u32 *hint_kind, u32 *hint_value) {
 +
 +  if (!range || !len || !range->len || range->start >= len) { return 0; }
 +  if (!formtrig_fuzz_one_finite(range->influence) ||
@@ -471,14 +719,17 @@ index 2ad4697..cfd8c5a 100644
 +  u32 clipped = range->len;
 +  if (clipped > len - range->start) { clipped = len - range->start; }
 +  if (!clipped) { return 0; }
-+  if (clipped > FORMTRIG_TYPED_RANGE_WINDOW) {
++  u32 window = formtrig_typed_range_window();
++  if (clipped > window) {
 +
-+    clipped = FORMTRIG_TYPED_RANGE_WINDOW;
++    clipped = window;
 +
 +  }
 +
 +  *start = range->start;
 +  *span = clipped;
++  if (hint_kind) { *hint_kind = range->hint_kind; }
++  if (hint_value) { *hint_value = range->hint_value; }
 +  return 1;
 +
 +}
@@ -494,7 +745,8 @@ index 2ad4697..cfd8c5a 100644
 +  for (u32 i = 0; i < count; ++i) {
 +
 +    u32 start = 0, span = 0;
-+    if (formtrig_hot_range_valid(&m->hot_ranges[i], len, &start, &span)) {
++    if (formtrig_hot_range_valid(&m->hot_ranges[i], len, &start, &span,
++                                 NULL, NULL)) {
 +
 +      ++valid;
 +
@@ -507,7 +759,8 @@ index 2ad4697..cfd8c5a 100644
 +}
 +
 +static u8 formtrig_typed_hot_range(const formtrig_queue_meta_t *m, u32 len,
-+                                   u32 nth, u32 *start, u32 *span) {
++                                   u32 nth, u32 *start, u32 *span,
++                                   u32 *hint_kind, u32 *hint_value) {
 +
 +  if (!m || !len) { return 0; }
 +  u32 count = m->hot_range_count;
@@ -515,7 +768,8 @@ index 2ad4697..cfd8c5a 100644
 +
 +  for (u32 i = 0; i < count; ++i) {
 +
-+    if (!formtrig_hot_range_valid(&m->hot_ranges[i], len, start, span)) {
++    if (!formtrig_hot_range_valid(&m->hot_ranges[i], len, start, span,
++                                  hint_kind, hint_value)) {
 +
 +      continue;
 +
@@ -558,12 +812,21 @@ index 2ad4697..cfd8c5a 100644
 +
 +}
 +
-+static void formtrig_apply_distance_mutation(u8 *out_buf, u32 len, u32 start,
-+                                             u32 span, u32 iter) {
++static u32 formtrig_typed_sample_offset(u32 start, u32 span, u32 sample,
++                                        u32 sample_count) {
 +
-+  u32 off = start + ((iter * 2654435761u) % span);
++  if (span <= 1) { return start; }
++  if (sample_count <= 1) { return start; }
++  if (sample >= sample_count) { sample = sample_count - 1; }
++  return start + (u32)(((u64)sample * (u64)(span - 1)) /
++                       (u64)(sample_count - 1));
 +
-+  switch (iter % FORMTRIG_TYPED_OPS) {
++}
++
++static void formtrig_apply_distance_mutation_at(u8 *out_buf, u32 len, u32 off,
++                                                u32 op) {
++
++  switch (op % FORMTRIG_TYPED_OPS) {
 +
 +    case 0:
 +      out_buf[off] ^= 0x01;
@@ -604,11 +867,11 @@ index 2ad4697..cfd8c5a 100644
 +
 +      }
 +      break;
-+    default:
++    case 7:
 +      if (off + 3 < len) {
 +
 +        u32 v = formtrig_read32_le(out_buf + off);
-+        formtrig_write32_le(out_buf + off, v + ((iter & 1) ? 16u : 1u));
++        formtrig_write32_le(out_buf + off, v + ((op & 1) ? 16u : 1u));
 +
 +      } else {
 +
@@ -616,23 +879,109 @@ index 2ad4697..cfd8c5a 100644
 +
 +      }
 +      break;
++    case 8:
++      if (off + 3 < len) {
++
++        u32 v = formtrig_read32_le(out_buf + off);
++        formtrig_write32_le(out_buf + off, v - ((op & 1) ? 16u : 1u));
++
++      } else {
++
++        out_buf[off] ^= 0x40;
++
++      }
++      break;
++    case 9:
++      if (off + 3 < len) {
++
++        formtrig_write32_le(out_buf + off, 0u);
++
++      } else {
++
++        out_buf[off] = 0;
++
++      }
++      break;
++    case 10:
++      if (off + 3 < len) {
++
++        formtrig_write32_le(out_buf + off, 0xffffffffu);
++
++      } else {
++
++        out_buf[off] = 0xff;
++
++      }
++      break;
++    default:
++      out_buf[off] ^= (u8)(0x80u >> (op & 7u));
++      break;
 +
 +  }
 +
 +}
 +
-+static void formtrig_apply_state_mutation(u8 *out_buf, u32 start, u32 span,
-+                                          u32 iter) {
++static void formtrig_fill_block(u8 *out_buf, u32 len, u32 off, u32 max_span,
++                                u32 block_len, u8 value) {
 +
-+  u32 off = start + ((iter * 1103515245u + 12345u) % span);
++  if (!len || off >= len) { return; }
++  if (!block_len) { block_len = 1; }
++  if (block_len > max_span) { block_len = max_span; }
++  if (block_len > len - off) { block_len = len - off; }
++  memset(out_buf + off, value, block_len);
 +
-+  switch (iter % FORMTRIG_TYPED_OPS) {
++}
++
++static void formtrig_local_delete_like(u8 *out_buf, u32 len, u32 off,
++                                       u32 max_span, u32 block_len) {
++
++  if (!len || off >= len) { return; }
++  if (!block_len) { block_len = 1; }
++  if (block_len > max_span) { block_len = max_span; }
++  if (block_len > len - off) { block_len = len - off; }
++  if (!block_len) { return; }
++  if (off + block_len < len) {
++
++    memmove(out_buf + off, out_buf + off + block_len,
++            len - off - block_len);
++
++  }
++  memset(out_buf + len - block_len, 0, block_len);
++
++}
++
++static void formtrig_local_insert_like(u8 *out_buf, u32 len, u32 off,
++                                       u32 max_span, u32 block_len,
++                                       u8 value) {
++
++  if (!len || off >= len) { return; }
++  if (!block_len) { block_len = 1; }
++  if (block_len > max_span) { block_len = max_span; }
++  if (block_len > len - off) { block_len = len - off; }
++  if (!block_len) { return; }
++  if (off + block_len < len) {
++
++    memmove(out_buf + off + block_len, out_buf + off,
++            len - off - block_len);
++
++  }
++  memset(out_buf + off, value, block_len);
++
++}
++
++static void formtrig_apply_state_mutation_at(u8 *out_buf, u32 len, u32 start,
++                                             u32 span, u32 off, u32 op,
++                                             u32 sample) {
++
++  u32 block_len = 1u << ((sample + (op >> 2)) & 3u);
++
++  switch (op % FORMTRIG_TYPED_OPS) {
 +
 +    case 0:
 +      out_buf[off] ^= 0xff;
 +      break;
 +    case 1:
-+      out_buf[off] ^= (u8)(1u << (iter & 7u));
++      out_buf[off] ^= (u8)(1u << ((sample + op) & 7u));
 +      break;
 +    case 2:
 +      out_buf[off] = 0x00;
@@ -660,7 +1009,7 @@ index 2ad4697..cfd8c5a 100644
 +
 +      }
 +      break;
-+    default:
++    case 7:
 +      if (span > 1) {
 +
 +        u32 other = start + ((off - start + span - 1) % span);
@@ -672,6 +1021,153 @@ index 2ad4697..cfd8c5a 100644
 +
 +      }
 +      break;
++    case 8:
++      formtrig_fill_block(out_buf, len, off, span, block_len, 0x00);
++      break;
++    case 9:
++      formtrig_fill_block(out_buf, len, off, span, block_len, 0xff);
++      break;
++    case 10:
++      formtrig_fill_block(out_buf, len, off, span, block_len, 0x41);
++      break;
++    case 11:
++      formtrig_fill_block(out_buf, len, off, span, block_len, 0x7a);
++      break;
++    case 12:
++      formtrig_local_delete_like(out_buf, len, off, span, block_len);
++      break;
++    case 13:
++      formtrig_local_insert_like(out_buf, len, off, span, block_len, 0x00);
++      break;
++    case 14:
++      if (off + 3 < len) {
++
++        formtrig_write32_le(out_buf + off, 0u);
++
++      } else {
++
++        out_buf[off] ^= 0x55;
++
++      }
++      break;
++    default:
++      if (off + 3 < len) {
++
++        formtrig_write32_le(out_buf + off, 0xffffffffu);
++
++      } else {
++
++        out_buf[off] ^= 0xaa;
++
++      }
++      break;
++
++  }
++
++}
++
++static u8 formtrig_apply_hint_mutation_at(u8 *out_buf, u32 len, u32 start,
++                                          u32 span, u32 off, u32 op,
++                                          u32 sample, u32 hint_kind,
++                                          u32 hint_value) {
++
++  if (!hint_kind || !len || off >= len) { return 0; }
++
++  u8  byte_value = (u8)(hint_value & 0xffu);
++  u32 block_len = 1u << ((sample + (op >> 2)) & 3u);
++  if (!span) { span = 1; }
++  if (block_len > span) { block_len = span; }
++  if (!block_len) { block_len = 1; }
++
++  switch (hint_kind) {
++
++    case FORMTRIG_MUTATION_HINT_SET_BYTE:
++      switch (op & 7u) {
++
++        case 0:
++          out_buf[off] = byte_value;
++          break;
++        case 1:
++          out_buf[off] = (u8)(byte_value + 1u);
++          break;
++        case 2:
++          out_buf[off] = (u8)(byte_value - 1u);
++          break;
++        case 3:
++          out_buf[off] ^= byte_value ? byte_value : 0xffu;
++          break;
++        case 4:
++          out_buf[off] = 0;
++          break;
++        case 5:
++          out_buf[off] = 0xff;
++          break;
++        case 6:
++          out_buf[off] ^= 0x80;
++          break;
++        default:
++          out_buf[off] ^= (u8)(1u << (sample & 7u));
++          break;
++
++      }
++      return 1;
++
++    case FORMTRIG_MUTATION_HINT_CLEAR:
++      if ((op & 1u) == 0) {
++
++        formtrig_fill_block(out_buf, len, off, span, block_len, 0);
++
++      } else {
++
++        formtrig_fill_block(out_buf, len, start, span, span, 0);
++
++      }
++      return 1;
++
++    case FORMTRIG_MUTATION_HINT_FILL:
++      formtrig_fill_block(out_buf, len, off, span, block_len, byte_value);
++      return 1;
++
++    case FORMTRIG_MUTATION_HINT_DELETE:
++      formtrig_local_delete_like(out_buf, len, (op & 1u) ? off : start, span,
++                                 (op & 2u) ? block_len : span);
++      return 1;
++
++    case FORMTRIG_MUTATION_HINT_INSERT_BYTE:
++      formtrig_local_insert_like(out_buf, len, off, span, block_len,
++                                 byte_value);
++      return 1;
++
++    case FORMTRIG_MUTATION_HINT_WRITE_U16_LE:
++      if (off + 1 < len) {
++
++        formtrig_write16_le(out_buf + off, (u16)(hint_value & 0xffffu));
++
++      } else {
++
++        out_buf[off] = byte_value;
++
++      }
++      return 1;
++
++    case FORMTRIG_MUTATION_HINT_WRITE_U32_LE:
++      if (off + 3 < len) {
++
++        formtrig_write32_le(out_buf + off, hint_value);
++
++      } else {
++
++        out_buf[off] = byte_value;
++
++      }
++      return 1;
++
++    case FORMTRIG_MUTATION_HINT_XOR_BYTE:
++      out_buf[off] ^= byte_value ? byte_value : (u8)(1u << (op & 7u));
++      return 1;
++
++    default:
++      return 0;
 +
 +  }
 +
@@ -735,10 +1231,13 @@ index 2ad4697..cfd8c5a 100644
 +
 +  }
 +
-+  u32 stage_max = component_count * range_count * FORMTRIG_TYPED_OPS;
-+  if (stage_max > FORMTRIG_TYPED_MUTATION_MAX) {
++  u32 sample_count = formtrig_typed_range_samples();
++  u32 stage_max = component_count * range_count * FORMTRIG_TYPED_OPS *
++                  sample_count;
++  u32 stage_limit = formtrig_typed_mutation_max();
++  if (stage_max > stage_limit) {
 +
-+    stage_max = FORMTRIG_TYPED_MUTATION_MAX;
++    stage_max = stage_limit;
 +
 +  }
 +
@@ -754,35 +1253,71 @@ index 2ad4697..cfd8c5a 100644
 +  for (afl->stage_cur = 0; afl->stage_cur < afl->stage_max;
 +       ++afl->stage_cur) {
 +
++    u32 cursor = afl->stage_cur;
++    u32 op = cursor % FORMTRIG_TYPED_OPS;
++    cursor /= FORMTRIG_TYPED_OPS;
++    u32 component_index = cursor % component_count;
++    cursor /= component_count;
++    u32 range_index = cursor % range_count;
++    cursor /= range_count;
++    u32 sample_index = cursor % sample_count;
++
 +    const formtrig_progress_component_t *component =
-+        formtrig_typed_component(m, afl->stage_cur % component_count);
-+    u32 start = 0, span = 0;
-+    if (!component ||
-+        !formtrig_typed_hot_range(m, len,
-+                                  (afl->stage_cur / component_count) %
-+                                      range_count,
-+                                  &start, &span)) {
++        formtrig_typed_component(m, component_index);
++    u32 start = 0, span = 0, hint_kind = 0, hint_value = 0;
++    if (!component || !formtrig_typed_hot_range(m, len, range_index, &start,
++                                                &span, &hint_kind,
++                                                &hint_value)) {
 +
 +      continue;
 +
 +    }
 +
++    u32 off =
++        formtrig_typed_sample_offset(start, span, sample_index, sample_count);
++    if (off >= len) { continue; }
++
 +    memcpy(out_buf, in_buf, len);
-+    afl->stage_cur_byte = start + (afl->stage_cur % span);
++    afl->stage_cur_byte = off;
 +    afl->stage_cur_val = (s32)component->kind;
 +
-+    if (formtrig_fuzz_one_lower(component)) {
++    if (formtrig_apply_hint_mutation_at(out_buf, len, start, span, off, op,
++                                        sample_index, hint_kind,
++                                        hint_value)) {
 +
-+      formtrig_apply_distance_mutation(out_buf, len, start, span,
-+                                       afl->stage_cur);
++      /* BindingSpec mutation hint applied. */
++
++    } else if (formtrig_fuzz_one_lower(component)) {
++
++      formtrig_apply_distance_mutation_at(out_buf, len, off, op);
 +
 +    } else {
 +
-+      formtrig_apply_state_mutation(out_buf, start, span, afl->stage_cur);
++      formtrig_apply_state_mutation_at(out_buf, len, start, span, off, op,
++                                       sample_index);
 +
 +    }
 +
 +    if (!memcmp(out_buf, in_buf, len)) { continue; }
++
++    u32 hook_len = 0;
++    u8 *hook_buf = formtrig_run_typed_mutation_hook(
++        afl, in_buf, out_buf, len, start, span, off, op, sample_index,
++        hint_kind, hint_value, component, &hook_len);
++    u8 *exec_buf = hook_buf ? hook_buf : out_buf;
++    u32 exec_len = hook_buf ? hook_len : len;
++    if (!exec_len) {
++
++      if (hook_buf) { ck_free(hook_buf); }
++      continue;
++
++    }
++    if (exec_len == len && !memcmp(exec_buf, in_buf, len)) {
++
++      if (hook_buf) { ck_free(hook_buf); }
++      continue;
++
++    }
 +
 +#ifdef INTROSPECTION
 +    snprintf(afl->mutation, sizeof(afl->mutation),
@@ -792,7 +1327,13 @@ index 2ad4697..cfd8c5a 100644
 +#endif
 +
 +    ++afl->formtrig_typed_execs;
-+    if (common_fuzz_stuff(afl, out_buf, len)) { return 1; }
++    if (common_fuzz_stuff(afl, exec_buf, exec_len)) {
++
++      if (hook_buf) { ck_free(hook_buf); }
++      return 1;
++
++    }
++    if (hook_buf) { ck_free(hook_buf); }
 +
 +  }
 +
@@ -812,10 +1353,10 @@ index 2ad4697..cfd8c5a 100644
  /* Helper function to see if a particular change (xor_val = old ^ new) could
     be a product of deterministic bit flips with the lengths and stepovers
     attempted by afl-fuzz. This is used to avoid dupes in some of the
-@@ -545,6 +1025,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
- 
+@@ -545,6 +1542,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
+
    }
- 
+
 +  if (formtrig_typed_mutation_stage(afl, in_buf, out_buf, len)) {
 +
 +    goto abandon_entry;
@@ -825,10 +1366,10 @@ index 2ad4697..cfd8c5a 100644
    /* Skip right away if -d is given, if it has not been chosen sufficiently
       often to warrant the expensive deterministic stage (fuzz_level), or
       if it has gone through deterministic testing in earlier, resumed runs
-@@ -3656,6 +4142,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
- 
+@@ -3656,6 +4659,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
+
    }
- 
+
 +  if (formtrig_typed_mutation_stage(afl, in_buf, out_buf, len)) {
 +
 +    goto abandon_entry;
@@ -836,15 +1377,15 @@ index 2ad4697..cfd8c5a 100644
 +  }
 +
    /* Go to pacemker fuzzing if MOpt is doing well */
- 
+
    cur_ms_lv = get_cur_time();
-@@ -6213,4 +6705,3 @@ u8 fuzz_one(afl_state_t *afl) {
+@@ -6213,4 +7222,3 @@ u8 fuzz_one(afl_state_t *afl) {
    return (key_val_lv_1 | key_val_lv_2);
- 
+
  }
 -
 diff --git a/src/afl-fuzz-queue.c b/src/afl-fuzz-queue.c
-index 48fd33e..821aa03 100644
+index 48fd33e..dce7cba 100644
 --- a/src/afl-fuzz-queue.c
 +++ b/src/afl-fuzz-queue.c
 @@ -26,6 +26,7 @@
@@ -852,13 +1393,13 @@ index 48fd33e..821aa03 100644
  #include <ctype.h>
  #include <math.h>
 +#include <sys/mman.h>
- 
+
  #ifdef _STANDALONE_MODULE
  void minimize_bits(afl_state_t *afl, u8 *dst, u8 *src) {
-@@ -43,6 +44,989 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
- 
+@@ -43,6 +44,1039 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
+
  #endif
- 
+
 +static u8 formtrig_env_enabled(void) {
 +
 +  const char *env = getenv("AFL_FORMTRIG");
@@ -1076,15 +1617,6 @@ index 48fd33e..821aa03 100644
 +
 +}
 +
-+static u8 formtrig_same_atom_context(
-+    const formtrig_progress_component_t *a,
-+    const formtrig_progress_component_t *b) {
-+
-+  return a && b && a->atom_id == b->atom_id && a->role == b->role &&
-+         a->context_hash == b->context_hash;
-+
-+}
-+
 +static u32 formtrig_meta_component_count(const formtrig_queue_meta_t *m) {
 +
 +  if (!m) { return 0; }
@@ -1285,12 +1817,13 @@ index 48fd33e..821aa03 100644
 +          ",\"components\":%u,\"atom_signals\":%u,"
 +          "\"actionable_components\":%u,"
 +          "\"hot_ranges\":%u,\"target_hit_count\":%u,"
-+          "\"source_flags\":%u,"
++          "\"source_flags\":%u,\"observed_source_flags\":%u,"
 +          "\"trace_signature\":\"%016llx\",\"aux\":%llu",
 +          component_count, atom_signal_count, actionable,
 +          m ? m->hot_range_count : 0,
 +          m ? m->target_hit_count : 0,
 +          m ? m->source_flags : 0,
++          m ? m->observed_source_flags : 0,
 +          (unsigned long long)(m ? m->trace_signature : 0),
 +          (unsigned long long)aux);
 +
@@ -1355,16 +1888,17 @@ index 48fd33e..821aa03 100644
 +
 +}
 +
-+static u8 formtrig_vector_has_same_atom_context(
++static u8 formtrig_vector_has_same_atom(
 +    const formtrig_queue_meta_t *m,
 +    const formtrig_progress_component_t *slot) {
 +
++  if (!m || !slot || !slot->atom_id) { return 0; }
 +  u32 count = formtrig_meta_component_count(m);
 +  for (u32 i = 0; i < count; i++) {
 +
 +    const formtrig_progress_component_t *component = &m->components[i];
 +    if (formtrig_component_actionable(component) &&
-+        formtrig_same_atom_context(component, slot)) {
++        component->atom_id == slot->atom_id) {
 +
 +      return 1;
 +
@@ -1487,14 +2021,62 @@ index 48fd33e..821aa03 100644
 +        &older->components[i];
 +    if (!formtrig_component_actionable(older_component)) { continue; }
 +    if (older_component->priority >= best_improved_priority) { continue; }
-+    if (!formtrig_vector_has_same_atom_context(candidate, older_component)) {
-+      continue;
-+    }
++    if (!formtrig_vector_has_same_atom(candidate, older_component)) { continue; }
 +    if (!formtrig_find_component(candidate, older_component)) { return 1; }
 +
 +  }
 +
 +  return 0;
++
++}
++
++static const char *formtrig_semantic_accept_reason(
++    const formtrig_queue_meta_t *m) {
++
++  if (!m) { return "lifted_feature_improvement"; }
++  if (m->triggered) { return "triggered"; }
++
++  u32 count = formtrig_meta_component_count(m);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *component = &m->components[i];
++    if (!formtrig_component_actionable(component)) { continue; }
++
++    if ((component->flags & FORMTRIG_COMPONENT_NATIVE) &&
++        component->kind == FORMTRIG_COMPONENT_NATIVE_DISTANCE) {
++
++      return "native_distance_improvement";
++
++    }
++
++    if (component->role == FORMTRIG_ROLE_LIFECYCLE_EVENT) {
++
++      return "lifecycle_prefix_improvement";
++
++    }
++
++    if (component->role == FORMTRIG_ROLE_INPUT_INFLUENCE ||
++        component->kind == FORMTRIG_COMPONENT_OPERAND_INFLUENCE) {
++
++      return "influence_confidence_improvement";
++
++    }
++
++    if (component->role == FORMTRIG_ROLE_ROOT_OBSERVE ||
++        component->role == FORMTRIG_ROLE_GUARD ||
++        component->role == FORMTRIG_ROLE_PRODUCER ||
++        component->role == FORMTRIG_ROLE_DESIRED_PRODUCER ||
++        component->role == FORMTRIG_ROLE_OPPOSITE_PRODUCER ||
++        component->role == FORMTRIG_ROLE_USE ||
++        component->role == FORMTRIG_ROLE_SAME_OBJECT) {
++
++      return "root_aligned_state_transition";
++
++    }
++
++  }
++
++  return "lifted_feature_improvement";
 +
 +}
 +
@@ -1550,8 +2132,8 @@ index 48fd33e..821aa03 100644
 +
 +  if (accepted) { *accepted = 1; }
 +  if (!afl->formtrig_frontier_count) { return "frontier_empty_seed"; }
-+  if (dominates_existing) { return "dominates_existing_frontier"; }
-+  return "non_dominated_frontier_seed";
++  (void)dominates_existing;
++  return formtrig_semantic_accept_reason(m);
 +
 +}
 +
@@ -1585,6 +2167,7 @@ index 48fd33e..821aa03 100644
 +  meta.d_f_heuristic_lifted = rec->d_f_heuristic_lifted;
 +  meta.d_f_manual_lifted = rec->d_f_manual_lifted;
 +  meta.source_flags = rec->source_flags;
++  meta.observed_source_flags = rec->observed_source_flags;
 +  if (meta.hot_range_count > FORMTRIG_MAX_HOT_RANGES)
 +    meta.hot_range_count = FORMTRIG_MAX_HOT_RANGES;
 +  memcpy(meta.hot_ranges, rec->hot_ranges,
@@ -1707,6 +2290,13 @@ index 48fd33e..821aa03 100644
 +
 +  if (!afl->formtrig_enabled || !m->seen || !m->reached) { return 0; }
 +  if (m->triggered) { return 0; }
++  if (!m->stable) {
++
++    formtrig_log_progress(afl, "frontier_reject", "not_replay_stable", m,
++                          queue_id, 0);
++    return 0;
++
++  }
 +  u8 accepted = 0;
 +  const char *reason = formtrig_frontier_reason(afl, m, &accepted);
 +  if (!accepted) {
@@ -1844,20 +2434,20 @@ index 48fd33e..821aa03 100644
 +}
 +
  /* select next queue entry based on alias algo - fast! */
- 
+
  inline u32 select_next_queue_entry(afl_state_t *afl) {
-@@ -80,6 +1064,7 @@ double compute_weight(afl_state_t *afl, struct queue_entry *q,
+@@ -80,6 +1114,7 @@ double compute_weight(afl_state_t *afl, struct queue_entry *q,
    if (unlikely(weight < 0.1)) { weight = 0.1; }
    if (unlikely(q->favored)) { weight *= 5; }
    if (unlikely(!q->was_fuzzed)) { weight *= 2; }
 +  weight *= formtrig_queue_weight_multiplier(q);
- 
+
    return weight;
- 
-@@ -1167,6 +2152,15 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
- 
+
+@@ -1167,6 +2202,15 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
+
    }
- 
+
 +  perf_score =
 +      (u32)((double)perf_score * formtrig_queue_weight_multiplier(q));
 +  if (perf_score > afl->havoc_max_mult * 100) {
@@ -1868,25 +2458,25 @@ index 48fd33e..821aa03 100644
 +  if (!perf_score) { perf_score = 1; }
 +
    return perf_score;
- 
+
  }
-@@ -1451,4 +2445,3 @@ inline void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q,
+@@ -1451,4 +2495,3 @@ inline void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q,
    }
- 
+
  }
 -
 diff --git a/src/afl-fuzz-run.c b/src/afl-fuzz-run.c
-index ac4fb4a..df4d285 100644
+index ac4fb4a..aa5baa9 100644
 --- a/src/afl-fuzz-run.c
 +++ b/src/afl-fuzz-run.c
 @@ -58,7 +58,9 @@ fuzz_run_target(afl_state_t *afl, afl_forkserver_t *fsrv, u32 timeout) {
- 
+
  #endif
- 
+
 +  if (fsrv == &afl->fsrv) { formtrig_prepare_run(afl); }
    fsrv_run_result_t res = afl_fsrv_run_target(fsrv, timeout, &afl->stop_soon);
 +  if (fsrv == &afl->fsrv) { formtrig_capture_last(afl); }
- 
+
  #ifdef PROFILING
    clock_gettime(CLOCK_REALTIME, &spec);
 @@ -414,6 +416,8 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
@@ -1895,46 +2485,53 @@ index ac4fb4a..df4d285 100644
    u8 *old_sn = afl->stage_name;
 +  formtrig_queue_meta_t formtrig_first_signal;
 +  memset(&formtrig_first_signal, 0, sizeof(formtrig_first_signal));
- 
+
    if (unlikely(afl->shm.cmplog_mode)) { q->exec_cksum = 0; }
- 
+
 @@ -471,6 +475,11 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
         we want to bail out quickly. */
- 
+
      if (afl->stop_soon || fault != afl->crash_mode) { goto abort_calibration; }
 +    if (!formtrig_first_signal.seen && afl->formtrig_last.seen) {
 +
 +      formtrig_first_signal = afl->formtrig_last;
 +
 +    }
- 
+
      if (!afl->non_instrumented_mode && !afl->stage_cur &&
          !count_bytes(afl, afl->fsrv.trace_bits)) {
 @@ -514,6 +523,11 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
         we want to bail out quickly. */
- 
+
      if (afl->stop_soon || fault != afl->crash_mode) { goto abort_calibration; }
 +    if (!formtrig_first_signal.seen && afl->formtrig_last.seen) {
 +
 +      formtrig_first_signal = afl->formtrig_last;
 +
 +    }
- 
+
      if (!afl->non_instrumented_mode && !afl->stage_cur &&
          !count_bytes(afl, afl->fsrv.trace_bits)) {
-@@ -610,6 +624,27 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
+@@ -610,6 +624,34 @@ u8 calibrate_case(afl_state_t *afl, struct queue_entry *q, u8 *use_mem,
    q->bitmap_size = count_bytes(afl, afl->fsrv.trace_bits);
    q->handicap = handicap;
    q->cal_failed = 0;
 +  formtrig_apply_last_to_queue(afl, q);
-+  if (formtrig_should_save(afl)) {
++  u8 formtrig_calibration_stable = 0;
++  if (formtrig_first_signal.seen && afl->formtrig_last.seen &&
++      formtrig_progress_stable(&formtrig_first_signal, &afl->formtrig_last)) {
++
++    afl->formtrig_last.stable = 1;
++    q->formtrig = afl->formtrig_last;
++    formtrig_calibration_stable = 1;
++
++  }
++
++  if (!afl->formtrig_defer_calibration_frontier && formtrig_should_save(afl)) {
 +
 +    ++afl->formtrig_stability_checks;
-+    if (formtrig_progress_stable(&formtrig_first_signal,
-+                                 &afl->formtrig_last)) {
++    if (formtrig_calibration_stable) {
 +
-+      q->formtrig = afl->formtrig_last;
-+      q->formtrig.stable = 1;
 +      formtrig_note_calibrated(afl);
 +
 +    } else {
@@ -1947,12 +2544,12 @@ index ac4fb4a..df4d285 100644
 +    }
 +
 +  }
- 
+
    afl->total_bitmap_size += q->bitmap_size;
    ++afl->total_bitmap_entries;
-@@ -1110,4 +1145,3 @@ common_fuzz_stuff(afl_state_t *afl, u8 *out_buf, u32 len) {
+@@ -1110,4 +1152,3 @@ common_fuzz_stuff(afl_state_t *afl, u8 *out_buf, u32 len) {
    return 0;
- 
+
  }
 -
 diff --git a/src/afl-fuzz-state.c b/src/afl-fuzz-state.c
@@ -1978,12 +2575,12 @@ index 5a6b95c..8ec86eb 100644
    if (afl->orig_cmp_map) { ck_free(afl->orig_cmp_map); }
    if (afl->cmplog_binary) { ck_free(afl->cmplog_binary); }
 +  formtrig_deinit(afl);
- 
+
    afl_free(afl->queue_buf);
    afl_free(afl->out_buf);
 @@ -748,4 +756,3 @@ void afl_states_request_skip(void) {
    LIST_FOREACH(&afl_states, afl_state_t, { el->skip_requested = 1; });
- 
+
  }
 -
 diff --git a/src/afl-fuzz-stats.c b/src/afl-fuzz-stats.c
@@ -1991,9 +2588,9 @@ index 3d0a9b9..f36df96 100644
 --- a/src/afl-fuzz-stats.c
 +++ b/src/afl-fuzz-stats.c
 @@ -385,6 +385,36 @@ void write_stats_file(afl_state_t *afl, u32 t_bytes, double bitmap_cvg,
- 
+
    /* ignore errors */
- 
+
 +  if (afl->formtrig_enabled) {
 +
 +    fprintf(f,
@@ -2025,11 +2622,11 @@ index 3d0a9b9..f36df96 100644
 +  }
 +
    if (afl->debug) {
- 
+
      u32 i = 0;
 @@ -2376,4 +2406,3 @@ void show_init_stats(afl_state_t *afl) {
  #undef IB
- 
+
  }
 -
 diff --git a/utils/aflpp_driver/aflpp_driver.c b/utils/aflpp_driver/aflpp_driver.c
@@ -2039,7 +2636,7 @@ index 4e8f466..c6e4054 100644
 @@ -73,6 +73,10 @@ extern unsigned char *__afl_fuzz_ptr;
  extern unsigned char *__afl_area_ptr;
  extern unsigned int   __afl_map_size;
- 
+
 +__attribute__((weak)) void formtrig_register_input(const void *data,
 +                                                   size_t      len);
 +__attribute__((weak)) void formtrig_finalize(void);
@@ -2050,7 +2647,7 @@ index 4e8f466..c6e4054 100644
 @@ -83,6 +87,17 @@ __attribute__((weak)) int     LLVMFuzzerInitialize(int *argc, char ***argv);
  __attribute__((weak)) int     LLVMFuzzerRunDriver(
          int *argc, char ***argv, int (*callback)(const uint8_t *data, size_t size));
- 
+
 +static inline int ExecuteOneInput(
 +    int (*callback)(const uint8_t *data, size_t size), const uint8_t *data,
 +    size_t size) {
@@ -2067,33 +2664,33 @@ index 4e8f466..c6e4054 100644
  // https://github.com/google/sanitizers/wiki/AddressSanitizerManualPoisoning
 @@ -252,7 +267,7 @@ static int ExecuteFilesOnyByOne(int argc, char **argv,
        prev_length = length;
- 
+
        printf("Reading %zu bytes from %s\n", length, argv[i]);
 -      callback(buf, length);
 +      ExecuteOneInput(callback, buf, length);
        printf("Execution successful.\n");
- 
+
      }
 @@ -403,7 +418,7 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
- 
+
          prev_length = length;
- 
+
 -        if (unlikely(callback(__afl_fuzz_ptr, length) == -1)) {
 +        if (unlikely(ExecuteOneInput(callback, __afl_fuzz_ptr, length) == -1)) {
- 
+
            memset(__afl_area_ptr, 0, __afl_map_size);
            __afl_area_ptr[0] = 1;
 @@ -418,7 +433,7 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
- 
+
      while (__afl_persistent_loop(N)) {
- 
+
 -      callback(__afl_fuzz_ptr, *__afl_fuzz_len);
 +      ExecuteOneInput(callback, __afl_fuzz_ptr, *__afl_fuzz_len);
- 
+
      }
- 
+
 @@ -433,4 +448,3 @@ __attribute__((weak)) int LLVMFuzzerRunDriver(
  }
- 
+
  #endif
 -

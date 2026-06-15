@@ -9,10 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_SITES 8192u
 #define MAX_BINDINGS 512u
 #define MAX_ATOMS 128u
 #define MAX_SITE_ROLES 128u
+#define MAX_RANGE_ROWS 128u
 
 enum ft_category {
   FT_CATEGORY_GENERIC = 0,
@@ -46,6 +46,7 @@ typedef struct binding_row {
   char value[64];
   char confidence[64];
   char phase_index[32];
+  char observe_window[32];
   char op[32];
   uint64_t event_id;
   uint32_t collapsed_with;
@@ -62,25 +63,42 @@ typedef struct site_role_set {
   uint32_t roles;
 } site_role_set_t;
 
+typedef struct same_object_relation {
+  uint32_t atom_id;
+  uint32_t from_role;
+  uint32_t to_role;
+  char object_expr[128];
+} same_object_relation_t;
+
 typedef struct atom_summary {
   uint32_t atom_id;
   enum ft_category category;
   uint32_t roles;
   uint32_t collapsed;
   uint32_t missing;
+  uint32_t stateful_root_count;
+  uint32_t stateful_use_count;
+  uint32_t stateful_same_object_count;
+  uint32_t same_object_relation_count;
+  uint32_t same_object_relation_roles;
   uint32_t tier;
   const char *reason;
   uint32_t lift_allowed;
 } atom_summary_t;
 
-static site_row_t sites[MAX_SITES];
+static site_row_t *sites;
 static uint32_t site_count;
+static uint32_t site_capacity;
 static binding_row_t bindings[MAX_BINDINGS];
 static uint32_t binding_count;
 static atom_summary_t atoms[MAX_ATOMS];
 static uint32_t atom_count;
 static site_role_set_t site_roles[MAX_SITE_ROLES];
 static uint32_t site_role_count;
+static same_object_relation_t same_object_relations[MAX_BINDINGS];
+static uint32_t same_object_relation_count;
+static char range_rows[MAX_RANGE_ROWS][192];
+static uint32_t range_row_count;
 
 static atom_summary_t *atom_slot(uint32_t atom_id);
 
@@ -122,9 +140,68 @@ static void copy_field(char *dst, size_t dst_size, const char *src) {
   snprintf(dst, dst_size, "%s", src);
 }
 
+static int is_observe_window(const char *s) {
+  return s && (!strcmp(s, "post_reach") || !strcmp(s, "post-reach") ||
+               !strcmp(s, "after_reach") || !strcmp(s, "after-reach") ||
+               !strcmp(s, "pre_reach") || !strcmp(s, "pre-reach") ||
+               !strcmp(s, "before_reach") || !strcmp(s, "before-reach") ||
+               !strcmp(s, "any") || !strcmp(s, "both"));
+}
+
+static void parse_optional_tail(char **saveptr, binding_row_t *b) {
+  char *token = NULL;
+  while ((token = next_token(saveptr)) != NULL) {
+    if (is_observe_window(token)) {
+      copy_field(b->observe_window, sizeof(b->observe_window), token);
+      return;
+    }
+  }
+}
+
 static uint32_t role_bit(uint32_t role) {
   if (role == FORMTRIG_ROLE_UNKNOWN || role > 31u) return 0u;
   return 1u << (role - 1u);
+}
+
+static int role_participates_in_semantic_collapse(uint32_t role) {
+  return role != FORMTRIG_ROLE_UNKNOWN &&
+         role != FORMTRIG_ROLE_INPUT_INFLUENCE &&
+         role != FORMTRIG_ROLE_REPAIR_HOOK;
+}
+
+static int token_eq(const char *s, const char *a, const char *b,
+                    const char *c) {
+  if (!s) return 0;
+  return (a && !strcmp(s, a)) || (b && !strcmp(s, b)) ||
+         (c && !strcmp(s, c));
+}
+
+static int value_mode_observes_state(const char *mode) {
+  if (!mode) return 0;
+  if (token_eq(mode, "distance", "dist", "1")) return 1;
+  if (token_eq(mode, "outcome", "3", NULL)) return 1;
+  if (token_eq(mode, "not_outcome", "not-outcome", "4")) return 1;
+  if (token_eq(mode, "a", "5", NULL)) return 1;
+  if (token_eq(mode, "b", "6", NULL)) return 1;
+  if (token_eq(mode, "c", "7", NULL)) return 1;
+  if (token_eq(mode, "distance_to_a", "distance-to-a", "8")) return 1;
+  if (token_eq(mode, "target_distance_a", "target-distance-a", NULL))
+    return 1;
+  if (token_eq(mode, "abs_to_a", "abs-to-a", NULL)) return 1;
+  if (token_eq(mode, "distance_to_b", "distance-to-b", "9")) return 1;
+  if (token_eq(mode, "target_distance_b", "target-distance-b", NULL))
+    return 1;
+  if (token_eq(mode, "abs_to_b", "abs-to-b", NULL)) return 1;
+  if (token_eq(mode, "distance_to_c", "distance-to-c", "10")) return 1;
+  if (token_eq(mode, "target_distance_c", "target-distance-c", NULL))
+    return 1;
+  if (token_eq(mode, "abs_to_c", "abs-to-c", NULL)) return 1;
+  return 0;
+}
+
+static int same_object_relation_complete(const atom_summary_t *atom) {
+  if (!atom || !atom->same_object_relation_count) return 0;
+  return (atom->same_object_relation_roles & ~atom->roles) == 0u;
 }
 
 static uint32_t parse_role(const char *s) {
@@ -152,6 +229,9 @@ static uint32_t parse_role(const char *s) {
   if (!strcmp(s, "input_influence") || !strcmp(s, "input-influence") ||
       !strcmp(s, "9"))
     return FORMTRIG_ROLE_INPUT_INFLUENCE;
+  if (!strcmp(s, "repair_hook") || !strcmp(s, "repair-hook") ||
+      !strcmp(s, "10"))
+    return FORMTRIG_ROLE_REPAIR_HOOK;
   return FORMTRIG_ROLE_UNKNOWN;
 }
 
@@ -175,6 +255,8 @@ static const char *role_name(uint32_t role) {
       return "same_object";
     case FORMTRIG_ROLE_INPUT_INFLUENCE:
       return "input_influence";
+    case FORMTRIG_ROLE_REPAIR_HOOK:
+      return "repair_hook";
     default:
       return "unknown";
   }
@@ -254,24 +336,49 @@ static int load_site_map(const char *path) {
 
   char line[1024];
   while (fgets(line, sizeof(line), f)) {
-    if (site_count >= MAX_SITES) break;
     site_row_t row;
     memset(&row, 0, sizeof(row));
-    if (read_site_row(line, &row)) sites[site_count++] = row;
+    if (!read_site_row(line, &row)) continue;
+    if (site_count == site_capacity) {
+      uint32_t new_capacity = site_capacity ? site_capacity * 2u : 65536u;
+      site_row_t *new_sites =
+          (site_row_t *)realloc(sites, sizeof(*sites) * new_capacity);
+      if (!new_sites) {
+        perror("realloc site_map");
+        fclose(f);
+        return 0;
+      }
+      sites = new_sites;
+      site_capacity = new_capacity;
+    }
+    sites[site_count++] = row;
   }
   fclose(f);
   return 1;
 }
 
+static int equivalent_site_rows(const site_row_t *a, const site_row_t *b) {
+  return a && b && a->site_id == b->site_id && !strcmp(a->kind, b->kind) &&
+         !strcmp(a->function, b->function) && a->inst_no == b->inst_no &&
+         !strcmp(a->opcode, b->opcode) && !strcmp(a->file, b->file) &&
+         a->line == b->line && a->column == b->column;
+}
+
 static const site_row_t *find_site(uint32_t site_id, uint32_t *matches) {
   const site_row_t *found = NULL;
+  uint32_t count = 0;
   if (matches) *matches = 0;
   if (site_id == UINT32_MAX) return NULL;
   for (uint32_t i = 0; i < site_count; i++) {
     if (sites[i].site_id != site_id) continue;
-    if (!found) found = &sites[i];
-    if (matches) (*matches)++;
+    if (!found) {
+      found = &sites[i];
+      count = 1u;
+    } else if (!equivalent_site_rows(found, &sites[i])) {
+      count++;
+    }
   }
+  if (matches) *matches = count;
   return found;
 }
 
@@ -308,6 +415,28 @@ static void parse_spec_line(char *line) {
     return;
   }
 
+  if (!strcmp(op, "same_object_relation") ||
+      !strcmp(op, "same-object-relation") ||
+      !strcmp(op, "object_identity_relation") ||
+      !strcmp(op, "object-identity-relation")) {
+    char *atom_text = next_token(&saveptr);
+    char *from_role = next_token(&saveptr);
+    char *to_role = next_token(&saveptr);
+    char *object_expr = next_token(&saveptr);
+    uint32_t atom_id = 0;
+    if (!parse_u32(atom_text, &atom_id) || !object_expr || !*object_expr)
+      return;
+    if (same_object_relation_count >= MAX_BINDINGS) return;
+    same_object_relation_t *rel =
+        &same_object_relations[same_object_relation_count++];
+    memset(rel, 0, sizeof(*rel));
+    rel->atom_id = atom_id;
+    rel->from_role = parse_role(from_role);
+    rel->to_role = parse_role(to_role);
+    copy_field(rel->object_expr, sizeof(rel->object_expr), object_expr);
+    return;
+  }
+
   if (!strcmp(op, "role_component") || !strcmp(op, "role-event") ||
       !strcmp(op, "role_event")) {
     binding_row_t *b = new_binding(op);
@@ -336,6 +465,40 @@ static void parse_spec_line(char *line) {
     copy_field(b->value_mode, sizeof(b->value_mode), value_mode);
     copy_field(b->value, sizeof(b->value), value);
     copy_field(b->confidence, sizeof(b->confidence), confidence);
+    parse_optional_tail(&saveptr, b);
+    return;
+  }
+
+  if (!strcmp(op, "range") || !strcmp(op, "hot_range") ||
+      !strcmp(op, "hot-range")) {
+    char *event_kind = next_token(&saveptr);
+    char *site_id = next_token(&saveptr);
+    char *start = next_token(&saveptr);
+    char *len = next_token(&saveptr);
+    char *influence = next_token(&saveptr);
+    char *mutation_hint = next_token(&saveptr);
+    char *mutation_value = next_token(&saveptr);
+    char *observe_window = next_token(&saveptr);
+    uint32_t ignored = 0;
+    if (!event_kind || !site_id || !start || !len) return;
+    if (!parse_u32(event_kind, &ignored) || !parse_u32(site_id, &ignored) ||
+        !parse_u32(start, &ignored) || !parse_u32(len, &ignored))
+      return;
+    if (!influence) influence = "1.0";
+    if (range_row_count < MAX_RANGE_ROWS) {
+      if (mutation_hint) {
+        snprintf(range_rows[range_row_count++], sizeof(range_rows[0]),
+                 "range %s %s %s %s %s %s %s%s%s", event_kind, site_id, start,
+                 len, influence, mutation_hint,
+                 mutation_value ? mutation_value : "0",
+                 observe_window ? " " : "",
+                 observe_window ? observe_window : "");
+      } else {
+        snprintf(range_rows[range_row_count++], sizeof(range_rows[0]),
+                 "range %s %s %s %s %s", event_kind, site_id, start, len,
+                 influence);
+      }
+    }
     return;
   }
 
@@ -364,6 +527,7 @@ static void parse_spec_line(char *line) {
     copy_field(b->value_mode, sizeof(b->value_mode), value_mode);
     copy_field(b->value, sizeof(b->value), value);
     copy_field(b->confidence, sizeof(b->confidence), confidence);
+    parse_optional_tail(&saveptr, b);
     return;
   }
 
@@ -390,6 +554,7 @@ static void parse_spec_line(char *line) {
     copy_field(b->value_mode, sizeof(b->value_mode), "hit");
     copy_field(b->phase_index, sizeof(b->phase_index), phase_index);
     copy_field(b->confidence, sizeof(b->confidence), confidence);
+    parse_optional_tail(&saveptr, b);
   }
 }
 
@@ -431,21 +596,23 @@ static site_role_set_t *site_role_slot(uint32_t atom_id, uint32_t site_id) {
 }
 
 static uint32_t binding_tier(const atom_summary_t *atom) {
-  int root = (atom->roles & role_bit(FORMTRIG_ROLE_ROOT_OBSERVE)) != 0;
+  int root = atom && atom->stateful_root_count > 0u;
   int producer = (atom->roles & role_bit(FORMTRIG_ROLE_PRODUCER)) != 0 ||
                  (atom->roles & role_bit(FORMTRIG_ROLE_DESIRED_PRODUCER)) != 0 ||
                  (atom->roles & role_bit(FORMTRIG_ROLE_OPPOSITE_PRODUCER)) != 0;
   int use = (atom->roles & role_bit(FORMTRIG_ROLE_USE)) != 0;
   int lifecycle = (atom->roles & role_bit(FORMTRIG_ROLE_LIFECYCLE_EVENT)) != 0;
-  int same_object = (atom->roles & role_bit(FORMTRIG_ROLE_SAME_OBJECT)) != 0;
+  int same_object = atom->stateful_same_object_count > 0u &&
+                    same_object_relation_complete(atom);
   int influence = (atom->roles & role_bit(FORMTRIG_ROLE_INPUT_INFLUENCE)) != 0;
+  int repair = (atom->roles & role_bit(FORMTRIG_ROLE_REPAIR_HOOK)) != 0;
 
-  if (root && producer && use && lifecycle && same_object && influence)
-    return 4u;
-  if (root && lifecycle && use && same_object) return 3u;
-  if (root && producer && use) return 2u;
-  if (root) return 1u;
-  return 0u;
+  uint32_t tier = 0u;
+  if (root) tier = 1u;
+  if (root && producer && use) tier = 2u;
+  if (root && lifecycle && use && same_object && tier < 3u) tier = 3u;
+  if (root && (influence || repair)) tier = 4u;
+  return tier;
 }
 
 static uint32_t min_tier(enum ft_category category) {
@@ -466,14 +633,35 @@ static const char *atom_reason(const atom_summary_t *atom,
                                enum ft_category category) {
   if (atom->missing) return "missing_runtime_event";
   if (atom->collapsed) return "semantic_role_collapse";
+  if (category == FT_CATEGORY_BINARY_NULL) {
+    if ((atom->roles & role_bit(FORMTRIG_ROLE_ROOT_OBSERVE)) == 0 ||
+        (atom->roles & role_bit(FORMTRIG_ROLE_USE)) == 0)
+      return "missing_root_or_use";
+    if (!atom->stateful_root_count) return "missing_stateful_root_observe";
+    if ((atom->roles & role_bit(FORMTRIG_ROLE_PRODUCER)) == 0 &&
+        (atom->roles & role_bit(FORMTRIG_ROLE_DESIRED_PRODUCER)) == 0 &&
+        (atom->roles & role_bit(FORMTRIG_ROLE_OPPOSITE_PRODUCER)) == 0)
+      return "missing_producer";
+  }
+  if (min_tier(category) >= 1u &&
+      (atom->roles & role_bit(FORMTRIG_ROLE_ROOT_OBSERVE)) != 0 &&
+      !atom->stateful_root_count)
+    return "missing_stateful_root_observe";
+  if (category == FT_CATEGORY_LIFECYCLE) {
+    if ((atom->roles & role_bit(FORMTRIG_ROLE_ROOT_OBSERVE)) == 0 ||
+        (atom->roles & role_bit(FORMTRIG_ROLE_LIFECYCLE_EVENT)) == 0 ||
+        (atom->roles & role_bit(FORMTRIG_ROLE_USE)) == 0)
+      return "missing_lifecycle_role";
+    if ((atom->roles & role_bit(FORMTRIG_ROLE_SAME_OBJECT)) == 0)
+      return "missing_same_object";
+    if (!atom->stateful_same_object_count)
+      return "missing_stateful_same_object";
+    if (!atom->same_object_relation_count)
+      return "missing_same_object_relation";
+    if (!same_object_relation_complete(atom))
+      return "missing_same_object_endpoint";
+  }
   if (atom->tier < min_tier(category)) return "insufficient_binding_tier";
-  if (category == FT_CATEGORY_BINARY_NULL &&
-      ((atom->roles & role_bit(FORMTRIG_ROLE_ROOT_OBSERVE)) == 0 ||
-       (atom->roles & role_bit(FORMTRIG_ROLE_USE)) == 0))
-    return "missing_root_or_use";
-  if (category == FT_CATEGORY_LIFECYCLE &&
-      (atom->roles & role_bit(FORMTRIG_ROLE_SAME_OBJECT)) == 0)
-    return "missing_same_object";
   return "ok";
 }
 
@@ -487,8 +675,15 @@ static void resolve_bindings(enum ft_category fallback_category) {
   for (uint32_t i = 0; i < binding_count; i++) {
     binding_row_t *b = &bindings[i];
     uint32_t matches = 0;
-    b->site = find_site(b->site_id, &matches);
-    if (b->site_id == UINT32_MAX) {
+    if (b->event_kind == FORMTRIG_EVENT_CANARY && b->site_id != UINT32_MAX) {
+      b->site = NULL;
+      b->mapping_status = "exact";
+    } else {
+      b->site = find_site(b->site_id, &matches);
+    }
+    if (b->mapping_status) {
+      /* Pseudo-events such as canaries are runtime ABI events, not LLVM rows. */
+    } else if (b->site_id == UINT32_MAX) {
       b->mapping_status = "ambiguous";
     } else if (!matches) {
       b->mapping_status = "missing";
@@ -511,8 +706,18 @@ static void resolve_bindings(enum ft_category fallback_category) {
     if (!atom) continue;
     atom->roles |= role_bit(b->role);
     if (!strcmp(b->mapping_status, "missing")) atom->missing = 1u;
+    if (b->role == FORMTRIG_ROLE_ROOT_OBSERVE &&
+        value_mode_observes_state(b->value_mode))
+      atom->stateful_root_count++;
+    if (b->role == FORMTRIG_ROLE_USE &&
+        value_mode_observes_state(b->value_mode))
+      atom->stateful_use_count++;
+    if (b->role == FORMTRIG_ROLE_SAME_OBJECT &&
+        value_mode_observes_state(b->value_mode))
+      atom->stateful_same_object_count++;
 
-    if (b->site_id != UINT32_MAX && b->role != FORMTRIG_ROLE_UNKNOWN) {
+    if (b->site_id != UINT32_MAX &&
+        role_participates_in_semantic_collapse(b->role)) {
       site_role_set_t *site_role = site_role_slot(b->atom_id, b->site_id);
       if (site_role) {
         uint32_t bit = role_bit(b->role);
@@ -523,6 +728,18 @@ static void resolve_bindings(enum ft_category fallback_category) {
         site_role->roles |= bit;
       }
     }
+  }
+
+  for (uint32_t i = 0; i < same_object_relation_count; i++) {
+    const same_object_relation_t *rel = &same_object_relations[i];
+    if (rel->from_role == FORMTRIG_ROLE_UNKNOWN ||
+        rel->to_role == FORMTRIG_ROLE_UNKNOWN)
+      continue;
+    atom_summary_t *atom = atom_slot(rel->atom_id);
+    if (!atom) continue;
+    atom->same_object_relation_count++;
+    atom->same_object_relation_roles |=
+        role_bit(rel->from_role) | role_bit(rel->to_role);
   }
 
   for (uint32_t i = 0; i < atom_count; i++) {
@@ -539,7 +756,8 @@ static void resolve_bindings(enum ft_category fallback_category) {
     b->tier = atom->tier;
     b->reason = b->reason ? b->reason : atom->reason;
     b->lift_allowed = atom->lift_allowed;
-    if (atom->collapsed && !b->collapsed_with && b->site_id != UINT32_MAX) {
+    if (atom->collapsed && !b->collapsed_with && b->site_id != UINT32_MAX &&
+        role_participates_in_semantic_collapse(b->role)) {
       site_role_set_t *site_role = site_role_slot(b->atom_id, b->site_id);
       if (site_role) b->collapsed_with = site_role->roles & ~role_bit(b->role);
     }
@@ -550,7 +768,7 @@ static void print_header(void) {
   printf("binding_id,atom_id,category,role,event_kind,site_id,event_id,"
          "mapping_status,collapsed_with,binding_tier,lift_allowed,reason,"
          "component_kind,priority,direction,value_mode,function,file,line,"
-         "column,opcode\n");
+         "column,opcode,observe_window\n");
 }
 
 static void print_binding(const binding_row_t *b,
@@ -574,6 +792,7 @@ static void print_binding(const binding_row_t *b,
   } else {
     printf(",,0,0,");
   }
+  printf(",%s", b->observe_window[0] ? b->observe_window : "post_reach");
   putchar('\n');
 }
 
@@ -591,31 +810,39 @@ static int write_normalized_spec(const char *path) {
       return 0;
     }
     if (!strcmp(b->op, "phase") || !strcmp(b->op, "prefix")) {
-      fprintf(f, "phase %u %u %u %u %u %s %s %llu\n", b->event_kind,
+      fprintf(f, "phase %u %u %u %u %u %s %s %llu", b->event_kind,
               b->site_id, b->component_kind, b->atom_id, b->priority,
               b->phase_index[0] ? b->phase_index : "1",
               b->confidence[0] ? b->confidence : "1.0",
               (unsigned long long)b->event_id);
+      if (b->observe_window[0]) fprintf(f, " %s", b->observe_window);
+      fputc('\n', f);
       continue;
     }
     if (b->role == FORMTRIG_ROLE_UNKNOWN) {
-      fprintf(f, "component %u %u %u %u %u %s %s %s %s %llu %llu\n",
+      fprintf(f, "component %u %u %u %u %u %s %s %s %s %llu %llu",
               b->event_kind, b->site_id, b->component_kind, b->atom_id,
               b->priority, b->direction, b->value_mode,
               b->value[0] ? b->value : "1.0",
               b->confidence[0] ? b->confidence : "1.0",
               (unsigned long long)b->event_id,
               (unsigned long long)b->event_id);
+      if (b->observe_window[0]) fprintf(f, " %s", b->observe_window);
+      fputc('\n', f);
     } else {
-      fprintf(f, "role_component %u %u %s %u %u %u %s %s %s %s %llu %llu\n",
+      fprintf(f, "role_component %u %u %s %u %u %u %s %s %s %s %llu %llu",
               b->event_kind, b->site_id, role_name(b->role),
               b->component_kind, b->atom_id, b->priority, b->direction,
               b->value_mode, b->value[0] ? b->value : "1.0",
               b->confidence[0] ? b->confidence : "1.0",
               (unsigned long long)b->event_id,
               (unsigned long long)b->event_id);
+      if (b->observe_window[0]) fprintf(f, " %s", b->observe_window);
+      fputc('\n', f);
     }
   }
+  for (uint32_t i = 0; i < range_row_count; i++)
+    fprintf(f, "%s\n", range_rows[i]);
 
   fclose(f);
   return 1;

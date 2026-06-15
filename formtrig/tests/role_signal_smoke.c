@@ -33,8 +33,9 @@ int main(void) {
 
   formtrig_record_role_component(
       FORMTRIG_COMPONENT_PRODUCER_USE, 1, FORMTRIG_ROLE_ROOT_OBSERVE, 25,
-      FORMTRIG_COMPONENT_HIGHER_IS_BETTER | FORMTRIG_COMPONENT_LIFTED, 101,
-      1001, 1.0, 0.9);
+      FORMTRIG_COMPONENT_HIGHER_IS_BETTER | FORMTRIG_COMPONENT_LIFTED |
+          FORMTRIG_COMPONENT_SPEC_LIFTED,
+      101, 1001, 1.0, 0.9);
 
   formtrig_shm_record_t *rec =
       (formtrig_shm_record_t *)(void *)(area + FORMTRIG_SHM_OFFSET);
@@ -42,6 +43,9 @@ int main(void) {
       rec->version != FORMTRIG_SHM_VERSION)
     return 3;
   if (has_lifted_atom_component(rec) || rec->atom_signal_count != 0) return 4;
+  if ((rec->source_flags & FORMTRIG_SOURCE_MANUAL_TARGET) != 0) return 17;
+  if ((rec->observed_source_flags & FORMTRIG_SOURCE_MANUAL_TARGET) == 0)
+    return 18;
 
   setenv("FORMTRIG_ALLOW_MANUAL_LIFT", "1", 1);
   formtrig_reset();
@@ -75,6 +79,16 @@ int main(void) {
     return 10;
   if ((signal->producer_bits & 2u) == 0) return 11;
   if ((signal->use_bits & 2u) == 0) return 12;
+  if (rec->source_flags & FORMTRIG_SOURCE_SPEC_LIFTED) return 13;
+  if ((rec->source_flags & FORMTRIG_SOURCE_MANUAL_TARGET) == 0) return 14;
+  for (uint32_t i = 0; i < rec->component_count; i++) {
+    if (!(rec->components[i].flags & FORMTRIG_COMPONENT_LIFTED) ||
+        rec->components[i].atom_id == 0)
+      continue;
+    if (rec->components[i].flags & FORMTRIG_COMPONENT_SPEC_LIFTED) return 15;
+    if ((rec->components[i].flags & FORMTRIG_COMPONENT_MANUAL_TARGET) == 0)
+      return 16;
+  }
 
   free(area);
   return 0;

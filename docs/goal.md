@@ -772,3 +772,11 @@ no higher-priority regression
 必须是 **TC-rooted progress**。
 
 ---
+
+## 7. 当前工程交接
+
+当前 native FORMTRIG 工程状态、已验证证据、风险和下一步执行项记录在：
+
+```text
+docs/formtrig_native_handoff_20260615.md
+```

@@ -7,8 +7,9 @@ set. Required fields:
 - `crash_predicate`: whether the benchmark/application crash predicate was
   satisfied.
 - `D_T`: direct binary target/crash distance.
-- `D_F`: synthesized FORMTRIG distance from generic runtime safety semantics.
-  It is not derived from benchmark oracles such as Magma canaries.
+- `D_F`: selected FORMTRIG distance for the current run mode. In
+  FORMTRIG-main this comes from BindingSpec-driven TC-rooted components, not
+  benchmark oracles such as Magma canaries.
 - `D_F_lifted`: selected lifted distance used by the current runtime mode.
   FORMTRIG-main selects BindingSpec-driven lift by default.
 - `D_F_spec_lifted`: BindingSpec/runtime-event-map generated lifted distance.
@@ -22,6 +23,9 @@ set. Required fields:
 - `observed_lift_source_flags`: bitset over all lifted source classes observed
   by the runtime, including heuristic/manual sources that were not allowed to
   guide FORMTRIG-main.
+- AFL++ progress JSON mirrors this split as `source_flags` and
+  `observed_source_flags`; summary/diagnosis report used and observed source
+  counts separately.
 - `trace_signature`: 64-bit hex signature over post-reach events.
 - `target_hit_count`: number of target hits in the execution.
 - `hot_byte_ranges`: bounded list of byte ranges and finite-difference
@@ -44,7 +48,8 @@ set. Required fields:
   fields showing whether disabled exploratory/manual sources were observed.
 - `atom_signals`: per-atom role summary for the AFL++ fast path. Role bits
   distinguish root observation, guard, producer, desired/opposite producer,
-  use, lifecycle event, same-object, and input-influence evidence.
+  use, lifecycle event, same-object, input-influence evidence, and external
+  repair hooks.
 - `df_source`: optional object explaining the selected FORMTRIG distance source.
   `mode=1` means producer-linked lifted comparison, `mode=2` manual direct
   margin, `mode=3` manual lifted distance, `mode=4` direct binary sink,
@@ -84,13 +89,35 @@ Example:
 `formtrig_progress.jsonl` and emits one campaign-level JSON object. The summary
 keeps aggregate counters from AFL++ and adds experiment-facing diagnostics:
 
-- `progress_status`: `triggered`, `progress_queued`, or `not_progressing`.
+- `progress_status`: `triggered`, `progress_queued`,
+  `frontier_progress_observed`, or `not_progressing`.
   Initial frontier admission does not count as `progress_queued`.
-- `frontier_progress_accept_events`: accepted non-initial frontier updates.
-  This excludes `initial_frontier_seed`, which is only setup state.
+- `calibrated_frontier_events`: initial corpus calibration events that build
+  the starting frontier. These are setup state, not search progress.
+- `frontier_progress_accept_events`: accepted non-initial `frontier_accept`
+  updates from search. This excludes `calibrated_frontier` and
+  `initial_frontier_seed`, which are only setup state.
+- `saved_triggered_progress_events`: `saved_progress` events whose runtime
+  signal already fired the TC. These are terminal successes, not evidence of a
+  non-trigger frontier step.
+- `saved_non_trigger_progress_events`: `saved_progress` events that preserve
+  reachability without firing the TC and are therefore evidence of non-trigger
+  lifted progress.
+- `non_trigger_progress_events`: `saved_non_trigger_progress_events` plus
+  non-initial `frontier_progress_accept_events`.
+- `has_tc_rooted_progress`: true when the run triggered, saved FORMTRIG
+  progress, or observed non-initial frontier progress.
+- `has_queued_progress`: true only when FORMTRIG progress was saved into the
+  fuzzing queue.
+- `has_frontier_progress`: true when dominance/frontier accepted non-initial
+  TC-rooted progress, even if that progress was not saved into the queue.
+- `has_non_trigger_progress`: true when the run produced replay-stable,
+  non-trigger TC-rooted progress. This is the field to use when evaluating
+  whether FORMTRIG moved through lifted states before terminal trigger.
 - `limiting_reason`: first coarse explanation when no FORMTRIG progress was
   queued, such as `no_formtrig_signal`, `target_not_reached`,
-  `no_actionable_component`, `constant_d_f`, `dominance_rejected`, or
+  `no_actionable_component`, `constant_d_f`, `frontier_progress_not_queued`,
+  `typed_stage_parent_not_replay_stable`, `dominance_rejected`, or
   `progress_not_replay_stable`.
 - `d_f_constant`: whether all observed finite `D_F` values were identical.
 - `has_lifted_signal`, `has_actionable_component`, `has_atom_signal`,
@@ -102,10 +129,22 @@ keeps aggregate counters from AFL++ and adds experiment-facing diagnostics:
 These summary diagnostics are audit data. They do not feed back into fuzzing
 decisions and they do not use trigger-oracle state to score non-trigger inputs.
 
+`formtrig/tools/formtrig_binding_signal_diagnose.c` consumes the runtime event
+map and `formtrig_progress.jsonl`, then writes
+`formtrig_binding_signal_diagnosis.json`. This is a dynamic BindingSpec quality
+diagnostic, separate from provenance. It reports per-atom/per-role samples,
+candidate-only samples, unique values, variable roles, and candidate `D_F`
+values. For binary/null and lifecycle atoms, it flags cases such as
+`guard_only_lift_signal`, `producer_root_use_constant`,
+`producer_not_observed_in_candidates`, and
+`mutations_lose_best_lifted_state`. These diagnoses prevent a statically valid
+BindingSpec from being interpreted as effective lifted guidance when mutation
+children do not move TC-rooted producer/use/root or lifecycle roles.
+
 `formtrig/tools/formtrig_campaign_diagnose.c` consumes the campaign summary,
-the runtime event map, and the lifted-feature provenance audit, then writes
-`formtrig_diagnosis.json`. This is the experiment-readiness gate for result
-interpretation. It reports:
+the runtime event map, the lifted-feature provenance audit, and the binding
+signal diagnosis, then writes `formtrig_diagnosis.json`. This is the
+experiment-readiness gate for result interpretation. It reports:
 
 - `experiment_ready`: true only when runtime signal reached the target,
   spec-driven lifted signal exists, actionable atom/role components are present,
@@ -113,10 +152,19 @@ interpretation. It reports:
   sources did not enter FORMTRIG-main.
 - `has_tc_rooted_progress`: true only for trigger or accepted non-initial
   progress, not for initial frontier seeds.
+- `has_non_trigger_progress`: true only when replay-stable non-trigger lifted
+  progress was saved or accepted by the frontier. A run can be `triggered` while
+  this remains false.
+- `pretrigger_lift_guidance_ready`: true when the run produced either
+  non-trigger progress or a non-trigger candidate-side lifted `D_F` delta. This
+  is stricter than `experiment_ready` and is the campaign-level indicator for
+  whether lifted guidance moved before the terminal trigger.
 - `diagnosis`: a single primary explanation such as
   `seed_does_not_reach_target`, `insufficient_binding`,
   `semantic_role_collapse`, `no_spec_lifted_signal`, `constant_lift_signal`,
-  `no_new_non_dominated_progress`, or `queued_tc_rooted_progress`.
+  `guard_only_lift_signal`, `producer_root_use_constant`,
+  `mutations_lose_best_lifted_state`, `no_new_non_dominated_progress`, or
+  `queued_tc_rooted_progress`.
 
 ## Seed Readiness
 
@@ -143,8 +191,34 @@ the same artifacts. It reads a line-oriented manifest, optionally generates a
 first-pass BindingSpec from a source site, then invokes the campaign runner. It
 does not change runtime semantics; all authoritative evidence remains in
 `formtrig_seed_readiness.json`, `formtrig_runtime_event_map.csv`,
-`formtrig_lift_feature_audit.json`, `formtrig_summary.json`, and
-`formtrig_diagnosis.json`.
+`formtrig_lift_feature_audit.json`, `formtrig_summary.json`,
+`formtrig_binding_signal_diagnosis.json`, and `formtrig_diagnosis.json`.
+
+`scripts/run_formtrig_binding_candidate_sweep.sh` evaluates a set of external
+BindingSpec or low-level lift-spec candidates without embedding target-specific
+rules in FORMTRIG core. For each candidate it runs the same static event-map
+gate, seed readiness replay, short AFL++ campaign, provenance audit, and
+binding-signal diagnosis. It writes `summary.tsv` and `summary.jsonl` with a
+deterministic score plus the candidate's final diagnosis, dynamic
+binding-signal diagnosis, queued progress count, trigger count, reached execs,
+candidate event count, non-trigger progress counts, saved triggered-progress
+counts, accepted non-trigger progress counts, and number of non-guard semantic
+roles that varied in mutation candidates. It also reports whether lifted
+`D_F` deltas occurred on triggered candidates, non-trigger candidates, or only
+after the terminal trigger. Candidate scores strongly prioritize
+`pretrigger_lift_guidance_ready`, and penalize
+`lift_delta_only_on_triggered_candidates`, after the experiment-readiness and
+binding-signal gates are accounted for. A trigger-only candidate therefore does
+not outrank a candidate that moves lifted state before the terminal trigger.
+This is the intended bridge for offline candidate generation, including manual
+review or an optional LLM proposal step: candidate generation may be heuristic,
+but candidate admission remains deterministic and runtime-grounded.
+
+`scripts/run_formtrig_manifest_batch.sh` preserves the same distinction in
+batch summaries. Its CSV/JSONL rows include `has_non_trigger_progress`,
+`non_trigger_progress`, `saved_non_trigger_progress`, and
+`saved_triggered_progress` so Magma/CVE long-run tables do not conflate
+terminal triggers with lifted non-trigger guidance.
 
 ## LLVM Site Map
 
@@ -156,28 +230,38 @@ site_id kind function inst_no opcode file line column
 ```
 
 `formtrig/tools/formtrig_site_map.c` filters this map by file, function, kind,
-and source line. It can emit:
+source line, and optional `inst_no` disambiguator. It can emit:
 
 - `csv`: matching rows plus `mapping_status` (`exact`, `ambiguous`, `missing`).
 - `ids`: comma-separated site ids.
 - `env`: `FORMTRIG_TARGET_SITE_IDS=...` for source-line TC campaigns.
+- `binding-context`: JSON context for offline BindingSpec candidate generation.
+  It includes the TC/atom metadata, per-category minimum binding tier,
+  candidate site rows, role requirements, and the deterministic gates that must
+  accept any proposed candidate.
 - `binding-spec`: a first-pass high-level BindingSpec manifest for the matched
   source event and requested atom/role.
 - `lift-spec`: draft `role_component` rows for `FORMTRIG_LIFT_SPEC`.
 
 Source-line generated BindingSpecs are intended to remove the site-id handoff
-from experiment setup. They still represent only the roles requested on the
-command line: a generated root-only BindingSpec can satisfy B1 numeric/equality
-binding, but binary/null and lifecycle targets remain blocked until explicit
-producer/use or lifecycle-event bindings are added. Draft lift-spec rows are
-only binding inputs. They must still pass the native binding-tier audit before a
-lifted plan is trusted.
+from experiment setup. Binding contexts are intended to make manual or optional
+LLM-assisted candidate generation inspectable without putting heuristic choices
+in FORMTRIG core. They are not evidence that lift is valid. Generated manifests
+and draft lift-spec rows still represent only the roles requested or proposed:
+a generated root-only BindingSpec can satisfy B1 numeric/equality binding, but
+binary/null and lifecycle targets remain blocked until explicit producer/use or
+lifecycle-event bindings are added. Draft lift-spec rows are only binding
+inputs. They must still pass the native binding-tier audit and dynamic binding
+signal diagnosis before a lifted plan is trusted.
 
 ## BindingSpec And Runtime Event Map
 
 The first-class experiment input is a high-level BindingSpec manifest matching
 `formtrig/binding_specs/schema.json`. It names the TC, atoms, root expressions,
 semantic binding roles, role expressions, and `observe_at` source locations.
+When one source location lowers to multiple IR events, `observe_at.inst_no`
+selects the intended instruction without embedding a site id in the high-level
+BindingSpec.
 The native runtime does not parse this manifest in the fuzzing hot path.
 Campaign setup compiles it once into the lower-level `FORMTRIG_LIFT_SPEC` row
 format:
@@ -211,6 +295,37 @@ quality gates compute minimum tier per atom, so mixed TCs such as
 `equality/magic && binary-state-null` do not incorrectly apply one global tier
 to every atom.
 
+Lifecycle atoms also need explicit object-identity relation metadata. A
+`same_object` binding is not enough by itself, even when its value mode observes
+an operand. The BindingSpec must declare the relation endpoints and object
+expression:
+
+```yaml
+role: same_object
+relation_from: lifecycle_event
+relation_to: use
+object_expr: obj
+```
+
+The compiler emits:
+
+```text
+same_object_relation 1 lifecycle_event use obj
+```
+
+`formtrig_lift_spec_audit` and `formtrig_binding_map` require that relation for
+compound/lifecycle B3. Without it, the atom is rejected with
+`missing_same_object_relation` or `missing_same_object_endpoint`. This prevents a
+single stateful probe from being misread as a same-object lifecycle binding.
+
+Binding rows also declare a `value_mode`. Basic modes forward the raw event
+distance or operands (`distance`, `hit`, `outcome`, `a`, `b`, `c`). The
+expression-driven modes `distance_to_a`, `distance_to_b`, and `distance_to_c`
+compute `abs(observed_operand - binding.value)` in the runtime. This is a
+generic TC-root transform: the BindingSpec chooses the semantic operand and
+target constant, while the runtime only evaluates the declared transform and
+does not inspect target ids or trigger-oracle state.
+
 The resulting runtime event map includes:
 
 - `binding_id`, `atom_id`, semantic `role`, event kind, site id, and stable
@@ -238,6 +353,7 @@ When a campaign has both `--lift-spec` and `--site-map`, the runner also emits:
 
 ```text
 OUT/default/formtrig_lift_feature_audit.json
+OUT/default/formtrig_binding_signal_diagnosis.json
 ```
 
 This audit reads `formtrig_runtime_event_map.csv` and
@@ -247,6 +363,13 @@ For non-trigger accepted spec-lifted progress, at least one spec-lifted componen
 must map back to a BindingSpec/runtime event id. Accepted heuristic/manual lifted
 progress fails FORMTRIG-main provenance because it is not BindingSpec-grounded
 guidance; ignored heuristic/manual observations are reported separately.
+
+The binding signal diagnosis reads the same progress log but answers a
+different question: whether the mapped semantic roles produce useful dynamic
+lift. It distinguishes initial/calibrated frontier states from mutation
+candidate states. A binary/null target with exact B2 bindings can still be
+marked `not_ready` if all mutation candidates preserve only a guard bit while
+root, producer, opposite-producer, and use roles remain constant.
 
 ## Lift Source Separation
 
