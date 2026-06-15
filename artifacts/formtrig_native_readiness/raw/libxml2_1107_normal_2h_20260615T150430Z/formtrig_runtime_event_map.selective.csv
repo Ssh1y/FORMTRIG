@@ -1,0 +1,6 @@
+binding_id,atom_id,category,role,event_kind,site_id,event_id,mapping_status,collapsed_with,binding_tier,lift_allowed,reason,component_kind,priority,direction,value_mode,function,file,line,column,opcode,observe_window
+1,1,binary-state-null,root_observe,7,787463692,17bcd972776e95ec,exact,0x00000000,B4,true,ok,3,10,higher,outcome,xmlRegNewParserCtxt,/home/cwh/FORMTRIG/benchmarks/cve_build/libxml2-a7511af0-src/xmlregexp.c,741,25,icmp,any
+2,1,binary-state-null,desired_producer,7,1900586549,a4c63efb82a81faa,exact,0x00000000,B4,true,ok,6,20,lower,distance_to_b,hook_malloc,/home/cwh/FORMTRIG/benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c,15,47,icmp,any
+3,1,binary-state-null,use,9,921684644,5f2fddd884bdafb0,exact,0x00000000,B4,true,ok,6,30,higher,hit,xmlRegNewParserCtxt,/home/cwh/FORMTRIG/benchmarks/cve_build/libxml2-a7511af0-src/xmlregexp.c,740,40,load,any
+4,1,binary-state-null,guard,7,1816698454,fedcb3547a54ae40,exact,0x00000000,B4,true,ok,5,15,higher,outcome,hook_malloc,/home/cwh/FORMTRIG/benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c,15,24,icmp,any
+5,1,binary-state-null,input_influence,7,1816698454,c8f42109ece90087,exact,0x00000000,B4,true,ok,4,40,higher,hit,hook_malloc,/home/cwh/FORMTRIG/benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c,15,24,icmp,any

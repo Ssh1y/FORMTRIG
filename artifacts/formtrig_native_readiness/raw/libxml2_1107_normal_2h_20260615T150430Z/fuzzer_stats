@@ -1,0 +1,61 @@
+start_time        : 1781535886
+last_update       : 1781543086
+run_time          : 7200
+fuzzer_pid        : 365469
+cycles_done       : 1
+cycles_wo_finds   : 0
+time_wo_finds     : 103
+execs_done        : 13844261
+execs_per_sec     : 1922.81
+execs_ps_last_min : 1939.82
+corpus_count      : 3461
+corpus_favored    : 370
+corpus_found      : 3460
+corpus_imported   : 0
+corpus_variable   : 0
+max_depth         : 27
+cur_item          : 336
+pending_favs      : 0
+pending_total     : 2641
+stability         : 100.00%
+bitmap_cvg        : 2.85%
+saved_crashes     : 0
+saved_hangs       : 3
+last_find         : 1781543045
+last_crash        : 0
+last_hang         : 1781538381
+execs_since_crash : 13844261
+exec_timeout      : 20
+slowest_exec_ms   : 0
+peak_rss_mb       : 0
+cpu_affinity      : -1
+edges_found       : 1255
+total_edges       : 43979
+var_byte_count    : 0
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 209281
+testcache_count   : 3461
+testcache_evict   : 0
+afl_banner        : /tmp/formtrig_libxml2_1107_normal_2h_20260615T150430Z/libxml2_regexp_strdup_fail_replay_formtrig_selective
+afl_version       : ++4.08c
+target_mode       : shmem_testcase default
+command_line      : /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz -i /home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBXML2_1107/seeds -o /tmp/formtrig_libxml2_1107_normal_2h_20260615T150430Z/selective_sweep_7200s/candidates/001_LIBXML2_1107.native_b2_alloc_fail_candidate.yml -V 7200 -- /tmp/formtrig_libxml2_1107_normal_2h_20260615T150430Z/libxml2_regexp_strdup_fail_replay_formtrig_selective @@
+formtrig_seen_execs      : 13659421
+formtrig_reached_execs   : 13659421
+formtrig_triggered_execs : 0
+formtrig_queued_progress : 1
+formtrig_frontier_count  : 1
+formtrig_frontier_updates: 2
+formtrig_typed_execs     : 437712
+formtrig_typed_finds     : 4
+formtrig_typed_skips     : 3
+formtrig_stability_checks: 2
+formtrig_stability_failures: 0
+formtrig_progress_log_events: 11019
+formtrig_saved_progress_log_seen: 1
+formtrig_saved_triggered_log_seen: 0
+formtrig_saved_non_trigger_log_seen: 1
+formtrig_progress_log_dropped: 13631110
+formtrig_best_df         : 1
+formtrig_best_dt         : 1.0000000000000001e+300

@@ -1,0 +1,14 @@
+replay inputs:
+id:000000,sha256:022a6979e6dab7aa 00 61
+id:000001,src:000000,time:1024,execs:10,op:ftgtype,pos:0,+cov 03 61
+id:000000,src:000000,time:1023,execs:9,op:ftgtype,pos:0 02 61
+id:000001,src:000000,time:3232,execs:802,op:havoc,rep:1 02 00
+id:000002,src:000010,time:2495231,execs:4470750,op:ftgtype,pos:0 02 7c
+
+direct replay exits:
+id:000000,sha256:022a6979e6dab7aa exit=0
+id:000001,src:000000,time:1024,execs:10,op:ftgtype,pos:0,+cov exit=0
+id:000002,src:000000,time:1029,execs:18,op:ftgtype,pos:0,+cov exit=0
+id:000000,src:000000,time:1023,execs:9,op:ftgtype,pos:0 exit=139
+id:000001,src:000000,time:3232,execs:802,op:havoc,rep:1 exit=139
+id:000002,src:000010,time:2495231,execs:4470750,op:ftgtype,pos:0 exit=139
