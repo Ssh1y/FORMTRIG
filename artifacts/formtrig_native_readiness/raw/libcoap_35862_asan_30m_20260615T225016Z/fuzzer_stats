@@ -1,0 +1,61 @@
+start_time        : 1781564096
+last_update       : 1781565896
+run_time          : 1800
+fuzzer_pid        : 1671031
+cycles_done       : 1
+cycles_wo_finds   : 0
+time_wo_finds     : 207
+execs_done        : 130010
+execs_per_sec     : 72.23
+execs_ps_last_min : 72.97
+corpus_count      : 83
+corpus_favored    : 21
+corpus_found      : 82
+corpus_imported   : 0
+corpus_variable   : 0
+max_depth         : 7
+cur_item          : 80
+pending_favs      : 1
+pending_total     : 54
+stability         : 100.00%
+bitmap_cvg        : 0.55%
+saved_crashes     : 17
+saved_hangs       : 0
+last_find         : 1781565882
+last_crash        : 1781564694
+last_hang         : 0
+execs_since_crash : 86403
+exec_timeout      : 60
+slowest_exec_ms   : 0
+peak_rss_mb       : 0
+cpu_affinity      : -1
+edges_found       : 187
+total_edges       : 34016
+var_byte_count    : 0
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 4458
+testcache_count   : 83
+testcache_evict   : 0
+afl_banner        : /tmp/formtrig_libcoap_35862_asan_30m_20260615T225016Z/libcoap_oscore_conf_replay_formtrig_selective
+afl_version       : ++4.08c
+target_mode       : shmem_testcase default
+command_line      : /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz -i /home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds -o /tmp/formtrig_libcoap_35862_asan_30m_20260615T225016Z/selective_sweep_1800s/candidates/001_LIBCOAP_CVE_2023_35862.native_b2_keyword_len_candidate.yml -V 1800 -m none -- /tmp/formtrig_libcoap_35862_asan_30m_20260615T225016Z/libcoap_oscore_conf_replay_formtrig_selective @@
+formtrig_seen_execs      : 46370
+formtrig_reached_execs   : 46370
+formtrig_triggered_execs : 0
+formtrig_queued_progress : 0
+formtrig_frontier_count  : 1
+formtrig_frontier_updates: 1
+formtrig_typed_execs     : 7680
+formtrig_typed_finds     : 1
+formtrig_typed_skips     : 38
+formtrig_stability_checks: 1
+formtrig_stability_failures: 0
+formtrig_progress_log_events: 4240
+formtrig_saved_progress_log_seen: 0
+formtrig_saved_triggered_log_seen: 0
+formtrig_saved_non_trigger_log_seen: 0
+formtrig_progress_log_dropped: 41853
+formtrig_best_df         : 1
+formtrig_best_dt         : 1.0000000000000001e+300

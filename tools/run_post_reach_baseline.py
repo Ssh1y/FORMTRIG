@@ -38,30 +38,101 @@ REPRESENTATIVE_BASELINES = {
     "native_tc_dgf",
     "uniform_tc_distance",
 }
-BASELINE_CONTRACTS: dict[str, dict[str, str]] = {
+ACCEPTED_BASELINE_FAITHFULNESS = {
+    "accepted_executable_control",
+    "accepted_executable_artifact",
+    "paper_equivalent_reimplementation",
+    "thin_public_artifact_adapter",
+}
+REQUIRED_BASELINE_CONTRACT_FIELDS = (
+    "paper_anchors",
+    "artifact_anchors",
+    "information_budget",
+)
+BASELINE_CONTRACTS: dict[str, dict[str, Any]] = {
     "aflplusplus_vanilla": {
         "faithfulness": "accepted_executable_control",
         "implementation": "local AFL++ afl-fuzz artifact",
         "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
         "scope": "coverage/reach-only control, not a post-reach TC-distance method",
+        "paper_anchors": [
+            "related_papers/AFL++ CMPLOG.pdf",
+            "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+            "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog",
+        ],
+        "artifact_anchors": [
+            "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+            "experiments/aflplusplus/AFLplusplus/afl-fuzz",
+        ],
+        "information_budget": (
+            "coverage feedback only; no FORMTRIG lifted D_F, BindingSpec "
+            "roles, or typed mutation registry"
+        ),
     },
     "aflplusplus_cmplog": {
         "faithfulness": "accepted_executable_artifact",
         "implementation": "local AFL++ CmpLog instrumentation plus matching cmplog binary",
         "mechanism": "comparison operand logging and comparison-guided mutation from AFL++",
         "scope": "faithful AFL++ CmpLog baseline for visible scalar/string comparison feedback",
+        "paper_anchors": [
+            "related_papers/AFL++ CMPLOG.pdf",
+            "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+            "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog",
+        ],
+        "artifact_anchors": [
+            "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+            "experiments/aflplusplus/AFLplusplus/instrumentation/README.cmplog.md",
+            "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c",
+        ],
+        "information_budget": (
+            "AFL++ CmpLog operand map and normal AFL++ feedback; no FORMTRIG "
+            "lifted D_F, BindingSpec roles, or typed mutation registry"
+        ),
     },
     "redqueen_operand": {
         "faithfulness": "accepted_executable_artifact",
         "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
         "mechanism": "AFL++ value-profile/operand-substitution machinery",
         "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped",
+        "paper_anchors": [
+            "related_papers/Redqueen.pdf",
+            "related_papers/AFL++ CMPLOG.pdf",
+            "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+            "paper/notes/CITATION_TODO.md:Redqueen",
+        ],
+        "artifact_anchors": [
+            "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+            "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c",
+        ],
+        "information_budget": (
+            "AFL++ Redqueen/CmpLog operand observations and substitutions; "
+            "no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation "
+            "registry"
+        ),
+        "equivalence_note": (
+            "This local adapter is the AFL++ Redqueen/CmpLog implementation "
+            "path. It is not evidence for the original Redqueen artifact "
+            "unless a separate paper-equivalence mapping is added."
+        ),
     },
     "aflgo": {
         "faithfulness": "accepted_executable_artifact",
         "implementation": "local AFLGo artifact path or AFLGO_FUZZ override",
         "mechanism": "static target-distance directed greybox fuzzing",
         "scope": "reach-side directed baseline; no FORMTRIG post-reach target-state signal is injected",
+        "paper_anchors": [
+            "related_papers/aflgo.pdf",
+            "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFLGo",
+            "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFLGo",
+        ],
+        "artifact_anchors": [
+            "experiments/aflgo_formtrig/aflgo@fa125da5d706",
+            "experiments/aflgo_formtrig/aflgo/afl-2.57b/afl-fuzz",
+        ],
+        "information_budget": (
+            "AFLGo static reach distance and AFL feedback; no FORMTRIG "
+            "lifted D_F, BindingSpec roles, or typed mutation registry"
+        ),
     },
     "formtrig_full": {
         "faithfulness": "system_under_test",
@@ -126,7 +197,7 @@ def parse_fuzzer_stats(path: Path) -> dict[str, str]:
     return stats
 
 
-def baseline_contract(baseline: str) -> dict[str, str]:
+def baseline_contract(baseline: str) -> dict[str, Any]:
     if baseline in BASELINE_CONTRACTS:
         return BASELINE_CONTRACTS[baseline]
     if baseline in REPRESENTATIVE_BASELINES:
@@ -142,6 +213,42 @@ def baseline_contract(baseline: str) -> dict[str, str]:
         "mechanism": "unknown",
         "scope": "unsupported baseline id",
     }
+
+
+def baseline_contract_rejection(baseline: str) -> str | None:
+    contract = baseline_contract(baseline)
+    faithfulness = contract.get("faithfulness")
+    if faithfulness == "system_under_test":
+        return None
+    if faithfulness not in ACCEPTED_BASELINE_FAITHFULNESS:
+        if baseline in REPRESENTATIVE_BASELINES:
+            return "representative-only baseline has no faithful executable adapter"
+        return "unsupported baseline has no accepted faithful contract"
+    missing = [field for field in REQUIRED_BASELINE_CONTRACT_FIELDS if not contract.get(field)]
+    if missing:
+        return "accepted baseline contract is missing required anchors: " + ",".join(missing)
+    return None
+
+
+def refuse_unaccepted_baseline(args: argparse.Namespace, events_path: Path) -> int | None:
+    reason = baseline_contract_rejection(args.baseline)
+    if reason is None:
+        return None
+    status_name = (
+        "not_faithful_baseline_adapter"
+        if args.baseline in REPRESENTATIVE_BASELINES
+        else "unaccepted_baseline_contract"
+    )
+    detail = {
+        "baseline": args.baseline,
+        "baseline_contract": baseline_contract(args.baseline),
+        "faithfulness": baseline_contract(args.baseline).get("faithfulness", "unknown"),
+        "reason": reason,
+        "status": status_name,
+    }
+    write_json(Path(args.out_dir) / "status.json", detail)
+    append_event(events_path, args.baseline, args.target_id, args.rep, "run_error", detail)
+    return 2
 
 
 def find_fuzzer_stats(fuzzer_out: Path) -> Path | None:
@@ -250,17 +357,9 @@ def infer_run_record(
 
 
 def run_execute(args: argparse.Namespace, events_path: Path) -> int:
-    if args.baseline in REPRESENTATIVE_BASELINES:
-        detail = {
-            "baseline": args.baseline,
-            "baseline_contract": baseline_contract(args.baseline),
-            "faithfulness": "not_accepted",
-            "reason": "representative-only baseline has no faithful executable adapter",
-            "status": "not_faithful_baseline_adapter",
-        }
-        write_json(Path(args.out_dir) / "status.json", detail)
-        append_event(events_path, args.baseline, args.target_id, args.rep, "run_error", detail)
-        return 2
+    refusal = refuse_unaccepted_baseline(args, events_path)
+    if refusal is not None:
+        return refusal
 
     tool = resolve_tool(args)
     if not tool.exists():
@@ -351,17 +450,9 @@ def run_execute(args: argparse.Namespace, events_path: Path) -> int:
 
 
 def run_dry(args: argparse.Namespace, events_path: Path) -> int:
-    if args.baseline in REPRESENTATIVE_BASELINES:
-        status = {
-            "baseline": args.baseline,
-            "baseline_contract": baseline_contract(args.baseline),
-            "faithfulness": "not_accepted",
-            "reason": "representative-only baseline has no faithful executable adapter",
-            "status": "not_faithful_baseline_adapter",
-        }
-        write_json(Path(args.out_dir) / "status.json", status)
-        append_event(events_path, args.baseline, args.target_id, args.rep, "run_error", status)
-        return 2
+    refusal = refuse_unaccepted_baseline(args, events_path)
+    if refusal is not None:
+        return refusal
 
     tool = resolve_tool(args)
     fuzzer_out = Path(args.out_dir) / "fuzzer_out"

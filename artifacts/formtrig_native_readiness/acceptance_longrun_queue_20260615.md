@@ -87,11 +87,11 @@ Completed 2-hour evidence:
 ### CVE: LIBCOAP_CVE_2023_35862
 
 Current status: admissible native smoke path passed, 30-minute strict
-pre-trigger guidance passed, and 2-hour strict pre-trigger guidance passed.
-This is the replacement real-CVE candidate for LIBXML2_1107. It still needs a
-long ASAN campaign before it can count as full FORMTRIG real-CVE acceptance
-evidence. It also needs faithful baseline runs before it can enter the final
-SOTA comparison package.
+pre-trigger guidance passed, 2-hour strict pre-trigger guidance passed, and a
+30-minute ASAN terminal-oracle campaign passed. This is the replacement
+real-CVE candidate for LIBXML2_1107. It still needs 2-hour ASAN repetitions and
+same-oracle faithful baseline runs before it can count as the full final
+FORMTRIG real-CVE comparison package.
 
 Runner:
 
@@ -179,6 +179,26 @@ Completed 2-hour pre-trigger evidence:
   not complete; the accepted evidence is the replay-stable saved progress plus
   summary and binding diagnosis counters.
 
+Completed 30-minute ASAN terminal-oracle evidence:
+
+- Run root: `/tmp/formtrig_libcoap_35862_asan_30m_20260615T225016Z`
+- Terminal-only gate:
+  `/tmp/formtrig_libcoap_35862_asan_30m_20260615T225016Z/gate_30m_terminal_oracle/gate_summary.csv`
+- Preserved raw evidence:
+  `artifacts/formtrig_native_readiness/raw/libcoap_35862_asan_30m_20260615T225016Z`
+- Evidence note:
+  `artifacts/formtrig_native_readiness/libcoap_35862_asan_30m_terminal_oracle_20260615.md`
+- Result: terminal-only gate pass with `run_time=1800`,
+  `execs_done=130010`, `execs_per_sec=72.23`, `reached=46370`,
+  `terminal_triggered=17`, `saved_crashes=17`, `saved_hangs=0`,
+  `spec_lifted=4213`, `heuristic_lifted=0`, and `manual_lifted=0`.
+- Replay verification: first saved crash exits with ASAN exit code `86` and
+  reports `AddressSanitizer: global-buffer-overflow` near `master_salt`,
+  `sender_id`, and `id_context` in `coap_oscore.c`.
+- Important distinction: this is ASAN/AFL++ terminal oracle evidence. The
+  FORMTRIG runtime counter remained `formtrig_triggered_execs=0`, so this run
+  does not replace the strict pre-trigger guidance evidence above.
+
 Baseline comparison queue:
 
 - AFL++ vanilla: required faithful coverage/reach-only control.
@@ -201,6 +221,10 @@ Baseline comparison queue:
   evidence, because non-ASAN native crash accounting is not equivalent to the
   ASAN terminal oracle and because repetitions plus 2-hour runs are still
   required.
+- Baseline runner contracts now require paper/artifact anchors and an explicit
+  information budget. The related-paper anchors are local PDFs and matrices
+  under `related_papers/` and `paper/notes/`; a method-family label alone is not
+  accepted as a faithful baseline.
 
 Faithful AFL++-family baseline runner:
 

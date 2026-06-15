@@ -19,6 +19,20 @@ Accepted baseline scope:
   to be the original Redqueen artifact unless a separate paper-equivalence
   mapping is added.
 
+The runner contract now requires each accepted baseline id to carry
+`paper_anchors`, `artifact_anchors`, and an explicit `information_budget`.
+Representative ids, unsupported ids, or accepted-looking contracts missing
+those anchors are rejected before dry-run or execution. The historical raw
+evidence for this 30-minute package predates that stricter contract schema, but
+the baseline identities and caveats above match the same policy.
+
+Related-paper anchors for this package:
+
+- `related_papers/AFL++ CMPLOG.pdf`
+- `related_papers/Redqueen.pdf`
+- `paper/notes/RELATED_PAPER_ARTIFACTS.md`
+- `paper/notes/TC_GAP_CAPABILITY_MATRIX.md`
+
 ## Command
 
 ```bash

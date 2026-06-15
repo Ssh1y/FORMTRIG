@@ -1,0 +1,48 @@
+{
+  "status": "pass",
+  "diagnosis": "no_new_non_dominated_progress",
+  "progress_events": 4240,
+  "candidate_events": 4081,
+  "calibration_events": 1,
+  "accepted_progress_events": 0,
+  "accepted_triggered_progress_events": 0,
+  "accepted_non_trigger_progress_events": 0,
+  "triggered_events": 0,
+  "spec_role_samples": 16852,
+  "spec_role_candidate_samples": 16324,
+  "spec_d_f_samples": 4213,
+  "spec_d_f_candidate_samples": 4081,
+  "spec_d_f_triggered_candidate_samples": 0,
+  "spec_d_f_non_trigger_candidate_samples": 4081,
+  "spec_d_f_calibration_samples": 1,
+  "spec_d_f_candidate_min": 1,
+  "spec_d_f_triggered_candidate_min": null,
+  "spec_d_f_non_trigger_candidate_min": 1,
+  "spec_d_f_calibration_min": 1,
+  "spec_d_f_candidate_values": [2,1],
+  "spec_d_f_triggered_candidate_values": [],
+  "spec_d_f_non_trigger_candidate_values": [2,1],
+  "spec_d_f_calibration_values": [1],
+  "triggered_candidate_lift_delta": false,
+  "non_trigger_candidate_lift_delta": true,
+  "lift_delta_only_on_triggered_candidates": false,
+  "atoms": [
+    {
+      "atom_id": 1,
+      "category": "equality-magic",
+      "lift_allowed": true,
+      "bound_roles": ["root_observe","guard","use","input_influence"],
+      "sampled_roles": ["root_observe","guard","use","input_influence"],
+      "candidate_sampled_roles": ["root_observe","guard","use","input_influence"],
+      "variable_roles": ["root_observe"],
+      "candidate_variable_roles": ["root_observe"],
+      "diagnosis": "no_new_non_dominated_progress",
+      "roles": [
+        {"role":"root_observe","bound":true,"samples":4213,"candidate_samples":4081,"calibration_samples":1,"unique_values":14,"candidate_unique_values":14,"values":[1,6,8,10,12,7,9,11,5,13,3,14,4,2],"candidate_values":[6,1,8,10,12,7,9,11,5,13,3,14,4,2],"flags_or":85,"max_confidence":1},
+        {"role":"guard","bound":true,"samples":4213,"candidate_samples":4081,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":1},
+        {"role":"use","bound":true,"samples":4213,"candidate_samples":4081,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":1},
+        {"role":"input_influence","bound":true,"samples":4213,"candidate_samples":4081,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":118,"max_confidence":1}
+      ]
+    }
+  ]
+}

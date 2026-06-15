@@ -22,6 +22,19 @@ of:
 - a locally integrated implementation of a public artifact where the adapter is
   thin and auditable, with the upstream commit and local patch set recorded.
 
+Every accepted baseline row must also carry structured paper/artifact anchors.
+At minimum, its runner contract must include:
+
+- `paper_anchors`: local related-paper PDFs or local matrix rows under
+  `related_papers/` and `paper/notes/`;
+- `artifact_anchors`: upstream artifact path, local checkout, commit, and any
+  local patch or adapter path;
+- `information_budget`: the exact feedback and target-state information the
+  baseline receives.
+
+A runnable binary without these anchors is not a main-comparison baseline yet.
+It can be a smoke target or engineering milestone, but not SOTA evidence.
+
 The following are not acceptable as main comparison evidence:
 
 - "representative" signal-family stand-ins;
@@ -84,6 +97,11 @@ The runner also writes a `baseline_contract` object into `run_config.json`,
 `status.json`, and `run_record.json`. For example, `redqueen_operand` is
 declared as the AFL++ Redqueen/CmpLog implementation, not as the original
 Redqueen artifact unless a separate paper-equivalence mapping is added.
+
+As of this policy revision, the runner also refuses unsupported baseline ids or
+accepted-looking contracts that lack `paper_anchors`, `artifact_anchors`, or an
+`information_budget`. This prevents a baseline row from entering the experiment
+only because it has a familiar method-family name.
 
 ## Immediate Queue Impact
 

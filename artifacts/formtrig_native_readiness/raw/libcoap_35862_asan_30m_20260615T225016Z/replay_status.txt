@@ -1,0 +1,4 @@
+replay_command=ASAN_OPTIONS=halt_on_error=1:abort_on_error=0:exitcode=86:detect_leaks=0:symbolize=0 UBSAN_OPTIONS=halt_on_error=1:abort_on_error=0:exitcode=86:print_stacktrace=0 /tmp/formtrig_libcoap_35862_asan_30m_20260615T225016Z/libcoap_oscore_conf_replay_formtrig_selective /tmp/formtrig_libcoap_35862_asan_30m_20260615T225016Z/selective_sweep_1800s/candidates/001_LIBCOAP_CVE_2023_35862.native_b2_keyword_len_candidate.yml/default/crashes/id:000000,sig:00,src:000000,time:1938,execs:143,op:havoc,rep:2
+exit_code=86
+stderr_artifact=artifacts/formtrig_native_readiness/raw/libcoap_35862_asan_30m_20260615T225016Z/replay_stderr.txt
+asan_summary=AddressSanitizer: global-buffer-overflow
