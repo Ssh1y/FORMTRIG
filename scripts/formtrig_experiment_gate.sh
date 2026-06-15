@@ -5,6 +5,7 @@ suite="formtrig_native"
 out_dir=""
 min_runtime=0
 require_terminal=0
+terminal_oracle_only=0
 declare -a runs=()
 
 usage() {
@@ -19,6 +20,9 @@ options:
   --suite NAME          label written to outputs
   --min-runtime SEC     require fuzzer_stats run_time >= SEC
   --require-terminal    require terminal_triggered_execs > 0
+  --terminal-oracle-only
+                        validate terminal oracle accounting only; this does not
+                        satisfy the strict pre-trigger guidance gate
   --run LABEL=DIR       campaign output to audit, repeatable
 
 outputs:
@@ -139,6 +143,11 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --require-terminal)
+      require_terminal=1
+      shift
+      ;;
+    --terminal-oracle-only)
+      terminal_oracle_only=1
       require_terminal=1
       shift
       ;;
@@ -265,29 +274,31 @@ for run_spec in "${runs[@]}"; do
   execs_done="$(stat_value "$stats_file" execs_done 0)"
   execs_per_sec="$(stat_value "$stats_file" execs_per_sec 0)"
 
-  if [[ "$experiment_ready" != "true" ]]; then
-    status="fail"
-    add_reason "experiment_not_ready"
-  fi
-  if [[ "$pretrigger_ready" != "true" ]]; then
-    status="fail"
-    add_reason "pretrigger_lift_not_ready"
-  fi
-  if [[ "$accepted_non_trigger" == "0" ]]; then
-    status="fail"
-    add_reason "no_accepted_non_trigger_progress"
-  fi
-  if [[ "$saved_non_trigger" == "0" ]]; then
-    status="fail"
-    add_reason "no_saved_non_trigger_progress"
-  fi
-  if [[ "$non_trigger_delta" != "true" ]]; then
-    status="fail"
-    add_reason "no_non_trigger_lift_delta"
-  fi
-  if [[ "$lift_delta_only_on_triggered" == "true" ]]; then
-    status="fail"
-    add_reason "lift_delta_only_on_triggered"
+  if [[ "$terminal_oracle_only" != "1" ]]; then
+    if [[ "$experiment_ready" != "true" ]]; then
+      status="fail"
+      add_reason "experiment_not_ready"
+    fi
+    if [[ "$pretrigger_ready" != "true" ]]; then
+      status="fail"
+      add_reason "pretrigger_lift_not_ready"
+    fi
+    if [[ "$accepted_non_trigger" == "0" ]]; then
+      status="fail"
+      add_reason "no_accepted_non_trigger_progress"
+    fi
+    if [[ "$saved_non_trigger" == "0" ]]; then
+      status="fail"
+      add_reason "no_saved_non_trigger_progress"
+    fi
+    if [[ "$non_trigger_delta" != "true" ]]; then
+      status="fail"
+      add_reason "no_non_trigger_lift_delta"
+    fi
+    if [[ "$lift_delta_only_on_triggered" == "true" ]]; then
+      status="fail"
+      add_reason "lift_delta_only_on_triggered"
+    fi
   fi
   if [[ "$heuristic_lifted" != "0" ]]; then
     status="fail"
@@ -378,6 +389,11 @@ done
   printf -- '- Runs: `%s`\n' "${#runs[@]}"
   printf -- '- Pass: `%s`\n' "$pass_count"
   printf -- '- Fail: `%s`\n' "$fail_count"
+  if [[ "$terminal_oracle_only" == "1" ]]; then
+    printf -- '- Mode: `terminal_oracle_only`\n'
+  else
+    printf -- '- Mode: `strict_pretrigger`\n'
+  fi
   printf -- '- Require terminal: `%s`\n' "$require_terminal"
   printf -- '- Minimum runtime: `%s`\n\n' "$min_runtime"
   printf '## Summary\n\n'

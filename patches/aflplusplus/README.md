@@ -16,6 +16,23 @@ Enable at fuzz time:
 AFL_FORMTRIG=1 FORMTRIG_TARGET_BUG=<tc-label> afl-fuzz ...
 ```
 
+For ASAN/UBSAN terminal-oracle fuzzing on hosts where `core_pattern` routes
+crashes through apport/systemd-coredump, prefer exit-code crash accounting over
+`abort_on_error=1`:
+
+```sh
+ASAN_OPTIONS=halt_on_error=1:abort_on_error=0:exitcode=86:detect_leaks=0:symbolize=0 \
+UBSAN_OPTIONS=halt_on_error=1:abort_on_error=0:exitcode=86:print_stacktrace=0 \
+AFL_CRASH_EXITCODE=86 \
+AFL_FORMTRIG=1 FORMTRIG_TARGET_BUG=<tc-label> afl-fuzz ...
+```
+
+The FORMTRIG AFL++ patch accepts this mode only when `AFL_CRASH_EXITCODE`
+matches the ASAN `exitcode=` value; otherwise AFL++ keeps its default
+`abort_on_error=1` safety check. Use
+`scripts/formtrig_experiment_gate.sh --terminal-oracle-only` to validate this
+oracle separately from the strict pre-trigger guidance gate.
+
 Or use the repository campaign wrapper:
 
 ```sh

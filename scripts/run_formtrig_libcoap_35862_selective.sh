@@ -117,8 +117,9 @@ enable_sanitizers_if_requested() {
     return
   fi
   export AFL_USE_ASAN=1
-  export ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:symbolize=0
-  export UBSAN_OPTIONS=halt_on_error=1:abort_on_error=1:print_stacktrace=0
+  export AFL_CRASH_EXITCODE=86
+  export ASAN_OPTIONS=halt_on_error=1:abort_on_error=0:exitcode=86:detect_leaks=0:symbolize=0
+  export UBSAN_OPTIONS=halt_on_error=1:abort_on_error=0:exitcode=86:print_stacktrace=0
   export CFLAGS="${CFLAGS:-} -fsanitize=address,undefined -fno-omit-frame-pointer"
   export LDFLAGS="${LDFLAGS:-} -fsanitize=address,undefined"
 }

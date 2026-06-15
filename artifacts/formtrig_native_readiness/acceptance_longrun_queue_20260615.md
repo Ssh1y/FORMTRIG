@@ -78,7 +78,8 @@ Completed 2-hour evidence:
 
 Current status: admissible native smoke path passed. This is the replacement
 real-CVE candidate for LIBXML2_1107, but it still needs a long ASAN campaign
-before it can count as long-run acceptance evidence.
+plus a long strict pre-trigger guidance campaign before it can count as
+long-run acceptance evidence.
 
 Runner:
 
@@ -97,15 +98,30 @@ FORMTRIG_JOBS=8 scripts/run_formtrig_libcoap_35862_selective.sh \
   --durations 1800,7200
 ```
 
+ASAN terminal-oracle gate:
+
+```bash
+scripts/formtrig_experiment_gate.sh \
+  --suite LIBCOAP_CVE_2023_35862_asan_terminal_oracle \
+  --min-runtime 1800 \
+  --terminal-oracle-only \
+  --out /tmp/formtrig_libcoap_35862_asan_20260615/gate_30m_terminal_oracle \
+  --run asan30m=/tmp/formtrig_libcoap_35862_asan_20260615/selective_sweep_1800s/candidates/001_LIBCOAP_CVE_2023_35862.native_b2_keyword_len_candidate.yml/default
+```
+
 Smoke evidence:
 
 - Evidence note:
   `artifacts/formtrig_native_readiness/libcoap_35862_native_tool_smoke_20260615.md`
+- ASAN terminal-oracle note:
+  `artifacts/formtrig_native_readiness/libcoap_35862_asan_terminal_oracle_20260615.md`
 - Harness audit: `admissible`, `core_evidence_allowed=true`.
 - Non-ASAN replay: seed has `D_F_spec_lifted=1`; PoC
   `master_secretX,hex,00\n` has `D_F_spec_lifted=0`.
-- ASAN replay: the same PoC exits `134` with AddressSanitizer
-  `global-buffer-overflow`.
+- ASAN replay: the same PoC exits `86` with AddressSanitizer
+  `global-buffer-overflow` in FORMTRIG's ASAN exit-code oracle mode.
+- ASAN 30-second terminal-oracle sweep: `saved_crashes=7`, `saved_hangs=0`,
+  `terminal_triggered_execs=7`, terminal-only gate pass.
 - 10-second pre-trigger gate: pass with `run_time=10`, `execs_done=27115`,
   `reached=10008`, `accepted_non_trigger=1`, `saved_non_trigger=1`,
   `spec_lifted=4098`, and `binding_signal_diagnosis=role_signal_progress_observed`.

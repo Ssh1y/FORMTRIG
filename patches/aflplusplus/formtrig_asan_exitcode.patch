@@ -1,0 +1,21 @@
+diff --git a/src/afl-fuzz-init.c b/src/afl-fuzz-init.c
+index 5a53082..bffbfcd 100644
+--- a/src/afl-fuzz-init.c
++++ b/src/afl-fuzz-init.c
+@@ -2609,0 +2610 @@ void check_asan_opts(afl_state_t *afl) {
++  u8 *crash_exitcode = get_afl_env("AFL_CRASH_EXITCODE");
+@@ -2617 +2618,13 @@ void check_asan_opts(afl_state_t *afl) {
+-      FATAL("Custom ASAN_OPTIONS set without abort_on_error=1 - please fix!");
++      u8 *exitcode = crash_exitcode
++                         ? alloc_printf("exitcode=%s", crash_exitcode)
++                         : NULL;
++      u8 allow_exitcode_crash =
++          exitcode && strstr(x, "abort_on_error=0") && strstr(x, exitcode);
++      if (exitcode) { ck_free(exitcode); }
++
++      if (!allow_exitcode_crash) {
++
++        FATAL("Custom ASAN_OPTIONS set without abort_on_error=1 or matching "
++              "AFL_CRASH_EXITCODE/exitcode=N - please fix!");
++
++      }

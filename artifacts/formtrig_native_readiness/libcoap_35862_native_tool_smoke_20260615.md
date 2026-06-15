@@ -67,10 +67,23 @@ Non-ASAN selective replay:
 ASAN selective replay:
 
 - Seed: `rc=0`, `reached=true`, `D_F_spec_lifted=1`.
-- PoC `master_secretX,hex,00\n`: `rc=134`, AddressSanitizer reports
-  `global-buffer-overflow`, `READ of size 14`, at the libcoap OSCORE parser.
-  FORMTRIG JSON is empty for this PoC because ASAN aborts before the runtime
-  flushes the log; terminal validation is the sanitizer exit/report.
+- PoC `master_secretX,hex,00\n`: with FORMTRIG's ASAN exit-code oracle mode,
+  `rc=86`; AddressSanitizer reports `global-buffer-overflow`, `READ of size
+  14`, at the libcoap OSCORE parser. Terminal validation is the sanitizer
+  exit/report.
+
+ASAN AFL++ terminal-oracle campaign:
+
+- Evidence note:
+  `artifacts/formtrig_native_readiness/libcoap_35862_asan_terminal_oracle_20260615.md`
+- `run_time=30`
+- `execs_done=2303`
+- `saved_crashes=7`
+- `saved_hangs=0`
+- `terminal_triggered_execs=7`
+- terminal-only gate: pass
+- strict pre-trigger gate: fails as expected because this ASAN run had no
+  accepted/saved non-trigger progress
 
 Short campaign gate:
 
