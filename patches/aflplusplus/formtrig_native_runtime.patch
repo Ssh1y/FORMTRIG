@@ -70,7 +70,7 @@ index ef84a18..270906e 100644
    u8 *testcase_buf;                     /* The testcase buffer, if loaded.  */
 
    u8             *cmplog_colorinput;    /* the result buf of colorization   */
-@@ -546,6 +577,31 @@ typedef struct afl_state {
+@@ -546,6 +577,34 @@ typedef struct afl_state {
        *virgin_tmout,                    /* Bits we haven't seen in tmouts   */
        *virgin_crash;                    /* Bits we haven't seen in crashes  */
 
@@ -97,6 +97,9 @@ index ef84a18..270906e 100644
 +      formtrig_stability_checks,        /* Replay checks before progress use*/
 +      formtrig_stability_failures,      /* Unstable FORMTRIG progress       */
 +      formtrig_progress_log_events,     /* Structured FORMTRIG log entries  */
++      formtrig_saved_progress_log_seen, /* saved_progress candidates seen   */
++      formtrig_saved_triggered_log_seen, /* Triggered saved_progress seen   */
++      formtrig_saved_non_trigger_log_seen, /* Non-trigger saved_progress seen*/
 +      formtrig_progress_log_dropped;    /* Entries skipped by log cap       */
 +
    double *alias_probability;            /* alias weighted probabilities     */
@@ -1396,7 +1399,7 @@ index 48fd33e..dce7cba 100644
 
  #ifdef _STANDALONE_MODULE
  void minimize_bits(afl_state_t *afl, u8 *dst, u8 *src) {
-@@ -43,6 +44,1039 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
+@@ -43,6 +44,1095 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
 
  #endif
 
@@ -1709,23 +1712,40 @@ index 48fd33e..dce7cba 100644
 +
 +}
 +
-+static u64 formtrig_log_limit(void) {
++static u64 formtrig_env_u64(const char *name, u64 fallback) {
 +
-+  const char *env = getenv("FORMTRIG_PROGRESS_LOG_LIMIT");
-+  if (!env || !env[0]) { return 4096; }
++  const char *env = getenv(name);
++  if (!env || !env[0]) { return fallback; }
 +
 +  char *end = NULL;
 +  u64   limit = strtoull(env, &end, 10);
-+  if (end == env) { return 4096; }
++  if (end == env) { return fallback; }
 +  return limit;
++
++}
++
++static u64 formtrig_log_limit(void) {
++
++  return formtrig_env_u64("FORMTRIG_PROGRESS_LOG_LIMIT", 4096);
++
++}
++
++static u64 formtrig_saved_progress_log_limit(void) {
++
++  return formtrig_env_u64("FORMTRIG_SAVED_PROGRESS_LOG_LIMIT", 8192);
++
++}
++
++static u64 formtrig_saved_progress_log_sample_rate(void) {
++
++  return formtrig_env_u64("FORMTRIG_SAVED_PROGRESS_LOG_SAMPLE_RATE", 1024);
 +
 +}
 +
 +static u8 formtrig_log_event_is_critical(const char *event) {
 +
 +  if (!event) { return 0; }
-+  return !strcmp(event, "saved_progress") ||
-+         !strcmp(event, "calibrated_frontier") ||
++  return !strcmp(event, "calibrated_frontier") ||
 +         !strcmp(event, "stability_confirmed") ||
 +         !strcmp(event, "stability_reject") ||
 +         !strcmp(event, "typed_skip") ||
@@ -1734,10 +1754,49 @@ index 48fd33e..dce7cba 100644
 +
 +}
 +
-+static u8 formtrig_log_allowed(afl_state_t *afl, const char *event) {
++static u8 formtrig_saved_progress_log_allowed(
++    afl_state_t *afl, const formtrig_queue_meta_t *m) {
++
++  ++afl->formtrig_saved_progress_log_seen;
++
++  u64 *class_seen = NULL;
++  if (m && m->triggered)
++    class_seen = &afl->formtrig_saved_triggered_log_seen;
++  else
++    class_seen = &afl->formtrig_saved_non_trigger_log_seen;
++
++  ++*class_seen;
++  u64 ordinal = *class_seen;
++  u64 limit = formtrig_saved_progress_log_limit();
++  if (!limit || ordinal <= limit) { return 1; }
++
++  u64 sample_rate = formtrig_saved_progress_log_sample_rate();
++  if (sample_rate && ordinal % sample_rate == 0) { return 1; }
++
++  ++afl->formtrig_progress_log_dropped;
++  return 0;
++
++}
++
++static u8 formtrig_log_allowed(afl_state_t *afl, const char *event,
++                               const formtrig_queue_meta_t *m) {
 +
 +  if (!afl || !afl->formtrig_enabled || !afl->out_dir) { return 0; }
 +  if (formtrig_env_disabled(getenv("FORMTRIG_PROGRESS_LOG"))) { return 0; }
++
++  u8 saved_progress = event && !strcmp(event, "saved_progress");
++  if (saved_progress && !formtrig_saved_progress_log_allowed(afl, m)) {
++
++    return 0;
++
++  }
++
++  if (saved_progress) {
++
++    ++afl->formtrig_progress_log_events;
++    return 1;
++
++  }
 +
 +  u64 limit = formtrig_log_limit();
 +  if (!formtrig_log_event_is_critical(event) && limit &&
@@ -1772,7 +1831,7 @@ index 48fd33e..dce7cba 100644
 +                           const formtrig_queue_meta_t *m, u32 queue_id,
 +                           u64 aux) {
 +
-+  if (!formtrig_log_allowed(afl, event)) { return; }
++  if (!formtrig_log_allowed(afl, event, m)) { return; }
 +
 +  u8 *path = alloc_printf("%s/formtrig_progress.jsonl", afl->out_dir);
 +  FILE *f = fopen((char *)path, "a");
@@ -2372,7 +2431,7 @@ index 48fd33e..dce7cba 100644
 +  if (changed || afl->formtrig_last.triggered) {
 +
 +    ++afl->formtrig_queued_progress;
-+    if (afl->formtrig_last.triggered) {
++    if (!changed && afl->formtrig_last.triggered) {
 +
 +      formtrig_log_progress(afl, "saved_progress", "triggered",
 +                            &afl->formtrig_last, queue_id, 0);
@@ -2556,7 +2615,7 @@ diff --git a/src/afl-fuzz-state.c b/src/afl-fuzz-state.c
 index 5a6b95c..8ec86eb 100644
 --- a/src/afl-fuzz-state.c
 +++ b/src/afl-fuzz-state.c
-@@ -109,6 +109,13 @@ void afl_state_init(afl_state_t *afl, uint32_t map_size) {
+@@ -109,6 +109,16 @@ void afl_state_init(afl_state_t *afl, uint32_t map_size) {
    afl->min_length = 1;
    afl->max_length = MAX_FILE;
    afl->switch_fuzz_mode = STRATEGY_SWITCH_TIME * 1000;
@@ -2565,6 +2624,9 @@ index 5a6b95c..8ec86eb 100644
 +  afl->formtrig_best_dt = FORMTRIG_INF;
 +  afl->formtrig_frontier_count = 0;
 +  afl->formtrig_progress_log_events = 0;
++  afl->formtrig_saved_progress_log_seen = 0;
++  afl->formtrig_saved_triggered_log_seen = 0;
++  afl->formtrig_saved_non_trigger_log_seen = 0;
 +  afl->formtrig_progress_log_dropped = 0;
 +  formtrig_init(afl);
  #ifndef NO_SPLICING
@@ -2587,7 +2649,7 @@ diff --git a/src/afl-fuzz-stats.c b/src/afl-fuzz-stats.c
 index 3d0a9b9..f36df96 100644
 --- a/src/afl-fuzz-stats.c
 +++ b/src/afl-fuzz-stats.c
-@@ -385,6 +385,36 @@ void write_stats_file(afl_state_t *afl, u32 t_bytes, double bitmap_cvg,
+@@ -385,6 +385,42 @@ void write_stats_file(afl_state_t *afl, u32 t_bytes, double bitmap_cvg,
 
    /* ignore errors */
 
@@ -2606,6 +2668,9 @@ index 3d0a9b9..f36df96 100644
 +            "formtrig_stability_checks: %llu\n"
 +            "formtrig_stability_failures: %llu\n"
 +            "formtrig_progress_log_events: %llu\n"
++            "formtrig_saved_progress_log_seen: %llu\n"
++            "formtrig_saved_triggered_log_seen: %llu\n"
++            "formtrig_saved_non_trigger_log_seen: %llu\n"
 +            "formtrig_progress_log_dropped: %llu\n"
 +            "formtrig_best_df         : %.17g\n"
 +            "formtrig_best_dt         : %.17g\n",
@@ -2616,6 +2681,9 @@ index 3d0a9b9..f36df96 100644
 +            afl->formtrig_typed_skips, afl->formtrig_stability_checks,
 +            afl->formtrig_stability_failures,
 +            afl->formtrig_progress_log_events,
++            afl->formtrig_saved_progress_log_seen,
++            afl->formtrig_saved_triggered_log_seen,
++            afl->formtrig_saved_non_trigger_log_seen,
 +            afl->formtrig_progress_log_dropped, afl->formtrig_best_df,
 +            afl->formtrig_best_dt);
 +

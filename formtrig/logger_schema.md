@@ -103,6 +103,15 @@ keeps aggregate counters from AFL++ and adds experiment-facing diagnostics:
 - `saved_non_trigger_progress_events`: `saved_progress` events that preserve
   reachability without firing the TC and are therefore evidence of non-trigger
   lifted progress.
+- `formtrig_saved_progress_log_seen`: number of `saved_progress` candidates
+  observed by AFL++ before JSONL sampling.
+- `formtrig_saved_triggered_log_seen` and
+  `formtrig_saved_non_trigger_log_seen`: triggered and non-trigger splits for
+  the saved-progress candidates seen before sampling.
+- `formtrig_progress_log_events` and `formtrig_progress_log_dropped`: JSONL
+  entries written and entries skipped by logging caps. `saved_progress` uses
+  a separate triggered/non-trigger sampler so long runs keep diagnostic
+  examples without writing one JSON object for every queued trigger.
 - `non_trigger_progress_events`: `saved_non_trigger_progress_events` plus
   non-initial `frontier_progress_accept_events`.
 - `has_tc_rooted_progress`: true when the run triggered, saved FORMTRIG
@@ -128,6 +137,15 @@ keeps aggregate counters from AFL++ and adds experiment-facing diagnostics:
 
 These summary diagnostics are audit data. They do not feed back into fuzzing
 decisions and they do not use trigger-oracle state to score non-trigger inputs.
+
+Long AFL++ campaigns cap progress logging without disabling diagnostics.
+`FORMTRIG_PROGRESS_LOG_LIMIT` caps ordinary non-critical progress events
+defaulting to 4096. `FORMTRIG_SAVED_PROGRESS_LOG_LIMIT` keeps the first N
+triggered and first N non-trigger `saved_progress` entries per run, defaulting
+to 8192 per class. `FORMTRIG_SAVED_PROGRESS_LOG_SAMPLE_RATE` then keeps one
+additional saved-progress sample per class every N candidates, defaulting to
+1024. Stability rejects and typed-stage boundary events remain critical audit
+events and bypass the ordinary event cap.
 
 `formtrig/tools/formtrig_binding_signal_diagnose.c` consumes the runtime event
 map and `formtrig_progress.jsonl`, then writes

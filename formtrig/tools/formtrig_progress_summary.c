@@ -70,6 +70,11 @@ typedef struct summary {
   uint64_t formtrig_typed_finds;
   uint64_t formtrig_stability_checks;
   uint64_t formtrig_stability_failures;
+  uint64_t formtrig_progress_log_events;
+  uint64_t formtrig_saved_progress_log_seen;
+  uint64_t formtrig_saved_triggered_log_seen;
+  uint64_t formtrig_saved_non_trigger_log_seen;
+  uint64_t formtrig_progress_log_dropped;
   reason_bucket_t reasons[MAX_REASON_BUCKETS];
   reason_bucket_t accept_reasons[MAX_REASON_BUCKETS];
   reason_bucket_t reject_reasons[MAX_REASON_BUCKETS];
@@ -230,6 +235,16 @@ static void ingest_stats_line(summary_t *s, const char *line) {
                        &s->formtrig_stability_checks);
   (void)read_u64_field(line, "formtrig_stability_failures",
                        &s->formtrig_stability_failures);
+  (void)read_u64_field(line, "formtrig_progress_log_events",
+                       &s->formtrig_progress_log_events);
+  (void)read_u64_field(line, "formtrig_saved_progress_log_seen",
+                       &s->formtrig_saved_progress_log_seen);
+  (void)read_u64_field(line, "formtrig_saved_triggered_log_seen",
+                       &s->formtrig_saved_triggered_log_seen);
+  (void)read_u64_field(line, "formtrig_saved_non_trigger_log_seen",
+                       &s->formtrig_saved_non_trigger_log_seen);
+  (void)read_u64_field(line, "formtrig_progress_log_dropped",
+                       &s->formtrig_progress_log_dropped);
 }
 
 static void ingest_progress_line(summary_t *s, const char *line) {
@@ -492,6 +507,16 @@ static void print_summary(const summary_t *s) {
          (unsigned long long)s->formtrig_stability_checks);
   printf("  \"formtrig_stability_failures\": %llu,\n",
          (unsigned long long)s->formtrig_stability_failures);
+  printf("  \"formtrig_progress_log_events\": %llu,\n",
+         (unsigned long long)s->formtrig_progress_log_events);
+  printf("  \"formtrig_saved_progress_log_seen\": %llu,\n",
+         (unsigned long long)s->formtrig_saved_progress_log_seen);
+  printf("  \"formtrig_saved_triggered_log_seen\": %llu,\n",
+         (unsigned long long)s->formtrig_saved_triggered_log_seen);
+  printf("  \"formtrig_saved_non_trigger_log_seen\": %llu,\n",
+         (unsigned long long)s->formtrig_saved_non_trigger_log_seen);
+  printf("  \"formtrig_progress_log_dropped\": %llu,\n",
+         (unsigned long long)s->formtrig_progress_log_dropped);
   printf("  \"progress_events\": %llu,\n",
          (unsigned long long)s->progress_events);
   printf("  \"saved_progress_events\": %llu,\n",
