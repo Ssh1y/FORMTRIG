@@ -86,12 +86,12 @@ Completed 2-hour evidence:
 
 ### CVE: LIBCOAP_CVE_2023_35862
 
-Current status: admissible native smoke path passed and 30-minute strict
-pre-trigger guidance passed. This is the replacement real-CVE candidate for
-LIBXML2_1107. It still needs a long ASAN campaign and 2-hour pre-trigger
-campaign before it can count as full FORMTRIG real-CVE acceptance evidence. It
-also needs faithful baseline runs before it can enter the final SOTA comparison
-package.
+Current status: admissible native smoke path passed, 30-minute strict
+pre-trigger guidance passed, and 2-hour strict pre-trigger guidance passed.
+This is the replacement real-CVE candidate for LIBXML2_1107. It still needs a
+long ASAN campaign before it can count as full FORMTRIG real-CVE acceptance
+evidence. It also needs faithful baseline runs before it can enter the final
+SOTA comparison package.
 
 Runner:
 
@@ -157,6 +157,27 @@ Completed 30-minute pre-trigger evidence:
 - Performance caveat: AFL++ saved `12` hangs. They did not invalidate the
   strict pre-trigger gate, but they should be tracked in the 2-hour and
   baseline runs.
+
+Completed 2-hour pre-trigger evidence:
+
+- Run root: `/tmp/formtrig_libcoap_35862_selective_2h_20260615T191111Z`
+- Strict gate:
+  `/tmp/formtrig_libcoap_35862_selective_2h_20260615T191111Z/gate_2h/gate_summary.csv`
+- Preserved raw evidence:
+  `artifacts/formtrig_native_readiness/raw/libcoap_35862_2h_20260615T191111Z`
+- Evidence note:
+  `artifacts/formtrig_native_readiness/libcoap_35862_2h_pretrigger_20260615.md`
+- Result: pass with `run_time=7200`, `execs_done=18627489`,
+  `execs_per_sec=2587.15`, `reached=8843324`,
+  `terminal_triggered=0`, `accepted_non_trigger=1`,
+  `saved_non_trigger=1`, `spec_lifted=19756`,
+  `heuristic_lifted=0`, `manual_lifted=0`,
+  `non_trigger_candidate_lift_delta=true`, and
+  `binding_signal_diagnosis=role_signal_progress_observed`.
+- Stability caveat: `formtrig_stability_failures=0`, but AFL++ saved `17`
+  hangs. `formtrig_progress_log_dropped=8838309`, so the full progress JSONL is
+  not complete; the accepted evidence is the replay-stable saved progress plus
+  summary and binding diagnosis counters.
 
 Baseline comparison queue:
 

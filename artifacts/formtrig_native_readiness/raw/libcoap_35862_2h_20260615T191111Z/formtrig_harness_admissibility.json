@@ -1,0 +1,24 @@
+{
+  "core_evidence_allowed": true,
+  "flags": [],
+  "inputs": {
+    "binding_spec": "/home/cwh/FORMTRIG/artifacts/binding_specs/LIBCOAP_CVE_2023_35862.native_b2_keyword_len_candidate.yml",
+    "harness": "/home/cwh/FORMTRIG/benchmarks/cve_harnesses/libcoap_oscore_conf_replay.c",
+    "seed_dir": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds"
+  },
+  "recommendations": [],
+  "schema": "formtrig_harness_admissibility_v1",
+  "seed_summary": {
+    "file_count": 1,
+    "max_size": 21,
+    "min_size": 21,
+    "path": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+    "provided": true,
+    "sizes": [
+      21
+    ]
+  },
+  "status": "admissible",
+  "summary": "No harness-bias pattern was detected by this static audit.",
+  "target_id": "LIBCOAP_CVE_2023_35862"
+}
