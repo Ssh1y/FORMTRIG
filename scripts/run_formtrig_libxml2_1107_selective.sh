@@ -25,7 +25,8 @@ usage: $0 [options]
 Builds and optionally sweeps the LIBXML2_1107 selective FORMTRIG native target.
 The flow is:
 
-  full site map + BindingSpec
+  harness admissibility audit
+    -> full site map + BindingSpec
     -> compiled lift-spec
     -> runtime-grounded normalized lift-spec
     -> compile-time site-id allowlist
@@ -160,6 +161,13 @@ require_path "$aflpp_dir/afl-fuzz"
 
 mkdir -p "$out_dir/tools" "$out_dir/spec"
 
+"$repo_root/scripts/formtrig_harness_admissibility_audit.py" \
+  --binding-spec "$binding_spec" \
+  --harness "$harness_src" \
+  --seed-dir "$seed_dir" \
+  --out-json "$out_dir/formtrig_harness_admissibility.json" \
+  --out-md "$out_dir/formtrig_harness_admissibility.md"
+
 "$repo_root/scripts/prepare_formtrig_native_env.sh" \
   --out "$out_dir/native_env" \
   --aflpp-dir "$aflpp_dir" > "$out_dir/prepare_native_env.log"
@@ -238,6 +246,7 @@ binary="$out_dir/libxml2_regexp_strdup_fail_replay_formtrig_selective"
   printf 'full_site_map=%s\n' "$full_site_map"
   printf 'selective_site_map=%s\n' "$out_dir/native_env/site_map.tsv"
   printf 'allowlist=%s\n' "$out_dir/spec/formtrig_site_allowlist.txt"
+  printf 'harness_admissibility=%s\n' "$out_dir/formtrig_harness_admissibility.json"
   printf 'selective_site_rows=%s\n' \
     "$(wc -l < "$out_dir/native_env/site_map.tsv")"
   printf 'allowlist_rows=%s\n' \
@@ -288,3 +297,4 @@ echo "  out=$out_dir"
 echo "  binary=$binary"
 echo "  site_map=$out_dir/native_env/site_map.tsv"
 echo "  allowlist=$out_dir/spec/formtrig_site_allowlist.txt"
+echo "  harness_admissibility=$out_dir/formtrig_harness_admissibility.json"

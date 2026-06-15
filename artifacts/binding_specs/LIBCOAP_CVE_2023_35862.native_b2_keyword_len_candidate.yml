@@ -1,0 +1,91 @@
+tc_id: 'LIBCOAP_CVE_2023_35862'
+target:
+  project: 'libcoap'
+  binary: 'libcoap_oscore_conf_replay'
+  command: './libcoap_oscore_conf_replay @@'
+tc:
+  category: 'equality-magic'
+  expression: 'OSCORE config keyword extends the master_secret literal while preserving its prefix'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'keyword.length == 14 at coap_oscore.c:1849'
+    kind: 'equality-magic'
+    root: 'keyword.length'
+bindings:
+  - id: 'oscore_keyword_length_root'
+    atom: 1
+    role: 'root_observe'
+    expr: 'keyword.length moves from master_secret length 13 toward crashing length 14'
+    observe_at:
+      kind: 'load'
+      function: 'coap_parse_oscore_conf_mem'
+      file: 'coap_oscore.c'
+      line: 1849
+      column: 63
+      inst_no: 108
+    component: 'root_state'
+    priority: 10
+    direction: 'lower'
+    value_mode: 'distance_to_c'
+    value: 14.0
+    confidence: 1.0
+    observe_window: 'any'
+  - id: 'oscore_keyword_compare_guard'
+    atom: 1
+    role: 'guard'
+    expr: 'coap_parse_oscore_conf_mem compares config keyword against fixed oscore_config keyword literals'
+    observe_at:
+      kind: 'cmp'
+      function: 'coap_parse_oscore_conf_mem'
+      file: 'coap_oscore.c'
+      line: 1849
+      column: 71
+      inst_no: 110
+    component: 'producer_use'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 1.0
+    observe_window: 'any'
+  - id: 'oscore_keyword_compare_branch'
+    atom: 1
+    role: 'use'
+    expr: 'coap_parse_oscore_conf_mem reaches the keyword comparison branch'
+    observe_at:
+      kind: 'branch'
+      function: 'coap_parse_oscore_conf_mem'
+      file: 'coap_oscore.c'
+      line: 1849
+      column: 76
+      inst_no: 111
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 1.0
+    observe_window: 'any'
+  - id: 'oscore_keyword_insert_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'insert one non-comma byte before the first comma to extend master_secret to master_secretX'
+    observe_at:
+      kind: 'branch'
+      function: 'coap_parse_oscore_conf_mem'
+      file: 'coap_oscore.c'
+      line: 1849
+      column: 76
+      inst_no: 111
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 1.0
+    observe_window: 'any'
+    range_start: 13
+    range_len: 1
+    mutation_hint: 'insert_byte'
+    mutation_value: 88

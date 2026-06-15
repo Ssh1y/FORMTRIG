@@ -1,0 +1,67 @@
+# FORMTRIG Core Evidence Admissibility - 2026-06-15
+
+This note separates experimental evidence that can support the core FORMTRIG
+claim from engineering sanity evidence.
+
+## Core-Evidence Rule
+
+A target can support the main claim only if all of these hold:
+
+- The original input naturally drives the relevant parser state, size, length,
+  magic, structure, object relation, or lifecycle transition.
+- The harness does not expose the trigger through a direct control knob such as
+  "input byte N selects malloc failure K".
+- BindingSpec roles may use harness-visible source sites only when those sites
+  encode natural input parsing behavior, not an injected trigger oracle.
+- Typed mutation hints may focus an input range, but they must not simply name a
+  one-byte terminal switch introduced by the harness.
+- `scripts/formtrig_experiment_gate.sh` passes with spec-driven lifted `D_F`,
+  accepted non-trigger progress, `lift_delta_only_on_triggered_candidates=false`,
+  and zero heuristic/manual lifted events.
+
+## Current Target Status
+
+| target | status | use |
+|---|---|---|
+| PNG006 eXIf | admissible Magma evidence | Keep as current positive 2-hour Magma structure/state case. |
+| LIBCOAP_CVE_2023_35862 | admissible real-CVE smoke | Promote to real-CVE long-run candidate after ASAN campaign wiring. |
+| LIBXML2_1107 | inadmissible as core evidence | Keep only as native pipeline, BindingSpec, typed mutation, and crash-accounting sanity case. |
+| PNG007 PLTE | not positive | Terminal-only so far; needs accepted non-trigger progress. |
+| SQL013 | not positive | Binding is insufficient without planner-internal root/same-object/lifecycle evidence. |
+
+## LIBXML2_1107 Finding
+
+`LIBXML2_1107` is real vulnerable library code, but the current replay harness
+turns the trigger into an artificial knob:
+
+- `buf[0]` is assigned to `g_fail_malloc_at`.
+- `hook_malloc` returns `NULL` when `g_malloc_count == g_fail_malloc_at`.
+- The RNT seed is two bytes: `00 61`.
+- The terminal crashing input is essentially one byte away: `02 61`.
+- The BindingSpec includes `range_start: 0`, `range_len: 1`,
+  `mutation_hint: set_byte`, and `mutation_value: 2`.
+
+That is useful for testing whether FORMTRIG plumbing can observe, mutate, and
+account for a binary-null crash path. It does not show that FORMTRIG solves a
+natural R2T problem where the fuzzer must construct a parser state or structural
+relationship from the input.
+
+## Required Replacement
+
+The real-CVE queue needs at least one replacement target whose triggering path is
+not a harness-level oracle. Prefer targets already present in the local CVE
+inventory:
+
+- `LIBARCHIVE_2925`: binary-state-null plus numeric margin, archive structure
+  input.
+- `LIBARCHIVE_2936`: binary-state-null plus compound lifecycle, archive virtual
+  directory state.
+- `LIBCOAP_CVE_2023_35862`: equality/magic path in configuration parsing.
+  The native smoke path now passes harness admissibility, non-ASAN `D_F`
+  replay, short pre-trigger guidance gate, and ASAN terminal replay. It still
+  needs longer ASAN campaign evidence before it can stand as long-run evidence.
+- `PCRE2_CVE_2025_58050`: equality/magic plus compound lifecycle in regex
+  compilation.
+
+Each replacement must pass the harness admissibility audit before it can be used
+as core FORMTRIG evidence.

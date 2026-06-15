@@ -1,0 +1,156 @@
+{
+  "core_evidence_allowed": false,
+  "flags": [
+    {
+      "detail": "The harness appears to map input byte 0 to a malloc-failure index, then returns NULL when the allocation counter matches that value. This collapses the real R2T search into a small artificial knob.",
+      "evidence": [
+        {
+          "line": 10,
+          "text": "static unsigned char g_fail_malloc_at = 0;"
+        },
+        {
+          "line": 11,
+          "text": "static unsigned int g_malloc_count = 0;"
+        },
+        {
+          "line": 14,
+          "text": "  g_malloc_count++;"
+        },
+        {
+          "line": 15,
+          "text": "  if (g_fail_malloc_at != 0 && g_malloc_count == g_fail_malloc_at)"
+        },
+        {
+          "line": 16,
+          "text": "    return NULL;"
+        },
+        {
+          "line": 39,
+          "text": "    return NULL;"
+        },
+        {
+          "line": 42,
+          "text": "    return NULL;"
+        },
+        {
+          "line": 47,
+          "text": "    return NULL;"
+        },
+        {
+          "line": 53,
+          "text": "    return NULL;"
+        },
+        {
+          "line": 74,
+          "text": "  g_fail_malloc_at = buf[0];"
+        }
+      ],
+      "id": "direct_input_allocation_failure_switch",
+      "severity": "critical",
+      "title": "Harness exposes allocation failure as an input byte switch"
+    },
+    {
+      "detail": "At least one binding role is grounded in the replay harness rather than the vulnerable library's natural parser state. This may still be useful for smoke tests, but it is not admissible as core evidence that FORMTRIG solves natural binary-trigger guidance.",
+      "evidence": [
+        {
+          "line": 36,
+          "text": "    expr: 'the harness-selected malloc failure index is closest to the xmlStrdup allocation for ret->string'"
+        },
+        {
+          "line": 39,
+          "text": "      function: 'hook_malloc'"
+        },
+        {
+          "line": 40,
+          "text": "      file: 'benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c'"
+        },
+        {
+          "line": 70,
+          "text": "    expr: 'harness allocation-failure guard checks whether the input-selected fail count is enabled'"
+        },
+        {
+          "line": 73,
+          "text": "      function: 'hook_malloc'"
+        },
+        {
+          "line": 74,
+          "text": "      file: 'benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c'"
+        },
+        {
+          "line": 90,
+          "text": "      function: 'hook_malloc'"
+        },
+        {
+          "line": 91,
+          "text": "      file: 'benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c'"
+        }
+      ],
+      "id": "binding_depends_on_harness_semantics",
+      "severity": "high",
+      "title": "BindingSpec uses harness-level semantics"
+    },
+    {
+      "detail": "A one-byte mutation hint can be valid as a typed mutator hint, but combined with a harness allocation-failure switch it effectively names the terminal knob.",
+      "evidence": [
+        {
+          "line": 101,
+          "text": "    range_start: 0"
+        },
+        {
+          "line": 102,
+          "text": "    range_len: 1"
+        },
+        {
+          "line": 103,
+          "text": "    mutation_hint: 'set_byte'"
+        },
+        {
+          "line": 104,
+          "text": "    mutation_value: 2"
+        }
+      ],
+      "id": "one_byte_terminal_mutation_hint",
+      "severity": "high",
+      "title": "BindingSpec contains a one-byte set-byte mutation hint"
+    },
+    {
+      "detail": "Tiny RNT seeds are not invalid by themselves, but they are a warning sign when the trigger is also exposed through a direct one-byte harness control.",
+      "evidence": [
+        {
+          "max_size": 2,
+          "path": "artifacts/rnt_corpus/LIBXML2_1107/seeds",
+          "sizes": [
+            2
+          ]
+        }
+      ],
+      "id": "tiny_seed_space",
+      "severity": "medium",
+      "title": "Seed corpus contains only tiny inputs"
+    }
+  ],
+  "inputs": {
+    "binding_spec": "artifacts/binding_specs/LIBXML2_1107.native_b2_alloc_fail_candidate.yml",
+    "harness": "benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c",
+    "seed_dir": "artifacts/rnt_corpus/LIBXML2_1107/seeds"
+  },
+  "recommendations": [
+    "Do not count this target as core evidence for solving natural R2T guidance.",
+    "Keep it only as a native pipeline, BindingSpec, or crash-accounting sanity case.",
+    "Replace it with targets where the input naturally drives parser state, length, magic, structure, or lifecycle constraints."
+  ],
+  "schema": "formtrig_harness_admissibility_v1",
+  "seed_summary": {
+    "file_count": 1,
+    "max_size": 2,
+    "min_size": 2,
+    "path": "artifacts/rnt_corpus/LIBXML2_1107/seeds",
+    "provided": true,
+    "sizes": [
+      2
+    ]
+  },
+  "status": "inadmissible_core_evidence",
+  "summary": "Not admissible as core FORMTRIG R2T evidence because the harness exposes an artificial trigger-control knob.",
+  "target_id": "LIBXML2_1107"
+}
