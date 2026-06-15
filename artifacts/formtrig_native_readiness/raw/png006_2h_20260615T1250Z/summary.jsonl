@@ -1,0 +1,274 @@
+{
+  "index": 1,
+  "score": 771000,
+  "candidate": "/home/cwh/FORMTRIG/artifacts/binding_specs/PNG006.native_b2_exif_insert_candidate.yml",
+  "out_dir": "/tmp/formtrig_png006_exif_longrun_20260615T1250Z/png006_exif_7200s/candidates/001_PNG006.native_b2_exif_insert_candidate.yml",
+  "exit_code": 0,
+  "diagnosis": "triggered",
+  "experiment_ready": true,
+  "pretrigger_lift_guidance_ready": true,
+  "has_tc_rooted_progress": true,
+  "has_non_trigger_progress": true,
+  "non_trigger_progress_events": 1,
+  "queued_progress": 1919630,
+  "triggered_execs": 17276659,
+  "saved_non_trigger_progress_events": 1,
+  "saved_triggered_progress_events": 1919629,
+  "execs_done": 29754905,
+  "reached_execs": 26319188,
+  "binding_signal_status": "pass",
+  "binding_signal_diagnosis": "triggered",
+  "candidate_events": 1923722,
+  "accepted_non_trigger_progress_events": 1,
+  "triggered_candidate_lift_delta": true,
+  "non_trigger_candidate_lift_delta": true,
+  "lift_delta_only_on_triggered_candidates": false,
+  "semantic_candidate_variable_roles": 0,
+  "diagnosis_json": {
+    "status": "ready",
+    "experiment_ready": true,
+    "has_tc_rooted_progress": true,
+    "has_queued_progress": true,
+    "has_frontier_progress": false,
+    "has_non_trigger_progress": true,
+    "pretrigger_lift_guidance_ready": true,
+    "triggered_candidate_lift_delta": true,
+    "non_trigger_candidate_lift_delta": true,
+    "lift_delta_only_on_triggered_candidates": false,
+    "diagnosis": "triggered",
+    "progress_status": "triggered",
+    "limiting_reason": "terminal_triggered",
+    "execs_done": 29754905,
+    "formtrig_seen_execs": 29754905,
+    "formtrig_reached_execs": 26319188,
+    "formtrig_triggered_execs": 17276659,
+    "triggered_events": 3839753,
+    "afl_saved_crashes": 0,
+    "terminal_triggered_execs": 17276659,
+    "formtrig_queued_progress": 1919630,
+    "saved_progress_events": 1919630,
+    "saved_triggered_progress_events": 1919629,
+    "saved_non_trigger_progress_events": 1,
+    "frontier_progress_accept_events": 0,
+    "non_trigger_progress_events": 1,
+    "typed_stage_start_events": 179,
+    "typed_skip_not_replay_stable_events": 1,
+    "spec_lifted_events": 3844204,
+    "heuristic_lifted_events": 0,
+    "manual_lifted_events": 0,
+    "observed_spec_lifted_events": 3844204,
+    "observed_heuristic_lifted_events": 0,
+    "observed_manual_lifted_events": 0,
+    "actionable_component_events": 3844204,
+    "atom_signal_events": 3844204,
+    "role_signal_events": 3844204,
+    "d_f_constant": false,
+    "d_f_spec_lifted_constant": false,
+    "runtime_event_map": {
+      "rows": 6,
+      "exact": 6,
+      "ambiguous": 0,
+      "missing": 0,
+      "lift_allowed": 6,
+      "lift_blocked": 0,
+      "semantic_role_collapse": 0,
+      "insufficient_binding": 0
+    },
+    "lift_feature_audit_status": "pass",
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "triggered"
+  },
+  "binding_signal_json": {
+    "status": "pass",
+    "diagnosis": "triggered",
+    "progress_events": 3844205,
+    "candidate_events": 1923722,
+    "calibration_events": 1,
+    "accepted_progress_events": 1919630,
+    "accepted_triggered_progress_events": 1919629,
+    "accepted_non_trigger_progress_events": 1,
+    "triggered_events": 3839753,
+    "spec_role_samples": 23060911,
+    "spec_role_candidate_samples": 11538367,
+    "spec_d_f_samples": 3844205,
+    "spec_d_f_candidate_samples": 1923722,
+    "spec_d_f_triggered_candidate_samples": 1919629,
+    "spec_d_f_non_trigger_candidate_samples": 4093,
+    "spec_d_f_calibration_samples": 1,
+    "spec_d_f_candidate_min": 1,
+    "spec_d_f_triggered_candidate_min": 1,
+    "spec_d_f_non_trigger_candidate_min": 1,
+    "spec_d_f_calibration_min": 2,
+    "spec_d_f_candidate_values": [
+      2,
+      1
+    ],
+    "spec_d_f_triggered_candidate_values": [
+      1
+    ],
+    "spec_d_f_non_trigger_candidate_values": [
+      2,
+      1
+    ],
+    "spec_d_f_calibration_values": [
+      2
+    ],
+    "triggered_candidate_lift_delta": true,
+    "non_trigger_candidate_lift_delta": true,
+    "lift_delta_only_on_triggered_candidates": false,
+    "atoms": [
+      {
+        "atom_id": 1,
+        "category": "binary-state-null",
+        "lift_allowed": true,
+        "bound_roles": [
+          "root_observe",
+          "desired_producer",
+          "use",
+          "input_influence"
+        ],
+        "sampled_roles": [
+          "root_observe",
+          "desired_producer",
+          "use",
+          "input_influence"
+        ],
+        "candidate_sampled_roles": [
+          "root_observe",
+          "desired_producer",
+          "use",
+          "input_influence"
+        ],
+        "variable_roles": [],
+        "candidate_variable_roles": [],
+        "diagnosis": "constant_lift_signal",
+        "roles": [
+          {
+            "role": "root_observe",
+            "bound": true,
+            "samples": 3844204,
+            "candidate_samples": 1923722,
+            "calibration_samples": 1,
+            "unique_values": 1,
+            "candidate_unique_values": 1,
+            "values": [
+              1
+            ],
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 86,
+            "max_confidence": 1
+          },
+          {
+            "role": "desired_producer",
+            "bound": true,
+            "samples": 3839891,
+            "candidate_samples": 1919757,
+            "calibration_samples": 0,
+            "unique_values": 1,
+            "candidate_unique_values": 1,
+            "values": [
+              1
+            ],
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 86,
+            "max_confidence": 1
+          },
+          {
+            "role": "use",
+            "bound": true,
+            "samples": 3844204,
+            "candidate_samples": 1923722,
+            "calibration_samples": 1,
+            "unique_values": 1,
+            "candidate_unique_values": 1,
+            "values": [
+              1
+            ],
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 86,
+            "max_confidence": 1
+          },
+          {
+            "role": "input_influence",
+            "bound": true,
+            "samples": 3844204,
+            "candidate_samples": 1923722,
+            "calibration_samples": 1,
+            "unique_values": 1,
+            "candidate_unique_values": 1,
+            "values": [
+              1
+            ],
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 118,
+            "max_confidence": 0.80000000000000004
+          }
+        ]
+      },
+      {
+        "atom_id": 2,
+        "category": "equality-magic",
+        "lift_allowed": true,
+        "bound_roles": [
+          "root_observe",
+          "use"
+        ],
+        "sampled_roles": [
+          "root_observe",
+          "use"
+        ],
+        "candidate_sampled_roles": [
+          "root_observe",
+          "use"
+        ],
+        "variable_roles": [],
+        "candidate_variable_roles": [],
+        "diagnosis": "constant_lift_signal",
+        "roles": [
+          {
+            "role": "root_observe",
+            "bound": true,
+            "samples": 3844204,
+            "candidate_samples": 1923722,
+            "calibration_samples": 1,
+            "unique_values": 1,
+            "candidate_unique_values": 1,
+            "values": [
+              0
+            ],
+            "candidate_values": [
+              0
+            ],
+            "flags_or": 86,
+            "max_confidence": 1
+          },
+          {
+            "role": "use",
+            "bound": true,
+            "samples": 3844204,
+            "candidate_samples": 1923722,
+            "calibration_samples": 1,
+            "unique_values": 1,
+            "candidate_unique_values": 1,
+            "values": [
+              1
+            ],
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 86,
+            "max_confidence": 1
+          }
+        ]
+      }
+    ]
+  }
+}

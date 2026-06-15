@@ -102,6 +102,8 @@ Completed 2-hour evidence:
 
 - Run root: `/tmp/formtrig_png006_exif_longrun_20260615T1250Z`
 - Strict gate: `/tmp/formtrig_png006_exif_longrun_20260615T1250Z/gate_2h/gate_summary.csv`
+- Preserved raw evidence:
+  `artifacts/formtrig_native_readiness/raw/png006_2h_20260615T1250Z`
 - Evidence note: `artifacts/formtrig_native_readiness/png006_exif_2h_20260615.md`
 - Result: pass with `run_time=7200`, `execs_done=29754905`,
   `reached=26319188`, `terminal_triggered=17276659`,

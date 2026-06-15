@@ -1,0 +1,58 @@
+start_time        : 1781526455
+last_update       : 1781533655
+run_time          : 7200
+fuzzer_pid        : 330872
+cycles_done       : 0
+cycles_wo_finds   : 0
+time_wo_finds     : 31
+execs_done        : 29754905
+execs_per_sec     : 4132.45
+execs_ps_last_min : 2853.10
+corpus_count      : 1920311
+corpus_favored    : 126
+corpus_found      : 1920305
+corpus_imported   : 0
+corpus_variable   : 0
+max_depth         : 25
+cur_item          : 23
+pending_favs      : 4
+pending_total     : 1919824
+stability         : 100.00%
+bitmap_cvg        : 16.08%
+saved_crashes     : 0
+saved_hangs       : 0
+last_find         : 1781533631
+last_crash        : 0
+last_hang         : 0
+execs_since_crash : 29754905
+exec_timeout      : 20
+slowest_exec_ms   : 0
+peak_rss_mb       : 3924
+cpu_affinity      : -1
+edges_found       : 2925
+total_edges       : 18186
+var_byte_count    : 0
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 11028451
+testcache_count   : 65535
+testcache_evict   : 6323603
+afl_banner        : /tmp/formtrig_png007_native_build_20260615T045038Z/libpng_read_fuzzer_env18
+afl_version       : ++4.08c
+target_mode       : persistent shmem_testcase deferred 
+command_line      : /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz -i /home/cwh/FORMTRIG/artifacts/rnt_corpus/PNG006/seeds -o /tmp/formtrig_png006_exif_longrun_20260615T1250Z/png006_exif_7200s/candidates/001_PNG006.native_b2_exif_insert_candidate.yml -V 7200 -- /tmp/formtrig_png007_native_build_20260615T045038Z/libpng_read_fuzzer_env18 @@
+formtrig_seen_execs      : 29754905
+formtrig_reached_execs   : 26319188
+formtrig_triggered_execs : 17276659
+formtrig_queued_progress : 1919630
+formtrig_frontier_count  : 1
+formtrig_frontier_updates: 2
+formtrig_typed_execs     : 22887
+formtrig_typed_finds     : 9
+formtrig_typed_skips     : 503
+formtrig_stability_checks: 3839253
+formtrig_stability_failures: 2
+formtrig_progress_log_events: 3844205
+formtrig_progress_log_dropped: 9033681
+formtrig_best_df         : 1
+formtrig_best_dt         : 1.0000000000000001e+300

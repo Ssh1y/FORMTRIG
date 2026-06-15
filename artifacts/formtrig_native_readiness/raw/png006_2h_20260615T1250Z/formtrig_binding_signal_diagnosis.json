@@ -1,0 +1,63 @@
+{
+  "status": "pass",
+  "diagnosis": "triggered",
+  "progress_events": 3844205,
+  "candidate_events": 1923722,
+  "calibration_events": 1,
+  "accepted_progress_events": 1919630,
+  "accepted_triggered_progress_events": 1919629,
+  "accepted_non_trigger_progress_events": 1,
+  "triggered_events": 3839753,
+  "spec_role_samples": 23060911,
+  "spec_role_candidate_samples": 11538367,
+  "spec_d_f_samples": 3844205,
+  "spec_d_f_candidate_samples": 1923722,
+  "spec_d_f_triggered_candidate_samples": 1919629,
+  "spec_d_f_non_trigger_candidate_samples": 4093,
+  "spec_d_f_calibration_samples": 1,
+  "spec_d_f_candidate_min": 1,
+  "spec_d_f_triggered_candidate_min": 1,
+  "spec_d_f_non_trigger_candidate_min": 1,
+  "spec_d_f_calibration_min": 2,
+  "spec_d_f_candidate_values": [2,1],
+  "spec_d_f_triggered_candidate_values": [1],
+  "spec_d_f_non_trigger_candidate_values": [2,1],
+  "spec_d_f_calibration_values": [2],
+  "triggered_candidate_lift_delta": true,
+  "non_trigger_candidate_lift_delta": true,
+  "lift_delta_only_on_triggered_candidates": false,
+  "atoms": [
+    {
+      "atom_id": 1,
+      "category": "binary-state-null",
+      "lift_allowed": true,
+      "bound_roles": ["root_observe","desired_producer","use","input_influence"],
+      "sampled_roles": ["root_observe","desired_producer","use","input_influence"],
+      "candidate_sampled_roles": ["root_observe","desired_producer","use","input_influence"],
+      "variable_roles": [],
+      "candidate_variable_roles": [],
+      "diagnosis": "constant_lift_signal",
+      "roles": [
+        {"role":"root_observe","bound":true,"samples":3844204,"candidate_samples":1923722,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":1},
+        {"role":"desired_producer","bound":true,"samples":3839891,"candidate_samples":1919757,"calibration_samples":0,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":1},
+        {"role":"use","bound":true,"samples":3844204,"candidate_samples":1923722,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":1},
+        {"role":"input_influence","bound":true,"samples":3844204,"candidate_samples":1923722,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":118,"max_confidence":0.80000000000000004}
+      ]
+    },
+    {
+      "atom_id": 2,
+      "category": "equality-magic",
+      "lift_allowed": true,
+      "bound_roles": ["root_observe","use"],
+      "sampled_roles": ["root_observe","use"],
+      "candidate_sampled_roles": ["root_observe","use"],
+      "variable_roles": [],
+      "candidate_variable_roles": [],
+      "diagnosis": "constant_lift_signal",
+      "roles": [
+        {"role":"root_observe","bound":true,"samples":3844204,"candidate_samples":1923722,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[0],"candidate_values":[0],"flags_or":86,"max_confidence":1},
+        {"role":"use","bound":true,"samples":3844204,"candidate_samples":1923722,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":1}
+      ]
+    }
+  ]
+}

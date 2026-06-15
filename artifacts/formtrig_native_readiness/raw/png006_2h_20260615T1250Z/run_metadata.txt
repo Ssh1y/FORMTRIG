@@ -1,0 +1,7 @@
+out_dir=/tmp/formtrig_png006_exif_longrun_20260615T1250Z
+binary=/tmp/formtrig_png007_native_build_20260615T045038Z/libpng_read_fuzzer_env18
+site_map=/tmp/formtrig_png007_native_build_20260615T045038Z/native_env18/site_map.tsv
+binding_spec=/home/cwh/FORMTRIG/artifacts/binding_specs/PNG006.native_b2_exif_insert_candidate.yml
+seed_dir=/home/cwh/FORMTRIG/artifacts/rnt_corpus/PNG006/seeds
+target_site_ids=3373319550,1343477914
+durations=7200

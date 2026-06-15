@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "source": "binding_spec",
+  "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/png_exif_insert_hook.py",
+  "sha256": "4ed43ac48f3ce6097d59814169348bdea9b7a91860ebd94665769b00d54bb024"
+}
