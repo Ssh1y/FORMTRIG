@@ -33,6 +33,27 @@ matches the ASAN `exitcode=` value; otherwise AFL++ keeps its default
 `scripts/formtrig_experiment_gate.sh --terminal-oracle-only` to validate this
 oracle separately from the strict pre-trigger guidance gate.
 
+Faithful AFL++-family baselines use the same local AFL++ artifact. The
+FORMTRIG patch installer also applies
+`formtrig_llvm18_cmplog_compat.patch`, which updates older AFL++ pass sources
+that used the removed LLVM `IntegerType::getInt8PtrTy` API. This is required
+for CmpLog/Redqueen baseline builds on LLVM 18 hosts. Rebuild the LLVM pass
+objects with the matching LLVM toolchain before running those baselines:
+
+```sh
+LLVM_CONFIG=llvm-config-18 \
+  make -C experiments/aflplusplus/AFLplusplus -f GNUmakefile.llvm \
+  cmplog-routines-pass.so cmplog-instructions-pass.so \
+  cmplog-switches-pass.so compare-transform-pass.so \
+  afl-llvm-dict2file.so SanitizerCoveragePCGUARD.so afl-llvm-pass.so
+```
+
+The LIBCOAP baseline wrapper checks this with a tiny
+`AFL_LLVM_CMPLOG=1 afl-clang-fast` compile before accepting CmpLog or
+Redqueen-mode runs. Do not count AFL++ LAF/split-switches as a faithful
+baseline until its LLVM pass self-test is fixed separately; the current
+verified baseline path does not enable LAF.
+
 Or use the repository campaign wrapper:
 
 ```sh

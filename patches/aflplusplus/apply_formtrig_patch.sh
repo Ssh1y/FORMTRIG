@@ -6,6 +6,7 @@ repo_root="$(cd "$script_dir/../.." && pwd)"
 aflpp_dir="${AFLPP_DIR:-$repo_root/experiments/aflplusplus/AFLplusplus}"
 patch_file="$script_dir/formtrig_native_runtime.patch"
 asan_exitcode_patch="$script_dir/formtrig_asan_exitcode.patch"
+llvm18_cmplog_patch="$script_dir/formtrig_llvm18_cmplog_compat.patch"
 
 if [[ ! -d "$aflpp_dir/.git" ]]; then
   echo "AFL++ checkout not found: $aflpp_dir" >&2
@@ -27,6 +28,7 @@ apply_patch_once() {
 
 apply_patch_once "$patch_file"
 apply_patch_once "$asan_exitcode_patch" --unidiff-zero
+apply_patch_once "$llvm18_cmplog_patch" --unidiff-zero
 
 make -C "$aflpp_dir" afl-fuzz NO_PYTHON=1
 if ldd "$aflpp_dir/afl-fuzz" 2>/dev/null | grep -qi python; then

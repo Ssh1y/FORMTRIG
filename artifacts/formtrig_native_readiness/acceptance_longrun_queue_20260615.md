@@ -22,12 +22,22 @@ inputs must naturally drive parser state, length, magic, structure, or lifecycle
 constraints. A replay harness that exposes the trigger as a direct input knob is
 only a sanity target, even if `formtrig_experiment_gate.sh` passes.
 
+The broader experimental claim also requires faithful baseline comparison.
+FORMTRIG-only long runs prove native readiness, but they do not prove superiority
+over SOTA. A target can enter the main comparison package only after the
+FORMTRIG run is paired with same-seed, same-budget faithful baseline runs under
+`artifacts/formtrig_native_readiness/baseline_faithfulness_policy_20260615.md`.
+Representative signal-family stand-ins are not accepted as SOTA baselines.
+`tools/run_post_reach_baseline.py` is the common post-reach baseline entrypoint
+and refuses representative-only baselines by default.
+
 ## Positive Long-Run Queue
 
 ### Magma: PNG006
 
 Current status: 2-hour native acceptance passed with external eXIf insertion
-hook from the BindingSpec.
+hook from the BindingSpec. It still needs same-budget faithful baseline runs
+before it can support the final comparative claim.
 
 Runner:
 
@@ -76,10 +86,12 @@ Completed 2-hour evidence:
 
 ### CVE: LIBCOAP_CVE_2023_35862
 
-Current status: admissible native smoke path passed. This is the replacement
-real-CVE candidate for LIBXML2_1107, but it still needs a long ASAN campaign
-plus a long strict pre-trigger guidance campaign before it can count as
-long-run acceptance evidence.
+Current status: admissible native smoke path passed and 30-minute strict
+pre-trigger guidance passed. This is the replacement real-CVE candidate for
+LIBXML2_1107. It still needs a long ASAN campaign and 2-hour pre-trigger
+campaign before it can count as full FORMTRIG real-CVE acceptance evidence. It
+also needs faithful baseline runs before it can enter the final SOTA comparison
+package.
 
 Runner:
 
@@ -125,6 +137,60 @@ Smoke evidence:
 - 10-second pre-trigger gate: pass with `run_time=10`, `execs_done=27115`,
   `reached=10008`, `accepted_non_trigger=1`, `saved_non_trigger=1`,
   `spec_lifted=4098`, and `binding_signal_diagnosis=role_signal_progress_observed`.
+
+Completed 30-minute pre-trigger evidence:
+
+- Run root: `/tmp/formtrig_libcoap_35862_selective_30m_20260615T182142Z`
+- Strict gate:
+  `/tmp/formtrig_libcoap_35862_selective_30m_20260615T182142Z/gate_30m/gate_summary.csv`
+- Preserved raw evidence:
+  `artifacts/formtrig_native_readiness/raw/libcoap_35862_30m_20260615T182142Z`
+- Evidence note:
+  `artifacts/formtrig_native_readiness/libcoap_35862_30m_pretrigger_20260615.md`
+- Result: pass with `run_time=1800`, `execs_done=4764811`,
+  `execs_per_sec=2647.11`, `reached=2128534`,
+  `terminal_triggered=0`, `accepted_non_trigger=1`,
+  `saved_non_trigger=1`, `spec_lifted=8524`,
+  `heuristic_lifted=0`, `manual_lifted=0`,
+  `non_trigger_candidate_lift_delta=true`, and
+  `binding_signal_diagnosis=role_signal_progress_observed`.
+- Performance caveat: AFL++ saved `12` hangs. They did not invalidate the
+  strict pre-trigger gate, but they should be tracked in the 2-hour and
+  baseline runs.
+
+Baseline comparison queue:
+
+- AFL++ vanilla: required faithful coverage/reach-only control.
+- AFL++ CmpLog/Redqueen: required faithful comparison-feedback baseline for this
+  equality/magic target.
+- AFLGo or another faithfully wired directed-fuzzing artifact: required reach
+  baseline if the target can be built with the artifact.
+- TrigFuzz-style native `D_T`: required only after the distance, scheduling, and
+  mutation behavior are implemented from the paper/artifact; a replay-only or
+  representative stand-in is not sufficient.
+- Faithful AFL++-family baseline build/execute smoke is recorded in
+  `artifacts/formtrig_native_readiness/libcoap_35862_baseline_smoke_20260615.md`.
+  This confirms the runner can build and launch the baseline artifacts; it is
+  not a long-run comparison result.
+
+Faithful AFL++-family baseline runner:
+
+```bash
+scripts/run_libcoap_35862_baselines.sh \
+  --out /tmp/formtrig_libcoap_35862_baselines_20260615 \
+  --durations 1800,7200 \
+  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+```
+
+ASAN terminal-oracle variant:
+
+```bash
+scripts/run_libcoap_35862_baselines.sh \
+  --out /tmp/formtrig_libcoap_35862_baselines_asan_20260615 \
+  --asan \
+  --durations 1800,7200 \
+  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+```
 
 ## Sanity / Demoted Queue
 

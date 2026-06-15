@@ -1,0 +1,84 @@
+diff --git a/instrumentation/SanitizerCoverageLTO.so.cc b/instrumentation/SanitizerCoverageLTO.so.cc
+index c70fbd4..f967c89 100644
+--- a/instrumentation/SanitizerCoverageLTO.so.cc
++++ b/instrumentation/SanitizerCoverageLTO.so.cc
+@@ -699 +699,2 @@ bool ModuleSanitizerCoverageLTO::instrumentModule(
+-                            IntegerType::getInt8PtrTy(M.getContext());
++                            PointerType::getUnqual(
++                                Type::getInt8Ty(M.getContext()));
+@@ -704 +705,2 @@ bool ModuleSanitizerCoverageLTO::instrumentModule(
+-                                IntegerType::getInt8PtrTy(M.getContext());
++                                PointerType::getUnqual(
++                                    Type::getInt8Ty(M.getContext()));
+@@ -714 +716,2 @@ bool ModuleSanitizerCoverageLTO::instrumentModule(
+-                             IntegerType::getInt8PtrTy(M.getContext()) &&
++                             PointerType::getUnqual(
++                                 Type::getInt8Ty(M.getContext())) &&
+@@ -720 +723,2 @@ bool ModuleSanitizerCoverageLTO::instrumentModule(
+-                                 IntegerType::getInt8PtrTy(M.getContext()) &&
++                                 PointerType::getUnqual(
++                                     Type::getInt8Ty(M.getContext())) &&
+@@ -1811 +1814,0 @@ static RegisterStandardPasses RegisterCompTransPassLTO(
+-
+diff --git a/instrumentation/afl-llvm-dict2file.so.cc b/instrumentation/afl-llvm-dict2file.so.cc
+index 8ee1301..470f22f 100644
+--- a/instrumentation/afl-llvm-dict2file.so.cc
++++ b/instrumentation/afl-llvm-dict2file.so.cc
+@@ -425 +425,2 @@ bool AFLdict2filePass::runOnModule(Module &M) {
+-              FT->getParamType(0) == IntegerType::getInt8PtrTy(M.getContext());
++              FT->getParamType(0) ==
++                  PointerType::getUnqual(Type::getInt8Ty(M.getContext()));
+@@ -429 +430,2 @@ bool AFLdict2filePass::runOnModule(Module &M) {
+-              FT->getParamType(0) == IntegerType::getInt8PtrTy(M.getContext());
++              FT->getParamType(0) ==
++                  PointerType::getUnqual(Type::getInt8Ty(M.getContext()));
+@@ -433 +435,2 @@ bool AFLdict2filePass::runOnModule(Module &M) {
+-              FT->getParamType(0) == IntegerType::getInt8PtrTy(M.getContext());
++              FT->getParamType(0) ==
++                  PointerType::getUnqual(Type::getInt8Ty(M.getContext()));
+@@ -443 +446,2 @@ bool AFLdict2filePass::runOnModule(Module &M) {
+-                           IntegerType::getInt8PtrTy(M.getContext()) &&
++                           PointerType::getUnqual(
++                               Type::getInt8Ty(M.getContext())) &&
+@@ -449 +453,2 @@ bool AFLdict2filePass::runOnModule(Module &M) {
+-                               IntegerType::getInt8PtrTy(M.getContext()) &&
++                               PointerType::getUnqual(
++                                   Type::getInt8Ty(M.getContext())) &&
+@@ -759 +763,0 @@ static RegisterStandardPasses RegisterAFLdict2filePass0(
+-
+diff --git a/instrumentation/cmplog-routines-pass.cc b/instrumentation/cmplog-routines-pass.cc
+index c3fbed8..da223fe 100644
+--- a/instrumentation/cmplog-routines-pass.cc
++++ b/instrumentation/cmplog-routines-pass.cc
+@@ -388 +388,2 @@ bool CmpLogRoutines::hookRtns(Module &M) {
+-              FT->getParamType(0) == IntegerType::getInt8PtrTy(M.getContext());
++              FT->getParamType(0) ==
++                  PointerType::getUnqual(Type::getInt8Ty(M.getContext()));
+@@ -405 +406,2 @@ bool CmpLogRoutines::hookRtns(Module &M) {
+-                           IntegerType::getInt8PtrTy(M.getContext()) &&
++                           PointerType::getUnqual(
++                               Type::getInt8Ty(M.getContext())) &&
+@@ -795 +796,0 @@ static RegisterStandardPasses RegisterCmpLogRoutinesPassLTO(
+-
+diff --git a/instrumentation/compare-transform-pass.so.cc b/instrumentation/compare-transform-pass.so.cc
+index 5dd705c..9a89be2 100644
+--- a/instrumentation/compare-transform-pass.so.cc
++++ b/instrumentation/compare-transform-pass.so.cc
+@@ -273 +273,2 @@ bool CompareTransform::transformCmps(Module &M, const bool processStrcmp,
+-              FT->getParamType(0) == IntegerType::getInt8PtrTy(M.getContext());
++              FT->getParamType(0) ==
++                  PointerType::getUnqual(Type::getInt8Ty(M.getContext()));
+@@ -277 +278,2 @@ bool CompareTransform::transformCmps(Module &M, const bool processStrcmp,
+-              FT->getParamType(0) == IntegerType::getInt8PtrTy(M.getContext());
++              FT->getParamType(0) ==
++                  PointerType::getUnqual(Type::getInt8Ty(M.getContext()));
+@@ -287 +289,2 @@ bool CompareTransform::transformCmps(Module &M, const bool processStrcmp,
+-                           IntegerType::getInt8PtrTy(M.getContext()) &&
++                           PointerType::getUnqual(
++                               Type::getInt8Ty(M.getContext())) &&
+@@ -293 +296,2 @@ bool CompareTransform::transformCmps(Module &M, const bool processStrcmp,
+-                               IntegerType::getInt8PtrTy(M.getContext()) &&
++                               PointerType::getUnqual(
++                                   Type::getInt8Ty(M.getContext())) &&
+@@ -779 +782,0 @@ static RegisterStandardPasses RegisterCompTransPassLTO(
+-
