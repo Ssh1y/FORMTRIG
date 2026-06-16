@@ -1,0 +1,58 @@
+# compiled_from_binding_spec tc_id=TIF012 category=binary-state-null
+# tc_expression=MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))
+atom_category 1 binary-state-null
+# binding id=magma_canary_root_01_cmp_126 atom=1 role=root_observe expr=TIF012 canary cmp at setExtraSamples:134
+role_component 7 2633682639 root_observe 3 1 10 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_01_cmp_129 atom=1 role=root_observe expr=TIF012 canary cmp at setExtraSamples:134
+role_component 7 2717570734 root_observe 3 1 11 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_01_cmp_138 atom=1 role=root_observe expr=TIF012 canary cmp at setExtraSamples:134
+role_component 7 2633535544 root_observe 3 1 12 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_01_cmp_147 atom=1 role=root_observe expr=TIF012 canary cmp at setExtraSamples:134
+role_component 7 2617890758 root_observe 3 1 13 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_01_cmp_155 atom=1 role=root_observe expr=TIF012 canary cmp at setExtraSamples:134
+role_component 7 2651298901 root_observe 3 1 14 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_01_cmp_165 atom=1 role=root_observe expr=TIF012 canary cmp at setExtraSamples:134
+role_component 7 772058478 root_observe 3 1 15 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_01_cmp_172 atom=1 role=root_observe expr=TIF012 canary cmp at setExtraSamples:134
+role_component 7 788689002 root_observe 3 1 16 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_457 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 2305107043 root_observe 3 1 17 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_460 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 140647097 root_observe 3 1 18 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_469 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 258090430 root_observe 3 1 19 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_477 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 157277621 root_observe 3 1 20 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_481 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 461687524 root_observe 3 1 21 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_486 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 444909905 root_observe 3 1 22 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_493 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 360874715 root_observe 3 1 23 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_503 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 2967075965 root_observe 3 1 24 higher outcome 1.0 0.55 any
+# binding id=magma_canary_root_02_cmp_512 atom=1 role=root_observe expr=TIF012 canary cmp at _TIFFVSetField:313
+role_component 7 2984000679 root_observe 3 1 25 higher outcome 1.0 0.55 any
+# binding id=transferfunction_set_count_producer atom=1 role=desired_producer expr=_TIFFVSetField reaches TIFFTAG_TRANSFERFUNCTION count decision from samplesperpixel/extrasamples
+role_component 7 2428864631 desired_producer 6 1 30 higher outcome 1.0 0.75 any
+# binding id=transferfunction_set_array_producer atom=1 role=desired_producer expr=_TIFFVSetField reaches td_transferfunction array population loop
+role_component 7 2227386108 desired_producer 6 1 31 higher outcome 1.0 0.75 any
+# binding id=sminsamplevalue_set_producer atom=1 role=desired_producer expr=_TIFFVSetField reaches SMINSAMPLEVALUE array set path
+role_component 7 1889720481 desired_producer 6 1 32 higher outcome 1.0 0.7 any
+# binding id=smaxsamplevalue_set_producer atom=1 role=desired_producer expr=_TIFFVSetField reaches SMAXSAMPLEVALUE array set path
+role_component 7 4085911284 desired_producer 6 1 33 higher outcome 1.0 0.7 any
+# binding id=transferfunction_get_root_use atom=1 role=use expr=_TIFFVGetField reads td_transferfunction[0] before multi-sample transferfunction use
+role_component 7 3986070914 use 6 1 40 higher outcome 1.0 0.75 any
+# binding id=transferfunction_get_multisample_use atom=1 role=use expr=_TIFFVGetField branches on samplesperpixel/extrasamples before reading transferfunction[1:2]
+role_component 7 2019419709 use 6 1 41 higher outcome 1.0 0.75 any
+# binding id=sminsamplevalue_get_use atom=1 role=use expr=_TIFFVGetField reaches SMINSAMPLEVALUE state read path
+role_component 7 1815920006 use 6 1 42 higher outcome 1.0 0.7 any
+# binding id=smaxsamplevalue_get_use atom=1 role=use expr=_TIFFVGetField reaches SMAXSAMPLEVALUE state read path
+role_component 7 380098173 use 6 1 43 higher outcome 1.0 0.7 any
+# binding id=samplesperpixel_new_color_count_use atom=1 role=use expr=_TIFFVSetField computes v - td_extrasamples inside the TIF012 SamplesPerPixel trigger condition
+role_component 11 344097096 use 6 1 44 higher c 1.0 0.85 any
+# binding id=samplesperpixel_old_color_count_use atom=1 role=use expr=_TIFFVSetField computes td_samplesperpixel - td_extrasamples inside the TIF012 stale-state guard
+role_component 11 2950298346 use 6 1 45 higher c 1.0 0.85 any
+# binding id=tif012_ifd_tag_order_influence atom=1 role=input_influence expr=classic TIFF header first-IFD pointer selects the directory whose tag order controls TransferFunction-before-SamplesPerPixel state
+range * * 4 4 0.85 xor_byte 1 any
+mutation_hook scripts/formtrig_hooks/tiff_tif012_ifd_tag_hook.py

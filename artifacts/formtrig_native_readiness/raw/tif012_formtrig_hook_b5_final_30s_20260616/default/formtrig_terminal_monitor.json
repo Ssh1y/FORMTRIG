@@ -1,0 +1,9 @@
+{
+  "snapshot_count": 2,
+  "first_trigger_time_s": 0,
+  "first_triggered_execs": 8,
+  "first_trigger_snapshot": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_formtrig_hook_b5_final_30s_20260616/formtrig_stats_monitor/30.stats",
+  "latest_time_s": 30,
+  "latest_triggered_execs": 1150,
+  "latest_snapshot": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_formtrig_hook_b5_final_30s_20260616/formtrig_stats_monitor/final.stats"
+}

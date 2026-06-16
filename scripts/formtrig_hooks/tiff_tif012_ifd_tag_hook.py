@@ -2,14 +2,18 @@
 """Typed FORMTRIG mutation hook for Magma TIF012.
 
 The TIF012 trigger is order/state dependent: libtiff must observe state from
-TransferFunction, SMinSampleValue, or SMaxSampleValue before SamplesPerPixel is
-changed from its default single-sample state. Plain byte flips rarely make a
-well-formed IFD with that ordering, so this hook rewrites the first-IFD pointer
-to a new IFD appended at EOF and inserts terminal-proximal state tags before
-SamplesPerPixel. When the seed already has the vulnerable ExtraSamples then
+SMinSampleValue or SMaxSampleValue before SamplesPerPixel is changed from its
+default single-sample state. Plain byte flips rarely make a well-formed IFD with
+that ordering, so this hook rewrites the first-IFD pointer to a new IFD appended
+at EOF and inserts the missing producer-state context while omitting
+SamplesPerPixel. libtiff reads SamplesPerPixel before the normal directory pass
+whenever the tag is present, so the useful producer state must be installed
+first and then let libtiff's missing-SamplesPerPixel recovery set the value
+later. That recovery path is OJPEG-specific, so the fallback also coerces
+Compression to OJPEG. When the seed already has the vulnerable ExtraSamples then
 SamplesPerPixel shape, the hook first tries the smaller in-place tag
-substitution observed in replayed baseline triggers: rewrite SamplesPerPixel
-to SMaxSampleValue while preserving the surrounding directory context.
+substitution observed in replayed baseline triggers: rewrite SamplesPerPixel to
+SMaxSampleValue while preserving the surrounding directory context.
 """
 
 from __future__ import annotations
@@ -20,11 +24,12 @@ from dataclasses import dataclass
 
 
 TIFFTAG_SAMPLESPERPIXEL = 277
-TIFFTAG_TRANSFERFUNCTION = 301
+TIFFTAG_COMPRESSION = 259
 TIFFTAG_EXTRASAMPLES = 338
 TIFFTAG_SMINSAMPLEVALUE = 340
 TIFFTAG_SMAXSAMPLEVALUE = 341
 TIFF_SHORT = 3
+COMPRESSION_OJPEG = 6
 
 
 @dataclass(frozen=True)
@@ -67,20 +72,6 @@ def pack_entry(endian: str, entry: TiffEntry) -> bytes:
     return struct.pack(endian + "HHII", entry.tag, entry.typ, entry.count, entry.value)
 
 
-def transfer_function_payload(endian: str, sample: int) -> bytes:
-    values = []
-    mode = sample % 3
-    for i in range(256):
-        if mode == 0:
-            value = i * 257
-        elif mode == 1:
-            value = min(65535, (i * i) & 0xFFFF)
-        else:
-            value = 65535 - i * 257
-        values.append(value)
-    return struct.pack(endian + "256H", *values)
-
-
 def inline_short(endian: str, value: int) -> int:
     if endian == "<":
         return value & 0xFFFF
@@ -101,6 +92,13 @@ def rewrite_existing_spp_to_sample_value(data: bytes, op: int) -> bytes | None:
     ):
         return None
 
+    compression_idx = next(
+        (idx for idx, entry in enumerate(entries) if entry.tag == TIFFTAG_COMPRESSION),
+        None,
+    )
+    if compression_idx is None:
+        return None
+
     seen_extra = False
     for idx, entry in enumerate(entries):
         if entry.tag == TIFFTAG_EXTRASAMPLES:
@@ -116,6 +114,16 @@ def rewrite_existing_spp_to_sample_value(data: bytes, op: int) -> bytes | None:
         rewritten = bytearray(data)
         pos = first_ifd + 2 + idx * 12
         rewritten[pos : pos + 2] = struct.pack(endian + "H", replacement)
+        compression_pos = first_ifd + 2 + compression_idx * 12
+        rewritten[compression_pos : compression_pos + 12] = pack_entry(
+            endian,
+            TiffEntry(
+                TIFFTAG_COMPRESSION,
+                TIFF_SHORT,
+                1,
+                inline_short(endian, COMPRESSION_OJPEG),
+            ),
+        )
         return bytes(rewritten)
     return None
 
@@ -130,44 +138,63 @@ def build_tif012_candidate(data: bytes, op: int, sample: int) -> bytes | None:
         return None
     endian, _first_ifd, entries, next_ifd = parsed
 
-    tf_payload = transfer_function_payload(endian, op + sample)
     pad = b"\x00" if len(data) % 2 else b""
     new_ifd_offset = len(data) + len(pad)
 
-    insert_at = None
+    insert_at = min(len(entries), 4)
+    rewritten_entries: list[TiffEntry] = []
+    replaced_spp = False
+    replacement_tag = (
+        TIFFTAG_SMAXSAMPLEVALUE if op % 2 == 0 else TIFFTAG_SMINSAMPLEVALUE
+    )
+    replacement_entry = TiffEntry(
+        replacement_tag, TIFF_SHORT, 1, inline_short(endian, 3 if op % 2 == 0 else 0)
+    )
     for idx, entry in enumerate(entries):
-        if entry.tag == TIFFTAG_SAMPLESPERPIXEL:
+        if entry.tag == TIFFTAG_SAMPLESPERPIXEL and not (
+            has_tag(entries, TIFFTAG_SMAXSAMPLEVALUE)
+            or has_tag(entries, TIFFTAG_SMINSAMPLEVALUE)
+        ):
             insert_at = idx
-            break
-    inserted_spp: TiffEntry | None = None
-    if insert_at is None:
-        insert_at = min(len(entries), 4)
-        inserted_spp = TiffEntry(
-            TIFFTAG_SAMPLESPERPIXEL, TIFF_SHORT, 1, inline_short(endian, 3)
-        )
+            if not has_tag(entries, replacement_tag):
+                rewritten_entries.append(replacement_entry)
+            replaced_spp = True
+            continue
+        rewritten_entries.append(entry)
 
     state_entries: list[TiffEntry] = []
-    if not has_tag(entries, TIFFTAG_SMAXSAMPLEVALUE):
+    if not has_tag(entries, TIFFTAG_COMPRESSION):
         state_entries.append(
-            TiffEntry(TIFFTAG_SMAXSAMPLEVALUE, TIFF_SHORT, 1, inline_short(endian, 3))
+            TiffEntry(
+                TIFFTAG_COMPRESSION,
+                TIFF_SHORT,
+                1,
+                inline_short(endian, COMPRESSION_OJPEG),
+            )
         )
-    elif not has_tag(entries, TIFFTAG_SMINSAMPLEVALUE):
+    if not has_tag(entries, TIFFTAG_EXTRASAMPLES):
         state_entries.append(
-            TiffEntry(TIFFTAG_SMINSAMPLEVALUE, TIFF_SHORT, 1, inline_short(endian, 0))
+            TiffEntry(TIFFTAG_EXTRASAMPLES, TIFF_SHORT, 1, inline_short(endian, 1))
         )
+    if not replaced_spp and not has_tag(entries, replacement_tag):
+        state_entries.append(replacement_entry)
 
-    add_transfer_function = not has_tag(entries, TIFFTAG_TRANSFERFUNCTION)
-    new_entry_count = (
-        len(entries)
-        + len(state_entries)
-        + (1 if inserted_spp is not None else 0)
-        + (1 if add_transfer_function else 0)
+    rewritten_entries = [
+        (
+            TiffEntry(
+                TIFFTAG_COMPRESSION,
+                TIFF_SHORT,
+                1,
+                inline_short(endian, COMPRESSION_OJPEG),
+            )
+            if entry.tag == TIFFTAG_COMPRESSION
+            else entry
+        )
+        for entry in rewritten_entries
+    ]
+    rewritten_entries = (
+        rewritten_entries[:insert_at] + state_entries + rewritten_entries[insert_at:]
     )
-    tf_offset = new_ifd_offset + 2 + new_entry_count * 12 + 4
-    if add_transfer_function:
-        state_entries.append(TiffEntry(TIFFTAG_TRANSFERFUNCTION, TIFF_SHORT, 256, tf_offset))
-    inserted_entries = state_entries + ([inserted_spp] if inserted_spp is not None else [])
-    rewritten_entries = entries[:insert_at] + inserted_entries + entries[insert_at:]
 
     header = bytearray(data)
     header[4:8] = struct.pack(endian + "I", new_ifd_offset)
@@ -178,8 +205,7 @@ def build_tif012_candidate(data: bytes, op: int, sample: int) -> bytes | None:
         new_ifd += pack_entry(endian, entry)
     new_ifd += struct.pack(endian + "I", next_ifd)
 
-    payload = tf_payload if add_transfer_function else b""
-    return bytes(header) + pad + bytes(new_ifd) + payload
+    return bytes(header) + pad + bytes(new_ifd)
 
 
 def main(argv: list[str]) -> int:

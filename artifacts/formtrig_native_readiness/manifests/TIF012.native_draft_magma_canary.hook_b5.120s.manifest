@@ -1,0 +1,16 @@
+# FORMTRIG native short-screen manifest for the TIF012 typed hook b5 repair.
+# b5 matches the replayed vanilla trigger shape: synthesize OJPEG +
+# ExtraSamples + SMax/SMin, omit SamplesPerPixel, and let libtiff's OJPEG
+# missing-SamplesPerPixel recovery produce the terminal use.
+target_id: TIF012
+category: binary-null
+seed_dir: /home/cwh/FORMTRIG/artifacts/rnt_corpus/TIF012/seeds
+out_dir: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_formtrig_hook_b5_120s_20260616
+binding_spec: /home/cwh/FORMTRIG/artifacts/binding_specs/TIF012.native_draft_magma_canary.yml
+site_map: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/formtrig_native/formtrig_sites.tsv
+duration: 120
+seed_preflight: require
+seed_preflight_max: 32
+seed_preflight_timeout: 5
+target_cwd: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl
+target_cmd: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl/tiff_read_rgba_fuzzer @@

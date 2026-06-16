@@ -1,0 +1,47 @@
+{
+  "status": "pass",
+  "diagnosis": "triggered",
+  "progress_events": 4096,
+  "candidate_events": 3964,
+  "calibration_events": 1,
+  "accepted_progress_events": 132,
+  "accepted_triggered_progress_events": 128,
+  "accepted_non_trigger_progress_events": 4,
+  "triggered_events": 254,
+  "spec_role_samples": 46326,
+  "spec_role_candidate_samples": 44244,
+  "spec_d_f_samples": 4096,
+  "spec_d_f_candidate_samples": 3964,
+  "spec_d_f_triggered_candidate_samples": 128,
+  "spec_d_f_non_trigger_candidate_samples": 3836,
+  "spec_d_f_calibration_samples": 1,
+  "spec_d_f_candidate_min": 1,
+  "spec_d_f_triggered_candidate_min": 1,
+  "spec_d_f_non_trigger_candidate_min": 2,
+  "spec_d_f_calibration_min": 2,
+  "spec_d_f_candidate_values": [2,1],
+  "spec_d_f_triggered_candidate_values": [1],
+  "spec_d_f_non_trigger_candidate_values": [2],
+  "spec_d_f_calibration_values": [2],
+  "triggered_candidate_lift_delta": true,
+  "non_trigger_candidate_lift_delta": false,
+  "lift_delta_only_on_triggered_candidates": true,
+  "atoms": [
+    {
+      "atom_id": 1,
+      "category": "binary-state-null",
+      "lift_allowed": true,
+      "bound_roles": ["root_observe","desired_producer","use"],
+      "sampled_roles": ["root_observe","desired_producer","use"],
+      "candidate_sampled_roles": ["root_observe","desired_producer","use"],
+      "variable_roles": ["root_observe","use"],
+      "candidate_variable_roles": ["root_observe","use"],
+      "diagnosis": "role_signal_progress_observed",
+      "roles": [
+        {"role":"root_observe","bound":true,"samples":38134,"candidate_samples":36316,"calibration_samples":9,"unique_values":2,"candidate_unique_values":2,"values":[1,0],"candidate_values":[1,0],"flags_or":86,"max_confidence":0.55000000000000004},
+        {"role":"desired_producer","bound":true,"samples":254,"candidate_samples":128,"calibration_samples":0,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":0.69999999999999996},
+        {"role":"use","bound":true,"samples":7938,"candidate_samples":7800,"calibration_samples":2,"unique_values":17,"candidate_unique_values":17,"values":[3,1,2,245,32771,34,255,40451,65283,57598,7171,230,36355,15360,27,510,771],"candidate_values":[3,1,2,245,32771,34,255,40451,65283,57598,7171,230,36355,15360,27,510,771],"flags_or":86,"max_confidence":0.84999999999999998}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "status": "fail",
+  "diagnosis": "no_lifted_components",
+  "runtime_records": 20,
+  "reached_records": 20,
+  "triggered_records": 20,
+  "rnt_records": 0,
+  "spec_lifted_records": 20,
+  "rnt_spec_lifted_records": 0,
+  "spec_d_f_samples": 0,
+  "spec_d_f_unique": 0,
+  "spec_d_f_constant": false,
+  "spec_d_f_min": null,
+  "spec_d_f_max": null,
+  "component_keys": 0,
+  "spec_component_keys": 0,
+  "actionable_component_keys": 0,
+  "constant_components": 0,
+  "variable_components": 0,
+  "constant_actionable_components": 0,
+  "variable_actionable_components": 0,
+  "components": [
+  ]
+}
