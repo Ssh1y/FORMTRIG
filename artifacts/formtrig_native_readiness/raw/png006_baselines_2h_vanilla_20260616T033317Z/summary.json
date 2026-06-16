@@ -1,0 +1,40 @@
+{
+  "groups": [
+    {
+      "baseline": "aflplusplus_vanilla",
+      "budget": 7200,
+      "max_magma_triggered": 0,
+      "median_execs_done": 16126501,
+      "median_magma_triggered": 0,
+      "median_trigger_time_s": null,
+      "min_trigger_time_s": null,
+      "reps": 1,
+      "success_rate": 0.0,
+      "successes": 0,
+      "target_id": "PNG006"
+    }
+  ],
+  "records": [
+    {
+      "baseline": "aflplusplus_vanilla",
+      "budget": 7200,
+      "corpus_count": 902,
+      "execs_done": 16126501,
+      "execs_per_sec": "2240.43",
+      "magma_first_reach_time_s": 60,
+      "magma_first_trigger_time_s": null,
+      "magma_reached": 23144616,
+      "magma_snapshot_count": 240,
+      "magma_triggered": 0,
+      "rep": 1,
+      "run_record": "artifacts/formtrig_native_readiness/raw/png006_baselines_2h_vanilla_20260616T033317Z/aflplusplus_vanilla/run_record.json",
+      "run_time": 7197,
+      "saved_crashes": 1,
+      "saved_hangs": 0,
+      "success": false,
+      "target_id": "PNG006",
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ]
+}

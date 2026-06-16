@@ -104,6 +104,10 @@ def parse_labeled_path(value: str) -> tuple[str, Path]:
     return path.stem, path
 
 
+def split_list(value: str) -> list[str]:
+    return [part for part in value.replace(",", " ").split() if part]
+
+
 def formtrig_gate_csv(path: Path) -> Path:
     if path.is_dir():
         candidate = path / "gate_summary.csv"
@@ -271,6 +275,7 @@ def classify_evidence(
     baseline_rows: list[dict[str, Any]],
     tolerance: int,
     min_reps: int,
+    required_baselines: list[str],
 ) -> dict[str, Any]:
     reasons: list[str] = []
     matched_baselines = [
@@ -280,6 +285,19 @@ def classify_evidence(
     ]
     if not matched_baselines:
         reasons.append("missing_matched_budget_baselines")
+
+    matched_baseline_names = {
+        str(row.get("baseline"))
+        for row in matched_baselines
+        if row.get("baseline") is not None
+    }
+    missing_required = [
+        baseline
+        for baseline in required_baselines
+        if baseline not in matched_baseline_names
+    ]
+    if missing_required:
+        reasons.append("missing_required_baselines")
 
     strict_formtrig = any(row.get("strict_pretrigger_guidance") for row in formtrig_rows)
     terminal_formtrig = any(int_value(row.get("terminal_count")) > 0 for row in formtrig_rows)
@@ -303,6 +321,8 @@ def classify_evidence(
 
     if not matched_baselines:
         verdict = "not_comparable_missing_matched_budget"
+    elif missing_required:
+        verdict = "incomplete_required_baseline_set"
     elif successful_baselines:
         verdict = "baseline_also_triggers_not_sota_advantage"
     elif strict_formtrig and terminal_formtrig and not low_rep_groups:
@@ -320,6 +340,8 @@ def classify_evidence(
         next_steps.append(f"run faithful baselines at FORMTRIG budget(s): {budgets}")
     if low_rep_groups or (matched_baselines and not groups):
         next_steps.append(f"collect at least {min_reps} repetitions per matched baseline/budget")
+    if missing_required:
+        next_steps.append("run missing required baselines: " + ",".join(missing_required))
     if successful_baselines:
         next_steps.append("do not claim SOTA advantage on this target without harder targets or stronger statistics")
     if strict_formtrig and not terminal_formtrig:
@@ -328,6 +350,7 @@ def classify_evidence(
     return {
         "baseline_groups": groups,
         "matched_baseline_count": len(matched_baselines),
+        "missing_required_baselines": missing_required,
         "next_steps": next_steps,
         "reasons": reasons,
         "verdict": verdict,
@@ -446,6 +469,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--budget-tolerance-sec", type=int, default=5)
     parser.add_argument("--min-reps", type=int, default=3)
+    parser.add_argument(
+        "--required-baselines",
+        default="",
+        help="comma/space-separated baseline ids required for a complete comparison",
+    )
     return parser.parse_args()
 
 
@@ -462,6 +490,7 @@ def main() -> int:
         baseline_rows,
         args.budget_tolerance_sec,
         args.min_reps,
+        split_list(args.required_baselines),
     )
     payload = {
         "analysis": analysis,

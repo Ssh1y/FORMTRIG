@@ -43,8 +43,10 @@ Current status: 2-hour native acceptance passed with external eXIf insertion
 hook from the BindingSpec. The same-budget faithful baseline runner now exists,
 its Magma `_T` harvest oracle has passed synthetic smoke verification, and a
 real 120-second Magma/captain baseline smoke plus a same-seed 30-minute
-baseline package have completed. The 2-hour baseline campaign and repetitions
-still need to run before PNG006 can support the final comparative claim.
+baseline package have completed. A matched-budget 2-hour AFL++ vanilla control
+has also completed with `PNG006_T=0`. The 2-hour CmpLog and Redqueen/CmpLog-path
+baseline runs and repetitions still need to run before PNG006 can support the
+final comparative claim.
 
 Runner:
 
@@ -106,6 +108,26 @@ Completed 30-minute baseline package:
   run has much higher final target-state volume and strict pre-trigger `D_F`
   evidence, but PNG006 cannot be used as a case where strong AFL++ CmpLog /
   Redqueen-style comparison feedback fails to produce `_T`.
+
+Completed 2-hour vanilla baseline control:
+
+- Evidence note:
+  `artifacts/formtrig_native_readiness/png006_magma_baselines_2h_vanilla_20260616.md`
+- Raw evidence:
+  `artifacts/formtrig_native_readiness/raw/png006_baselines_2h_vanilla_20260616T033317Z`
+  including `summary.json` and `summary.tsv`.
+- Comparison package:
+  `artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_2h_incomplete_20260616`
+- Result over 2 hours:
+  `aflplusplus_vanilla` reached `PNG006_R=23144616` with `PNG006_T=0`,
+  `run_time=7197`, `execs_done=16126501`, `execs_per_sec=2240.43`,
+  `corpus_count=902`, `saved_crashes=1`, and `saved_hangs=0`.
+  The saved AFL crash is auxiliary only; the target-specific Magma oracle stayed
+  at `PNG006_T=0`, so target success is false.
+- Interpretation: this strengthens the vanilla coverage/reach-only control, but
+  the comparison package verdict remains `incomplete_required_baseline_set`
+  because 7200-second `aflplusplus_cmplog` and `redqueen_operand` runs are still
+  missing and there is only one repetition.
 
 Gate examples:
 

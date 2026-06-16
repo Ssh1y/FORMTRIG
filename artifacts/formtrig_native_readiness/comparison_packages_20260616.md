@@ -28,6 +28,12 @@ not_comparable_missing_matched_budget
 ```
 
 It also marks single-repetition evidence as `low_replication`.
+When `--required-baselines` is provided, a package that is missing one of the
+required matched-budget baseline families receives:
+
+```text
+incomplete_required_baseline_set
+```
 
 ## Generated Packages
 
@@ -60,6 +66,39 @@ Reason: the saved FORMTRIG evidence is 7200 seconds, while the current faithful
 baseline package is 1800 seconds. The package records that FORMTRIG has strict
 pre-trigger guidance and terminal oracle evidence, but the comparative claim is
 blocked until 7200-second faithful baselines are run.
+
+### PNG006: FORMTRIG 2h vs vanilla 2h incomplete baseline set
+
+Command:
+
+```bash
+python3 tools/compare_formtrig_baselines.py \
+  --comparison-id PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616 \
+  --target-id PNG006 \
+  --formtrig-gate formtrig_2h=artifacts/formtrig_native_readiness/raw/png006_2h_20260615T1250Z/gate_summary.csv \
+  --baseline-summary vanilla_2h=artifacts/formtrig_native_readiness/raw/png006_baselines_2h_vanilla_20260616T033317Z/summary.json \
+  --required-baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand \
+  --out-dir artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_2h_incomplete_20260616
+```
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_2h_incomplete_20260616
+```
+
+Verdict:
+
+```text
+incomplete_required_baseline_set
+```
+
+Reason: the saved FORMTRIG 2-hour evidence is now paired with a matched
+7200-second `aflplusplus_vanilla` baseline. The vanilla run has
+`PNG006_R=23144616` and `PNG006_T=0`, while FORMTRIG has strict pre-trigger
+guidance and terminal oracle evidence. The package is still incomplete because
+the required matched-budget `aflplusplus_cmplog` and `redqueen_operand` runs
+are missing and there is only one repetition.
 
 ### LIBCOAP: pre-trigger FORMTRIG 30m vs non-ASAN baselines
 
@@ -145,7 +184,8 @@ validation target rather than a strong SOTA-positive FORMTRIG target.
 
 The comparison packages make the current evidence state explicit:
 
-- PNG006 still needs the 7200-second faithful baseline package and repetitions.
+- PNG006 now has a 7200-second faithful vanilla control. It still needs
+  7200-second CmpLog and Redqueen/CmpLog-path baselines plus repetitions.
 - LIBCOAP demonstrates real-CVE pre-trigger guidance and terminal-oracle
   plumbing, but it does not prove a SOTA advantage because the ASAN baselines
   also trigger.

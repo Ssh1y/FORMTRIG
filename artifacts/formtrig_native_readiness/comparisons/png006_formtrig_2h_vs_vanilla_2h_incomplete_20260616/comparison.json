@@ -1,0 +1,91 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 7200,
+        "median_terminal_count": 0,
+        "median_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      }
+    ],
+    "matched_baseline_count": 1,
+    "missing_required_baselines": [
+      "aflplusplus_cmplog",
+      "redqueen_operand"
+    ],
+    "next_steps": [
+      "collect at least 3 repetitions per matched baseline/budget",
+      "run missing required baselines: aflplusplus_cmplog,redqueen_operand"
+    ],
+    "reasons": [
+      "missing_required_baselines",
+      "formtrig_strict_pretrigger_guidance_present",
+      "formtrig_terminal_oracle_present",
+      "low_replication"
+    ],
+    "verdict": "incomplete_required_baseline_set"
+  },
+  "baseline_rows": [
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_vanilla",
+      "binding_signal_status": null,
+      "budget": 7200,
+      "execs_done": 16126501,
+      "execs_per_sec": "2240.43",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 23144616,
+      "rep": 1,
+      "run_time": 7197,
+      "saved_crashes": 1,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "vanilla_2h",
+      "source_path": "artifacts/formtrig_native_readiness/raw/png006_baselines_2h_vanilla_20260616T033317Z/aflplusplus_vanilla/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "PNG006",
+      "terminal_count": 0,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "comparison_id": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 1,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "triggered",
+      "binding_signal_status": "pass",
+      "budget": 7200,
+      "execs_done": 29754905,
+      "execs_per_sec": "4132.45",
+      "gate_reasons": "ok",
+      "gate_status": "pass",
+      "heuristic_lifted": 0,
+      "manual_lifted": 0,
+      "out_dir": "/tmp/formtrig_png006_exif_longrun_20260615T1250Z/png006_exif_7200s/candidates/001_PNG006.native_b2_exif_insert_candidate.yml/default",
+      "reached": 26319188,
+      "rep": null,
+      "run_time": 7200,
+      "saved_non_trigger": 1,
+      "source_label": "formtrig_2h",
+      "source_path": "artifacts/formtrig_native_readiness/raw/png006_2h_20260615T1250Z/gate_summary.csv",
+      "spec_lifted": 3844204,
+      "strict_pretrigger_guidance": true,
+      "success": true,
+      "target_id": "PNG006",
+      "terminal_count": 17276659,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "target_id": "PNG006"
+}
