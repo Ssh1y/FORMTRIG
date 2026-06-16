@@ -1,0 +1,137 @@
+{
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "target_id": "PNG007",
+  "binding_spec": "artifacts/binding_specs/PNG007.native_b3_current_root46.yml",
+  "candidate_set": [
+    "artifacts/binding_specs/PNG007.native_b3_current_root46.yml",
+    "artifacts/binding_specs/PNG007.native_b3_current_root49.yml",
+    "artifacts/binding_specs/PNG007.native_b3_current_root58.yml",
+    "artifacts/binding_specs/PNG007.native_b3_current_root70.yml"
+  ],
+  "status": "terminal_only_no_pretrigger_guidance",
+  "diagnosis": "triggered_only",
+  "ready_for_short_gate": false,
+  "native_site_map_validated": true,
+  "generated_at_utc": "2026-06-16T15:53:00Z",
+  "checks": {
+    "binding_spec_compile_pass": true,
+    "lift_audit_pass": true,
+    "native_site_map_validated": true,
+    "runtime_event_map_pass": true,
+    "binding_signal_pass": true,
+    "terminal_triggered": true,
+    "pretrigger_lift_guidance_ready": false,
+    "non_trigger_candidate_lift_delta": false,
+    "lift_delta_only_on_triggered_candidates": true
+  },
+  "native_site_map": {
+    "path": "/tmp/formtrig_png007_native_env_20260616/site_map.tsv",
+    "site_count": 7650,
+    "current_root_candidates": [
+      {
+        "function": "MAGMA_png_read_transform_info",
+        "file": "pngrtran.c",
+        "line": 1967,
+        "cmp_inst_no": 46,
+        "branch_inst_no": 47
+      },
+      {
+        "function": "MAGMA_png_read_transform_info",
+        "file": "pngrtran.c",
+        "line": 1967,
+        "cmp_inst_no": 49,
+        "branch_inst_no": 50
+      },
+      {
+        "function": "MAGMA_png_read_transform_info",
+        "file": "pngrtran.c",
+        "line": 1967,
+        "cmp_inst_no": 58,
+        "branch_inst_no": 59
+      },
+      {
+        "function": "MAGMA_png_read_transform_info",
+        "file": "pngrtran.c",
+        "line": 1967,
+        "cmp_inst_no": 70,
+        "branch_inst_no": 71
+      }
+    ],
+    "producer_site": {
+      "function": "MAGMA_png_set_PLTE",
+      "file": "pngset.c",
+      "line": 634,
+      "branch_inst_no": 81
+    }
+  },
+  "benefit_readout": {
+    "terminal_triggered": true,
+    "pretrigger_lift_guidance_ready": false,
+    "interpretation": "negative/control evidence for FORMTRIG benefit: current-site BindingSpecs can trigger PNG007, but the lifted candidate signal changes only on already-triggered executions and therefore cannot support an R-to-T guidance claim."
+  },
+  "sweep": {
+    "raw_root_removed": "artifacts/formtrig_native_readiness/raw/png007_binding_sweep_20s_20260616T154413Z",
+    "duration_seconds_per_candidate": 20,
+    "seed_preflight_max": 16,
+    "target_bug": "PNG007",
+    "category": "binary-null",
+    "best_candidate": "artifacts/binding_specs/PNG007.native_b3_current_root46.yml",
+    "rows": [
+      {
+        "candidate": "artifacts/binding_specs/PNG007.native_b3_current_root46.yml",
+        "experiment_ready": true,
+        "pretrigger_lift_guidance_ready": false,
+        "terminal_triggered_execs": 1217,
+        "execs_done": 31283,
+        "formtrig_reached_execs": 10060,
+        "saved_non_trigger_progress_events": 0,
+        "saved_triggered_progress_events": 128,
+        "candidate_events": 4094,
+        "binding_signal_diagnosis": "triggered"
+      },
+      {
+        "candidate": "artifacts/binding_specs/PNG007.native_b3_current_root49.yml",
+        "experiment_ready": true,
+        "pretrigger_lift_guidance_ready": false,
+        "terminal_triggered_execs": 594,
+        "execs_done": 13421,
+        "formtrig_reached_execs": 5544,
+        "saved_non_trigger_progress_events": 0,
+        "saved_triggered_progress_events": 64,
+        "candidate_events": 4030,
+        "binding_signal_diagnosis": "triggered"
+      },
+      {
+        "candidate": "artifacts/binding_specs/PNG007.native_b3_current_root58.yml",
+        "experiment_ready": true,
+        "pretrigger_lift_guidance_ready": false,
+        "terminal_triggered_execs": 1167,
+        "execs_done": 18158,
+        "formtrig_reached_execs": 4255,
+        "saved_non_trigger_progress_events": 0,
+        "saved_triggered_progress_events": 128,
+        "candidate_events": 2763,
+        "binding_signal_diagnosis": "triggered"
+      },
+      {
+        "candidate": "artifacts/binding_specs/PNG007.native_b3_current_root70.yml",
+        "experiment_ready": true,
+        "pretrigger_lift_guidance_ready": false,
+        "terminal_triggered_execs": 594,
+        "execs_done": 15483,
+        "formtrig_reached_execs": 7133,
+        "saved_non_trigger_progress_events": 0,
+        "saved_triggered_progress_events": 64,
+        "candidate_events": 4030,
+        "binding_signal_diagnosis": "triggered"
+      }
+    ]
+  },
+  "blockers": [
+    "pretrigger_lift_guidance_ready is false for every current-site candidate",
+    "saved_non_trigger_progress_events is 0 for every current-site candidate",
+    "non_trigger_candidate_lift_delta is false while lift_delta_only_on_triggered_candidates is true",
+    "no same-budget AFL++ family baseline screen has been run for this current-site candidate set"
+  ],
+  "next_action": "demote PNG007 to control/negative evidence for now; spend main long-run budget on targets where spec-driven lifted D_F first moves on non-trigger executions, then compare terminal TTE against faithful baselines"
+}

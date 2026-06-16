@@ -1,0 +1,155 @@
+tc_id: 'PNG007'
+target:
+  project: 'magma/libpng'
+  binary: 'libpng_read_fuzzer'
+  command: './libpng_read_fuzzer @@'
+tc:
+  category: 'binary-state-null'
+  expression: 'png_ptr->palette == NULL'
+atoms:
+  - id: 1
+    expr: 'png_ptr->palette == NULL'
+    kind: 'binary-state-null'
+    root: 'png_ptr->palette'
+bindings:
+  - id: 'palette_image_guard_current'
+    atom: 1
+    role: 'guard'
+    expr: 'info_ptr->color_type == PNG_COLOR_TYPE_PALETTE'
+    observe_at:
+      kind: 'cmp'
+      function: 'MAGMA_png_read_transform_info'
+      file: 'pngrtran.c'
+      line: 1947
+      inst_no: 19
+    component: 'guard_progress'
+    priority: 5
+    direction: 'higher'
+    value_mode: 'outcome'
+    observe_window: 'any'
+  - id: 'palette_root_observe_current_49'
+    atom: 1
+    role: 'root_observe'
+    expr: 'png_ptr->palette == NULL'
+    observe_at:
+      kind: 'cmp'
+      function: 'MAGMA_png_read_transform_info'
+      file: 'pngrtran.c'
+      line: 1967
+      inst_no: 49
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    observe_window: 'any'
+  - id: 'palette_opposite_producer_bypassed_current'
+    atom: 1
+    role: 'opposite_producer'
+    expr: 'png_set_PLTE allocation path absent'
+    observe_at:
+      kind: 'branch'
+      function: 'MAGMA_png_set_PLTE'
+      file: 'pngset.c'
+      line: 634
+      inst_no: 81
+    component: 'producer_use'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'absent'
+    observe_window: 'any'
+  - id: 'palette_use_context_current_50'
+    atom: 1
+    role: 'use'
+    expr: 'png_read_transform_info reached palette expansion canary'
+    observe_at:
+      kind: 'branch'
+      function: 'MAGMA_png_read_transform_info'
+      file: 'pngrtran.c'
+      line: 1967
+      inst_no: 50
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    observe_window: 'any'
+  - id: 'plte_chunk_offset_33_current'
+    atom: 1
+    role: 'input_influence'
+    expr: 'RNT PLTE chunk bytes at observed offset 33'
+    observe_at:
+      kind: 'branch'
+      function: 'MAGMA_png_set_PLTE'
+      file: 'pngset.c'
+      line: 634
+      inst_no: 81
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 33
+    range_len: 33
+    mutation_hint: 'delete'
+    mutation_value: 0
+    mutation_hook: 'scripts/formtrig_hooks/png_plte_empty_hook.py'
+  - id: 'plte_chunk_offset_49_current'
+    atom: 1
+    role: 'input_influence'
+    expr: 'RNT PLTE chunk bytes at observed offset 49'
+    observe_at:
+      kind: 'branch'
+      function: 'MAGMA_png_set_PLTE'
+      file: 'pngset.c'
+      line: 634
+      inst_no: 81
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 49
+    range_len: 27
+    mutation_hint: 'delete'
+    mutation_value: 0
+  - id: 'plte_chunk_offset_70_current'
+    atom: 1
+    role: 'input_influence'
+    expr: 'RNT PLTE chunk bytes at observed offset 70'
+    observe_at:
+      kind: 'branch'
+      function: 'MAGMA_png_set_PLTE'
+      file: 'pngset.c'
+      line: 634
+      inst_no: 81
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 70
+    range_len: 27
+    mutation_hint: 'delete'
+    mutation_value: 0
+  - id: 'plte_chunk_offset_248_current'
+    atom: 1
+    role: 'input_influence'
+    expr: 'RNT PLTE chunk bytes at observed offset 248'
+    observe_at:
+      kind: 'branch'
+      function: 'MAGMA_png_set_PLTE'
+      file: 'pngset.c'
+      line: 634
+      inst_no: 81
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 248
+    range_len: 27
+    mutation_hint: 'delete'
+    mutation_value: 0

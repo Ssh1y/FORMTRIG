@@ -136,6 +136,8 @@ def binding_validation_records(
 def binding_spec_validated(target_id: str) -> bool:
     pass_statuses = {"pass", "native_binding_validated", "ready_for_short_gate"}
     for record in binding_validation_records(target_id):
+        if binding_validation_terminal_only_record(record):
+            continue
         checks = record.get("checks") if isinstance(record.get("checks"), dict) else {}
         if boolish(record.get("ready_for_short_gate")):
             return True
@@ -149,6 +151,33 @@ def binding_spec_validated(target_id: str) -> bool:
         ):
             return True
     return False
+
+
+def binding_validation_terminal_only_record(record: dict[str, Any]) -> bool:
+    status = str(record.get("status", ""))
+    diagnosis = str(record.get("diagnosis", ""))
+    benefit = record.get("benefit_readout")
+    if not isinstance(benefit, dict):
+        benefit = {}
+    checks = record.get("checks") if isinstance(record.get("checks"), dict) else {}
+    return (
+        status in {"terminal_only", "terminal_only_no_pretrigger_guidance"}
+        or diagnosis in {"terminal_only", "triggered_only"}
+        or (
+            boolish(benefit.get("terminal_triggered"))
+            and not boolish(benefit.get("pretrigger_lift_guidance_ready"))
+        )
+        or (
+            boolish(checks.get("native_site_map_validated"))
+            and boolish(checks.get("binding_signal_pass"))
+            and boolish(checks.get("terminal_triggered"))
+            and not boolish(checks.get("non_trigger_candidate_lift_delta"))
+        )
+    )
+
+
+def binding_validation_terminal_only(target_id: str) -> bool:
+    return any(binding_validation_terminal_only_record(record) for record in binding_validation_records(target_id))
 
 
 def comparison_targets(comparison_root: Path | None) -> Counter[str]:
@@ -227,7 +256,10 @@ def lane_for(
     specs: list[str],
     specs_validated: bool,
     disposition: str,
+    terminal_only_validation: bool = False,
 ) -> str:
+    if terminal_only_validation:
+        return "control_or_negative"
     if disposition in DEMOTE_DISPOSITIONS:
         return "control_or_negative"
     if source == "real_cve":
@@ -313,8 +345,12 @@ def status_for(
     comparison_count: int,
     has_external_input: bool,
     has_commit: bool,
+    terminal_only_validation: bool = False,
 ) -> tuple[str, list[str]]:
     blockers: list[str] = []
+    if terminal_only_validation:
+        blockers.append("validated BindingSpec produced terminal-only evidence without pre-trigger lift guidance")
+        return "do_not_promote", blockers
     if disposition in DEMOTE_DISPOSITIONS:
         blockers.append("existing comparison/admissibility evidence demotes this target")
         return "do_not_promote", blockers
@@ -369,16 +405,19 @@ def build_magma_rows(
         disposition = str(dispositions.get(target_id, {}).get("disposition") or "")
         specs = binding_specs_for(target_id, binding_spec_dir)
         comparison_count = comparisons[target_id]
+        terminal_only_validation = binding_validation_terminal_only(target_id)
+        specs_validated = binding_spec_validated(target_id)
         status, blockers = status_for(
             "magma",
             primary,
             secondary,
             specs,
-            binding_spec_validated(target_id),
+            specs_validated,
             disposition,
             comparison_count,
             has_external_input=True,
             has_commit=True,
+            terminal_only_validation=terminal_only_validation,
         )
         score = SOURCE_BASE_SCORE["magma"] + score_categories(primary, secondary)
         if boolish(record.get("ambiguous")):
@@ -389,11 +428,12 @@ def build_magma_rows(
             score += 8
         if specs:
             score += 12
-        specs_validated = binding_spec_validated(target_id)
         if specs and not specs_validated:
             score -= 6
         if specs_validated:
             score += 10
+        if terminal_only_validation:
+            score -= 90
         if comparison_count:
             score += min(comparison_count, 3)
         if disposition in DEMOTE_DISPOSITIONS:
@@ -406,7 +446,15 @@ def build_magma_rows(
                 "primary_category": primary,
                 "secondary_category": secondary,
                 "score": score,
-                "lane": lane_for("magma", primary, secondary, specs, specs_validated, disposition),
+                "lane": lane_for(
+                    "magma",
+                    primary,
+                    secondary,
+                    specs,
+                    specs_validated,
+                    disposition,
+                    terminal_only_validation,
+                ),
                 "status": status,
                 "binding_spec": ",".join(specs),
                 "binding_spec_validated": specs_validated,
@@ -460,6 +508,7 @@ def build_cve_rows(
         secondary = ""
         disposition = str(dispositions.get(target_id, {}).get("disposition") or "")
         specs = binding_specs_for(target_id, binding_spec_dir)
+        terminal_only_validation = binding_validation_terminal_only(target_id)
         specs_validated = binding_spec_validated(target_id)
         comparison_count = comparisons[target_id]
         has_external_input = bool(split_links(record.get("external_input_links")))
@@ -474,6 +523,7 @@ def build_cve_rows(
             comparison_count,
             has_external_input=has_external_input,
             has_commit=has_commit,
+            terminal_only_validation=terminal_only_validation,
         )
         score = SOURCE_BASE_SCORE["real_cve"] + score_categories(primary, secondary)
         if has_external_input:
@@ -486,6 +536,8 @@ def build_cve_rows(
             score -= 6
         if specs_validated:
             score += 10
+        if terminal_only_validation:
+            score -= 95
         if comparison_count:
             score += min(comparison_count, 3)
         if record.get("status") == "candidate_unvalidated":
@@ -500,7 +552,15 @@ def build_cve_rows(
                 "primary_category": primary,
                 "secondary_category": secondary,
                 "score": score,
-                "lane": lane_for("real_cve", primary, secondary, specs, specs_validated, disposition),
+                "lane": lane_for(
+                    "real_cve",
+                    primary,
+                    secondary,
+                    specs,
+                    specs_validated,
+                    disposition,
+                    terminal_only_validation,
+                ),
                 "status": status,
                 "binding_spec": ",".join(specs),
                 "binding_spec_validated": specs_validated,
@@ -702,10 +762,11 @@ def write_markdown(path: Path, rows: list[dict[str, Any]], all_rows: list[dict[s
         ]
     )
     for row in controls:
+        disposition = row.get("existing_disposition") or row.get("status") or "control_or_negative"
         lines.append(
             "| {target_id} | `{disposition}` | {next_action} |".format(
                 target_id=markdown_escape(row.get("target_id")),
-                disposition=markdown_escape(row.get("existing_disposition")),
+                disposition=markdown_escape(disposition),
                 next_action=markdown_escape(row.get("next_action")),
             )
         )

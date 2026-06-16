@@ -26,7 +26,7 @@ A target can support the main claim only if all of these hold:
 | PNG006 eXIf | admissible Magma evidence | Keep as current positive 2-hour Magma structure/state case. |
 | LIBCOAP_CVE_2023_35862 | admissible real-CVE smoke | Promote to real-CVE long-run candidate after ASAN campaign wiring. |
 | LIBXML2_1107 | inadmissible as core evidence | Keep only as native pipeline, BindingSpec, typed mutation, and crash-accounting sanity case. |
-| PNG007 PLTE | not positive | Terminal-only so far; needs accepted non-trigger progress. |
+| PNG007 PLTE | control / negative | Current-site BindingSpecs now validate and trigger `_T`, but all 20s candidates are terminal-only: `pretrigger_lift_guidance_ready=false`, `saved_non_trigger_progress_events=0`, and `lift_delta_only_on_triggered_candidates=true`. |
 | SQL013 | not positive | Binding is insufficient without planner-internal root/same-object/lifecycle evidence. |
 
 ## LIBXML2_1107 Finding
@@ -65,3 +65,26 @@ inventory:
 
 Each replacement must pass the harness admissibility audit before it can be used
 as core FORMTRIG evidence.
+
+## PNG007 Current-Site Update
+
+On 2026-06-16, the PNG007 BindingSpecs were repaired against the current native
+site map:
+
+- `MAGMA_png_read_transform_info`, `pngrtran.c:1947`, cmp inst `19`
+- `MAGMA_png_read_transform_info`, `pngrtran.c:1967`, root/use pairs
+  `46/47`, `49/50`, `58/59`, and `70/71`
+- `MAGMA_png_set_PLTE`, `pngset.c:634`, branch inst `81`
+
+The sweep result is benefit-negative, not implementation-negative. All four
+current-site candidates compiled and triggered Magma `_T` in 20s, with terminal
+triggered exec counts between `594` and `1217`. But every candidate reported
+`pretrigger_lift_guidance_ready=false`, `saved_non_trigger_progress_events=0`,
+`non_trigger_candidate_lift_delta=false`, and
+`lift_delta_only_on_triggered_candidates=true`.
+
+Therefore PNG007 does not currently show that FORMTRIG guides R-to-T before the
+terminal state is reached. It can remain as a control or negative example, but
+main long-run budget should move to targets that first show spec-driven
+non-trigger progress and then convert that progress into same-budget terminal
+TTE benefit.
