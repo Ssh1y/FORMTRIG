@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "source": "binding_spec",
+  "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/tiff_tif012_ifd_tag_hook.py",
+  "sha256": "e3c56d247aa03e2f14f97065c3159314f4f65238f9da9d0acbc1aeba21ef4734"
+}

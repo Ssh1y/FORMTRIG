@@ -1,0 +1,47 @@
+{
+  "status": "pass",
+  "diagnosis": "role_signal_progress_observed",
+  "progress_events": 4226,
+  "candidate_events": 4094,
+  "calibration_events": 1,
+  "accepted_progress_events": 9,
+  "accepted_triggered_progress_events": 0,
+  "accepted_non_trigger_progress_events": 9,
+  "triggered_events": 0,
+  "spec_role_samples": 46453,
+  "spec_role_candidate_samples": 45034,
+  "spec_d_f_samples": 4226,
+  "spec_d_f_candidate_samples": 4094,
+  "spec_d_f_triggered_candidate_samples": 0,
+  "spec_d_f_non_trigger_candidate_samples": 4094,
+  "spec_d_f_calibration_samples": 1,
+  "spec_d_f_candidate_min": 2,
+  "spec_d_f_triggered_candidate_min": null,
+  "spec_d_f_non_trigger_candidate_min": 2,
+  "spec_d_f_calibration_min": 2,
+  "spec_d_f_candidate_values": [2],
+  "spec_d_f_triggered_candidate_values": [],
+  "spec_d_f_non_trigger_candidate_values": [2],
+  "spec_d_f_calibration_values": [2],
+  "triggered_candidate_lift_delta": false,
+  "non_trigger_candidate_lift_delta": false,
+  "lift_delta_only_on_triggered_candidates": false,
+  "atoms": [
+    {
+      "atom_id": 1,
+      "category": "binary-state-null",
+      "lift_allowed": true,
+      "bound_roles": ["root_observe","desired_producer","use"],
+      "sampled_roles": ["root_observe","use"],
+      "candidate_sampled_roles": ["root_observe","use"],
+      "variable_roles": ["root_observe","use"],
+      "candidate_variable_roles": ["root_observe","use"],
+      "diagnosis": "role_signal_progress_observed",
+      "roles": [
+        {"role":"root_observe","bound":true,"samples":38007,"candidate_samples":36846,"calibration_samples":9,"unique_values":2,"candidate_unique_values":2,"values":[1,0],"candidate_values":[1,0],"flags_or":86,"max_confidence":0.55000000000000004},
+        {"role":"desired_producer","bound":true,"samples":0,"candidate_samples":0,"calibration_samples":0,"unique_values":0,"candidate_unique_values":0,"values":[],"candidate_values":[],"flags_or":0,"max_confidence":0},
+        {"role":"use","bound":true,"samples":8446,"candidate_samples":8188,"calibration_samples":2,"unique_values":30,"candidate_unique_values":30,"values":[3,1,55038,16643,251,7,21084,59,20,279,2,65027,59100,32515,64,65025,16,23,65091,35587,65409,1000,61443,259,4,65515,65521,65531,65532,65535],"candidate_values":[3,1,55038,16643,251,7,21084,59,20,279,2,65027,59100,32515,64,65025,16,23,65091,35587,65409,1000,61443,259,4,65515,65521,65531,65532,65535],"flags_or":86,"max_confidence":0.84999999999999998}
+      ]
+    }
+  ]
+}
