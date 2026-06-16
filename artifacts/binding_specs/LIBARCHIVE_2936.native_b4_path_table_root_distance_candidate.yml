@@ -117,6 +117,7 @@ bindings:
     range_len: 16
     mutation_hint: 'insert_byte'
     mutation_value: 47
+    mutation_hook: 'scripts/formtrig_hooks/libarchive_rnt_path_hierarchy_hook.py'
   - id: 'second_pathname_nested_component_influence'
     atom: 1
     role: 'input_influence'

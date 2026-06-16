@@ -1,0 +1,61 @@
+start_time        : 1781611256
+last_update       : 1781611318
+run_time          : 61
+fuzzer_pid        : 1556360
+cycles_done       : 0
+cycles_wo_finds   : 0
+time_wo_finds     : 61
+execs_done        : 116
+execs_per_sec     : 1.90
+execs_ps_last_min : 1.79
+corpus_count      : 4
+corpus_favored    : 1
+corpus_found      : 3
+corpus_imported   : 0
+corpus_variable   : 0
+max_depth         : 2
+cur_item          : 0
+pending_favs      : 1
+pending_total     : 4
+stability         : 100.00%
+bitmap_cvg        : 9.35%
+saved_crashes     : 4
+saved_hangs       : 0
+last_find         : 1781611257
+last_crash        : 1781611261
+last_hang         : 0
+execs_since_crash : 81
+exec_timeout      : 5000
+slowest_exec_ms   : 0
+peak_rss_mb       : 138
+cpu_affinity      : -1
+edges_found       : 2493
+total_edges       : 26674
+var_byte_count    : 0
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 200
+testcache_count   : 4
+testcache_evict   : 0
+afl_banner        : /tmp/formtrig_libarchive_2936_build/libarchive_write_replay_formtrig
+afl_version       : ++4.08c
+target_mode       : shmem_testcase default
+command_line      : /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz -i artifacts/rnt_corpus/LIBARCHIVE_2936/seeds -o artifacts/formtrig_native_readiness/raw/libarchive_2936_b4_path_hierarchy_hook_crashclass_60s_20260616T120056Z -V 60 -t 5000+ -- /tmp/formtrig_libarchive_2936_build/libarchive_write_replay_formtrig @@
+formtrig_seen_execs      : 62
+formtrig_reached_execs   : 62
+formtrig_triggered_execs : 0
+formtrig_queued_progress : 1
+formtrig_frontier_count  : 1
+formtrig_frontier_updates: 2
+formtrig_typed_execs     : 89
+formtrig_typed_finds     : 0
+formtrig_typed_skips     : 0
+formtrig_stability_checks: 2
+formtrig_stability_failures: 0
+formtrig_progress_log_events: 35
+formtrig_saved_progress_log_seen: 1
+formtrig_saved_triggered_log_seen: 0
+formtrig_saved_non_trigger_log_seen: 1
+formtrig_progress_log_dropped: 0
+formtrig_best_df         : 0
+formtrig_best_dt         : 1.0000000000000001e+300

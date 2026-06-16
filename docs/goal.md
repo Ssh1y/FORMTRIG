@@ -45,9 +45,18 @@ root-distance BindingSpec 10m screen:
   D_F_spec_lifted = [1,0]
   old FORMTRIG 10m saved_non_trigger_progress = 0
   AFL++ vanilla/CmpLog 10m _T = 0
+
+root-distance + path-hierarchy typed hook 60s gate:
+  terminal crashes = 4
+  first terminal crash = 1.196s / exec 32
+  first crash op = ftgtype
+  crash signal = SIGSEGV
+  D_F_spec_lifted = [1,0]
+  BindingSignal = pass / role_signal_progress_observed
+  hook provenance = binding_spec
 ```
 
-这不能写成 endpoint/TTE 性能收益；它只能写成“中间产物开始产生可实验的搜索收益，并且已经从 role 级变量推进到 spec scalar 可排序变量，在 10m 窗口内能稳定保存非触发进展”。下一步必须补结构化 typed mutation 或更贴近 null-parent creation 的 producer，再配套 Redqueen/operand-aware baseline；只有出现 `_T`/TTE 或更强的 pre-trigger-to-terminal 转化，才能写成性能优势。
+因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”。这仍然不是最终 replicated 性能结论：Redqueen/operand-aware baseline 还缺失，且所有 baseline 需要用相同 terminal timeout/oracle 设置重跑；但它已经可以作为 FORMTRIG 中间产物产生端点收益的正例。
 
 ---
 
