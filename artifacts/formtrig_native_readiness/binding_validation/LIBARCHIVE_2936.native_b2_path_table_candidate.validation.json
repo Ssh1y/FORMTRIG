@@ -2,24 +2,34 @@
   "schema": "formtrig_binding_candidate_validation_v1",
   "target_id": "LIBARCHIVE_2936",
   "binding_spec": "artifacts/binding_specs/LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
-  "status": "candidate_static_validated",
-  "ready_for_short_gate": false,
-  "native_site_map_validated": false,
-  "generated_at_utc": "2026-06-16T09:01:30Z",
+  "status": "native_binding_validated",
+  "ready_for_short_gate": true,
+  "native_site_map_validated": true,
+  "generated_at_utc": "2026-06-16T09:20:43Z",
   "checks": {
     "tool_compile_pass": true,
     "binding_spec_compile_pass": true,
     "lift_audit_pass": true,
     "harness_admissibility_pass": true,
-    "native_site_map_validated": false,
-    "dynamic_binding_signal_pass": false
+    "native_site_map_validated": true,
+    "runtime_event_map_pass": true,
+    "dynamic_binding_signal_pass": true
   },
-  "synthetic_source_map": {
-    "purpose": "source-selector syntax and lift-tier check only",
-    "native_runtime_evidence": false,
-    "site_count": 6
+  "native_site_map": {
+    "path": "/tmp/formtrig_libarchive_2936_native_env/site_map.tsv",
+    "site_count": 29160,
+    "native_runtime_evidence": true
+  },
+  "runtime_event_map": {
+    "path": "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.runtime_event_map.csv",
+    "exact_bindings": 6,
+    "missing_bindings": 0,
+    "ambiguous_bindings": 0,
+    "binding_tier": "B4",
+    "lift_allowed": true
   },
   "lift_audit": {
+    "path": "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.lift_audit.csv",
     "atom_id": 1,
     "category": "binary-state-null",
     "binding_tier": "B4",
@@ -31,10 +41,49 @@
     "core_evidence_allowed": true,
     "flags": []
   },
-  "blockers": [
-    "FORMTRIG-instrumented libarchive target site map has not been generated",
-    "BindingSpec has not been compiled against native runtime site IDs",
-    "dynamic binding-signal diagnosis has not been run"
+  "dynamic_seed_readiness": {
+    "path": "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.seed_readiness.json",
+    "runtime_log": "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.seed_1.runtime.jsonl",
+    "status": "pass",
+    "diagnosis": "ready_single_rnt_seed",
+    "seed_count": 1,
+    "reached": 1,
+    "triggered": 0,
+    "rnt": 1,
+    "spec_lifted": 1,
+    "components": 1,
+    "atom_signals": 1,
+    "role_signals": 1,
+    "shm_seen": 1,
+    "shm_abi_ok": 1,
+    "observed": {
+      "D_T": 1,
+      "D_F": 2,
+      "D_F_spec_lifted": 2,
+      "uses_spec_lifted": true,
+      "uses_trigger_oracle": false,
+      "uses_runtime_heuristic": false,
+      "uses_manual_target": false,
+      "hot_byte_ranges": [
+        {
+          "start": 18,
+          "len": 12,
+          "hint_kind": "insert_byte",
+          "hint_value": 47
+        },
+        {
+          "start": 3,
+          "len": 12,
+          "hint_kind": "insert_byte",
+          "hint_value": 47
+        }
+      ]
+    }
+  },
+  "blockers": [],
+  "remaining_limitations": [
+    "single RNT seed means signal entropy is not a performance or stability result",
+    "short FORMTRIG-vs-baseline fuzzing gate is still required before claiming TTE benefit"
   ],
-  "next_action": "build a FORMTRIG-instrumented libarchive_write_replay target, generate the native site map, compile this BindingSpec against that map, then run seed-readiness and binding-signal diagnosis"
+  "next_action": "run a short FORMTRIG/baseline screen on LIBARCHIVE_2936, then promote to replicated long-run only if non-trigger lifted progress converts into earlier terminal hits"
 }

@@ -14,7 +14,7 @@ Demoted controls retained outside the main queue: `3`.
 
 | rank | target | source | project | category | score | lane | next action |
 | ---: | --- | --- | --- | --- | ---: | --- | --- |
-| 1 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 96 | `binding_validation_first` | validate BindingSpec against native site map and dynamic binding signal before short gate |
+| 1 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 112 | `real_cve_replacement` | run short FORMTRIG gate and same-budget AFL++ family baseline screen |
 | 2 | PNG007 | magma | libpng | binary-state-null | 77 | `binding_validation_first` | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
 | 3 | GPAC_3403 | real_cve | gpac | compound-sequence-lifecycle | 92 | `binding_spec_first` | validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec |
 | 4 | PDF003 | magma | poppler | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
@@ -50,8 +50,8 @@ Demoted controls retained outside the main queue: `3`.
 ### 1. LIBARCHIVE_2936
 
 - Benefit hypothesis: native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T
-- Blockers: BindingSpec candidate is not native-site-map validated
-- Short triage: build FORMTRIG-instrumented target/site map, compile the BindingSpec against native site ids, then run seed-readiness and binding-signal diagnosis
+- Blockers: none recorded
+- Short triage: run admissibility audit, ASAN replay, 10-30m FORMTRIG gate, and same-budget AFL++ family baselines
 
 ### 2. PNG007
 

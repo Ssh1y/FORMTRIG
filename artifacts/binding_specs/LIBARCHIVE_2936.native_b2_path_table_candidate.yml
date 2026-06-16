@@ -13,33 +13,16 @@ atoms:
     kind: 'binary-state-null'
     root: 'isoent->parent'
 bindings:
-  - id: 'path_table_parent_p1_root'
+  - id: 'path_table_parent_dir_number_root'
     atom: 1
     role: 'root_observe'
-    expr: 'first path-table entry parent is observed before dir_number dereference'
+    expr: 'path-table comparator computes parent dir_number ordering after parent dereference'
     observe_at:
-      kind: 'load'
+      kind: 'binary'
       function: '_compare_path_table'
       file: 'archive_write_set_format_iso9660.c'
       line: 6823
-      column: 20
-    component: 'root_state'
-    priority: 10
-    direction: 'higher'
-    value_mode: 'outcome'
-    value: 1.0
-    confidence: 0.9
-    observe_window: 'any'
-  - id: 'path_table_parent_p2_root'
-    atom: 1
-    role: 'root_observe'
-    expr: 'second path-table entry parent is observed before dir_number dereference'
-    observe_at:
-      kind: 'load'
-      function: '_compare_path_table'
-      file: 'archive_write_set_format_iso9660.c'
-      line: 6823
-      column: 45
+      column: 31
     component: 'root_state'
     priority: 10
     direction: 'higher'
@@ -82,34 +65,18 @@ bindings:
   - id: 'path_table_sort_use'
     atom: 1
     role: 'use'
-    expr: 'primary path table sorting dispatch reaches the comparator use context'
+    expr: 'primary path table sorting has path-table entries to sort before comparator use'
     observe_at:
       kind: 'branch'
       function: 'isoent_make_path_table_2'
       file: 'archive_write_set_format_iso9660.c'
-      line: 6942
+      line: 6927
     component: 'producer_use'
     priority: 30
     direction: 'higher'
     value_mode: 'hit'
     value: 1.0
     confidence: 0.9
-    observe_window: 'any'
-  - id: 'path_table_close_phase'
-    atom: 1
-    role: 'use'
-    expr: 'archive close enters ISO9660 path-table generation'
-    observe_at:
-      kind: 'branch'
-      function: 'iso9660_close'
-      file: 'archive_write_set_format_iso9660.c'
-      line: 1937
-    component: 'producer_use'
-    priority: 35
-    direction: 'higher'
-    value_mode: 'hit'
-    value: 1.0
-    confidence: 0.7
     observe_window: 'any'
   - id: 'first_pathname_nested_component_influence'
     atom: 1

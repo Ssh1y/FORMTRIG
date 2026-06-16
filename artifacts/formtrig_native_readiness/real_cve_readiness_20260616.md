@@ -7,7 +7,7 @@ or terminal validation.
 
 | rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | next action |
 | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | LIBARCHIVE_2936 | binary-state-null | `needs_binding_validation` | yes | yes | yes | yes | no | build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility |
+| 1 | LIBARCHIVE_2936 | binary-state-null | `ready_for_formtrig_short_gate` | yes | yes | yes | yes | yes | run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines |
 | 2 | GPAC_3403 | compound-sequence-lifecycle | `ready_for_binding_spec` | yes | yes | yes | no | no | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 3 | LIBARCHIVE_2935 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 4 | LIBARCHIVE_2937 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
@@ -20,18 +20,18 @@ or terminal validation.
 
 ### 1. LIBARCHIVE_2936
 
-- Discovery rank: 2
+- Discovery rank: 1
 - Source locations: libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table
 - Native D_T values in RNT metadata: `1`
 - Terminal validation signal: SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45
-- Binding validation status: candidate_static_validated@artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json
-- Blockers: BindingSpec candidate is not native-site-map validated
+- Binding validation status: native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json
+- Blockers: none
 - Program: `benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBARCHIVE_2936/manifest.json`
 
 ### 2. GPAC_3403
 
-- Discovery rank: 1
+- Discovery rank: 3
 - Source locations: src/utils/bitstream.c:372#gf_bs_del
 - Native D_T values in RNT metadata: `1`
 - Terminal validation signal: SUMMARY: AddressSanitizer: double-free (/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box+0x194f48a) (BuildId: da5c3e139317cf0e2b8580968246bc6803e86243) in free

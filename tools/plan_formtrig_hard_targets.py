@@ -115,6 +115,19 @@ def binding_validation_records(
         except (OSError, json.JSONDecodeError):
             continue
         if str(record.get("target_id", target_id)) == target_id:
+            schema = str(record.get("schema", ""))
+            if schema and schema != "formtrig_binding_candidate_validation_v1":
+                continue
+            if not schema and not any(
+                key in record
+                for key in (
+                    "binding_spec",
+                    "ready_for_short_gate",
+                    "native_site_map_validated",
+                    "checks",
+                )
+            ):
+                continue
             records.append(record)
     return records
 
