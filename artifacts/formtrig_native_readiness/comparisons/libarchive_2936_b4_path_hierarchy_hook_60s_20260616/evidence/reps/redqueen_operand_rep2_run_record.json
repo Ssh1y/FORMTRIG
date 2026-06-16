@@ -1,0 +1,77 @@
+{
+  "baseline": "redqueen_operand",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "budget": 60,
+  "command_line": [
+    "experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "artifacts/rnt_corpus/LIBARCHIVE_2936/seeds",
+    "-o",
+    "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/redqueen_operand_rep2/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "60",
+    "-c",
+    "/tmp/formtrig_libarchive_2936_aflpp_cmplog_build/libarchive_write_replay_aflpp_cmplog",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_libarchive_2936_aflpp_plain_build/libarchive_write_replay_aflpp_plain",
+    "@@"
+  ],
+  "config_path": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/redqueen_operand_rep2/run_config.json",
+  "curated_evidence_root": ".",
+  "first_crash": {
+    "execs": 47776,
+    "file": "evidence/reps/first_crashes/redqueen_operand_rep2/id:000000,sig:11,src:000257,time:34587,execs:47776,op:havoc,rep:7",
+    "id": "000000",
+    "op": "havoc",
+    "raw_file": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/redqueen_operand_rep2/fuzzer_out/default/crashes/id:000000,sig:11,src:000257,time:34587,execs:47776,op:havoc,rep:7",
+    "rep": "7",
+    "sig": "11",
+    "src": "000257",
+    "time": 34587,
+    "time_s": 34.587
+  },
+  "fuzzer_stats": "evidence/reps/redqueen_operand_rep2_fuzzer_stats.txt",
+  "last_crash_time_s": 63,
+  "magma_monitor": null,
+  "raw_fuzzer_stats": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/redqueen_operand_rep2/fuzzer_out/default/fuzzer_stats",
+  "run_id": "LIBARCHIVE_2936:redqueen_operand:rep2",
+  "seed_set_id": "artifacts/rnt_corpus/LIBARCHIVE_2936/seeds",
+  "stats": {
+    "corpus_count": 445,
+    "execs_done": 48906,
+    "execs_per_sec": "775.46",
+    "magma_reached": 0,
+    "magma_triggered": 0,
+    "run_time": 63,
+    "saved_crashes": 5,
+    "saved_hangs": 2
+  },
+  "success": true,
+  "target_id": "LIBARCHIVE_2936",
+  "tc_category": "binary-state-null",
+  "timeout": false,
+  "trigger_execs": 47776,
+  "trigger_time_kind": "exact",
+  "trigger_time_s": 34.587
+}

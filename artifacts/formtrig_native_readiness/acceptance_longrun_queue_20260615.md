@@ -75,13 +75,15 @@ python3 tools/triage_formtrig_targets.py \
 ```
 
 Current triage result: `LIBARCHIVE_2936` is promoted to
-`candidate_complete_baselines_and_reps` through
+`candidate_extend_longruns` through
 `LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616`. This is not a
-baseline-impossibility claim: matched AFL++ vanilla and CmpLog also trigger in
-60s, but FORMTRIG reaches first terminal SIGSEGV at `1.196s / exec 32`, versus
-the fastest successful baseline at `22.883s / exec 34379`, and the local
-Redqueen/operand path has no 60s crash. The next budget for this target should
-be repetitions and longer matched runs to validate the speedup distribution.
+baseline-impossibility claim: matched AFL++ vanilla, CmpLog, and the local
+Redqueen/operand path are all baseline-visible in repeated 60s runs. The
+benefit is replicated short-run speedup: FORMTRIG triggers in `3/3` reps with
+median first terminal SIGSEGV at `1.326s / exec 32`, while the fastest
+successful baseline family by median is AFL++ vanilla at
+`24.450s / exec 34379`. The next budget for this target should be longer
+matched runs, not more short repetition.
 `PNG006` and `LIBCOAP_CVE_2023_35862` remain control/negative evidence because
 matched faithful baselines also trigger without a recorded FORMTRIG speedup.
 `LIBXML2_1107` is demoted because the harness exposes the terminal trigger as a

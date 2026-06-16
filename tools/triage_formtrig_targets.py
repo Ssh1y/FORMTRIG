@@ -231,7 +231,9 @@ def package_row(path: Path) -> dict[str, Any]:
         "speedup_but_under_replicated",
     } or "formtrig_faster_than_successful_baselines" in reasons
 
-    if speedup_verdict:
+    if verdict == "positive_speedup_matched_comparison":
+        status = "promote_or_extend_longruns"
+    elif speedup_verdict:
         status = "promote_or_complete_reps"
     elif successful:
         status = "control_or_negative"
@@ -316,6 +318,10 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             and float(row.get("tte_speedup_over_fastest_baseline") or 0.0) > 1.0
             for row in items
         )
+        has_replicated_speedup = any(
+            row.get("verdict") == "positive_speedup_matched_comparison"
+            for row in items
+        )
         has_terminal_candidate = any(
             row.get("formtrig_terminal")
             and row.get("strict_pretrigger_guidance")
@@ -338,7 +344,11 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
         has_signal_refinement = any(row.get("package_status") == "needs_signal_refinement" for row in items)
         has_incomparable = any(row.get("package_status") == "incomparable_needs_matched_budget" for row in items)
 
-        if has_speedup_candidate:
+        if has_replicated_speedup:
+            disposition = "candidate_extend_longruns"
+            priority = 15
+            next_action = "extend to longer matched-budget runs to test whether the replicated FORMTRIG TTE speedup persists"
+        elif has_speedup_candidate:
             disposition = "candidate_complete_baselines_and_reps"
             priority = 20
             next_action = "complete repetitions and longer matched-budget runs to validate the observed FORMTRIG TTE speedup"
@@ -480,6 +490,7 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
 def status_rank(status: str) -> int:
     ranks = {
         "promote_or_complete_reps": 0,
+        "promote_or_extend_longruns": 0,
         "candidate_needs_required_baselines": 1,
         "mechanism_only_needs_terminal_oracle": 2,
         "needs_signal_refinement": 3,

@@ -389,23 +389,24 @@ artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarch
 Verdict:
 
 ```text
-speedup_but_under_replicated
+positive_speedup_matched_comparison
 ```
 
 Reason: this package uses the same 60-second `-t 5000+` terminal oracle for
-FORMTRIG and faithful AFL++-family baselines. FORMTRIG saves 4 terminal
-crashes, with first `_T` at `1.196s / exec 32`. AFL++ vanilla also triggers,
-but first at `22.883s / exec 34379`; AFL++ CmpLog first triggers at
-`34.169s / exec 51119`; the local AFL++ Redqueen/operand path has 0 crashes in
-60s. The observed gap is therefore `19.13x` by wall-clock and `1074.34x` by
-executions versus the fastest successful baseline.
+FORMTRIG and faithful AFL++-family baselines across 3 repetitions. FORMTRIG
+triggers in `3/3` reps with first `_T` values `1.196s`, `2.000s`, and
+`1.326s` and median exec `32`. AFL++ vanilla triggers in `3/3`, CmpLog triggers
+in `3/3`, and the local AFL++ Redqueen/operand path triggers in `2/3`; all
+successful baseline first crashes are at least `22.883s`. The observed median
+gap is therefore `18.44x` by wall-clock and `1074.34x` by executions versus the
+fastest successful baseline family by median.
 
 Benefit readout: this is a speedup/attribution package, not a
 baseline-impossibility package. The endpoint conversion is attributed to the b4
 non-constant `D_F_spec_lifted` signal, accepted non-trigger progress, and the
-BindingSpec-selected path-hierarchy typed mutation hook. It remains
-under-replicated and must be followed by repeated/longer matched runs before a
-final performance claim.
+BindingSpec-selected path-hierarchy typed mutation hook. It remains a 60s
+short-run package and must be followed by longer matched runs before a final
+performance claim.
 
 ## Current Acceptance Implication
 
@@ -421,10 +422,11 @@ The comparison packages make the current evidence state explicit:
   also trigger.
 - LIBARCHIVE_2936 is now the leading real-CVE speedup/attribution candidate.
   The path-hierarchy hook package converts b4 pre-trigger guidance into
-  terminal crashes and shows a matched 60s first-`_T` speedup over AFL++
-  vanilla/CmpLog. Because vanilla and CmpLog also trigger, this is not a hard
-  "SOTA cannot solve it" case; it needs repetitions and longer matched runs to
-  determine whether the speedup is stable.
+  terminal crashes and shows a replicated matched 60s first-`_T` speedup over
+  AFL++ vanilla/CmpLog/Redqueen-path. Because all three baseline families are
+  baseline-visible, this is not a hard "SOTA cannot solve it" case; it now
+  needs longer matched runs to determine whether the speedup persists beyond
+  short-run repetition.
 - No final "FORMTRIG beats SOTA" claim should be made from these packages
   alone.
 
@@ -452,12 +454,12 @@ artifacts/formtrig_native_readiness/hard_target_triage_20260616.md
 ```
 
 Current result: `LIBARCHIVE_2936` is
-`candidate_complete_baselines_and_reps` with best package
+`candidate_extend_longruns` with best package
 `LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616`; `PNG006` and
 `LIBCOAP_CVE_2023_35862` are `demote_to_control_or_negative`; `LIBXML2_1107`
 is `demote_harness_artifact`. The next experiment step for LIBARCHIVE is not
-more signal repair; it is repeated and longer matched runs to validate the
-observed first-`_T` speedup and quantify variance.
+more signal repair or more 60s repetition; it is longer matched runs to validate
+that the observed first-`_T` speedup persists beyond the short-run setting.
 
 ## Hard-Target Discovery
 
@@ -503,9 +505,9 @@ python3 tools/audit_real_cve_readiness.py \
   --out-md artifacts/formtrig_native_readiness/real_cve_readiness_20260616.md
 ```
 
-Current readiness result: `LIBARCHIVE_2936` is `speedup_but_under_replicated`
+Current readiness result: `LIBARCHIVE_2936` is `short_run_replicated_speedup`
 with matched AFL++ vanilla/CmpLog/Redqueen-path evidence and a validated
-BindingSpec; its blocker is replication/long-run confirmation, not missing
+BindingSpec; its blocker is long-run confirmation, not missing
 assets or constant lifted guidance. `GPAC_3403` has the core opportunity evidence
 (`R=1,T=0`, native `D_T=1`, and terminal validation) but still needs an
 executable BindingSpec candidate.

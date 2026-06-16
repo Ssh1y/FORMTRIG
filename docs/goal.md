@@ -55,16 +55,18 @@ root-distance + path-hierarchy typed hook 60s gate:
   BindingSignal = pass / role_signal_progress_observed
   hook provenance = binding_spec
 
-matched 60s baselines with the same -t 5000+ terminal oracle:
-  AFL++ vanilla: terminal crashes = 13, first = 22.883s / exec 34379
-  AFL++ CmpLog: terminal crashes = 12, first = 34.169s / exec 51119
-  AFL++ Redqueen/operand path: terminal crashes = 0
-  FORMTRIG vs fastest successful baseline:
-    19.13x faster by first _T wall-clock
+matched 60s x3 with the same -t 5000+ terminal oracle:
+  FORMTRIG: 3/3 _T, first _T values = 1.196s, 2.000s, 1.326s; median exec = 32
+  AFL++ vanilla: 3/3 crashes, first crash values = 22.883s, 24.450s, 37.648s
+  AFL++ CmpLog: 3/3 crashes, first crash values = 34.169s, 28.505s, 60.976s
+  AFL++ Redqueen/operand path: 2/3 crashes, successful first crash values = 34.587s, 30.505s
+  FORMTRIG vs fastest successful baseline family by median:
+    18.44x faster by first _T wall-clock
     1074.34x fewer executions to first terminal crash
+  separation: every FORMTRIG rep triggers before every successful baseline rep
 ```
 
-因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下出现了 first `_T` speedup。它不是“CmpLog/vanilla 做不到”的 hard-gap 目标，因为 vanilla 和 CmpLog 也能在 60s 内触发；它现在的价值是 speedup + attribution：FORMTRIG 把二值 TC 后的 path-hierarchy lifted signal 变成了更早、更少执行次数的 terminal input。这个结论仍然不是最终 replicated 性能结论，必须继续补 repetition、长测和更难的 Magma/real-CVE 目标。
+因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下复现了 first `_T` speedup。它不是“CmpLog/Redqueen/vanilla 做不到”的 hard-gap 目标，因为三个 baseline family 在 60s repeated package 中都可见；它现在的价值是 short-run replicated speedup + attribution：FORMTRIG 把二值 TC 后的 path-hierarchy lifted signal 变成了更早、更少执行次数的 terminal input。这个结论仍然不是最终长测性能结论，下一步必须做 10m/2h matched runs 和更难的 Magma/real-CVE 目标。
 
 ---
 

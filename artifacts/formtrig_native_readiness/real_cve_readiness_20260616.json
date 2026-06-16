@@ -27,7 +27,7 @@
       "existing_disposition": "mechanism_only_needs_terminal_oracle",
       "harness_source_ready": true,
       "native_dt_values": "1",
-      "next_action": "repeat and lengthen matched FORMTRIG/AFL++ vanilla/CmpLog/Redqueen-path runs for the b4 path-hierarchy speedup package",
+      "next_action": "extend to longer matched FORMTRIG/AFL++ vanilla/CmpLog/Redqueen-path runs for the b4 path-hierarchy speedup package",
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2936.json",
         "binding_specs": [
@@ -60,9 +60,19 @@
       "priority": 12,
       "project": "libarchive",
       "rank": 1,
-      "readiness": "speedup_under_replicated",
+      "readiness": "short_run_replicated_speedup",
       "rnt_ready": true,
       "seed_count": 1,
+      "short_run_speedup": {
+        "baseline_median_first_t_execs": 34379,
+        "baseline_median_first_t_s": 24.45,
+        "fastest_successful_baseline_family": "aflplusplus_vanilla",
+        "formtrig_median_first_t_execs": 32,
+        "formtrig_median_first_t_s": 1.326,
+        "formtrig_reps": "3/3",
+        "median_exec_speedup": 1074.34375,
+        "median_time_speedup": 18.43891402714932
+      },
       "source_locations": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
       "target_id": "LIBARCHIVE_2936",
       "tcir_ready": true,
