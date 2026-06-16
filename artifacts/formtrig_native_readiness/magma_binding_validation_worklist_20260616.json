@@ -1,8 +1,8 @@
 {
   "blocked_count": 6,
-  "generated_at_utc": "2026-06-16T17:25:41+00:00",
+  "generated_at_utc": "2026-06-16T17:37:56+00:00",
   "inputs": {
-    "assets": "",
+    "assets": "artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json",
     "drafts": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
     "duration_s": 600,
     "raw_root": "artifacts/formtrig_native_readiness/raw",
@@ -18,8 +18,8 @@
       "benefit_to_prove": "Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.",
       "binding_spec": "artifacts/binding_specs/PDF003.native_draft_magma_canary.yml",
       "blockers": [
-        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
-        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD",
+        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF003.tsv",
+        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF003",
         "target_cmd is missing or still contains TODO"
       ],
       "category": "binary-state-null",
@@ -37,11 +37,11 @@
       "runnable_now": false,
       "runner_category": "binary-null",
       "seed_dir": "artifacts/rnt_corpus/PDF003/seeds",
-      "seed_source": "formal_rnt_corpus",
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
+      "seed_source": "assets",
+      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF003.tsv",
       "summary_command": "",
       "target_cmd": "TODO_FORMTRIG_MAGMA_POPPLER_PDFIMAGES_BINARY @@ /tmp/out",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD",
+      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF003",
       "target_id": "PDF003",
       "target_site_ids": "",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PDF003.native_draft_magma_canary.validation.json"
@@ -52,8 +52,8 @@
       "binding_spec": "artifacts/binding_specs/SSL011.native_draft_magma_canary.yml",
       "blockers": [
         "formal RNT seed corpus is not ready: excluded (No strict RNT seed is available under asn1: SSL011 is logged in PKCS7_dataDecode, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform PKCS7 dataDecode workflows.)",
-        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
-        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD",
+        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL011.tsv",
+        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL011",
         "target_cmd is missing or still contains TODO"
       ],
       "category": "binary-state-null",
@@ -72,10 +72,10 @@
       "runner_category": "binary-null",
       "seed_dir": "experiments/magma_workspace/magma/targets/openssl/corpus/asn1",
       "seed_source": "manifest_template_initial_corpus",
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
+      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL011.tsv",
       "summary_command": "",
       "target_cmd": "TODO_FORMTRIG_MAGMA_OPENSSL_ASN1_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD",
+      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL011",
       "target_id": "SSL011",
       "target_site_ids": "",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL011.native_draft_magma_canary.validation.json"
@@ -86,8 +86,8 @@
       "binding_spec": "artifacts/binding_specs/SSL015.native_draft_magma_canary.yml",
       "blockers": [
         "formal RNT seed corpus is not ready: excluded (No strict RNT seed is available under asn1: SSL015 is logged in PKCS7 data init/decode/final/verify workflows, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform those PKCS7 workflows.)",
-        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
-        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD",
+        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv",
+        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL015",
         "target_cmd is missing or still contains TODO"
       ],
       "category": "binary-state-null",
@@ -106,10 +106,10 @@
       "runner_category": "binary-null",
       "seed_dir": "experiments/magma_workspace/magma/targets/openssl/corpus/asn1",
       "seed_source": "manifest_template_initial_corpus",
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
+      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv",
       "summary_command": "",
       "target_cmd": "TODO_FORMTRIG_MAGMA_OPENSSL_ASN1_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD",
+      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL015",
       "target_id": "SSL015",
       "target_site_ids": "",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_draft_magma_canary.validation.json"
@@ -119,8 +119,8 @@
       "benefit_to_prove": "Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.",
       "binding_spec": "artifacts/binding_specs/TIF012.native_draft_magma_canary.yml",
       "blockers": [
-        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
-        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD",
+        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_TIF012.tsv",
+        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_TIF012",
         "target_cmd is missing or still contains TODO"
       ],
       "category": "binary-state-null",
@@ -138,11 +138,11 @@
       "runnable_now": false,
       "runner_category": "binary-null",
       "seed_dir": "artifacts/rnt_corpus/TIF012/seeds",
-      "seed_source": "formal_rnt_corpus",
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
+      "seed_source": "assets",
+      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_TIF012.tsv",
       "summary_command": "",
       "target_cmd": "TODO_FORMTRIG_MAGMA_LIBTIFF_TIFF_READ_RGBA_FUZZER_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD",
+      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_TIF012",
       "target_id": "TIF012",
       "target_site_ids": "",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/TIF012.native_draft_magma_canary.validation.json"
@@ -152,8 +152,8 @@
       "benefit_to_prove": "Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.",
       "binding_spec": "artifacts/binding_specs/PDF016.native_draft_magma_canary.yml",
       "blockers": [
-        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
-        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD",
+        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF016.tsv",
+        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016",
         "target_cmd is missing or still contains TODO"
       ],
       "category": "compound-sequence-lifecycle",
@@ -171,11 +171,11 @@
       "runnable_now": false,
       "runner_category": "lifecycle",
       "seed_dir": "artifacts/rnt_corpus/PDF016/seeds",
-      "seed_source": "formal_rnt_corpus",
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
+      "seed_source": "assets",
+      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF016.tsv",
       "summary_command": "",
       "target_cmd": "TODO_FORMTRIG_MAGMA_POPPLER_PDF_FUZZER_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD",
+      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016",
       "target_id": "PDF016",
       "target_site_ids": "",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json"
@@ -185,8 +185,8 @@
       "benefit_to_prove": "Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.",
       "binding_spec": "artifacts/binding_specs/PHP009.native_draft_magma_canary.yml",
       "blockers": [
-        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
-        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD",
+        "site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PHP009.tsv",
+        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PHP009",
         "target_cmd is missing or still contains TODO"
       ],
       "category": "compound-sequence-lifecycle",
@@ -204,11 +204,11 @@
       "runnable_now": false,
       "runner_category": "lifecycle",
       "seed_dir": "artifacts/rnt_corpus/PHP009/seeds",
-      "seed_source": "formal_rnt_corpus",
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
+      "seed_source": "assets",
+      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PHP009.tsv",
       "summary_command": "",
       "target_cmd": "TODO_FORMTRIG_MAGMA_PHP_EXIF_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD",
+      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PHP009",
       "target_id": "PHP009",
       "target_site_ids": "",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PHP009.native_draft_magma_canary.validation.json"

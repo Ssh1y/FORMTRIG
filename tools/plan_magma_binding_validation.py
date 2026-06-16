@@ -194,7 +194,7 @@ def task_from_draft(
     explicit_seed_dir = str(asset.get("seed_dir") or "")
     rnt_seed_dir = str(rnt.get("seed_dir") or "")
     rnt_ready = str(rnt.get("status") or "") == "formal_ready" and str(rnt.get("seed_dir_exists") or "").lower() == "true"
-    if explicit_seed_dir:
+    if explicit_seed_dir and not has_todo(explicit_seed_dir):
         seed_dir = explicit_seed_dir
         seed_source = "assets"
     elif rnt_ready and rnt_seed_dir:
