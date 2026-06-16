@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Generated FORMTRIG benefit-first runnable commands.
+# Gated tasks are intentionally emitted as comments.
+
+# P0 LIBARCHIVE_2936 extend_matched_longrun
+# benefit: Confirm that the current first-_T speedup and lower execution cost persist in 3 matched 7200s repetitions.
+# blocked: no reusable matched 2h runner is recorded for this real-CVE target; existing evidence is 60s x3 plus one 10m confirmation, not 2h repetitions
+# post-unblock: create a target-specific matched runner from the saved 10m run records
+# post-unblock: then rebuild the comparison package with tools/compare_formtrig_baselines.py
+
+# P0 GPAC_3403 validate_replay_then_draft_binding_spec
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet
+# post-unblock: validate vulnerable build and PoC replay
+# post-unblock: write harness admissibility note
+# post-unblock: draft BindingSpec and run binding-signal sweep
+
+# P1 PDF003 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail
+
+# P1 SSL011 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id SSL011 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL011.list --duration 600 --jobs 4 --continue-on-fail
+
+# P1 SSL015 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id SSL015 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL015.list --duration 600 --jobs 4 --continue-on-fail
+
+# P1 TIF012 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id TIF012 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/TIF012.list --duration 600 --jobs 4 --continue-on-fail
+
+# P1 PDF016 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail
+
+# P1 PHP009 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.list --duration 600 --jobs 4 --continue-on-fail
+
+# P2 SQL013 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id SQL013 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SQL013.list --duration 600 --jobs 4 --continue-on-fail
+
+# P2 SSL009 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id SSL009 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL009.list --duration 600 --jobs 4 --continue-on-fail
+
+# P2 PHP003 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.list --duration 600 --jobs 4 --continue-on-fail
+
+# P2 PHP010 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id PHP010 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP010.list --duration 600 --jobs 4 --continue-on-fail
