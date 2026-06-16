@@ -31,9 +31,23 @@ path-table-count BindingSpec:
   _T = 0
   saved_non_trigger_progress = 3
   BindingSignal = pass / role_signal_progress_observed
+
+root-distance BindingSpec:
+  _T = 0
+  saved_non_trigger_progress = 3
+  D_F_spec_lifted = [1,0] instead of constant [2]
+  non_trigger_candidate_lift_delta = true
+  experiment_ready = true
+
+root-distance BindingSpec 10m screen:
+  _T = 0
+  saved_non_trigger_progress = 10
+  D_F_spec_lifted = [1,0]
+  old FORMTRIG 10m saved_non_trigger_progress = 0
+  AFL++ vanilla/CmpLog 10m _T = 0
 ```
 
-这不能写成 endpoint/TTE 性能收益；它只能写成“中间产物开始产生可实验的搜索收益”。下一步必须把这个 producer/use 变量信号继续推进到 root-proximal 或 lower-is-better 的可优化信号，再做 10-30m screen 和 faithful baseline 对照。
+这不能写成 endpoint/TTE 性能收益；它只能写成“中间产物开始产生可实验的搜索收益，并且已经从 role 级变量推进到 spec scalar 可排序变量，在 10m 窗口内能稳定保存非触发进展”。下一步必须补结构化 typed mutation 或更贴近 null-parent creation 的 producer，再配套 Redqueen/operand-aware baseline；只有出现 `_T`/TTE 或更强的 pre-trigger-to-terminal 转化，才能写成性能优势。
 
 ---
 

@@ -120,6 +120,15 @@ def benefit_readout(payload: dict[str, Any]) -> dict[str, list[str] | str]:
             "design_evidence": list(existing.get("design_evidence") or []),
         }
 
+    top_level_claim = str(payload.get("benefit_first_claim") or "")
+    if top_level_claim:
+        return {
+            "summary": top_level_claim,
+            "observed_benefits": [top_level_claim],
+            "blocked_claims": list(payload.get("blocked_claims") or []),
+            "design_evidence": list(payload.get("design_evidence") or []),
+        }
+
     analysis = payload.get("analysis", {})
     reasons = set(analysis.get("reasons") or [])
     formtrig_runs = payload.get("formtrig_runs") or []
@@ -179,11 +188,23 @@ def package_row(path: Path) -> dict[str, Any]:
         if (value := numeric(group.get("median_trigger_time_s"))) is not None
     ]
     formtrig_runs = payload.get("formtrig_runs") or []
-    formtrig_terminal = any(int_value(row.get("terminal_count")) > 0 for row in formtrig_runs)
-    strict = any(bool_value(row.get("strict_pretrigger_guidance")) for row in formtrig_runs)
+    arms = payload.get("arms") or []
+    formtrig_terminal = any(
+        int_value(row.get("terminal_count")) > 0 for row in formtrig_runs
+    ) or any(
+        int_value(row.get("terminal_triggered_execs")) > 0 for row in arms
+    )
+    strict = any(
+        bool_value(row.get("strict_pretrigger_guidance")) for row in formtrig_runs
+    ) or any(
+        bool_value(row.get("pretrigger_lift_guidance_ready"))
+        or bool_value(row.get("non_trigger_candidate_lift_delta"))
+        or int_value(row.get("saved_non_trigger_progress_events")) > 0
+        for row in arms
+    )
     benefit = benefit_readout(payload)
     reasons = set(analysis.get("reasons") or [])
-    verdict = str(analysis.get("verdict") or "")
+    verdict = str(analysis.get("verdict") or payload.get("verdict") or "")
 
     if successful:
         status = "control_or_negative"
@@ -192,6 +213,12 @@ def package_row(path: Path) -> dict[str, Any]:
     elif formtrig_terminal and strict and groups:
         status = "candidate_needs_required_baselines"
     elif strict and not formtrig_terminal:
+        status = "mechanism_only_needs_terminal_oracle"
+    elif verdict in {
+        "mechanism_benefit_no_endpoint_success",
+        "scalar_guidance_repair_no_endpoint_success",
+        "pretrigger_guidance_only",
+    }:
         status = "mechanism_only_needs_terminal_oracle"
     elif "constant_lift" in verdict or "formtrig_constant_lift_signal" in reasons:
         status = "needs_signal_refinement"
@@ -213,7 +240,7 @@ def package_row(path: Path) -> dict[str, Any]:
         "missing_required_baselines": list(analysis.get("missing_required_baselines") or []),
         "observed_benefits": list(benefit.get("observed_benefits") or []),
         "blocked_claims": list(benefit.get("blocked_claims") or []),
-        "next_steps": list(analysis.get("next_steps") or []),
+        "next_steps": list(analysis.get("next_steps") or payload.get("next_actions") or []),
         "source_path": str(path),
     }
 
@@ -262,6 +289,14 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             row.get("strict_pretrigger_guidance") and not row.get("formtrig_terminal")
             for row in items
         )
+        has_scalar_guidance = any(
+            row.get("verdict") == "scalar_guidance_repair_no_endpoint_success"
+            for row in items
+        )
+        has_mid_screen_guidance = any(
+            row.get("verdict") == "pretrigger_guidance_improved_no_endpoint_success"
+            for row in items
+        )
         has_signal_refinement = any(row.get("package_status") == "needs_signal_refinement" for row in items)
         has_incomparable = any(row.get("package_status") == "incomparable_needs_matched_budget" for row in items)
 
@@ -290,7 +325,7 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             priority = 70
             next_action = "collect FORMTRIG gate evidence and matched baseline package"
 
-        best = sorted(items, key=lambda row: status_rank(str(row.get("package_status"))))[0]
+        best = sorted(items, key=package_rank)[0]
         sources = unique([str(row.get("source_path")) for row in items])
         observed = unique([benefit for row in items for benefit in row.get("observed_benefits", [])])
         blocked = unique([claim for row in items for claim in row.get("blocked_claims", [])])
@@ -306,6 +341,32 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             blocked = [
                 claim for claim in blocked
                 if claim != "no FORMTRIG terminal success is established"
+            ]
+        if has_scalar_guidance:
+            stale_fragments = (
+                "scalar D_F_spec_lifted is still constant",
+                "D_F and D_F_spec_lifted are constant",
+                "constant lifted D_F/D_F_spec_lifted identified",
+                "no accepted non-trigger frontier progress is established",
+            )
+            observed = [
+                benefit for benefit in observed
+                if not any(fragment in benefit for fragment in stale_fragments)
+            ]
+            blocked = [
+                claim for claim in blocked
+                if not any(fragment in claim for fragment in stale_fragments)
+            ]
+        if has_mid_screen_guidance:
+            stale_fragments = (
+                "single 60s repetition",
+                "single short readiness screen",
+                "no terminal _T event was observed in either 60s",
+                "no faithful AFL++/CmpLog/Redqueen performance comparison is made",
+            )
+            blocked = [
+                claim for claim in blocked
+                if not any(fragment in claim for fragment in stale_fragments)
             ]
         if has_baseline_trigger:
             blocked = unique(
@@ -351,6 +412,27 @@ def status_rank(status: str) -> int:
         "insufficient_evidence": 6,
     }
     return ranks.get(status, 99)
+
+
+def verdict_rank(verdict: str) -> int:
+    ranks = {
+        "positive_matched_comparison": 0,
+        "positive_but_under_replicated": 1,
+        "pretrigger_guidance_improved_no_endpoint_success": 2,
+        "scalar_guidance_repair_no_endpoint_success": 3,
+        "mechanism_benefit_no_endpoint_success": 4,
+        "pretrigger_guidance_only": 5,
+        "short_gate_no_terminal_constant_lift_signal": 6,
+    }
+    return ranks.get(verdict, 50)
+
+
+def package_rank(row: dict[str, Any]) -> tuple[int, int, str]:
+    return (
+        status_rank(str(row.get("package_status"))),
+        verdict_rank(str(row.get("verdict"))),
+        str(row.get("comparison_id")),
+    )
 
 
 def write_csv(path: Path, rows: list[dict[str, Any]], fields: list[str]) -> None:

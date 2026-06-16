@@ -1,0 +1,49 @@
+{
+  "status": "pass",
+  "diagnosis": "role_signal_progress_observed",
+  "progress_events": 4108,
+  "candidate_events": 4091,
+  "calibration_events": 1,
+  "accepted_progress_events": 3,
+  "accepted_triggered_progress_events": 0,
+  "accepted_non_trigger_progress_events": 3,
+  "triggered_events": 0,
+  "spec_role_samples": 28700,
+  "spec_role_candidate_samples": 28637,
+  "spec_d_f_samples": 4100,
+  "spec_d_f_candidate_samples": 4091,
+  "spec_d_f_triggered_candidate_samples": 0,
+  "spec_d_f_non_trigger_candidate_samples": 4091,
+  "spec_d_f_calibration_samples": 1,
+  "spec_d_f_candidate_min": 0,
+  "spec_d_f_triggered_candidate_min": null,
+  "spec_d_f_non_trigger_candidate_min": 0,
+  "spec_d_f_calibration_min": 1,
+  "spec_d_f_candidate_values": [1,0],
+  "spec_d_f_triggered_candidate_values": [],
+  "spec_d_f_non_trigger_candidate_values": [1,0],
+  "spec_d_f_calibration_values": [1],
+  "triggered_candidate_lift_delta": false,
+  "non_trigger_candidate_lift_delta": true,
+  "lift_delta_only_on_triggered_candidates": false,
+  "atoms": [
+    {
+      "atom_id": 1,
+      "category": "binary-state-null",
+      "lift_allowed": true,
+      "bound_roles": ["root_observe","guard","desired_producer","use","input_influence"],
+      "sampled_roles": ["root_observe","guard","desired_producer","use","input_influence"],
+      "candidate_sampled_roles": ["root_observe","guard","desired_producer","use","input_influence"],
+      "variable_roles": ["root_observe","desired_producer","use"],
+      "candidate_variable_roles": ["root_observe","desired_producer","use"],
+      "diagnosis": "role_signal_progress_observed",
+      "roles": [
+        {"role":"root_observe","bound":true,"samples":4100,"candidate_samples":4091,"calibration_samples":1,"unique_values":2,"candidate_unique_values":2,"values":[1,0],"candidate_values":[1,0],"flags_or":85,"max_confidence":0.90000000000000002},
+        {"role":"guard","bound":true,"samples":4100,"candidate_samples":4091,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":0.80000000000000004},
+        {"role":"desired_producer","bound":true,"samples":4100,"candidate_samples":4091,"calibration_samples":1,"unique_values":3,"candidate_unique_values":3,"values":[2,3,4],"candidate_values":[2,3,4],"flags_or":86,"max_confidence":0.90000000000000002},
+        {"role":"use","bound":true,"samples":8200,"candidate_samples":8182,"calibration_samples":2,"unique_values":4,"candidate_unique_values":4,"values":[1,16,24,32],"candidate_values":[1,16,24,32],"flags_or":86,"max_confidence":0.90000000000000002},
+        {"role":"input_influence","bound":true,"samples":8200,"candidate_samples":8182,"calibration_samples":2,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":118,"max_confidence":0.80000000000000004}
+      ]
+    }
+  ]
+}

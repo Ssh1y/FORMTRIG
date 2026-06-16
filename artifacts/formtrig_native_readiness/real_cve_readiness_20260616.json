@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-16T10:45:29+00:00",
+  "generated_at_utc": "2026-06-16T11:32:35+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -18,7 +18,7 @@
       "blockers": "",
       "build_ready": true,
       "category": "binary-state-null",
-      "comparison_count": 2,
+      "comparison_count": 4,
       "discovery_lane": "real_cve_replacement",
       "discovery_rank": 1,
       "existing_disposition": "mechanism_only_needs_terminal_oracle",
@@ -29,14 +29,17 @@
         "atom": "artifacts/atoms/LIBARCHIVE_2936.json",
         "binding_specs": [
           "LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
-          "LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml"
+          "LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml",
+          "LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml"
         ],
         "binding_validation_records": [
           "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json"
         ],
         "comparison_records": [
+          "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/comparison.json",
           "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_binding_signal_repair_60s_20260616/comparison.json",
-          "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json"
+          "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json",
+          "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_root_distance_repair_60s_20260616/comparison.json"
         ],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",

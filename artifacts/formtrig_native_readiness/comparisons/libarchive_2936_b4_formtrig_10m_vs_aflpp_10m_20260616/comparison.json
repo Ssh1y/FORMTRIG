@@ -1,0 +1,159 @@
+{
+  "comparison_id": "LIBARCHIVE_2936_b4_formtrig_10m_vs_aflpp_10m_20260616",
+  "target_id": "LIBARCHIVE_2936",
+  "analysis": {
+    "verdict": "pretrigger_guidance_improved_no_endpoint_success",
+    "matched_baseline_count": 2,
+    "missing_required_baselines": ["redqueen_operand"],
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 600,
+        "reps": 1,
+        "successes": 0,
+        "success_rate": 0.0,
+        "median_terminal_count": 0,
+        "median_trigger_time_s": null
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 600,
+        "reps": 1,
+        "successes": 0,
+        "success_rate": 0.0,
+        "median_terminal_count": 0,
+        "median_trigger_time_s": null
+      }
+    ],
+    "reasons": [
+      "no_arm_reached_terminal_in_600s",
+      "b4_strict_pretrigger_guidance_present",
+      "b4_non_trigger_candidate_lift_delta_present",
+      "b4_saved_non_trigger_progress_present",
+      "faithful_aflpp_vanilla_and_cmplog_screen_complete",
+      "redqueen_operand_missing",
+      "low_replication"
+    ],
+    "next_steps": [
+      "do not claim endpoint/TTE performance benefit from this package",
+      "keep b4 as the current LIBARCHIVE readiness candidate",
+      "add structure-aware typed mutation for RNT entry count and path hierarchy",
+      "add or run Redqueen/operand-aware baseline before any final baseline-family claim"
+    ]
+  },
+  "benefit_readout": {
+    "summary": "b4 improves FORMTRIG pre-trigger guidance over the old constant-signal FORMTRIG run but does not establish endpoint success.",
+    "observed_benefits": [
+      "FORMTRIG saved non-trigger progress improves from 0 to 10 events against the old native FORMTRIG run",
+      "D_F_spec_lifted changes from constant [2] to variable [1,0]",
+      "binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed"
+    ],
+    "blocked_claims": [
+      "no endpoint/TTE benefit is established",
+      "no arm reaches _T in 600 seconds",
+      "Redqueen/operand-aware baseline is still missing",
+      "single repetition is not final efficacy evidence"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance",
+      "non_trigger_candidate_lift_delta",
+      "root_observe_scalar_variation"
+    ]
+  },
+  "formtrig_runs": [
+    {
+      "arm": "formtrig",
+      "source_label": "old_b2_path_table_10m",
+      "target_id": "LIBARCHIVE_2936",
+      "budget": 600,
+      "run_time": 600,
+      "success": false,
+      "terminal_count": 0,
+      "trigger_time_s": null,
+      "trigger_time_kind": null,
+      "execs_done": 393966,
+      "execs_per_sec": "656.61",
+      "corpus_count": 794,
+      "saved_crashes": 0,
+      "saved_hangs": 62,
+      "reached": 108141,
+      "accepted_non_trigger": 0,
+      "saved_non_trigger": 0,
+      "spec_lifted": 4182,
+      "strict_pretrigger_guidance": false,
+      "binding_signal_status": "fail",
+      "binding_signal_diagnosis": "constant_lift_signal",
+      "d_f_spec_lifted_constant": true,
+      "d_f_spec_lifted_min": 2,
+      "d_f_spec_lifted_max": 2,
+      "limiting_reason": "typed_mutation_no_lift_delta",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/evidence/old_formtrig_summary.json"
+    },
+    {
+      "arm": "formtrig",
+      "source_label": "b4_root_distance_10m",
+      "target_id": "LIBARCHIVE_2936",
+      "budget": 600,
+      "run_time": 600,
+      "success": false,
+      "terminal_count": 0,
+      "trigger_time_s": null,
+      "trigger_time_kind": null,
+      "execs_done": 305093,
+      "execs_per_sec": "508.47",
+      "corpus_count": 846,
+      "saved_crashes": 0,
+      "saved_hangs": 40,
+      "reached": 162849,
+      "accepted_non_trigger": 10,
+      "saved_non_trigger": 10,
+      "spec_lifted": 4152,
+      "strict_pretrigger_guidance": true,
+      "binding_signal_status": "pass",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "d_f_spec_lifted_constant": false,
+      "d_f_spec_lifted_min": 0,
+      "d_f_spec_lifted_max": 1,
+      "limiting_reason": "none",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/evidence/b4_formtrig_summary.json"
+    }
+  ],
+  "baseline_runs": [
+    {
+      "baseline": "aflplusplus_vanilla",
+      "budget": 600,
+      "success": false,
+      "terminal_count": 0,
+      "execs_done": 531892,
+      "execs_per_sec": "886.48",
+      "corpus_count": 852,
+      "saved_crashes": 0,
+      "saved_hangs": 59,
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/evidence/aflplusplus_vanilla_fuzzer_stats.txt"
+    },
+    {
+      "baseline": "aflplusplus_cmplog",
+      "budget": 600,
+      "success": false,
+      "terminal_count": 0,
+      "execs_done": 608906,
+      "execs_per_sec": "1014.83",
+      "corpus_count": 797,
+      "saved_crashes": 0,
+      "saved_hangs": 56,
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/evidence/aflplusplus_cmplog_fuzzer_stats.txt"
+    }
+  ],
+  "evidence": {
+    "b4_summary": "evidence/b4_formtrig_summary.json",
+    "b4_diagnosis": "evidence/b4_formtrig_diagnosis.json",
+    "b4_binding_signal": "evidence/b4_binding_signal_diagnosis.json",
+    "b4_lift_feature_audit": "evidence/b4_lift_feature_audit.json",
+    "b4_runtime_event_map": "evidence/b4_runtime_event_map.csv",
+    "old_summary": "evidence/old_formtrig_summary.json",
+    "old_diagnosis": "evidence/old_formtrig_diagnosis.json",
+    "old_binding_signal": "evidence/old_binding_signal_diagnosis.json",
+    "aflplusplus_vanilla_stats": "evidence/aflplusplus_vanilla_fuzzer_stats.txt",
+    "aflplusplus_cmplog_stats": "evidence/aflplusplus_cmplog_fuzzer_stats.txt"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "comparison_id": "LIBARCHIVE_2936_root_distance_repair_60s_20260616",
+  "target_id": "LIBARCHIVE_2936",
+  "category": "binary-state-null",
+  "verdict": "scalar_guidance_repair_no_endpoint_success",
+  "benefit_first_claim": "b4 converts b3's producer/use-only role variation into root-observe scalar/spec lift variation visible to FORMTRIG diagnostics.",
+  "blocked_claims": [
+    "no endpoint/TTE benefit is established",
+    "no terminal _T event was observed in either 60s arm",
+    "this is a single short readiness screen, not final efficacy evidence"
+  ],
+  "arms": [
+    {
+      "name": "b3_count_roles_60s",
+      "binding_spec": "artifacts/binding_specs/LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml",
+      "execs_done": 38914,
+      "terminal_triggered_execs": 0,
+      "saved_non_trigger_progress_events": 3,
+      "formtrig_queued_progress": 3,
+      "typed_execs": 256,
+      "typed_finds": 8,
+      "diagnosis": "queued_tc_rooted_progress",
+      "experiment_ready": false,
+      "pretrigger_lift_guidance_ready": true,
+      "d_f_spec_lifted_constant": true,
+      "d_f_spec_lifted_values": [2],
+      "non_trigger_candidate_lift_delta": false,
+      "candidate_variable_roles": ["desired_producer", "use"],
+      "root_observe_values": [0]
+    },
+    {
+      "name": "b4_root_distance_60s",
+      "binding_spec": "artifacts/binding_specs/LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
+      "execs_done": 44607,
+      "terminal_triggered_execs": 0,
+      "saved_non_trigger_progress_events": 3,
+      "formtrig_queued_progress": 3,
+      "typed_execs": 512,
+      "typed_finds": 8,
+      "diagnosis": "queued_tc_rooted_progress",
+      "experiment_ready": true,
+      "pretrigger_lift_guidance_ready": true,
+      "d_f_spec_lifted_constant": false,
+      "d_f_spec_lifted_values": [1, 0],
+      "d_f_public_values": [1],
+      "non_trigger_candidate_lift_delta": true,
+      "candidate_variable_roles": ["root_observe", "desired_producer", "use"],
+      "root_observe_values": [1, 0]
+    }
+  ],
+  "evidence": {
+    "b3_summary": "evidence/b3_count_formtrig_summary.json",
+    "b3_diagnosis": "evidence/b3_count_formtrig_diagnosis.json",
+    "b3_binding_signal": "evidence/b3_count_binding_signal_diagnosis.json",
+    "b3_lift_feature_audit": "evidence/b3_count_lift_feature_audit.json",
+    "b3_runtime_event_map": "evidence/b3_count_runtime_event_map.csv",
+    "b4_summary": "evidence/b4_root_distance_formtrig_summary.json",
+    "b4_diagnosis": "evidence/b4_root_distance_formtrig_diagnosis.json",
+    "b4_binding_signal": "evidence/b4_root_distance_binding_signal_diagnosis.json",
+    "b4_lift_feature_audit": "evidence/b4_root_distance_lift_feature_audit.json",
+    "b4_lift_audit": "evidence/b4_root_distance_lift_audit.csv",
+    "b4_runtime_event_map": "evidence/b4_root_distance_runtime_event_map.csv"
+  },
+  "next_actions": [
+    "promote b4 to a 10-30m screen as a readiness candidate",
+    "compare against faithful AFL++ vanilla/CmpLog using the same terminal oracle before any performance claim",
+    "keep endpoint claims blocked until _T/TTE evidence exists"
+  ]
+}

@@ -316,6 +316,68 @@ candidate values widen from `[1]` to `[1,16,24,32,56]`. The scalar
 root-proximal lower-is-better scalar or stronger typed mutation before
 long-run promotion.
 
+### LIBARCHIVE_2936: root-distance BindingSpec scalar repair 60s
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/libarchive_2936_root_distance_repair_60s_20260616
+```
+
+Verdict:
+
+```text
+scalar_guidance_repair_no_endpoint_success
+```
+
+Reason: this package compares the path-table-count b3 BindingSpec against a b4
+BindingSpec that keeps the producer/use count signals and changes the
+`_compare_path_table` root binding from `binary/sub + outcome` to
+`binary/sub + lower/distance`. Both 60-second arms still have `_T=0`, so no
+endpoint/TTE performance claim is established.
+
+Benefit readout: b4 removes the immediate scalar-collapse blocker. b3 has
+`D_F_spec_lifted` constant at `[2]` and
+`non_trigger_candidate_lift_delta=false`; b4 has `D_F_spec_lifted` candidate
+values `[1,0]`, `root_observe` candidate values `[1,0]`, and
+`non_trigger_candidate_lift_delta=true`. The package-level diagnosis changes
+from `experiment_ready=false` for b3 to `experiment_ready=true` for b4. This is
+the first LIBARCHIVE_2936 evidence that a FORMTRIG middle product has moved
+from role-only variation to a sortable spec-scalar guidance signal. The public
+`D_F` remains `1` because runtime zero is reserved for terminal TC
+confirmation; this package is therefore readiness/mechanism evidence, not
+endpoint evidence.
+
+### LIBARCHIVE_2936: b4 FORMTRIG 10m vs faithful AFL++ vanilla/CmpLog 10m
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616
+```
+
+Verdict:
+
+```text
+pretrigger_guidance_improved_no_endpoint_success
+```
+
+Reason: this package promotes the b4 root-distance BindingSpec from the 60s
+readiness gate to a 600-second FORMTRIG screen and compares it with the prior
+600-second constant-signal FORMTRIG run plus faithful AFL++ vanilla/CmpLog
+screens. No arm reaches `_T` in 600 seconds, so no endpoint/TTE benefit is
+established.
+
+Benefit readout: b4 gives a real FORMTRIG-side pre-trigger improvement over the
+old native FORMTRIG run. Saved non-trigger progress improves from `0` to `10`,
+`D_F_spec_lifted` changes from constant `[2]` to variable `[1,0]`, and
+BindingSignal improves from `fail/constant_lift_signal` to
+`pass/role_signal_progress_observed`. The b4 run is still endpoint-negative:
+`_T=0`, `saved_crashes=0`, and Redqueen/operand-aware baseline is still
+missing. The next blocker is no longer scalar signal collapse; it is endpoint
+conversion, likely requiring structure-aware typed mutation over RNT entry
+count/path hierarchy or a closer producer for null-parent creation.
+
 ## Current Acceptance Implication
 
 The comparison packages make the current evidence state explicit:
@@ -330,10 +392,12 @@ The comparison packages make the current evidence state explicit:
   also trigger.
 - LIBARCHIVE_2936 is a valid real-CVE binary-state-null target with a validated
   native BindingSpec and matched 600-second vanilla/CmpLog screens. The 10m
-  package proves no performance benefit; the 60s signal-repair package shows
-  the intermediate guidance can be made useful enough to save non-trigger
-  progress. The remaining blocker is still endpoint/root-proximal guidance:
-  `_T=0` and scalar `D_F_spec_lifted=2` in the repaired short gate.
+  b4 package still proves no endpoint/TTE benefit, but it does prove a
+  FORMTRIG-side pre-trigger guidance benefit over the old constant-signal
+  native FORMTRIG run: saved non-trigger progress is `0 -> 10` and scalar
+  `D_F_spec_lifted` is no longer constant. The remaining blocker is endpoint
+  conversion: `_T=0` in the 600-second b4 screen, with no TTE advantage claim
+  yet.
 - No final "FORMTRIG beats SOTA" claim should be made from these packages
   alone.
 
@@ -361,12 +425,14 @@ artifacts/formtrig_native_readiness/hard_target_triage_20260616.md
 ```
 
 Current result: `LIBARCHIVE_2936` is
-`short_gate_needs_signal_refinement`; `PNG006` and
+`mechanism_only_needs_terminal_oracle` with latest best package
+`LIBARCHIVE_2936_b4_formtrig_10m_vs_aflpp_10m_20260616`; `PNG006` and
 `LIBCOAP_CVE_2023_35862` are `demote_to_control_or_negative`; `LIBXML2_1107`
 is `demote_harness_artifact`. The current package set therefore contains no
-main promoted hard-target candidate. The next experiment step is to repair
-LIBARCHIVE_2936's lifted guidance or move to another hard target, not to spend
-long-run budget on a constant-signal short gate.
+main promoted hard-target candidate. The next experiment step is to improve b4
+endpoint conversion, especially with structure-aware typed mutation for RNT
+entry count and path hierarchy, while adding Redqueen/operand-aware baseline
+coverage before any final SOTA-family claim.
 
 ## Hard-Target Discovery
 

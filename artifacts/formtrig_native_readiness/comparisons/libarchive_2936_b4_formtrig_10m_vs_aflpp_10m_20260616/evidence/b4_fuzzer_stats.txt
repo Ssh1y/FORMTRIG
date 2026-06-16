@@ -1,0 +1,61 @@
+start_time        : 1781608322
+last_update       : 1781608922
+run_time          : 600
+fuzzer_pid        : 1207066
+cycles_done       : 0
+cycles_wo_finds   : 0
+time_wo_finds     : 27
+execs_done        : 305093
+execs_per_sec     : 508.47
+execs_ps_last_min : 474.42
+corpus_count      : 846
+corpus_favored    : 67
+corpus_found      : 845
+corpus_imported   : 0
+corpus_variable   : 6
+max_depth         : 11
+cur_item          : 836
+pending_favs      : 36
+pending_total     : 801
+stability         : 99.12%
+bitmap_cvg        : 19.19%
+saved_crashes     : 0
+saved_hangs       : 40
+last_find         : 1781608921
+last_crash        : 0
+last_hang         : 1781608776
+execs_since_crash : 305093
+exec_timeout      : 20
+slowest_exec_ms   : 0
+peak_rss_mb       : 0
+cpu_affinity      : -1
+edges_found       : 5119
+total_edges       : 26674
+var_byte_count    : 45
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 133925
+testcache_count   : 846
+testcache_evict   : 0
+afl_banner        : /tmp/formtrig_libarchive_2936_build/libarchive_write_replay_formtrig
+afl_version       : ++4.08c
+target_mode       : shmem_testcase default
+command_line      : /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz -i /home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBARCHIVE_2936/seeds -o /tmp/libarchive_2936_b4_root_distance_10m -V 600 -m none -- /tmp/formtrig_libarchive_2936_build/libarchive_write_replay_formtrig @@
+formtrig_seen_execs      : 162849
+formtrig_reached_execs   : 162849
+formtrig_triggered_execs : 0
+formtrig_queued_progress : 10
+formtrig_frontier_count  : 1
+formtrig_frontier_updates: 11
+formtrig_typed_execs     : 3072
+formtrig_typed_finds     : 8
+formtrig_typed_skips     : 24
+formtrig_stability_checks: 13
+formtrig_stability_failures: 0
+formtrig_progress_log_events: 4176
+formtrig_saved_progress_log_seen: 10
+formtrig_saved_triggered_log_seen: 0
+formtrig_saved_non_trigger_log_seen: 10
+formtrig_progress_log_dropped: 155941
+formtrig_best_df         : 0
+formtrig_best_dt         : 1.0000000000000001e+300

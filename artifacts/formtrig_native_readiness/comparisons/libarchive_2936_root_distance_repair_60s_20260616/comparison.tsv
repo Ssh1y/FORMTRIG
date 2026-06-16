@@ -1,0 +1,3 @@
+arm	binding_spec	execs_done	_T	saved_non_trigger	queued_progress	typed_execs	typed_finds	diagnosis	experiment_ready	d_f_spec_lifted_constant	d_f_spec_lifted_values	non_trigger_candidate_lift_delta	candidate_variable_roles	root_values	endpoint_claim
+b3_count_roles_60s	LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml	38914	0	3	3	256	8	queued_tc_rooted_progress	false	true	[2]	false	desired_producer,use	[0]	none
+b4_root_distance_60s	LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml	44607	0	3	3	512	8	queued_tc_rooted_progress	true	false	[1,0]	true	root_observe,desired_producer,use	[1,0]	none

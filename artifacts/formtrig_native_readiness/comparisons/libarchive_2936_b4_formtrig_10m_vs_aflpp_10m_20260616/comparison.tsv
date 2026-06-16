@@ -1,0 +1,5 @@
+arm	source_label	budget	success	terminal_count	trigger_time_s	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	reached	saved_non_trigger	spec_lifted	strict_pretrigger_guidance	d_f_spec_lifted	binding_signal_status	binding_signal_diagnosis	notes
+formtrig	old_b2_path_table_10m	600	false	0		393966	656.61	794	0	62	108141	0	4182	false	[2]	fail	constant_lift_signal	constant lifted signal, no accepted non-trigger progress
+formtrig	b4_root_distance_10m	600	false	0		305093	508.47	846	0	40	162849	10	4152	true	[1,0]	pass	role_signal_progress_observed	scalar spec lift delta, no endpoint success
+baseline	aflplusplus_vanilla_10m	600	false	0		531892	886.48	852	0	59					no FORMTRIG guidance channel
+baseline	aflplusplus_cmplog_10m	600	false	0		608906	1014.83	797	0	56					no FORMTRIG guidance channel
