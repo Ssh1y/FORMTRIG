@@ -1,0 +1,30 @@
+{
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/afl-fuzz"
+    ],
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "information_budget": "coverage feedback only; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "existing_fuzzer_out": "/tmp/formtrig_png006_baselines_real_smoke_20260616T012458Z/magma/aflplusplus_vanilla_120s/findings",
+  "magma_monitor_dir": "/tmp/formtrig_png006_baselines_real_smoke_20260616T012458Z/magma/aflplusplus_vanilla_120s/monitor",
+  "resolved_cmd": [
+    "magma/captain",
+    "aflplusplus_plain",
+    "libpng",
+    "libpng_read_fuzzer",
+    "@@"
+  ],
+  "returncode": null,
+  "run_record": "/tmp/formtrig_png006_baselines_real_smoke_20260616T012458Z/runs/aflplusplus_vanilla_120s/run_record.json",
+  "status": "harvested"
+}

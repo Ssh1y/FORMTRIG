@@ -37,7 +37,8 @@ and refuses representative-only baselines by default.
 
 Current status: 2-hour native acceptance passed with external eXIf insertion
 hook from the BindingSpec. The same-budget faithful baseline runner now exists,
-and its Magma `_T` harvest oracle has passed smoke verification, but the actual
+its Magma `_T` harvest oracle has passed synthetic smoke verification, and a
+real 120-second Magma/captain baseline smoke has completed. The actual
 30-minute and 2-hour baseline campaigns still need to run before PNG006 can
 support the final comparative claim.
 
@@ -69,6 +70,20 @@ Baseline runner/oracle smoke:
   records `magma_reached`, `magma_triggered`, and the first `_T` monitor
   snapshot. This is required because PNG006 is a Magma monitor TC, not
   necessarily an AFL crash.
+
+Real Magma baseline smoke:
+
+- Evidence note:
+  `artifacts/formtrig_native_readiness/png006_magma_baselines_real_smoke_20260616.md`
+- Raw smoke evidence:
+  `artifacts/formtrig_native_readiness/raw/png006_baselines_real_smoke_120s_20260616T012458Z`
+- Result over 120 seconds: `aflplusplus_vanilla` reached `PNG006_R=336689`
+  with `PNG006_T=0`; `aflplusplus_cmplog` reached `PNG006_R=379517` with
+  `PNG006_T=0`; `redqueen_operand` reached `PNG006_R=510177` with
+  `PNG006_T=1`. This validates the runner and shows PNG006 is not a
+  LIBCOAP-like immediate trigger for vanilla/CmpLog, but it is not final
+  comparative evidence because one AFL++ Redqueen/CmpLog-path run did trigger
+  within the 120-second smoke and no repetitions or 30m/2h budgets have run.
 
 Gate examples:
 

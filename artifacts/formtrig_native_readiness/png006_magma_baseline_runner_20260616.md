@@ -115,3 +115,23 @@ This is a runner/oracle capability update, not a PNG006 comparative result.
 The actual next evidence package must run the command above for at least the
 30-minute and 2-hour budgets and compare first `_T`, final `_T`, throughput,
 and corpus/crash/hang counters against the existing FORMTRIG PNG006 run.
+
+## Real Smoke Follow-Up
+
+A real 120-second Magma/captain smoke was subsequently completed and is recorded
+in:
+
+```text
+artifacts/formtrig_native_readiness/png006_magma_baselines_real_smoke_20260616.md
+```
+
+That run validated the actual Docker/captain path and found:
+
+- `aflplusplus_vanilla`: `PNG006_R=336689`, `PNG006_T=0`;
+- `aflplusplus_cmplog`: `PNG006_R=379517`, `PNG006_T=0`;
+- `redqueen_operand`: `PNG006_R=510177`, `PNG006_T=1`.
+
+The `redqueen_operand` `_T` was observed only in the final monitor snapshot, so
+the recorded trigger time is an upper bound. This reinforces that PNG006 still
+needs same-seed 30-minute and 2-hour baseline campaigns before any comparative
+claim is made.

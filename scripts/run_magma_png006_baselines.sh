@@ -91,13 +91,20 @@ run_one_baseline() {
   local shared="$out_dir/magma/${baseline}_${duration}s"
   local run_out="$out_dir/runs/${baseline}_${duration}s"
   mkdir -p "$shared" "$run_out"
+  rm -rf "$shared/input_corpus"
+  mkdir -p "$shared/input_corpus"
+  find "$seed_dir" -maxdepth 1 -type f -exec cp {} "$shared/input_corpus/" \;
+  if ! find "$shared/input_corpus" -maxdepth 1 -type f | grep -q .; then
+    echo "seed corpus is empty after copy: $seed_dir" >&2
+    exit 2
+  fi
 
   (
     cd "$magma_dir"
     FUZZER="$fuzzer" TARGET=libpng PROGRAM=libpng_read_fuzzer \
       ARGS=@@ CANARY_MODE=1 SHARED="$shared" POLL="$poll" \
-      TIMEOUT="${duration}s" MAGMA_INPUT_CORPUS="$seed_dir" \
-      MAGMA_SKIP_SEED_PRUNE=1 \
+      TIMEOUT="${duration}s" MAGMA_INPUT_CORPUS=/magma_shared/input_corpus \
+      MAGMA_SKIP_SEED_PRUNE=1 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
       ./tools/captain/start.sh
   ) > "$run_out/captain_stdout.log" 2> "$run_out/captain_stderr.log"
 

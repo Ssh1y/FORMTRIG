@@ -447,6 +447,13 @@ def int_stat(stats: dict[str, str], key: str, default: int = 0) -> int:
         return default
 
 
+def first_int_stat(stats: dict[str, str], keys: tuple[str, ...], default: int = 0) -> int:
+    for key in keys:
+        if key in stats:
+            return int_stat(stats, key, default)
+    return default
+
+
 def resolve_tool(args: argparse.Namespace) -> Path:
     if args.afl_fuzz:
         return Path(args.afl_fuzz)
@@ -495,8 +502,8 @@ def infer_run_record(
     stats_path = find_fuzzer_stats(fuzzer_out)
     stats = parse_fuzzer_stats(stats_path) if stats_path else {}
 
-    saved_crashes = int_stat(stats, "saved_crashes")
-    saved_hangs = int_stat(stats, "saved_hangs")
+    saved_crashes = first_int_stat(stats, ("saved_crashes", "unique_crashes"))
+    saved_hangs = first_int_stat(stats, ("saved_hangs", "unique_hangs"))
     magma_bug_id = args.magma_bug_id or args.target_id
     magma_monitor = magma_monitor_record(args.magma_monitor_dir, magma_bug_id)
     magma_triggered = magma_monitor["triggered"] if magma_monitor else 0
@@ -521,6 +528,15 @@ def infer_run_record(
         trigger_execs = int_stat(stats, "execs_done")
 
     run_time = int_stat(stats, "run_time", int(elapsed_s))
+    trigger_time_kind = "exact"
+    if (
+        trigger_time_s is None
+        and first_crash is None
+        and magma_triggered > 0
+        and first_magma_trigger is not None
+    ):
+        trigger_time_s = run_time
+        trigger_time_kind = "magma_monitor_upper_bound"
     success = saved_crashes > 0 or magma_triggered > 0
     timeout = returncode == 124 or (mode_status == "complete" and run_time >= args.budget_sec and not success)
 
@@ -542,6 +558,7 @@ def infer_run_record(
         "magma_monitor": magma_monitor,
         "trigger_execs": trigger_execs if success else None,
         "trigger_time_s": trigger_time_s,
+        "trigger_time_kind": trigger_time_kind if success else None,
         "stats": {
             "execs_done": int_stat(stats, "execs_done"),
             "execs_per_sec": stats.get("execs_per_sec"),
@@ -550,7 +567,7 @@ def infer_run_record(
             "saved_hangs": saved_hangs,
             "magma_reached": magma_reached,
             "magma_triggered": magma_triggered,
-            "corpus_count": int_stat(stats, "corpus_count"),
+            "corpus_count": first_int_stat(stats, ("corpus_count", "paths_total")),
         },
     }
 

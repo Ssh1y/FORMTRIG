@@ -1,0 +1,809 @@
+000000000046f780 W main
+[1;92m[+] [0mLoaded environment variable AFL_NO_UI with value 1[0m
+[1;92m[+] [0mLoaded environment variable AFL_SKIP_CPUFREQ with value 1[0m
+[1;92m[+] [0mLoaded environment variable AFL_NO_AFFINITY with value 1[0m
+[1;92m[+] [0mLoaded environment variable AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES with value 1[0m
+[1;93m[!] [1;97mWARNING: [0mMistyped AFL environment variable: AFL_DRIVER_DONT_DEFER=1[0m
+[0;36mafl-fuzz++3.14a[0m based on afl by Michal Zalewski and a large online community
+[1;92m[+] [0mafl++ is maintained by Marc "van Hauser" Heuse, Heiko "hexcoder" Eißfeldt, Andrea Fioraldi and Dominik Maier[0m
+[1;92m[+] [0mafl++ is open source, get it at https://github.com/AFLplusplus/AFLplusplus[0m
+[1;92m[+] [0mNOTE: This is v3.x which changes defaults and behaviours - see README.md[0m
+[1;92m[+] [0mNo -M/-S set, autoconfiguring for "-S default"[0m
+[1;94m[*] [0mGetting to work...[0m
+[1;92m[+] [0mUsing exponential power schedule (FAST)[0m
+[1;92m[+] [0mEnabled testcache with 50 MB[0m
+[1;92m[+] [0mDisabling the UI because AFL_NO_UI is set.[0m
+[1;94m[*] [0mChecking core_pattern...[0m
+
+[1;91m[-] [0mHmm, your system is configured to send core dump notifications to an
+    external utility. This will cause issues: there will be an extended delay
+    between stumbling upon a crash and having this information relayed to the
+    fuzzer via the standard waitpid() API.
+    If you're just testing, set 'AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1'.
+
+    To avoid having crashes misinterpreted as timeouts, please log in as root
+    and temporarily modify /proc/sys/kernel/core_pattern, like so:
+
+    echo core >/proc/sys/kernel/core_pattern
+[1;92m[+] [0mYou have 8 CPU cores and 1 runnable tasks (utilization: 12%).[0m
+[1;92m[+] [0mTry parallel jobs - see docs/parallel_fuzzing.md.[0m
+[1;94m[*] [0mSetting up output directories...[0m
+[1;93m[!] [1;97mWARNING: [0mNot binding to a CPU core (AFL_NO_AFFINITY set).[0m
+[1;94m[*] [0mScanning '/magma_shared/input_corpus'...[0m
+[1;92m[+] [0mLoaded a total of 4 seeds.[0m
+[1;94m[*] [0mCreating hard links for all input files...[0m
+[1;94m[*] [0mValidating target binary...[0m
+[1;92m[+] [0m[1;95mDeferred forkserver binary detected.[0m
+[1;94m[*] [0mSpinning up the fork server...[0m
+[1;92m[+] [0mAll right - fork server is up.[0m
+[1;94m[*] [0mTarget map size: 4514[0m
+[1;94m[*] [0mNo auto-generated dictionary tokens to reuse.[0m
+[1;94m[*] [0mAttempting dry run with 'id:000000,time:0,orig:id:000003,sha256:efaf0ebe0ef4a2ee'...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;90m    len = 427, map size = 545, exec speed = 782 us
+[0m[1;93m[!] [1;97mWARNING: [0mInstrumentation output varies across runs.[0m
+[1;94m[*] [0mAttempting dry run with 'id:000001,time:0,orig:id:000002,sha256:44a793713f9aadc5'...[0m
+[1;90m    len = 228, map size = 496, exec speed = 639 us
+[0m[1;94m[*] [0mAttempting dry run with 'id:000002,time:0,orig:id:000001,sha256:382ac44ca2ee7323'...[0m
+[1;90m    len = 376, map size = 511, exec speed = 574 us
+[0m[1;94m[*] [0mAttempting dry run with 'id:000003,time:0,orig:id:000000,sha256:d4001d350292b08a'...[0m
+[1;90m    len = 218, map size = 479, exec speed = 628 us
+[0m[1;92m[+] [0mAll test cases processed.[0m
+[1;92m[+] [0mHere are some useful stats:
+
+[1;90m    Test case count : [0m4 favored, 1 variable, 0 ignored, 4 total
+[1;90m       Bitmap range : [0m479 to 545 bits (average: 507.75 bits)
+[1;90m        Exec timing : [0m574 to 782 us (average: 690 us)
+[0m
+[1;94m[*] [0mNo -t option specified, so I'll use exec timeout of 20 ms.[0m
+[1;92m[+] [0mAll set and ready to roll![0m
+[1;94m[*] [0mEntering queue cycle 1.[0m
+[1;94m[*] [0mFuzzing test case #3 (4 total, 0 uniq crashes found, perf_score=100, exec_us=628, hits=0, map=479)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #50 (166 total, 0 uniq crashes found, perf_score=100, exec_us=397, hits=3, map=422)...[0m
+[1;94m[*] [0mFuzzing test case #52 (166 total, 0 uniq crashes found, perf_score=100, exec_us=350, hits=57, map=422)...[0m
+[1;94m[*] [0mFuzzing test case #133 (166 total, 0 uniq crashes found, perf_score=100, exec_us=429, hits=1, map=285)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #46 (170 total, 0 uniq crashes found, perf_score=75, exec_us=361, hits=8, map=233)...[0m
+[1;94m[*] [0mFuzzing test case #44 (170 total, 0 uniq crashes found, perf_score=100, exec_us=386, hits=1, map=282)...[0m
+[1;94m[*] [0mFuzzing test case #0 (170 total, 0 uniq crashes found, perf_score=112, exec_us=782, hits=0, map=545)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #23 (246 total, 0 uniq crashes found, perf_score=100, exec_us=388, hits=18, map=494)...[0m
+[1;94m[*] [0mFuzzing test case #48 (246 total, 0 uniq crashes found, perf_score=75, exec_us=407, hits=1, map=223)...[0m
+[1;94m[*] [0mFuzzing test case #81 (246 total, 0 uniq crashes found, perf_score=100, exec_us=472, hits=1, map=408)...[0m
+[1;94m[*] [0mFuzzing test case #214 (246 total, 0 uniq crashes found, perf_score=100, exec_us=443, hits=1, map=441)...[0m
+[1;94m[*] [0mFuzzing test case #135 (246 total, 0 uniq crashes found, perf_score=100, exec_us=533, hits=2, map=470)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #156 (262 total, 0 uniq crashes found, perf_score=75, exec_us=419, hits=1, map=242)...[0m
+[1;94m[*] [0mFuzzing test case #89 (262 total, 0 uniq crashes found, perf_score=100, exec_us=376, hits=28, map=284)...[0m
+[1;94m[*] [0mFuzzing test case #235 (262 total, 0 uniq crashes found, perf_score=100, exec_us=410, hits=1, map=269)...[0m
+[1;94m[*] [0mFuzzing test case #1 (262 total, 0 uniq crashes found, perf_score=75, exec_us=639, hits=0, map=496)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #34 (274 total, 0 uniq crashes found, perf_score=100, exec_us=383, hits=1, map=254)...[0m
+[1;94m[*] [0mFuzzing test case #151 (274 total, 0 uniq crashes found, perf_score=100, exec_us=374, hits=1, map=491)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #91 (290 total, 0 uniq crashes found, perf_score=75, exec_us=401, hits=2, map=232)...[0m
+[1;94m[*] [0mFuzzing test case #193 (290 total, 0 uniq crashes found, perf_score=100, exec_us=474, hits=1, map=326)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #141 (292 total, 0 uniq crashes found, perf_score=75, exec_us=398, hits=2, map=231)...[0m
+[1;94m[*] [0mFuzzing test case #197 (292 total, 0 uniq crashes found, perf_score=100, exec_us=363, hits=1, map=310)...[0m
+[1;94m[*] [0mFuzzing test case #265 (292 total, 0 uniq crashes found, perf_score=100, exec_us=409, hits=1, map=273)...[0m
+[1;94m[*] [0mFuzzing test case #165 (292 total, 0 uniq crashes found, perf_score=100, exec_us=389, hits=1, map=475)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #216 (331 total, 0 uniq crashes found, perf_score=100, exec_us=465, hits=1, map=312)...[0m
+[1;94m[*] [0mFuzzing test case #316 (331 total, 0 uniq crashes found, perf_score=100, exec_us=536, hits=1, map=475)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;94m[*] [0mFuzzing test case #346 (349 total, 0 uniq crashes found, perf_score=200, exec_us=426, hits=1, map=471)...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[?25h[1;91m
+
++++ Testing aborted by user +++
+[0m[1;92m[+] [0mWe're done here. Have a nice day!
+[0m

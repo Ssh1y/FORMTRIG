@@ -1,0 +1,118 @@
+000000000046f780 W main
+[1;92m[+] [0mLoaded environment variable AFL_NO_UI with value 1[0m
+[1;92m[+] [0mLoaded environment variable AFL_SKIP_CPUFREQ with value 1[0m
+[1;92m[+] [0mLoaded environment variable AFL_NO_AFFINITY with value 1[0m
+[1;92m[+] [0mLoaded environment variable AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES with value 1[0m
+[1;93m[!] [1;97mWARNING: [0mMistyped AFL environment variable: AFL_DRIVER_DONT_DEFER=1[0m
+[0;36mafl-fuzz++3.14a[0m based on afl by Michal Zalewski and a large online community
+[1;92m[+] [0mafl++ is maintained by Marc "van Hauser" Heuse, Heiko "hexcoder" Eißfeldt, Andrea Fioraldi and Dominik Maier[0m
+[1;92m[+] [0mafl++ is open source, get it at https://github.com/AFLplusplus/AFLplusplus[0m
+[1;92m[+] [0mNOTE: This is v3.x which changes defaults and behaviours - see README.md[0m
+[1;92m[+] [0mNo -M/-S set, autoconfiguring for "-S default"[0m
+[1;94m[*] [0mGetting to work...[0m
+[1;92m[+] [0mUsing exponential power schedule (FAST)[0m
+[1;92m[+] [0mCmpLog level: 2[0m
+[1;92m[+] [0mEnabled testcache with 50 MB[0m
+[1;92m[+] [0mDisabling the UI because AFL_NO_UI is set.[0m
+[1;94m[*] [0mChecking core_pattern...[0m
+
+[1;91m[-] [0mHmm, your system is configured to send core dump notifications to an
+    external utility. This will cause issues: there will be an extended delay
+    between stumbling upon a crash and having this information relayed to the
+    fuzzer via the standard waitpid() API.
+    If you're just testing, set 'AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1'.
+
+    To avoid having crashes misinterpreted as timeouts, please log in as root
+    and temporarily modify /proc/sys/kernel/core_pattern, like so:
+
+    echo core >/proc/sys/kernel/core_pattern
+[1;92m[+] [0mYou have 8 CPU cores and 1 runnable tasks (utilization: 12%).[0m
+[1;92m[+] [0mTry parallel jobs - see docs/parallel_fuzzing.md.[0m
+[1;94m[*] [0mSetting up output directories...[0m
+[1;93m[!] [1;97mWARNING: [0mNot binding to a CPU core (AFL_NO_AFFINITY set).[0m
+[1;94m[*] [0mScanning '/magma_shared/input_corpus'...[0m
+[1;92m[+] [0mLoaded a total of 4 seeds.[0m
+[1;94m[*] [0mCreating hard links for all input files...[0m
+[1;94m[*] [0mValidating target binary...[0m
+[1;92m[+] [0m[1;95mDeferred forkserver binary detected.[0m
+[1;94m[*] [0mValidating target binary...[0m
+[1;92m[+] [0m[1;95mDeferred forkserver binary detected.[0m
+[1;94m[*] [0mSpinning up the fork server...[0m
+[1;92m[+] [0mAll right - fork server is up.[0m
+[1;94m[*] [0mTarget map size: 4514[0m
+[1;94m[*] [0mSpawning cmplog forkserver[0m
+[1;94m[*] [0mSpinning up the fork server...[0m
+[1;92m[+] [0mAll right - fork server is up.[0m
+[1;94m[*] [0mTarget map size: 4845[0m
+[1;92m[+] [0mCmplog forkserver successfully started[0m
+[1;94m[*] [0mNo auto-generated dictionary tokens to reuse.[0m
+[1;94m[*] [0mAttempting dry run with 'id:000000,time:0,orig:id:000003,sha256:efaf0ebe0ef4a2ee'...[0m
+[1;93m[!] [1;97mWARNING: [0minstability detected during calibration
+[0m
+[1;90m    len = 427, map size = 545, exec speed = 533 us
+[0m[1;93m[!] [1;97mWARNING: [0mInstrumentation output varies across runs.[0m
+[1;94m[*] [0mAttempting dry run with 'id:000001,time:0,orig:id:000002,sha256:44a793713f9aadc5'...[0m
+[1;90m    len = 228, map size = 496, exec speed = 414 us
+[0m[1;94m[*] [0mAttempting dry run with 'id:000002,time:0,orig:id:000001,sha256:382ac44ca2ee7323'...[0m
+[1;90m    len = 376, map size = 511, exec speed = 367 us
+[0m[1;94m[*] [0mAttempting dry run with 'id:000003,time:0,orig:id:000000,sha256:d4001d350292b08a'...[0m
+[1;90m    len = 218, map size = 479, exec speed = 455 us
+[0m[1;92m[+] [0mAll test cases processed.[0m
+[1;92m[+] [0mHere are some useful stats:
+
+[1;90m    Test case count : [0m4 favored, 1 variable, 0 ignored, 4 total
+[1;90m       Bitmap range : [0m479 to 545 bits (average: 507.75 bits)
+[1;90m        Exec timing : [0m367 to 533 us (average: 467 us)
+[0m
+[1;94m[*] [0mNo -t option specified, so I'll use exec timeout of 20 ms.[0m
+[1;92m[+] [0mAll set and ready to roll![0m
+[1;94m[*] [0mEntering queue cycle 1.[0m
+[1;94m[*] [0mFuzzing test case #1 (4 total, 0 uniq crashes found, perf_score=100, exec_us=414, hits=0, map=496)...[0m
+[1;94m[*] [0mFuzzing test case #167 (184 total, 0 uniq crashes found, perf_score=100, exec_us=373, hits=1, map=425)...[0m
+[1;94m[*] [0mFuzzing test case #128 (184 total, 0 uniq crashes found, perf_score=150, exec_us=370, hits=1, map=536)...[0m
+[1;94m[*] [0mFuzzing test case #154 (226 total, 0 uniq crashes found, perf_score=100, exec_us=400, hits=1, map=325)...[0m
+[1;94m[*] [0mFuzzing test case #19 (229 total, 0 uniq crashes found, perf_score=100, exec_us=414, hits=18, map=496)...[0m
+[1;94m[*] [0mFuzzing test case #30 (229 total, 0 uniq crashes found, perf_score=150, exec_us=452, hits=1, map=531)...[0m
+[1;94m[*] [0mFuzzing test case #179 (286 total, 0 uniq crashes found, perf_score=75, exec_us=454, hits=1, map=218)...[0m
+[1;94m[*] [0mFuzzing test case #168 (287 total, 0 uniq crashes found, perf_score=100, exec_us=329, hits=1, map=278)...[0m
+[1;94m[*] [0mFuzzing test case #105 (298 total, 0 uniq crashes found, perf_score=100, exec_us=459, hits=15, map=309)...[0m
+[1;94m[*] [0mFuzzing test case #98 (308 total, 0 uniq crashes found, perf_score=75, exec_us=353, hits=17, map=234)...[0m
+[1;94m[*] [0mFuzzing test case #223 (314 total, 0 uniq crashes found, perf_score=100, exec_us=476, hits=1, map=427)...[0m
+[1;94m[*] [0mFuzzing test case #238 (317 total, 0 uniq crashes found, perf_score=100, exec_us=363, hits=7, map=521)...[0m
+[1;94m[*] [0mFuzzing test case #229 (318 total, 0 uniq crashes found, perf_score=100, exec_us=378, hits=5, map=515)...[0m
+[1;94m[*] [0mFuzzing test case #306 (319 total, 0 uniq crashes found, perf_score=100, exec_us=406, hits=1, map=337)...[0m
+[1;94m[*] [0mFuzzing test case #0 (325 total, 0 uniq crashes found, perf_score=150, exec_us=533, hits=0, map=545)...[0m
+[1;94m[*] [0mFuzzing test case #262 (384 total, 0 uniq crashes found, perf_score=100, exec_us=452, hits=1, map=521)...[0m
+[1;94m[*] [0mFuzzing test case #345 (386 total, 0 uniq crashes found, perf_score=150, exec_us=428, hits=1, map=562)...[0m
+[1;94m[*] [0mFuzzing test case #55 (388 total, 0 uniq crashes found, perf_score=100, exec_us=350, hits=1, map=521)...[0m
+[1;94m[*] [0mFuzzing test case #364 (388 total, 0 uniq crashes found, perf_score=150, exec_us=434, hits=1, map=567)...[0m
+[1;94m[*] [0mFuzzing test case #85 (389 total, 0 uniq crashes found, perf_score=75, exec_us=378, hits=1, map=219)...[0m
+[1;94m[*] [0mFuzzing test case #205 (389 total, 0 uniq crashes found, perf_score=100, exec_us=350, hits=1, map=521)...[0m
+[1;94m[*] [0mFuzzing test case #271 (389 total, 0 uniq crashes found, perf_score=100, exec_us=369, hits=1, map=281)...[0m
+[1;94m[*] [0mFuzzing test case #388 (391 total, 0 uniq crashes found, perf_score=100, exec_us=365, hits=3, map=344)...[0m
+[1;94m[*] [0mFuzzing test case #283 (393 total, 0 uniq crashes found, perf_score=100, exec_us=383, hits=1, map=526)...[0m
+[1;94m[*] [0mFuzzing test case #274 (394 total, 0 uniq crashes found, perf_score=100, exec_us=426, hits=1, map=311)...[0m
+[1;94m[*] [0mFuzzing test case #356 (395 total, 0 uniq crashes found, perf_score=100, exec_us=355, hits=1, map=347)...[0m
+[1;94m[*] [0mFuzzing test case #2 (395 total, 0 uniq crashes found, perf_score=100, exec_us=367, hits=0, map=511)...[0m
+[1;94m[*] [0mFuzzing test case #165 (434 total, 0 uniq crashes found, perf_score=100, exec_us=354, hits=1, map=297)...[0m
+[1;94m[*] [0mFuzzing test case #38 (434 total, 0 uniq crashes found, perf_score=75, exec_us=531, hits=289, map=213)...[0m
+[1;94m[*] [0mFuzzing test case #116 (434 total, 0 uniq crashes found, perf_score=75, exec_us=379, hits=3, map=234)...[0m
+[1;94m[*] [0mFuzzing test case #427 (434 total, 0 uniq crashes found, perf_score=100, exec_us=530, hits=1, map=302)...[0m
+[1;94m[*] [0mFuzzing test case #301 (434 total, 0 uniq crashes found, perf_score=100, exec_us=337, hits=1, map=309)...[0m
+[1;94m[*] [0mFuzzing test case #284 (434 total, 0 uniq crashes found, perf_score=75, exec_us=340, hits=1, map=226)...[0m
+[1;94m[*] [0mFuzzing test case #293 (434 total, 0 uniq crashes found, perf_score=100, exec_us=493, hits=1, map=304)...[0m
+[1;94m[*] [0mFuzzing test case #302 (435 total, 0 uniq crashes found, perf_score=100, exec_us=439, hits=1, map=307)...[0m
+[1;94m[*] [0mFuzzing test case #109 (435 total, 0 uniq crashes found, perf_score=100, exec_us=387, hits=4, map=325)...[0m
+[1;94m[*] [0mFuzzing test case #324 (439 total, 0 uniq crashes found, perf_score=200, exec_us=522, hits=1, map=312)...[0m
+[1;94m[*] [0mFuzzing test case #434 (440 total, 0 uniq crashes found, perf_score=200, exec_us=434, hits=1, map=289)...[0m
+[1;94m[*] [0mFuzzing test case #352 (440 total, 0 uniq crashes found, perf_score=100, exec_us=473, hits=145, map=510)...[0m
+[1;94m[*] [0mFuzzing test case #382 (440 total, 0 uniq crashes found, perf_score=100, exec_us=379, hits=1, map=529)...[0m
+[1;94m[*] [0mFuzzing test case #346 (455 total, 0 uniq crashes found, perf_score=100, exec_us=408, hits=35, map=295)...[0m
+[1;94m[*] [0mFuzzing test case #82 (455 total, 0 uniq crashes found, perf_score=100, exec_us=371, hits=1, map=319)...[0m
+[1;94m[*] [0mFuzzing test case #369 (455 total, 0 uniq crashes found, perf_score=100, exec_us=456, hits=1, map=312)...[0m
+[1;94m[*] [0mFuzzing test case #215 (455 total, 0 uniq crashes found, perf_score=100, exec_us=453, hits=1, map=507)...[0m
+[?25h[1;91m
+
++++ Testing aborted by user +++
+[0m[1;92m[+] [0mWe're done here. Have a nice day!
+[0m
