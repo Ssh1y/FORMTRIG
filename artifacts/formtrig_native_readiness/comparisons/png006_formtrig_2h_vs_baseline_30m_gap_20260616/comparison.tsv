@@ -1,0 +1,5 @@
+arm	source_label	target_id	budget	run_time	rep	success	terminal_count	trigger_time_s	trigger_time_kind	execs_done	execs_per_sec	reached	accepted_non_trigger	saved_non_trigger	spec_lifted	heuristic_lifted	manual_lifted	strict_pretrigger_guidance	binding_signal_status	source_path
+formtrig	formtrig_2h	PNG006	7200	7200		true	17276659			29754905	4132.45	26319188	1	1	3844204	0	0	true	pass	artifacts/formtrig_native_readiness/raw/png006_2h_20260615T1250Z/gate_summary.csv
+baseline	magma_30m	PNG006	1800	1797	1	true	204	210	magma_monitor_upper_bound	4167600	2317.97	6951839						false		artifacts/formtrig_native_readiness/raw/png006_baselines_30m_20260616T013914Z/aflplusplus_cmplog/run_record.json
+baseline	magma_30m	PNG006	1800	1797	1	false	0			4313285	2399.00	7523009						false		artifacts/formtrig_native_readiness/raw/png006_baselines_30m_20260616T013914Z/aflplusplus_vanilla/run_record.json
+baseline	magma_30m	PNG006	1800	1797	1	true	1269	90	magma_monitor_upper_bound	4276691	2378.64	7604252						false		artifacts/formtrig_native_readiness/raw/png006_baselines_30m_20260616T013914Z/redqueen_operand/run_record.json

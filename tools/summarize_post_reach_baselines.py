@@ -183,7 +183,7 @@ def write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def tsv_value(value: Any) -> Any:
     if value is None:
-        return ""
+        return "NA"
     if isinstance(value, bool):
         return "true" if value else "false"
     return value

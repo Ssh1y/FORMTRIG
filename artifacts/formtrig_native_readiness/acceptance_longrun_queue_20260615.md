@@ -30,6 +30,10 @@ FORMTRIG run is paired with same-seed, same-budget faithful baseline runs under
 Representative signal-family stand-ins are not accepted as SOTA baselines.
 `tools/run_post_reach_baseline.py` is the common post-reach baseline entrypoint
 and refuses representative-only baselines by default.
+Current machine-generated comparison packages are indexed in
+`artifacts/formtrig_native_readiness/comparison_packages_20260616.md`; these
+packages explicitly mark unmatched budgets, low replication, and targets where
+the faithful baselines also trigger.
 
 ## Positive Long-Run Queue
 

@@ -1,0 +1,5 @@
+arm	source_label	target_id	budget	run_time	rep	success	terminal_count	trigger_time_s	trigger_time_kind	execs_done	execs_per_sec	reached	accepted_non_trigger	saved_non_trigger	spec_lifted	heuristic_lifted	manual_lifted	strict_pretrigger_guidance	binding_signal_status	source_path
+formtrig	formtrig_pretrigger_30m	LIBCOAP_CVE_2023_35862	1800	1800		false	0			4764811	2647.11	2128534	1	1	8524	0	0	true	pass	artifacts/formtrig_native_readiness/raw/libcoap_35862_30m_20260615T182142Z/gate_summary.csv
+baseline	non_asan_30m	LIBCOAP_CVE_2023_35862	1800	1800	1	false	0			7414238	4119.01	0						false		artifacts/formtrig_native_readiness/raw/libcoap_35862_baselines_30m_20260615T211555Z/aflplusplus_cmplog_1800s/run_record.json
+baseline	non_asan_30m	LIBCOAP_CVE_2023_35862	1800	1800	1	false	0			7233966	4018.87	0						false		artifacts/formtrig_native_readiness/raw/libcoap_35862_baselines_30m_20260615T211555Z/aflplusplus_vanilla_1800s/run_record.json
+baseline	non_asan_30m	LIBCOAP_CVE_2023_35862	1800	1800	1	false	0			7902220	4390.10	0						false		artifacts/formtrig_native_readiness/raw/libcoap_35862_baselines_30m_20260615T211555Z/redqueen_operand_1800s/run_record.json

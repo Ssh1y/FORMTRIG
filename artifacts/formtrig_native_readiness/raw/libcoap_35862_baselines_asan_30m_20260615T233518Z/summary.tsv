@@ -1,0 +1,4 @@
+target_id	baseline	budget	rep	success	trigger_time_s	trigger_time_kind	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	magma_reached	magma_triggered	magma_first_reach_time_s	magma_first_trigger_time_s	magma_snapshot_count
+LIBCOAP_CVE_2023_35862	aflplusplus_cmplog	1800	1	true	1060	NA	1800	140244	77.91	96	20	0	NA	NA	NA	NA	NA
+LIBCOAP_CVE_2023_35862	aflplusplus_vanilla	1800	1	true	1484	NA	1800	137840	76.58	111	22	0	NA	NA	NA	NA	NA
+LIBCOAP_CVE_2023_35862	redqueen_operand	1800	1	true	1327	NA	1800	138452	76.92	115	24	0	NA	NA	NA	NA	NA
