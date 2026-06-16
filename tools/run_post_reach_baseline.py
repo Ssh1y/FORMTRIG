@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Any
 
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
 AFLPP_BASELINES = {
     "aflplusplus_vanilla",
     "aflplusplus_cmplog",
@@ -215,6 +216,48 @@ def baseline_contract(baseline: str) -> dict[str, Any]:
     }
 
 
+def resolve_anchor_path(anchor: str) -> Path:
+    path_text = anchor.split(":", 1)[0]
+    path = Path(path_text)
+    if not path.is_absolute():
+        path = REPO_ROOT / path
+    if path.exists():
+        return path
+
+    if "@" in path_text:
+        versionless = Path(path_text.split("@", 1)[0])
+        if not versionless.is_absolute():
+            versionless = REPO_ROOT / versionless
+        return versionless
+    return path
+
+
+def unresolved_contract_anchors(contract: dict[str, Any], field: str) -> list[str]:
+    anchors = contract.get(field)
+    if not isinstance(anchors, list) or not anchors:
+        return [f"<missing {field}>"]
+    unresolved = []
+    for anchor in anchors:
+        if not isinstance(anchor, str) or not anchor.strip():
+            unresolved.append(repr(anchor))
+            continue
+        if not resolve_anchor_path(anchor).exists():
+            unresolved.append(anchor)
+    return unresolved
+
+
+def has_pdf_paper_anchor(contract: dict[str, Any]) -> bool:
+    anchors = contract.get("paper_anchors", [])
+    if not isinstance(anchors, list):
+        return False
+    return any(
+        isinstance(anchor, str)
+        and resolve_anchor_path(anchor).suffix.lower() == ".pdf"
+        and resolve_anchor_path(anchor).is_file()
+        for anchor in anchors
+    )
+
+
 def baseline_contract_rejection(baseline: str) -> str | None:
     contract = baseline_contract(baseline)
     faithfulness = contract.get("faithfulness")
@@ -227,6 +270,12 @@ def baseline_contract_rejection(baseline: str) -> str | None:
     missing = [field for field in REQUIRED_BASELINE_CONTRACT_FIELDS if not contract.get(field)]
     if missing:
         return "accepted baseline contract is missing required anchors: " + ",".join(missing)
+    for field in ("paper_anchors", "artifact_anchors"):
+        unresolved = unresolved_contract_anchors(contract, field)
+        if unresolved:
+            return "accepted baseline contract has unresolved " + field + ": " + ",".join(unresolved)
+    if not has_pdf_paper_anchor(contract):
+        return "accepted baseline contract has no local PDF paper anchor"
     return None
 
 
@@ -261,6 +310,45 @@ def find_fuzzer_stats(fuzzer_out: Path) -> Path | None:
             return candidate
     matches = sorted(fuzzer_out.glob("*/fuzzer_stats"))
     return matches[0] if matches else None
+
+
+def parse_afl_crash_metadata(path: Path) -> dict[str, int | str]:
+    metadata: dict[str, int | str] = {"file": str(path)}
+    for part in path.name.split(","):
+        if ":" not in part:
+            continue
+        key, value = part.split(":", 1)
+        if key in {"time", "execs"}:
+            try:
+                metadata[key] = int(value)
+            except ValueError:
+                metadata[key] = value
+        else:
+            metadata[key] = value
+    return metadata
+
+
+def first_crash_record(stats_path: Path | None) -> dict[str, Any] | None:
+    if stats_path is None:
+        return None
+    crash_dir = stats_path.parent / "crashes"
+    if not crash_dir.is_dir():
+        return None
+    records = []
+    for path in crash_dir.glob("id:*"):
+        metadata = parse_afl_crash_metadata(path)
+        time_ms = metadata.get("time")
+        execs = metadata.get("execs")
+        if not isinstance(time_ms, int):
+            continue
+        sort_execs = execs if isinstance(execs, int) else sys.maxsize
+        records.append((time_ms, sort_execs, path.name, metadata))
+    if not records:
+        return None
+    records.sort()
+    metadata = records[0][3].copy()
+    metadata["time_s"] = records[0][0] / 1000.0
+    return metadata
 
 
 def int_stat(stats: dict[str, str], key: str, default: int = 0) -> int:
@@ -322,9 +410,14 @@ def infer_run_record(
     saved_hangs = int_stat(stats, "saved_hangs")
     start_time = int_stat(stats, "start_time")
     last_crash = int_stat(stats, "last_crash")
-    trigger_time_s = None
+    last_crash_time_s = None
     if saved_crashes > 0 and start_time > 0 and last_crash > 0:
-        trigger_time_s = max(0, last_crash - start_time)
+        last_crash_time_s = max(0, last_crash - start_time)
+    first_crash = first_crash_record(stats_path)
+    trigger_time_s = first_crash.get("time_s") if first_crash else last_crash_time_s
+    trigger_execs = first_crash.get("execs") if first_crash else None
+    if saved_crashes > 0 and trigger_execs is None:
+        trigger_execs = int_stat(stats, "execs_done")
 
     run_time = int_stat(stats, "run_time", int(elapsed_s))
     timeout = returncode == 124 or (mode_status == "complete" and run_time >= args.budget_sec and saved_crashes == 0)
@@ -343,7 +436,9 @@ def infer_run_record(
         "target_id": args.target_id,
         "tc_category": args.tc_category,
         "timeout": timeout,
-        "trigger_execs": int_stat(stats, "execs_done") if success else None,
+        "first_crash": first_crash,
+        "last_crash_time_s": last_crash_time_s,
+        "trigger_execs": trigger_execs if success else None,
         "trigger_time_s": trigger_time_s,
         "stats": {
             "execs_done": int_stat(stats, "execs_done"),

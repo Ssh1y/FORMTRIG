@@ -107,6 +107,18 @@ event.
   `artifacts/formtrig_native_readiness/baseline_faithfulness_policy_20260615.md`;
   representative paper-family stand-ins are not accepted.
 
+## Baseline Follow-Up
+
+The same-seed, same-budget ASAN baseline package later showed that
+`aflplusplus_vanilla`, `aflplusplus_cmplog`, and `redqueen_operand` also
+trigger this target quickly under the same terminal oracle. That follow-up is
+recorded in
+`artifacts/formtrig_native_readiness/libcoap_35862_baselines_asan_30m_20260615.md`.
+
+Therefore this FORMTRIG ASAN run is real terminal-oracle evidence, but not
+evidence of terminal TTE superiority over faithful AFL++-family baselines on
+LIBCOAP.
+
 ## Preserved Evidence
 
 Raw evidence is preserved at:

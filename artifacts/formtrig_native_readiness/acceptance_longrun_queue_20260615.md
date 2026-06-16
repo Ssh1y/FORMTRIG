@@ -87,11 +87,13 @@ Completed 2-hour evidence:
 ### CVE: LIBCOAP_CVE_2023_35862
 
 Current status: admissible native smoke path passed, 30-minute strict
-pre-trigger guidance passed, 2-hour strict pre-trigger guidance passed, and a
-30-minute ASAN terminal-oracle campaign passed. This is the replacement
-real-CVE candidate for LIBXML2_1107. It still needs 2-hour ASAN repetitions and
-same-oracle faithful baseline runs before it can count as the full final
-FORMTRIG real-CVE comparison package.
+pre-trigger guidance passed, 2-hour strict pre-trigger guidance passed, a
+30-minute ASAN terminal-oracle campaign passed, and 30-minute same-oracle
+faithful AFL++-family baselines completed. This is a useful real-CVE pipeline
+and oracle-validation target, but it is not a strong SOTA-positive FORMTRIG
+case: all three ASAN baselines also triggered quickly. It still needs harder
+real-CVE targets for the final claim that FORMTRIG solves guidance gaps left by
+binary TC feedback.
 
 Runner:
 
@@ -225,6 +227,17 @@ Baseline comparison queue:
   information budget. The related-paper anchors are local PDFs and matrices
   under `related_papers/` and `paper/notes/`; a method-family label alone is not
   accepted as a faithful baseline.
+- Faithful AFL++-family 30-minute ASAN terminal-oracle baseline runs are
+  recorded in
+  `artifacts/formtrig_native_readiness/libcoap_35862_baselines_asan_30m_20260615.md`.
+  Results: `aflplusplus_vanilla`, `aflplusplus_cmplog`, and
+  `redqueen_operand` all completed `run_time=1800` with ASAN
+  `saved_hangs=0` and `saved_crashes=22`, `20`, and `24`, respectively. The
+  first saved crash in each baseline replayed with ASAN exit code `86` and
+  `AddressSanitizer: global-buffer-overflow`. First-crash filename times were
+  `0.200s`, `0.227s`, and `0.226s`, respectively. This demotes LIBCOAP as a
+  terminal TTE advantage target; it remains a pipeline/oracle validation target
+  and a negative-control baseline package.
 
 Faithful AFL++-family baseline runner:
 

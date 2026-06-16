@@ -1,0 +1,50 @@
+=================================================================
+==2714663==ERROR: AddressSanitizer: global-buffer-overflow on address 0x595aaa053e6c at pc 0x595aa9d85c9c bp 0x7ffced66bcc0 sp 0x7ffced66b468
+READ of size 13 at 0x595aaa053e6c thread T0
+    #0 0x595aa9d85c9b  (/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp+0x108c9b) (BuildId: 43452707008faeb589cc732a0e8bdd6facb5d538)
+    #1 0x595aa9d86200  (/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp+0x109200) (BuildId: 43452707008faeb589cc732a0e8bdd6facb5d538)
+    #2 0x595aa9e5846a  (/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp+0x1db46a) (BuildId: 43452707008faeb589cc732a0e8bdd6facb5d538)
+    #3 0x595aa9e42a9d  (/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp+0x1c5a9d) (BuildId: 43452707008faeb589cc732a0e8bdd6facb5d538)
+    #4 0x7a193a42a1c9  (/lib/x86_64-linux-gnu/libc.so.6+0x2a1c9) (BuildId: 8e9fd827446c24067541ac5390e6f527fb5947bb)
+    #5 0x7a193a42a28a  (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 8e9fd827446c24067541ac5390e6f527fb5947bb)
+    #6 0x595aa9d69544  (/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp+0xec544) (BuildId: 43452707008faeb589cc732a0e8bdd6facb5d538)
+
+0x595aaa053e6c is located 52 bytes before global variable '.str.69' defined in '/home/cwh/FORMTRIG/benchmarks/cve_build/libcoap-cve-2023-35862-src/src/coap_oscore.c' (0x595aaa053ea0) of size 11
+  '.str.69' is ascii string 'id_context'
+0x595aaa053e6c is located 20 bytes before global variable '.str.68' defined in '/home/cwh/FORMTRIG/benchmarks/cve_build/libcoap-cve-2023-35862-src/src/coap_oscore.c' (0x595aaa053e80) of size 10
+  '.str.68' is ascii string 'sender_id'
+0x595aaa053e6c is located 0 bytes after global variable '.str.67' defined in '/home/cwh/FORMTRIG/benchmarks/cve_build/libcoap-cve-2023-35862-src/src/coap_oscore.c' (0x595aaa053e60) of size 12
+  '.str.67' is ascii string 'master_salt'
+SUMMARY: AddressSanitizer: global-buffer-overflow (/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp+0x108c9b) (BuildId: 43452707008faeb589cc732a0e8bdd6facb5d538)
+Shadow bytes around the buggy address:
+  0x595aaa053b80: f9 f9 f9 f9 00 00 00 00 04 f9 f9 f9 f9 f9 f9 f9
+  0x595aaa053c00: 00 00 00 00 00 00 03 f9 f9 f9 f9 f9 00 00 00 00
+  0x595aaa053c80: 00 00 00 00 00 00 00 00 05 f9 f9 f9 06 f9 f9 f9
+  0x595aaa053d00: 00 00 00 00 00 00 06 f9 f9 f9 f9 f9 06 f9 f9 f9
+  0x595aaa053d80: 04 f9 f9 f9 00 f9 f9 f9 05 f9 f9 f9 05 f9 f9 f9
+=>0x595aaa053e00: 00 00 00 00 00 00 00 00 00 06 f9 f9 00[04]f9 f9
+  0x595aaa053e80: 00 02 f9 f9 00 03 f9 f9 00 06 f9 f9 00 01 f9 f9
+  0x595aaa053f00: 00 01 f9 f9 00 01 f9 f9 00 06 f9 f9 00 04 f9 f9
+  0x595aaa053f80: 00 00 01 f9 f9 f9 f9 f9 00 00 04 f9 f9 f9 f9 f9
+  0x595aaa054000: 00 00 02 f9 f9 f9 f9 f9 00 00 02 f9 f9 f9 f9 f9
+  0x595aaa054080: 00 00 04 f9 f9 f9 f9 f9 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==2714663==ABORTING

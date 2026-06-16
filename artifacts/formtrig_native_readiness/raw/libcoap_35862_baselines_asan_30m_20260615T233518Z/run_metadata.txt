@@ -1,0 +1,10 @@
+out_dir=/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z
+seed_dir=/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds
+source_dir=/home/cwh/FORMTRIG/benchmarks/cve_build/libcoap-cve-2023-35862-src
+harness=/home/cwh/FORMTRIG/benchmarks/cve_harnesses/libcoap_oscore_conf_replay.c
+aflpp_dir=/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus
+asan=1
+baselines=aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+durations=1800
+binary=/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp
+cmplog_binary=/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_cmplog

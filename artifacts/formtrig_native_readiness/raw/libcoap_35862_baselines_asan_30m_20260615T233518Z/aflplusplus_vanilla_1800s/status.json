@@ -1,0 +1,36 @@
+{
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/afl-fuzz"
+    ],
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "information_budget": "coverage feedback only; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "elapsed_s": 1800.2961696400016,
+  "resolved_cmd": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+    "-o",
+    "/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/aflplusplus_vanilla_1800s/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "1800",
+    "--",
+    "/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp",
+    "@@"
+  ],
+  "returncode": 0,
+  "run_record": "/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/aflplusplus_vanilla_1800s/run_record.json",
+  "status": "complete"
+}

@@ -1,0 +1,55 @@
+{
+  "baseline": "aflplusplus_cmplog",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/instrumentation/README.cmplog.md",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ CmpLog instrumentation plus matching cmplog binary",
+    "information_budget": "AFL++ CmpLog operand map and normal AFL++ feedback; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "comparison operand logging and comparison-guided mutation from AFL++",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "faithful AFL++ CmpLog baseline for visible scalar/string comparison feedback"
+  },
+  "budget": 1800,
+  "command_line": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+    "-o",
+    "/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/aflplusplus_cmplog_1800s/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "1800",
+    "-c",
+    "/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_cmplog",
+    "--",
+    "/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/libcoap_oscore_conf_replay_aflpp",
+    "@@"
+  ],
+  "config_path": "/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/aflplusplus_cmplog_1800s/run_config.json",
+  "fuzzer_stats": "/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/aflplusplus_cmplog_1800s/fuzzer_out/default/fuzzer_stats",
+  "run_id": "LIBCOAP_CVE_2023_35862:aflplusplus_cmplog:rep1",
+  "seed_set_id": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBCOAP_CVE_2023_35862/seeds",
+  "stats": {
+    "corpus_count": 96,
+    "execs_done": 140244,
+    "execs_per_sec": "77.91",
+    "run_time": 1800,
+    "saved_crashes": 20,
+    "saved_hangs": 0
+  },
+  "success": true,
+  "target_id": "LIBCOAP_CVE_2023_35862",
+  "tc_category": "equality-magic",
+  "timeout": false,
+  "trigger_execs": 140244,
+  "trigger_time_s": 1060
+}

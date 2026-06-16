@@ -83,6 +83,11 @@ none produced a native crash during this run.
   an AFL++ operand baseline, not a claim about the original Redqueen artifact.
 - Hangs are nonzero across all three runs and should be tracked in the ASAN and
   2-hour baseline packages.
+- The ASAN follow-up is recorded in
+  `artifacts/formtrig_native_readiness/libcoap_35862_baselines_asan_30m_20260615.md`.
+  In that same-oracle package, all three AFL++-family baselines triggered
+  quickly. Treat LIBCOAP as pipeline/oracle validation and negative-control
+  evidence, not as a final SOTA-positive FORMTRIG terminal-advantage target.
 
 ## Preserved Evidence
 

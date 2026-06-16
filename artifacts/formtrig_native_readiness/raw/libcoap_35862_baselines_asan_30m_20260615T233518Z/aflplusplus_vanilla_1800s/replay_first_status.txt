@@ -1,0 +1,4 @@
+baseline=aflplusplus_vanilla
+crash=/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/aflplusplus_vanilla_1800s/fuzzer_out/default/crashes/id:000000,sig:00,src:000000,time:200,execs:22,op:havoc,rep:1
+exit_code=86
+stderr=/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/aflplusplus_vanilla_1800s/replay_first_stderr.txt

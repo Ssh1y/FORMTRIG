@@ -1,0 +1,4 @@
+baseline=redqueen_operand
+crash=/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/redqueen_operand_1800s/fuzzer_out/default/crashes/id:000000,sig:00,src:000000,time:226,execs:25,op:colorization,pos:0
+exit_code=86
+stderr=/tmp/formtrig_libcoap_35862_baselines_asan_30m_20260615T233518Z/runs/redqueen_operand_1800s/replay_first_stderr.txt
