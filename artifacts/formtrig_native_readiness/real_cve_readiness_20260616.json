@@ -18,13 +18,16 @@
       "blockers": "",
       "build_ready": true,
       "category": "binary-state-null",
-      "comparison_count": 4,
+      "comparison_count": 5,
       "discovery_lane": "real_cve_replacement",
       "discovery_rank": 1,
+      "evidence": {
+        "speedup_package": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json"
+      },
       "existing_disposition": "mechanism_only_needs_terminal_oracle",
       "harness_source_ready": true,
       "native_dt_values": "1",
-      "next_action": "inspect latest short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance",
+      "next_action": "repeat and lengthen matched FORMTRIG/AFL++ vanilla/CmpLog/Redqueen-path runs for the b4 path-hierarchy speedup package",
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2936.json",
         "binding_specs": [
@@ -57,7 +60,7 @@
       "priority": 12,
       "project": "libarchive",
       "rank": 1,
-      "readiness": "short_gate_triaged",
+      "readiness": "speedup_under_replicated",
       "rnt_ready": true,
       "seed_count": 1,
       "source_locations": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",

@@ -378,6 +378,35 @@ missing. The next blocker is no longer scalar signal collapse; it is endpoint
 conversion, likely requiring structure-aware typed mutation over RNT entry
 count/path hierarchy or a closer producer for null-parent creation.
 
+### LIBARCHIVE_2936: b4 path-hierarchy typed hook 60s vs matched AFL++ baselines
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616
+```
+
+Verdict:
+
+```text
+speedup_but_under_replicated
+```
+
+Reason: this package uses the same 60-second `-t 5000+` terminal oracle for
+FORMTRIG and faithful AFL++-family baselines. FORMTRIG saves 4 terminal
+crashes, with first `_T` at `1.196s / exec 32`. AFL++ vanilla also triggers,
+but first at `22.883s / exec 34379`; AFL++ CmpLog first triggers at
+`34.169s / exec 51119`; the local AFL++ Redqueen/operand path has 0 crashes in
+60s. The observed gap is therefore `19.13x` by wall-clock and `1074.34x` by
+executions versus the fastest successful baseline.
+
+Benefit readout: this is a speedup/attribution package, not a
+baseline-impossibility package. The endpoint conversion is attributed to the b4
+non-constant `D_F_spec_lifted` signal, accepted non-trigger progress, and the
+BindingSpec-selected path-hierarchy typed mutation hook. It remains
+under-replicated and must be followed by repeated/longer matched runs before a
+final performance claim.
+
 ## Current Acceptance Implication
 
 The comparison packages make the current evidence state explicit:
@@ -390,14 +419,12 @@ The comparison packages make the current evidence state explicit:
 - LIBCOAP demonstrates real-CVE pre-trigger guidance and terminal-oracle
   plumbing, but it does not prove a SOTA advantage because the ASAN baselines
   also trigger.
-- LIBARCHIVE_2936 is a valid real-CVE binary-state-null target with a validated
-  native BindingSpec and matched 600-second vanilla/CmpLog screens. The 10m
-  b4 package still proves no endpoint/TTE benefit, but it does prove a
-  FORMTRIG-side pre-trigger guidance benefit over the old constant-signal
-  native FORMTRIG run: saved non-trigger progress is `0 -> 10` and scalar
-  `D_F_spec_lifted` is no longer constant. The remaining blocker is endpoint
-  conversion: `_T=0` in the 600-second b4 screen, with no TTE advantage claim
-  yet.
+- LIBARCHIVE_2936 is now the leading real-CVE speedup/attribution candidate.
+  The path-hierarchy hook package converts b4 pre-trigger guidance into
+  terminal crashes and shows a matched 60s first-`_T` speedup over AFL++
+  vanilla/CmpLog. Because vanilla and CmpLog also trigger, this is not a hard
+  "SOTA cannot solve it" case; it needs repetitions and longer matched runs to
+  determine whether the speedup is stable.
 - No final "FORMTRIG beats SOTA" claim should be made from these packages
   alone.
 
@@ -411,7 +438,7 @@ python3 tools/triage_formtrig_targets.py \
   --manual-target 'LIBXML2_1107|demote_harness_artifact|harness exposes terminal trigger as a direct input knob; not admissible as core R2T evidence|do not use as core evidence; keep only build, BindingSpec, and crash-accounting sanity checks|artifacts/formtrig_native_readiness/raw/libxml2_1107_harness_admissibility_20260615.json' \
   --out-json artifacts/formtrig_native_readiness/hard_target_triage_20260616.json \
   --out-csv artifacts/formtrig_native_readiness/hard_target_triage_20260616.csv \
-  --out-packages-csv artifacts/formtrig_native_readiness/hard_target_package_triage_20260616.csv \
+  --out-packages-csv artifacts/formtrig_native_readiness/hard_target_triage_packages_20260616.csv \
   --out-md artifacts/formtrig_native_readiness/hard_target_triage_20260616.md
 ```
 
@@ -420,19 +447,17 @@ Outputs:
 ```text
 artifacts/formtrig_native_readiness/hard_target_triage_20260616.json
 artifacts/formtrig_native_readiness/hard_target_triage_20260616.csv
-artifacts/formtrig_native_readiness/hard_target_package_triage_20260616.csv
+artifacts/formtrig_native_readiness/hard_target_triage_packages_20260616.csv
 artifacts/formtrig_native_readiness/hard_target_triage_20260616.md
 ```
 
 Current result: `LIBARCHIVE_2936` is
-`mechanism_only_needs_terminal_oracle` with latest best package
-`LIBARCHIVE_2936_b4_formtrig_10m_vs_aflpp_10m_20260616`; `PNG006` and
+`candidate_complete_baselines_and_reps` with best package
+`LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616`; `PNG006` and
 `LIBCOAP_CVE_2023_35862` are `demote_to_control_or_negative`; `LIBXML2_1107`
-is `demote_harness_artifact`. The current package set therefore contains no
-main promoted hard-target candidate. The next experiment step is to improve b4
-endpoint conversion, especially with structure-aware typed mutation for RNT
-entry count and path hierarchy, while adding Redqueen/operand-aware baseline
-coverage before any final SOTA-family claim.
+is `demote_harness_artifact`. The next experiment step for LIBARCHIVE is not
+more signal repair; it is repeated and longer matched runs to validate the
+observed first-`_T` speedup and quantify variance.
 
 ## Hard-Target Discovery
 
@@ -478,8 +503,9 @@ python3 tools/audit_real_cve_readiness.py \
   --out-md artifacts/formtrig_native_readiness/real_cve_readiness_20260616.md
 ```
 
-Current readiness result: `LIBARCHIVE_2936` is `short_gate_triaged` with one
-comparison package and a validated BindingSpec; its blocker is constant lifted
-guidance, not missing assets. `GPAC_3403` has the core opportunity evidence
+Current readiness result: `LIBARCHIVE_2936` is `speedup_but_under_replicated`
+with matched AFL++ vanilla/CmpLog/Redqueen-path evidence and a validated
+BindingSpec; its blocker is replication/long-run confirmation, not missing
+assets or constant lifted guidance. `GPAC_3403` has the core opportunity evidence
 (`R=1,T=0`, native `D_T=1`, and terminal validation) but still needs an
 executable BindingSpec candidate.

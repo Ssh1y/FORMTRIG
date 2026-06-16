@@ -24,6 +24,8 @@ CSV_FIELDS = [
     "best_verdict",
     "baseline_triggers",
     "fastest_baseline_trigger_time_s",
+    "best_formtrig_trigger_time_s",
+    "tte_speedup_over_fastest_baseline",
     "formtrig_terminal",
     "strict_pretrigger_guidance",
     "observed_benefits",
@@ -41,6 +43,8 @@ PACKAGE_FIELDS = [
     "matched_baselines",
     "successful_baselines",
     "fastest_baseline_trigger_time_s",
+    "best_formtrig_trigger_time_s",
+    "tte_speedup_over_fastest_baseline",
     "formtrig_terminal",
     "strict_pretrigger_guidance",
     "missing_required_baselines",
@@ -136,6 +140,14 @@ def benefit_readout(payload: dict[str, Any]) -> dict[str, list[str] | str]:
     strict = "formtrig_strict_pretrigger_guidance_present" in reasons
     baseline_groups = analysis.get("baseline_groups") or []
     baseline_triggers = any(float(group.get("success_rate") or 0.0) > 0.0 for group in baseline_groups)
+    best_formtrig_tte = numeric(analysis.get("best_formtrig_trigger_time_s"))
+    best_baseline_tte = numeric(analysis.get("fastest_baseline_trigger_time_s"))
+    speedup = numeric(analysis.get("tte_speedup_over_fastest_baseline"))
+    formtrig_faster = (
+        best_formtrig_tte is not None
+        and best_baseline_tte is not None
+        and best_formtrig_tte < best_baseline_tte
+    )
 
     observed: list[str] = []
     blocked: list[str] = []
@@ -147,7 +159,14 @@ def benefit_readout(payload: dict[str, Any]) -> dict[str, list[str] | str]:
         design.append("formtrig_terminal_oracle_success")
     if terminal and baseline_groups and not baseline_triggers:
         observed.append("FORMTRIG reaches terminal success where matched baselines do not trigger in this budget")
-    if baseline_triggers:
+    if terminal and baseline_triggers and formtrig_faster:
+        if speedup is not None:
+            observed.append(
+                f"FORMTRIG first `_T` is {speedup:.2f}x faster than the fastest matched successful baseline"
+            )
+        else:
+            observed.append("FORMTRIG has a lower first `_T` than matched successful baselines")
+    if baseline_triggers and not formtrig_faster:
         blocked.append("matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage")
     if "low_replication" in reasons:
         blocked.append("replication is too low for a final performance claim")
@@ -156,7 +175,9 @@ def benefit_readout(payload: dict[str, Any]) -> dict[str, list[str] | str]:
     if strict and not terminal:
         blocked.append("pre-trigger guidance is not paired with same-oracle FORMTRIG terminal success")
 
-    if baseline_triggers:
+    if baseline_triggers and formtrig_faster:
+        summary = "current package supports a matched-budget speedup benefit, subject to replication"
+    elif baseline_triggers:
         summary = "mechanism benefit is present, but performance advantage is not established on this target"
     elif terminal and observed:
         summary = "current package supports a matched-budget terminal-success benefit, subject to blockers"
@@ -205,8 +226,14 @@ def package_row(path: Path) -> dict[str, Any]:
     benefit = benefit_readout(payload)
     reasons = set(analysis.get("reasons") or [])
     verdict = str(analysis.get("verdict") or payload.get("verdict") or "")
+    speedup_verdict = verdict in {
+        "positive_speedup_matched_comparison",
+        "speedup_but_under_replicated",
+    } or "formtrig_faster_than_successful_baselines" in reasons
 
-    if successful:
+    if speedup_verdict:
+        status = "promote_or_complete_reps"
+    elif successful:
         status = "control_or_negative"
     elif verdict in {"positive_matched_comparison", "positive_but_under_replicated"}:
         status = "promote_or_complete_reps"
@@ -235,6 +262,10 @@ def package_row(path: Path) -> dict[str, Any]:
         "matched_baselines": int_value(analysis.get("matched_baseline_count")),
         "successful_baselines": successful,
         "fastest_baseline_trigger_time_s": min(trigger_times) if trigger_times else None,
+        "best_formtrig_trigger_time_s": numeric(analysis.get("best_formtrig_trigger_time_s")),
+        "tte_speedup_over_fastest_baseline": numeric(
+            analysis.get("tte_speedup_over_fastest_baseline")
+        ),
         "formtrig_terminal": formtrig_terminal,
         "strict_pretrigger_guidance": strict,
         "missing_required_baselines": list(analysis.get("missing_required_baselines") or []),
@@ -278,6 +309,13 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
     rows: list[dict[str, Any]] = []
     for target_id, items in sorted(grouped.items()):
         has_baseline_trigger = any(row.get("successful_baselines") for row in items)
+        has_speedup_candidate = any(
+            row.get("verdict")
+            in {"positive_speedup_matched_comparison", "speedup_but_under_replicated"}
+            or numeric(row.get("tte_speedup_over_fastest_baseline")) is not None
+            and float(row.get("tte_speedup_over_fastest_baseline") or 0.0) > 1.0
+            for row in items
+        )
         has_terminal_candidate = any(
             row.get("formtrig_terminal")
             and row.get("strict_pretrigger_guidance")
@@ -300,7 +338,11 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
         has_signal_refinement = any(row.get("package_status") == "needs_signal_refinement" for row in items)
         has_incomparable = any(row.get("package_status") == "incomparable_needs_matched_budget" for row in items)
 
-        if has_baseline_trigger:
+        if has_speedup_candidate:
+            disposition = "candidate_complete_baselines_and_reps"
+            priority = 20
+            next_action = "complete repetitions and longer matched-budget runs to validate the observed FORMTRIG TTE speedup"
+        elif has_baseline_trigger:
             disposition = "demote_to_control_or_negative"
             priority = 90
             next_action = "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets"
@@ -327,8 +369,24 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
 
         best = sorted(items, key=package_rank)[0]
         sources = unique([str(row.get("source_path")) for row in items])
-        observed = unique([benefit for row in items for benefit in row.get("observed_benefits", [])])
-        blocked = unique([claim for row in items for claim in row.get("blocked_claims", [])])
+        observed = unique(
+            list(best.get("observed_benefits") or [])
+            + [
+                benefit
+                for row in items
+                if row is not best
+                for benefit in row.get("observed_benefits", [])
+            ]
+        )
+        blocked = unique(
+            list(best.get("blocked_claims") or [])
+            + [
+                claim
+                for row in items
+                if row is not best
+                for claim in row.get("blocked_claims", [])
+            ]
+        )
         successful = unique([baseline for row in items for baseline in row.get("successful_baselines", [])])
         has_any_terminal = any(row.get("formtrig_terminal") for row in items)
         has_any_strict = any(row.get("strict_pretrigger_guidance") for row in items)
@@ -341,6 +399,20 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             blocked = [
                 claim for claim in blocked
                 if claim != "no FORMTRIG terminal success is established"
+            ]
+        if has_speedup_candidate:
+            stale_fragments = (
+                "no endpoint/TTE benefit is established",
+                "no arm reaches _T",
+                "Redqueen/operand-aware baseline is still missing",
+                "no time-to-_T or crash improvement is established",
+                "replication is one run per arm and Redqueen/operand baseline is still missing",
+                "no terminal _T event was observed",
+                "no faithful AFL++/CmpLog/Redqueen performance comparison is made",
+            )
+            blocked = [
+                claim for claim in blocked
+                if not any(fragment in claim for fragment in stale_fragments)
             ]
         if has_scalar_guidance:
             stale_fragments = (
@@ -368,7 +440,7 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 claim for claim in blocked
                 if not any(fragment in claim for fragment in stale_fragments)
             ]
-        if has_baseline_trigger:
+        if has_baseline_trigger and not has_speedup_candidate:
             blocked = unique(
                 ["matched faithful baselines trigger in the current package set; not a hard SOTA-gap target"]
                 + blocked
@@ -388,6 +460,10 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 "best_verdict": best.get("verdict"),
                 "baseline_triggers": ",".join(successful),
                 "fastest_baseline_trigger_time_s": min(trigger_times) if trigger_times else "",
+                "best_formtrig_trigger_time_s": best.get("best_formtrig_trigger_time_s", ""),
+                "tte_speedup_over_fastest_baseline": best.get(
+                    "tte_speedup_over_fastest_baseline", ""
+                ),
                 "formtrig_terminal": has_any_terminal,
                 "strict_pretrigger_guidance": has_any_strict,
                 "observed_benefits": join_values(observed),
@@ -418,11 +494,13 @@ def verdict_rank(verdict: str) -> int:
     ranks = {
         "positive_matched_comparison": 0,
         "positive_but_under_replicated": 1,
-        "pretrigger_guidance_improved_no_endpoint_success": 2,
-        "scalar_guidance_repair_no_endpoint_success": 3,
-        "mechanism_benefit_no_endpoint_success": 4,
-        "pretrigger_guidance_only": 5,
-        "short_gate_no_terminal_constant_lift_signal": 6,
+        "positive_speedup_matched_comparison": 1,
+        "speedup_but_under_replicated": 2,
+        "pretrigger_guidance_improved_no_endpoint_success": 3,
+        "scalar_guidance_repair_no_endpoint_success": 4,
+        "mechanism_benefit_no_endpoint_success": 5,
+        "pretrigger_guidance_only": 6,
+        "short_gate_no_terminal_constant_lift_signal": 7,
     }
     return ranks.get(verdict, 50)
 
@@ -471,25 +549,28 @@ def write_markdown(path: Path, targets: list[dict[str, Any]], packages: list[dic
         "This report is benefit-first. A target is promoted only when current",
         "evidence supports a terminal/TTE benefit against matched faithful",
         "baselines, or when it has mechanism evidence and a concrete terminal",
-        "oracle gap to close. Targets where matched baselines also trigger are",
-        "kept as controls or negative evidence, not main SOTA-gap cases.",
+        "oracle gap to close. Targets where matched baselines also trigger but",
+        "FORMTRIG is not faster are kept as controls or negative evidence, not",
+        "main SOTA-gap cases.",
         "",
         f"Promoted hard-target candidates: `{len(promoted)}`.",
         "",
         "## Target Queue",
         "",
-        "| target | disposition | priority | baseline triggers | fastest baseline `_T` | next action |",
-        "| --- | --- | ---: | --- | ---: | --- |",
+        "| target | disposition | priority | baseline triggers | FORMTRIG `_T` | fastest baseline `_T` | speedup | next action |",
+        "| --- | --- | ---: | --- | ---: | ---: | ---: | --- |",
     ]
     for row in targets:
         lines.append(
             "| {target_id} | `{disposition}` | {priority} | {baseline_triggers} | "
-            "{fastest} | {next_action} |".format(
+            "{formtrig_t} | {fastest} | {speedup} | {next_action} |".format(
                 target_id=row.get("target_id", ""),
                 disposition=row.get("disposition", ""),
                 priority=row.get("priority", ""),
                 baseline_triggers=row.get("baseline_triggers", ""),
+                formtrig_t=row.get("best_formtrig_trigger_time_s", ""),
                 fastest=row.get("fastest_baseline_trigger_time_s", ""),
+                speedup=row.get("tte_speedup_over_fastest_baseline", ""),
                 next_action=row.get("next_action", ""),
             )
         )

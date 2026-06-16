@@ -27,6 +27,7 @@ TSV_FIELDS = [
     "terminal_count",
     "trigger_time_s",
     "trigger_time_kind",
+    "trigger_execs",
     "execs_done",
     "execs_per_sec",
     "reached",
@@ -152,6 +153,8 @@ def load_formtrig_rows(items: list[str], target_id: str) -> list[dict[str, Any]]
                     "terminal_count": int_value(raw.get("terminal_triggered")),
                     "trigger_time_s": numeric(raw.get("first_terminal_time_s")),
                     "trigger_time_kind": str_value(raw.get("first_terminal_time_kind")),
+                    "trigger_execs": numeric(raw.get("first_terminal_execs"))
+                    or numeric(raw.get("first_trigger_execs")),
                     "execs_done": int_value(raw.get("execs_done")),
                     "execs_per_sec": str_value(raw.get("execs_per_sec")),
                     "reached": int_value(raw.get("reached")),
@@ -210,6 +213,7 @@ def load_baseline_rows(items: list[str], target_id: str) -> list[dict[str, Any]]
                 "terminal_count": baseline_terminal_count(raw),
                 "trigger_time_s": raw.get("trigger_time_s"),
                 "trigger_time_kind": baseline_trigger_kind(raw),
+                "trigger_execs": raw.get("trigger_execs"),
                 "execs_done": int_value(raw.get("execs_done")),
                 "execs_per_sec": str_value(raw.get("execs_per_sec")),
                 "reached": int_value(raw.get("magma_reached")),
@@ -251,6 +255,11 @@ def summarize_baseline_groups(rows: list[dict[str, Any]]) -> list[dict[str, Any]
             for row in successes
             if (value := numeric(row.get("trigger_time_s"))) is not None
         ]
+        trigger_execs = [
+            float(value)
+            for row in successes
+            if (value := numeric(row.get("trigger_execs"))) is not None
+        ]
         terminal_counts = [
             float(value)
             for row in group
@@ -264,10 +273,20 @@ def summarize_baseline_groups(rows: list[dict[str, Any]]) -> list[dict[str, Any]
                 "successes": len(successes),
                 "success_rate": len(successes) / len(group) if group else 0.0,
                 "median_trigger_time_s": median(trigger_times),
+                "median_trigger_execs": median(trigger_execs),
                 "median_terminal_count": median(terminal_counts),
             }
         )
     return summaries
+
+
+def successful_baseline_ttes(groups: list[dict[str, Any]]) -> list[float]:
+    return [
+        float(value)
+        for group in groups
+        if float(group.get("success_rate") or 0.0) > 0.0
+        if (value := numeric(group.get("median_trigger_time_s"))) is not None
+    ]
 
 
 def classify_evidence(
@@ -311,6 +330,18 @@ def classify_evidence(
         reasons.append("formtrig_terminal_oracle_missing")
 
     groups = summarize_baseline_groups(matched_baselines)
+    formtrig_successes = [
+        row for row in formtrig_rows if int_value(row.get("terminal_count")) > 0
+    ]
+    formtrig_ttes = numeric_values(formtrig_successes, "trigger_time_s")
+    best_formtrig_tte = min(formtrig_ttes) if formtrig_ttes else None
+    baseline_ttes = successful_baseline_ttes(groups)
+    best_baseline_tte = min(baseline_ttes) if baseline_ttes else None
+    tte_speedup = (
+        best_baseline_tte / best_formtrig_tte
+        if best_formtrig_tte and best_baseline_tte and best_formtrig_tte > 0
+        else None
+    )
     low_rep_groups = [group for group in groups if int_value(group.get("reps")) < min_reps]
     if low_rep_groups:
         reasons.append("low_replication")
@@ -318,11 +349,20 @@ def classify_evidence(
     successful_baselines = [group for group in groups if float(group.get("success_rate") or 0.0) > 0.0]
     if successful_baselines:
         reasons.append("matched_baseline_also_triggers")
+        if best_formtrig_tte is not None and best_baseline_tte is not None:
+            if best_formtrig_tte < best_baseline_tte:
+                reasons.append("formtrig_faster_than_successful_baselines")
+            else:
+                reasons.append("matched_successful_baseline_no_later_than_formtrig")
 
     if not matched_baselines:
         verdict = "not_comparable_missing_matched_budget"
     elif missing_required:
         verdict = "incomplete_required_baseline_set"
+    elif successful_baselines and "formtrig_faster_than_successful_baselines" in reasons and not low_rep_groups:
+        verdict = "positive_speedup_matched_comparison"
+    elif successful_baselines and "formtrig_faster_than_successful_baselines" in reasons:
+        verdict = "speedup_but_under_replicated"
     elif successful_baselines:
         verdict = "baseline_also_triggers_not_sota_advantage"
     elif strict_formtrig and terminal_formtrig and not low_rep_groups:
@@ -343,7 +383,10 @@ def classify_evidence(
     if missing_required:
         next_steps.append("run missing required baselines: " + ",".join(missing_required))
     if successful_baselines:
-        next_steps.append("do not claim SOTA advantage on this target without harder targets or stronger statistics")
+        if "formtrig_faster_than_successful_baselines" in reasons:
+            next_steps.append("treat this as a speedup claim and complete repetitions/longer runs before final performance claims")
+        else:
+            next_steps.append("do not claim SOTA advantage on this target without harder targets or stronger statistics")
     if strict_formtrig and not terminal_formtrig:
         next_steps.append("pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims")
 
@@ -353,6 +396,9 @@ def classify_evidence(
         "missing_required_baselines": missing_required,
         "next_steps": next_steps,
         "reasons": reasons,
+        "best_formtrig_trigger_time_s": best_formtrig_tte,
+        "fastest_baseline_trigger_time_s": best_baseline_tte,
+        "tte_speedup_over_fastest_baseline": tte_speedup,
         "verdict": verdict,
     }
 
@@ -417,8 +463,16 @@ def benefit_readout(
     elif successful_baseline_groups:
         if formtrig_ttes and baseline_ttes:
             if min(formtrig_ttes) < min(baseline_ttes):
+                speedup = min(baseline_ttes) / min(formtrig_ttes) if min(formtrig_ttes) > 0 else None
                 primary_benefits.append(
                     "FORMTRIG has a lower observed first-`_T` upper bound than matched successful baselines"
+                )
+                if speedup is not None:
+                    primary_benefits.append(
+                        f"FORMTRIG observed first-`_T` is {speedup:.2f}x faster than the fastest matched successful baseline"
+                    )
+                endpoint_observations.append(
+                    f"fastest matched successful baseline first `_T` upper bound is {min(baseline_ttes):g}s"
                 )
             else:
                 blocked_claims.append(
@@ -441,7 +495,10 @@ def benefit_readout(
     observed_benefits = primary_benefits + endpoint_observations + mechanism_benefits
 
     if primary_benefits:
-        summary = "current package supports a matched-budget primary benefit, subject to replication"
+        if successful_baseline_groups:
+            summary = "current package supports a matched-budget speedup benefit, subject to replication"
+        else:
+            summary = "current package supports a matched-budget primary benefit, subject to replication"
     elif not observed_benefits:
         summary = "no benefit claim is supported by the current package"
     elif any("no later than FORMTRIG" in claim or "also trigger" in claim for claim in blocked_claims):
@@ -563,19 +620,21 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
             "",
             "## Matched Baseline Groups",
             "",
-            "| baseline | budget | reps | success rate | median trigger time | median terminal count |",
-            "| --- | ---: | ---: | ---: | ---: | ---: |",
+            "| baseline | budget | reps | success rate | median trigger time | median trigger execs | median terminal count |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
         ]
     )
     for group in payload["analysis"]["baseline_groups"]:
         lines.append(
             "| {baseline} | {budget} | {reps} | {success_rate:.3f} | {median_trigger_time_s} | "
+            "{median_trigger_execs} | "
             "{median_terminal_count} |".format(
                 baseline=cell(group.get("baseline")),
                 budget=cell(group.get("budget")),
                 reps=int_value(group.get("reps")),
                 success_rate=float(group.get("success_rate") or 0.0),
                 median_trigger_time_s=cell(group.get("median_trigger_time_s")),
+                median_trigger_execs=cell(group.get("median_trigger_execs")),
                 median_terminal_count=cell(group.get("median_terminal_count")),
             )
         )

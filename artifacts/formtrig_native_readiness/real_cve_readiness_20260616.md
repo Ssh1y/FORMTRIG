@@ -7,7 +7,7 @@ or terminal validation.
 
 | rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | short-gate packages | next action |
 | ---: | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
-| 1 | LIBARCHIVE_2936 | binary-state-null | `short_gate_triaged` | yes | yes | yes | yes | yes | 4 | inspect latest short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance |
+| 1 | LIBARCHIVE_2936 | binary-state-null | `speedup_under_replicated` | yes | yes | yes | yes | yes | 5 | repeat and lengthen matched FORMTRIG/AFL++ vanilla/CmpLog/Redqueen-path runs for the b4 path-hierarchy speedup package |
 | 2 | GPAC_3403 | compound-sequence-lifecycle | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 3 | LIBARCHIVE_2935 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 4 | LIBARCHIVE_2937 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
@@ -25,8 +25,10 @@ or terminal validation.
 - Native D_T values in RNT metadata: `1`
 - Terminal validation signal: SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45
 - Binding validation status: native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json
-- Short-gate comparison packages: 4
-- Blockers: none
+- Short-gate comparison packages: 5
+- Current speedup package: `artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json`
+- Current benefit: first terminal SIGSEGV at `1.196s / exec 32`, versus fastest matched successful baseline at `22.883s / exec 34379`
+- Blockers: under-replicated speedup evidence; needs repeated and longer matched runs
 - Program: `benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBARCHIVE_2936/manifest.json`
 

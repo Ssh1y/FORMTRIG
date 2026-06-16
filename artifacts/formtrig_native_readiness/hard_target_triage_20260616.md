@@ -3,25 +3,27 @@
 This report is benefit-first. A target is promoted only when current
 evidence supports a terminal/TTE benefit against matched faithful
 baselines, or when it has mechanism evidence and a concrete terminal
-oracle gap to close. Targets where matched baselines also trigger are
-kept as controls or negative evidence, not main SOTA-gap cases.
+oracle gap to close. Targets where matched baselines also trigger but
+FORMTRIG is not faster are kept as controls or negative evidence, not
+main SOTA-gap cases.
 
-Promoted hard-target candidates: `0`.
+Promoted hard-target candidates: `1`.
 
 ## Target Queue
 
-| target | disposition | priority | baseline triggers | fastest baseline `_T` | next action |
-| --- | --- | ---: | --- | ---: | --- |
-| LIBARCHIVE_2936 | `mechanism_only_needs_terminal_oracle` | 40 |  |  | pair pre-trigger guidance with same-oracle terminal run before performance claims |
-| LIBCOAP_CVE_2023_35862 | `demote_to_control_or_negative` | 90 | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | 1060.0 | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
-| PNG006 | `demote_to_control_or_negative` | 90 | aflplusplus_cmplog | 120.0 | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
-| LIBXML2_1107 | `demote_harness_artifact` | 99 |  |  | do not use as core evidence; keep only build, BindingSpec, and crash-accounting sanity checks |
+| target | disposition | priority | baseline triggers | FORMTRIG `_T` | fastest baseline `_T` | speedup | next action |
+| --- | --- | ---: | --- | ---: | ---: | ---: | --- |
+| LIBARCHIVE_2936 | `candidate_complete_baselines_and_reps` | 20 | aflplusplus_vanilla,aflplusplus_cmplog | 1.196 | 22.883 | 19.13294314381271 | complete repetitions and longer matched-budget runs to validate the observed FORMTRIG TTE speedup |
+| LIBCOAP_CVE_2023_35862 | `demote_to_control_or_negative` | 90 | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | None | 1060.0 | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
+| PNG006 | `demote_to_control_or_negative` | 90 | aflplusplus_cmplog | None | 120.0 | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
+| LIBXML2_1107 | `demote_harness_artifact` | 99 |  |  |  |  | do not use as core evidence; keep only build, BindingSpec, and crash-accounting sanity checks |
 
 ## Package Evidence
 
 | comparison | target | status | verdict | successful baselines | benefits | blocked claims |
 | --- | --- | --- | --- | --- | --- | --- |
 | LIBARCHIVE_2936_b4_formtrig_10m_vs_aflpp_10m_20260616 | LIBARCHIVE_2936 | `mechanism_only_needs_terminal_oracle` | `pretrigger_guidance_improved_no_endpoint_success` |  | FORMTRIG saved non-trigger progress improves from 0 to 10 events against the old native FORMTRIG run; D_F_spec_lifted changes from constant [2] to variable [1,0]; binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed | no endpoint/TTE benefit is established; no arm reaches _T in 600 seconds; Redqueen/operand-aware baseline is still missing; single repetition is not final efficacy evidence |
+| LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616 | LIBARCHIVE_2936 | `promote_or_complete_reps` | `speedup_but_under_replicated` | aflplusplus_vanilla,aflplusplus_cmplog | FORMTRIG has a lower observed first-`_T` upper bound than matched successful baselines; FORMTRIG observed first-`_T` is 19.13x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline; FORMTRIG b4 path-hierarchy hook saves 4 terminal crashes in 60s; AFL++ Redqueen/operand does not trigger in the same 60s, -t 5000+ run; D_F_spec_lifted is non-constant [0,1] and the endpoint is attributable to BindingSpec typed mutation | single repetition is not final efficacy evidence; AFL++ vanilla and CmpLog also trigger in the matched 60s run, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case; the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped; 60s evidence is not a substitute for the required long-run Magma and real-CVE evidence loop |
 | LIBARCHIVE_2936_binding_signal_repair_60s_20260616 | LIBARCHIVE_2936 | `mechanism_only_needs_terminal_oracle` | `mechanism_benefit_no_endpoint_success` |  | same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events; binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed; pretrigger_lift_guidance_ready improves from false to true | no endpoint/TTE benefit is established; scalar D_F_spec_lifted is still constant at 2, so the next repair should expose a lower-is-better scalar or root-proximal value; single 60s repetition is not final efficacy evidence; no faithful AFL++/CmpLog/Redqueen performance comparison is made in this mechanism package |
 | LIBARCHIVE_2936_formtrig_10m_vs_aflpp_10m_20260616 | LIBARCHIVE_2936 | `needs_signal_refinement` | `short_gate_no_terminal_constant_lift_signal` |  | diagnostic triage benefit: exact native binding and typed mutation executed without endpoint success; diagnostic triage benefit: constant lifted D_F/D_F_spec_lifted identified as the current R2T blocker | no FORMTRIG terminal success is established; no time-to-_T or crash improvement is established; no accepted non-trigger frontier progress is established; D_F and D_F_spec_lifted are constant, so the present guidance is not an effective R2T gradient; replication is one run per arm and Redqueen/operand baseline is still missing |
 | LIBARCHIVE_2936_root_distance_repair_60s_20260616 | LIBARCHIVE_2936 | `mechanism_only_needs_terminal_oracle` | `scalar_guidance_repair_no_endpoint_success` |  | b4 converts b3's producer/use-only role variation into root-observe scalar/spec lift variation visible to FORMTRIG diagnostics. | no endpoint/TTE benefit is established; no terminal _T event was observed in either 60s arm; this is a single short readiness screen, not final efficacy evidence |

@@ -1,8 +1,9 @@
 {
-  "generated_at_utc": "2026-06-16T11:32:35+00:00",
-  "package_count": 9,
+  "generated_at_utc": "2026-06-16T14:01:26+00:00",
+  "package_count": 10,
   "packages": [
     {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "no endpoint/TTE benefit is established",
         "no arm reaches _T in 600 seconds",
@@ -32,9 +33,47 @@
       "strict_pretrigger_guidance": true,
       "successful_baselines": [],
       "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "pretrigger_guidance_improved_no_endpoint_success"
     },
     {
+      "best_formtrig_trigger_time_s": 1.196,
+      "blocked_claims": [
+        "single repetition is not final efficacy evidence",
+        "AFL++ vanilla and CmpLog also trigger in the matched 60s run, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case",
+        "the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped",
+        "60s evidence is not a substitute for the required long-run Magma and real-CVE evidence loop"
+      ],
+      "comparison_id": "LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616",
+      "fastest_baseline_trigger_time_s": 22.883,
+      "formtrig_terminal": true,
+      "matched_baselines": 3,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "repeat FORMTRIG hook and all matched baselines for enough repetitions to estimate success-rate and TTE distributions",
+        "extend the matched run length beyond 60s to test whether the early speedup persists under long-run budgets",
+        "report LIBARCHIVE_2936 as speedup/attribution evidence, not as a baseline-impossibility case"
+      ],
+      "observed_benefits": [
+        "FORMTRIG has a lower observed first-`_T` upper bound than matched successful baselines",
+        "FORMTRIG observed first-`_T` is 19.13x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline",
+        "FORMTRIG b4 path-hierarchy hook saves 4 terminal crashes in 60s",
+        "AFL++ Redqueen/operand does not trigger in the same 60s, -t 5000+ run",
+        "D_F_spec_lifted is non-constant [0,1] and the endpoint is attributable to BindingSpec typed mutation"
+      ],
+      "package_status": "promote_or_complete_reps",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_vanilla",
+        "aflplusplus_cmplog"
+      ],
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": 19.13294314381271,
+      "verdict": "speedup_but_under_replicated"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "no endpoint/TTE benefit is established",
         "scalar D_F_spec_lifted is still constant at 2, so the next repair should expose a lower-is-better scalar or root-proximal value",
@@ -65,9 +104,11 @@
       "strict_pretrigger_guidance": true,
       "successful_baselines": [],
       "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "mechanism_benefit_no_endpoint_success"
     },
     {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "no FORMTRIG terminal success is established",
         "no time-to-_T or crash improvement is established",
@@ -98,9 +139,11 @@
       "strict_pretrigger_guidance": false,
       "successful_baselines": [],
       "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "short_gate_no_terminal_constant_lift_signal"
     },
     {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "no endpoint/TTE benefit is established",
         "no terminal _T event was observed in either 60s arm",
@@ -124,9 +167,11 @@
       "strict_pretrigger_guidance": true,
       "successful_baselines": [],
       "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "scalar_guidance_repair_no_endpoint_success"
     },
     {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "no strict pre-trigger guidance benefit is established",
         "FORMTRIG first `_T`/TTE is not recorded for this run",
@@ -154,9 +199,11 @@
         "redqueen_operand"
       ],
       "target_id": "LIBCOAP_CVE_2023_35862",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "baseline_also_triggers_not_sota_advantage"
     },
     {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "no FORMTRIG terminal success is established",
         "FORMTRIG first `_T`/TTE is not recorded for this run",
@@ -179,9 +226,11 @@
       "strict_pretrigger_guidance": true,
       "successful_baselines": [],
       "target_id": "LIBCOAP_CVE_2023_35862",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "pretrigger_guidance_only"
     },
     {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "FORMTRIG first `_T`/TTE is not recorded for this run",
         "no matched-budget baseline benefit comparison is available"
@@ -203,9 +252,11 @@
       "strict_pretrigger_guidance": true,
       "successful_baselines": [],
       "target_id": "PNG006",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "not_comparable_missing_matched_budget"
     },
     {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "FORMTRIG first `_T`/TTE is not recorded for this run",
         "required baseline families are still missing",
@@ -233,9 +284,11 @@
       "strict_pretrigger_guidance": true,
       "successful_baselines": [],
       "target_id": "PNG006",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "incomplete_required_baseline_set"
     },
     {
+      "best_formtrig_trigger_time_s": null,
       "blocked_claims": [
         "FORMTRIG first `_T`/TTE is not recorded for this run",
         "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
@@ -265,55 +318,62 @@
         "aflplusplus_cmplog"
       ],
       "target_id": "PNG006",
+      "tte_speedup_over_fastest_baseline": null,
       "verdict": "incomplete_required_baseline_set"
     }
   ],
   "target_count": 4,
   "targets": [
     {
-      "baseline_triggers": "",
-      "best_package": "LIBARCHIVE_2936_b4_formtrig_10m_vs_aflpp_10m_20260616",
-      "best_verdict": "pretrigger_guidance_improved_no_endpoint_success",
-      "blocked_claims": "no endpoint/TTE benefit is established; no arm reaches _T in 600 seconds; Redqueen/operand-aware baseline is still missing; single repetition is not final efficacy evidence; no FORMTRIG terminal success is established; no time-to-_T or crash improvement is established; replication is one run per arm and Redqueen/operand baseline is still missing",
-      "disposition": "mechanism_only_needs_terminal_oracle",
-      "fastest_baseline_trigger_time_s": "",
-      "formtrig_terminal": false,
-      "next_action": "pair pre-trigger guidance with same-oracle terminal run before performance claims",
-      "observed_benefits": "FORMTRIG saved non-trigger progress improves from 0 to 10 events against the old native FORMTRIG run; D_F_spec_lifted changes from constant [2] to variable [1,0]; binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed; same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events; pretrigger_lift_guidance_ready improves from false to true; diagnostic triage benefit: exact native binding and typed mutation executed without endpoint success; b4 converts b3's producer/use-only role variation into root-observe scalar/spec lift variation visible to FORMTRIG diagnostics.",
-      "priority": 40,
-      "sources": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_binding_signal_repair_60s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_root_distance_repair_60s_20260616/comparison.json",
+      "baseline_triggers": "aflplusplus_vanilla,aflplusplus_cmplog",
+      "best_formtrig_trigger_time_s": 1.196,
+      "best_package": "LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616",
+      "best_verdict": "speedup_but_under_replicated",
+      "blocked_claims": "single repetition is not final efficacy evidence; AFL++ vanilla and CmpLog also trigger in the matched 60s run, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case; the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped; 60s evidence is not a substitute for the required long-run Magma and real-CVE evidence loop",
+      "disposition": "candidate_complete_baselines_and_reps",
+      "fastest_baseline_trigger_time_s": 22.883,
+      "formtrig_terminal": true,
+      "next_action": "complete repetitions and longer matched-budget runs to validate the observed FORMTRIG TTE speedup",
+      "observed_benefits": "FORMTRIG has a lower observed first-`_T` upper bound than matched successful baselines; FORMTRIG observed first-`_T` is 19.13x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline; FORMTRIG b4 path-hierarchy hook saves 4 terminal crashes in 60s; AFL++ Redqueen/operand does not trigger in the same 60s, -t 5000+ run; D_F_spec_lifted is non-constant [0,1] and the endpoint is attributable to BindingSpec typed mutation; FORMTRIG saved non-trigger progress improves from 0 to 10 events against the old native FORMTRIG run; D_F_spec_lifted changes from constant [2] to variable [1,0]; binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed; same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events; pretrigger_lift_guidance_ready improves from false to true; diagnostic triage benefit: exact native binding and typed mutation executed without endpoint success; b4 converts b3's producer/use-only role variation into root-observe scalar/spec lift variation visible to FORMTRIG diagnostics.",
+      "priority": 20,
+      "sources": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_binding_signal_repair_60s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_root_distance_repair_60s_20260616/comparison.json",
       "strict_pretrigger_guidance": true,
-      "target_id": "LIBARCHIVE_2936"
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": 19.13294314381271
     },
     {
       "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "best_formtrig_trigger_time_s": null,
       "best_package": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
       "best_verdict": "pretrigger_guidance_only",
-      "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage; replication is too low for a final performance claim",
+      "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; replication is too low for a final performance claim; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
       "disposition": "demote_to_control_or_negative",
       "fastest_baseline_trigger_time_s": 1060.0,
       "formtrig_terminal": true,
       "next_action": "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets",
-      "observed_benefits": "FORMTRIG terminal oracle success is observed; binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+      "observed_benefits": "binary or sparse trigger feedback was lifted into accepted non-trigger search progress; FORMTRIG terminal oracle success is observed",
       "priority": 90,
       "sources": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_asan_terminal_30m_vs_asan_baselines_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libcoap_35862_pretrigger_30m_vs_non_asan_baselines_20260616/comparison.json",
       "strict_pretrigger_guidance": true,
-      "target_id": "LIBCOAP_CVE_2023_35862"
+      "target_id": "LIBCOAP_CVE_2023_35862",
+      "tte_speedup_over_fastest_baseline": null
     },
     {
       "baseline_triggers": "aflplusplus_cmplog",
+      "best_formtrig_trigger_time_s": null,
       "best_package": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
       "best_verdict": "incomplete_required_baseline_set",
-      "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; no matched-budget baseline benefit comparison is available; required baseline families are still missing; replication is too low for a final performance claim; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+      "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; required baseline families are still missing; replication is too low for a final performance claim; no matched-budget baseline benefit comparison is available; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
       "disposition": "demote_to_control_or_negative",
       "fastest_baseline_trigger_time_s": 120.0,
       "formtrig_terminal": true,
       "next_action": "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets",
-      "observed_benefits": "FORMTRIG terminal oracle success is observed; binary or sparse trigger feedback was lifted into accepted non-trigger search progress; FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+      "observed_benefits": "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget; FORMTRIG terminal oracle success is observed; binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
       "priority": 90,
       "sources": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_baseline_30m_gap_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_2h_incomplete_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616/comparison.json",
       "strict_pretrigger_guidance": true,
-      "target_id": "PNG006"
+      "target_id": "PNG006",
+      "tte_speedup_over_fastest_baseline": null
     },
     {
       "baseline_triggers": "",

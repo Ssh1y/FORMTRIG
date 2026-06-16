@@ -1,5 +1,8 @@
-arm	budget_s	execs	terminal	first_T_s	saved_non_trigger	binding_signal	D_F_spec_lifted	note
-FORMTRIG b4+path-hook 60s	60	116	4	1.196	1	pass/role_signal_progress_observed	[0,1]	first crash op=ftgtype exec=32
-FORMTRIG b4 no-hook 10m	600	305093	0		10	pass/role_signal_progress_observed	[0,1]	pre-trigger only
-AFL++ vanilla 10m	600	531892	0		n/a	n/a	n/a	no terminal
-AFL++ CmpLog 10m	600	608906	0		n/a	n/a	n/a	no terminal
+arm	budget_s	execs	terminal	first_T_s	first_T_execs	saved_non_trigger	binding_signal	D_F_spec_lifted	note
+FORMTRIG b4+path-hook 60s t5000	60	116	4	1.196	32	1	pass/role_signal_progress_observed	[0,1]	first crash op=ftgtype exec=32
+aflplusplus_vanilla 60s t5000	60	65592	13	22.883	34379	n/a	n/a	n/a	matched -t 5000+ baseline
+aflplusplus_cmplog 60s t5000	60	56512	12	34.169	51119	n/a	n/a	n/a	matched -t 5000+ baseline
+redqueen_operand 60s t5000	60	102222	0			n/a	n/a	n/a	matched -t 5000+ baseline
+FORMTRIG b4 no-hook 10m historical	600	305093	0			10	pass/role_signal_progress_observed	[0,1]	historical pre-trigger only
+AFL++ vanilla 10m historical	600	531892	0			n/a	n/a	n/a	old screen, not matched current oracle
+AFL++ CmpLog 10m historical	600	608906	0			n/a	n/a	n/a	old screen, not matched current oracle

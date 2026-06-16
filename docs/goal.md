@@ -17,7 +17,7 @@ Design second
   8. typed mutation proves the signal is actionable at input-field or event level
 ```
 
-正式结果表必须先回答“FORMTRIG 带来了什么收益”。只有当收益成立后，才展开解释“这个收益如何由 lift 机制产生”。如果同预算 faithful baseline 也能很快触发，目标应被降为 control/native-readiness 或 negative evidence，不能靠中间信号强行包装成性能优势。
+正式结果表必须先回答“FORMTRIG 带来了什么收益”。只有当收益成立后，才展开解释“这个收益如何由 lift 机制产生”。如果同预算 faithful baseline 比 FORMTRIG 更快或相近触发，目标应被降为 control/native-readiness 或 negative evidence，不能靠中间信号强行包装成性能优势；如果 baseline 也触发但 FORMTRIG 的 first `_T`/TTE/exec 明显更早，那么口径必须是 speedup benefit，而不是“baseline 做不到”。
 
 当前 LIBARCHIVE_2936 的 60s signal-repair 结果给出了这个口径的最小正例：
 
@@ -35,14 +35,14 @@ path-table-count BindingSpec:
 root-distance BindingSpec:
   _T = 0
   saved_non_trigger_progress = 3
-  D_F_spec_lifted = [1,0] instead of constant [2]
+  D_F_spec_lifted values = {0,1} instead of constant {2}
   non_trigger_candidate_lift_delta = true
   experiment_ready = true
 
 root-distance BindingSpec 10m screen:
   _T = 0
   saved_non_trigger_progress = 10
-  D_F_spec_lifted = [1,0]
+  D_F_spec_lifted values = {0,1}
   old FORMTRIG 10m saved_non_trigger_progress = 0
   AFL++ vanilla/CmpLog 10m _T = 0
 
@@ -51,12 +51,20 @@ root-distance + path-hierarchy typed hook 60s gate:
   first terminal crash = 1.196s / exec 32
   first crash op = ftgtype
   crash signal = SIGSEGV
-  D_F_spec_lifted = [1,0]
+  D_F_spec_lifted values = {0,1}
   BindingSignal = pass / role_signal_progress_observed
   hook provenance = binding_spec
+
+matched 60s baselines with the same -t 5000+ terminal oracle:
+  AFL++ vanilla: terminal crashes = 13, first = 22.883s / exec 34379
+  AFL++ CmpLog: terminal crashes = 12, first = 34.169s / exec 51119
+  AFL++ Redqueen/operand path: terminal crashes = 0
+  FORMTRIG vs fastest successful baseline:
+    19.13x faster by first _T wall-clock
+    1074.34x fewer executions to first terminal crash
 ```
 
-因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”。这仍然不是最终 replicated 性能结论：Redqueen/operand-aware baseline 还缺失，且所有 baseline 需要用相同 terminal timeout/oracle 设置重跑；但它已经可以作为 FORMTRIG 中间产物产生端点收益的正例。
+因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下出现了 first `_T` speedup。它不是“CmpLog/vanilla 做不到”的 hard-gap 目标，因为 vanilla 和 CmpLog 也能在 60s 内触发；它现在的价值是 speedup + attribution：FORMTRIG 把二值 TC 后的 path-hierarchy lifted signal 变成了更早、更少执行次数的 terminal input。这个结论仍然不是最终 replicated 性能结论，必须继续补 repetition、长测和更难的 Magma/real-CVE 目标。
 
 ---
 

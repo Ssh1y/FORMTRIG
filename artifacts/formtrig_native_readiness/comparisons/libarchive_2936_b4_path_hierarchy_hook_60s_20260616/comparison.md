@@ -2,23 +2,42 @@
 
 - target: `LIBARCHIVE_2936`
 - category: `binary-state-null`
-- verdict: `positive_but_under_replicated`
-- key benefit: b4's pre-trigger guidance now converts into terminal `SIGSEGV` via BindingSpec-selected typed mutation.
+- verdict: `speedup_but_under_replicated`
+- key benefit: same-timeout matched 60s run shows FORMTRIG reaches first terminal SIGSEGV earlier than successful AFL++ vanilla/CmpLog baselines, while Redqueen/operand does not trigger.
 
-## Result
+## Benefit First
+
+Under the shared `-V 60 -t 5000+` oracle, FORMTRIG first `_T` is `1.196s / exec 32`. The fastest matched successful baseline is AFL++ vanilla at `22.883s / exec 34379`, so the observed first-`_T` gap is `19.13x` by time and `1074.34x` by executions. AFL++ CmpLog also triggers, but later; Redqueen/operand does not trigger in this 60s run.
+
+This is a speedup and attribution package, not a baseline-impossibility package. It remains under-replicated and needs repeated/longer matched runs before final paper efficacy claims.
+
+## Matched 60s Result
+
+| arm | budget | execs | terminal/crashes | first `_T` | saved non-trigger | note |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| FORMTRIG b4 + path-hierarchy hook | 60s | 116 | 4 | 1.196s / exec 32 | 1 | first crash from `ftgtype`, `sig:11` |
+| aflplusplus_vanilla | 60s | 65592 | 13 | 22.883s / exec 34379 | n/a | matched `-t 5000+` baseline |
+| aflplusplus_cmplog | 60s | 56512 | 12 | 34.169s / exec 51119 | n/a | matched `-t 5000+` baseline |
+| redqueen_operand | 60s | 102222 | 0 | n/a | n/a | matched `-t 5000+` baseline |
+
+## Historical Context
 
 | arm | budget | execs | `_T` / terminal | first `_T` | saved non-trigger | note |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| FORMTRIG b4 + path-hierarchy hook | 60s | 116 | 4 | 1.196s / exec 32 | 1 | first crash from `ftgtype`, `sig:11` |
-| FORMTRIG b4 no hook | 600s | 305093 | 0 | n/a | 10 | pre-trigger guidance only |
-| AFL++ vanilla | 600s | 531892 | 0 | n/a | n/a | no terminal |
-| AFL++ CmpLog | 600s | 608906 | 0 | n/a | n/a | no terminal |
+| FORMTRIG b4 no hook | 600s | 305093 | 0 | n/a | 10 | pre-trigger guidance only; unmatched older screen |
+| AFL++ vanilla old screen | 600s | 531892 | 0 | n/a | n/a | old screen retained as context, not the matched result |
+| AFL++ CmpLog old screen | 600s | 608906 | 0 | n/a | n/a | old screen retained as context, not the matched result |
 
-## Benefit Readout
+## Design Attribution
 
-This is the first LIBARCHIVE_2936 package where FORMTRIG turns the b4 lifted signal into endpoint success. The hook is selected by the BindingSpec and constructs slash-delimited path hierarchy candidates from the safe RNT seed (`a/b/file.txt`, `a/c/file.txt`); it does not copy PoC bytes. The first saved crash is `sig:11` at about `1.196s` and exec `32`.
+The endpoint gain is attributable to FORMTRIG only through the benefit chain: non-constant `D_F_spec_lifted=[0,1]`, accepted non-trigger progress, BindingSpec-selected path-hierarchy typed mutation, and terminal crash replay. The hook constructs slash-delimited path hierarchy candidates from the safe RNT seed (`a/b/file.txt`, `a/c/file.txt`); it does not copy PoC bytes.
 
-The claim is still under-replicated: Redqueen/operand-aware baseline is missing, and final comparisons should rerun all arms with the same terminal timeout/oracle. The current package is strong endpoint-conversion evidence for FORMTRIG's middle products, not yet the final performance table.
+## Blocked Claims
+
+- Single repetition is not final efficacy evidence.
+- AFL++ vanilla and CmpLog also trigger, so this target supports speedup/attribution rather than an unsolved-by-CmpLog claim.
+- The Redqueen/operand row is the local AFL++ CmpLog/Redqueen path, not the original Redqueen artifact unless separately mapped.
+- This 60s package must be followed by repeated long-run Magma and real-CVE experiments.
 
 ## Evidence
 
@@ -26,6 +45,7 @@ The claim is still under-replicated: Redqueen/operand-aware baseline is missing,
 - FORMTRIG hook diagnosis: `evidence/b4_hook_formtrig_diagnosis.json`
 - Hook provenance: `evidence/b4_hook_mutation_hook.json`
 - Crash replay manifest: `evidence/b4_hook_crash_replay.json`
-- Crash inputs: `evidence/crashes/`
-- Previous b4 no-hook 10m summary: `evidence/b4_no_hook_10m_summary.json`
-- AFL++ vanilla/CmpLog 10m stats: `evidence/aflplusplus_vanilla_10m_fuzzer_stats.txt`, `evidence/aflplusplus_cmplog_10m_fuzzer_stats.txt`
+- Matched vanilla run record: `evidence/aflplusplus_vanilla_60s_t5000_run_record.json`
+- Matched CmpLog run record: `evidence/aflplusplus_cmplog_60s_t5000_run_record.json`
+- Matched Redqueen/operand run record: `evidence/redqueen_operand_60s_t5000_run_record.json`
+- First crash inputs: `evidence/crashes/`, `evidence/baseline_first_crashes/`
