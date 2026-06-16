@@ -1,0 +1,483 @@
+{
+  "confidence_summary": {
+    "high": 5,
+    "low": 5,
+    "medium": 14,
+    "verified": 3
+  },
+  "edges": [
+    {
+      "dst": "target:GPAC_3403",
+      "site_index": 1,
+      "src": "site:1:d3454b4f3edb8a13",
+      "type": "site_of_target"
+    },
+    {
+      "dst": "target:GPAC_3403",
+      "src": "atom:a1",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:d3454b4f3edb8a13",
+      "src": "atom:a1",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:2ed84cb121b7b54d",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:5927a6af65f833f4",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:b080c64357c4c998",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:611496f412cac947",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:b48111c10c65fc11",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:ca978112ca1bbdca",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:73c76d56fd404200",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:85434d1992c17733",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "phase:configured",
+      "order": "lifecycle_prefix",
+      "src": "phase:producer",
+      "type": "order_constraint"
+    },
+    {
+      "dst": "phase:aliased",
+      "order": "lifecycle_prefix",
+      "src": "phase:configured",
+      "type": "order_constraint"
+    },
+    {
+      "dst": "phase:released_or_skipped",
+      "order": "lifecycle_prefix",
+      "src": "phase:aliased",
+      "type": "order_constraint"
+    },
+    {
+      "dst": "phase:used_or_violated",
+      "order": "lifecycle_prefix",
+      "src": "phase:released_or_skipped",
+      "type": "order_constraint"
+    },
+    {
+      "dst": "target:GPAC_3403",
+      "src": "producer:8465f78ee1db9923",
+      "type": "may_enable_target"
+    },
+    {
+      "dst": "use:5e0094c9624692fe",
+      "src": "guard:d3454b4f3edb8a13",
+      "type": "guards_use"
+    },
+    {
+      "dst": "target:GPAC_3403",
+      "src": "use:5e0094c9624692fe",
+      "type": "observes_target"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "order": "producer_before_guard",
+      "src": "producer:8465f78ee1db9923",
+      "type": "order_before"
+    },
+    {
+      "dst": "use:5e0094c9624692fe",
+      "order": "guard_before_use",
+      "src": "guard:d3454b4f3edb8a13",
+      "type": "order_before"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "src": "range:938fdba3fe1a8528",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "src": "range:c18f2e72f4f52416",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "src": "range:62b3359eb7bce001",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "src": "range:6134b8be8edf8fc6",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "src": "range:c0f20a58b17ab93d",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "src": "range:42cec71b10450409",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "src": "range:b5c2cf77d9631989",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:d3454b4f3edb8a13",
+      "src": "range:90cd930298ce0ece",
+      "type": "candidate_influences"
+    }
+  ],
+  "nodes": [
+    {
+      "confidence": "high",
+      "id": "target:GPAC_3403",
+      "label": "GPAC_3403",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "target_context"
+    },
+    {
+      "confidence": "high",
+      "id": "site:1:d3454b4f3edb8a13",
+      "label": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "target_site_context"
+    },
+    {
+      "category": "compound-sequence-lifecycle",
+      "composition": "all_of",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a1",
+      "label": "MP4Box concatenation reaches cleanup where a dynamic bitstream buffer is freed after the sample buffer has already been released.",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:2ed84cb121b7b54d",
+      "label": "MP4Box",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:5927a6af65f833f4",
+      "label": "concatenation",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:b080c64357c4c998",
+      "label": "reaches",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:611496f412cac947",
+      "label": "cleanup",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:b48111c10c65fc11",
+      "label": "where",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:ca978112ca1bbdca",
+      "label": "a",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:73c76d56fd404200",
+      "label": "dynamic",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:85434d1992c17733",
+      "label": "bitstream",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "confidence": "low",
+      "id": "phase:producer",
+      "label": "producer",
+      "runtime_event_id": "lifecycle:producer",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "lifecycle_phase"
+    },
+    {
+      "confidence": "low",
+      "id": "phase:configured",
+      "label": "configured",
+      "runtime_event_id": "lifecycle:configured",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "lifecycle_phase"
+    },
+    {
+      "confidence": "low",
+      "id": "phase:aliased",
+      "label": "aliased",
+      "runtime_event_id": "lifecycle:aliased",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "lifecycle_phase"
+    },
+    {
+      "confidence": "low",
+      "id": "phase:released_or_skipped",
+      "label": "released_or_skipped",
+      "runtime_event_id": "lifecycle:released_or_skipped",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "lifecycle_phase"
+    },
+    {
+      "confidence": "low",
+      "id": "phase:used_or_violated",
+      "label": "used_or_violated",
+      "runtime_event_id": "lifecycle:used_or_violated",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "lifecycle_phase"
+    },
+    {
+      "confidence": "medium",
+      "id": "producer:8465f78ee1db9923",
+      "label": "cve_rnt_gdb_collector",
+      "runtime_event_id": "producer:7fbf6faffcd071d9",
+      "source_location": "",
+      "type": "producer_context"
+    },
+    {
+      "confidence": "high",
+      "id": "guard:d3454b4f3edb8a13",
+      "label": "MP4Box concatenation reaches cleanup where a dynamic bitstream buffer is freed after the sample buffer has already been released.",
+      "runtime_event_id": "",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "guard_context"
+    },
+    {
+      "confidence": "high",
+      "id": "use:5e0094c9624692fe",
+      "label": "src/utils/bitstream.c:372#gf_bs_del",
+      "runtime_event_id": "",
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "type": "use_context"
+    },
+    {
+      "confidence": "verified",
+      "confidence_score": 0.85,
+      "format_family": "mp4",
+      "id": "range:938fdba3fe1a8528",
+      "integer_endian": "big",
+      "integer_values": [
+        28,
+        27,
+        29,
+        8,
+        1660
+      ],
+      "integer_width": 4,
+      "label": "id:000000,sha256:f7f909fb41fbf344[0:4]",
+      "length": 4,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "mp4_box_size",
+      "runtime_event_id": "mp4:ftyp:size",
+      "seed_id": "id:000000,sha256:f7f909fb41fbf344",
+      "source": "generic_format_lifted_observer",
+      "start": 0,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "mp4",
+      "id": "range:c18f2e72f4f52416",
+      "label": "id:000000,sha256:f7f909fb41fbf344[4:8]",
+      "length": 4,
+      "range_kind": "mp4_box_type",
+      "runtime_event_id": "mp4:ftyp:type",
+      "seed_id": "id:000000,sha256:f7f909fb41fbf344",
+      "source": "generic_format_lifted_observer",
+      "start": 4,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "mp4",
+      "id": "range:62b3359eb7bce001",
+      "label": "id:000000,sha256:f7f909fb41fbf344[8:28]",
+      "length": 20,
+      "range_kind": "mp4_box_payload",
+      "runtime_event_id": "mp4:ftyp:payload",
+      "seed_id": "id:000000,sha256:f7f909fb41fbf344",
+      "source": "generic_format_lifted_observer",
+      "start": 8,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "verified",
+      "confidence_score": 0.85,
+      "format_family": "mp4",
+      "id": "range:6134b8be8edf8fc6",
+      "integer_endian": "big",
+      "integer_values": [
+        580,
+        579,
+        581,
+        8,
+        1632
+      ],
+      "integer_width": 4,
+      "label": "id:000000,sha256:f7f909fb41fbf344[28:32]",
+      "length": 4,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "mp4_box_size",
+      "runtime_event_id": "mp4:moov:size",
+      "seed_id": "id:000000,sha256:f7f909fb41fbf344",
+      "source": "generic_format_lifted_observer",
+      "start": 28,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "mp4",
+      "id": "range:c0f20a58b17ab93d",
+      "label": "id:000000,sha256:f7f909fb41fbf344[32:36]",
+      "length": 4,
+      "range_kind": "mp4_box_type",
+      "runtime_event_id": "mp4:moov:type",
+      "seed_id": "id:000000,sha256:f7f909fb41fbf344",
+      "source": "generic_format_lifted_observer",
+      "start": 32,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "mp4",
+      "id": "range:42cec71b10450409",
+      "label": "id:000000,sha256:f7f909fb41fbf344[36:100]",
+      "length": 64,
+      "range_kind": "mp4_box_payload",
+      "runtime_event_id": "mp4:moov:payload",
+      "seed_id": "id:000000,sha256:f7f909fb41fbf344",
+      "source": "generic_format_lifted_observer",
+      "start": 36,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "verified",
+      "confidence_score": 0.85,
+      "format_family": "mp4",
+      "id": "range:b5c2cf77d9631989",
+      "integer_endian": "big",
+      "integer_values": [
+        974,
+        973,
+        975,
+        8,
+        1052
+      ],
+      "integer_width": 4,
+      "label": "id:000000,sha256:f7f909fb41fbf344[608:612]",
+      "length": 4,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "mp4_box_size",
+      "runtime_event_id": "mp4:mdat:size",
+      "seed_id": "id:000000,sha256:f7f909fb41fbf344",
+      "source": "generic_format_lifted_observer",
+      "start": 608,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "mp4",
+      "id": "range:90cd930298ce0ece",
+      "label": "id:000000,sha256:f7f909fb41fbf344[612:616]",
+      "length": 4,
+      "range_kind": "mp4_box_type",
+      "runtime_event_id": "mp4:mdat:type",
+      "seed_id": "id:000000,sha256:f7f909fb41fbf344",
+      "source": "generic_format_lifted_observer",
+      "start": 612,
+      "type": "candidate_input_influence_range"
+    }
+  ],
+  "repair_hooks": [],
+  "schema_version": "formtrig-trigger-progress-graph-v2",
+  "target_id": "GPAC_3403"
+}

@@ -1,0 +1,306 @@
+{
+  "confidence_summary": {
+    "high": 5,
+    "low": 1,
+    "medium": 11
+  },
+  "edges": [
+    {
+      "dst": "target:LIBARCHIVE_2935",
+      "site_index": 1,
+      "src": "site:1:98f71176a46a0c3a",
+      "type": "site_of_target"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2935",
+      "src": "atom:a1",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:98f71176a46a0c3a",
+      "src": "atom:a1",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:e46159911def4020",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:285437db8c5e1541",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:26f1de33979d065b",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:c62d18434681f20e",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:277089d91c0bdf4f",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:5e8818d1dd191490",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:b9776d7ddf459c9a",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:1584570866884bb8",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2935",
+      "src": "producer:8465f78ee1db9923",
+      "type": "may_enable_target"
+    },
+    {
+      "dst": "use:0932eb5a1f4280c8",
+      "src": "guard:98f71176a46a0c3a",
+      "type": "guards_use"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2935",
+      "src": "use:0932eb5a1f4280c8",
+      "type": "observes_target"
+    },
+    {
+      "dst": "guard:98f71176a46a0c3a",
+      "order": "producer_before_guard",
+      "src": "producer:8465f78ee1db9923",
+      "type": "order_before"
+    },
+    {
+      "dst": "use:0932eb5a1f4280c8",
+      "order": "guard_before_use",
+      "src": "guard:98f71176a46a0c3a",
+      "type": "order_before"
+    },
+    {
+      "dst": "guard:98f71176a46a0c3a",
+      "src": "range:f6e6877e74a2c103",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:98f71176a46a0c3a",
+      "src": "range:90ddfa81c5739cea",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:98f71176a46a0c3a",
+      "src": "repair:13a5cca9676364e8",
+      "type": "may_repair_after_mutation"
+    }
+  ],
+  "nodes": [
+    {
+      "confidence": "high",
+      "id": "target:LIBARCHIVE_2935",
+      "label": "LIBARCHIVE_2935",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "type": "target_context"
+    },
+    {
+      "confidence": "high",
+      "id": "site:1:98f71176a46a0c3a",
+      "label": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "type": "target_site_context"
+    },
+    {
+      "category": "numeric-margin",
+      "composition": "all_of",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a1",
+      "label": "Joliet identifier extension copies extension bytes beyond the allocated identifier buffer when rename offset and extension length exceed the allocation.",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:e46159911def4020",
+      "label": "Joliet",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:285437db8c5e1541",
+      "label": "identifier",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:26f1de33979d065b",
+      "label": "extension",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:c62d18434681f20e",
+      "label": "copies",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:277089d91c0bdf4f",
+      "label": "bytes",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:5e8818d1dd191490",
+      "label": "beyond",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:b9776d7ddf459c9a",
+      "label": "the",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:1584570866884bb8",
+      "label": "allocated",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "confidence": "medium",
+      "id": "producer:8465f78ee1db9923",
+      "label": "cve_rnt_gdb_collector",
+      "runtime_event_id": "producer:4e5b477d6ee167c8",
+      "source_location": "",
+      "type": "producer_context"
+    },
+    {
+      "confidence": "high",
+      "id": "guard:98f71176a46a0c3a",
+      "label": "Joliet identifier extension copies extension bytes beyond the allocated identifier buffer when rename offset and extension length exceed the allocation.",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "type": "guard_context"
+    },
+    {
+      "confidence": "high",
+      "id": "use:0932eb5a1f4280c8",
+      "label": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "type": "use_context"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:f6e6877e74a2c103",
+      "integer_endian": "big",
+      "integer_values": [
+        255,
+        5,
+        4,
+        1,
+        0
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:6655599f21bf054f[16:17]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:16",
+      "seed_id": "id:000000,sha256:6655599f21bf054f",
+      "source": "generic_format_lifted_observer",
+      "start": 16,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:90ddfa81c5739cea",
+      "label": "id:000000,sha256:6655599f21bf054f[17:21]",
+      "length": 4,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:16",
+      "seed_id": "id:000000,sha256:6655599f21bf054f",
+      "source": "generic_format_lifted_observer",
+      "start": 17,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "low",
+      "configured": false,
+      "id": "repair:13a5cca9676364e8",
+      "kind": "external_or_project_format_repair",
+      "label": "format_repair_hook_available_if_configured",
+      "name": "format_repair_hook_available_if_configured",
+      "type": "repair_hook"
+    }
+  ],
+  "repair_hooks": [
+    {
+      "confidence": "low",
+      "configured": false,
+      "kind": "external_or_project_format_repair",
+      "name": "format_repair_hook_available_if_configured"
+    }
+  ],
+  "schema_version": "formtrig-trigger-progress-graph-v2",
+  "target_id": "LIBARCHIVE_2935"
+}

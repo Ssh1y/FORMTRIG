@@ -1,0 +1,71 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "numeric-margin",
+      "composition": "sequence",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "Joliet duplicate-identifier numeric insertion uses a negative insertion offset",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        "-"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "Joliet",
+        "duplicate",
+        "identifier",
+        "numeric",
+        "insertion",
+        "uses",
+        "a",
+        "negative"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [
+        "a2"
+      ],
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ]
+    },
+    {
+      "atom_id": "a2",
+      "category": "numeric-margin",
+      "composition": "sequence",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "the allocated UTF-16 identifier buffer.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        "-"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "the",
+        "allocated",
+        "identifier",
+        "buffer"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [],
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ]
+    }
+  ],
+  "target_id": "LIBARCHIVE_2938"
+}

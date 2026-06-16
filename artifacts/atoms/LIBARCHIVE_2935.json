@@ -1,0 +1,37 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "numeric-margin",
+      "composition": "all_of",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "Joliet identifier extension copies extension bytes beyond the allocated identifier buffer when rename offset and extension length exceed the allocation.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "Joliet",
+        "identifier",
+        "extension",
+        "copies",
+        "bytes",
+        "beyond",
+        "the",
+        "allocated"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [],
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5913#idr_extend_identifier"
+      ]
+    }
+  ],
+  "target_id": "LIBARCHIVE_2935"
+}

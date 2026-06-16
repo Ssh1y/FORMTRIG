@@ -1,0 +1,41 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "compound-sequence-lifecycle",
+      "composition": "all_of",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "MP4Box concatenation reaches cleanup where a dynamic bitstream buffer is freed after the sample buffer has already been released.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "MP4Box",
+        "concatenation",
+        "reaches",
+        "cleanup",
+        "where",
+        "a",
+        "dynamic",
+        "bitstream"
+      ],
+      "secondary_categories": [
+        "binary-state-null"
+      ],
+      "secondary_tags": [
+        "binary-state-null"
+      ],
+      "sequence_edges": [],
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ]
+    }
+  ],
+  "target_id": "GPAC_3403"
+}

@@ -1,0 +1,43 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "binary-state-null",
+      "composition": "all_of",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "ISO9660 path-table comparator dereferences parent state that can be NULL for malformed virtual directory state.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        "-"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "path",
+        "table",
+        "comparator",
+        "dereferences",
+        "parent",
+        "state",
+        "that",
+        "can"
+      ],
+      "secondary_categories": [
+        "compound-sequence-lifecycle"
+      ],
+      "secondary_tags": [
+        "compound-sequence-lifecycle"
+      ],
+      "sequence_edges": [],
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ]
+    }
+  ],
+  "target_id": "LIBARCHIVE_2936"
+}

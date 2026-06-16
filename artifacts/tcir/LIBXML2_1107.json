@@ -1,0 +1,318 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "binary-state-null",
+      "composition": "sequence",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "xmlStrdup can return NULL during regexp parser-context creation, and ret->string is passed to strlen",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        ">",
+        "-",
+        "strlen"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "xmlStrdup",
+        "can",
+        "during",
+        "regexp",
+        "parser",
+        "context",
+        "creation",
+        "and"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [
+        "a2"
+      ],
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ]
+    },
+    {
+      "atom_id": "a2",
+      "category": "binary-state-null",
+      "composition": "sequence",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "the NULL check.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "the",
+        "check"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [],
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "attrs": {
+        "composition": "SEQUENCE"
+      },
+      "dst": "a1",
+      "edge_type": "contains",
+      "src": "g1"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:f5a26e258ce8c7a3"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:9f584196e7fe6de8"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:76678e40cf8bdb8a"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:0af6c667532fcbb3"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:b17d45121150928f"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:ea7792a26f405e2a"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:965abb254b10e268"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:6201111b83a0cb5b"
+    },
+    {
+      "attrs": {
+        "composition": "SEQUENCE"
+      },
+      "dst": "a2",
+      "edge_type": "contains",
+      "src": "g1"
+    },
+    {
+      "attrs": {},
+      "dst": "a2",
+      "edge_type": "defines_atom",
+      "src": "root:a2:b9776d7ddf459c9a"
+    },
+    {
+      "attrs": {},
+      "dst": "a2",
+      "edge_type": "defines_atom",
+      "src": "root:a2:20f65c28671b4093"
+    },
+    {
+      "attrs": {
+        "order": "sequence"
+      },
+      "dst": "a2",
+      "edge_type": "order",
+      "src": "a1"
+    }
+  ],
+  "expression": "xmlStrdup can return NULL during regexp parser-context creation, and ret->string is passed to strlen before the NULL check.",
+  "groups": [
+    {
+      "branch_quota": 2,
+      "children": [
+        "a1",
+        "a2"
+      ],
+      "expression": "xmlStrdup can return NULL during regexp parser-context creation, and ret->string is passed to strlen before the NULL check.",
+      "group_id": "g1",
+      "group_type": "SEQUENCE",
+      "parent_id": ""
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "expression": "xmlStrdup can return NULL during regexp parser-context creation, and ret->string is passed to strlen before the NULL check."
+      },
+      "label": "SEQUENCE",
+      "node_id": "g1",
+      "node_type": "group"
+    },
+    {
+      "attrs": {
+        "category": "binary-state-null",
+        "composition": "sequence",
+        "group_id": "g1",
+        "operators": [
+          ">",
+          "-",
+          "strlen"
+        ],
+        "root_events": [],
+        "root_variables": [
+          "xmlStrdup",
+          "can",
+          "during",
+          "regexp",
+          "parser",
+          "context",
+          "creation",
+          "and"
+        ],
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "xmlStrdup can return NULL during regexp parser-context creation, and ret->string is passed to strlen",
+      "node_id": "a1",
+      "node_type": "atom"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "xmlStrdup",
+      "node_id": "root:a1:f5a26e258ce8c7a3",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "can",
+      "node_id": "root:a1:9f584196e7fe6de8",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "during",
+      "node_id": "root:a1:76678e40cf8bdb8a",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "regexp",
+      "node_id": "root:a1:0af6c667532fcbb3",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "parser",
+      "node_id": "root:a1:b17d45121150928f",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "context",
+      "node_id": "root:a1:ea7792a26f405e2a",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "creation",
+      "node_id": "root:a1:965abb254b10e268",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "and",
+      "node_id": "root:a1:6201111b83a0cb5b",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "category": "binary-state-null",
+        "composition": "sequence",
+        "group_id": "g1",
+        "operators": [],
+        "root_events": [],
+        "root_variables": [
+          "the",
+          "check"
+        ],
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "the NULL check.",
+      "node_id": "a2",
+      "node_type": "atom"
+    },
+    {
+      "attrs": {
+        "atom_id": "a2",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "the",
+      "node_id": "root:a2:b9776d7ddf459c9a",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a2",
+        "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt"
+      },
+      "label": "check",
+      "node_id": "root:a2:20f65c28671b4093",
+      "node_type": "root"
+    }
+  ],
+  "root_group_id": "g1",
+  "schema_version": "formtrig-tcir-v3",
+  "source_locations": [
+    "xmlregexp.c:740#xmlRegNewParserCtxt"
+  ],
+  "target_id": "LIBXML2_1107"
+}

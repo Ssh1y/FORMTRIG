@@ -1,0 +1,226 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "numeric-margin",
+      "composition": "all_of",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "ZIP directory entry with an empty pathname makes copy_path inspect path[pathlen - 1] when pathlen is zero.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        "-"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "directory",
+        "entry",
+        "with",
+        "an",
+        "empty",
+        "pathname",
+        "makes",
+        "copy_path"
+      ],
+      "secondary_categories": [
+        "numeric-margin"
+      ],
+      "secondary_tags": [
+        "numeric-margin"
+      ],
+      "sequence_edges": [],
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "attrs": {
+        "composition": "ALL_OF"
+      },
+      "dst": "a1",
+      "edge_type": "contains",
+      "src": "g1"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:333178788eae3e0b"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:923fe53966c6cd93"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:0695b563acde461f"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:ea325d761f98c6b7"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:2e1cfa82b035c26c"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:63466ca18536c77b"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:efbde73cf7b4ef00"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:d9d48979e1003e2e"
+    }
+  ],
+  "expression": "ZIP directory entry with an empty pathname makes copy_path inspect path[pathlen - 1] when pathlen is zero.",
+  "groups": [
+    {
+      "branch_quota": 2,
+      "children": [
+        "a1"
+      ],
+      "expression": "ZIP directory entry with an empty pathname makes copy_path inspect path[pathlen - 1] when pathlen is zero.",
+      "group_id": "g1",
+      "group_type": "ALL_OF",
+      "parent_id": ""
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "expression": "ZIP directory entry with an empty pathname makes copy_path inspect path[pathlen - 1] when pathlen is zero."
+      },
+      "label": "ALL_OF",
+      "node_id": "g1",
+      "node_type": "group"
+    },
+    {
+      "attrs": {
+        "category": "numeric-margin",
+        "composition": "all_of",
+        "group_id": "g1",
+        "operators": [
+          "-"
+        ],
+        "root_events": [],
+        "root_variables": [
+          "directory",
+          "entry",
+          "with",
+          "an",
+          "empty",
+          "pathname",
+          "makes",
+          "copy_path"
+        ],
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "ZIP directory entry with an empty pathname makes copy_path inspect path[pathlen - 1] when pathlen is zero.",
+      "node_id": "a1",
+      "node_type": "atom"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "directory",
+      "node_id": "root:a1:333178788eae3e0b",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "entry",
+      "node_id": "root:a1:923fe53966c6cd93",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "with",
+      "node_id": "root:a1:0695b563acde461f",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "an",
+      "node_id": "root:a1:ea325d761f98c6b7",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "empty",
+      "node_id": "root:a1:2e1cfa82b035c26c",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "pathname",
+      "node_id": "root:a1:63466ca18536c77b",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "makes",
+      "node_id": "root:a1:efbde73cf7b4ef00",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      },
+      "label": "copy_path",
+      "node_id": "root:a1:d9d48979e1003e2e",
+      "node_type": "root"
+    }
+  ],
+  "root_group_id": "g1",
+  "schema_version": "formtrig-tcir-v3",
+  "source_locations": [
+    "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+  ],
+  "target_id": "LIBARCHIVE_2925"
+}

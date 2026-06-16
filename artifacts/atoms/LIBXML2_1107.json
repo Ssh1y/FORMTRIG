@@ -1,0 +1,69 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "binary-state-null",
+      "composition": "sequence",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "xmlStrdup can return NULL during regexp parser-context creation, and ret->string is passed to strlen",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        ">",
+        "-",
+        "strlen"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "xmlStrdup",
+        "can",
+        "during",
+        "regexp",
+        "parser",
+        "context",
+        "creation",
+        "and"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [
+        "a2"
+      ],
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ]
+    },
+    {
+      "atom_id": "a2",
+      "category": "binary-state-null",
+      "composition": "sequence",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "the NULL check.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "the",
+        "check"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [],
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ]
+    }
+  ],
+  "target_id": "LIBXML2_1107"
+}

@@ -1,0 +1,431 @@
+{
+  "confidence_summary": {
+    "high": 5,
+    "low": 1,
+    "medium": 16
+  },
+  "edges": [
+    {
+      "dst": "target:LIBARCHIVE_2925",
+      "site_index": 1,
+      "src": "site:1:ad59a67843d4529d",
+      "type": "site_of_target"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2925",
+      "src": "atom:a1",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:ad59a67843d4529d",
+      "src": "atom:a1",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:333178788eae3e0b",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:923fe53966c6cd93",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:0695b563acde461f",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:ea325d761f98c6b7",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:2e1cfa82b035c26c",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:63466ca18536c77b",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:efbde73cf7b4ef00",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:d9d48979e1003e2e",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2925",
+      "src": "producer:8465f78ee1db9923",
+      "type": "may_enable_target"
+    },
+    {
+      "dst": "use:f83fd844f57c6d79",
+      "src": "guard:ad59a67843d4529d",
+      "type": "guards_use"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2925",
+      "src": "use:f83fd844f57c6d79",
+      "type": "observes_target"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "order": "producer_before_guard",
+      "src": "producer:8465f78ee1db9923",
+      "type": "order_before"
+    },
+    {
+      "dst": "use:f83fd844f57c6d79",
+      "order": "guard_before_use",
+      "src": "guard:ad59a67843d4529d",
+      "type": "order_before"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "src": "range:849ffed0f413539b",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "src": "range:2c8c198300495b33",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "src": "range:3a17c9a3122b5f56",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "src": "range:a8bb369832262737",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "src": "range:9b720d0224a5d599",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "src": "range:1b890f418d40b387",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "src": "range:f391180488e33dbc",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad59a67843d4529d",
+      "src": "repair:2c5c5f31bf51ab62",
+      "type": "may_repair_after_mutation"
+    }
+  ],
+  "nodes": [
+    {
+      "confidence": "high",
+      "id": "target:LIBARCHIVE_2925",
+      "label": "LIBARCHIVE_2925",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "type": "target_context"
+    },
+    {
+      "confidence": "high",
+      "id": "site:1:ad59a67843d4529d",
+      "label": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "type": "target_site_context"
+    },
+    {
+      "category": "numeric-margin",
+      "composition": "all_of",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a1",
+      "label": "ZIP directory entry with an empty pathname makes copy_path inspect path[pathlen - 1] when pathlen is zero.",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:333178788eae3e0b",
+      "label": "directory",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:923fe53966c6cd93",
+      "label": "entry",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:0695b563acde461f",
+      "label": "with",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:ea325d761f98c6b7",
+      "label": "an",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:2e1cfa82b035c26c",
+      "label": "empty",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:63466ca18536c77b",
+      "label": "pathname",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:efbde73cf7b4ef00",
+      "label": "makes",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:d9d48979e1003e2e",
+      "label": "copy_path",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "source_locations": [
+        "libarchive/archive_write_set_format_zip.c:2306#copy_path"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "confidence": "medium",
+      "id": "producer:8465f78ee1db9923",
+      "label": "cve_rnt_gdb_collector",
+      "runtime_event_id": "producer:241552337161da61",
+      "source_location": "",
+      "type": "producer_context"
+    },
+    {
+      "confidence": "high",
+      "id": "guard:ad59a67843d4529d",
+      "label": "ZIP directory entry with an empty pathname makes copy_path inspect path[pathlen - 1] when pathlen is zero.",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "type": "guard_context"
+    },
+    {
+      "confidence": "high",
+      "id": "use:f83fd844f57c6d79",
+      "label": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_zip.c:2306#copy_path",
+      "type": "use_context"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:849ffed0f413539b",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        3,
+        4,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:dfd33e704b242984[1:2]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:1",
+      "seed_id": "id:000000,sha256:dfd33e704b242984",
+      "source": "generic_format_lifted_observer",
+      "start": 1,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:2c8c198300495b33",
+      "label": "id:000000,sha256:dfd33e704b242984[2:5]",
+      "length": 3,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:1",
+      "seed_id": "id:000000,sha256:dfd33e704b242984",
+      "source": "generic_format_lifted_observer",
+      "start": 2,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:3a17c9a3122b5f56",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        5,
+        6,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:dfd33e704b242984[2:3]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:2",
+      "seed_id": "id:000000,sha256:dfd33e704b242984",
+      "source": "generic_format_lifted_observer",
+      "start": 2,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:a8bb369832262737",
+      "label": "id:000000,sha256:dfd33e704b242984[3:8]",
+      "length": 5,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:2",
+      "seed_id": "id:000000,sha256:dfd33e704b242984",
+      "source": "generic_format_lifted_observer",
+      "start": 3,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:9b720d0224a5d599",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000001,sha256:6a9662194f63c1d3[0:1]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 0,
+      "runtime_event_id": "archive_harness:length:0",
+      "seed_id": "id:000001,sha256:6a9662194f63c1d3",
+      "source": "generic_format_lifted_observer",
+      "start": 0,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:1b890f418d40b387",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        2,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000001,sha256:6a9662194f63c1d3[1:2]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 0,
+      "runtime_event_id": "archive_harness:length:1",
+      "seed_id": "id:000001,sha256:6a9662194f63c1d3",
+      "source": "generic_format_lifted_observer",
+      "start": 1,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:f391180488e33dbc",
+      "label": "id:000001,sha256:6a9662194f63c1d3[2:3]",
+      "length": 1,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:1",
+      "seed_id": "id:000001,sha256:6a9662194f63c1d3",
+      "source": "generic_format_lifted_observer",
+      "start": 2,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "low",
+      "configured": false,
+      "id": "repair:2c5c5f31bf51ab62",
+      "kind": "external_or_project_format_repair",
+      "label": "format_repair_hook_available_if_configured",
+      "name": "format_repair_hook_available_if_configured",
+      "type": "repair_hook"
+    }
+  ],
+  "repair_hooks": [
+    {
+      "confidence": "low",
+      "configured": false,
+      "kind": "external_or_project_format_repair",
+      "name": "format_repair_hook_available_if_configured"
+    }
+  ],
+  "schema_version": "formtrig-trigger-progress-graph-v2",
+  "target_id": "LIBARCHIVE_2925"
+}

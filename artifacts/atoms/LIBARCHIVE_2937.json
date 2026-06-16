@@ -1,0 +1,44 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "numeric-margin",
+      "composition": "all_of",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "Virtual-directory construction computes a path slice with an underflowed length/offset relation.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        "-",
+        "/"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "Virtual",
+        "directory",
+        "construction",
+        "computes",
+        "a",
+        "path",
+        "slice",
+        "with"
+      ],
+      "secondary_categories": [
+        "compound-sequence-lifecycle"
+      ],
+      "secondary_tags": [
+        "compound-sequence-lifecycle"
+      ],
+      "sequence_edges": [],
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ]
+    }
+  ],
+  "target_id": "LIBARCHIVE_2937"
+}

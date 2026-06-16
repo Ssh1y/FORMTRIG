@@ -1,0 +1,338 @@
+{
+  "confidence_summary": {
+    "high": 6,
+    "low": 2,
+    "medium": 11
+  },
+  "edges": [
+    {
+      "dst": "target:LIBXML2_1107",
+      "site_index": 1,
+      "src": "site:1:a941dab43172beb0",
+      "type": "site_of_target"
+    },
+    {
+      "dst": "target:LIBXML2_1107",
+      "src": "atom:a1",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:a941dab43172beb0",
+      "src": "atom:a1",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:f5a26e258ce8c7a3",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:9f584196e7fe6de8",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:76678e40cf8bdb8a",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:0af6c667532fcbb3",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:b17d45121150928f",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:ea7792a26f405e2a",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:965abb254b10e268",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:6201111b83a0cb5b",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "target:LIBXML2_1107",
+      "src": "atom:a2",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:a941dab43172beb0",
+      "src": "atom:a2",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a2",
+      "src": "root:a2:b9776d7ddf459c9a",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a2",
+      "src": "root:a2:20f65c28671b4093",
+      "type": "defines_atom"
+    },
+    {
+      "confidence": "low",
+      "dst": "atom:a2",
+      "order": "expression_order",
+      "src": "atom:a1",
+      "type": "order_constraint"
+    },
+    {
+      "dst": "target:LIBXML2_1107",
+      "src": "producer:8465f78ee1db9923",
+      "type": "may_enable_target"
+    },
+    {
+      "dst": "use:3010952fd90295ad",
+      "src": "guard:a941dab43172beb0",
+      "type": "guards_use"
+    },
+    {
+      "dst": "target:LIBXML2_1107",
+      "src": "use:3010952fd90295ad",
+      "type": "observes_target"
+    },
+    {
+      "dst": "guard:a941dab43172beb0",
+      "order": "producer_before_guard",
+      "src": "producer:8465f78ee1db9923",
+      "type": "order_before"
+    },
+    {
+      "dst": "use:3010952fd90295ad",
+      "order": "guard_before_use",
+      "src": "guard:a941dab43172beb0",
+      "type": "order_before"
+    },
+    {
+      "dst": "guard:a941dab43172beb0",
+      "src": "range:b4e0686ff36ac158",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:a941dab43172beb0",
+      "src": "repair:79e4f5cadb3b70d0",
+      "type": "may_repair_after_mutation"
+    }
+  ],
+  "nodes": [
+    {
+      "confidence": "high",
+      "id": "target:LIBXML2_1107",
+      "label": "LIBXML2_1107",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "type": "target_context"
+    },
+    {
+      "confidence": "high",
+      "id": "site:1:a941dab43172beb0",
+      "label": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "type": "target_site_context"
+    },
+    {
+      "category": "binary-state-null",
+      "composition": "sequence",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a1",
+      "label": "xmlStrdup can return NULL during regexp parser-context creation, and ret->string is passed to strlen",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:f5a26e258ce8c7a3",
+      "label": "xmlStrdup",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:9f584196e7fe6de8",
+      "label": "can",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:76678e40cf8bdb8a",
+      "label": "during",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:0af6c667532fcbb3",
+      "label": "regexp",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:b17d45121150928f",
+      "label": "parser",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:ea7792a26f405e2a",
+      "label": "context",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:965abb254b10e268",
+      "label": "creation",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:6201111b83a0cb5b",
+      "label": "and",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "category": "binary-state-null",
+      "composition": "sequence",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a2",
+      "label": "the NULL check.",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a2",
+      "confidence": "medium",
+      "id": "root:a2:b9776d7ddf459c9a",
+      "label": "the",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a2",
+      "confidence": "medium",
+      "id": "root:a2:20f65c28671b4093",
+      "label": "check",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "source_locations": [
+        "xmlregexp.c:740#xmlRegNewParserCtxt"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "confidence": "medium",
+      "id": "producer:8465f78ee1db9923",
+      "label": "cve_rnt_gdb_collector",
+      "runtime_event_id": "producer:122417a7cc433737",
+      "source_location": "",
+      "type": "producer_context"
+    },
+    {
+      "confidence": "high",
+      "id": "guard:a941dab43172beb0",
+      "label": "xmlStrdup can return NULL during regexp parser-context creation, and ret->string is passed to strlen before the NULL check.",
+      "runtime_event_id": "",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "type": "guard_context"
+    },
+    {
+      "confidence": "high",
+      "id": "use:3010952fd90295ad",
+      "label": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "runtime_event_id": "",
+      "source_location": "xmlregexp.c:740#xmlRegNewParserCtxt",
+      "type": "use_context"
+    },
+    {
+      "confidence": "low",
+      "confidence_score": 0.25,
+      "format_family": "unknown",
+      "id": "range:b4e0686ff36ac158",
+      "label": "id:000000,sha256:022a6979e6dab7aa[0:2]",
+      "length": 2,
+      "range_kind": "replay_range",
+      "runtime_event_id": "seed:f641fed41ff4ed6b",
+      "seed_id": "id:000000,sha256:022a6979e6dab7aa",
+      "source": "whole_input_fallback",
+      "start": 0,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "low",
+      "configured": false,
+      "id": "repair:79e4f5cadb3b70d0",
+      "kind": "external_or_project_format_repair",
+      "label": "format_repair_hook_available_if_configured",
+      "name": "format_repair_hook_available_if_configured",
+      "type": "repair_hook"
+    }
+  ],
+  "repair_hooks": [
+    {
+      "confidence": "low",
+      "configured": false,
+      "kind": "external_or_project_format_repair",
+      "name": "format_repair_hook_available_if_configured"
+    }
+  ],
+  "schema_version": "formtrig-trigger-progress-graph-v2",
+  "target_id": "LIBXML2_1107"
+}

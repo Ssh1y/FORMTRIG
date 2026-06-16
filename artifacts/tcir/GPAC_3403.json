@@ -1,0 +1,222 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "compound-sequence-lifecycle",
+      "composition": "all_of",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "MP4Box concatenation reaches cleanup where a dynamic bitstream buffer is freed after the sample buffer has already been released.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "MP4Box",
+        "concatenation",
+        "reaches",
+        "cleanup",
+        "where",
+        "a",
+        "dynamic",
+        "bitstream"
+      ],
+      "secondary_categories": [
+        "binary-state-null"
+      ],
+      "secondary_tags": [
+        "binary-state-null"
+      ],
+      "sequence_edges": [],
+      "source_location": "src/utils/bitstream.c:372#gf_bs_del",
+      "source_locations": [
+        "src/utils/bitstream.c:372#gf_bs_del"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "attrs": {
+        "composition": "ALL_OF"
+      },
+      "dst": "a1",
+      "edge_type": "contains",
+      "src": "g1"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:2ed84cb121b7b54d"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:5927a6af65f833f4"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:b080c64357c4c998"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:611496f412cac947"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:b48111c10c65fc11"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:ca978112ca1bbdca"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:73c76d56fd404200"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:85434d1992c17733"
+    }
+  ],
+  "expression": "MP4Box concatenation reaches cleanup where a dynamic bitstream buffer is freed after the sample buffer has already been released.",
+  "groups": [
+    {
+      "branch_quota": 2,
+      "children": [
+        "a1"
+      ],
+      "expression": "MP4Box concatenation reaches cleanup where a dynamic bitstream buffer is freed after the sample buffer has already been released.",
+      "group_id": "g1",
+      "group_type": "ALL_OF",
+      "parent_id": ""
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "expression": "MP4Box concatenation reaches cleanup where a dynamic bitstream buffer is freed after the sample buffer has already been released."
+      },
+      "label": "ALL_OF",
+      "node_id": "g1",
+      "node_type": "group"
+    },
+    {
+      "attrs": {
+        "category": "compound-sequence-lifecycle",
+        "composition": "all_of",
+        "group_id": "g1",
+        "operators": [],
+        "root_events": [],
+        "root_variables": [
+          "MP4Box",
+          "concatenation",
+          "reaches",
+          "cleanup",
+          "where",
+          "a",
+          "dynamic",
+          "bitstream"
+        ],
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "MP4Box concatenation reaches cleanup where a dynamic bitstream buffer is freed after the sample buffer has already been released.",
+      "node_id": "a1",
+      "node_type": "atom"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "MP4Box",
+      "node_id": "root:a1:2ed84cb121b7b54d",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "concatenation",
+      "node_id": "root:a1:5927a6af65f833f4",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "reaches",
+      "node_id": "root:a1:b080c64357c4c998",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "cleanup",
+      "node_id": "root:a1:611496f412cac947",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "where",
+      "node_id": "root:a1:b48111c10c65fc11",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "a",
+      "node_id": "root:a1:ca978112ca1bbdca",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "dynamic",
+      "node_id": "root:a1:73c76d56fd404200",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "src/utils/bitstream.c:372#gf_bs_del"
+      },
+      "label": "bitstream",
+      "node_id": "root:a1:85434d1992c17733",
+      "node_type": "root"
+    }
+  ],
+  "root_group_id": "g1",
+  "schema_version": "formtrig-tcir-v3",
+  "source_locations": [
+    "src/utils/bitstream.c:372#gf_bs_del"
+  ],
+  "target_id": "GPAC_3403"
+}

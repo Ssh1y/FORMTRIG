@@ -1,0 +1,355 @@
+{
+  "confidence_summary": {
+    "high": 5,
+    "low": 1,
+    "medium": 13
+  },
+  "edges": [
+    {
+      "dst": "target:LIBARCHIVE_2937",
+      "site_index": 1,
+      "src": "site:1:b855bafe528dc488",
+      "type": "site_of_target"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2937",
+      "src": "atom:a1",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:b855bafe528dc488",
+      "src": "atom:a1",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:d02c86fe26e741c6",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:333178788eae3e0b",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:7a01adea4b8a1084",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:8a1b12670e9ea570",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:ca978112ca1bbdca",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:a0af9f865bf637e6",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:03fdb065d956f3fb",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:0695b563acde461f",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2937",
+      "src": "producer:8465f78ee1db9923",
+      "type": "may_enable_target"
+    },
+    {
+      "dst": "use:b6bf2d811e53a58b",
+      "src": "guard:b855bafe528dc488",
+      "type": "guards_use"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2937",
+      "src": "use:b6bf2d811e53a58b",
+      "type": "observes_target"
+    },
+    {
+      "dst": "guard:b855bafe528dc488",
+      "order": "producer_before_guard",
+      "src": "producer:8465f78ee1db9923",
+      "type": "order_before"
+    },
+    {
+      "dst": "use:b6bf2d811e53a58b",
+      "order": "guard_before_use",
+      "src": "guard:b855bafe528dc488",
+      "type": "order_before"
+    },
+    {
+      "dst": "guard:b855bafe528dc488",
+      "src": "range:849ffed0f413539b",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:b855bafe528dc488",
+      "src": "range:2c8c198300495b33",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:b855bafe528dc488",
+      "src": "range:3a17c9a3122b5f56",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:b855bafe528dc488",
+      "src": "range:a8bb369832262737",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:b855bafe528dc488",
+      "src": "repair:0f64e4706000b9b6",
+      "type": "may_repair_after_mutation"
+    }
+  ],
+  "nodes": [
+    {
+      "confidence": "high",
+      "id": "target:LIBARCHIVE_2937",
+      "label": "LIBARCHIVE_2937",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "type": "target_context"
+    },
+    {
+      "confidence": "high",
+      "id": "site:1:b855bafe528dc488",
+      "label": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "type": "target_site_context"
+    },
+    {
+      "category": "numeric-margin",
+      "composition": "all_of",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a1",
+      "label": "Virtual-directory construction computes a path slice with an underflowed length/offset relation.",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:d02c86fe26e741c6",
+      "label": "Virtual",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:333178788eae3e0b",
+      "label": "directory",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:7a01adea4b8a1084",
+      "label": "construction",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:8a1b12670e9ea570",
+      "label": "computes",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:ca978112ca1bbdca",
+      "label": "a",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:a0af9f865bf637e6",
+      "label": "path",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:03fdb065d956f3fb",
+      "label": "slice",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:0695b563acde461f",
+      "label": "with",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "confidence": "medium",
+      "id": "producer:8465f78ee1db9923",
+      "label": "cve_rnt_gdb_collector",
+      "runtime_event_id": "producer:d069e3f16f7ed778",
+      "source_location": "",
+      "type": "producer_context"
+    },
+    {
+      "confidence": "high",
+      "id": "guard:b855bafe528dc488",
+      "label": "Virtual-directory construction computes a path slice with an underflowed length/offset relation.",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "type": "guard_context"
+    },
+    {
+      "confidence": "high",
+      "id": "use:b6bf2d811e53a58b",
+      "label": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5634#isoent_tree",
+      "type": "use_context"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:849ffed0f413539b",
+      "integer_endian": "big",
+      "integer_values": [
+        255,
+        4,
+        3,
+        1,
+        0
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:dfd33e704b242984[1:2]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:1",
+      "seed_id": "id:000000,sha256:dfd33e704b242984",
+      "source": "generic_format_lifted_observer",
+      "start": 1,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:2c8c198300495b33",
+      "label": "id:000000,sha256:dfd33e704b242984[2:5]",
+      "length": 3,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:1",
+      "seed_id": "id:000000,sha256:dfd33e704b242984",
+      "source": "generic_format_lifted_observer",
+      "start": 2,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:3a17c9a3122b5f56",
+      "integer_endian": "big",
+      "integer_values": [
+        255,
+        6,
+        5,
+        1,
+        0
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:dfd33e704b242984[2:3]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:2",
+      "seed_id": "id:000000,sha256:dfd33e704b242984",
+      "source": "generic_format_lifted_observer",
+      "start": 2,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:a8bb369832262737",
+      "label": "id:000000,sha256:dfd33e704b242984[3:8]",
+      "length": 5,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:2",
+      "seed_id": "id:000000,sha256:dfd33e704b242984",
+      "source": "generic_format_lifted_observer",
+      "start": 3,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "low",
+      "configured": false,
+      "id": "repair:0f64e4706000b9b6",
+      "kind": "external_or_project_format_repair",
+      "label": "format_repair_hook_available_if_configured",
+      "name": "format_repair_hook_available_if_configured",
+      "type": "repair_hook"
+    }
+  ],
+  "repair_hooks": [
+    {
+      "confidence": "low",
+      "configured": false,
+      "kind": "external_or_project_format_repair",
+      "name": "format_repair_hook_available_if_configured"
+    }
+  ],
+  "schema_version": "formtrig-trigger-progress-graph-v2",
+  "target_id": "LIBARCHIVE_2937"
+}

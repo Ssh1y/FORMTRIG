@@ -1,0 +1,352 @@
+{
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "category": "numeric-margin",
+      "composition": "sequence",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "Joliet duplicate-identifier numeric insertion uses a negative insertion offset",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        "-"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "Joliet",
+        "duplicate",
+        "identifier",
+        "numeric",
+        "insertion",
+        "uses",
+        "a",
+        "negative"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [
+        "a2"
+      ],
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ]
+    },
+    {
+      "atom_id": "a2",
+      "category": "numeric-margin",
+      "composition": "sequence",
+      "composition_group": "g1",
+      "confidence": "high",
+      "expression": "the allocated UTF-16 identifier buffer.",
+      "group_id": "g1",
+      "guarded_by": [],
+      "object_identity_edges": [],
+      "observation_status": "NOT_OBSERVED",
+      "operators": [
+        "-"
+      ],
+      "reason": "tcir_atomic_predicate",
+      "root_events": [],
+      "root_variables": [
+        "the",
+        "allocated",
+        "identifier",
+        "buffer"
+      ],
+      "secondary_categories": [],
+      "secondary_tags": [],
+      "sequence_edges": [],
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "attrs": {
+        "composition": "SEQUENCE"
+      },
+      "dst": "a1",
+      "edge_type": "contains",
+      "src": "g1"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:e46159911def4020"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:e24a5a32c9b8c863"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:285437db8c5e1541"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:15f450a59134f37a"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:4fbb1929d4e0878c"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:f480ffb2979d1888"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:ca978112ca1bbdca"
+    },
+    {
+      "attrs": {},
+      "dst": "a1",
+      "edge_type": "defines_atom",
+      "src": "root:a1:09f04951af4cd503"
+    },
+    {
+      "attrs": {
+        "composition": "SEQUENCE"
+      },
+      "dst": "a2",
+      "edge_type": "contains",
+      "src": "g1"
+    },
+    {
+      "attrs": {},
+      "dst": "a2",
+      "edge_type": "defines_atom",
+      "src": "root:a2:b9776d7ddf459c9a"
+    },
+    {
+      "attrs": {},
+      "dst": "a2",
+      "edge_type": "defines_atom",
+      "src": "root:a2:1584570866884bb8"
+    },
+    {
+      "attrs": {},
+      "dst": "a2",
+      "edge_type": "defines_atom",
+      "src": "root:a2:285437db8c5e1541"
+    },
+    {
+      "attrs": {},
+      "dst": "a2",
+      "edge_type": "defines_atom",
+      "src": "root:a2:d0ca8c2ac0dab879"
+    },
+    {
+      "attrs": {
+        "order": "sequence"
+      },
+      "dst": "a2",
+      "edge_type": "order",
+      "src": "a1"
+    }
+  ],
+  "expression": "Joliet duplicate-identifier numeric insertion uses a negative insertion offset before the allocated UTF-16 identifier buffer.",
+  "groups": [
+    {
+      "branch_quota": 2,
+      "children": [
+        "a1",
+        "a2"
+      ],
+      "expression": "Joliet duplicate-identifier numeric insertion uses a negative insertion offset before the allocated UTF-16 identifier buffer.",
+      "group_id": "g1",
+      "group_type": "SEQUENCE",
+      "parent_id": ""
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {
+        "expression": "Joliet duplicate-identifier numeric insertion uses a negative insertion offset before the allocated UTF-16 identifier buffer."
+      },
+      "label": "SEQUENCE",
+      "node_id": "g1",
+      "node_type": "group"
+    },
+    {
+      "attrs": {
+        "category": "numeric-margin",
+        "composition": "sequence",
+        "group_id": "g1",
+        "operators": [
+          "-"
+        ],
+        "root_events": [],
+        "root_variables": [
+          "Joliet",
+          "duplicate",
+          "identifier",
+          "numeric",
+          "insertion",
+          "uses",
+          "a",
+          "negative"
+        ],
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "Joliet duplicate-identifier numeric insertion uses a negative insertion offset",
+      "node_id": "a1",
+      "node_type": "atom"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "Joliet",
+      "node_id": "root:a1:e46159911def4020",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "duplicate",
+      "node_id": "root:a1:e24a5a32c9b8c863",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "identifier",
+      "node_id": "root:a1:285437db8c5e1541",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "numeric",
+      "node_id": "root:a1:15f450a59134f37a",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "insertion",
+      "node_id": "root:a1:4fbb1929d4e0878c",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "uses",
+      "node_id": "root:a1:f480ffb2979d1888",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "a",
+      "node_id": "root:a1:ca978112ca1bbdca",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a1",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "negative",
+      "node_id": "root:a1:09f04951af4cd503",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "category": "numeric-margin",
+        "composition": "sequence",
+        "group_id": "g1",
+        "operators": [
+          "-"
+        ],
+        "root_events": [],
+        "root_variables": [
+          "the",
+          "allocated",
+          "identifier",
+          "buffer"
+        ],
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "the allocated UTF-16 identifier buffer.",
+      "node_id": "a2",
+      "node_type": "atom"
+    },
+    {
+      "attrs": {
+        "atom_id": "a2",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "the",
+      "node_id": "root:a2:b9776d7ddf459c9a",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a2",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "allocated",
+      "node_id": "root:a2:1584570866884bb8",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a2",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "identifier",
+      "node_id": "root:a2:285437db8c5e1541",
+      "node_type": "root"
+    },
+    {
+      "attrs": {
+        "atom_id": "a2",
+        "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      },
+      "label": "buffer",
+      "node_id": "root:a2:d0ca8c2ac0dab879",
+      "node_type": "root"
+    }
+  ],
+  "root_group_id": "g1",
+  "schema_version": "formtrig-tcir-v3",
+  "source_locations": [
+    "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+  ],
+  "target_id": "LIBARCHIVE_2938"
+}

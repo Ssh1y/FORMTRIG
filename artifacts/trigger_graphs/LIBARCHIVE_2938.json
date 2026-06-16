@@ -1,0 +1,543 @@
+{
+  "confidence_summary": {
+    "high": 6,
+    "low": 1,
+    "medium": 21
+  },
+  "edges": [
+    {
+      "dst": "target:LIBARCHIVE_2938",
+      "site_index": 1,
+      "src": "site:1:ad6f7aa61e64ad82",
+      "type": "site_of_target"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2938",
+      "src": "atom:a1",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:ad6f7aa61e64ad82",
+      "src": "atom:a1",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:e46159911def4020",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:e24a5a32c9b8c863",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:285437db8c5e1541",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:15f450a59134f37a",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:4fbb1929d4e0878c",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:f480ffb2979d1888",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:ca978112ca1bbdca",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:09f04951af4cd503",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2938",
+      "src": "atom:a2",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:ad6f7aa61e64ad82",
+      "src": "atom:a2",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a2",
+      "src": "root:a2:b9776d7ddf459c9a",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a2",
+      "src": "root:a2:1584570866884bb8",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a2",
+      "src": "root:a2:285437db8c5e1541",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a2",
+      "src": "root:a2:d0ca8c2ac0dab879",
+      "type": "defines_atom"
+    },
+    {
+      "confidence": "low",
+      "dst": "atom:a2",
+      "order": "expression_order",
+      "src": "atom:a1",
+      "type": "order_constraint"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2938",
+      "src": "producer:8465f78ee1db9923",
+      "type": "may_enable_target"
+    },
+    {
+      "dst": "use:28d37fdd981982cf",
+      "src": "guard:ad6f7aa61e64ad82",
+      "type": "guards_use"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2938",
+      "src": "use:28d37fdd981982cf",
+      "type": "observes_target"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "order": "producer_before_guard",
+      "src": "producer:8465f78ee1db9923",
+      "type": "order_before"
+    },
+    {
+      "dst": "use:28d37fdd981982cf",
+      "order": "guard_before_use",
+      "src": "guard:ad6f7aa61e64ad82",
+      "type": "order_before"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "range:3e384cd1470df551",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "range:c2a4026cd09d68fc",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "range:fb5e03e559a14b38",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "range:85267ddcd099b877",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "range:c6b65f3d639285c2",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "range:10367a975f124d5a",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "range:9f29a25ac5d7cebd",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "range:0b8a635c5970da57",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:ad6f7aa61e64ad82",
+      "src": "repair:6d64444de2985740",
+      "type": "may_repair_after_mutation"
+    }
+  ],
+  "nodes": [
+    {
+      "confidence": "high",
+      "id": "target:LIBARCHIVE_2938",
+      "label": "LIBARCHIVE_2938",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "type": "target_context"
+    },
+    {
+      "confidence": "high",
+      "id": "site:1:ad6f7aa61e64ad82",
+      "label": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "type": "target_site_context"
+    },
+    {
+      "category": "numeric-margin",
+      "composition": "sequence",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a1",
+      "label": "Joliet duplicate-identifier numeric insertion uses a negative insertion offset",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:e46159911def4020",
+      "label": "Joliet",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:e24a5a32c9b8c863",
+      "label": "duplicate",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:285437db8c5e1541",
+      "label": "identifier",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:15f450a59134f37a",
+      "label": "numeric",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:4fbb1929d4e0878c",
+      "label": "insertion",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:f480ffb2979d1888",
+      "label": "uses",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:ca978112ca1bbdca",
+      "label": "a",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:09f04951af4cd503",
+      "label": "negative",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "category": "numeric-margin",
+      "composition": "sequence",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a2",
+      "label": "the allocated UTF-16 identifier buffer.",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a2",
+      "confidence": "medium",
+      "id": "root:a2:b9776d7ddf459c9a",
+      "label": "the",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a2",
+      "confidence": "medium",
+      "id": "root:a2:1584570866884bb8",
+      "label": "allocated",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a2",
+      "confidence": "medium",
+      "id": "root:a2:285437db8c5e1541",
+      "label": "identifier",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a2",
+      "confidence": "medium",
+      "id": "root:a2:d0ca8c2ac0dab879",
+      "label": "buffer",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "confidence": "medium",
+      "id": "producer:8465f78ee1db9923",
+      "label": "cve_rnt_gdb_collector",
+      "runtime_event_id": "producer:7548c27c84b3fe5a",
+      "source_location": "",
+      "type": "producer_context"
+    },
+    {
+      "confidence": "high",
+      "id": "guard:ad6f7aa61e64ad82",
+      "label": "Joliet duplicate-identifier numeric insertion uses a negative insertion offset before the allocated UTF-16 identifier buffer.",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "type": "guard_context"
+    },
+    {
+      "confidence": "high",
+      "id": "use:28d37fdd981982cf",
+      "label": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:5969#idr_set_num_beutf16",
+      "type": "use_context"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:3e384cd1470df551",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:1c57367b1b53486e[1:2]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:1",
+      "seed_id": "id:000000,sha256:1c57367b1b53486e",
+      "source": "generic_format_lifted_observer",
+      "start": 1,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:c2a4026cd09d68fc",
+      "label": "id:000000,sha256:1c57367b1b53486e[2:66]",
+      "length": 64,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:1",
+      "seed_id": "id:000000,sha256:1c57367b1b53486e",
+      "source": "generic_format_lifted_observer",
+      "start": 2,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:fb5e03e559a14b38",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        48,
+        49,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:1c57367b1b53486e[3:4]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:3",
+      "seed_id": "id:000000,sha256:1c57367b1b53486e",
+      "source": "generic_format_lifted_observer",
+      "start": 3,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:85267ddcd099b877",
+      "label": "id:000000,sha256:1c57367b1b53486e[4:52]",
+      "length": 48,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:3",
+      "seed_id": "id:000000,sha256:1c57367b1b53486e",
+      "source": "generic_format_lifted_observer",
+      "start": 4,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:c6b65f3d639285c2",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:1c57367b1b53486e[4:5]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:4",
+      "seed_id": "id:000000,sha256:1c57367b1b53486e",
+      "source": "generic_format_lifted_observer",
+      "start": 4,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:10367a975f124d5a",
+      "label": "id:000000,sha256:1c57367b1b53486e[5:69]",
+      "length": 64,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:4",
+      "seed_id": "id:000000,sha256:1c57367b1b53486e",
+      "source": "generic_format_lifted_observer",
+      "start": 5,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:9f29a25ac5d7cebd",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        102,
+        103,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:1c57367b1b53486e[6:7]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:6",
+      "seed_id": "id:000000,sha256:1c57367b1b53486e",
+      "source": "generic_format_lifted_observer",
+      "start": 6,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:0b8a635c5970da57",
+      "label": "id:000000,sha256:1c57367b1b53486e[7:71]",
+      "length": 64,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:6",
+      "seed_id": "id:000000,sha256:1c57367b1b53486e",
+      "source": "generic_format_lifted_observer",
+      "start": 7,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "low",
+      "configured": false,
+      "id": "repair:6d64444de2985740",
+      "kind": "external_or_project_format_repair",
+      "label": "format_repair_hook_available_if_configured",
+      "name": "format_repair_hook_available_if_configured",
+      "type": "repair_hook"
+    }
+  ],
+  "repair_hooks": [
+    {
+      "confidence": "low",
+      "configured": false,
+      "kind": "external_or_project_format_repair",
+      "name": "format_repair_hook_available_if_configured"
+    }
+  ],
+  "schema_version": "formtrig-trigger-progress-graph-v2",
+  "target_id": "LIBARCHIVE_2938"
+}

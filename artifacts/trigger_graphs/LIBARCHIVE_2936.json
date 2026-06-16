@@ -1,0 +1,453 @@
+{
+  "confidence_summary": {
+    "high": 5,
+    "low": 1,
+    "medium": 17
+  },
+  "edges": [
+    {
+      "dst": "target:LIBARCHIVE_2936",
+      "site_index": 1,
+      "src": "site:1:3e0fbc2616d2a05e",
+      "type": "site_of_target"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2936",
+      "src": "atom:a1",
+      "type": "belongs_to_target"
+    },
+    {
+      "dst": "site:1:3e0fbc2616d2a05e",
+      "src": "atom:a1",
+      "type": "located_at"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:a0af9f865bf637e6",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:0d4fc4a78d3706ed",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:1958910ec11446e9",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:338e30d7aa177a31",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:e47125968b3b7104",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:4ba69735ca53765e",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:8e7fc0236af43df9",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "atom:a1",
+      "src": "root:a1:9f584196e7fe6de8",
+      "type": "defines_atom"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2936",
+      "src": "producer:8465f78ee1db9923",
+      "type": "may_enable_target"
+    },
+    {
+      "dst": "use:73bb1512b14e6d58",
+      "src": "guard:3e0fbc2616d2a05e",
+      "type": "guards_use"
+    },
+    {
+      "dst": "target:LIBARCHIVE_2936",
+      "src": "use:73bb1512b14e6d58",
+      "type": "observes_target"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "order": "producer_before_guard",
+      "src": "producer:8465f78ee1db9923",
+      "type": "order_before"
+    },
+    {
+      "dst": "use:73bb1512b14e6d58",
+      "order": "guard_before_use",
+      "src": "guard:3e0fbc2616d2a05e",
+      "type": "order_before"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "range:1e8c01f533e51c82",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "range:aadcf3b58d464170",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "range:11d167a7c9767c31",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "range:2a7345f9cb591319",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "range:3957b810b35d0eb6",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "range:db5923f3b61067b6",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "range:241a6f5cf08b64e3",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "range:bdca092456cc8809",
+      "type": "candidate_influences"
+    },
+    {
+      "dst": "guard:3e0fbc2616d2a05e",
+      "src": "repair:7cfb7049d44f488f",
+      "type": "may_repair_after_mutation"
+    }
+  ],
+  "nodes": [
+    {
+      "confidence": "high",
+      "id": "target:LIBARCHIVE_2936",
+      "label": "LIBARCHIVE_2936",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "type": "target_context"
+    },
+    {
+      "confidence": "high",
+      "id": "site:1:3e0fbc2616d2a05e",
+      "label": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "type": "target_site_context"
+    },
+    {
+      "category": "binary-state-null",
+      "composition": "all_of",
+      "confidence": "high",
+      "group_id": "g1",
+      "id": "atom:a1",
+      "label": "ISO9660 path-table comparator dereferences parent state that can be NULL for malformed virtual directory state.",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "tc_atom"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:a0af9f865bf637e6",
+      "label": "path",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:0d4fc4a78d3706ed",
+      "label": "table",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:1958910ec11446e9",
+      "label": "comparator",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:338e30d7aa177a31",
+      "label": "dereferences",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:e47125968b3b7104",
+      "label": "parent",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:4ba69735ca53765e",
+      "label": "state",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:8e7fc0236af43df9",
+      "label": "that",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "atom_id": "a1",
+      "confidence": "medium",
+      "id": "root:a1:9f584196e7fe6de8",
+      "label": "can",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "source_locations": [
+        "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table"
+      ],
+      "type": "root_variable_or_event"
+    },
+    {
+      "confidence": "medium",
+      "id": "producer:8465f78ee1db9923",
+      "label": "cve_rnt_gdb_collector",
+      "runtime_event_id": "producer:c586c3d4349c5aec",
+      "source_location": "",
+      "type": "producer_context"
+    },
+    {
+      "confidence": "high",
+      "id": "guard:3e0fbc2616d2a05e",
+      "label": "ISO9660 path-table comparator dereferences parent state that can be NULL for malformed virtual directory state.",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "type": "guard_context"
+    },
+    {
+      "confidence": "high",
+      "id": "use:73bb1512b14e6d58",
+      "label": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "runtime_event_id": "",
+      "source_location": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "type": "use_context"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:1e8c01f533e51c82",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        4,
+        5,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:73babf46f0dd7c1c[0:1]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:0",
+      "seed_id": "id:000000,sha256:73babf46f0dd7c1c",
+      "source": "generic_format_lifted_observer",
+      "start": 0,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:aadcf3b58d464170",
+      "label": "id:000000,sha256:73babf46f0dd7c1c[1:5]",
+      "length": 4,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:0",
+      "seed_id": "id:000000,sha256:73babf46f0dd7c1c",
+      "source": "generic_format_lifted_observer",
+      "start": 1,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:11d167a7c9767c31",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        3,
+        4,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:73babf46f0dd7c1c[1:2]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:1",
+      "seed_id": "id:000000,sha256:73babf46f0dd7c1c",
+      "source": "generic_format_lifted_observer",
+      "start": 1,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:2a7345f9cb591319",
+      "label": "id:000000,sha256:73babf46f0dd7c1c[2:5]",
+      "length": 3,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:1",
+      "seed_id": "id:000000,sha256:73babf46f0dd7c1c",
+      "source": "generic_format_lifted_observer",
+      "start": 2,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:3957b810b35d0eb6",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        11,
+        12,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:73babf46f0dd7c1c[2:3]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:2",
+      "seed_id": "id:000000,sha256:73babf46f0dd7c1c",
+      "source": "generic_format_lifted_observer",
+      "start": 2,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:db5923f3b61067b6",
+      "label": "id:000000,sha256:73babf46f0dd7c1c[3:14]",
+      "length": 11,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:2",
+      "seed_id": "id:000000,sha256:73babf46f0dd7c1c",
+      "source": "generic_format_lifted_observer",
+      "start": 3,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.75,
+      "format_family": "archive_harness",
+      "id": "range:241a6f5cf08b64e3",
+      "integer_endian": "big",
+      "integer_values": [
+        0,
+        1,
+        11,
+        12,
+        255
+      ],
+      "integer_width": 1,
+      "label": "id:000000,sha256:73babf46f0dd7c1c[17:18]",
+      "length": 1,
+      "mutation_strategy": "integer_boundary",
+      "range_kind": "binary_length_prefix",
+      "root_priority": 1,
+      "runtime_event_id": "archive_harness:length:17",
+      "seed_id": "id:000000,sha256:73babf46f0dd7c1c",
+      "source": "generic_format_lifted_observer",
+      "start": 17,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "medium",
+      "confidence_score": 0.55,
+      "format_family": "archive_harness",
+      "id": "range:bdca092456cc8809",
+      "label": "id:000000,sha256:73babf46f0dd7c1c[18:29]",
+      "length": 11,
+      "range_kind": "binary_length_payload",
+      "runtime_event_id": "archive_harness:payload:17",
+      "seed_id": "id:000000,sha256:73babf46f0dd7c1c",
+      "source": "generic_format_lifted_observer",
+      "start": 18,
+      "type": "candidate_input_influence_range"
+    },
+    {
+      "confidence": "low",
+      "configured": false,
+      "id": "repair:7cfb7049d44f488f",
+      "kind": "external_or_project_format_repair",
+      "label": "format_repair_hook_available_if_configured",
+      "name": "format_repair_hook_available_if_configured",
+      "type": "repair_hook"
+    }
+  ],
+  "repair_hooks": [
+    {
+      "confidence": "low",
+      "configured": false,
+      "kind": "external_or_project_format_repair",
+      "name": "format_repair_hook_available_if_configured"
+    }
+  ],
+  "schema_version": "formtrig-trigger-progress-graph-v2",
+  "target_id": "LIBARCHIVE_2936"
+}
