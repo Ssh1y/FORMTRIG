@@ -1,0 +1,76 @@
+{
+  "baseline": "redqueen_operand",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "budget": 120,
+  "command_line": [
+    "magma/captain",
+    "aflplusplus",
+    "libtiff",
+    "tiff_read_rgba_fuzzer",
+    "@@"
+  ],
+  "config_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_baselines_b5_matched_120s_3rep_20260616/runs/redqueen_operand_120s_rep1/run_config.json",
+  "first_crash": null,
+  "fuzzer_stats": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_baselines_b5_matched_120s_3rep_20260616/magma/redqueen_operand_120s_rep1/findings/default/fuzzer_stats",
+  "last_crash_time_s": null,
+  "magma_monitor": {
+    "bug_id": "TIF012",
+    "first_reach": {
+      "bug_id": "TIF012",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_baselines_b5_matched_120s_3rep_20260616/magma/redqueen_operand_120s_rep1/monitor/60",
+      "kind": "poll",
+      "reached": 1,
+      "time_s": 60,
+      "triggered": 0
+    },
+    "first_trigger": null,
+    "latest": {
+      "bug_id": "TIF012",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_baselines_b5_matched_120s_3rep_20260616/magma/redqueen_operand_120s_rep1/monitor/final",
+      "kind": "final",
+      "reached": 46445,
+      "time_s": null,
+      "triggered": 0
+    },
+    "monitor_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_baselines_b5_matched_120s_3rep_20260616/magma/redqueen_operand_120s_rep1/monitor",
+    "reached": 46445,
+    "snapshot_count": 4,
+    "triggered": 0
+  },
+  "run_id": "TIF012:redqueen_operand:rep1",
+  "seed_set_id": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/TIF012/seeds",
+  "stats": {
+    "corpus_count": 411,
+    "execs_done": 229411,
+    "execs_per_sec": "1946.59",
+    "magma_reached": 46445,
+    "magma_triggered": 0,
+    "run_time": 117,
+    "saved_crashes": 0,
+    "saved_hangs": 0
+  },
+  "success": false,
+  "target_id": "TIF012",
+  "tc_category": "binary-state-null",
+  "timeout": false,
+  "trigger_execs": null,
+  "trigger_time_kind": null,
+  "trigger_time_s": null
+}

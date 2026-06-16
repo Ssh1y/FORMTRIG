@@ -187,6 +187,59 @@ non-trigger `D_F` gradient claim. It is a typed-repair endpoint claim: FORMTRIG
 uses the lifted input-influence hook to synthesize the missing producer/use
 state and directly closes R2T.
 
+## Matched 120s Baseline Comparison
+
+Comparison package:
+
+`artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_vs_aflpp_family_120s_20260616`
+
+Replicated comparison package:
+
+`artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616`
+
+Baseline input:
+
+`artifacts/formtrig_native_readiness/raw/tif012_baselines_b5_matched_120s_20260616/summary.json`
+
+Replicated baseline input:
+
+`artifacts/formtrig_native_readiness/raw/tif012_baselines_b5_matched_120s_3rep_20260616/summary.json`
+
+Replicated FORMTRIG input:
+
+`artifacts/formtrig_native_readiness/raw/tif012_b5_formtrig_120s_3rep_20260616/batch_summary.csv`
+
+Replicated first-trigger evidence:
+
+`artifacts/formtrig_native_readiness/raw/tif012_b5_formtrig_120s_3rep_20260616/first_trigger_events.jsonl`
+
+Same-budget 120s result:
+
+| arm | budget | `_R`/reached | `_T` | first `_T` |
+| --- | ---: | ---: | ---: | ---: |
+| FORMTRIG B5 | 120s | 39,787 | 18,708 | 0.035s / exec 146 |
+| AFL++ vanilla | 120s | 37,505 | 0 | n/a |
+| AFL++ CmpLog | 120s | 63,036 | 0 | n/a |
+| Redqueen/operand | 120s | 52,228 | 0 | n/a |
+
+The comparison verdict is `positive_endpoint_but_under_replicated`: it supports
+a same-budget endpoint benefit for this short screen, but not a final
+performance claim. Required next step is at least three repetitions per
+matched baseline/budget and matching FORMTRIG repetitions.
+
+The replicated 3x120s result upgrades this short-screen evidence:
+
+| arm | success | terminal `_T` counts | first `_T` |
+| --- | ---: | --- | --- |
+| FORMTRIG B5 current SHA | 3/3 | 10,870; 7,971; 4,604 | 0.036s, 0.035s, 0.035s / exec 146 |
+| AFL++ vanilla | 0/3 | 0; 0; 0 | n/a |
+| AFL++ CmpLog | 0/3 | 0; 0; 0 | n/a |
+| Redqueen/operand | 0/3 | 0; 0; 0 | n/a |
+
+The replicated comparison verdict is `positive_endpoint_matched_comparison`.
+This is now a real short-screen endpoint benefit, not only a single-run smoke
+signal. It is still not a final long-run or cross-target claim.
+
 ## Interpretation
 
 TIF012 has moved from negative endpoint evidence under B2 to positive endpoint

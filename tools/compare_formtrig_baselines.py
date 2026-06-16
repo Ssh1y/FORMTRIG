@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 import statistics
 from pathlib import Path
 from typing import Any
@@ -132,6 +133,52 @@ def strict_pretrigger(row: dict[str, Any]) -> bool:
     )
 
 
+def first_formtrig_trigger(default_dir: Path) -> dict[str, Any]:
+    progress_path = default_dir / "formtrig_progress.jsonl"
+    queue_dir = default_dir / "queue"
+    if not progress_path.exists():
+        return {}
+
+    for line in progress_path.read_text(encoding="utf-8").splitlines():
+        if "triggered" not in line:
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if event.get("reason") != "triggered" and not parse_bool(event.get("triggered")):
+            continue
+        queue_id = event.get("queue_id")
+        queue_path = None
+        queue_time_s = None
+        queue_execs = None
+        if queue_id is not None and queue_dir.is_dir():
+            prefix = f"id:{int(queue_id):06d},"
+            for candidate in queue_dir.iterdir():
+                if candidate.name.startswith(prefix):
+                    queue_path = candidate
+                    time_match = re.search(r"(?:^|,)time:(\d+)(?:,|$)", candidate.name)
+                    exec_match = re.search(r"(?:^|,)execs:(\d+)(?:,|$)", candidate.name)
+                    if time_match:
+                        queue_time_s = int(time_match.group(1)) / 1000.0
+                    if exec_match:
+                        queue_execs = int(exec_match.group(1))
+                    break
+        return {
+            "first_formtrig_trigger_event": event,
+            "first_formtrig_trigger_queue_id": queue_id,
+            "first_formtrig_trigger_queue_path": str(queue_path) if queue_path else None,
+            "first_formtrig_trigger_time_s": queue_time_s,
+            "first_formtrig_trigger_execs": queue_execs or event.get("execs_done"),
+            "first_formtrig_trigger_kind": (
+                "formtrig_progress_queue_filename_exact"
+                if queue_time_s is not None
+                else "formtrig_progress_exec_exact"
+            ),
+        }
+    return {}
+
+
 def load_formtrig_rows(items: list[str], target_id: str) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for item in items:
@@ -171,6 +218,16 @@ def load_formtrig_rows(items: list[str], target_id: str) -> list[dict[str, Any]]
                     "source_path": str(path),
                     "out_dir": str_value(raw.get("out_dir")),
                 }
+                out_dir = str_value(raw.get("out_dir"))
+                if out_dir:
+                    exact = first_formtrig_trigger(Path(out_dir))
+                    if exact:
+                        row.update(exact)
+                        if numeric(exact.get("first_formtrig_trigger_time_s")) is not None:
+                            row["trigger_time_s"] = exact["first_formtrig_trigger_time_s"]
+                            row["trigger_time_kind"] = exact["first_formtrig_trigger_kind"]
+                        if numeric(exact.get("first_formtrig_trigger_execs")) is not None:
+                            row["trigger_execs"] = exact["first_formtrig_trigger_execs"]
                 rows.append(row)
     return rows
 
@@ -347,6 +404,9 @@ def classify_evidence(
         reasons.append("low_replication")
 
     successful_baselines = [group for group in groups if float(group.get("success_rate") or 0.0) > 0.0]
+    terminal_without_successful_baseline = terminal_formtrig and matched_baselines and not successful_baselines
+    if terminal_without_successful_baseline:
+        reasons.append("formtrig_endpoint_where_matched_baselines_do_not_trigger")
     if successful_baselines:
         reasons.append("matched_baseline_also_triggers")
         if best_formtrig_tte is not None and best_baseline_tte is not None:
@@ -365,6 +425,10 @@ def classify_evidence(
         verdict = "speedup_but_under_replicated"
     elif successful_baselines:
         verdict = "baseline_also_triggers_not_sota_advantage"
+    elif terminal_without_successful_baseline and not low_rep_groups:
+        verdict = "positive_endpoint_matched_comparison"
+    elif terminal_without_successful_baseline:
+        verdict = "positive_endpoint_but_under_replicated"
     elif strict_formtrig and terminal_formtrig and not low_rep_groups:
         verdict = "positive_matched_comparison"
     elif strict_formtrig and terminal_formtrig:
@@ -486,6 +550,7 @@ def benefit_readout(
         primary_benefits.append(
             "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
         )
+        design_evidence.append("matched_budget_endpoint_success")
 
     if analysis.get("missing_required_baselines"):
         blocked_claims.append("required baseline families are still missing")
@@ -494,11 +559,16 @@ def benefit_readout(
 
     observed_benefits = primary_benefits + endpoint_observations + mechanism_benefits
 
+    low_replication = "low_replication" in analysis.get("reasons", [])
     if primary_benefits:
-        if successful_baseline_groups:
+        if low_replication and successful_baseline_groups:
             summary = "current package supports a matched-budget speedup benefit, subject to replication"
-        else:
+        elif low_replication:
             summary = "current package supports a matched-budget primary benefit, subject to replication"
+        elif successful_baseline_groups:
+            summary = "current package supports a matched-budget speedup benefit"
+        else:
+            summary = "current package supports a matched-budget primary endpoint benefit"
     elif not observed_benefits:
         summary = "no benefit claim is supported by the current package"
     elif any("no later than FORMTRIG" in claim or "also trigger" in claim for claim in blocked_claims):
