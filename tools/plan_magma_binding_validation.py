@@ -23,8 +23,10 @@ DEFAULT_OUT_JSON = Path("artifacts/formtrig_native_readiness/magma_binding_valid
 DEFAULT_OUT_MD = Path("artifacts/formtrig_native_readiness/magma_binding_validation_worklist_20260616.md")
 DEFAULT_OUT_CSV = Path("artifacts/formtrig_native_readiness/magma_binding_validation_worklist_20260616.csv")
 DEFAULT_OUT_SH = Path("artifacts/formtrig_native_readiness/magma_binding_validation_worklist_20260616.sh")
+DEFAULT_ASSETS_TEMPLATE = Path("artifacts/formtrig_native_readiness/magma_binding_validation_assets.template.json")
 DEFAULT_RAW_ROOT = Path("artifacts/formtrig_native_readiness/raw")
 DEFAULT_VALIDATION_ROOT = Path("artifacts/formtrig_native_readiness/binding_validation")
+DEFAULT_RNT_STATUS = Path("artifacts/rnt_corpus_status.json")
 
 
 CSV_FIELDS = [
@@ -34,7 +36,10 @@ CSV_FIELDS = [
     "runnable_now",
     "action",
     "binding_spec",
+    "seed_source",
     "seed_dir",
+    "rnt_status",
+    "rnt_seed_files",
     "site_map",
     "target_cwd",
     "target_cmd",
@@ -97,6 +102,25 @@ def load_assets(path: Path | None) -> dict[str, dict[str, Any]]:
     raise ValueError(f"unsupported assets JSON shape: {path}")
 
 
+def load_rnt_status(path: Path | None) -> dict[str, dict[str, Any]]:
+    if path is None or not path.exists():
+        return {}
+    payload = read_json(path)
+    rows = payload.get("records", []) if isinstance(payload, dict) else []
+    return {
+        str(row.get("target_id")): row
+        for row in rows
+        if isinstance(row, dict) and row.get("target_id")
+    }
+
+
+def intish(value: Any) -> int:
+    try:
+        return int(str(value))
+    except (TypeError, ValueError):
+        return 0
+
+
 def repo_path(value: str, *, base: Path | None = None) -> Path:
     path = Path(value)
     if path.is_absolute() or base is None:
@@ -151,6 +175,7 @@ def task_from_draft(
     draft: dict[str, Any],
     *,
     assets: dict[str, dict[str, Any]],
+    rnt_status: dict[str, dict[str, Any]],
     duration_s: int,
     raw_root: Path,
     validation_root: Path,
@@ -160,12 +185,24 @@ def task_from_draft(
 ) -> dict[str, Any]:
     target_id = str(draft.get("target_id") or "")
     asset = assets.get(target_id, {})
+    rnt = rnt_status.get(target_id, {})
     manifest_template = Path(str(draft.get("manifest_template") or ""))
     manifest_dir = manifest_template.parent if manifest_template else Path(".")
     template = manifest_values(manifest_template)
 
     binding_spec = str(asset.get("binding_spec") or draft.get("binding_spec") or template.get("binding_spec") or "")
-    seed_dir = str(asset.get("seed_dir") or template.get("seed_dir") or "")
+    explicit_seed_dir = str(asset.get("seed_dir") or "")
+    rnt_seed_dir = str(rnt.get("seed_dir") or "")
+    rnt_ready = str(rnt.get("status") or "") == "formal_ready" and str(rnt.get("seed_dir_exists") or "").lower() == "true"
+    if explicit_seed_dir:
+        seed_dir = explicit_seed_dir
+        seed_source = "assets"
+    elif rnt_ready and rnt_seed_dir:
+        seed_dir = rnt_seed_dir
+        seed_source = "formal_rnt_corpus"
+    else:
+        seed_dir = str(template.get("seed_dir") or "")
+        seed_source = "manifest_template_initial_corpus"
     site_map = str(asset.get("site_map") or template.get("site_map") or "")
     target_cwd = str(asset.get("target_cwd") or template.get("target_cwd") or "")
     target_cmd = str(asset.get("target_cmd") or template.get("target_cmd") or "")
@@ -185,6 +222,19 @@ def task_from_draft(
         blockers.append(f"binding_spec is missing or unresolved: {binding_spec or '<empty>'}")
     if has_todo(seed_dir) or not resolved_seed_dir.exists():
         blockers.append(f"seed_dir is missing or unresolved: {seed_dir or '<empty>'}")
+    if seed_source != "assets":
+        if rnt and not rnt_ready:
+            blockers.append(
+                "formal RNT seed corpus is not ready: "
+                f"{rnt.get('status') or 'unknown'}"
+                + (
+                    f" ({rnt.get('blocking_reason')})"
+                    if rnt.get("blocking_reason")
+                    else ""
+                )
+            )
+        elif not rnt:
+            blockers.append("formal RNT seed status is missing for this target")
     if has_todo(site_map) or not resolved_site_map.exists():
         blockers.append(f"site_map is missing or unresolved: {site_map or '<empty>'}")
     if has_todo(target_cwd) or not resolved_target_cwd.exists():
@@ -270,7 +320,11 @@ def task_from_draft(
         "blockers": blockers,
         "binding_spec": display_path(resolved_binding_spec),
         "manifest_template": str(manifest_template),
+        "seed_source": seed_source,
         "seed_dir": display_path(resolved_seed_dir),
+        "rnt_status": str(rnt.get("status") or ""),
+        "rnt_seed_files": intish(rnt.get("seed_files")),
+        "rnt_blocking_reason": str(rnt.get("blocking_reason") or ""),
         "site_map": display_path(resolved_site_map),
         "target_cwd": display_path(resolved_target_cwd),
         "target_cmd": target_cmd,
@@ -297,6 +351,7 @@ def build_worklist(
     *,
     drafts_path: Path,
     assets_path: Path | None,
+    rnt_status_path: Path | None,
     duration_s: int,
     raw_root: Path,
     validation_root: Path,
@@ -306,10 +361,12 @@ def build_worklist(
 ) -> dict[str, Any]:
     drafts_payload = read_json(drafts_path)
     assets = load_assets(assets_path)
+    rnt_status = load_rnt_status(rnt_status_path)
     tasks = [
         task_from_draft(
             draft,
             assets=assets,
+            rnt_status=rnt_status,
             duration_s=duration_s,
             raw_root=raw_root,
             validation_root=validation_root,
@@ -325,6 +382,7 @@ def build_worklist(
         "inputs": {
             "drafts": str(drafts_path),
             "assets": str(assets_path) if assets_path else "",
+            "rnt_status": str(rnt_status_path) if rnt_status_path else "",
             "duration_s": duration_s,
             "raw_root": str(raw_root),
             "validation_root": str(validation_root),
@@ -384,6 +442,8 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         if task["runnable_now"]:
             continue
         lines.append(f"### {task['target_id']}")
+        if task.get("rnt_status"):
+            lines.append(f"- RNT status: `{task['rnt_status']}`; seed files: `{task.get('rnt_seed_files', 0)}`")
         for blocker in task.get("blockers") or []:
             lines.append(f"- {blocker}")
         lines.append("")
@@ -414,10 +474,44 @@ def write_shell(path: Path, payload: dict[str, Any]) -> None:
     path.chmod(0o755)
 
 
+def build_assets_template(payload: dict[str, Any]) -> dict[str, Any]:
+    targets: dict[str, Any] = {}
+    for task in payload["tasks"]:
+        target_id = str(task["target_id"])
+        rnt_ready = task.get("rnt_status") == "formal_ready"
+        seed_dir = task["seed_dir"] if rnt_ready else f"TODO_FORMAL_RNT_SEED_DIR_FOR_{target_id}"
+        targets[target_id] = {
+            "binding_spec": task["binding_spec"],
+            "seed_dir": seed_dir,
+            "site_map": f"TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_{target_id}.tsv",
+            "target_cwd": f"TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_{target_id}",
+            "target_cmd": task["target_cmd"],
+            "category": task["category"],
+            "runner_category": task["runner_category"],
+            "duration_s": task["duration_s"],
+            "seed_preflight_max": 32,
+            "seed_preflight_timeout": 5,
+            "validation_record": task["validation_record"],
+            "notes": [
+                "Replace TODO_* fields with paths from a FORMTRIG-native Magma build.",
+                "Use formal RNT seeds for pre-trigger validation; do not substitute the initial Magma corpus unless a new RNT seed source is validated.",
+            ],
+        }
+        if task.get("rnt_status") and task.get("rnt_status") != "formal_ready":
+            targets[target_id]["rnt_blocker"] = task.get("rnt_blocking_reason") or "RNT status is not formal_ready"
+    return {
+        "schema": "formtrig_magma_binding_validation_assets_template_v1",
+        "generated_at_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+        "source_worklist": payload["inputs"].get("drafts", ""),
+        "targets": targets,
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--drafts", type=Path, default=DEFAULT_DRAFTS)
     parser.add_argument("--assets", type=Path)
+    parser.add_argument("--rnt-status", type=Path, default=DEFAULT_RNT_STATUS)
     parser.add_argument("--duration", type=int, default=600)
     parser.add_argument("--raw-root", type=Path, default=DEFAULT_RAW_ROOT)
     parser.add_argument("--validation-root", type=Path, default=DEFAULT_VALIDATION_ROOT)
@@ -428,6 +522,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-md", type=Path, default=DEFAULT_OUT_MD)
     parser.add_argument("--out-csv", type=Path, default=DEFAULT_OUT_CSV)
     parser.add_argument("--out-sh", type=Path, default=DEFAULT_OUT_SH)
+    parser.add_argument("--out-assets-template", type=Path, default=DEFAULT_ASSETS_TEMPLATE)
     return parser.parse_args()
 
 
@@ -436,6 +531,7 @@ def main() -> int:
     payload = build_worklist(
         drafts_path=args.drafts,
         assets_path=args.assets,
+        rnt_status_path=args.rnt_status,
         duration_s=args.duration,
         raw_root=args.raw_root,
         validation_root=args.validation_root,
@@ -447,6 +543,8 @@ def main() -> int:
     write_markdown(args.out_md, payload)
     write_csv(args.out_csv, payload)
     write_shell(args.out_sh, payload)
+    if args.out_assets_template:
+        write_json(args.out_assets_template, build_assets_template(payload))
     return 0
 
 

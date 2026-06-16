@@ -69,6 +69,7 @@ class MagmaBindingValidationWorkflowTest(unittest.TestCase):
                     {
                         "targets": {
                             "PDF003": {
+                                "seed_dir": str(seed_dir),
                                 "site_map": str(site_map),
                                 "target_cwd": str(target_cwd),
                                 "target_cmd": "./pdfimages @@ /tmp/out",
@@ -83,6 +84,7 @@ class MagmaBindingValidationWorkflowTest(unittest.TestCase):
             payload = planner.build_worklist(
                 drafts_path=drafts,
                 assets_path=assets,
+                rnt_status_path=None,
                 duration_s=600,
                 raw_root=root / "raw",
                 validation_root=root / "validation",
@@ -99,6 +101,182 @@ class MagmaBindingValidationWorkflowTest(unittest.TestCase):
             self.assertIn("--candidate-kind binding-spec", task["command"])
             self.assertIn("summarize_binding_candidate_sweep.py", task["command"])
             self.assertIn("--seed-preflight-max 16", task["command"])
+
+    def test_validation_worklist_prefers_formal_rnt_seed_dir(self):
+        planner = load_tool("plan_magma_binding_validation")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = root / "PDF003.yml"
+            initial_seed_dir = root / "initial"
+            rnt_seed_dir = root / "rnt" / "PDF003" / "seeds"
+            site_map = root / "site_map.tsv"
+            target_cwd = root / "target"
+            spec.write_text("tc_id: PDF003\n", encoding="utf-8")
+            initial_seed_dir.mkdir()
+            rnt_seed_dir.mkdir(parents=True)
+            site_map.write_text("1\tcmp\tf\t1\ticmp\ta.c\t10\t2\n", encoding="utf-8")
+            target_cwd.mkdir()
+
+            drafts = root / "drafts.json"
+            manifest = root / "PDF003.manifest.template"
+            manifest.write_text(
+                "\n".join(
+                    [
+                        "target_id: PDF003",
+                        "category: binary-null",
+                        f"seed_dir: {initial_seed_dir}",
+                        f"binding_spec: {spec}",
+                        f"site_map: {site_map}",
+                        f"target_cwd: {target_cwd}",
+                        "target_cmd: ./pdfimages @@ /tmp/out",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            drafts.write_text(
+                json.dumps(
+                    {
+                        "drafts": [
+                            {
+                                "target_id": "PDF003",
+                                "project": "poppler",
+                                "program": "pdfimages",
+                                "category": "binary-state-null",
+                                "binding_spec": str(spec),
+                                "manifest_template": str(manifest),
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            rnt_status = root / "rnt_status.json"
+            rnt_status.write_text(
+                json.dumps(
+                    {
+                        "records": [
+                            {
+                                "target_id": "PDF003",
+                                "status": "formal_ready",
+                                "seed_dir_exists": "true",
+                                "seed_dir": str(rnt_seed_dir),
+                                "seed_files": "3",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                drafts_path=drafts,
+                assets_path=None,
+                rnt_status_path=rnt_status,
+                duration_s=600,
+                raw_root=root / "raw",
+                validation_root=root / "validation",
+                aflpp_dir="AFLplusplus",
+                seed_preflight_max=16,
+                seed_preflight_timeout=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertTrue(task["runnable_now"])
+            self.assertEqual(task["seed_source"], "formal_rnt_corpus")
+            self.assertEqual(task["seed_dir"], str(rnt_seed_dir))
+            self.assertEqual(task["rnt_seed_files"], 3)
+            template = planner.build_assets_template(payload)
+            self.assertEqual(template["targets"]["PDF003"]["seed_dir"], str(rnt_seed_dir))
+            self.assertIn("TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF003", template["targets"]["PDF003"]["site_map"])
+
+    def test_validation_worklist_blocks_excluded_rnt_without_asset_override(self):
+        planner = load_tool("plan_magma_binding_validation")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = root / "SSL011.yml"
+            initial_seed_dir = root / "initial"
+            site_map = root / "site_map.tsv"
+            target_cwd = root / "target"
+            spec.write_text("tc_id: SSL011\n", encoding="utf-8")
+            initial_seed_dir.mkdir()
+            site_map.write_text("1\tcmp\tf\t1\ticmp\ta.c\t10\t2\n", encoding="utf-8")
+            target_cwd.mkdir()
+            manifest = root / "SSL011.manifest.template"
+            manifest.write_text(
+                "\n".join(
+                    [
+                        "target_id: SSL011",
+                        "category: binary-null",
+                        f"seed_dir: {initial_seed_dir}",
+                        f"binding_spec: {spec}",
+                        f"site_map: {site_map}",
+                        f"target_cwd: {target_cwd}",
+                        "target_cmd: ./asn1 @@",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            drafts = root / "drafts.json"
+            drafts.write_text(
+                json.dumps(
+                    {
+                        "drafts": [
+                            {
+                                "target_id": "SSL011",
+                                "project": "openssl",
+                                "program": "asn1",
+                                "category": "binary-state-null",
+                                "binding_spec": str(spec),
+                                "manifest_template": str(manifest),
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            rnt_status = root / "rnt_status.json"
+            rnt_status.write_text(
+                json.dumps(
+                    {
+                        "records": [
+                            {
+                                "target_id": "SSL011",
+                                "status": "excluded",
+                                "seed_dir_exists": "false",
+                                "seed_dir": str(root / "rnt" / "SSL011" / "seeds"),
+                                "seed_files": "0",
+                                "blocking_reason": "no strict RNT seed",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                drafts_path=drafts,
+                assets_path=None,
+                rnt_status_path=rnt_status,
+                duration_s=600,
+                raw_root=root / "raw",
+                validation_root=root / "validation",
+                aflpp_dir="AFLplusplus",
+                seed_preflight_max=16,
+                seed_preflight_timeout=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertFalse(task["runnable_now"])
+            self.assertIn("formal RNT seed corpus is not ready: excluded", "; ".join(task["blockers"]))
+            template = planner.build_assets_template(payload)
+            self.assertEqual(template["targets"]["SSL011"]["seed_dir"], "TODO_FORMAL_RNT_SEED_DIR_FOR_SSL011")
+            self.assertEqual(template["targets"]["SSL011"]["rnt_blocker"], "no strict RNT seed")
 
     def test_summarizer_writes_native_binding_validated_record(self):
         summarizer = load_tool("summarize_binding_candidate_sweep")
