@@ -6,9 +6,7 @@ set -euo pipefail
 
 # P0 LIBARCHIVE_2936 extend_matched_longrun
 # benefit: Confirm that the current first-_T speedup and lower execution cost persist in 3 matched 7200s repetitions.
-# blocked: no reusable matched 2h runner is recorded for this real-CVE target; existing evidence is 60s x3 plus one 10m confirmation, not 2h repetitions
-# post-unblock: create a target-specific matched runner from the saved 10m run records
-# post-unblock: then rebuild the comparison package with tools/compare_formtrig_baselines.py
+scripts/run_libarchive_2936_matched_longrun.sh --duration 7200 --reps 3 --jobs 4
 
 # P0 GPAC_3403 validate_replay_then_draft_binding_spec
 # benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.

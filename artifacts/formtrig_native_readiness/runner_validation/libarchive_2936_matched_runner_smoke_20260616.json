@@ -1,0 +1,54 @@
+{
+  "baseline_records": [
+    {
+      "baseline": "aflplusplus_cmplog",
+      "run_time_s": 2,
+      "saved_crashes": 0,
+      "success": false
+    },
+    {
+      "baseline": "aflplusplus_vanilla",
+      "run_time_s": 2,
+      "saved_crashes": 0,
+      "success": false
+    },
+    {
+      "baseline": "redqueen_operand",
+      "run_time_s": 2,
+      "saved_crashes": 0,
+      "success": false
+    }
+  ],
+  "comparison_verdict": "positive_matched_comparison",
+  "duration_s": 2,
+  "formtrig_gate": {
+    "binding_signal_diagnosis": "role_signal_progress_observed",
+    "binding_signal_status": "pass",
+    "first_terminal_execs": 32,
+    "first_terminal_time_kind": "afl_crash_filename_exact",
+    "first_terminal_time_s": 1.214,
+    "pretrigger_lift_guidance_ready": true,
+    "reached": 34,
+    "run_time_s": 7,
+    "spec_lifted": 8,
+    "status": "pass",
+    "terminal_triggered": 4
+  },
+  "generated_outputs": [
+    "run_plan.sh",
+    "run_plan.jsonl",
+    "formtrig_gate/gate_summary.csv",
+    "baseline_summary.json",
+    "comparison/comparison.json"
+  ],
+  "interpretation": "This is an execute-path smoke test for the matched runner and evidence plumbing only. It is not a performance claim because the budget is 2 seconds and baseline terminal behavior is intentionally under-sampled.",
+  "jobs": 4,
+  "mode": "execute",
+  "raw_output_dir": "/tmp/formtrig_libarchive_2936_runner_smoke_2s_20260616T164032Z",
+  "reps": 1,
+  "runner": "scripts/run_libarchive_2936_matched_longrun.sh",
+  "schema": "formtrig_runner_validation_v1",
+  "target_id": "LIBARCHIVE_2936",
+  "time_utc": "2026-06-16T16:40:32Z",
+  "validated_property": "The runner launches FORMTRIG plus AFL++ vanilla, AFL++ CmpLog, and Redqueen/operand arms, then emits FORMTRIG gate, baseline summary, and comparison artifacts with exact first-terminal time/exec extraction from AFL crash filenames."
+}

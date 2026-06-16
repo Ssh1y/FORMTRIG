@@ -119,6 +119,41 @@ stat_value() {
   fi
 }
 
+first_crash_metadata() {
+  local default_dir="$1"
+  python3 - "$default_dir" <<'PY'
+from pathlib import Path
+import sys
+
+default_dir = Path(sys.argv[1])
+crash_dir = default_dir / "crashes"
+records = []
+if crash_dir.is_dir():
+    for path in crash_dir.glob("id:*"):
+        fields = {}
+        for part in path.name.split(","):
+            if ":" not in part:
+                continue
+            key, value = part.split(":", 1)
+            fields[key] = value
+        try:
+            time_ms = int(fields["time"])
+        except (KeyError, ValueError):
+            continue
+        try:
+            execs = int(fields.get("execs", ""))
+        except ValueError:
+            execs = ""
+        exec_sort = execs if isinstance(execs, int) else 2**63 - 1
+        records.append((time_ms, exec_sort, path.name, execs, path))
+if not records:
+    print("\t\t")
+else:
+    time_ms, _exec_sort, _name, execs, path = sorted(records)[0]
+    print(f"{time_ms / 1000:g}\t{execs}\t{path}")
+PY
+}
+
 add_reason() {
   local reason="$1"
   if [[ -z "$reasons" ]]; then
@@ -182,7 +217,7 @@ summary_csv="$out_dir/gate_summary.csv"
 summary_jsonl="$out_dir/gate_summary.jsonl"
 report_md="$out_dir/gate_report.md"
 
-printf 'suite,run,status,reasons,run_time,execs_done,execs_per_sec,reached,terminal_triggered,first_terminal_time_s,first_terminal_time_kind,queued_progress,accepted_non_trigger,saved_non_trigger,saved_triggered,spec_lifted,heuristic_lifted,manual_lifted,experiment_ready,pretrigger_lift_guidance_ready,non_trigger_candidate_lift_delta,lift_delta_only_on_triggered,binding_signal_status,binding_signal_diagnosis,out_dir\n' \
+printf 'suite,run,status,reasons,run_time,execs_done,execs_per_sec,reached,terminal_triggered,first_terminal_time_s,first_terminal_time_kind,first_terminal_execs,queued_progress,accepted_non_trigger,saved_non_trigger,saved_triggered,spec_lifted,heuristic_lifted,manual_lifted,experiment_ready,pretrigger_lift_guidance_ready,non_trigger_candidate_lift_delta,lift_delta_only_on_triggered,binding_signal_status,binding_signal_diagnosis,out_dir\n' \
   > "$summary_csv"
 : > "$summary_jsonl"
 
@@ -257,6 +292,18 @@ for run_spec in "${runs[@]}"; do
   first_terminal_kind=""
   if [[ -n "$first_terminal_time" && "$first_terminal_time" != "null" ]]; then
     first_terminal_kind="formtrig_stats_monitor_upper_bound"
+  fi
+  first_terminal_execs=""
+  first_crash_time=""
+  first_crash_execs=""
+  first_crash_file=""
+  IFS=$'\t' read -r first_crash_time first_crash_execs first_crash_file < <(
+    first_crash_metadata "$default_dir"
+  )
+  if [[ "$terminal_triggered" != "0" && -n "$first_crash_time" ]]; then
+    first_terminal_time="$first_crash_time"
+    first_terminal_execs="$first_crash_execs"
+    first_terminal_kind="afl_crash_filename_exact"
   fi
   queued_progress="$(jq_number "$diagnosis_json" \
     '.formtrig_queued_progress' "0")"
@@ -347,6 +394,7 @@ for run_spec in "${runs[@]}"; do
       "$terminal_triggered"
     csv_escape "$first_terminal_time"; printf ','
     csv_escape "$first_terminal_kind"; printf ','
+    csv_escape "$first_terminal_execs"; printf ','
     printf '%s,%s,%s,%s,%s,%s,%s,' \
       "$queued_progress" "$accepted_non_trigger" \
       "$saved_non_trigger" "$saved_triggered" "$spec_lifted" \
@@ -382,6 +430,12 @@ for run_spec in "${runs[@]}"; do
     fi
     printf ',"first_terminal_time_kind":'
     json_escape "$first_terminal_kind"
+    printf ',"first_terminal_execs":'
+    if [[ -n "$first_terminal_execs" && "$first_terminal_execs" != "null" ]]; then
+      printf '%s' "$first_terminal_execs"
+    else
+      printf 'null'
+    fi
     printf ',"queued_progress":%s,' "$queued_progress"
     printf '"accepted_non_trigger":%s,"saved_non_trigger":%s,' \
       "$accepted_non_trigger" "$saved_non_trigger"
@@ -421,7 +475,7 @@ done
   printf '| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |\n'
   tail -n +2 "$summary_csv" | while IFS=, read -r _suite run status reasons \
       run_time _execs_done execs_per_sec reached terminal _first_time \
-      _first_kind _queued accepted saved _saved_triggered _spec _heur \
+      _first_kind _first_execs _queued accepted saved _saved_triggered _spec _heur \
       _manual _ready _pre _delta _only _binding_status _binding_diag _out; do
     run="${run%\"}"; run="${run#\"}"
     status="${status%\"}"; status="${status#\"}"

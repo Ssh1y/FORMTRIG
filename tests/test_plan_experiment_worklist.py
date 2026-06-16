@@ -108,7 +108,11 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertEqual(payload["skipped_control_count"], 1)
             tasks = {task["target_id"]: task for task in payload["tasks"]}
             self.assertEqual(tasks["LIBARCHIVE_2936"]["action"], "extend_matched_longrun")
-            self.assertFalse(tasks["LIBARCHIVE_2936"]["runnable_now"])
+            self.assertTrue(tasks["LIBARCHIVE_2936"]["runnable_now"])
+            self.assertIn(
+                "scripts/run_libarchive_2936_matched_longrun.sh --duration 7200 --reps 3 --jobs 4",
+                tasks["LIBARCHIVE_2936"]["command"],
+            )
             self.assertIn("first-_T speedup", tasks["LIBARCHIVE_2936"]["benefit_to_prove"])
             self.assertEqual(tasks["LIBARCHIVE_2936"]["comparison_verdict"], "positive_speedup_matched_comparison")
             self.assertEqual(tasks["PDF003"]["action"], "draft_binding_spec_then_short_screen")

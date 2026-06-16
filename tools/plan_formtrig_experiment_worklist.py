@@ -235,9 +235,34 @@ def longrun_task(
     *,
     duration_s: int,
     reps: int,
+    jobs: int,
 ) -> dict[str, Any]:
     summary = comparison_summary(comparison)
     target_id = str(row.get("target_id") or "")
+    command = ""
+    blocking_issue = [
+        "no reusable matched 2h runner is recorded for this real-CVE target",
+        "existing evidence is 60s x3 plus one 10m confirmation, not 2h repetitions",
+    ]
+    post_unblock_commands = [
+        "create a target-specific matched runner from the saved 10m run records",
+        "then rebuild the comparison package with tools/compare_formtrig_baselines.py",
+    ]
+    runner_path = Path("scripts/run_libarchive_2936_matched_longrun.sh")
+    if target_id == "LIBARCHIVE_2936" and runner_path.exists():
+        command = shell_join(
+            [
+                str(runner_path),
+                "--duration",
+                str(duration_s),
+                "--reps",
+                str(reps),
+                "--jobs",
+                str(jobs),
+            ]
+        )
+        blocking_issue = []
+        post_unblock_commands = []
     return {
         "priority": priority_for(row),
         "rank": int(row.get("rank") or 0),
@@ -249,7 +274,6 @@ def longrun_task(
         "action": "extend_matched_longrun",
         "duration_s": duration_s,
         "repetitions": reps,
-        "runnable_now": False,
         "benefit_to_prove": (
             "Confirm that the current first-_T speedup and lower execution cost "
             f"persist in {reps} matched {duration_s}s repetitions."
@@ -267,19 +291,14 @@ def longrun_task(
             "typed mutation provenance",
             "same timeout/oracle as baselines",
         ],
-        "blocking_issue": [
-            "no reusable matched 2h runner is recorded for this real-CVE target",
-            "existing evidence is 60s x3 plus one 10m confirmation, not 2h repetitions",
-        ],
+        "blocking_issue": blocking_issue,
         "claim_boundary": (
             "Report as speedup/attribution unless long-run matched baselines stop "
             "triggering while FORMTRIG remains successful."
         ),
-        "command": "",
-        "post_unblock_commands": [
-            "create a target-specific matched runner from the saved 10m run records",
-            "then rebuild the comparison package with tools/compare_formtrig_baselines.py",
-        ],
+        "command": command,
+        "runnable_now": bool(command),
+        "post_unblock_commands": post_unblock_commands,
         "comparison_verdict": summary["verdict"],
         "current_primary_benefits": summary["primary_benefits"],
         "blocked_claims": summary["blocked_claims"],
@@ -488,7 +507,7 @@ def task_for_row(
     disposition = str(row.get("existing_disposition") or "")
     lane = str(row.get("lane") or "")
     if disposition == "candidate_extend_longruns":
-        return longrun_task(row, comparison, duration_s=longrun_duration_s, reps=longrun_reps)
+        return longrun_task(row, comparison, duration_s=longrun_duration_s, reps=longrun_reps, jobs=jobs)
     if lane == "binding_spec_first":
         return binding_spec_first_task(row, comparison, short_duration_s=short_duration_s, jobs=jobs, reps=reps)
     if lane == "binding_validation_first":

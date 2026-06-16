@@ -1,6 +1,6 @@
 {
   "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
-  "blocked_count": 12,
+  "blocked_count": 11,
   "defaults": {
     "jobs": 4,
     "longrun_duration_s": 7200,
@@ -8,12 +8,12 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-16T16:26:12+00:00",
+  "generated_at_utc": "2026-06-16T16:39:08+00:00",
   "inputs": {
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json"
   },
-  "runnable_now_count": 0,
+  "runnable_now_count": 1,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
   "skipped_control_count": 4,
   "skipped_controls": [
@@ -905,13 +905,10 @@
         "the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped",
         "10m confirmation is still one additional matched point, not broad generality across Magma and real-CVE targets"
       ],
-      "blocking_issue": [
-        "no reusable matched 2h runner is recorded for this real-CVE target",
-        "existing evidence is 60s x3 plus one 10m confirmation, not 2h repetitions"
-      ],
+      "blocking_issue": [],
       "category": "binary-state-null",
       "claim_boundary": "Report as speedup/attribution unless long-run matched baselines stop triggering while FORMTRIG remains successful.",
-      "command": "",
+      "command": "scripts/run_libarchive_2936_matched_longrun.sh --duration 7200 --reps 3 --jobs 4",
       "comparison_verdict": "positive_speedup_matched_comparison",
       "current_primary_benefits": [
         "FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families",
@@ -933,10 +930,7 @@
         "formtrig_terminal_oracle_success",
         "matched_budget_replicated_tte_speedup"
       ],
-      "post_unblock_commands": [
-        "create a target-specific matched runner from the saved 10m run records",
-        "then rebuild the comparison package with tools/compare_formtrig_baselines.py"
-      ],
+      "post_unblock_commands": [],
       "primary_endpoint_metrics": [
         "same-budget terminal success rate",
         "first _T / terminal-crash wall-clock time",
@@ -947,7 +941,7 @@
       "project": "libarchive",
       "rank": 1,
       "repetitions": 3,
-      "runnable_now": false,
+      "runnable_now": true,
       "source": "real_cve",
       "target_id": "LIBARCHIVE_2936"
     },
