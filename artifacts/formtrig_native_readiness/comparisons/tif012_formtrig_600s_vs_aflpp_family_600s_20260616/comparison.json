@@ -1,0 +1,188 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 600,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 600,
+        "median_terminal_count": 225,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": 300,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget": 600,
+        "median_terminal_count": 23,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": 540,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1
+      }
+    ],
+    "best_formtrig_trigger_time_s": null,
+    "fastest_baseline_trigger_time_s": 300.0,
+    "matched_baseline_count": 3,
+    "missing_required_baselines": [],
+    "next_steps": [
+      "do not claim SOTA advantage on this target without harder targets or stronger statistics",
+      "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+    ],
+    "reasons": [
+      "formtrig_strict_pretrigger_guidance_present",
+      "formtrig_terminal_oracle_missing",
+      "matched_baseline_also_triggers"
+    ],
+    "tte_speedup_over_fastest_baseline": null,
+    "verdict": "baseline_also_triggers_not_sota_advantage"
+  },
+  "baseline_rows": [
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_cmplog",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 1141857,
+      "execs_per_sec": "1910.11",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 348663,
+      "rep": 1,
+      "run_time": 597,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_baselines_short_600s_20260616_r6/runs/aflplusplus_cmplog_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "TIF012",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_vanilla",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 1159506,
+      "execs_per_sec": "1939.66",
+      "heuristic_lifted": null,
+      "magma_triggered": 225,
+      "manual_lifted": null,
+      "reached": 186594,
+      "rep": 1,
+      "run_time": 597,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_baselines_short_600s_20260616_r6/runs/aflplusplus_vanilla_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": true,
+      "target_id": "TIF012",
+      "terminal_count": 225,
+      "trigger_execs": null,
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 300
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "redqueen_operand",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 1129183,
+      "execs_per_sec": "1888.87",
+      "heuristic_lifted": null,
+      "magma_triggered": 23,
+      "manual_lifted": null,
+      "reached": 722969,
+      "rep": 1,
+      "run_time": 597,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_baselines_short_600s_20260616_r6/runs/redqueen_operand_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": true,
+      "target_id": "TIF012",
+      "terminal_count": 23,
+      "trigger_execs": null,
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 540
+    }
+  ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "no FORMTRIG terminal success is established",
+      "FORMTRIG first `_T`/TTE is not recorded for this run",
+      "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance"
+    ],
+    "endpoint_observations": [],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "observed_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "primary_benefits": [],
+    "summary": "mechanism benefit is present, but performance advantage is not established on this target"
+  },
+  "comparison_id": "tif012_formtrig_600s_vs_aflpp_family_600s_20260616",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 2,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 600,
+      "execs_done": 418805,
+      "execs_per_sec": "697.96",
+      "gate_reasons": "ok",
+      "gate_status": "pass",
+      "heuristic_lifted": 0,
+      "manual_lifted": 0,
+      "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_formtrig_short_600s_20260616/default",
+      "reached": 162101,
+      "rep": null,
+      "run_time": 600,
+      "saved_non_trigger": 2,
+      "source_label": "formtrig",
+      "source_path": "artifacts/formtrig_native_readiness/raw/tif012_formtrig_short_600s_20260616/gate/gate_summary.csv",
+      "spec_lifted": 4177,
+      "strict_pretrigger_guidance": true,
+      "success": false,
+      "target_id": "TIF012",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "target_id": "TIF012"
+}

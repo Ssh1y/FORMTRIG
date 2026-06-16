@@ -17,6 +17,8 @@ jobs="${FORMTRIG_JOBS:-1}"
 run_build=1
 run_sweeps=1
 failed_jobs=0
+target_repo_path=""
+target_repo_backup=""
 
 usage() {
   cat >&2 <<EOF
@@ -47,6 +49,230 @@ require_path() {
   if [[ ! -e "$1" ]]; then
     echo "missing required path: $1" >&2
     exit 2
+  fi
+}
+
+sync_formtrig_canary_runtime() {
+  local support_dir="$magma_dir/magma"
+  local canary_h="$support_dir/src/canary.h"
+  if [[ ! -f "$canary_h" ]] ||
+     ! grep -q 'formtrig/formtrig_runtime.h' "$canary_h"; then
+    return
+  fi
+
+  local source_dir="${FORMTRIG_SOURCE_DIR:-$repo_root/formtrig}"
+  require_path "$source_dir/include/formtrig/formtrig_runtime.h"
+  require_path "$source_dir/include/formtrig/formtrig_abi.h"
+  require_path "$source_dir/runtime/formtrig_runtime.c"
+
+  rm -rf "$support_dir/formtrig"
+  mkdir -p "$support_dir/formtrig/include" "$support_dir/formtrig/runtime"
+  cp -a "$source_dir/include/formtrig" "$support_dir/formtrig/include/formtrig"
+  cp -a "$source_dir/runtime/formtrig_runtime.c" \
+    "$support_dir/formtrig/runtime/formtrig_runtime.c"
+
+  python3 - "$support_dir/prebuild.sh" "$support_dir/build.sh" <<'PY'
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+
+def inject_after_storage(text: str) -> str:
+    marker = 'FORMTRIG_CANARY_INCLUDE=()'
+    if marker in text:
+        return text
+    needle = 'MAGMA_STORAGE="$SHARED/canaries.raw"\n'
+    insert = '''MAGMA_STORAGE="$SHARED/canaries.raw"
+
+FORMTRIG_CANARY_INCLUDE=()
+if [ -d "$MAGMA/formtrig/include" ]; then
+    FORMTRIG_CANARY_INCLUDE=(-I "$MAGMA/formtrig/include")
+fi
+'''
+    if needle not in text:
+        raise SystemExit("could not locate MAGMA_STORAGE assignment")
+    return text.replace(needle, insert, 1)
+
+
+def patch_prebuild(path: Path) -> None:
+    text = inject_after_storage(path.read_text(encoding="utf-8"))
+    text = text.replace(
+        '-fPIC -I "$MAGMA/src/" -o "$OUT/pre_storage.o" $LDFLAGS',
+        '-fPIC -I "$MAGMA/src/" "${FORMTRIG_CANARY_INCLUDE[@]}" '
+        '-o "$OUT/pre_storage.o" $LDFLAGS',
+    )
+    text = text.replace(
+        '"$OUT/pre_storage.o" -I "$MAGMA/src/" -o "$OUT/monitor" $LDFLAGS $LIBS',
+        '"$OUT/pre_storage.o" -I "$MAGMA/src/" "${FORMTRIG_CANARY_INCLUDE[@]}" '
+        '-o "$OUT/monitor" $LDFLAGS $LIBS',
+    )
+    path.write_text(text, encoding="utf-8")
+
+
+def patch_build(path: Path) -> None:
+    text = inject_after_storage(path.read_text(encoding="utf-8"))
+    runtime_block = '''
+FORMTRIG_RUNTIME_OBJECTS=()
+if [ -f "$MAGMA/formtrig/runtime/formtrig_runtime.c" ]; then
+    $CC $CFLAGS -D"MAGMA_STORAGE=\\"$MAGMA_STORAGE\\"" \\
+        -c "$MAGMA/formtrig/runtime/formtrig_runtime.c" \\
+        -fPIC -I "$MAGMA/src/" "${FORMTRIG_CANARY_INCLUDE[@]}" \\
+        -o "$OUT/formtrig_runtime.o" $LDFLAGS
+    FORMTRIG_RUNTIME_OBJECTS+=("$OUT/formtrig_runtime.o")
+fi
+'''
+    if 'FORMTRIG_RUNTIME_OBJECTS=()' not in text:
+        needle = '$CC $CFLAGS -D"MAGMA_STORAGE=\\"$MAGMA_STORAGE\\"" -c "$MAGMA/src/canary.c"'
+        if needle not in text:
+            raise SystemExit("could not locate canary.c compile command")
+        text = text.replace(needle, runtime_block + "\n" + needle, 1)
+    text = text.replace(
+        '-fPIC -I "$MAGMA/src/" -o "$OUT/canary.o" $LDFLAGS',
+        '-fPIC -I "$MAGMA/src/" "${FORMTRIG_CANARY_INCLUDE[@]}" '
+        '-o "$OUT/canary.o" $LDFLAGS',
+    )
+    text = text.replace(
+        '-fPIC -I "$MAGMA/src/" -o "$OUT/storage.o" $LDFLAGS',
+        '-fPIC -I "$MAGMA/src/" "${FORMTRIG_CANARY_INCLUDE[@]}" '
+        '-o "$OUT/storage.o" $LDFLAGS',
+    )
+    text = text.replace(
+        '$LD -r "$OUT/canary.o" "$OUT/storage.o" -o "$OUT/magma.o"',
+        '$LD -r "$OUT/canary.o" "$OUT/storage.o" '
+        '"${FORMTRIG_RUNTIME_OBJECTS[@]}" -o "$OUT/magma.o"',
+    )
+    patched_rm = 'rm "$OUT/canary.o" "$OUT/storage.o" "${FORMTRIG_RUNTIME_OBJECTS[@]}"'
+    if patched_rm not in text:
+        text = text.replace('rm "$OUT/canary.o" "$OUT/storage.o"', patched_rm)
+    path.write_text(text, encoding="utf-8")
+
+
+patch_prebuild(Path(sys.argv[1]))
+patch_build(Path(sys.argv[2]))
+PY
+}
+
+prepare_clean_target_context() {
+  target_repo_path="$magma_dir/targets/$magma_target/repo"
+  if [[ ! -d "$target_repo_path/.git" ]]; then
+    return
+  fi
+  if [[ -z "$(git -C "$target_repo_path" status --porcelain --untracked-files=normal)" ]]; then
+    return
+  fi
+
+  target_repo_backup="$(mktemp -d "${TMPDIR:-/tmp}/formtrig_${target_id}_${magma_target}_repo.XXXXXX")"
+  mv "$target_repo_path" "$target_repo_backup/repo"
+}
+
+patch_target_build_helpers() {
+  local build_sh="$magma_dir/targets/$magma_target/build.sh"
+  if [[ ! -f "$build_sh" ]] || ! grep -q './autogen.sh' "$build_sh"; then
+    return
+  fi
+
+  python3 - "$build_sh" <<'PY'
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+if "FORMTRIG_LOCAL_CONFIG_AUX" in text:
+    changed = False
+    if "FORMTRIG_CANARY_TARGET_CFLAGS" not in text:
+        extra = '''if [ -d "$MAGMA/formtrig/include" ]; then
+    export CFLAGS="${CFLAGS:-} -I$MAGMA/formtrig/include"
+    export CXXFLAGS="${CXXFLAGS:-} -I$MAGMA/formtrig/include"
+fi
+# FORMTRIG_CANARY_TARGET_CFLAGS
+
+'''
+        text = text.replace('cd "$TARGET/repo"\n', extra + 'cd "$TARGET/repo"\n', 1)
+        changed = True
+    if "FORMTRIG_CONFIG_LOG_ON_FAILURE" not in text:
+        text = text.replace(
+            './configure --disable-shared --prefix="$WORK"',
+            './configure --disable-shared --prefix="$WORK" || '
+            '{ echo "FORMTRIG_CONFIG_LOG_ON_FAILURE"; cat config.log >&2; exit 1; }',
+        )
+        changed = True
+    if changed:
+        path.write_text(text, encoding="utf-8")
+    raise SystemExit(0)
+
+needle = 'cd "$TARGET/repo"\n'
+if needle not in text:
+    raise SystemExit("could not locate target repo cd in build.sh")
+
+insert = r'''
+formtrig_config_aux=""
+for candidate in /usr/share/misc /usr/share/automake-1.16 /usr/share/automake-1.15 /usr/share/autoconf/build-aux /usr/share/libtool/build-aux; do
+    if [ -f "$candidate/config.guess" ] && [ -f "$candidate/config.sub" ]; then
+        formtrig_config_aux="$candidate"
+        break
+    fi
+done
+if [ -n "$formtrig_config_aux" ]; then
+    mkdir -p "$TARGET/.formtrig-build-aux"
+    cat > "$TARGET/.formtrig-build-aux/wget" <<'FORMTRIG_WGET'
+#!/bin/sh
+out=""
+prev=""
+for arg in "$@"; do
+    if [ "$prev" = "-O" ]; then
+        out="$arg"
+    fi
+    prev="$arg"
+done
+case " $* " in
+    *config.guess*)
+        [ -n "$out" ] || out="config.guess"
+        cp "$FORMTRIG_LOCAL_CONFIG_AUX/config.guess" "$out"
+        exit $?
+        ;;
+    *config.sub*)
+        [ -n "$out" ] || out="config.sub"
+        cp "$FORMTRIG_LOCAL_CONFIG_AUX/config.sub" "$out"
+        exit $?
+        ;;
+esac
+exec /usr/bin/wget "$@"
+FORMTRIG_WGET
+    chmod +x "$TARGET/.formtrig-build-aux/wget"
+    export FORMTRIG_LOCAL_CONFIG_AUX="$formtrig_config_aux"
+    export PATH="$TARGET/.formtrig-build-aux:$PATH"
+fi
+
+if [ -d "$MAGMA/formtrig/include" ]; then
+    export CFLAGS="${CFLAGS:-} -I$MAGMA/formtrig/include"
+    export CXXFLAGS="${CXXFLAGS:-} -I$MAGMA/formtrig/include"
+fi
+# FORMTRIG_CANARY_TARGET_CFLAGS
+
+'''
+text = text.replace(needle, insert + needle, 1)
+text = text.replace(
+    './configure --disable-shared --prefix="$WORK"',
+    './configure --disable-shared --prefix="$WORK" || '
+    '{ echo "FORMTRIG_CONFIG_LOG_ON_FAILURE"; cat config.log >&2; exit 1; }',
+)
+path.write_text(text, encoding="utf-8")
+PY
+}
+
+restore_target_context() {
+  if [[ -n "${target_repo_backup:-}" && -d "$target_repo_backup/repo" ]]; then
+    if [[ -e "$target_repo_path" ]]; then
+      echo "target repo restore skipped because path exists: $target_repo_path" >&2
+    else
+      mkdir -p "$(dirname "$target_repo_path")"
+      mv "$target_repo_backup/repo" "$target_repo_path"
+      rmdir "$target_repo_backup" 2>/dev/null || true
+    fi
   fi
 }
 
@@ -265,6 +491,7 @@ magma_dir="$(abs_path "$magma_dir")"
 require_path "$inventory"
 require_path "$magma_dir/tools/captain/build.sh"
 require_path "$magma_dir/tools/captain/start.sh"
+sync_formtrig_canary_runtime
 
 magma_target="$(inventory_field project)"
 program="$(inventory_field program)"
@@ -320,6 +547,10 @@ fi
   printf 'poll=%s\n' "$poll"
 } > "$out_dir/run_metadata.txt"
 
+prepare_clean_target_context
+patch_target_build_helpers
+trap restore_target_context EXIT
+
 if [[ "$run_build" == "1" ]]; then
   declare -A built_fuzzers=()
   while IFS= read -r baseline; do
@@ -354,6 +585,9 @@ if [[ "$run_sweeps" == "1" ]]; then
     --out-json "$out_dir/summary.json" \
     --out-tsv "$out_dir/summary.tsv"
 fi
+
+restore_target_context
+trap - EXIT
 
 echo "$target_id Magma baseline flow complete"
 echo "  out=$out_dir"

@@ -1,0 +1,55 @@
+from pathlib import Path
+import unittest
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+class MagmaBaselineRunnerTest(unittest.TestCase):
+    def test_runner_patches_formtrig_canary_baseline_builds(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("sync_formtrig_canary_runtime", script)
+        self.assertIn("formtrig/formtrig_runtime.h", script)
+        self.assertIn("FORMTRIG_CANARY_INCLUDE", script)
+        self.assertIn("FORMTRIG_RUNTIME_OBJECTS", script)
+        self.assertIn("formtrig_runtime.o", script)
+
+    def test_runner_protects_dirty_target_repositories(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("prepare_clean_target_context", script)
+        self.assertIn("restore_target_context", script)
+        self.assertIn("git -C \"$target_repo_path\" status", script)
+        self.assertIn("mktemp -d", script)
+        self.assertIn("trap restore_target_context EXIT", script)
+
+    def test_runner_patches_libtiff_autogen_without_network_dependency(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("FORMTRIG_LOCAL_CONFIG_AUX", script)
+        self.assertIn("config.guess", script)
+        self.assertIn("config.sub", script)
+        self.assertIn("FORMTRIG_WGET", script)
+        self.assertIn("FORMTRIG_CONFIG_LOG_ON_FAILURE", script)
+
+    def test_runner_exports_formtrig_include_path_to_target_configure(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("FORMTRIG_CANARY_TARGET_CFLAGS", script)
+        self.assertIn('export CFLAGS="${CFLAGS:-} -I$MAGMA/formtrig/include"', script)
+        self.assertIn('export CXXFLAGS="${CXXFLAGS:-} -I$MAGMA/formtrig/include"', script)
+        self.assertIn("changed = False", script)
+        self.assertIn("if changed:", script)
+
+
+if __name__ == "__main__":
+    unittest.main()

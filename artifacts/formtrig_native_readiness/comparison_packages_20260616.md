@@ -518,3 +518,38 @@ path evidence and a validated BindingSpec; its blocker is 2h/multi-target
 generality, not missing assets or constant lifted guidance. `GPAC_3403` has the
 core opportunity evidence (`R=1,T=0`, native `D_T=1`, and terminal validation)
 but still needs an executable BindingSpec candidate.
+
+## TIF012 600s Matched Short Screen
+
+Command:
+
+```bash
+python3 tools/compare_formtrig_baselines.py \
+  --comparison-id tif012_formtrig_600s_vs_aflpp_family_600s_20260616 \
+  --target-id TIF012 \
+  --formtrig-gate formtrig=artifacts/formtrig_native_readiness/raw/tif012_formtrig_short_600s_20260616/gate/gate_summary.csv \
+  --baseline-summary aflpp_family=artifacts/formtrig_native_readiness/raw/tif012_baselines_short_600s_20260616_r6/summary.json \
+  --out-dir artifacts/formtrig_native_readiness/comparisons/tif012_formtrig_600s_vs_aflpp_family_600s_20260616 \
+  --required-baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand \
+  --min-reps 1
+```
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/tif012_formtrig_600s_vs_aflpp_family_600s_20260616
+```
+
+Verdict:
+
+```text
+baseline_also_triggers_not_sota_advantage
+```
+
+Benefit readout: this package supports no FORMTRIG performance-advantage claim
+on TIF012. FORMTRIG has strict pre-trigger mechanism evidence
+(`accepted_non_trigger=2`, `spec_lifted=4177`, binding signal `pass`) but no
+terminal `_T` in 600s. Matched faithful baselines show AFL++ vanilla triggering
+by the 300s Magma monitor snapshot and Redqueen/operand triggering by 540s;
+CmpLog does not trigger. Keep this target as repair evidence for the lifted
+signal/mutation policy, not as a positive result.

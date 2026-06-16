@@ -1,0 +1,16 @@
+# FORMTRIG native short-screen manifest for Magma TIF012.
+# Generated after TIF012.native_draft_magma_canary passed the 60s binding
+# validation gate. This is a treatment-arm endpoint screen, not a standalone
+# efficacy claim without matched baselines.
+target_id: TIF012
+category: binary-null
+seed_dir: /home/cwh/FORMTRIG/artifacts/rnt_corpus/TIF012/seeds
+out_dir: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_formtrig_short_600s_20260616
+binding_spec: /home/cwh/FORMTRIG/artifacts/binding_specs/TIF012.native_draft_magma_canary.yml
+site_map: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/formtrig_native/formtrig_sites.tsv
+duration: 600
+seed_preflight: require
+seed_preflight_max: 32
+seed_preflight_timeout: 5
+target_cwd: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl
+target_cmd: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl/tiff_read_rgba_fuzzer @@
