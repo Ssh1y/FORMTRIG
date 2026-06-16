@@ -30,6 +30,7 @@ FIELDS = [
     "status",
     "binding_spec",
     "binding_spec_validated",
+    "comparison_count",
     "existing_disposition",
     "benefit_hypothesis",
     "blockers",
@@ -246,7 +247,13 @@ def lane_for(
     return "control_or_low_priority"
 
 
-def suggested_triage(source: str, target_id: str, specs: list[str], specs_validated: bool) -> str:
+def suggested_triage(
+    source: str,
+    target_id: str,
+    specs: list[str],
+    specs_validated: bool,
+    comparison_count: int = 0,
+) -> str:
     if specs and not specs_validated:
         if source == "real_cve":
             return (
@@ -257,6 +264,12 @@ def suggested_triage(source: str, target_id: str, specs: list[str], specs_valida
         return (
             "compile BindingSpec against the native site map, pass lift audit "
             "and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen"
+        )
+    if specs_validated and comparison_count > 0:
+        return (
+            "short-gate comparison package already exists; inspect the benefit "
+            "readout first, promote only positive endpoint/pre-trigger evidence, "
+            "otherwise refine BindingSpec/root-state guidance before rerunning"
         )
     if source == "magma":
         if specs:
@@ -313,6 +326,8 @@ def status_for(
             return "needs_dt_degeneracy_audit", blockers
         if specs and not specs_validated:
             return "needs_binding_validation", blockers
+        if comparison_count > 0:
+            return ("candidate_after_replay_and_binding" if blockers else "short_gate_triaged"), blockers
         return ("candidate_after_replay_and_binding" if blockers else "ready_for_short_triage"), blockers
 
     if not specs:
@@ -327,7 +342,7 @@ def status_for(
         if specs and not specs_validated:
             return "needs_binding_validation", blockers
         return "needs_short_discovery", blockers
-    return "ready_for_short_triage", blockers
+    return ("short_gate_triaged" if comparison_count > 0 else "ready_for_short_triage"), blockers
 
 
 def build_magma_rows(
@@ -388,11 +403,12 @@ def build_magma_rows(
                 "status": status,
                 "binding_spec": ",".join(specs),
                 "binding_spec_validated": specs_validated,
+                "comparison_count": comparison_count,
                 "existing_disposition": disposition,
                 "benefit_hypothesis": benefit_hypothesis("magma", primary, secondary),
                 "blockers": "; ".join(blockers),
                 "next_action": next_action(status, "magma", target_id, primary, secondary, specs, specs_validated),
-                "suggested_short_triage": suggested_triage("magma", target_id, specs, specs_validated),
+                "suggested_short_triage": suggested_triage("magma", target_id, specs, specs_validated, comparison_count),
                 "source_evidence": str(inventory_path),
                 "raw": {
                     "canary_expression": record.get("canary_expression"),
@@ -465,11 +481,12 @@ def build_cve_rows(
                 "status": status,
                 "binding_spec": ",".join(specs),
                 "binding_spec_validated": specs_validated,
+                "comparison_count": comparison_count,
                 "existing_disposition": disposition,
                 "benefit_hypothesis": benefit_hypothesis("real_cve", primary, secondary),
                 "blockers": "; ".join(blockers),
                 "next_action": next_action(status, "real_cve", target_id, primary, secondary, specs, specs_validated),
-                "suggested_short_triage": suggested_triage("real_cve", target_id, specs, specs_validated),
+                "suggested_short_triage": suggested_triage("real_cve", target_id, specs, specs_validated, comparison_count),
                 "source_evidence": str(inventory_path),
                 "raw": {
                     "bug_type": record.get("bug_type"),
@@ -496,6 +513,8 @@ def next_action(
 ) -> str:
     if status == "do_not_promote":
         return "keep as control or negative evidence; do not spend main long-run budget"
+    if status == "short_gate_triaged":
+        return "inspect short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance"
     if source == "real_cve":
         if not specs:
             return "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec"
@@ -588,15 +607,15 @@ def write_markdown(path: Path, rows: list[dict[str, Any]], all_rows: list[dict[s
         "",
         "## Top Queue",
         "",
-        "| rank | target | source | project | category | score | lane | next action |",
-        "| ---: | --- | --- | --- | --- | ---: | --- | --- |",
+        "| rank | target | source | project | category | score | lane | comparison packages | next action |",
+        "| ---: | --- | --- | --- | --- | ---: | --- | ---: | --- |",
     ]
     for row in top:
         category = row.get("primary_category") or ""
         if row.get("secondary_category"):
             category = f"{category}+{row.get('secondary_category')}"
         lines.append(
-            "| {rank} | {target_id} | {source} | {project} | {category} | {score} | `{lane}` | {next_action} |".format(
+            "| {rank} | {target_id} | {source} | {project} | {category} | {score} | `{lane}` | {comparison_count} | {next_action} |".format(
                 rank=row.get("rank", ""),
                 target_id=markdown_escape(row.get("target_id")),
                 source=markdown_escape(row.get("source")),
@@ -604,6 +623,7 @@ def write_markdown(path: Path, rows: list[dict[str, Any]], all_rows: list[dict[s
                 category=markdown_escape(category),
                 score=row.get("score", ""),
                 lane=markdown_escape(row.get("lane")),
+                comparison_count=row.get("comparison_count", 0),
                 next_action=markdown_escape(row.get("next_action")),
             )
         )
@@ -621,6 +641,7 @@ def write_markdown(path: Path, rows: list[dict[str, Any]], all_rows: list[dict[s
                 f"### {row.get('rank')}. {row.get('target_id')}",
                 "",
                 f"- Benefit hypothesis: {row.get('benefit_hypothesis')}",
+                f"- Comparison packages: {row.get('comparison_count', 0)}",
                 f"- Blockers: {row.get('blockers') or 'none recorded'}",
                 f"- Short triage: {row.get('suggested_short_triage')}",
                 "",
@@ -683,6 +704,8 @@ def disposition_only_rows(dispositions: dict[str, dict[str, Any]], existing_targ
                 "lane": "control_or_negative",
                 "status": "do_not_promote",
                 "binding_spec": "",
+                "binding_spec_validated": False,
+                "comparison_count": 0,
                 "existing_disposition": disposition,
                 "benefit_hypothesis": "current evidence does not support a main hard-target benefit claim",
                 "blockers": str(triage_row.get("blocked_claims") or ""),

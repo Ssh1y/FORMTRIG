@@ -1,0 +1,30 @@
+{
+  "status": "fail",
+  "diagnosis": "constant_actionable_lifted_components",
+  "runtime_records": 1,
+  "reached_records": 1,
+  "triggered_records": 0,
+  "rnt_records": 1,
+  "spec_lifted_records": 1,
+  "rnt_spec_lifted_records": 1,
+  "spec_d_f_samples": 1,
+  "spec_d_f_unique": 1,
+  "spec_d_f_constant": false,
+  "spec_d_f_min": 2,
+  "spec_d_f_max": 2,
+  "component_keys": 6,
+  "spec_component_keys": 6,
+  "actionable_component_keys": 3,
+  "constant_components": 0,
+  "variable_components": 0,
+  "constant_actionable_components": 0,
+  "variable_actionable_components": 0,
+  "components": [
+    {"kind":5,"atom_id":1,"role":2,"source_id":15488104609315020744,"samples":1,"spec_lifted_samples":1,"actionable_samples":1,"flags_or":86,"flags_and":86,"max_confidence":0.80000000000000004,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":4,"atom_id":1,"role":9,"source_id":10581452816431964949,"samples":1,"spec_lifted_samples":1,"actionable_samples":0,"flags_or":118,"flags_and":118,"max_confidence":0.80000000000000004,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":4,"atom_id":1,"role":9,"source_id":14833157193732969436,"samples":1,"spec_lifted_samples":1,"actionable_samples":0,"flags_or":118,"flags_and":118,"max_confidence":0.80000000000000004,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":6,"atom_id":1,"role":4,"source_id":278298792577795760,"samples":1,"spec_lifted_samples":1,"actionable_samples":1,"flags_or":86,"flags_and":86,"max_confidence":0.80000000000000004,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":6,"atom_id":1,"role":6,"source_id":3583661372217438200,"samples":1,"spec_lifted_samples":1,"actionable_samples":1,"flags_or":86,"flags_and":86,"max_confidence":0.90000000000000002,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":3,"atom_id":1,"role":1,"source_id":7476352814566449817,"samples":1,"spec_lifted_samples":1,"actionable_samples":0,"flags_or":86,"flags_and":86,"max_confidence":0.90000000000000002,"unique_values":1,"constant":false,"min":0,"max":0,"values":[0]}
+  ]
+}

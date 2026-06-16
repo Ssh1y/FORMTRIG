@@ -31,6 +31,7 @@ FIELDS = [
     "validation_signal",
     "binding_spec_present",
     "binding_spec_validated",
+    "comparison_count",
     "binding_validation_status",
     "binding_spec_ready",
     "tcir_ready",
@@ -157,6 +158,26 @@ def binding_validation_status(records: list[dict[str, Any]]) -> str:
     return "; ".join(statuses)
 
 
+def comparison_records(
+    target_id: str,
+    root: Path = Path("artifacts/formtrig_native_readiness/comparisons"),
+) -> list[dict[str, Any]]:
+    if not root.exists():
+        return []
+    paths = [root] if root.name == "comparison.json" else sorted(root.glob("*/comparison.json"))
+    records: list[dict[str, Any]] = []
+    for path in paths:
+        try:
+            record = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        if str(record.get("target_id") or "") != target_id:
+            continue
+        record["_path"] = str(path)
+        records.append(record)
+    return records
+
+
 def load_rnt_manifest(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
@@ -271,6 +292,7 @@ def audit_target(
     cve: dict[str, Any],
     discovery: dict[str, Any],
     binding_spec_dir: Path,
+    comparison_root: Path,
 ) -> dict[str, Any]:
     project = str(cve.get("project") or discovery.get("project") or "")
     category = str(cve.get("initial_tc_category") or discovery.get("primary_category") or "")
@@ -304,6 +326,8 @@ def audit_target(
     validation_records = binding_validation_records(target_id)
     binding_spec_validated = binding_validation_pass(validation_records)
     binding_status = binding_validation_status(validation_records)
+    comparisons = comparison_records(target_id, comparison_root)
+    comparison_count = len(comparisons)
     atom_path = Path("artifacts/atoms") / f"{target_id}.json"
     tcir_path = Path("artifacts/tcir") / f"{target_id}.json"
     trigger_graph_path = Path("artifacts/trigger_graphs") / f"{target_id}.json"
@@ -340,9 +364,17 @@ def audit_target(
         next_action = "keep as control/sanity evidence; do not spend main real-CVE long-run budget"
         priority = 95
     elif rnt_ready and binary_dt_gap and terminal_validated and binding_spec_validated:
-        readiness = "ready_for_formtrig_short_gate"
-        next_action = "run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines"
-        priority = 10
+        if comparison_count:
+            readiness = "short_gate_triaged"
+            next_action = (
+                "inspect latest short-gate benefit readout; promote only positive "
+                "endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance"
+            )
+            priority = 12
+        else:
+            readiness = "ready_for_formtrig_short_gate"
+            next_action = "run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines"
+            priority = 10
     elif rnt_ready and binary_dt_gap and terminal_validated and binding_spec_present:
         readiness = "needs_binding_validation"
         next_action = "build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility"
@@ -379,6 +411,7 @@ def audit_target(
         "validation_signal": validation_signal,
         "binding_spec_present": binding_spec_present,
         "binding_spec_validated": binding_spec_validated,
+        "comparison_count": comparison_count,
         "binding_validation_status": binding_status,
         "binding_spec_ready": binding_spec_validated,
         "tcir_ready": tcir_path.exists(),
@@ -399,6 +432,7 @@ def audit_target(
             "rnt_metadata": str(metadata_path),
             "binding_specs": binding_specs,
             "binding_validation_records": [record.get("_path", "") for record in validation_records],
+            "comparison_records": [record.get("_path", "") for record in comparisons],
             "atom": str(atom_path),
             "tcir": str(tcir_path),
             "trigger_graph": str(trigger_graph_path),
@@ -440,12 +474,12 @@ def write_markdown(path: Path, rows: list[dict[str, Any]]) -> None:
         "benefit opportunity from missing engineering assets such as BindingSpec",
         "or terminal validation.",
         "",
-        "| rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | next action |",
-        "| ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | short-gate packages | next action |",
+        "| ---: | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {rank} | {target_id} | {category} | `{readiness}` | {rnt} | {dt} | {term} | {binding_present} | {binding_validated} | {next_action} |".format(
+            "| {rank} | {target_id} | {category} | `{readiness}` | {rnt} | {dt} | {term} | {binding_present} | {binding_validated} | {comparison_count} | {next_action} |".format(
                 rank=row.get("rank", ""),
                 target_id=row.get("target_id", ""),
                 category=row.get("category", ""),
@@ -455,6 +489,7 @@ def write_markdown(path: Path, rows: list[dict[str, Any]]) -> None:
                 term="yes" if row.get("terminal_validated") else "no",
                 binding_present="yes" if row.get("binding_spec_present") else "no",
                 binding_validated="yes" if row.get("binding_spec_validated") else "no",
+                comparison_count=row.get("comparison_count", 0),
                 next_action=str(row.get("next_action", "")).replace("|", "\\|"),
             )
         )
@@ -470,6 +505,7 @@ def write_markdown(path: Path, rows: list[dict[str, Any]]) -> None:
                 f"- Native D_T values in RNT metadata: `{row.get('native_dt_values') or 'none'}`",
                 f"- Terminal validation signal: {row.get('validation_signal') or 'none'}",
                 f"- Binding validation status: {row.get('binding_validation_status') or 'none'}",
+                f"- Short-gate comparison packages: {row.get('comparison_count', 0)}",
                 f"- Blockers: {row.get('blockers') or 'none'}",
                 f"- Program: `{row.get('paths', {}).get('program', '')}`",
                 f"- RNT manifest: `{row.get('paths', {}).get('rnt_manifest', '')}`",
@@ -485,6 +521,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cve-inventory", type=Path, default=Path("artifacts/cve_bench_candidate_audit.json"))
     parser.add_argument("--discovery", type=Path, default=Path("artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json"))
     parser.add_argument("--binding-spec-dir", type=Path, default=Path("artifacts/binding_specs"))
+    parser.add_argument("--comparison-root", type=Path, default=Path("artifacts/formtrig_native_readiness/comparisons"))
     parser.add_argument("--target-id", action="append", default=[])
     parser.add_argument("--out-json", required=True, type=Path)
     parser.add_argument("--out-csv", required=True, type=Path)
@@ -505,7 +542,13 @@ def main() -> int:
         if target_id in cves
     ]
     rows = [
-        audit_target(target_id, cves[target_id], discovery.get(target_id, {}), args.binding_spec_dir)
+        audit_target(
+            target_id,
+            cves[target_id],
+            discovery.get(target_id, {}),
+            args.binding_spec_dir,
+            args.comparison_root,
+        )
         for target_id in target_ids
         if target_id in cves
     ]
@@ -518,6 +561,7 @@ def main() -> int:
             "cve_inventory": str(args.cve_inventory),
             "discovery": str(args.discovery),
             "binding_spec_dir": str(args.binding_spec_dir),
+            "comparison_root": str(args.comparison_root),
         },
         "target_count": len(rows),
         "targets": rows,

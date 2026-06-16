@@ -1,0 +1,11 @@
+{
+  "target_id": "LIBARCHIVE_2936",
+  "baseline": "aflplusplus_cmplog",
+  "budget_sec": 600,
+  "seed_corpus": "artifacts/rnt_corpus/LIBARCHIVE_2936/seeds",
+  "target_binary": "/tmp/formtrig_libarchive_2936_aflpp_plain_build/libarchive_write_replay_aflpp_plain",
+  "cmplog_binary": "/tmp/formtrig_libarchive_2936_aflpp_cmplog_build/libarchive_write_replay_aflpp_cmplog",
+  "information_budget": "AFL++ CmpLog operand map and coverage feedback; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+  "mechanism": "AFL++ comparison operand logging and comparison-guided mutation",
+  "time_utc": "2026-06-16T09:54:09Z"
+}

@@ -251,6 +251,39 @@ three ASAN AFL++-family baselines also trigger in the same 1800-second budget.
 This confirms the earlier decision to keep LIBCOAP as a pipeline/oracle
 validation target rather than a strong SOTA-positive FORMTRIG target.
 
+### LIBARCHIVE_2936: FORMTRIG 10m vs faithful AFL++ vanilla/CmpLog 10m
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616
+```
+
+Verdict:
+
+```text
+short_gate_no_terminal_constant_lift_signal
+```
+
+Reason: this package pairs a 600-second native FORMTRIG short gate with
+same-seed, same-budget AFL++ vanilla and CmpLog screens. No arm reaches `_T`
+or a terminal crash in 600 seconds, so no endpoint or TTE benefit is
+established. The useful result is diagnostic rather than comparative:
+FORMTRIG exercised exact native BindingSpec/site-map bindings, observed
+spec-lifted/actionable atom roles at scale, and ran typed mutation
+(`typed_execs=5632`, `typed_finds=8`), but all non-trigger candidates stayed at
+`D_F_spec_lifted=2` and the binding-signal diagnosis is
+`constant_lift_signal`.
+
+Benefit readout: this package supports no primary performance benefit
+statement. It supports the engineering diagnosis that LIBARCHIVE_2936 is not
+blocked by missing reachability or an invalid harness; the current blocker is
+that the lifted root/role signal is saturated and therefore not an effective
+R2T gradient. The next step is to refine BindingSpec/root-state observability
+or typed mutation until non-trigger `D_F` variability appears, then rerun a
+10-30 minute FORMTRIG/baseline screen. Redqueen/operand-aware baseline remains
+missing for any final baseline-family claim.
+
 ## Current Acceptance Implication
 
 The comparison packages make the current evidence state explicit:
@@ -263,6 +296,10 @@ The comparison packages make the current evidence state explicit:
 - LIBCOAP demonstrates real-CVE pre-trigger guidance and terminal-oracle
   plumbing, but it does not prove a SOTA advantage because the ASAN baselines
   also trigger.
+- LIBARCHIVE_2936 is a valid real-CVE binary-state-null target with a validated
+  native BindingSpec and matched 600-second vanilla/CmpLog screens. The current
+  package proves no performance benefit; it localizes the algorithmic blocker
+  to constant lifted guidance that must be repaired before long-run promotion.
 - No final "FORMTRIG beats SOTA" claim should be made from these packages
   alone.
 
@@ -289,11 +326,13 @@ artifacts/formtrig_native_readiness/hard_target_package_triage_20260616.csv
 artifacts/formtrig_native_readiness/hard_target_triage_20260616.md
 ```
 
-Current result: `PNG006` and `LIBCOAP_CVE_2023_35862` are
-`demote_to_control_or_negative`; `LIBXML2_1107` is
-`demote_harness_artifact`. The current package set therefore contains no main
-hard-target candidate. The next experiment step is hard-target discovery and
-short triage, not more primary-claim long runs on these demoted targets.
+Current result: `LIBARCHIVE_2936` is
+`short_gate_needs_signal_refinement`; `PNG006` and
+`LIBCOAP_CVE_2023_35862` are `demote_to_control_or_negative`; `LIBXML2_1107`
+is `demote_harness_artifact`. The current package set therefore contains no
+main promoted hard-target candidate. The next experiment step is to repair
+LIBARCHIVE_2936's lifted guidance or move to another hard target, not to spend
+long-run budget on a constant-signal short gate.
 
 ## Hard-Target Discovery
 
@@ -305,7 +344,8 @@ python3 tools/plan_formtrig_hard_targets.py \
   --out-json artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json \
   --out-csv artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.csv \
   --out-md artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.md \
-  --limit 30
+  --limit 30 \
+  --include-controls
 ```
 
 Outputs:
@@ -316,7 +356,7 @@ artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.csv
 artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.md
 ```
 
-Current top queue: `GPAC_3403`, `LIBARCHIVE_2936`, `PNG007`, `PDF003`,
+Current top queue: `LIBARCHIVE_2936`, `PNG007`, `GPAC_3403`, `PDF003`,
 `SSL011`, `SSL015`, and `TIF012`. This is not a performance claim; it is the
 next experiment allocation plan. Magma baseline short screens should use the
 generic inventory-driven runner:
@@ -338,7 +378,8 @@ python3 tools/audit_real_cve_readiness.py \
   --out-md artifacts/formtrig_native_readiness/real_cve_readiness_20260616.md
 ```
 
-Current readiness result: `GPAC_3403` and `LIBARCHIVE_2936` already have the
-core opportunity evidence for a binary/uninformative trigger-guidance case
-(`R=1,T=0`, native `D_T=1`, and terminal validation). Their blocker is now
-specific: no executable BindingSpec candidate exists yet.
+Current readiness result: `LIBARCHIVE_2936` is `short_gate_triaged` with one
+comparison package and a validated BindingSpec; its blocker is constant lifted
+guidance, not missing assets. `GPAC_3403` has the core opportunity evidence
+(`R=1,T=0`, native `D_T=1`, and terminal validation) but still needs an
+executable BindingSpec candidate.

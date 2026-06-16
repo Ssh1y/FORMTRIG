@@ -1,0 +1,231 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 600,
+        "median_terminal_count": 0,
+        "median_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 600,
+        "median_terminal_count": 0,
+        "median_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      }
+    ],
+    "matched_baseline_count": 2,
+    "missing_required_baselines": [
+      "redqueen_operand"
+    ],
+    "next_steps": [
+      "refine LIBARCHIVE_2936 BindingSpec/root-state observability before long-run promotion",
+      "add a producer/root signal that varies before _T, such as path-table cardinality, parent-link creation, or hierarchy ordering",
+      "extend typed mutation toward RNT entry count and path hierarchy instead of only byte-local slash insertion",
+      "rerun a 10-30m FORMTRIG/baseline screen only after non-trigger D_F variability appears",
+      "add Redqueen/operand-aware baseline before any final performance claim"
+    ],
+    "reasons": [
+      "no_arm_reached_terminal_in_600s",
+      "formtrig_spec_lifted_signal_present",
+      "formtrig_typed_stage_executed",
+      "formtrig_constant_lift_signal",
+      "formtrig_no_accepted_frontier_progress",
+      "faithful_aflpp_vanilla_and_cmplog_screen_complete",
+      "low_replication"
+    ],
+    "verdict": "short_gate_no_terminal_constant_lift_signal"
+  },
+  "baseline_rows": [
+    {
+      "arm": "baseline",
+      "baseline": "aflplusplus_vanilla",
+      "bitmap_cvg": "20.49%",
+      "budget": 600,
+      "corpus_count": 852,
+      "corpus_found": 851,
+      "edges_found": 1648,
+      "execs_done": 531892,
+      "execs_per_sec": "886.48",
+      "reached": 0,
+      "rep": 1,
+      "run_time": 600,
+      "saved_crashes": 0,
+      "saved_hangs": 59,
+      "source_label": "aflpp_10m",
+      "source_path": "artifacts/formtrig_native_readiness/raw/libarchive_2936_baselines_10m_20260616T094213Z/aflplusplus_vanilla_600s/run_record.json",
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 0,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "arm": "baseline",
+      "baseline": "aflplusplus_cmplog",
+      "bitmap_cvg": "21.08%",
+      "budget": 600,
+      "corpus_count": 797,
+      "corpus_found": 796,
+      "edges_found": 1695,
+      "execs_done": 608906,
+      "execs_per_sec": "1014.83",
+      "reached": 0,
+      "rep": 1,
+      "run_time": 600,
+      "saved_crashes": 0,
+      "saved_hangs": 56,
+      "source_label": "aflpp_10m",
+      "source_path": "artifacts/formtrig_native_readiness/raw/libarchive_2936_baselines_10m_20260616T094213Z/aflplusplus_cmplog_600s/run_record.json",
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 0,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "no FORMTRIG terminal success is established",
+      "no time-to-_T or crash improvement is established",
+      "no accepted non-trigger frontier progress is established",
+      "D_F and D_F_spec_lifted are constant, so the present guidance is not an effective R2T gradient",
+      "replication is one run per arm and Redqueen/operand baseline is still missing"
+    ],
+    "design_evidence": [
+      "runtime_event_map_exact",
+      "spec_lifted_events",
+      "typed_mutation_executed",
+      "constant_lift_signal_diagnosis"
+    ],
+    "endpoint_observations": [
+      "FORMTRIG did not reach _T or a terminal crash within 600s",
+      "AFL++ vanilla did not reach a terminal crash within 600s",
+      "AFL++ CmpLog did not reach a terminal crash within 600s",
+      "LIBARCHIVE_2936 is therefore not a seconds-easy target for these faithful 600s screens"
+    ],
+    "mechanism_benefits": [
+      "native BindingSpec/site-map binding is exact for the exercised sites",
+      "spec-lifted/actionable atom and role signals were observed at scale",
+      "typed mutation executed on FORMTRIG-selected byte ranges and produced coverage finds",
+      "binding-signal diagnosis isolated the current failure to constant D_F/D_F_spec_lifted values"
+    ],
+    "observed_benefits": [
+      "diagnostic triage benefit: exact native binding and typed mutation executed without endpoint success",
+      "diagnostic triage benefit: constant lifted D_F/D_F_spec_lifted identified as the current R2T blocker"
+    ],
+    "primary_benefits": [],
+    "summary": "No endpoint/performance benefit is established in this 600s screen. The observed FORMTRIG benefit is diagnostic: exact native binding, spec-lifted roles, and typed mutation were exercised, and the run localizes the R2T failure to a constant lifted signal rather than to missing reachability or an invalid harness."
+  },
+  "binding_signal_evidence": {
+    "accepted_non_trigger_progress_events": 0,
+    "accepted_progress_events": 0,
+    "candidate_events": 4093,
+    "diagnosis": "constant_lift_signal",
+    "role_summary": [
+      {
+        "atom_id": 1,
+        "candidate_unique_values": 1,
+        "candidate_values": [
+          0
+        ],
+        "role": "root_observe"
+      },
+      {
+        "atom_id": 1,
+        "candidate_unique_values": 1,
+        "candidate_values": [
+          1
+        ],
+        "role": "guard"
+      },
+      {
+        "atom_id": 1,
+        "candidate_unique_values": 1,
+        "candidate_values": [
+          1
+        ],
+        "role": "desired_producer"
+      },
+      {
+        "atom_id": 1,
+        "candidate_unique_values": 1,
+        "candidate_values": [
+          1
+        ],
+        "role": "use"
+      },
+      {
+        "atom_id": 1,
+        "candidate_unique_values": 1,
+        "candidate_values": [
+          1
+        ],
+        "role": "input_influence"
+      }
+    ],
+    "spec_d_f_candidate_values": [
+      2
+    ],
+    "spec_d_f_non_trigger_candidate_values": [
+      2
+    ],
+    "status": "fail",
+    "triggered_events": 0
+  },
+  "comparison_id": "LIBARCHIVE_2936_formtrig_10m_vs_aflpp_10m_20260616",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 0,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "constant_lift_signal",
+      "binding_signal_status": "fail",
+      "bitmap_cvg": "19.18%",
+      "budget": 600,
+      "corpus_count": 794,
+      "corpus_found": 793,
+      "d_f_constant": true,
+      "d_f_max": 2,
+      "d_f_min": 2,
+      "d_f_spec_lifted_constant": true,
+      "d_f_spec_lifted_max": 2,
+      "d_f_spec_lifted_min": 2,
+      "edges_found": 5117,
+      "execs_done": 393966,
+      "execs_per_sec": "656.61",
+      "frontier_reject_events": 4093,
+      "frontier_updates": 1,
+      "heuristic_lifted": 0,
+      "limiting_reason": "typed_mutation_no_lift_delta",
+      "manual_lifted": 0,
+      "out_dir": "artifacts/formtrig_native_readiness/raw/libarchive_2936_formtrig_short_10m_20260616T093018Z/default",
+      "progress_status": "not_progressing",
+      "reached": 108141,
+      "run_time": 600,
+      "saved_crashes": 0,
+      "saved_hangs": 62,
+      "source_label": "formtrig_short_10m",
+      "source_path": "artifacts/formtrig_native_readiness/raw/libarchive_2936_formtrig_short_10m_20260616T093018Z/default/formtrig_summary.json",
+      "spec_lifted": 4182,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 0,
+      "trigger_time_kind": null,
+      "trigger_time_s": null,
+      "triggered": 0,
+      "typed_execs": 5632,
+      "typed_finds": 8,
+      "typed_stage_start_events": 44
+    }
+  ],
+  "target_id": "LIBARCHIVE_2936"
+}

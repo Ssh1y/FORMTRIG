@@ -193,6 +193,8 @@ def package_row(path: Path) -> dict[str, Any]:
         status = "candidate_needs_required_baselines"
     elif strict and not formtrig_terminal:
         status = "mechanism_only_needs_terminal_oracle"
+    elif "constant_lift" in verdict or "formtrig_constant_lift_signal" in reasons:
+        status = "needs_signal_refinement"
     elif "missing_matched_budget_baselines" in reasons:
         status = "incomparable_needs_matched_budget"
     else:
@@ -260,6 +262,7 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             row.get("strict_pretrigger_guidance") and not row.get("formtrig_terminal")
             for row in items
         )
+        has_signal_refinement = any(row.get("package_status") == "needs_signal_refinement" for row in items)
         has_incomparable = any(row.get("package_status") == "incomparable_needs_matched_budget" for row in items)
 
         if has_baseline_trigger:
@@ -274,6 +277,10 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             disposition = "mechanism_only_needs_terminal_oracle"
             priority = 40
             next_action = "pair pre-trigger guidance with same-oracle terminal run before performance claims"
+        elif has_signal_refinement:
+            disposition = "short_gate_needs_signal_refinement"
+            priority = 35
+            next_action = "refine BindingSpec/root-state guidance until non-trigger D_F variability appears, then rerun 10-30m FORMTRIG/baseline screen"
         elif has_incomparable:
             disposition = "needs_matched_budget_baselines"
             priority = 50
@@ -338,9 +345,10 @@ def status_rank(status: str) -> int:
         "promote_or_complete_reps": 0,
         "candidate_needs_required_baselines": 1,
         "mechanism_only_needs_terminal_oracle": 2,
-        "control_or_negative": 3,
-        "incomparable_needs_matched_budget": 4,
-        "insufficient_evidence": 5,
+        "needs_signal_refinement": 3,
+        "control_or_negative": 4,
+        "incomparable_needs_matched_budget": 5,
+        "insufficient_evidence": 6,
     }
     return ranks.get(status, 99)
 

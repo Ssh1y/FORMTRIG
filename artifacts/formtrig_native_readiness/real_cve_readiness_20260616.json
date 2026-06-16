@@ -1,7 +1,8 @@
 {
-  "generated_at_utc": "2026-06-16T09:26:14+00:00",
+  "generated_at_utc": "2026-06-16T10:22:30+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
+    "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
     "cve_inventory": "artifacts/cve_bench_candidate_audit.json",
     "discovery": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json"
   },
@@ -17,12 +18,13 @@
       "blockers": "",
       "build_ready": true,
       "category": "binary-state-null",
+      "comparison_count": 1,
       "discovery_lane": "real_cve_replacement",
       "discovery_rank": 1,
-      "existing_disposition": "",
+      "existing_disposition": "short_gate_needs_signal_refinement",
       "harness_source_ready": true,
       "native_dt_values": "1",
-      "next_action": "run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines",
+      "next_action": "inspect latest short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance",
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2936.json",
         "binding_specs": [
@@ -30,6 +32,9 @@
         ],
         "binding_validation_records": [
           "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json"
+        ],
+        "comparison_records": [
+          "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json"
         ],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
@@ -44,10 +49,10 @@
         "validation_log": "artifacts/cve_validation_logs/LIBARCHIVE_2936.validation.log"
       },
       "poc_ready": true,
-      "priority": 10,
+      "priority": 12,
       "project": "libarchive",
       "rank": 1,
-      "readiness": "ready_for_formtrig_short_gate",
+      "readiness": "short_gate_triaged",
       "rnt_ready": true,
       "seed_count": 1,
       "source_locations": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
@@ -68,6 +73,7 @@
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
+      "comparison_count": 0,
       "discovery_lane": "binding_spec_first",
       "discovery_rank": 3,
       "existing_disposition": "",
@@ -78,6 +84,7 @@
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [],
         "binding_validation_records": [],
+        "comparison_records": [],
         "harness_sources": [],
         "poc": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
         "program": "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
@@ -112,6 +119,7 @@
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "numeric-margin",
+      "comparison_count": 0,
       "discovery_lane": "real_cve_control_or_audit",
       "discovery_rank": 53,
       "existing_disposition": "",
@@ -122,6 +130,7 @@
         "atom": "artifacts/atoms/LIBARCHIVE_2935.json",
         "binding_specs": [],
         "binding_validation_records": [],
+        "comparison_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
           "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
@@ -159,6 +168,7 @@
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "numeric-margin",
+      "comparison_count": 0,
       "discovery_lane": "real_cve_control_or_audit",
       "discovery_rank": 54,
       "existing_disposition": "",
@@ -169,6 +179,7 @@
         "atom": "artifacts/atoms/LIBARCHIVE_2937.json",
         "binding_specs": [],
         "binding_validation_records": [],
+        "comparison_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
           "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
@@ -206,6 +217,7 @@
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "numeric-margin",
+      "comparison_count": 0,
       "discovery_lane": "real_cve_control_or_audit",
       "discovery_rank": 55,
       "existing_disposition": "",
@@ -216,6 +228,7 @@
         "atom": "artifacts/atoms/LIBARCHIVE_2938.json",
         "binding_specs": [],
         "binding_validation_records": [],
+        "comparison_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
           "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
@@ -253,6 +266,7 @@
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "numeric-margin",
+      "comparison_count": 0,
       "discovery_lane": "real_cve_control_or_audit",
       "discovery_rank": 56,
       "existing_disposition": "",
@@ -263,6 +277,7 @@
         "atom": "artifacts/atoms/LIBARCHIVE_2925.json",
         "binding_specs": [],
         "binding_validation_records": [],
+        "comparison_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
           "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
@@ -300,6 +315,7 @@
       "blockers": "no formal RNT seed with R=1,T=0; binary native D_T gap is not established; no executable BindingSpec candidate; no TCIR file; no atom file",
       "build_ready": true,
       "category": "numeric-margin",
+      "comparison_count": 0,
       "discovery_lane": "real_cve_control_or_audit",
       "discovery_rank": 52,
       "existing_disposition": "",
@@ -310,6 +326,7 @@
         "atom": "artifacts/atoms/GPAC_3398.json",
         "binding_specs": [],
         "binding_validation_records": [],
+        "comparison_records": [],
         "harness_sources": [],
         "poc": "benchmarks/cve_pocs/gpac/GPAC_3398.poc",
         "program": "benchmarks/cve_build/gpac-3398-src/bin/gcc/MP4Box",
@@ -344,6 +361,7 @@
       "blockers": "existing discovery triage demotes this target: demote_harness_artifact; BindingSpec candidate is not native-site-map validated",
       "build_ready": true,
       "category": "binary-state-null",
+      "comparison_count": 0,
       "discovery_lane": "control_or_negative",
       "discovery_rank": 146,
       "existing_disposition": "demote_harness_artifact",
@@ -356,6 +374,7 @@
           "LIBXML2_1107.native_b2_alloc_fail_candidate.yml"
         ],
         "binding_validation_records": [],
+        "comparison_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c"
         ],
