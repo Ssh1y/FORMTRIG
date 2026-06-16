@@ -7,19 +7,22 @@ usage() {
   cat >&2 <<EOF
 usage: $0 [options] <manifest> [manifest...]
 
-Runs native FORMTRIG manifests sequentially and writes a batch summary.
+Runs native FORMTRIG manifests and writes a batch summary.
 
 Options:
   --manifest-list FILE    newline-delimited manifest paths
   --duration SEC          override each manifest duration
   --out-root DIR          override each manifest out_dir as DIR/<target_id>
+  --jobs N                run up to N manifests concurrently (default: 1)
   --stop-on-trigger       stop the batch after the first triggered target
+                           (requires --jobs 1)
   --continue-on-fail      keep running after manifest failures
 
 Outputs:
   <out-root>/batch_summary.csv
   <out-root>/batch_summary.jsonl
-  <out-root>/<target_id>/batch_run.log
+  <out-root>/<target_id>/batch_run.log                 # --jobs 1
+  <out-root>/<index>_<target_id>/batch_run.log         # --jobs N
 EOF
 }
 
@@ -107,6 +110,7 @@ duration_override=""
 out_root=""
 stop_on_trigger=0
 continue_on_fail=0
+jobs=1
 declare -a manifests
 
 while [[ $# -gt 0 ]]; do
@@ -121,6 +125,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --out-root)
       out_root="${2:-}"
+      shift 2
+      ;;
+    --jobs)
+      jobs="${2:-}"
       shift 2
       ;;
     --stop-on-trigger)
@@ -168,12 +176,23 @@ if [[ "${#manifests[@]}" -eq 0 ]]; then
   exit 2
 fi
 
+if ! [[ "$jobs" =~ ^[0-9]+$ ]] || [[ "$jobs" -lt 1 ]]; then
+  echo "--jobs must be a positive integer: $jobs" >&2
+  exit 2
+fi
+if [[ "$jobs" -gt 1 && "$stop_on_trigger" -eq 1 ]]; then
+  echo "--stop-on-trigger requires --jobs 1" >&2
+  exit 2
+fi
+
 if [[ -z "$out_root" ]]; then
   out_root="$repo_root/results/formtrig_native_batch/$(date -u +%Y%m%dT%H%M%SZ)"
 else
   out_root="$(abs_path "$out_root")"
 fi
 mkdir -p "$out_root"
+result_root="$out_root/.batch_results"
+mkdir -p "$result_root"
 
 summary_csv="$out_root/batch_summary.csv"
 summary_jsonl="$out_root/batch_summary.jsonl"
@@ -183,13 +202,89 @@ printf 'manifest,target_id,status,experiment_ready,pretrigger_lift_guidance_read
 failures=0
 trigger_seen=0
 
-for manifest in "${manifests[@]}"; do
+write_manifest_result() {
+  local result_base="$1"
+  local manifest="$2"
+  local target_id="$3"
+  local status="$4"
+  local experiment_ready="$5"
+  local pretrigger_lift_guidance_ready="$6"
+  local diagnosis="$7"
+  local progress_status="$8"
+  local has_non_trigger_progress="$9"
+  local non_trigger_progress="${10}"
+  local saved_non_trigger="${11}"
+  local saved_triggered="${12}"
+  local execs_done="${13}"
+  local reached="${14}"
+  local triggered="${15}"
+  local queued="${16}"
+  local spec="${17}"
+  local heuristic="${18}"
+  local manual="${19}"
+  local d_f_constant="${20}"
+  local out_dir="${21}"
+  local log="${22}"
+
+  {
+    csv_escape "$manifest"; printf ','
+    csv_escape "$target_id"; printf ','
+    csv_escape "$status"; printf ','
+    csv_escape "$experiment_ready"; printf ','
+    csv_escape "$pretrigger_lift_guidance_ready"; printf ','
+    csv_escape "$diagnosis"; printf ','
+    csv_escape "$progress_status"; printf ','
+    csv_escape "$has_non_trigger_progress"; printf ','
+    printf '%s,%s,%s,' "$non_trigger_progress" "$saved_non_trigger" \
+      "$saved_triggered"
+    printf '%s,%s,%s,%s,%s,%s,%s,' "$execs_done" "$reached" "$triggered" \
+      "$queued" "$spec" "$heuristic" "$manual"
+    csv_escape "$d_f_constant"; printf ','
+    csv_escape "$out_dir"; printf ','
+    csv_escape "$log"; printf '\n'
+  } > "$result_base.csv"
+
+  {
+    printf '{"manifest":'
+    json_escape "$manifest"
+    printf ',"target_id":'
+    json_escape "$target_id"
+    printf ',"status":'
+    json_escape "$status"
+    printf ',"experiment_ready":'
+    json_escape "$experiment_ready"
+    printf ',"pretrigger_lift_guidance_ready":%s' \
+      "$pretrigger_lift_guidance_ready"
+    printf ',"diagnosis":'
+    json_escape "$diagnosis"
+    printf ',"progress_status":'
+    json_escape "$progress_status"
+    printf ',"has_non_trigger_progress":%s,"non_trigger_progress":%s,"saved_non_trigger_progress":%s,"saved_triggered_progress":%s,"execs_done":%s,"reached":%s,"triggered":%s,"queued_progress":%s,"spec_lifted":%s,"heuristic_lifted":%s,"manual_lifted":%s,"out_dir":' \
+      "$has_non_trigger_progress" "$non_trigger_progress" \
+      "$saved_non_trigger" "$saved_triggered" "$execs_done" "$reached" \
+      "$triggered" "$queued" "$spec" "$heuristic" "$manual"
+    json_escape "$out_dir"
+    printf ',"log":'
+    json_escape "$log"
+    printf '}\n'
+  } > "$result_base.jsonl"
+
+  printf '%s\n' "$status" > "$result_base.status"
+  printf '%s\n' "$triggered" > "$result_base.triggered"
+}
+
+run_one_manifest() {
+  local index="$1"
+  local manifest="$2"
+  local result_base="$result_root/$(printf '%03d' "$index")"
+
   manifest="$(abs_path "$manifest")"
   if [[ ! -f "$manifest" ]]; then
     echo "missing manifest: $manifest" >&2
-    failures=$((failures + 1))
-    [[ "$continue_on_fail" -eq 1 ]] && continue
-    exit 2
+    write_manifest_result "$result_base" "$manifest" "$(basename "$manifest")" \
+      "missing_manifest" "false" "false" "missing_manifest" "unknown" \
+      "false" 0 0 0 0 0 0 0 0 0 0 "unknown" "" ""
+    return 2
   fi
 
   target_id="$(manifest_value "$manifest" target_id)"
@@ -199,6 +294,9 @@ for manifest in "${manifests[@]}"; do
   fi
 
   run_dir="$out_root/$target_id"
+  if [[ "$jobs" -gt 1 ]]; then
+    run_dir="$out_root/$(printf '%03d_%s' "$index" "$target_id")"
+  fi
   mkdir -p "$run_dir"
   run_manifest="$run_dir/batch.manifest"
   cp "$manifest" "$run_manifest"
@@ -212,7 +310,6 @@ for manifest in "${manifests[@]}"; do
   if ! "$repo_root/scripts/run_formtrig_native_manifest.sh" "$run_manifest" \
       > "$log" 2>&1; then
     status="runner_failed"
-    failures=$((failures + 1))
   fi
 
   diagnosis_path="$run_dir/out/default/formtrig_diagnosis.json"
@@ -277,59 +374,80 @@ for manifest in "${manifests[@]}"; do
   [[ -z "$manual" ]] && manual=0
   [[ -z "$d_f_constant" ]] && d_f_constant="unknown"
 
-  {
-    csv_escape "$manifest"; printf ','
-    csv_escape "$target_id"; printf ','
-    csv_escape "$status"; printf ','
-    csv_escape "$experiment_ready"; printf ','
-    csv_escape "$pretrigger_lift_guidance_ready"; printf ','
-    csv_escape "$diagnosis"; printf ','
-    csv_escape "$progress_status"; printf ','
-    csv_escape "$has_non_trigger_progress"; printf ','
-    printf '%s,%s,%s,' "$non_trigger_progress" "$saved_non_trigger" \
-      "$saved_triggered"
-    printf '%s,%s,%s,%s,%s,%s,%s,' "$execs_done" "$reached" "$triggered" \
-      "$queued" "$spec" "$heuristic" "$manual"
-    csv_escape "$d_f_constant"; printf ','
-    csv_escape "$run_dir/out"; printf ','
-    csv_escape "$log"; printf '\n'
-  } >> "$summary_csv"
-
-  printf '{"manifest":' >> "$summary_jsonl"
-  json_escape "$manifest" >> "$summary_jsonl"
-  printf ',"target_id":' >> "$summary_jsonl"
-  json_escape "$target_id" >> "$summary_jsonl"
-  printf ',"status":' >> "$summary_jsonl"
-  json_escape "$status" >> "$summary_jsonl"
-  printf ',"experiment_ready":' >> "$summary_jsonl"
-  json_escape "$experiment_ready" >> "$summary_jsonl"
-  printf ',"pretrigger_lift_guidance_ready":%s' \
-    "$pretrigger_lift_guidance_ready" >> "$summary_jsonl"
-  printf ',"diagnosis":' >> "$summary_jsonl"
-  json_escape "$diagnosis" >> "$summary_jsonl"
-  printf ',"progress_status":' >> "$summary_jsonl"
-  json_escape "$progress_status" >> "$summary_jsonl"
-  printf ',"has_non_trigger_progress":%s,"non_trigger_progress":%s,"saved_non_trigger_progress":%s,"saved_triggered_progress":%s,"execs_done":%s,"reached":%s,"triggered":%s,"queued_progress":%s,"spec_lifted":%s,"heuristic_lifted":%s,"manual_lifted":%s,"out_dir":' \
-    "$has_non_trigger_progress" "$non_trigger_progress" \
+  write_manifest_result "$result_base" "$manifest" "$target_id" "$status" \
+    "$experiment_ready" "$pretrigger_lift_guidance_ready" "$diagnosis" \
+    "$progress_status" "$has_non_trigger_progress" "$non_trigger_progress" \
     "$saved_non_trigger" "$saved_triggered" "$execs_done" "$reached" \
-    "$triggered" "$queued" "$spec" "$heuristic" "$manual" \
-    >> "$summary_jsonl"
-  json_escape "$run_dir/out" >> "$summary_jsonl"
-  printf ',"log":' >> "$summary_jsonl"
-  json_escape "$log" >> "$summary_jsonl"
-  printf '}\n' >> "$summary_jsonl"
+    "$triggered" "$queued" "$spec" "$heuristic" "$manual" "$d_f_constant" \
+    "$run_dir/out" "$log"
+
+  [[ "$status" == "ok" ]]
+}
+
+append_result() {
+  local index="$1"
+  local result_base="$result_root/$(printf '%03d' "$index")"
+  [[ -f "$result_base.csv" ]] && cat "$result_base.csv" >> "$summary_csv"
+  [[ -f "$result_base.jsonl" ]] && cat "$result_base.jsonl" >> "$summary_jsonl"
+
+  local status="missing_result"
+  local triggered=0
+  [[ -f "$result_base.status" ]] && status="$(<"$result_base.status")"
+  [[ -f "$result_base.triggered" ]] && triggered="$(<"$result_base.triggered")"
+
+  if [[ "$status" != "ok" ]]; then
+    failures=$((failures + 1))
+  fi
 
   if [[ "$triggered" != "0" && "$triggered" != "null" ]]; then
     trigger_seen=1
-    if [[ "$stop_on_trigger" -eq 1 ]]; then
-      break
-    fi
   fi
 
-  if [[ "$status" != "ok" && "$continue_on_fail" -ne 1 ]]; then
-    break
-  fi
-done
+  [[ "$status" == "ok" ]]
+}
+
+wait_for_job_slot() {
+  local max_jobs="$1"
+  while (( $(jobs -pr | wc -l) >= max_jobs )); do
+    wait -n || true
+  done
+}
+
+wait_for_all_jobs() {
+  while (( $(jobs -pr | wc -l) > 0 )); do
+    wait -n || true
+  done
+}
+
+if [[ "$jobs" -gt 1 ]]; then
+  idx=0
+  for manifest in "${manifests[@]}"; do
+    idx=$((idx + 1))
+    wait_for_job_slot "$jobs"
+    run_one_manifest "$idx" "$manifest" &
+  done
+  wait_for_all_jobs
+
+  idx=0
+  for _manifest in "${manifests[@]}"; do
+    idx=$((idx + 1))
+    append_result "$idx" || true
+  done
+else
+  idx=0
+  for manifest in "${manifests[@]}"; do
+    idx=$((idx + 1))
+    run_one_manifest "$idx" "$manifest" || true
+    append_result "$idx" || true
+
+    if [[ "$trigger_seen" -eq 1 && "$stop_on_trigger" -eq 1 ]]; then
+      break
+    fi
+    if [[ "$failures" -ne 0 && "$continue_on_fail" -ne 1 ]]; then
+      break
+    fi
+  done
+fi
 
 echo "FORMTRIG manifest batch complete"
 echo "  out_root=$out_root"
