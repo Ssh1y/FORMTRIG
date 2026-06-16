@@ -30,6 +30,7 @@
       }
     ],
     "matched_baseline_count": 3,
+    "missing_required_baselines": [],
     "next_steps": [
       "collect at least 3 repetitions per matched baseline/budget",
       "do not claim SOTA advantage on this target without harder targets or stronger statistics"
@@ -125,6 +126,19 @@
       "trigger_time_s": 1327
     }
   ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "no strict pre-trigger guidance benefit is established",
+      "FORMTRIG first `_T`/TTE is not recorded for this run",
+      "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+      "replication is too low for a final performance claim"
+    ],
+    "design_evidence": [
+      "formtrig_terminal_oracle_success"
+    ],
+    "observed_benefits": [],
+    "summary": "no benefit claim is supported by the current package"
+  },
   "comparison_id": "LIBCOAP_35862_asan_terminal_30m_vs_asan_baselines_20260616",
   "formtrig_runs": [
     {

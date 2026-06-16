@@ -4,6 +4,21 @@
 - verdict: `not_comparable_missing_matched_budget`
 - matched baselines: `0`
 
+## Benefit Readout
+
+- summary: current package supports mechanism/search-guidance benefit, subject to remaining blockers
+
+Allowed benefit statements:
+- binary or sparse trigger feedback was lifted into accepted non-trigger search progress
+
+Blocked or not-yet-supported statements:
+- FORMTRIG first `_T`/TTE is not recorded for this run
+- no matched-budget baseline benefit comparison is available
+
+Design evidence used for attribution:
+- `strict_pretrigger_guidance`
+- `formtrig_terminal_oracle_success`
+
 ## FORMTRIG Runs
 
 | label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |

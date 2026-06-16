@@ -4,6 +4,22 @@
 - verdict: `baseline_also_triggers_not_sota_advantage`
 - matched baselines: `3`
 
+## Benefit Readout
+
+- summary: no benefit claim is supported by the current package
+
+Allowed benefit statements:
+- none
+
+Blocked or not-yet-supported statements:
+- no strict pre-trigger guidance benefit is established
+- FORMTRIG first `_T`/TTE is not recorded for this run
+- matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage
+- replication is too low for a final performance claim
+
+Design evidence used for attribution:
+- `formtrig_terminal_oracle_success`
+
 ## FORMTRIG Runs
 
 | label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |

@@ -260,3 +260,32 @@ The comparison packages make the current evidence state explicit:
   also trigger.
 - No final "FORMTRIG beats SOTA" claim should be made from these packages
   alone.
+
+## Hard-Target Triage
+
+The target-level queue is generated from comparison packages by:
+
+```bash
+python3 tools/triage_formtrig_targets.py \
+  --comparison artifacts/formtrig_native_readiness/comparisons \
+  --manual-target 'LIBXML2_1107|demote_harness_artifact|harness exposes terminal trigger as a direct input knob; not admissible as core R2T evidence|do not use as core evidence; keep only build, BindingSpec, and crash-accounting sanity checks|artifacts/formtrig_native_readiness/raw/libxml2_1107_harness_admissibility_20260615.json' \
+  --out-json artifacts/formtrig_native_readiness/hard_target_triage_20260616.json \
+  --out-csv artifacts/formtrig_native_readiness/hard_target_triage_20260616.csv \
+  --out-packages-csv artifacts/formtrig_native_readiness/hard_target_package_triage_20260616.csv \
+  --out-md artifacts/formtrig_native_readiness/hard_target_triage_20260616.md
+```
+
+Outputs:
+
+```text
+artifacts/formtrig_native_readiness/hard_target_triage_20260616.json
+artifacts/formtrig_native_readiness/hard_target_triage_20260616.csv
+artifacts/formtrig_native_readiness/hard_target_package_triage_20260616.csv
+artifacts/formtrig_native_readiness/hard_target_triage_20260616.md
+```
+
+Current result: `PNG006` and `LIBCOAP_CVE_2023_35862` are
+`demote_to_control_or_negative`; `LIBXML2_1107` is
+`demote_harness_artifact`. The current package set therefore contains no main
+hard-target candidate. The next experiment step is hard-target discovery and
+short triage, not more primary-claim long runs on these demoted targets.

@@ -30,6 +30,7 @@
       }
     ],
     "matched_baseline_count": 3,
+    "missing_required_baselines": [],
     "next_steps": [
       "collect at least 3 repetitions per matched baseline/budget",
       "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
@@ -124,6 +125,20 @@
       "trigger_time_s": null
     }
   ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "no FORMTRIG terminal success is established",
+      "FORMTRIG first `_T`/TTE is not recorded for this run",
+      "replication is too low for a final performance claim"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance"
+    ],
+    "observed_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "summary": "current package supports mechanism/search-guidance benefit, subject to remaining blockers"
+  },
   "comparison_id": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
   "formtrig_runs": [
     {

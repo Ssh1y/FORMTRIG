@@ -2,6 +2,7 @@
   "analysis": {
     "baseline_groups": [],
     "matched_baseline_count": 0,
+    "missing_required_baselines": [],
     "next_steps": [
       "run faithful baselines at FORMTRIG budget(s): [7200]"
     ],
@@ -95,6 +96,20 @@
       "trigger_time_s": 90
     }
   ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "FORMTRIG first `_T`/TTE is not recorded for this run",
+      "no matched-budget baseline benefit comparison is available"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance",
+      "formtrig_terminal_oracle_success"
+    ],
+    "observed_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "summary": "current package supports mechanism/search-guidance benefit, subject to remaining blockers"
+  },
   "comparison_id": "PNG006_formtrig_2h_vs_baseline_30m_gap_20260616",
   "formtrig_runs": [
     {

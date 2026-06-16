@@ -1,0 +1,191 @@
+{
+  "generated_at_utc": "2026-06-16T08:10:49+00:00",
+  "package_count": 5,
+  "packages": [
+    {
+      "blocked_claims": [
+        "no strict pre-trigger guidance benefit is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "LIBCOAP_35862_asan_terminal_30m_vs_asan_baselines_20260616",
+      "fastest_baseline_trigger_time_s": 1060.0,
+      "formtrig_terminal": true,
+      "matched_baselines": 3,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget",
+        "do not claim SOTA advantage on this target without harder targets or stronger statistics"
+      ],
+      "observed_benefits": [],
+      "package_status": "control_or_negative",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_asan_terminal_30m_vs_asan_baselines_20260616/comparison.json",
+      "strict_pretrigger_guidance": false,
+      "successful_baselines": [
+        "aflplusplus_cmplog",
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "LIBCOAP_CVE_2023_35862",
+      "verdict": "baseline_also_triggers_not_sota_advantage"
+    },
+    {
+      "blocked_claims": [
+        "no FORMTRIG terminal success is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": false,
+      "matched_baselines": 3,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget",
+        "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+      ],
+      "observed_benefits": [
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "mechanism_only_needs_terminal_oracle",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_pretrigger_30m_vs_non_asan_baselines_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "LIBCOAP_CVE_2023_35862",
+      "verdict": "pretrigger_guidance_only"
+    },
+    {
+      "blocked_claims": [
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "no matched-budget baseline benefit comparison is available"
+      ],
+      "comparison_id": "PNG006_formtrig_2h_vs_baseline_30m_gap_20260616",
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "matched_baselines": 0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "run faithful baselines at FORMTRIG budget(s): [7200]"
+      ],
+      "observed_benefits": [
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "incomparable_needs_matched_budget",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_baseline_30m_gap_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "PNG006",
+      "verdict": "not_comparable_missing_matched_budget"
+    },
+    {
+      "blocked_claims": [
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "required baseline families are still missing",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "matched_baselines": 1,
+      "missing_required_baselines": [
+        "aflplusplus_cmplog",
+        "redqueen_operand"
+      ],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget",
+        "run missing required baselines: aflplusplus_cmplog,redqueen_operand"
+      ],
+      "observed_benefits": [
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+        "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
+      ],
+      "package_status": "candidate_needs_required_baselines",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_2h_incomplete_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "PNG006",
+      "verdict": "incomplete_required_baseline_set"
+    },
+    {
+      "blocked_claims": [
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+        "required baseline families are still missing",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "PNG006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616",
+      "fastest_baseline_trigger_time_s": 120.0,
+      "formtrig_terminal": true,
+      "matched_baselines": 2,
+      "missing_required_baselines": [
+        "redqueen_operand"
+      ],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget",
+        "run missing required baselines: redqueen_operand",
+        "do not claim SOTA advantage on this target without harder targets or stronger statistics"
+      ],
+      "observed_benefits": [
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "control_or_negative",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_cmplog"
+      ],
+      "target_id": "PNG006",
+      "verdict": "incomplete_required_baseline_set"
+    }
+  ],
+  "target_count": 3,
+  "targets": [
+    {
+      "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "best_package": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
+      "best_verdict": "pretrigger_guidance_only",
+      "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage; replication is too low for a final performance claim",
+      "disposition": "demote_to_control_or_negative",
+      "fastest_baseline_trigger_time_s": 1060.0,
+      "formtrig_terminal": true,
+      "next_action": "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets",
+      "observed_benefits": "binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+      "priority": 90,
+      "sources": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_asan_terminal_30m_vs_asan_baselines_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libcoap_35862_pretrigger_30m_vs_non_asan_baselines_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "LIBCOAP_CVE_2023_35862"
+    },
+    {
+      "baseline_triggers": "aflplusplus_cmplog",
+      "best_package": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
+      "best_verdict": "incomplete_required_baseline_set",
+      "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; no matched-budget baseline benefit comparison is available; required baseline families are still missing; replication is too low for a final performance claim; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+      "disposition": "demote_to_control_or_negative",
+      "fastest_baseline_trigger_time_s": 120.0,
+      "formtrig_terminal": true,
+      "next_action": "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets",
+      "observed_benefits": "binary or sparse trigger feedback was lifted into accepted non-trigger search progress; FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+      "priority": 90,
+      "sources": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_baseline_30m_gap_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_2h_incomplete_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "PNG006"
+    },
+    {
+      "baseline_triggers": "",
+      "best_package": "",
+      "best_verdict": "demote_harness_artifact",
+      "blocked_claims": "harness exposes terminal trigger as a direct input knob; not admissible as core R2T evidence",
+      "disposition": "demote_harness_artifact",
+      "fastest_baseline_trigger_time_s": "",
+      "formtrig_terminal": "",
+      "manual": true,
+      "next_action": "do not use as core evidence; keep only build, BindingSpec, and crash-accounting sanity checks",
+      "observed_benefits": "",
+      "priority": 99,
+      "sources": "artifacts/formtrig_native_readiness/raw/libxml2_1107_harness_admissibility_20260615.json",
+      "strict_pretrigger_guidance": "",
+      "target_id": "LIBXML2_1107"
+    }
+  ]
+}
