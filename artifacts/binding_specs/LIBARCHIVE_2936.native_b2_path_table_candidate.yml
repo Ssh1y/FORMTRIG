@@ -1,0 +1,153 @@
+tc_id: 'LIBARCHIVE_2936'
+target:
+  project: 'libarchive'
+  binary: 'libarchive_write_replay'
+  command: './libarchive_write_replay @@'
+tc:
+  category: 'binary-state-null'
+  expression: 'ISO9660 path-table comparator reaches _compare_path_table with a NULL isoent parent state'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'isoent->parent == NULL before parent dir_number use'
+    kind: 'binary-state-null'
+    root: 'isoent->parent'
+bindings:
+  - id: 'path_table_parent_p1_root'
+    atom: 1
+    role: 'root_observe'
+    expr: 'first path-table entry parent is observed before dir_number dereference'
+    observe_at:
+      kind: 'load'
+      function: '_compare_path_table'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 6823
+      column: 20
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'path_table_parent_p2_root'
+    atom: 1
+    role: 'root_observe'
+    expr: 'second path-table entry parent is observed before dir_number dereference'
+    observe_at:
+      kind: 'load'
+      function: '_compare_path_table'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 6823
+      column: 45
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'pathname_parentdir_guard'
+    atom: 1
+    role: 'guard'
+    expr: 'pathname parsing counts slash-separated parent directory components'
+    observe_at:
+      kind: 'branch'
+      function: 'isofile_gen_utility_names'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 4973
+    component: 'guard_progress'
+    priority: 15
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'virtual_parent_dir_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'virtual parent directory construction loop is reached for nested pathname components'
+    observe_at:
+      kind: 'branch'
+      function: 'isoent_tree'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 5628
+    component: 'producer_use'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'path_table_sort_use'
+    atom: 1
+    role: 'use'
+    expr: 'primary path table sorting dispatch reaches the comparator use context'
+    observe_at:
+      kind: 'branch'
+      function: 'isoent_make_path_table_2'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 6942
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'path_table_close_phase'
+    atom: 1
+    role: 'use'
+    expr: 'archive close enters ISO9660 path-table generation'
+    observe_at:
+      kind: 'branch'
+      function: 'iso9660_close'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 1937
+    component: 'producer_use'
+    priority: 35
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.7
+    observe_window: 'any'
+  - id: 'first_pathname_nested_component_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'RNT first entry pathname bytes contain slash-separated nested directory components'
+    observe_at:
+      kind: 'branch'
+      function: 'isofile_gen_utility_names'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 4973
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 3
+    range_len: 12
+    mutation_hint: 'insert_byte'
+    mutation_value: 47
+  - id: 'second_pathname_nested_component_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'RNT second entry pathname bytes contain slash-separated sibling nested directory components'
+    observe_at:
+      kind: 'branch'
+      function: 'isofile_gen_utility_names'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 4973
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 18
+    range_len: 12
+    mutation_hint: 'insert_byte'
+    mutation_value: 47

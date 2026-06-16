@@ -1,0 +1,40 @@
+{
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "target_id": "LIBARCHIVE_2936",
+  "binding_spec": "artifacts/binding_specs/LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
+  "status": "candidate_static_validated",
+  "ready_for_short_gate": false,
+  "native_site_map_validated": false,
+  "generated_at_utc": "2026-06-16T09:01:30Z",
+  "checks": {
+    "tool_compile_pass": true,
+    "binding_spec_compile_pass": true,
+    "lift_audit_pass": true,
+    "harness_admissibility_pass": true,
+    "native_site_map_validated": false,
+    "dynamic_binding_signal_pass": false
+  },
+  "synthetic_source_map": {
+    "purpose": "source-selector syntax and lift-tier check only",
+    "native_runtime_evidence": false,
+    "site_count": 6
+  },
+  "lift_audit": {
+    "atom_id": 1,
+    "category": "binary-state-null",
+    "binding_tier": "B4",
+    "lift_allowed": true,
+    "reason": "ok"
+  },
+  "harness_admissibility": {
+    "status": "admissible",
+    "core_evidence_allowed": true,
+    "flags": []
+  },
+  "blockers": [
+    "FORMTRIG-instrumented libarchive target site map has not been generated",
+    "BindingSpec has not been compiled against native runtime site IDs",
+    "dynamic binding-signal diagnosis has not been run"
+  ],
+  "next_action": "build a FORMTRIG-instrumented libarchive_write_replay target, generate the native site map, compile this BindingSpec against that map, then run seed-readiness and binding-signal diagnosis"
+}

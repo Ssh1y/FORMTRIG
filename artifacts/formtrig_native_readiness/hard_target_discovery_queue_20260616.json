@@ -1,15 +1,69 @@
 {
   "all_targets": [
     {
+      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
+      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
+      "binding_spec_validated": false,
+      "blockers": "BindingSpec candidate is not native-site-map validated",
+      "existing_disposition": "",
+      "lane": "binding_validation_first",
+      "next_action": "validate BindingSpec against native site map and dynamic binding signal before short gate",
+      "primary_category": "binary-state-null",
+      "project": "libarchive",
+      "rank": 1,
+      "raw": {
+        "bug_type": "NULL Pointer Dereference",
+        "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
+        "comparison_count": 0,
+        "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
+        "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
+        "pull_links": "",
+        "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
+      },
+      "score": 96,
+      "secondary_category": "",
+      "source": "real_cve",
+      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
+      "status": "needs_binding_validation",
+      "suggested_short_triage": "build FORMTRIG-instrumented target/site map, compile the BindingSpec against native site ids, then run seed-readiness and binding-signal diagnosis",
+      "target_id": "LIBARCHIVE_2936"
+    },
+    {
+      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
+      "binding_spec": "PNG007.native_b2_candidate.yml,PNG007.native_b2_plte_delete_candidate.yml,PNG007.native_b2_plte_multi_delete_candidate.yml",
+      "binding_spec_validated": false,
+      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
+      "existing_disposition": "",
+      "lane": "binding_validation_first",
+      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
+      "primary_category": "binary-state-null",
+      "project": "libpng",
+      "rank": 2,
+      "raw": {
+        "canary_expression": "png_ptr->palette == NULL",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/libpng/patches/bugs/PNG007.patch",
+        "program": "libpng_read_fuzzer"
+      },
+      "score": 77,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "needs_binding_validation",
+      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
+      "target_id": "PNG007"
+    },
+    {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet",
       "existing_disposition": "",
-      "lane": "real_cve_replacement",
+      "lane": "binding_spec_first",
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "compound-sequence-lifecycle",
       "project": "gpac",
-      "rank": 1,
+      "rank": 3,
       "raw": {
         "bug_type": "Double Free",
         "commit_links": "https://github.com/gpac/gpac/commit/3ab9394473dfcdc830a4fb44a138db5276ae4bdb;https://github.com/gpac/gpac/commit/52f65707c512a2b6bab361301cb703a2c6c8b53e",
@@ -28,59 +82,9 @@
       "target_id": "GPAC_3403"
     },
     {
-      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "",
-      "blockers": "no BindingSpec candidate exists yet",
-      "existing_disposition": "",
-      "lane": "real_cve_replacement",
-      "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
-      "primary_category": "binary-state-null",
-      "project": "libarchive",
-      "rank": 2,
-      "raw": {
-        "bug_type": "NULL Pointer Dereference",
-        "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 0,
-        "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
-        "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
-        "pull_links": "",
-        "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
-      },
-      "score": 88,
-      "secondary_category": "",
-      "source": "real_cve",
-      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
-      "status": "candidate_after_replay_and_binding",
-      "suggested_short_triage": "validate vulnerable build and PoC replay, write harness admissibility note, then create BindingSpec before fuzzing budget is spent",
-      "target_id": "LIBARCHIVE_2936"
-    },
-    {
-      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "PNG007.native_b2_candidate.yml,PNG007.native_b2_plte_delete_candidate.yml,PNG007.native_b2_plte_multi_delete_candidate.yml",
-      "blockers": "no comparison package exists yet",
-      "existing_disposition": "",
-      "lane": "short_triage_ready",
-      "next_action": "repair/spec-audit BindingSpec until accepted non-trigger D_F exists, then rerun short gate",
-      "primary_category": "binary-state-null",
-      "project": "libpng",
-      "rank": 3,
-      "raw": {
-        "canary_expression": "png_ptr->palette == NULL",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/libpng/patches/bugs/PNG007.patch",
-        "program": "libpng_read_fuzzer"
-      },
-      "score": 83,
-      "secondary_category": "",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_short_discovery",
-      "suggested_short_triage": "run 10-30m FORMTRIG seed-readiness/gate, then same-seed AFL++ vanilla/CmpLog/Redqueen short baselines with `scripts/run_magma_baselines.sh --target-id PNG007 --durations 600,1800 --jobs N`",
-      "target_id": "PNG007"
-    },
-    {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -105,6 +109,7 @@
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -129,6 +134,7 @@
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -153,6 +159,7 @@
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -177,6 +184,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -201,6 +209,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -225,6 +234,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -249,6 +259,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -273,6 +284,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -297,6 +309,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -321,6 +334,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -345,6 +359,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -369,6 +384,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -393,6 +409,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -417,6 +434,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -441,6 +459,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -465,6 +484,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -489,6 +509,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -513,6 +534,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -537,6 +559,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -561,6 +584,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -585,6 +609,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -609,6 +634,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -633,6 +659,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -657,6 +684,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -681,6 +709,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -705,6 +734,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -729,6 +759,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -753,6 +784,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -777,6 +809,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -801,6 +834,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -825,6 +859,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -849,6 +884,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -873,6 +909,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -897,6 +934,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -921,6 +959,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -945,6 +984,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -969,6 +1009,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -993,6 +1034,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1017,6 +1059,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1041,6 +1084,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1065,6 +1109,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1089,6 +1134,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1113,6 +1159,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1137,6 +1184,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1161,6 +1209,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1185,6 +1234,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1209,6 +1259,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -1233,6 +1284,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; initial category is not binary/compound; treat as control unless audit shows D_T degeneration",
       "existing_disposition": "",
       "lane": "real_cve_control_or_audit",
@@ -1260,6 +1312,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; initial category is not binary/compound; treat as control unless audit shows D_T degeneration",
       "existing_disposition": "",
       "lane": "real_cve_control_or_audit",
@@ -1287,6 +1340,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; initial category is not binary/compound; treat as control unless audit shows D_T degeneration",
       "existing_disposition": "",
       "lane": "real_cve_control_or_audit",
@@ -1314,6 +1368,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; initial category is not binary/compound; treat as control unless audit shows D_T degeneration",
       "existing_disposition": "",
       "lane": "real_cve_control_or_audit",
@@ -1341,6 +1396,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no external PoC/input link recorded; no BindingSpec candidate exists yet; initial category is not binary/compound; treat as control unless audit shows D_T degeneration",
       "existing_disposition": "",
       "lane": "real_cve_control_or_audit",
@@ -1368,6 +1424,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1392,6 +1449,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1416,6 +1474,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1440,6 +1499,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1464,6 +1524,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1488,6 +1549,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1512,6 +1574,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1536,6 +1599,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1560,6 +1624,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1584,6 +1649,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1608,6 +1674,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1632,6 +1699,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1656,6 +1724,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1680,6 +1749,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1704,6 +1774,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1728,6 +1799,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1752,6 +1824,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1776,6 +1849,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1800,6 +1874,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1824,6 +1899,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1848,6 +1924,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1872,6 +1949,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1896,6 +1974,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1920,6 +1999,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1944,6 +2024,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1968,6 +2049,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -1992,6 +2074,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2016,6 +2099,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2040,6 +2124,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2064,6 +2149,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2088,6 +2174,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2112,6 +2199,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2136,6 +2224,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2160,6 +2249,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2184,6 +2274,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2208,6 +2299,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2232,6 +2324,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2256,6 +2349,7 @@
     {
       "benefit_hypothesis": "exact-match progress can be tested, but AFL++ CmpLog/Redqueen baselines are expected to be strong",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2280,6 +2374,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2304,6 +2399,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2328,6 +2424,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2352,6 +2449,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2376,6 +2474,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2400,6 +2499,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2424,6 +2524,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2448,6 +2549,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2472,6 +2574,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2496,6 +2599,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2520,6 +2624,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2544,6 +2649,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2568,6 +2674,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2592,6 +2699,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2616,6 +2724,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2640,6 +2749,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2664,6 +2774,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2688,6 +2799,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2712,6 +2824,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2736,6 +2849,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2760,6 +2874,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2784,6 +2899,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2808,6 +2924,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2832,6 +2949,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2856,6 +2974,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2880,6 +2999,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2904,6 +3024,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2928,6 +3049,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2952,6 +3074,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -2976,6 +3099,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3000,6 +3124,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3024,6 +3149,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3048,6 +3174,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3072,6 +3199,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3096,6 +3224,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3120,6 +3249,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3144,6 +3274,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3168,6 +3299,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3192,6 +3324,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3216,6 +3349,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3240,6 +3374,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3264,6 +3399,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3288,6 +3424,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3312,6 +3449,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3336,6 +3474,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3360,6 +3499,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3384,6 +3524,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3408,6 +3549,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3432,6 +3574,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3456,6 +3599,7 @@
     {
       "benefit_hypothesis": "numeric-margin behavior is mostly a control unless native distance or branch feedback is uninformative",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet; category is likely direct-distance or CmpLog-friendly",
       "existing_disposition": "",
       "lane": "control_or_low_priority",
@@ -3480,6 +3624,7 @@
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "PNG006.native_b2_candidate.yml,PNG006.native_b2_exif_insert_candidate.yml",
+      "binding_spec_validated": false,
       "blockers": "existing comparison/admissibility evidence demotes this target",
       "existing_disposition": "demote_to_control_or_negative",
       "lane": "control_or_negative",
@@ -3493,17 +3638,18 @@
         "patch_path": "experiments/magma_workspace/magma/targets/libpng/patches/bugs/PNG006.patch",
         "program": "libpng_read_fuzzer"
       },
-      "score": 9,
+      "score": 3,
       "secondary_category": "compound-sequence-lifecycle",
       "source": "magma",
       "source_evidence": "artifacts/magma_canary_inventory.json",
       "status": "do_not_promote",
-      "suggested_short_triage": "run 10-30m FORMTRIG seed-readiness/gate, then same-seed AFL++ vanilla/CmpLog/Redqueen short baselines with `scripts/run_magma_baselines.sh --target-id PNG006 --durations 600,1800 --jobs N`",
+      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
       "target_id": "PNG006"
     },
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "LIBXML2_1107.native_b2_alloc_fail_candidate.yml",
+      "binding_spec_validated": false,
       "blockers": "existing comparison/admissibility evidence demotes this target",
       "existing_disposition": "demote_harness_artifact",
       "lane": "control_or_negative",
@@ -3520,12 +3666,12 @@
         "pull_links": "",
         "title": "NULL pointer dereference in \"xmlRegNewParserCtxt\" on \"xmlStrdup\" failure (#1107) \u00b7 Issues \u00b7 GNOME / libxml2 \u00b7 GitLab"
       },
-      "score": -15,
+      "score": -21,
       "secondary_category": "",
       "source": "real_cve",
       "source_evidence": "artifacts/cve_bench_candidate_audit.json",
       "status": "do_not_promote",
-      "suggested_short_triage": "run admissibility audit, ASAN replay, 10-30m FORMTRIG gate, and same-budget AFL++ family baselines",
+      "suggested_short_triage": "build FORMTRIG-instrumented target/site map, compile the BindingSpec against native site ids, then run seed-readiness and binding-signal diagnosis",
       "target_id": "LIBXML2_1107"
     },
     {
@@ -3564,7 +3710,7 @@
       "target_id": "LIBCOAP_CVE_2023_35862"
     }
   ],
-  "generated_at_utc": "2026-06-16T08:23:50+00:00",
+  "generated_at_utc": "2026-06-16T09:05:40+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -3574,18 +3720,72 @@
   },
   "limit": 30,
   "row_count": 147,
-  "selected_count": 144,
+  "selected_count": 147,
   "top_targets": [
+    {
+      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
+      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
+      "binding_spec_validated": false,
+      "blockers": "BindingSpec candidate is not native-site-map validated",
+      "existing_disposition": "",
+      "lane": "binding_validation_first",
+      "next_action": "validate BindingSpec against native site map and dynamic binding signal before short gate",
+      "primary_category": "binary-state-null",
+      "project": "libarchive",
+      "rank": 1,
+      "raw": {
+        "bug_type": "NULL Pointer Dereference",
+        "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
+        "comparison_count": 0,
+        "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
+        "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
+        "pull_links": "",
+        "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
+      },
+      "score": 96,
+      "secondary_category": "",
+      "source": "real_cve",
+      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
+      "status": "needs_binding_validation",
+      "suggested_short_triage": "build FORMTRIG-instrumented target/site map, compile the BindingSpec against native site ids, then run seed-readiness and binding-signal diagnosis",
+      "target_id": "LIBARCHIVE_2936"
+    },
+    {
+      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
+      "binding_spec": "PNG007.native_b2_candidate.yml,PNG007.native_b2_plte_delete_candidate.yml,PNG007.native_b2_plte_multi_delete_candidate.yml",
+      "binding_spec_validated": false,
+      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
+      "existing_disposition": "",
+      "lane": "binding_validation_first",
+      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
+      "primary_category": "binary-state-null",
+      "project": "libpng",
+      "rank": 2,
+      "raw": {
+        "canary_expression": "png_ptr->palette == NULL",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/libpng/patches/bugs/PNG007.patch",
+        "program": "libpng_read_fuzzer"
+      },
+      "score": 77,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "needs_binding_validation",
+      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
+      "target_id": "PNG007"
+    },
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet",
       "existing_disposition": "",
-      "lane": "real_cve_replacement",
+      "lane": "binding_spec_first",
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "compound-sequence-lifecycle",
       "project": "gpac",
-      "rank": 1,
+      "rank": 3,
       "raw": {
         "bug_type": "Double Free",
         "commit_links": "https://github.com/gpac/gpac/commit/3ab9394473dfcdc830a4fb44a138db5276ae4bdb;https://github.com/gpac/gpac/commit/52f65707c512a2b6bab361301cb703a2c6c8b53e",
@@ -3604,59 +3804,9 @@
       "target_id": "GPAC_3403"
     },
     {
-      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "",
-      "blockers": "no BindingSpec candidate exists yet",
-      "existing_disposition": "",
-      "lane": "real_cve_replacement",
-      "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
-      "primary_category": "binary-state-null",
-      "project": "libarchive",
-      "rank": 2,
-      "raw": {
-        "bug_type": "NULL Pointer Dereference",
-        "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 0,
-        "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
-        "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
-        "pull_links": "",
-        "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
-      },
-      "score": 88,
-      "secondary_category": "",
-      "source": "real_cve",
-      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
-      "status": "candidate_after_replay_and_binding",
-      "suggested_short_triage": "validate vulnerable build and PoC replay, write harness admissibility note, then create BindingSpec before fuzzing budget is spent",
-      "target_id": "LIBARCHIVE_2936"
-    },
-    {
-      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "PNG007.native_b2_candidate.yml,PNG007.native_b2_plte_delete_candidate.yml,PNG007.native_b2_plte_multi_delete_candidate.yml",
-      "blockers": "no comparison package exists yet",
-      "existing_disposition": "",
-      "lane": "short_triage_ready",
-      "next_action": "repair/spec-audit BindingSpec until accepted non-trigger D_F exists, then rerun short gate",
-      "primary_category": "binary-state-null",
-      "project": "libpng",
-      "rank": 3,
-      "raw": {
-        "canary_expression": "png_ptr->palette == NULL",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/libpng/patches/bugs/PNG007.patch",
-        "program": "libpng_read_fuzzer"
-      },
-      "score": 83,
-      "secondary_category": "",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_short_discovery",
-      "suggested_short_triage": "run 10-30m FORMTRIG seed-readiness/gate, then same-seed AFL++ vanilla/CmpLog/Redqueen short baselines with `scripts/run_magma_baselines.sh --target-id PNG007 --durations 600,1800 --jobs N`",
-      "target_id": "PNG007"
-    },
-    {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3681,6 +3831,7 @@
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3705,6 +3856,7 @@
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3729,6 +3881,7 @@
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3753,6 +3906,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3777,6 +3931,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3801,6 +3956,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3825,6 +3981,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3849,6 +4006,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3873,6 +4031,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3897,6 +4056,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3921,6 +4081,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3945,6 +4106,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3969,6 +4131,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -3993,6 +4156,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4017,6 +4181,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4041,6 +4206,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4065,6 +4231,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4089,6 +4256,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4113,6 +4281,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4137,6 +4306,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4161,6 +4331,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4185,6 +4356,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4209,6 +4381,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4233,6 +4406,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4257,6 +4431,7 @@
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",
@@ -4281,6 +4456,7 @@
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "",
+      "binding_spec_validated": false,
       "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
       "existing_disposition": "",
       "lane": "binding_spec_first",

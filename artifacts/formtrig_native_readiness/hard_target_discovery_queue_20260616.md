@@ -14,9 +14,9 @@ Demoted controls retained outside the main queue: `3`.
 
 | rank | target | source | project | category | score | lane | next action |
 | ---: | --- | --- | --- | --- | ---: | --- | --- |
-| 1 | GPAC_3403 | real_cve | gpac | compound-sequence-lifecycle | 92 | `real_cve_replacement` | validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec |
-| 2 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 88 | `real_cve_replacement` | validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec |
-| 3 | PNG007 | magma | libpng | binary-state-null | 83 | `short_triage_ready` | repair/spec-audit BindingSpec until accepted non-trigger D_F exists, then rerun short gate |
+| 1 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 96 | `binding_validation_first` | validate BindingSpec against native site map and dynamic binding signal before short gate |
+| 2 | PNG007 | magma | libpng | binary-state-null | 77 | `binding_validation_first` | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
+| 3 | GPAC_3403 | real_cve | gpac | compound-sequence-lifecycle | 92 | `binding_spec_first` | validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec |
 | 4 | PDF003 | magma | poppler | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
 | 5 | SSL011 | magma | openssl | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
 | 6 | SSL015 | magma | openssl | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
@@ -47,23 +47,23 @@ Demoted controls retained outside the main queue: `3`.
 
 ## First Actions
 
-### 1. GPAC_3403
+### 1. LIBARCHIVE_2936
+
+- Benefit hypothesis: native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T
+- Blockers: BindingSpec candidate is not native-site-map validated
+- Short triage: build FORMTRIG-instrumented target/site map, compile the BindingSpec against native site ids, then run seed-readiness and binding-signal diagnosis
+
+### 2. PNG007
+
+- Benefit hypothesis: native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T
+- Blockers: BindingSpec candidate is not native-site-map validated; no comparison package exists yet
+- Short triage: compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen
+
+### 3. GPAC_3403
 
 - Benefit hypothesis: terminal success depends on event order, object identity, or parser state rather than one scalar branch distance
 - Blockers: no BindingSpec candidate exists yet
 - Short triage: validate vulnerable build and PoC replay, write harness admissibility note, then create BindingSpec before fuzzing budget is spent
-
-### 2. LIBARCHIVE_2936
-
-- Benefit hypothesis: native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T
-- Blockers: no BindingSpec candidate exists yet
-- Short triage: validate vulnerable build and PoC replay, write harness admissibility note, then create BindingSpec before fuzzing budget is spent
-
-### 3. PNG007
-
-- Benefit hypothesis: native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T
-- Blockers: no comparison package exists yet
-- Short triage: run 10-30m FORMTRIG seed-readiness/gate, then same-seed AFL++ vanilla/CmpLog/Redqueen short baselines with `scripts/run_magma_baselines.sh --target-id PNG007 --durations 600,1800 --jobs N`
 
 ### 4. PDF003
 

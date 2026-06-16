@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-16T08:36:42+00:00",
+  "generated_at_utc": "2026-06-16T09:01:30+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "cve_inventory": "artifacts/cve_bench_candidate_audit.json",
@@ -10,7 +10,61 @@
     {
       "atom_ready": true,
       "binary_dt_gap": true,
+      "binding_spec_present": true,
       "binding_spec_ready": false,
+      "binding_spec_validated": false,
+      "binding_validation_status": "candidate_static_validated@artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json",
+      "blockers": "BindingSpec candidate is not native-site-map validated",
+      "build_ready": true,
+      "category": "binary-state-null",
+      "discovery_lane": "real_cve_replacement",
+      "discovery_rank": 2,
+      "existing_disposition": "",
+      "harness_source_ready": true,
+      "native_dt_values": "1",
+      "next_action": "build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility",
+      "paths": {
+        "atom": "artifacts/atoms/LIBARCHIVE_2936.json",
+        "binding_specs": [
+          "LIBARCHIVE_2936.native_b2_path_table_candidate.yml"
+        ],
+        "binding_validation_records": [
+          "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json"
+        ],
+        "harness_sources": [
+          "benchmarks/cve_harnesses/libarchive_write_replay.c",
+          "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
+        ],
+        "poc": "benchmarks/cve_pocs/libarchive/LIBARCHIVE_2936.poc",
+        "program": "benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay",
+        "rnt_manifest": "artifacts/rnt_corpus/LIBARCHIVE_2936/manifest.json",
+        "rnt_metadata": "artifacts/rnt_corpus/LIBARCHIVE_2936/metadata.csv",
+        "tcir": "artifacts/tcir/LIBARCHIVE_2936.json",
+        "trigger_graph": "artifacts/trigger_graphs/LIBARCHIVE_2936.json",
+        "validation_log": "artifacts/cve_validation_logs/LIBARCHIVE_2936.validation.log"
+      },
+      "poc_ready": true,
+      "priority": 15,
+      "project": "libarchive",
+      "rank": 1,
+      "readiness": "needs_binding_validation",
+      "rnt_ready": true,
+      "seed_count": 1,
+      "source_locations": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
+      "target_id": "LIBARCHIVE_2936",
+      "tcir_ready": true,
+      "terminal_validated": true,
+      "trigger_graph_ready": true,
+      "validation_excerpt": "/home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45: runtime error: member access within null pointer of type 'struct isoent'\n    #0 0x563ba3d4854a in _compare_path_table /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45\n    #1 0x563ba3c3837c in qsort_r (/home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay+0x16937c) (BuildId: 8c400a70b41c909bb4562a98f2e8133b3820b542)\n    #2 0x563ba3d39fad in isoent_make_path_table_2 /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c\n    #3 0x563ba3d0db69 in isoent_make_path_table /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:7061:7\n    #4 0x563ba3d0db69 in iso9660_close /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:1937:8\n    #5 0x563ba3cdf140 in _archive_write_close /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write.c:638:8\n    #6 0x563ba3ca0f06 in main /home/cwh/FORMTRIG/benchmarks/cve_harnesses/libarchive_write_replay.c:152:3\n    #7 0x7e4c35a2a1c9  (/lib/x86_64-linux-gnu/libc.so.6+0x2a1c9) (BuildId: 8e9fd827446c24067541ac5390e6f527fb5947bb)\n    #8 0x7e4c35a2a28a in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 8e9fd827446c24067541ac5390e6f527fb5947bb)\n    #9 0x563ba3bc75c4 in _start (/home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay+0xf85c4) (BuildId: 8c400a70b41c909bb4562a98f2e8133b3820b542)\n\nSUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45 \ntarget_id=LIBARCHIVE_2936\ncommand=benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay benchmarks/cve_pocs/libarchive/LIBARCHIVE_2936.poc\nstarted_at_utc=2026-06-10T12:50:48Z\n\nreturncode=-6\nduration_s=0.199\n",
+      "validation_signal": "SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45"
+    },
+    {
+      "atom_ready": true,
+      "binary_dt_gap": true,
+      "binding_spec_present": false,
+      "binding_spec_ready": false,
+      "binding_spec_validated": false,
+      "binding_validation_status": "",
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
@@ -23,6 +77,7 @@
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [],
+        "binding_validation_records": [],
         "harness_sources": [],
         "poc": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
         "program": "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
@@ -35,7 +90,7 @@
       "poc_ready": true,
       "priority": 20,
       "project": "gpac",
-      "rank": 1,
+      "rank": 2,
       "readiness": "ready_for_binding_spec",
       "rnt_ready": true,
       "seed_count": 1,
@@ -50,50 +105,10 @@
     {
       "atom_ready": true,
       "binary_dt_gap": true,
+      "binding_spec_present": false,
       "binding_spec_ready": false,
-      "blockers": "no executable BindingSpec candidate",
-      "build_ready": true,
-      "category": "binary-state-null",
-      "discovery_lane": "real_cve_replacement",
-      "discovery_rank": 2,
-      "existing_disposition": "",
-      "harness_source_ready": true,
-      "native_dt_values": "1",
-      "next_action": "draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal",
-      "paths": {
-        "atom": "artifacts/atoms/LIBARCHIVE_2936.json",
-        "binding_specs": [],
-        "harness_sources": [
-          "benchmarks/cve_harnesses/libarchive_write_replay.c",
-          "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
-        ],
-        "poc": "benchmarks/cve_pocs/libarchive/LIBARCHIVE_2936.poc",
-        "program": "benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay",
-        "rnt_manifest": "artifacts/rnt_corpus/LIBARCHIVE_2936/manifest.json",
-        "rnt_metadata": "artifacts/rnt_corpus/LIBARCHIVE_2936/metadata.csv",
-        "tcir": "artifacts/tcir/LIBARCHIVE_2936.json",
-        "trigger_graph": "artifacts/trigger_graphs/LIBARCHIVE_2936.json",
-        "validation_log": "artifacts/cve_validation_logs/LIBARCHIVE_2936.validation.log"
-      },
-      "poc_ready": true,
-      "priority": 20,
-      "project": "libarchive",
-      "rank": 2,
-      "readiness": "ready_for_binding_spec",
-      "rnt_ready": true,
-      "seed_count": 1,
-      "source_locations": "libarchive/archive_write_set_format_iso9660.c:6823#_compare_path_table",
-      "target_id": "LIBARCHIVE_2936",
-      "tcir_ready": true,
-      "terminal_validated": true,
-      "trigger_graph_ready": true,
-      "validation_excerpt": "/home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45: runtime error: member access within null pointer of type 'struct isoent'\n    #0 0x563ba3d4854a in _compare_path_table /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45\n    #1 0x563ba3c3837c in qsort_r (/home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay+0x16937c) (BuildId: 8c400a70b41c909bb4562a98f2e8133b3820b542)\n    #2 0x563ba3d39fad in isoent_make_path_table_2 /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c\n    #3 0x563ba3d0db69 in isoent_make_path_table /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:7061:7\n    #4 0x563ba3d0db69 in iso9660_close /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:1937:8\n    #5 0x563ba3cdf140 in _archive_write_close /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write.c:638:8\n    #6 0x563ba3ca0f06 in main /home/cwh/FORMTRIG/benchmarks/cve_harnesses/libarchive_write_replay.c:152:3\n    #7 0x7e4c35a2a1c9  (/lib/x86_64-linux-gnu/libc.so.6+0x2a1c9) (BuildId: 8e9fd827446c24067541ac5390e6f527fb5947bb)\n    #8 0x7e4c35a2a28a in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 8e9fd827446c24067541ac5390e6f527fb5947bb)\n    #9 0x563ba3bc75c4 in _start (/home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay+0xf85c4) (BuildId: 8c400a70b41c909bb4562a98f2e8133b3820b542)\n\nSUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45 \ntarget_id=LIBARCHIVE_2936\ncommand=benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay benchmarks/cve_pocs/libarchive/LIBARCHIVE_2936.poc\nstarted_at_utc=2026-06-10T12:50:48Z\n\nreturncode=-6\nduration_s=0.199\n",
-      "validation_signal": "SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:6823:45"
-    },
-    {
-      "atom_ready": true,
-      "binary_dt_gap": true,
-      "binding_spec_ready": false,
+      "binding_spec_validated": false,
+      "binding_validation_status": "",
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "numeric-margin",
@@ -106,6 +121,7 @@
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2935.json",
         "binding_specs": [],
+        "binding_validation_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
           "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
@@ -136,7 +152,10 @@
     {
       "atom_ready": true,
       "binary_dt_gap": true,
+      "binding_spec_present": false,
       "binding_spec_ready": false,
+      "binding_spec_validated": false,
+      "binding_validation_status": "",
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "numeric-margin",
@@ -149,6 +168,7 @@
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2937.json",
         "binding_specs": [],
+        "binding_validation_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
           "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
@@ -179,7 +199,10 @@
     {
       "atom_ready": true,
       "binary_dt_gap": true,
+      "binding_spec_present": false,
       "binding_spec_ready": false,
+      "binding_spec_validated": false,
+      "binding_validation_status": "",
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "numeric-margin",
@@ -192,6 +215,7 @@
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2938.json",
         "binding_specs": [],
+        "binding_validation_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
           "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
@@ -222,7 +246,10 @@
     {
       "atom_ready": true,
       "binary_dt_gap": true,
+      "binding_spec_present": false,
       "binding_spec_ready": false,
+      "binding_spec_validated": false,
+      "binding_validation_status": "",
       "blockers": "no executable BindingSpec candidate",
       "build_ready": true,
       "category": "numeric-margin",
@@ -235,6 +262,7 @@
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2925.json",
         "binding_specs": [],
+        "binding_validation_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libarchive_write_replay.c",
           "benchmarks/cve_harnesses/libarchive_zip_empty_dir_replay.c"
@@ -265,7 +293,10 @@
     {
       "atom_ready": false,
       "binary_dt_gap": false,
+      "binding_spec_present": false,
       "binding_spec_ready": false,
+      "binding_spec_validated": false,
+      "binding_validation_status": "",
       "blockers": "no formal RNT seed with R=1,T=0; binary native D_T gap is not established; no executable BindingSpec candidate; no TCIR file; no atom file",
       "build_ready": true,
       "category": "numeric-margin",
@@ -278,6 +309,7 @@
       "paths": {
         "atom": "artifacts/atoms/GPAC_3398.json",
         "binding_specs": [],
+        "binding_validation_records": [],
         "harness_sources": [],
         "poc": "benchmarks/cve_pocs/gpac/GPAC_3398.poc",
         "program": "benchmarks/cve_build/gpac-3398-src/bin/gcc/MP4Box",
@@ -305,8 +337,11 @@
     {
       "atom_ready": true,
       "binary_dt_gap": true,
-      "binding_spec_ready": true,
-      "blockers": "existing discovery triage demotes this target: demote_harness_artifact",
+      "binding_spec_present": true,
+      "binding_spec_ready": false,
+      "binding_spec_validated": false,
+      "binding_validation_status": "",
+      "blockers": "existing discovery triage demotes this target: demote_harness_artifact; BindingSpec candidate is not native-site-map validated",
       "build_ready": true,
       "category": "binary-state-null",
       "discovery_lane": "control_or_negative",
@@ -320,6 +355,7 @@
         "binding_specs": [
           "LIBXML2_1107.native_b2_alloc_fail_candidate.yml"
         ],
+        "binding_validation_records": [],
         "harness_sources": [
           "benchmarks/cve_harnesses/libxml2_regexp_strdup_fail_replay.c"
         ],

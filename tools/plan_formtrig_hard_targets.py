@@ -29,6 +29,7 @@ FIELDS = [
     "lane",
     "status",
     "binding_spec",
+    "binding_spec_validated",
     "existing_disposition",
     "benefit_hypothesis",
     "blockers",
@@ -101,6 +102,41 @@ def binding_specs_for(target_id: str, binding_spec_dir: Path | None) -> list[str
     return sorted(specs)
 
 
+def binding_validation_records(
+    target_id: str,
+    root: Path = Path("artifacts/formtrig_native_readiness/binding_validation"),
+) -> list[dict[str, Any]]:
+    if not root.is_dir():
+        return []
+    records: list[dict[str, Any]] = []
+    for path in sorted(root.glob(f"{target_id}*.json")):
+        try:
+            record = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        if str(record.get("target_id", target_id)) == target_id:
+            records.append(record)
+    return records
+
+
+def binding_spec_validated(target_id: str) -> bool:
+    pass_statuses = {"pass", "native_binding_validated", "ready_for_short_gate"}
+    for record in binding_validation_records(target_id):
+        checks = record.get("checks") if isinstance(record.get("checks"), dict) else {}
+        if boolish(record.get("ready_for_short_gate")):
+            return True
+        if str(record.get("status", "")) in pass_statuses:
+            return True
+        if (
+            boolish(record.get("native_site_map_validated"))
+            and boolish(checks.get("binding_spec_compile_pass"))
+            and boolish(checks.get("lift_audit_pass"))
+            and boolish(checks.get("harness_admissibility_pass"))
+        ):
+            return True
+    return False
+
+
 def comparison_targets(comparison_root: Path | None) -> Counter[str]:
     counts: Counter[str] = Counter()
     if comparison_root is None or not comparison_root.exists():
@@ -170,21 +206,45 @@ def benefit_hypothesis(source: str, primary: str, secondary: str) -> str:
     return f"{source} target requires TC audit before a benefit hypothesis is credible"
 
 
-def lane_for(source: str, primary: str, secondary: str, specs: list[str], disposition: str) -> str:
+def lane_for(
+    source: str,
+    primary: str,
+    secondary: str,
+    specs: list[str],
+    specs_validated: bool,
+    disposition: str,
+) -> str:
     if disposition in DEMOTE_DISPOSITIONS:
         return "control_or_negative"
     if source == "real_cve":
         if not hard_category(primary, secondary):
             return "real_cve_control_or_audit"
+        if not specs:
+            return "binding_spec_first"
+        if specs and not specs_validated:
+            return "binding_validation_first"
         return "real_cve_replacement"
-    if specs:
+    if specs_validated:
         return "short_triage_ready"
+    if specs:
+        return "binding_validation_first"
     if hard_category(primary, secondary):
         return "binding_spec_first"
     return "control_or_low_priority"
 
 
-def suggested_triage(source: str, target_id: str, specs: list[str]) -> str:
+def suggested_triage(source: str, target_id: str, specs: list[str], specs_validated: bool) -> str:
+    if specs and not specs_validated:
+        if source == "real_cve":
+            return (
+                "build FORMTRIG-instrumented target/site map, compile the "
+                "BindingSpec against native site ids, then run seed-readiness "
+                "and binding-signal diagnosis"
+            )
+        return (
+            "compile BindingSpec against the native site map, pass lift audit "
+            "and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen"
+        )
     if source == "magma":
         if specs:
             return (
@@ -215,6 +275,7 @@ def status_for(
     primary: str,
     secondary: str,
     specs: list[str],
+    specs_validated: bool,
     disposition: str,
     comparison_count: int,
     has_external_input: bool,
@@ -232,18 +293,26 @@ def status_for(
             blockers.append("no vulnerable/fix commit link recorded")
         if not specs:
             blockers.append("no BindingSpec candidate exists yet")
+        elif not specs_validated:
+            blockers.append("BindingSpec candidate is not native-site-map validated")
         if not hard_category(primary, secondary):
             blockers.append("initial category is not binary/compound; treat as control unless audit shows D_T degeneration")
             return "needs_dt_degeneracy_audit", blockers
+        if specs and not specs_validated:
+            return "needs_binding_validation", blockers
         return ("candidate_after_replay_and_binding" if blockers else "ready_for_short_triage"), blockers
 
     if not specs:
         blockers.append("no BindingSpec candidate exists yet")
+    elif not specs_validated:
+        blockers.append("BindingSpec candidate is not native-site-map validated")
     if comparison_count == 0:
         blockers.append("no comparison package exists yet")
     if not hard_category(primary, secondary):
         blockers.append("category is likely direct-distance or CmpLog-friendly")
     if blockers:
+        if specs and not specs_validated:
+            return "needs_binding_validation", blockers
         return "needs_short_discovery", blockers
     return "ready_for_short_triage", blockers
 
@@ -270,6 +339,7 @@ def build_magma_rows(
             primary,
             secondary,
             specs,
+            binding_spec_validated(target_id),
             disposition,
             comparison_count,
             has_external_input=True,
@@ -284,6 +354,11 @@ def build_magma_rows(
             score += 8
         if specs:
             score += 12
+        specs_validated = binding_spec_validated(target_id)
+        if specs and not specs_validated:
+            score -= 6
+        if specs_validated:
+            score += 10
         if comparison_count:
             score += min(comparison_count, 3)
         if disposition in DEMOTE_DISPOSITIONS:
@@ -296,14 +371,15 @@ def build_magma_rows(
                 "primary_category": primary,
                 "secondary_category": secondary,
                 "score": score,
-                "lane": lane_for("magma", primary, secondary, specs, disposition),
+                "lane": lane_for("magma", primary, secondary, specs, specs_validated, disposition),
                 "status": status,
                 "binding_spec": ",".join(specs),
+                "binding_spec_validated": specs_validated,
                 "existing_disposition": disposition,
                 "benefit_hypothesis": benefit_hypothesis("magma", primary, secondary),
                 "blockers": "; ".join(blockers),
-                "next_action": next_action(status, "magma", target_id, primary, secondary, specs),
-                "suggested_short_triage": suggested_triage("magma", target_id, specs),
+                "next_action": next_action(status, "magma", target_id, primary, secondary, specs, specs_validated),
+                "suggested_short_triage": suggested_triage("magma", target_id, specs, specs_validated),
                 "source_evidence": str(inventory_path),
                 "raw": {
                     "canary_expression": record.get("canary_expression"),
@@ -332,6 +408,7 @@ def build_cve_rows(
         secondary = ""
         disposition = str(dispositions.get(target_id, {}).get("disposition") or "")
         specs = binding_specs_for(target_id, binding_spec_dir)
+        specs_validated = binding_spec_validated(target_id)
         comparison_count = comparisons[target_id]
         has_external_input = bool(split_links(record.get("external_input_links")))
         has_commit = bool(split_links(record.get("commit_links")) or split_links(record.get("pull_links")))
@@ -340,6 +417,7 @@ def build_cve_rows(
             primary,
             secondary,
             specs,
+            specs_validated,
             disposition,
             comparison_count,
             has_external_input=has_external_input,
@@ -352,6 +430,10 @@ def build_cve_rows(
             score += 10
         if specs:
             score += 14
+        if specs and not specs_validated:
+            score -= 6
+        if specs_validated:
+            score += 10
         if comparison_count:
             score += min(comparison_count, 3)
         if record.get("status") == "candidate_unvalidated":
@@ -366,14 +448,15 @@ def build_cve_rows(
                 "primary_category": primary,
                 "secondary_category": secondary,
                 "score": score,
-                "lane": lane_for("real_cve", primary, secondary, specs, disposition),
+                "lane": lane_for("real_cve", primary, secondary, specs, specs_validated, disposition),
                 "status": status,
                 "binding_spec": ",".join(specs),
+                "binding_spec_validated": specs_validated,
                 "existing_disposition": disposition,
                 "benefit_hypothesis": benefit_hypothesis("real_cve", primary, secondary),
                 "blockers": "; ".join(blockers),
-                "next_action": next_action(status, "real_cve", target_id, primary, secondary, specs),
-                "suggested_short_triage": suggested_triage("real_cve", target_id, specs),
+                "next_action": next_action(status, "real_cve", target_id, primary, secondary, specs, specs_validated),
+                "suggested_short_triage": suggested_triage("real_cve", target_id, specs, specs_validated),
                 "source_evidence": str(inventory_path),
                 "raw": {
                     "bug_type": record.get("bug_type"),
@@ -396,14 +479,19 @@ def next_action(
     primary: str,
     secondary: str,
     specs: list[str],
+    specs_validated: bool,
 ) -> str:
     if status == "do_not_promote":
         return "keep as control or negative evidence; do not spend main long-run budget"
     if source == "real_cve":
         if not specs:
             return "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec"
+        if not specs_validated:
+            return "validate BindingSpec against native site map and dynamic binding signal before short gate"
         return "run short FORMTRIG gate and same-budget AFL++ family baseline screen"
-    if specs:
+    if specs and not specs_validated:
+        return "validate BindingSpec against native site map and binding-signal diagnosis before short gate"
+    if specs_validated:
         if target_id == "PNG007":
             return "repair/spec-audit BindingSpec until accepted non-trigger D_F exists, then rerun short gate"
         return "run short FORMTRIG gate and same-seed AFL++ family baseline screen"
@@ -416,7 +504,8 @@ def rank_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     lane_rank = {
         "real_cve_replacement": 0,
         "short_triage_ready": 1,
-        "binding_spec_first": 2,
+        "binding_validation_first": 2,
+        "binding_spec_first": 3,
         "real_cve_control_or_audit": 3,
         "control_or_low_priority": 4,
         "control_or_negative": 5,

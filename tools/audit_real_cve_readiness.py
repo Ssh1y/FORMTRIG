@@ -29,6 +29,9 @@ FIELDS = [
     "binary_dt_gap",
     "terminal_validated",
     "validation_signal",
+    "binding_spec_present",
+    "binding_spec_validated",
+    "binding_validation_status",
     "binding_spec_ready",
     "tcir_ready",
     "atom_ready",
@@ -93,6 +96,52 @@ def binding_specs_for(target_id: str, root: Path) -> list[str]:
         for path in root.glob(f"{target_id}.*.yml")
         if ".llm_" not in path.name and not path.name.endswith(".llm_response.yml")
     )
+
+
+def binding_validation_records(
+    target_id: str,
+    root: Path = Path("artifacts/formtrig_native_readiness/binding_validation"),
+) -> list[dict[str, Any]]:
+    if not root.is_dir():
+        return []
+    records: list[dict[str, Any]] = []
+    for path in sorted(root.glob(f"{target_id}*.json")):
+        try:
+            record = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        if str(record.get("target_id", target_id)) != target_id:
+            continue
+        record["_path"] = str(path)
+        records.append(record)
+    return records
+
+
+def binding_validation_pass(records: list[dict[str, Any]]) -> bool:
+    pass_statuses = {"pass", "native_binding_validated", "ready_for_short_gate"}
+    for record in records:
+        checks = record.get("checks") if isinstance(record.get("checks"), dict) else {}
+        if boolish(record.get("ready_for_short_gate")):
+            return True
+        if str(record.get("status", "")) in pass_statuses:
+            return True
+        if (
+            boolish(record.get("native_site_map_validated"))
+            and boolish(checks.get("binding_spec_compile_pass"))
+            and boolish(checks.get("lift_audit_pass"))
+            and boolish(checks.get("harness_admissibility_pass"))
+        ):
+            return True
+    return False
+
+
+def binding_validation_status(records: list[dict[str, Any]]) -> str:
+    statuses = []
+    for record in records:
+        status = str(record.get("status") or "unknown")
+        path = record.get("_path")
+        statuses.append(f"{status}@{path}" if path else status)
+    return "; ".join(statuses)
 
 
 def load_rnt_manifest(path: Path) -> dict[str, Any]:
@@ -238,6 +287,10 @@ def audit_target(
     )
     binary_dt_gap = rnt_ready and native_dt_values == ["1"]
     binding_specs = binding_specs_for(target_id, binding_spec_dir)
+    binding_spec_present = bool(binding_specs)
+    validation_records = binding_validation_records(target_id)
+    binding_spec_validated = binding_validation_pass(validation_records)
+    binding_status = binding_validation_status(validation_records)
     atom_path = Path("artifacts/atoms") / f"{target_id}.json"
     tcir_path = Path("artifacts/tcir") / f"{target_id}.json"
     trigger_graph_path = Path("artifacts/trigger_graphs") / f"{target_id}.json"
@@ -256,8 +309,10 @@ def audit_target(
         blockers.append("binary native D_T gap is not established")
     if not terminal_validated:
         blockers.append("terminal validation is missing or inconclusive")
-    if not binding_specs:
+    if not binding_spec_present:
         blockers.append("no executable BindingSpec candidate")
+    elif not binding_spec_validated:
+        blockers.append("BindingSpec candidate is not native-site-map validated")
     if not tcir_path.exists():
         blockers.append("no TCIR file")
     if not atom_path.exists():
@@ -271,10 +326,14 @@ def audit_target(
         readiness = "control_or_negative"
         next_action = "keep as control/sanity evidence; do not spend main real-CVE long-run budget"
         priority = 95
-    elif rnt_ready and binary_dt_gap and terminal_validated and binding_specs:
+    elif rnt_ready and binary_dt_gap and terminal_validated and binding_spec_validated:
         readiness = "ready_for_formtrig_short_gate"
         next_action = "run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines"
         priority = 10
+    elif rnt_ready and binary_dt_gap and terminal_validated and binding_spec_present:
+        readiness = "needs_binding_validation"
+        next_action = "build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility"
+        priority = 15
     elif rnt_ready and binary_dt_gap and terminal_validated:
         readiness = "ready_for_binding_spec"
         next_action = "draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal"
@@ -305,7 +364,10 @@ def audit_target(
         "binary_dt_gap": binary_dt_gap,
         "terminal_validated": terminal_validated,
         "validation_signal": validation_signal,
-        "binding_spec_ready": bool(binding_specs),
+        "binding_spec_present": binding_spec_present,
+        "binding_spec_validated": binding_spec_validated,
+        "binding_validation_status": binding_status,
+        "binding_spec_ready": binding_spec_validated,
         "tcir_ready": tcir_path.exists(),
         "atom_ready": atom_path.exists(),
         "trigger_graph_ready": trigger_graph_path.exists(),
@@ -323,6 +385,7 @@ def audit_target(
             "rnt_manifest": str(manifest_path),
             "rnt_metadata": str(metadata_path),
             "binding_specs": binding_specs,
+            "binding_validation_records": [record.get("_path", "") for record in validation_records],
             "atom": str(atom_path),
             "tcir": str(tcir_path),
             "trigger_graph": str(trigger_graph_path),
@@ -364,12 +427,12 @@ def write_markdown(path: Path, rows: list[dict[str, Any]]) -> None:
         "benefit opportunity from missing engineering assets such as BindingSpec",
         "or terminal validation.",
         "",
-        "| rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec | next action |",
-        "| ---: | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | next action |",
+        "| ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {rank} | {target_id} | {category} | `{readiness}` | {rnt} | {dt} | {term} | {binding} | {next_action} |".format(
+            "| {rank} | {target_id} | {category} | `{readiness}` | {rnt} | {dt} | {term} | {binding_present} | {binding_validated} | {next_action} |".format(
                 rank=row.get("rank", ""),
                 target_id=row.get("target_id", ""),
                 category=row.get("category", ""),
@@ -377,7 +440,8 @@ def write_markdown(path: Path, rows: list[dict[str, Any]]) -> None:
                 rnt="yes" if row.get("rnt_ready") else "no",
                 dt="yes" if row.get("binary_dt_gap") else "no",
                 term="yes" if row.get("terminal_validated") else "no",
-                binding="yes" if row.get("binding_spec_ready") else "no",
+                binding_present="yes" if row.get("binding_spec_present") else "no",
+                binding_validated="yes" if row.get("binding_spec_validated") else "no",
                 next_action=str(row.get("next_action", "")).replace("|", "\\|"),
             )
         )
@@ -392,6 +456,7 @@ def write_markdown(path: Path, rows: list[dict[str, Any]]) -> None:
                 f"- Source locations: {row.get('source_locations') or 'none'}",
                 f"- Native D_T values in RNT metadata: `{row.get('native_dt_values') or 'none'}`",
                 f"- Terminal validation signal: {row.get('validation_signal') or 'none'}",
+                f"- Binding validation status: {row.get('binding_validation_status') or 'none'}",
                 f"- Blockers: {row.get('blockers') or 'none'}",
                 f"- Program: `{row.get('paths', {}).get('program', '')}`",
                 f"- RNT manifest: `{row.get('paths', {}).get('rnt_manifest', '')}`",
