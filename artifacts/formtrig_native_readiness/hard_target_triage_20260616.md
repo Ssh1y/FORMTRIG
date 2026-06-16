@@ -7,16 +7,16 @@ oracle gap to close. Targets where matched baselines also trigger but
 FORMTRIG is not faster are kept as controls or negative evidence, not
 main SOTA-gap cases.
 
-Promoted hard-target candidates: `1`.
+Promoted hard-target candidates: `2`.
 
 ## Target Queue
 
 | target | disposition | priority | baseline triggers | FORMTRIG `_T` | fastest baseline `_T` | speedup | next action |
 | --- | --- | ---: | --- | ---: | ---: | ---: | --- |
 | LIBARCHIVE_2936 | `candidate_extend_longruns` | 15 | aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand | 1.326 | 24.45 | 18.43891402714932 | run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets |
+| TIF012 | `candidate_extend_longruns` | 18 |  | 0.035 |  | None | extend to longer matched-budget runs to test whether the replicated FORMTRIG endpoint benefit persists |
 | LIBCOAP_CVE_2023_35862 | `demote_to_control_or_negative` | 90 | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | None | 1060.0 | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
 | PNG006 | `demote_to_control_or_negative` | 90 | aflplusplus_cmplog | None | 120.0 | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
-| LIBXML2_1107 | `demote_harness_artifact` | 99 |  |  |  |  | do not use as core evidence; keep only build, BindingSpec, and crash-accounting sanity checks |
 
 ## Package Evidence
 
@@ -32,3 +32,6 @@ Promoted hard-target candidates: `1`.
 | PNG006_formtrig_2h_vs_baseline_30m_gap_20260616 | PNG006 | `incomparable_needs_matched_budget` | `not_comparable_missing_matched_budget` |  | FORMTRIG terminal oracle success is observed; binary or sparse trigger feedback was lifted into accepted non-trigger search progress | FORMTRIG first `_T`/TTE is not recorded for this run; no matched-budget baseline benefit comparison is available |
 | PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616 | PNG006 | `candidate_needs_required_baselines` | `incomplete_required_baseline_set` |  | FORMTRIG reaches terminal success where matched baselines do not trigger in this budget; FORMTRIG terminal oracle success is observed; binary or sparse trigger feedback was lifted into accepted non-trigger search progress | FORMTRIG first `_T`/TTE is not recorded for this run; required baseline families are still missing; replication is too low for a final performance claim |
 | PNG006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616 | PNG006 | `control_or_negative` | `incomplete_required_baseline_set` | aflplusplus_cmplog | FORMTRIG terminal oracle success is observed; binary or sparse trigger feedback was lifted into accepted non-trigger search progress | FORMTRIG first `_T`/TTE is not recorded for this run; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage; required baseline families are still missing; replication is too low for a final performance claim |
+| tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616 | TIF012 | `promote_or_extend_longruns` | `positive_endpoint_matched_comparison` |  | FORMTRIG reaches terminal success where matched baselines do not trigger in this budget; FORMTRIG terminal oracle success is observed; FORMTRIG first `_T` upper bound is recorded at 0.035s; binary or sparse trigger feedback was lifted into accepted non-trigger search progress |  |
+| tif012_b5_formtrig_120s_vs_aflpp_family_120s_20260616 | TIF012 | `promote_or_complete_reps` | `positive_endpoint_but_under_replicated` |  | FORMTRIG reaches terminal success where matched baselines do not trigger in this budget; FORMTRIG terminal oracle success is observed; FORMTRIG first `_T` upper bound is recorded at 0.035s | no strict pre-trigger guidance benefit is established; replication is too low for a final performance claim |
+| tif012_formtrig_600s_vs_aflpp_family_600s_20260616 | TIF012 | `control_or_negative` | `baseline_also_triggers_not_sota_advantage` | aflplusplus_vanilla,redqueen_operand | binary or sparse trigger feedback was lifted into accepted non-trigger search progress | no FORMTRIG terminal success is established; FORMTRIG first `_T`/TTE is not recorded for this run; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage |

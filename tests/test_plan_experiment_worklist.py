@@ -122,6 +122,111 @@ class ExperimentWorklistTest(unittest.TestCase):
             )
             self.assertIn("Endpoint benefit", payload["benefit_first_rule"])
 
+    def test_endpoint_positive_comparison_overrides_stale_validation_lane(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            comparison_dir = comparison_root / "tif012_b5_endpoint"
+            comparison_dir.mkdir(parents=True)
+            (comparison_dir / "comparison.json").write_text(
+                json.dumps(
+                    {
+                        "target_id": "TIF012",
+                        "analysis": {
+                            "verdict": "positive_endpoint_matched_comparison",
+                            "matched_baseline_count": 9,
+                            "missing_required_baselines": [],
+                            "best_formtrig_trigger_time_s": 0.035,
+                            "baseline_groups": [
+                                {
+                                    "baseline": "aflplusplus_vanilla",
+                                    "budget": 120,
+                                    "reps": 3,
+                                    "success_rate": 0.0,
+                                },
+                                {
+                                    "baseline": "aflplusplus_cmplog",
+                                    "budget": 120,
+                                    "reps": 3,
+                                    "success_rate": 0.0,
+                                },
+                                {
+                                    "baseline": "redqueen_operand",
+                                    "budget": 120,
+                                    "reps": 3,
+                                    "success_rate": 0.0,
+                                },
+                            ],
+                        },
+                        "benefit_readout": {
+                            "primary_benefits": [
+                                "FORMTRIG reaches terminal success where matched baselines do not trigger"
+                            ],
+                            "design_evidence": [
+                                "strict_pretrigger_guidance",
+                                "matched_budget_endpoint_success",
+                            ],
+                            "blocked_claims": [],
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 5,
+                                "target_id": "TIF012",
+                                "source": "magma",
+                                "project": "libtiff",
+                                "primary_category": "binary-state-null",
+                                "secondary_category": "",
+                                "lane": "binding_validation_first",
+                                "status": "needs_binding_validation",
+                                "existing_disposition": "",
+                                "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            self.assertEqual(payload["task_count"], 1)
+            task = payload["tasks"][0]
+            self.assertEqual(task["target_id"], "TIF012")
+            self.assertEqual(task["action"], "extend_matched_longrun")
+            self.assertEqual(task["priority"], "P0")
+            self.assertFalse(task["runnable_now"])
+            self.assertEqual(task["comparison_verdict"], "positive_endpoint_matched_comparison")
+            self.assertIn("endpoint benefit", task["benefit_to_prove"])
+            self.assertNotIn("BindingSpec candidate", " ".join(task["blocking_issue"]))
+            self.assertTrue(
+                any("TIF012.b5_current_3rep.list" in command for command in task["post_unblock_commands"])
+            )
+            self.assertTrue(
+                any("tools/compare_formtrig_baselines.py" in command for command in task["post_unblock_commands"])
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

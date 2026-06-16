@@ -214,6 +214,53 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertEqual(row["successful_baselines"], ["aflplusplus_vanilla"])
         self.assertEqual(row["tte_speedup_over_fastest_baseline"], 20.0)
 
+    def test_triage_prefers_replicated_endpoint_package_over_stale_negative(self):
+        packages = [
+            {
+                "comparison_id": "old_negative",
+                "target_id": "TIF012",
+                "package_status": "control_or_negative",
+                "verdict": "baseline_also_triggers_not_sota_advantage",
+                "matched_baselines": 3,
+                "successful_baselines": ["aflplusplus_vanilla"],
+                "fastest_baseline_trigger_time_s": 300.0,
+                "best_formtrig_trigger_time_s": None,
+                "formtrig_terminal": False,
+                "strict_pretrigger_guidance": True,
+                "observed_benefits": ["old mechanism-only evidence"],
+                "blocked_claims": ["matched baselines also trigger"],
+                "source_path": "old.json",
+            },
+            {
+                "comparison_id": "new_endpoint",
+                "target_id": "TIF012",
+                "package_status": "promote_or_extend_longruns",
+                "verdict": "positive_endpoint_matched_comparison",
+                "matched_baselines": 9,
+                "successful_baselines": [],
+                "fastest_baseline_trigger_time_s": None,
+                "best_formtrig_trigger_time_s": 0.035,
+                "formtrig_terminal": True,
+                "strict_pretrigger_guidance": True,
+                "observed_benefits": [
+                    "FORMTRIG reaches terminal success where matched baselines do not trigger"
+                ],
+                "blocked_claims": [],
+                "source_path": "new.json",
+            },
+        ]
+
+        rows = target_rows(packages, [])
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["disposition"], "candidate_extend_longruns")
+        self.assertEqual(rows[0]["priority"], 18)
+        self.assertEqual(rows[0]["best_package"], "new_endpoint")
+        self.assertEqual(rows[0]["baseline_triggers"], "")
+        self.assertEqual(rows[0]["fastest_baseline_trigger_time_s"], "")
+        self.assertIn("longer matched-budget", rows[0]["next_action"])
+        self.assertNotIn("matched baselines also trigger", rows[0]["blocked_claims"])
+
     def test_triage_uses_2h_next_action_after_10m_confirmation(self):
         payload = {
             "comparison_id": "synthetic_speedup_10m",

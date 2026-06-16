@@ -1,0 +1,191 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 2,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 2,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget": 2,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      }
+    ],
+    "best_formtrig_trigger_time_s": 1.208,
+    "fastest_baseline_trigger_time_s": null,
+    "matched_baseline_count": 3,
+    "missing_required_baselines": [],
+    "next_steps": [],
+    "reasons": [
+      "formtrig_strict_pretrigger_guidance_present",
+      "formtrig_terminal_oracle_present",
+      "formtrig_endpoint_where_matched_baselines_do_not_trigger"
+    ],
+    "tte_speedup_over_fastest_baseline": null,
+    "verdict": "positive_endpoint_matched_comparison"
+  },
+  "baseline_rows": [
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_cmplog",
+      "binding_signal_status": null,
+      "budget": 2,
+      "execs_done": 2544,
+      "execs_per_sec": "1269.46",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 0,
+      "rep": 1,
+      "run_time": 2,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "matched",
+      "source_path": "/tmp/formtrig_libarchive_runner_smoke_after_deps_20260616T221249Z/runs/aflplusplus_cmplog_rep1/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_vanilla",
+      "binding_signal_status": null,
+      "budget": 2,
+      "execs_done": 2869,
+      "execs_per_sec": "1418.89",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 0,
+      "rep": 1,
+      "run_time": 2,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "matched",
+      "source_path": "/tmp/formtrig_libarchive_runner_smoke_after_deps_20260616T221249Z/runs/aflplusplus_vanilla_rep1/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "redqueen_operand",
+      "binding_signal_status": null,
+      "budget": 2,
+      "execs_done": 2953,
+      "execs_per_sec": "1468.42",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 0,
+      "rep": 1,
+      "run_time": 2,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "matched",
+      "source_path": "/tmp/formtrig_libarchive_runner_smoke_after_deps_20260616T221249Z/runs/redqueen_operand_rep1/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "benefit_readout": {
+    "blocked_claims": [],
+    "design_evidence": [
+      "strict_pretrigger_guidance",
+      "formtrig_terminal_oracle_success",
+      "matched_budget_endpoint_success"
+    ],
+    "endpoint_observations": [
+      "FORMTRIG terminal oracle success is observed",
+      "FORMTRIG first `_T` upper bound is recorded at 1.208s"
+    ],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "observed_benefits": [
+      "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+      "FORMTRIG terminal oracle success is observed",
+      "FORMTRIG first `_T` upper bound is recorded at 1.208s",
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "primary_benefits": [
+      "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
+    ],
+    "summary": "current package supports a matched-budget primary endpoint benefit"
+  },
+  "comparison_id": "libarchive_2936_matched_2s_1rep_20260616T221249Z",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 1,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 6,
+      "execs_done": 39,
+      "execs_per_sec": "5.77",
+      "gate_reasons": "ok",
+      "gate_status": "pass",
+      "heuristic_lifted": 0,
+      "manual_lifted": 0,
+      "out_dir": "/tmp/formtrig_libarchive_runner_smoke_after_deps_20260616T221249Z/runs/formtrig_rep1/fuzzer_out/default",
+      "reached": 34,
+      "rep": null,
+      "run_time": 6,
+      "saved_non_trigger": 1,
+      "source_label": "formtrig",
+      "source_path": "/tmp/formtrig_libarchive_runner_smoke_after_deps_20260616T221249Z/formtrig_gate/gate_summary.csv",
+      "spec_lifted": 8,
+      "strict_pretrigger_guidance": true,
+      "success": true,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 4,
+      "trigger_execs": 32,
+      "trigger_time_kind": "afl_crash_filename_exact",
+      "trigger_time_s": 1.208
+    }
+  ],
+  "target_id": "LIBARCHIVE_2936"
+}

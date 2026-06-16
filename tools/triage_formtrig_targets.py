@@ -234,9 +234,18 @@ def package_row(path: Path) -> dict[str, Any]:
         "speedup_but_under_replicated",
     } or "formtrig_faster_than_successful_baselines" in reasons
 
+    endpoint_verdict = verdict in {
+        "positive_endpoint_matched_comparison",
+        "positive_endpoint_but_under_replicated",
+    } or "formtrig_endpoint_where_matched_baselines_do_not_trigger" in reasons
+
     if verdict == "positive_speedup_matched_comparison":
         status = "promote_or_extend_longruns"
     elif speedup_verdict:
+        status = "promote_or_complete_reps"
+    elif verdict == "positive_endpoint_matched_comparison":
+        status = "promote_or_extend_longruns"
+    elif endpoint_verdict:
         status = "promote_or_complete_reps"
     elif successful:
         status = "control_or_negative"
@@ -326,6 +335,26 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             row.get("verdict") == "positive_speedup_matched_comparison"
             for row in items
         )
+        has_replicated_endpoint = any(
+            row.get("verdict") == "positive_endpoint_matched_comparison"
+            and row.get("formtrig_terminal")
+            and row.get("matched_baselines")
+            and not row.get("successful_baselines")
+            for row in items
+        )
+        has_endpoint_candidate = any(
+            row.get("verdict")
+            in {
+                "positive_endpoint_matched_comparison",
+                "positive_endpoint_but_under_replicated",
+                "positive_matched_comparison",
+                "positive_but_under_replicated",
+            }
+            and row.get("formtrig_terminal")
+            and row.get("matched_baselines")
+            and not row.get("successful_baselines")
+            for row in items
+        )
         has_10m_confirmation = any(row.get("longrun_10m_confirmed") for row in items)
         has_terminal_candidate = any(
             row.get("formtrig_terminal")
@@ -363,6 +392,14 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             disposition = "candidate_complete_baselines_and_reps"
             priority = 20
             next_action = "complete repetitions and longer matched-budget runs to validate the observed FORMTRIG TTE speedup"
+        elif has_replicated_endpoint:
+            disposition = "candidate_extend_longruns"
+            priority = 18
+            next_action = "extend to longer matched-budget runs to test whether the replicated FORMTRIG endpoint benefit persists"
+        elif has_endpoint_candidate:
+            disposition = "candidate_complete_baselines_and_reps"
+            priority = 20
+            next_action = "complete repetitions and longer matched-budget runs to validate the observed FORMTRIG endpoint benefit"
         elif has_baseline_trigger:
             disposition = "demote_to_control_or_negative"
             priority = 90
@@ -408,7 +445,42 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 for claim in row.get("blocked_claims", [])
             ]
         )
-        successful = unique([baseline for row in items for baseline in row.get("successful_baselines", [])])
+        if has_replicated_endpoint:
+            metric_items = [
+                row for row in items
+                if row.get("verdict") == "positive_endpoint_matched_comparison"
+            ]
+        elif has_endpoint_candidate:
+            metric_items = [
+                row for row in items
+                if row.get("verdict")
+                in {
+                    "positive_endpoint_matched_comparison",
+                    "positive_endpoint_but_under_replicated",
+                    "positive_matched_comparison",
+                    "positive_but_under_replicated",
+                }
+                and row.get("formtrig_terminal")
+                and row.get("matched_baselines")
+                and not row.get("successful_baselines")
+            ]
+        elif has_replicated_speedup:
+            metric_items = [
+                row for row in items
+                if row.get("verdict") == "positive_speedup_matched_comparison"
+            ]
+        elif has_speedup_candidate:
+            metric_items = [
+                row for row in items
+                if row.get("verdict")
+                in {"positive_speedup_matched_comparison", "speedup_but_under_replicated"}
+                or numeric(row.get("tte_speedup_over_fastest_baseline")) is not None
+                and float(row.get("tte_speedup_over_fastest_baseline") or 0.0) > 1.0
+            ]
+        else:
+            metric_items = items
+
+        successful = unique([baseline for row in metric_items for baseline in row.get("successful_baselines", [])])
         has_any_terminal = any(row.get("formtrig_terminal") for row in items)
         has_any_strict = any(row.get("strict_pretrigger_guidance") for row in items)
         if has_any_strict:
@@ -430,6 +502,18 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 "replication is one run per arm and Redqueen/operand baseline is still missing",
                 "no terminal _T event was observed",
                 "no faithful AFL++/CmpLog/Redqueen performance comparison is made",
+            )
+            blocked = [
+                claim for claim in blocked
+                if not any(fragment in claim for fragment in stale_fragments)
+            ]
+        if has_replicated_endpoint:
+            stale_fragments = (
+                "replication is too low",
+                "FORMTRIG first `_T`/TTE is not recorded",
+                "matched baselines also trigger",
+                "no strict pre-trigger guidance benefit is established",
+                "required baseline families are still missing",
             )
             blocked = [
                 claim for claim in blocked
@@ -461,14 +545,14 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 claim for claim in blocked
                 if not any(fragment in claim for fragment in stale_fragments)
             ]
-        if has_baseline_trigger and not has_speedup_candidate:
+        if has_baseline_trigger and not has_speedup_candidate and not has_endpoint_candidate:
             blocked = unique(
                 ["matched faithful baselines trigger in the current package set; not a hard SOTA-gap target"]
                 + blocked
             )
         trigger_times = [
             value
-            for row in items
+            for row in metric_items
             if (value := numeric(row.get("fastest_baseline_trigger_time_s"))) is not None
         ]
 
@@ -515,7 +599,9 @@ def status_rank(status: str) -> int:
 def verdict_rank(verdict: str) -> int:
     ranks = {
         "positive_matched_comparison": 0,
+        "positive_endpoint_matched_comparison": 0,
         "positive_but_under_replicated": 1,
+        "positive_endpoint_but_under_replicated": 1,
         "positive_speedup_matched_comparison": 1,
         "speedup_but_under_replicated": 2,
         "pretrigger_guidance_improved_no_endpoint_success": 3,

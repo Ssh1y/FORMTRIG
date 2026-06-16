@@ -58,6 +58,19 @@ CONTROL_STATUSES = {
     "do_not_promote",
 }
 
+LONGRUN_PROMOTION_VERDICTS = {
+    "positive_endpoint_matched_comparison",
+    "positive_speedup_matched_comparison",
+}
+
+COMPLETE_REPS_VERDICTS = {
+    "positive_endpoint_but_under_replicated",
+    "positive_but_under_replicated",
+    "speedup_but_under_replicated",
+}
+
+BASELINE_FAMILY = "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
+
 
 def read_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as handle:
@@ -104,18 +117,50 @@ def comparison_map(root: Path) -> dict[str, list[dict[str, Any]]]:
     return by_target
 
 
+def int_value(value: Any, default: int = 0) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def comparison_verdict(comparison: dict[str, Any] | None) -> str:
+    if not comparison:
+        return ""
+    analysis = comparison.get("analysis") if isinstance(comparison.get("analysis"), dict) else {}
+    return str(analysis.get("verdict") or comparison.get("verdict") or "")
+
+
+def comparison_promotes_longrun(comparison: dict[str, Any] | None) -> bool:
+    return comparison_verdict(comparison) in LONGRUN_PROMOTION_VERDICTS
+
+
 def strongest_comparison(comparisons: list[dict[str, Any]]) -> dict[str, Any] | None:
     if not comparisons:
         return None
 
-    def score(payload: dict[str, Any]) -> tuple[int, int, str]:
+    def score(payload: dict[str, Any]) -> tuple[int, int, int, int, str]:
         analysis = payload.get("analysis") if isinstance(payload.get("analysis"), dict) else {}
         benefit = payload.get("benefit_readout") if isinstance(payload.get("benefit_readout"), dict) else {}
-        verdict = str(analysis.get("verdict") or "")
+        verdict = comparison_verdict(payload)
+        if verdict in LONGRUN_PROMOTION_VERDICTS:
+            verdict_score = 4
+        elif verdict in COMPLETE_REPS_VERDICTS:
+            verdict_score = 3
+        elif "positive" in verdict:
+            verdict_score = 2
+        else:
+            verdict_score = 0
         has_longrun = int(bool(analysis.get("longrun_10m_confirmation") or payload.get("longrun_10m_confirmation")))
         benefit_count = len(benefit.get("primary_benefits") or [])
-        positive = int("positive" in verdict or benefit_count > 0)
-        return (positive, has_longrun, str(payload.get("_comparison_path") or ""))
+        matched_baselines = int_value(analysis.get("matched_baseline_count"))
+        return (
+            verdict_score,
+            has_longrun,
+            matched_baselines,
+            benefit_count,
+            str(payload.get("_comparison_path") or ""),
+        )
 
     return max(comparisons, key=score)
 
@@ -199,7 +244,14 @@ def shell_join(args: list[str]) -> str:
     return " ".join(shlex.quote(arg) for arg in args)
 
 
-def magma_baseline_command(target_id: str, duration_s: int, jobs: int, reps: int) -> str:
+def magma_baseline_command(
+    target_id: str,
+    duration_s: int,
+    jobs: int,
+    reps: int,
+    *,
+    out_dir: str | None = None,
+) -> str:
     args = [
         "scripts/run_magma_baselines.sh",
         "--target-id",
@@ -209,24 +261,94 @@ def magma_baseline_command(target_id: str, duration_s: int, jobs: int, reps: int
         "--jobs",
         str(jobs),
     ]
+    if out_dir:
+        args.extend(["--out", out_dir])
     if reps > 1:
         args.extend(["--reps", str(reps)])
     return shell_join(args)
 
 
-def formtrig_manifest_batch_command(manifest_list: str, duration_s: int, jobs: int) -> str:
-    return shell_join(
-        [
-            "scripts/run_formtrig_manifest_batch.sh",
-            "--manifest-list",
+def formtrig_manifest_batch_command(
+    manifest_list: str,
+    duration_s: int,
+    jobs: int,
+    *,
+    out_root: str | None = None,
+) -> str:
+    args = [
+        "scripts/run_formtrig_manifest_batch.sh",
+        "--manifest-list",
+        manifest_list,
+        "--duration",
+        str(duration_s),
+        "--jobs",
+        str(jobs),
+        "--continue-on-fail",
+    ]
+    if out_root:
+        args.extend(["--out-root", out_root])
+    return shell_join(args)
+
+
+def tif012_magma_longrun_steps(duration_s: int, reps: int, jobs: int) -> list[str]:
+    manifest_list = "artifacts/formtrig_native_readiness/manifests/TIF012.b5_current_3rep.list"
+    run_tag = f"tif012_b5_matched_{duration_s}s_{reps}rep_<UTC>"
+    formtrig_out = f"artifacts/formtrig_native_readiness/raw/{run_tag}_formtrig"
+    baseline_out = f"artifacts/formtrig_native_readiness/raw/{run_tag}_baselines"
+    gate_out = f"{formtrig_out}/gate"
+    comparison_out = f"artifacts/formtrig_native_readiness/comparisons/{run_tag}"
+    return [
+        formtrig_manifest_batch_command(
             manifest_list,
-            "--duration",
-            str(duration_s),
-            "--jobs",
-            str(jobs),
-            "--continue-on-fail",
-        ]
-    )
+            duration_s,
+            jobs,
+            out_root=formtrig_out,
+        ),
+        magma_baseline_command(
+            "TIF012",
+            duration_s,
+            jobs,
+            reps,
+            out_dir=baseline_out,
+        ),
+        shell_join(
+            [
+                "scripts/formtrig_experiment_gate.sh",
+                "--suite",
+                f"TIF012_b5_{duration_s}s_{reps}rep",
+                "--out",
+                gate_out,
+                "--min-runtime",
+                str(duration_s),
+                "--run",
+                f"rep1={formtrig_out}/001_TIF012/out",
+                "--run",
+                f"rep2={formtrig_out}/002_TIF012/out",
+                "--run",
+                f"rep3={formtrig_out}/003_TIF012/out",
+            ]
+        ),
+        shell_join(
+            [
+                "python3",
+                "tools/compare_formtrig_baselines.py",
+                "--comparison-id",
+                run_tag,
+                "--target-id",
+                "TIF012",
+                "--formtrig-gate",
+                f"b5_{duration_s}s_{reps}rep={gate_out}/gate_summary.csv",
+                "--baseline-summary",
+                f"aflpp_family_{duration_s}s_{reps}rep={baseline_out}/summary.json",
+                "--out-dir",
+                comparison_out,
+                "--min-reps",
+                str(reps),
+                "--required-baselines",
+                BASELINE_FAMILY,
+            ]
+        ),
+    ]
 
 
 def longrun_task(
@@ -239,6 +361,7 @@ def longrun_task(
 ) -> dict[str, Any]:
     summary = comparison_summary(comparison)
     target_id = str(row.get("target_id") or "")
+    verdict = comparison_verdict(comparison)
     command = ""
     blocking_issue = [
         "no reusable matched 2h runner is recorded for this real-CVE target",
@@ -263,8 +386,26 @@ def longrun_task(
         )
         blocking_issue = []
         post_unblock_commands = []
+    elif target_id == "TIF012" and str(row.get("source") or "") == "magma":
+        blocking_issue = [
+            "no single reusable matched long-run runner currently coordinates this Magma target and rebuilds the comparison package",
+            "use the recorded TIF012 b5 manifest list and regenerate the comparison package after both arms finish",
+        ]
+        post_unblock_commands = tif012_magma_longrun_steps(duration_s, reps, jobs)
+    if verdict == "positive_endpoint_matched_comparison":
+        benefit_to_prove = (
+            "Confirm that the current matched-budget endpoint benefit "
+            f"persists in {reps} matched {duration_s}s repetitions: FORMTRIG "
+            "reaches _T while faithful baselines do not."
+        )
+    else:
+        benefit_to_prove = (
+            "Confirm that the current first-_T speedup and lower execution cost "
+            f"persist in {reps} matched {duration_s}s repetitions."
+        )
+
     return {
-        "priority": priority_for(row),
+        "priority": "P0" if comparison_promotes_longrun(comparison) else priority_for(row),
         "rank": int(row.get("rank") or 0),
         "target_id": target_id,
         "source": str(row.get("source") or ""),
@@ -274,10 +415,7 @@ def longrun_task(
         "action": "extend_matched_longrun",
         "duration_s": duration_s,
         "repetitions": reps,
-        "benefit_to_prove": (
-            "Confirm that the current first-_T speedup and lower execution cost "
-            f"persist in {reps} matched {duration_s}s repetitions."
-        ),
+        "benefit_to_prove": benefit_to_prove,
         "primary_endpoint_metrics": [
             "same-budget terminal success rate",
             "first _T / terminal-crash wall-clock time",
@@ -506,6 +644,8 @@ def task_for_row(
     comparison = strongest_comparison(comparisons.get(target_id, []))
     disposition = str(row.get("existing_disposition") or "")
     lane = str(row.get("lane") or "")
+    if comparison_promotes_longrun(comparison):
+        return longrun_task(row, comparison, duration_s=longrun_duration_s, reps=longrun_reps, jobs=jobs)
     if disposition == "candidate_extend_longruns":
         return longrun_task(row, comparison, duration_s=longrun_duration_s, reps=longrun_reps, jobs=jobs)
     if lane == "binding_spec_first":

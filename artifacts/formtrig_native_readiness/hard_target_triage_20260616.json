@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-06-16T15:15:40+00:00",
-  "package_count": 10,
+  "generated_at_utc": "2026-06-16T22:12:03+00:00",
+  "package_count": 13,
   "packages": [
     {
       "best_formtrig_trigger_time_s": null,
@@ -334,6 +334,89 @@
       "target_id": "PNG006",
       "tte_speedup_over_fastest_baseline": null,
       "verdict": "incomplete_required_baseline_set"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.035,
+      "blocked_claims": [],
+      "comparison_id": "tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616",
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "matched_baselines": 9,
+      "missing_required_baselines": [],
+      "next_steps": [],
+      "observed_benefits": [
+        "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 0.035s",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "promote_or_extend_longruns",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "positive_endpoint_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.035,
+      "blocked_claims": [
+        "no strict pre-trigger guidance benefit is established",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "tif012_b5_formtrig_120s_vs_aflpp_family_120s_20260616",
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "matched_baselines": 3,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget"
+      ],
+      "observed_benefits": [
+        "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 0.035s"
+      ],
+      "package_status": "promote_or_complete_reps",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_vs_aflpp_family_120s_20260616/comparison.json",
+      "strict_pretrigger_guidance": false,
+      "successful_baselines": [],
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "positive_endpoint_but_under_replicated"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no FORMTRIG terminal success is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage"
+      ],
+      "comparison_id": "tif012_formtrig_600s_vs_aflpp_family_600s_20260616",
+      "fastest_baseline_trigger_time_s": 300.0,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "matched_baselines": 3,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "do not claim SOTA advantage on this target without harder targets or stronger statistics",
+        "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+      ],
+      "observed_benefits": [
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "control_or_negative",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_formtrig_600s_vs_aflpp_family_600s_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "baseline_also_triggers_not_sota_advantage"
     }
   ],
   "target_count": 4,
@@ -354,6 +437,23 @@
       "strict_pretrigger_guidance": true,
       "target_id": "LIBARCHIVE_2936",
       "tte_speedup_over_fastest_baseline": 18.43891402714932
+    },
+    {
+      "baseline_triggers": "",
+      "best_formtrig_trigger_time_s": 0.035,
+      "best_package": "tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616",
+      "best_verdict": "positive_endpoint_matched_comparison",
+      "blocked_claims": "",
+      "disposition": "candidate_extend_longruns",
+      "fastest_baseline_trigger_time_s": "",
+      "formtrig_terminal": true,
+      "next_action": "extend to longer matched-budget runs to test whether the replicated FORMTRIG endpoint benefit persists",
+      "observed_benefits": "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget; FORMTRIG terminal oracle success is observed; FORMTRIG first `_T` upper bound is recorded at 0.035s; binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+      "priority": 18,
+      "sources": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_vs_aflpp_family_120s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/tif012_formtrig_600s_vs_aflpp_family_600s_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": null
     },
     {
       "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
@@ -388,22 +488,6 @@
       "strict_pretrigger_guidance": true,
       "target_id": "PNG006",
       "tte_speedup_over_fastest_baseline": null
-    },
-    {
-      "baseline_triggers": "",
-      "best_package": "",
-      "best_verdict": "demote_harness_artifact",
-      "blocked_claims": "harness exposes terminal trigger as a direct input knob; not admissible as core R2T evidence",
-      "disposition": "demote_harness_artifact",
-      "fastest_baseline_trigger_time_s": "",
-      "formtrig_terminal": "",
-      "manual": true,
-      "next_action": "do not use as core evidence; keep only build, BindingSpec, and crash-accounting sanity checks",
-      "observed_benefits": "",
-      "priority": 99,
-      "sources": "artifacts/formtrig_native_readiness/raw/libxml2_1107_harness_admissibility_20260615.json",
-      "strict_pretrigger_guidance": "",
-      "target_id": "LIBXML2_1107"
     }
   ]
 }
