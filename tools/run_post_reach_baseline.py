@@ -10,6 +10,7 @@ they cannot be mistaken for SOTA evidence.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import os
 import shlex
@@ -351,6 +352,94 @@ def first_crash_record(stats_path: Path | None) -> dict[str, Any] | None:
     return metadata
 
 
+def parse_magma_monitor_file(path: Path, bug_id: str) -> dict[str, Any] | None:
+    try:
+        with path.open("r", encoding="utf-8", errors="replace", newline="") as handle:
+            rows = list(csv.reader(handle))
+    except OSError:
+        return None
+    if len(rows) < 2:
+        return None
+    header = rows[0]
+    values = rows[1]
+    if not header or len(values) < len(header):
+        return None
+
+    row = dict(zip(header, values))
+    reached_key = f"{bug_id}_R"
+    triggered_key = f"{bug_id}_T"
+    if reached_key not in row and triggered_key not in row:
+        return None
+
+    def parse_count(key: str) -> int:
+        try:
+            return int(row.get(key, "0") or "0")
+        except ValueError:
+            return 0
+
+    return {
+        "file": str(path),
+        "bug_id": bug_id,
+        "reached": parse_count(reached_key),
+        "triggered": parse_count(triggered_key),
+    }
+
+
+def magma_monitor_snapshots(monitor_dir: str, bug_id: str) -> list[dict[str, Any]]:
+    if not monitor_dir:
+        return []
+    path = Path(monitor_dir)
+    if not path.is_dir():
+        return []
+
+    snapshots = []
+    for child in path.iterdir():
+        if not child.is_file() or child.name.startswith("."):
+            continue
+        record = parse_magma_monitor_file(child, bug_id)
+        if record is None:
+            continue
+        if child.name.isdigit():
+            record["time_s"] = int(child.name)
+            record["kind"] = "poll"
+        elif child.name == "final":
+            record["time_s"] = None
+            record["kind"] = "final"
+        else:
+            continue
+        snapshots.append(record)
+
+    def sort_key(record: dict[str, Any]) -> tuple[int, int]:
+        time_s = record.get("time_s")
+        if isinstance(time_s, int):
+            return (0, time_s)
+        return (1, sys.maxsize)
+
+    snapshots.sort(key=sort_key)
+    return snapshots
+
+
+def magma_monitor_record(monitor_dir: str, bug_id: str) -> dict[str, Any] | None:
+    snapshots = magma_monitor_snapshots(monitor_dir, bug_id)
+    if not snapshots:
+        return None
+
+    final = next((row for row in snapshots if row.get("kind") == "final"), None)
+    latest = final or snapshots[-1]
+    first_trigger = next((row for row in snapshots if row.get("triggered", 0) > 0), None)
+    first_reach = next((row for row in snapshots if row.get("reached", 0) > 0), None)
+    return {
+        "bug_id": bug_id,
+        "monitor_dir": monitor_dir,
+        "latest": latest,
+        "first_reach": first_reach,
+        "first_trigger": first_trigger,
+        "reached": int(latest.get("reached", 0)),
+        "triggered": int(latest.get("triggered", 0)),
+        "snapshot_count": len(snapshots),
+    }
+
+
 def int_stat(stats: dict[str, str], key: str, default: int = 0) -> int:
     try:
         return int(float(stats.get(key, str(default))))
@@ -408,20 +497,32 @@ def infer_run_record(
 
     saved_crashes = int_stat(stats, "saved_crashes")
     saved_hangs = int_stat(stats, "saved_hangs")
+    magma_bug_id = args.magma_bug_id or args.target_id
+    magma_monitor = magma_monitor_record(args.magma_monitor_dir, magma_bug_id)
+    magma_triggered = magma_monitor["triggered"] if magma_monitor else 0
+    magma_reached = magma_monitor["reached"] if magma_monitor else 0
     start_time = int_stat(stats, "start_time")
     last_crash = int_stat(stats, "last_crash")
     last_crash_time_s = None
     if saved_crashes > 0 and start_time > 0 and last_crash > 0:
         last_crash_time_s = max(0, last_crash - start_time)
     first_crash = first_crash_record(stats_path)
-    trigger_time_s = first_crash.get("time_s") if first_crash else last_crash_time_s
+    first_magma_trigger = magma_monitor.get("first_trigger") if magma_monitor else None
+    magma_trigger_time_s = (
+        first_magma_trigger.get("time_s")
+        if isinstance(first_magma_trigger, dict)
+        else None
+    )
+    trigger_time_s = first_crash.get("time_s") if first_crash else magma_trigger_time_s
+    if trigger_time_s is None:
+        trigger_time_s = last_crash_time_s
     trigger_execs = first_crash.get("execs") if first_crash else None
-    if saved_crashes > 0 and trigger_execs is None:
+    if (saved_crashes > 0 or magma_triggered > 0) and trigger_execs is None:
         trigger_execs = int_stat(stats, "execs_done")
 
     run_time = int_stat(stats, "run_time", int(elapsed_s))
-    timeout = returncode == 124 or (mode_status == "complete" and run_time >= args.budget_sec and saved_crashes == 0)
-    success = saved_crashes > 0
+    success = saved_crashes > 0 or magma_triggered > 0
+    timeout = returncode == 124 or (mode_status == "complete" and run_time >= args.budget_sec and not success)
 
     return {
         "baseline": args.baseline,
@@ -438,6 +539,7 @@ def infer_run_record(
         "timeout": timeout,
         "first_crash": first_crash,
         "last_crash_time_s": last_crash_time_s,
+        "magma_monitor": magma_monitor,
         "trigger_execs": trigger_execs if success else None,
         "trigger_time_s": trigger_time_s,
         "stats": {
@@ -446,6 +548,8 @@ def infer_run_record(
             "run_time": run_time,
             "saved_crashes": saved_crashes,
             "saved_hangs": saved_hangs,
+            "magma_reached": magma_reached,
+            "magma_triggered": magma_triggered,
             "corpus_count": int_stat(stats, "corpus_count"),
         },
     }
@@ -564,6 +668,53 @@ def run_dry(args: argparse.Namespace, events_path: Path) -> int:
     return 0
 
 
+def run_harvest(args: argparse.Namespace, events_path: Path) -> int:
+    refusal = refuse_unaccepted_baseline(args, events_path)
+    if refusal is not None:
+        return refusal
+    if not args.existing_fuzzer_out:
+        raise SystemExit("--mode harvest requires --existing-fuzzer-out")
+
+    fuzzer_out = Path(args.existing_fuzzer_out)
+    if not fuzzer_out.is_dir():
+        raise SystemExit(f"existing fuzzer output is not a directory: {fuzzer_out}")
+
+    cmd = shlex.split(args.target_cmd) if args.target_cmd else []
+    if not cmd:
+        cmd = ["<harvested external run>"]
+
+    append_event(
+        events_path,
+        args.baseline,
+        args.target_id,
+        args.rep,
+        "tool_resolution",
+        {
+            "baseline_contract": baseline_contract(args.baseline),
+            "cwd": str(Path.cwd()),
+            "existing_fuzzer_out": str(fuzzer_out),
+            "magma_monitor_dir": args.magma_monitor_dir,
+            "resolved_cmd": cmd,
+            "runner_mode": args.mode,
+            "seed_corpus_exists": Path(args.seed_corpus).is_dir(),
+        },
+    )
+    run_record = infer_run_record(args, cmd, None, 0.0, fuzzer_out, "harvest")
+    write_json(Path(args.out_dir) / "run_record.json", run_record)
+    status = {
+        "baseline_contract": baseline_contract(args.baseline),
+        "existing_fuzzer_out": str(fuzzer_out),
+        "magma_monitor_dir": args.magma_monitor_dir,
+        "resolved_cmd": cmd,
+        "returncode": None,
+        "run_record": str(Path(args.out_dir) / "run_record.json"),
+        "status": "harvested",
+    }
+    write_json(Path(args.out_dir) / "status.json", status)
+    append_event(events_path, args.baseline, args.target_id, args.rep, "run_complete", status)
+    return 0
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--baseline", required=True)
@@ -573,12 +724,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--budget-sec", type=int, required=True)
     parser.add_argument("--rep", type=int, default=1)
-    parser.add_argument("--target-cmd", required=True)
+    parser.add_argument("--target-cmd", default="")
     parser.add_argument("--cmplog-binary", default="")
     parser.add_argument("--afl-fuzz", default="")
+    parser.add_argument("--magma-monitor-dir", default="")
+    parser.add_argument("--magma-bug-id", default="")
+    parser.add_argument("--existing-fuzzer-out", default="")
     parser.add_argument("--memory-limit", default="none")
     parser.add_argument("--timeout-grace-sec", type=int, default=5)
-    parser.add_argument("--mode", choices=["dry-run", "execute"], default="execute")
+    parser.add_argument("--mode", choices=["dry-run", "execute", "harvest"], default="execute")
     parser.add_argument("--afl-arg", action="append", default=[])
     parser.add_argument("--env", action="append", default=[], help="extra environment KEY=VALUE for the fuzzer")
     return parser.parse_args()
@@ -605,6 +759,8 @@ def main() -> int:
     try:
         if args.mode == "dry-run":
             return run_dry(args, events_path)
+        if args.mode == "harvest":
+            return run_harvest(args, events_path)
         return run_execute(args, events_path)
     except SystemExit as exc:
         message = str(exc)

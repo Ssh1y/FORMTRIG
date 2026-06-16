@@ -1,0 +1,76 @@
+{
+  "baseline": "aflplusplus_vanilla",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/afl-fuzz"
+    ],
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "information_budget": "coverage feedback only; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "budget": 120,
+  "command_line": [
+    "<harvested external run>"
+  ],
+  "config_path": "artifacts/formtrig_native_readiness/raw/magma_harvest_oracle_smoke_20260616/harvest/run_config.json",
+  "first_crash": null,
+  "fuzzer_stats": "artifacts/formtrig_native_readiness/raw/magma_harvest_oracle_smoke_20260616/shared/findings/default/fuzzer_stats",
+  "last_crash_time_s": null,
+  "magma_monitor": {
+    "bug_id": "PNG006",
+    "first_reach": {
+      "bug_id": "PNG006",
+      "file": "artifacts/formtrig_native_readiness/raw/magma_harvest_oracle_smoke_20260616/shared/monitor/60",
+      "kind": "poll",
+      "reached": 10,
+      "time_s": 60,
+      "triggered": 0
+    },
+    "first_trigger": {
+      "bug_id": "PNG006",
+      "file": "artifacts/formtrig_native_readiness/raw/magma_harvest_oracle_smoke_20260616/shared/monitor/120",
+      "kind": "poll",
+      "reached": 20,
+      "time_s": 120,
+      "triggered": 3
+    },
+    "latest": {
+      "bug_id": "PNG006",
+      "file": "artifacts/formtrig_native_readiness/raw/magma_harvest_oracle_smoke_20260616/shared/monitor/final",
+      "kind": "final",
+      "reached": 20,
+      "time_s": null,
+      "triggered": 3
+    },
+    "monitor_dir": "artifacts/formtrig_native_readiness/raw/magma_harvest_oracle_smoke_20260616/shared/monitor",
+    "reached": 20,
+    "snapshot_count": 4,
+    "triggered": 3
+  },
+  "run_id": "PNG006:aflplusplus_vanilla:rep1",
+  "seed_set_id": "artifacts/rnt_corpus/PNG006/seeds",
+  "stats": {
+    "corpus_count": 12,
+    "execs_done": 4242,
+    "execs_per_sec": "35.0",
+    "magma_reached": 20,
+    "magma_triggered": 3,
+    "run_time": 120,
+    "saved_crashes": 0,
+    "saved_hangs": 0
+  },
+  "success": true,
+  "target_id": "PNG006",
+  "tc_category": "binary-state-null",
+  "timeout": false,
+  "trigger_execs": 4242,
+  "trigger_time_s": 120
+}

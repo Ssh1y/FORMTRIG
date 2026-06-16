@@ -36,8 +36,10 @@ and refuses representative-only baselines by default.
 ### Magma: PNG006
 
 Current status: 2-hour native acceptance passed with external eXIf insertion
-hook from the BindingSpec. It still needs same-budget faithful baseline runs
-before it can support the final comparative claim.
+hook from the BindingSpec. The same-budget faithful baseline runner now exists,
+and its Magma `_T` harvest oracle has passed smoke verification, but the actual
+30-minute and 2-hour baseline campaigns still need to run before PNG006 can
+support the final comparative claim.
 
 Runner:
 
@@ -46,6 +48,27 @@ scripts/run_formtrig_png006_native_longrun.sh \
   --out /tmp/formtrig_png006_exif_longrun_20260615 \
   --durations 1800,7200
 ```
+
+Faithful baseline runner:
+
+```bash
+scripts/run_magma_png006_baselines.sh \
+  --out /tmp/formtrig_png006_baselines_20260616 \
+  --durations 1800,7200 \
+  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+```
+
+Baseline runner/oracle smoke:
+
+- Evidence note:
+  `artifacts/formtrig_native_readiness/png006_magma_baseline_runner_20260616.md`
+- Raw smoke evidence:
+  `artifacts/formtrig_native_readiness/raw/magma_harvest_oracle_smoke_20260616`
+- Result: `tools/run_post_reach_baseline.py --mode harvest` treats Magma
+  `PNG006_T > 0` as terminal success even when AFL `saved_crashes=0`, and
+  records `magma_reached`, `magma_triggered`, and the first `_T` monitor
+  snapshot. This is required because PNG006 is a Magma monitor TC, not
+  necessarily an AFL crash.
 
 Gate examples:
 
