@@ -289,3 +289,37 @@ Current result: `PNG006` and `LIBCOAP_CVE_2023_35862` are
 `demote_harness_artifact`. The current package set therefore contains no main
 hard-target candidate. The next experiment step is hard-target discovery and
 short triage, not more primary-claim long runs on these demoted targets.
+
+## Hard-Target Discovery
+
+The next queue is generated from the Magma inventory, real-CVE candidate audit,
+current comparison triage, and available BindingSpec candidates:
+
+```bash
+python3 tools/plan_formtrig_hard_targets.py \
+  --out-json artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json \
+  --out-csv artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.csv \
+  --out-md artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.md \
+  --limit 30
+```
+
+Outputs:
+
+```text
+artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json
+artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.csv
+artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.md
+```
+
+Current top queue: `GPAC_3403`, `LIBARCHIVE_2936`, `PNG007`, `PDF003`,
+`SSL011`, `SSL015`, and `TIF012`. This is not a performance claim; it is the
+next experiment allocation plan. Magma baseline short screens should use the
+generic inventory-driven runner:
+
+```bash
+scripts/run_magma_baselines.sh \
+  --target-id PNG007 \
+  --durations 600,1800 \
+  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand \
+  --jobs 3
+```
