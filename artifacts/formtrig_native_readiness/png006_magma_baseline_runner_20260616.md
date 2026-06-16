@@ -49,7 +49,11 @@ and records:
 - `magma_reached`
 - `magma_triggered`
 - first monitor snapshot where `PNG006_T > 0`
-- `success=true` when either AFL saved crashes or Magma `_T` is observed
+- `success=true` when the requested Magma bug has `_T > 0`
+
+AFL `saved_crashes` remains in the run record, but it is auxiliary for Magma
+bug-specific comparisons. A saved AFL crash for another Magma bug must not make
+`PNG006` a success when `PNG006_T=0`.
 
 ## Baseline Mapping
 
@@ -92,6 +96,7 @@ Harvest result:
 {
   "success": true,
   "trigger_time_s": 120,
+  "trigger_time_kind": "magma_monitor_upper_bound",
   "stats": {
     "execs_done": 4242,
     "run_time": 120,
@@ -135,3 +140,16 @@ The `redqueen_operand` `_T` was observed only in the final monitor snapshot, so
 the recorded trigger time is an upper bound. This reinforces that PNG006 still
 needs same-seed 30-minute and 2-hour baseline campaigns before any comparative
 claim is made.
+
+## 30-Minute Follow-Up
+
+A real same-seed 30-minute package was later completed and is recorded in:
+
+```text
+artifacts/formtrig_native_readiness/png006_magma_baselines_30m_20260616.md
+```
+
+That run also validated the corrected oracle rule. `aflplusplus_vanilla` saved
+two AFL crashes but had `PNG006_T=0`, so it is recorded as `success=false` for
+PNG006. `aflplusplus_cmplog` and `redqueen_operand` both produced target
+`_T`, with final `PNG006_T=204` and `PNG006_T=1269`, respectively.

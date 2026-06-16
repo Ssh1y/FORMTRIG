@@ -520,15 +520,24 @@ def infer_run_record(
         if isinstance(first_magma_trigger, dict)
         else None
     )
-    trigger_time_s = first_crash.get("time_s") if first_crash else magma_trigger_time_s
-    if trigger_time_s is None:
-        trigger_time_s = last_crash_time_s
-    trigger_execs = first_crash.get("execs") if first_crash else None
-    if (saved_crashes > 0 or magma_triggered > 0) and trigger_execs is None:
+    has_magma_oracle = bool(args.magma_monitor_dir)
+    if has_magma_oracle:
+        success = magma_triggered > 0
+        trigger_time_s = magma_trigger_time_s
+        trigger_execs = None
+        trigger_time_kind = "magma_monitor_upper_bound" if success else None
+    else:
+        success = saved_crashes > 0
+        trigger_time_s = first_crash.get("time_s") if first_crash else None
+        if trigger_time_s is None:
+            trigger_time_s = last_crash_time_s
+        trigger_execs = first_crash.get("execs") if first_crash else None
+        trigger_time_kind = "exact" if success else None
+
+    if success and not has_magma_oracle and trigger_execs is None:
         trigger_execs = int_stat(stats, "execs_done")
 
     run_time = int_stat(stats, "run_time", int(elapsed_s))
-    trigger_time_kind = "exact"
     if (
         trigger_time_s is None
         and first_crash is None
@@ -537,7 +546,6 @@ def infer_run_record(
     ):
         trigger_time_s = run_time
         trigger_time_kind = "magma_monitor_upper_bound"
-    success = saved_crashes > 0 or magma_triggered > 0
     timeout = returncode == 124 or (mode_status == "complete" and run_time >= args.budget_sec and not success)
 
     return {

@@ -38,9 +38,9 @@ and refuses representative-only baselines by default.
 Current status: 2-hour native acceptance passed with external eXIf insertion
 hook from the BindingSpec. The same-budget faithful baseline runner now exists,
 its Magma `_T` harvest oracle has passed synthetic smoke verification, and a
-real 120-second Magma/captain baseline smoke has completed. The actual
-30-minute and 2-hour baseline campaigns still need to run before PNG006 can
-support the final comparative claim.
+real 120-second Magma/captain baseline smoke plus a same-seed 30-minute
+baseline package have completed. The 2-hour baseline campaign and repetitions
+still need to run before PNG006 can support the final comparative claim.
 
 Runner:
 
@@ -66,10 +66,10 @@ Baseline runner/oracle smoke:
 - Raw smoke evidence:
   `artifacts/formtrig_native_readiness/raw/magma_harvest_oracle_smoke_20260616`
 - Result: `tools/run_post_reach_baseline.py --mode harvest` treats Magma
-  `PNG006_T > 0` as terminal success even when AFL `saved_crashes=0`, and
-  records `magma_reached`, `magma_triggered`, and the first `_T` monitor
-  snapshot. This is required because PNG006 is a Magma monitor TC, not
-  necessarily an AFL crash.
+  `PNG006_T > 0` as terminal success and records `magma_reached`,
+  `magma_triggered`, and the first `_T` monitor snapshot. AFL `saved_crashes`
+  is preserved as auxiliary evidence, but when a Magma monitor is provided it
+  does not replace the requested bug's `_T` oracle.
 
 Real Magma baseline smoke:
 
@@ -84,6 +84,23 @@ Real Magma baseline smoke:
   LIBCOAP-like immediate trigger for vanilla/CmpLog, but it is not final
   comparative evidence because one AFL++ Redqueen/CmpLog-path run did trigger
   within the 120-second smoke and no repetitions or 30m/2h budgets have run.
+
+Completed 30-minute baseline package:
+
+- Evidence note:
+  `artifacts/formtrig_native_readiness/png006_magma_baselines_30m_20260616.md`
+- Raw evidence:
+  `artifacts/formtrig_native_readiness/raw/png006_baselines_30m_20260616T013914Z`
+- Result over 30 minutes:
+  `aflplusplus_vanilla` reached `PNG006_R=7523009` with `PNG006_T=0`;
+  `aflplusplus_cmplog` reached `PNG006_R=6951839` with `PNG006_T=204`;
+  `redqueen_operand` reached `PNG006_R=7604252` with `PNG006_T=1269`.
+  `aflplusplus_vanilla` saved two AFL crashes, but they are not PNG006
+  success because the target-specific Magma oracle stayed at `PNG006_T=0`.
+- Interpretation: this supports a more precise PNG006 claim. FORMTRIG's 30m
+  run has much higher final target-state volume and strict pre-trigger `D_F`
+  evidence, but PNG006 cannot be used as a case where strong AFL++ CmpLog /
+  Redqueen-style comparison feedback fails to produce `_T`.
 
 Gate examples:
 
