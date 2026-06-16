@@ -1,0 +1,40 @@
+{
+  "groups": [
+    {
+      "baseline": "aflplusplus_cmplog",
+      "budget": 7200,
+      "max_magma_triggered": 2362,
+      "median_execs_done": 17067952,
+      "median_magma_triggered": 2362,
+      "median_trigger_time_s": 120,
+      "min_trigger_time_s": 120,
+      "reps": 1,
+      "success_rate": 1.0,
+      "successes": 1,
+      "target_id": "PNG006"
+    }
+  ],
+  "records": [
+    {
+      "baseline": "aflplusplus_cmplog",
+      "budget": 7200,
+      "corpus_count": 1201,
+      "execs_done": 17067952,
+      "execs_per_sec": "2371.23",
+      "magma_first_reach_time_s": 60,
+      "magma_first_trigger_time_s": 120,
+      "magma_reached": 27502106,
+      "magma_snapshot_count": 240,
+      "magma_triggered": 2362,
+      "rep": 1,
+      "run_record": "artifacts/formtrig_native_readiness/raw/png006_baselines_2h_cmplog_20260616T053928Z/aflplusplus_cmplog/run_record.json",
+      "run_time": 7197,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "success": true,
+      "target_id": "PNG006",
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 120
+    }
+  ]
+}

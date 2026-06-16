@@ -11,8 +11,10 @@ harness_src="$repo_root/benchmarks/cve_harnesses/libcoap_oscore_conf_replay.c"
 aflpp_dir="${AFLPP_DIR:-$repo_root/experiments/aflplusplus/AFLplusplus}"
 durations="1800"
 baselines="aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
+jobs="${FORMTRIG_BASELINE_JOBS:-${FORMTRIG_JOBS:-1}}"
 use_asan=0
 run_sweeps=1
+failed_jobs=0
 
 usage() {
   cat >&2 <<EOF
@@ -29,6 +31,7 @@ options:
   --aflpp-dir DIR       AFL++ checkout/build directory
   --durations LIST      comma/space-separated budgets in seconds
   --baselines LIST      comma/space-separated baseline ids
+  --jobs N              concurrent baseline runs, default 1
   --asan                build/run ASAN terminal-oracle binaries
   --no-sweeps           build binaries only
 EOF
@@ -163,6 +166,27 @@ run_one_baseline() {
   "$repo_root/tools/run_post_reach_baseline.py" "${runner_args[@]}"
 }
 
+wait_for_job_slot() {
+  local max_jobs="$1"
+  while (( $(jobs -pr | wc -l) >= max_jobs )); do
+    if ! wait -n; then
+      failed_jobs=1
+    fi
+  done
+}
+
+wait_for_all_jobs() {
+  while (( $(jobs -pr | wc -l) > 0 )); do
+    if ! wait -n; then
+      failed_jobs=1
+    fi
+  done
+  if [[ "$failed_jobs" != "0" ]]; then
+    echo "one or more baseline jobs failed" >&2
+    exit 1
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --out)
@@ -191,6 +215,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --baselines)
       baselines="${2:-}"
+      shift 2
+      ;;
+    --jobs)
+      jobs="${2:-}"
       shift 2
       ;;
     --asan)
@@ -225,6 +253,10 @@ require_path "$source_dir"
 require_path "$harness_src"
 require_path "$aflpp_dir/afl-fuzz"
 require_path "$aflpp_dir/afl-clang-fast"
+if ! [[ "$jobs" =~ ^[0-9]+$ ]] || [[ "$jobs" -lt 1 ]]; then
+  echo "--jobs must be a positive integer: $jobs" >&2
+  exit 2
+fi
 
 mkdir -p "$out_dir"
 reset_build_dir "$out_dir/libcoap-aflpp-build"
@@ -264,6 +296,7 @@ fi
   printf 'asan=%s\n' "$use_asan"
   printf 'baselines=%s\n' "$baselines"
   printf 'durations=%s\n' "$durations"
+  printf 'jobs=%s\n' "$jobs"
   printf 'binary=%s\n' "$out_dir/libcoap_oscore_conf_replay_aflpp"
   if [[ -e "$out_dir/libcoap_oscore_conf_replay_cmplog" ]]; then
     printf 'cmplog_binary=%s\n' "$out_dir/libcoap_oscore_conf_replay_cmplog"
@@ -275,7 +308,12 @@ if [[ "$run_sweeps" == "1" ]]; then
     while IFS= read -r baseline; do
       case "$baseline" in
         aflplusplus_vanilla|aflplusplus_cmplog|redqueen_operand)
-          run_one_baseline "$baseline" "$duration"
+          if [[ "$jobs" -gt 1 ]]; then
+            wait_for_job_slot "$jobs"
+            run_one_baseline "$baseline" "$duration" &
+          else
+            run_one_baseline "$baseline" "$duration"
+          fi
           ;;
         *)
           echo "unsupported faithful LIBCOAP baseline in this runner: $baseline" >&2
@@ -284,9 +322,13 @@ if [[ "$run_sweeps" == "1" ]]; then
       esac
     done < <(split_list "$baselines")
   done < <(split_list "$durations")
+  if [[ "$jobs" -gt 1 ]]; then
+    wait_for_all_jobs
+  fi
 fi
 
 echo "LIBCOAP_CVE_2023_35862 baseline flow complete"
 echo "  out=$out_dir"
 echo "  asan=$use_asan"
 echo "  baselines=$baselines"
+echo "  jobs=$jobs"

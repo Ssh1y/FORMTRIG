@@ -35,6 +35,29 @@ Current machine-generated comparison packages are indexed in
 packages explicitly mark unmatched budgets, low replication, and targets where
 the faithful baselines also trigger.
 
+Evidence should be presented benefit-first, design-second. For each target, the
+first question is what user-visible or experiment-visible benefit FORMTRIG
+actually delivers: lower first `_T`/TTE, terminal success where matched
+baselines do not trigger, a binary TC turned into accepted non-trigger search
+progress, or a faster triage decision that avoids wasting long-run budget.
+`D_F`, BindingSpec provenance, dominance filtering, and typed mutation are then
+used as attribution evidence for that benefit. They are not independent
+performance claims.
+
+## Accelerated Comparison Protocol
+
+The remaining schedule should not spend long-run budget uniformly. The current
+workflow is:
+
+- run faithful AFL++-family baselines concurrently with `--jobs N` or
+  `FORMTRIG_JOBS=N`;
+- use 10-30 minute triage runs to identify baseline-visible targets;
+- promote only hard or unclear targets to 2h/6h/24h long runs;
+- keep easy/baseline-visible targets as control/native-readiness evidence;
+- compare tools only by same-budget terminal success, first `_T`/TTE upper
+  bounds, throughput/cost, and repetitions. FORMTRIG `D_F` remains mechanism
+  evidence, not a cross-tool performance metric.
+
 ## Positive Long-Run Queue
 
 ### Magma: PNG006
@@ -43,10 +66,12 @@ Current status: 2-hour native acceptance passed with external eXIf insertion
 hook from the BindingSpec. The same-budget faithful baseline runner now exists,
 its Magma `_T` harvest oracle has passed synthetic smoke verification, and a
 real 120-second Magma/captain baseline smoke plus a same-seed 30-minute
-baseline package have completed. A matched-budget 2-hour AFL++ vanilla control
-has also completed with `PNG006_T=0`. The 2-hour CmpLog and Redqueen/CmpLog-path
-baseline runs and repetitions still need to run before PNG006 can support the
-final comparative claim.
+baseline package have completed. Matched-budget 2-hour AFL++ vanilla and CmpLog
+runs have also completed. Vanilla stayed at `PNG006_T=0`, but CmpLog produced
+target-specific `_T` within the 120-second monitor upper bound. PNG006 is
+therefore a control/native-readiness target, not a main SOTA-gap target. The
+2-hour Redqueen/CmpLog-path run and repetitions are still useful for
+completeness, but they should not block harder-target discovery.
 
 Runner:
 
@@ -62,7 +87,8 @@ Faithful baseline runner:
 scripts/run_magma_png006_baselines.sh \
   --out /tmp/formtrig_png006_baselines_20260616 \
   --durations 1800,7200 \
-  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand \
+  --jobs 3
 ```
 
 Baseline runner/oracle smoke:
@@ -124,10 +150,27 @@ Completed 2-hour vanilla baseline control:
   `corpus_count=902`, `saved_crashes=1`, and `saved_hangs=0`.
   The saved AFL crash is auxiliary only; the target-specific Magma oracle stayed
   at `PNG006_T=0`, so target success is false.
-- Interpretation: this strengthens the vanilla coverage/reach-only control, but
-  the comparison package verdict remains `incomplete_required_baseline_set`
-  because 7200-second `aflplusplus_cmplog` and `redqueen_operand` runs are still
-  missing and there is only one repetition.
+- Interpretation: this strengthens the vanilla coverage/reach-only control.
+  However, the later matched-budget CmpLog run triggers PNG006 early, so this
+  vanilla contrast is not enough to support a SOTA advantage claim.
+
+Completed 2-hour CmpLog baseline:
+
+- Evidence note:
+  `artifacts/formtrig_native_readiness/png006_magma_baselines_2h_cmplog_20260616.md`
+- Raw evidence:
+  `artifacts/formtrig_native_readiness/raw/png006_baselines_2h_cmplog_20260616T053928Z`
+  including `summary.json` and `summary.tsv`.
+- Comparison package:
+  `artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616`
+- Result over 2 hours:
+  `aflplusplus_cmplog` reached `PNG006_R=27502106` with `PNG006_T=2362`,
+  first observed `_T` at the 120-second monitor upper bound, `run_time=7197`,
+  `execs_done=17067952`, `execs_per_sec=2371.23`, `corpus_count=1201`,
+  `saved_crashes=0`, and `saved_hangs=0`.
+- Interpretation: CmpLog can solve PNG006 quickly under the same Magma oracle.
+  PNG006 remains valuable for FORMTRIG native-readiness and mechanism evidence,
+  but it should not be used as the main hard comparison target.
 
 Gate examples:
 
@@ -327,7 +370,8 @@ Faithful AFL++-family baseline runner:
 scripts/run_libcoap_35862_baselines.sh \
   --out /tmp/formtrig_libcoap_35862_baselines_20260615 \
   --durations 1800,7200 \
-  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand \
+  --jobs 3
 ```
 
 ASAN terminal-oracle variant:
@@ -337,7 +381,8 @@ scripts/run_libcoap_35862_baselines.sh \
   --out /tmp/formtrig_libcoap_35862_baselines_asan_20260615 \
   --asan \
   --durations 1800,7200 \
-  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+  --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand \
+  --jobs 3
 ```
 
 ## Sanity / Demoted Queue

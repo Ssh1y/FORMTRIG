@@ -182,7 +182,7 @@ summary_csv="$out_dir/gate_summary.csv"
 summary_jsonl="$out_dir/gate_summary.jsonl"
 report_md="$out_dir/gate_report.md"
 
-printf 'suite,run,status,reasons,run_time,execs_done,execs_per_sec,reached,terminal_triggered,queued_progress,accepted_non_trigger,saved_non_trigger,saved_triggered,spec_lifted,heuristic_lifted,manual_lifted,experiment_ready,pretrigger_lift_guidance_ready,non_trigger_candidate_lift_delta,lift_delta_only_on_triggered,binding_signal_status,binding_signal_diagnosis,out_dir\n' \
+printf 'suite,run,status,reasons,run_time,execs_done,execs_per_sec,reached,terminal_triggered,first_terminal_time_s,first_terminal_time_kind,queued_progress,accepted_non_trigger,saved_non_trigger,saved_triggered,spec_lifted,heuristic_lifted,manual_lifted,experiment_ready,pretrigger_lift_guidance_ready,non_trigger_candidate_lift_delta,lift_delta_only_on_triggered,binding_signal_status,binding_signal_diagnosis,out_dir\n' \
   > "$summary_csv"
 : > "$summary_jsonl"
 
@@ -206,6 +206,7 @@ for run_spec in "${runs[@]}"; do
   diagnosis_json="$default_dir/formtrig_diagnosis.json"
   summary_json="$default_dir/formtrig_summary.json"
   binding_signal_json="$default_dir/formtrig_binding_signal_diagnosis.json"
+  terminal_monitor_json="$default_dir/formtrig_terminal_monitor.json"
   stats_file="$default_dir/fuzzer_stats"
 
   status="pass"
@@ -251,6 +252,12 @@ for run_spec in "${runs[@]}"; do
     '.saved_triggered_progress_events' "0")"
   terminal_triggered="$(jq_number "$diagnosis_json" \
     '.terminal_triggered_execs' "0")"
+  first_terminal_time="$(jq_value "$terminal_monitor_json" \
+    '.first_trigger_time_s' "")"
+  first_terminal_kind=""
+  if [[ -n "$first_terminal_time" && "$first_terminal_time" != "null" ]]; then
+    first_terminal_kind="formtrig_stats_monitor_upper_bound"
+  fi
   queued_progress="$(jq_number "$diagnosis_json" \
     '.formtrig_queued_progress' "0")"
   reached="$(jq_number "$diagnosis_json" '.formtrig_reached_execs' "0")"
@@ -335,9 +342,13 @@ for run_spec in "${runs[@]}"; do
     csv_escape "$label"; printf ','
     csv_escape "$status"; printf ','
     csv_escape "$reasons"; printf ','
-    printf '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
+    printf '%s,%s,%s,%s,%s,' \
       "$run_time" "$execs_done" "$execs_per_sec" "$reached" \
-      "$terminal_triggered" "$queued_progress" "$accepted_non_trigger" \
+      "$terminal_triggered"
+    csv_escape "$first_terminal_time"; printf ','
+    csv_escape "$first_terminal_kind"; printf ','
+    printf '%s,%s,%s,%s,%s,%s,%s,' \
+      "$queued_progress" "$accepted_non_trigger" \
       "$saved_non_trigger" "$saved_triggered" "$spec_lifted" \
       "$heuristic_lifted" "$manual_lifted"
     csv_escape "$experiment_ready"; printf ','
@@ -361,8 +372,17 @@ for run_spec in "${runs[@]}"; do
     printf ',"run_time":%s,"execs_done":%s,"execs_per_sec":' \
       "$run_time" "$execs_done"
     json_escape "$execs_per_sec"
-    printf ',"reached":%s,"terminal_triggered":%s,"queued_progress":%s,' \
-      "$reached" "$terminal_triggered" "$queued_progress"
+    printf ',"reached":%s,"terminal_triggered":%s,' \
+      "$reached" "$terminal_triggered"
+    printf '"first_terminal_time_s":'
+    if [[ -n "$first_terminal_time" && "$first_terminal_time" != "null" ]]; then
+      printf '%s' "$first_terminal_time"
+    else
+      printf 'null'
+    fi
+    printf ',"first_terminal_time_kind":'
+    json_escape "$first_terminal_kind"
+    printf ',"queued_progress":%s,' "$queued_progress"
     printf '"accepted_non_trigger":%s,"saved_non_trigger":%s,' \
       "$accepted_non_trigger" "$saved_non_trigger"
     printf '"saved_triggered":%s,"spec_lifted":%s,' \
@@ -400,9 +420,9 @@ done
   printf '| run | status | reasons | run_time | exec/s | reached | terminal | accepted_non_trigger | saved_non_trigger |\n'
   printf '| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |\n'
   tail -n +2 "$summary_csv" | while IFS=, read -r _suite run status reasons \
-      run_time _execs_done execs_per_sec reached terminal _queued accepted \
-      saved _saved_triggered _spec _heur _manual _ready _pre _delta _only \
-      _binding_status _binding_diag _out; do
+      run_time _execs_done execs_per_sec reached terminal _first_time \
+      _first_kind _queued accepted saved _saved_triggered _spec _heur \
+      _manual _ready _pre _delta _only _binding_status _binding_diag _out; do
     run="${run%\"}"; run="${run#\"}"
     status="${status%\"}"; status="${status#\"}"
     reasons="${reasons%\"}"; reasons="${reasons#\"}"

@@ -150,8 +150,8 @@ def load_formtrig_rows(items: list[str], target_id: str) -> list[dict[str, Any]]
                     "rep": None,
                     "success": int_value(raw.get("terminal_triggered")) > 0,
                     "terminal_count": int_value(raw.get("terminal_triggered")),
-                    "trigger_time_s": None,
-                    "trigger_time_kind": None,
+                    "trigger_time_s": numeric(raw.get("first_terminal_time_s")),
+                    "trigger_time_kind": str_value(raw.get("first_terminal_time_kind")),
                     "execs_done": int_value(raw.get("execs_done")),
                     "execs_per_sec": str_value(raw.get("execs_per_sec")),
                     "reached": int_value(raw.get("reached")),
@@ -357,6 +357,101 @@ def classify_evidence(
     }
 
 
+def numeric_values(rows: list[dict[str, Any]], field: str) -> list[float]:
+    values = []
+    for row in rows:
+        value = numeric(row.get(field))
+        if value is not None:
+            values.append(float(value))
+    return values
+
+
+def benefit_readout(
+    formtrig_rows: list[dict[str, Any]],
+    analysis: dict[str, Any],
+) -> dict[str, Any]:
+    strict_formtrig = any(row.get("strict_pretrigger_guidance") for row in formtrig_rows)
+    terminal_formtrig = any(int_value(row.get("terminal_count")) > 0 for row in formtrig_rows)
+    formtrig_ttes = numeric_values(formtrig_rows, "trigger_time_s")
+    baseline_groups = analysis.get("baseline_groups", [])
+    successful_baseline_groups = [
+        group
+        for group in baseline_groups
+        if float(group.get("success_rate") or 0.0) > 0.0
+    ]
+    baseline_ttes = [
+        float(value)
+        for group in successful_baseline_groups
+        if (value := numeric(group.get("median_trigger_time_s"))) is not None
+    ]
+
+    observed_benefits: list[str] = []
+    blocked_claims: list[str] = []
+    design_evidence: list[str] = []
+
+    if strict_formtrig:
+        observed_benefits.append(
+            "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+        )
+        design_evidence.append("strict_pretrigger_guidance")
+    else:
+        blocked_claims.append("no strict pre-trigger guidance benefit is established")
+
+    if terminal_formtrig:
+        design_evidence.append("formtrig_terminal_oracle_success")
+    else:
+        blocked_claims.append("no FORMTRIG terminal success is established")
+
+    if formtrig_ttes:
+        observed_benefits.append(
+            f"FORMTRIG first `_T` upper bound is recorded at {min(formtrig_ttes):g}s"
+        )
+    else:
+        blocked_claims.append("FORMTRIG first `_T`/TTE is not recorded for this run")
+
+    if not baseline_groups:
+        blocked_claims.append("no matched-budget baseline benefit comparison is available")
+    elif successful_baseline_groups:
+        if formtrig_ttes and baseline_ttes:
+            if min(formtrig_ttes) < min(baseline_ttes):
+                observed_benefits.append(
+                    "FORMTRIG has a lower observed first-`_T` upper bound than matched successful baselines"
+                )
+            else:
+                blocked_claims.append(
+                    "matched successful baseline first-`_T` is no later than FORMTRIG on current evidence"
+                )
+        else:
+            blocked_claims.append(
+                "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage"
+            )
+    elif terminal_formtrig:
+        observed_benefits.append(
+            "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
+        )
+
+    if analysis.get("missing_required_baselines"):
+        blocked_claims.append("required baseline families are still missing")
+    if "low_replication" in analysis.get("reasons", []):
+        blocked_claims.append("replication is too low for a final performance claim")
+
+    if not observed_benefits:
+        summary = "no benefit claim is supported by the current package"
+    elif any("no later than FORMTRIG" in claim or "also trigger" in claim for claim in blocked_claims):
+        summary = "mechanism benefit is present, but performance advantage is not established on this target"
+    elif terminal_formtrig and not successful_baseline_groups and baseline_groups:
+        summary = "current package supports a matched-budget terminal-success benefit, subject to replication"
+    else:
+        summary = "current package supports mechanism/search-guidance benefit, subject to remaining blockers"
+
+    return {
+        "blocked_claims": blocked_claims,
+        "design_evidence": design_evidence,
+        "observed_benefits": observed_benefits,
+        "summary": summary,
+    }
+
+
 def tsv_value(value: Any) -> Any:
     if value is None:
         return ""
@@ -395,11 +490,40 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         f"- verdict: `{payload['analysis']['verdict']}`",
         f"- matched baselines: `{payload['analysis']['matched_baseline_count']}`",
         "",
-        "## FORMTRIG Runs",
+        "## Benefit Readout",
         "",
-        "| label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |",
-        "| --- | ---: | ---: | --- | ---: | ---: | ---: |",
+        f"- summary: {payload['benefit_readout']['summary']}",
+        "",
+        "Allowed benefit statements:",
     ]
+    for benefit in payload["benefit_readout"]["observed_benefits"]:
+        lines.append(f"- {benefit}")
+    if not payload["benefit_readout"]["observed_benefits"]:
+        lines.append("- none")
+    lines.extend(["", "Blocked or not-yet-supported statements:"])
+    for claim in payload["benefit_readout"]["blocked_claims"]:
+        lines.append(f"- {claim}")
+    if not payload["benefit_readout"]["blocked_claims"]:
+        lines.append("- none")
+    lines.extend(
+        [
+            "",
+            "Design evidence used for attribution:",
+        ]
+    )
+    for evidence in payload["benefit_readout"]["design_evidence"]:
+        lines.append(f"- `{evidence}`")
+    if not payload["benefit_readout"]["design_evidence"]:
+        lines.append("- none")
+    lines.extend(
+        [
+            "",
+            "## FORMTRIG Runs",
+            "",
+            "| label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |",
+            "| --- | ---: | ---: | --- | ---: | ---: | ---: |",
+        ]
+    )
     for row in payload["formtrig_runs"]:
         lines.append(
             "| {source_label} | {budget} | {terminal_count} | {strict_pretrigger_guidance} | "
@@ -495,6 +619,7 @@ def main() -> int:
     payload = {
         "analysis": analysis,
         "baseline_rows": baseline_rows,
+        "benefit_readout": benefit_readout(formtrig_rows, analysis),
         "comparison_id": args.comparison_id,
         "formtrig_runs": formtrig_rows,
         "target_id": args.target_id,

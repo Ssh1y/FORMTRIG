@@ -57,6 +57,22 @@
       "trigger_time_s": null
     }
   ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "FORMTRIG first `_T`/TTE is not recorded for this run",
+      "required baseline families are still missing",
+      "replication is too low for a final performance claim"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance",
+      "formtrig_terminal_oracle_success"
+    ],
+    "observed_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+      "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
+    ],
+    "summary": "current package supports a matched-budget terminal-success benefit, subject to replication"
+  },
   "comparison_id": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
   "formtrig_runs": [
     {

@@ -11,8 +11,10 @@ durations="1800"
 baselines="aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 poll="30"
 reps="1"
+jobs="${FORMTRIG_JOBS:-1}"
 run_build=1
 run_sweeps=1
+failed_jobs=0
 
 usage() {
   cat >&2 <<EOF
@@ -28,6 +30,7 @@ options:
   --durations LIST      comma/space-separated budgets in seconds
   --baselines LIST      comma/space-separated baseline ids
   --reps N              repetitions per baseline/budget, default 1
+  --jobs N              concurrent baseline runs, default 1
   --poll SEC            Magma monitor poll interval, default 30
   --no-build            skip captain build
   --no-sweeps           build only
@@ -130,6 +133,27 @@ run_one_baseline() {
     --target-cmd "magma/captain $fuzzer libpng libpng_read_fuzzer @@"
 }
 
+wait_for_job_slot() {
+  local max_jobs="$1"
+  while (( $(jobs -pr | wc -l) >= max_jobs )); do
+    if ! wait -n; then
+      failed_jobs=1
+    fi
+  done
+}
+
+wait_for_all_jobs() {
+  while (( $(jobs -pr | wc -l) > 0 )); do
+    if ! wait -n; then
+      failed_jobs=1
+    fi
+  done
+  if [[ "$failed_jobs" != "0" ]]; then
+    echo "one or more baseline jobs failed" >&2
+    exit 1
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --out)
@@ -154,6 +178,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --reps)
       reps="${2:-}"
+      shift 2
+      ;;
+    --jobs)
+      jobs="${2:-}"
       shift 2
       ;;
     --poll)
@@ -192,6 +220,10 @@ if ! [[ "$reps" =~ ^[0-9]+$ ]] || [[ "$reps" -lt 1 ]]; then
   echo "--reps must be a positive integer: $reps" >&2
   exit 2
 fi
+if ! [[ "$jobs" =~ ^[0-9]+$ ]] || [[ "$jobs" -lt 1 ]]; then
+  echo "--jobs must be a positive integer: $jobs" >&2
+  exit 2
+fi
 
 {
   printf 'out_dir=%s\n' "$out_dir"
@@ -200,6 +232,7 @@ fi
   printf 'baselines=%s\n' "$baselines"
   printf 'durations=%s\n' "$durations"
   printf 'reps=%s\n' "$reps"
+  printf 'jobs=%s\n' "$jobs"
   printf 'poll=%s\n' "$poll"
 } > "$out_dir/run_metadata.txt"
 
@@ -219,10 +252,18 @@ if [[ "$run_sweeps" == "1" ]]; then
   while IFS= read -r duration; do
     for ((rep = 1; rep <= reps; rep++)); do
       while IFS= read -r baseline; do
-        run_one_baseline "$baseline" "$duration" "$rep"
+        if [[ "$jobs" -gt 1 ]]; then
+          wait_for_job_slot "$jobs"
+          run_one_baseline "$baseline" "$duration" "$rep" &
+        else
+          run_one_baseline "$baseline" "$duration" "$rep"
+        fi
       done < <(split_list "$baselines")
     done
   done < <(split_list "$durations")
+  if [[ "$jobs" -gt 1 ]]; then
+    wait_for_all_jobs
+  fi
 
   python3 "$repo_root/tools/summarize_post_reach_baselines.py" \
     --root "$out_dir/runs" \
@@ -235,3 +276,4 @@ echo "  out=$out_dir"
 echo "  baselines=$baselines"
 echo "  durations=$durations"
 echo "  reps=$reps"
+echo "  jobs=$jobs"

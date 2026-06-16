@@ -1,0 +1,7 @@
+out_dir=/tmp/formtrig_png006_baselines_2h_cmplog_20260616T053928Z
+magma_dir=/home/cwh/FORMTRIG/experiments/magma_workspace/magma
+seed_dir=/home/cwh/FORMTRIG/artifacts/rnt_corpus/PNG006/seeds
+baselines=aflplusplus_cmplog
+durations=7200
+reps=1
+poll=30

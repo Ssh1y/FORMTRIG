@@ -4,6 +4,23 @@
 - verdict: `incomplete_required_baseline_set`
 - matched baselines: `1`
 
+## Benefit Readout
+
+- summary: current package supports a matched-budget terminal-success benefit, subject to replication
+
+Allowed benefit statements:
+- binary or sparse trigger feedback was lifted into accepted non-trigger search progress
+- FORMTRIG reaches terminal success where matched baselines do not trigger in this budget
+
+Blocked or not-yet-supported statements:
+- FORMTRIG first `_T`/TTE is not recorded for this run
+- required baseline families are still missing
+- replication is too low for a final performance claim
+
+Design evidence used for attribution:
+- `strict_pretrigger_guidance`
+- `formtrig_terminal_oracle_success`
+
 ## FORMTRIG Runs
 
 | label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |

@@ -52,6 +52,115 @@ require_file() {
   fi
 }
 
+stats_field() {
+  local file="$1"
+  local key="$2"
+  local default_value="${3:-0}"
+  if [[ -s "$file" ]]; then
+    awk -F: -v want="$key" -v default_value="$default_value" '
+      {
+        key = $1
+        gsub(/^[ \t]+|[ \t]+$/, "", key)
+      }
+      key == want {
+        value = $2
+        gsub(/^[ \t]+|[ \t]+$/, "", value)
+        print value
+        found = 1
+        exit
+      }
+      END {
+        if (!found) print default_value
+      }
+    ' "$file"
+  else
+    printf '%s\n' "$default_value"
+  fi
+}
+
+json_or_null() {
+  local value="${1:-}"
+  if [[ -z "$value" ]]; then
+    printf 'null'
+  else
+    printf '%s' "$value"
+  fi
+}
+
+monitor_formtrig_stats() {
+  local stats_path="$1"
+  local monitor_dir="$2"
+  local poll="$3"
+  local start_ts
+  start_ts="$(date +%s)"
+  mkdir -p "$monitor_dir"
+  while :; do
+    if [[ -f "$stats_path" ]]; then
+      local now elapsed
+      now="$(date +%s)"
+      elapsed=$((now - start_ts))
+      cp "$stats_path" "$monitor_dir/${elapsed}.stats" 2>/dev/null || true
+    fi
+    sleep "$poll" || break
+  done
+}
+
+write_terminal_monitor_json() {
+  local monitor_dir="$1"
+  local out_json="$2"
+  local snapshot_count=0
+  local first_time=""
+  local first_triggered=""
+  local first_file=""
+  local latest_time=""
+  local latest_triggered=0
+  local latest_file=""
+
+  if [[ -d "$monitor_dir" ]]; then
+    while IFS= read -r snapshot; do
+      snapshot_count=$((snapshot_count + 1))
+      local triggered run_time
+      triggered="$(stats_field "$snapshot" formtrig_triggered_execs 0)"
+      run_time="$(stats_field "$snapshot" run_time "")"
+      latest_time="$run_time"
+      latest_triggered="$triggered"
+      latest_file="$snapshot"
+      if [[ -z "$first_time" && "$triggered" =~ ^[0-9]+$ &&
+            "$triggered" -gt 0 ]]; then
+        first_time="$run_time"
+        first_triggered="$triggered"
+        first_file="$snapshot"
+      fi
+    done < <(find "$monitor_dir" -maxdepth 1 -type f -name '*.stats' | sort -V)
+  fi
+
+  {
+    printf '{\n'
+    printf '  "snapshot_count": %s,\n' "$snapshot_count"
+    printf '  "first_trigger_time_s": '
+    json_or_null "$first_time"
+    printf ',\n'
+    printf '  "first_triggered_execs": '
+    json_or_null "$first_triggered"
+    printf ',\n'
+    if [[ -n "$first_file" ]]; then
+      printf '  "first_trigger_snapshot": "%s",\n' "$first_file"
+    else
+      printf '  "first_trigger_snapshot": null,\n'
+    fi
+    printf '  "latest_time_s": '
+    json_or_null "$latest_time"
+    printf ',\n'
+    printf '  "latest_triggered_execs": %s,\n' "$latest_triggered"
+    if [[ -n "$latest_file" ]]; then
+      printf '  "latest_snapshot": "%s"\n' "$latest_file"
+    else
+      printf '  "latest_snapshot": null\n'
+    fi
+    printf '}\n'
+  } > "$out_json"
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --in)
@@ -345,13 +454,43 @@ if [[ "$seed_preflight" != "off" ]]; then
   fi
 fi
 
+stats_monitor_poll="${FORMTRIG_STATS_MONITOR_POLL:-30}"
+stats_monitor_pid=""
+stats_monitor_dir="$out_dir/formtrig_stats_monitor"
+cleanup_stats_monitor() {
+  if [[ -n "${stats_monitor_pid:-}" ]]; then
+    kill "$stats_monitor_pid" 2>/dev/null || true
+    wait "$stats_monitor_pid" 2>/dev/null || true
+    stats_monitor_pid=""
+  fi
+}
+
+if [[ "$stats_monitor_poll" =~ ^[0-9]+$ && "$stats_monitor_poll" -gt 0 ]]; then
+  monitor_formtrig_stats "$out_dir/default/fuzzer_stats" \
+    "$stats_monitor_dir" "$stats_monitor_poll" &
+  stats_monitor_pid=$!
+fi
+trap cleanup_stats_monitor EXIT
+set +e
 env "${env_args[@]}" "$afl_fuzz" \
   -i "$seed_dir" -o "$out_dir" -V "$duration" "${extra_afl_args[@]}" -- "$@"
+afl_status=$?
+set -e
+cleanup_stats_monitor
+trap - EXIT
+if [[ "$afl_status" != "0" ]]; then
+  exit "$afl_status"
+fi
 
 stats="$out_dir/default/fuzzer_stats"
 progress="$out_dir/default/formtrig_progress.jsonl"
 require_file "$stats"
 require_file "$progress"
+if [[ -d "$stats_monitor_dir" ]]; then
+  cp "$stats" "$stats_monitor_dir/final.stats"
+  write_terminal_monitor_json "$stats_monitor_dir" \
+    "$out_dir/default/formtrig_terminal_monitor.json"
+fi
 if [[ -n "$seed_readiness" ]]; then
   cp "$seed_readiness" "$out_dir/default/formtrig_seed_readiness.json"
   seed_signal_entropy="${seed_readiness%.json}.signal_entropy.json"

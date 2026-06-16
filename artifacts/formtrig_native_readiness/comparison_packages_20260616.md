@@ -12,13 +12,31 @@ terminal-only runs, and low-repetition baselines.
 tools/compare_formtrig_baselines.py
 ```
 
-The tool keeps three facts separate:
+The tool is benefit-first. Each generated Markdown/JSON package starts with a
+`Benefit Readout` that states:
+
+- observed benefit statements allowed by the current evidence;
+- benefit statements that are blocked or not yet supported;
+- design evidence that can be used only for attribution after the benefit is
+  stated.
+
+Only after that does it list the FORMTRIG internal signals and baseline groups.
+This prevents `D_F`, BindingSpec roles, typed mutation, or terminal-state volume
+from being presented as performance claims by themselves.
+
+The tool also keeps three facts separate:
 
 - strict FORMTRIG pre-trigger guidance:
   accepted and saved non-trigger `D_F` progress, spec-lifted signal, no
   heuristic/manual lift, and binding-signal `pass`;
 - FORMTRIG terminal oracle success;
 - baseline terminal oracle success.
+
+Strict pre-trigger guidance is a FORMTRIG admissibility and mechanism check,
+not a ranking metric against CmpLog, Redqueen, or other baselines. Baseline
+comparison should use same-budget terminal success, TTE/first-trigger upper
+bounds, throughput/cost, and repetitions. Terminal-state volume is auxiliary
+unless the compared arms use the same oracle and counter semantics.
 
 It refuses to silently compare different budgets. A comparison with no matched
 baseline budget receives:
@@ -99,6 +117,54 @@ Reason: the saved FORMTRIG 2-hour evidence is now paired with a matched
 guidance and terminal oracle evidence. The package is still incomplete because
 the required matched-budget `aflplusplus_cmplog` and `redqueen_operand` runs
 are missing and there is only one repetition.
+
+Benefit readout: this package allows a limited benefit statement against the
+vanilla reach-only control: FORMTRIG reaches terminal success where vanilla does
+not trigger in the matched 7200-second budget. It blocks final performance
+claims because first FORMTRIG `_T`/TTE was not recorded, CmpLog/Redqueen are
+missing in this package, and replication is low.
+
+### PNG006: FORMTRIG 2h vs vanilla+CmpLog 2h incomplete baseline set
+
+Command:
+
+```bash
+python3 tools/compare_formtrig_baselines.py \
+  --comparison-id PNG006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616 \
+  --target-id PNG006 \
+  --formtrig-gate formtrig_2h=artifacts/formtrig_native_readiness/raw/png006_2h_20260615T1250Z/gate_summary.csv \
+  --baseline-summary vanilla_2h=artifacts/formtrig_native_readiness/raw/png006_baselines_2h_vanilla_20260616T033317Z/summary.json \
+  --baseline-summary cmplog_2h=artifacts/formtrig_native_readiness/raw/png006_baselines_2h_cmplog_20260616T053928Z/summary.json \
+  --required-baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand \
+  --out-dir artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616
+```
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616
+```
+
+Verdict:
+
+```text
+incomplete_required_baseline_set
+```
+
+Reason: the saved FORMTRIG 2-hour evidence is paired with matched 7200-second
+`aflplusplus_vanilla` and `aflplusplus_cmplog` baselines. Vanilla remains at
+`PNG006_T=0`, but CmpLog reaches target-specific `PNG006_T=2362` and first
+observes `_T` at the 120-second Magma monitor upper bound. The package is still
+incomplete because `redqueen_operand` is missing and there is only one
+repetition, but it also records `matched_baseline_also_triggers`. PNG006 should
+therefore be treated as a control/native-readiness target rather than a main
+SOTA-gap target.
+
+Benefit readout: this package allows only the mechanism/search-guidance benefit
+statement: binary or sparse trigger feedback was lifted into accepted
+non-trigger search progress. It blocks the performance-advantage statement
+because a matched CmpLog baseline also triggers and FORMTRIG first `_T`/TTE was
+not recorded for the saved run.
 
 ### LIBCOAP: pre-trigger FORMTRIG 30m vs non-ASAN baselines
 
@@ -184,8 +250,11 @@ validation target rather than a strong SOTA-positive FORMTRIG target.
 
 The comparison packages make the current evidence state explicit:
 
-- PNG006 now has a 7200-second faithful vanilla control. It still needs
-  7200-second CmpLog and Redqueen/CmpLog-path baselines plus repetitions.
+- PNG006 now has 7200-second faithful vanilla and CmpLog controls. CmpLog
+  triggers within the 120-second monitor upper bound, so PNG006 is not a hard
+  SOTA-positive case for FORMTRIG. Redqueen/CmpLog-path and repetitions remain
+  useful for completeness, but harder targets should receive the long-run
+  budget first.
 - LIBCOAP demonstrates real-CVE pre-trigger guidance and terminal-oracle
   plumbing, but it does not prove a SOTA advantage because the ASAN baselines
   also trigger.

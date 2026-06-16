@@ -4,7 +4,13 @@ This note records the first 2-hour same-seed Magma baseline run for PNG006.
 It covers only the faithful AFL++ vanilla coverage/reach-only control. It is a
 matched-budget control for the existing FORMTRIG 2-hour PNG006 run, but it is
 not a complete baseline package because AFL++ CmpLog and Redqueen/CmpLog-path
-2-hour runs are still missing.
+2-hour runs were still missing when this note was generated. The later CmpLog
+2-hour run is recorded separately and does trigger PNG006.
+
+Benefit-first conclusion: against the vanilla reach-only control, FORMTRIG has
+a matched-budget terminal-success benefit and strict pre-trigger search-guidance
+evidence. This benefit must be scoped to vanilla only; the later matched CmpLog
+run blocks a broader SOTA-performance claim on PNG006.
 
 ## Command
 
@@ -66,8 +72,10 @@ This run strengthens the PNG006 control evidence:
 - Vanilla AFL++ can sustain high target reach (`PNG006_R=23144616`) over the
   same 2-hour budget without reaching the target trigger (`PNG006_T=0`).
 - FORMTRIG's existing 2-hour run has strict pre-trigger `D_F` evidence and
-  `terminal_triggered=17276659`.
-- This does not prove a SOTA advantage yet. The 30-minute package already
-  showed that CmpLog and the Redqueen/CmpLog path can produce `PNG006_T`.
-  Therefore, the next required PNG006 runs are 7200-second CmpLog and
-  Redqueen/CmpLog-path baselines, plus repetitions.
+  terminal oracle evidence. This is mechanism evidence for FORMTRIG; it is not
+  a cross-tool ranking metric.
+- This does not prove a SOTA advantage. The 30-minute package already showed
+  that CmpLog and the Redqueen/CmpLog path can produce `PNG006_T`, and the
+  later matched-budget 2-hour CmpLog run triggers within the 120-second monitor
+  upper bound. PNG006 should stay in the control/native-readiness bucket while
+  harder targets receive long-run budget.
