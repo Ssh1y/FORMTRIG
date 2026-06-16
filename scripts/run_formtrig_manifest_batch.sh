@@ -185,6 +185,22 @@ if [[ "$jobs" -gt 1 && "$stop_on_trigger" -eq 1 ]]; then
   exit 2
 fi
 
+declare -A target_counts=()
+for manifest in "${manifests[@]}"; do
+  manifest_path="$(abs_path "$manifest")"
+  if [[ -f "$manifest_path" ]]; then
+    target_id_for_count="$(manifest_value "$manifest_path" target_id)"
+    if [[ -z "$target_id_for_count" ]]; then
+      target_id_for_count="$(basename "$manifest_path")"
+      target_id_for_count="${target_id_for_count%.*}"
+    fi
+  else
+    target_id_for_count="$(basename "$manifest")"
+    target_id_for_count="${target_id_for_count%.*}"
+  fi
+  target_counts["$target_id_for_count"]=$(( ${target_counts["$target_id_for_count"]:-0} + 1 ))
+done
+
 if [[ -z "$out_root" ]]; then
   out_root="$repo_root/results/formtrig_native_batch/$(date -u +%Y%m%dT%H%M%SZ)"
 else
@@ -294,7 +310,7 @@ run_one_manifest() {
   fi
 
   run_dir="$out_root/$target_id"
-  if [[ "$jobs" -gt 1 ]]; then
+  if [[ "$jobs" -gt 1 || "${target_counts["$target_id"]:-0}" -gt 1 ]]; then
     run_dir="$out_root/$(printf '%03d_%s' "$index" "$target_id")"
   fi
   mkdir -p "$run_dir"

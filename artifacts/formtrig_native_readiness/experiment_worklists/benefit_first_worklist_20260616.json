@@ -1,6 +1,6 @@
 {
   "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
-  "blocked_count": 11,
+  "blocked_count": 10,
   "defaults": {
     "jobs": 4,
     "longrun_duration_s": 7200,
@@ -8,12 +8,12 @@
     "repetitions": 3,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-16T22:12:03+00:00",
+  "generated_at_utc": "2026-06-16T22:23:09+00:00",
   "inputs": {
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json"
   },
-  "runnable_now_count": 1,
+  "runnable_now_count": 2,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
   "skipped_control_count": 4,
   "skipped_controls": [
@@ -1072,13 +1072,10 @@
       "action": "extend_matched_longrun",
       "benefit_to_prove": "Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not.",
       "blocked_claims": [],
-      "blocking_issue": [
-        "no single reusable matched long-run runner currently coordinates this Magma target and rebuilds the comparison package",
-        "use the recorded TIF012 b5 manifest list and regenerate the comparison package after both arms finish"
-      ],
+      "blocking_issue": [],
       "category": "binary-state-null+compound-sequence-lifecycle",
       "claim_boundary": "Report as speedup/attribution unless long-run matched baselines stop triggering while FORMTRIG remains successful.",
-      "command": "",
+      "command": "scripts/run_tif012_b5_matched_longrun.sh --duration 7200 --reps 3 --jobs 4",
       "comparison_verdict": "positive_endpoint_matched_comparison",
       "current_primary_benefits": [
         "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
@@ -1094,12 +1091,7 @@
         "formtrig_terminal_oracle_success",
         "matched_budget_endpoint_success"
       ],
-      "post_unblock_commands": [
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/TIF012.b5_current_3rep.list --duration 7200 --jobs 4 --continue-on-fail --out-root 'artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig'",
-        "scripts/run_magma_baselines.sh --target-id TIF012 --durations 7200 --jobs 4 --out 'artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_baselines' --reps 3",
-        "scripts/formtrig_experiment_gate.sh --suite TIF012_b5_7200s_3rep --out 'artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/gate' --min-runtime 7200 --run 'rep1=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/001_TIF012/out' --run 'rep2=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/002_TIF012/out' --run 'rep3=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/003_TIF012/out'",
-        "python3 tools/compare_formtrig_baselines.py --comparison-id 'tif012_b5_matched_7200s_3rep_<UTC>' --target-id TIF012 --formtrig-gate 'b5_7200s_3rep=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/gate/gate_summary.csv' --baseline-summary 'aflpp_family_7200s_3rep=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_baselines/summary.json' --out-dir 'artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_<UTC>' --min-reps 3 --required-baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
-      ],
+      "post_unblock_commands": [],
       "primary_endpoint_metrics": [
         "same-budget terminal success rate",
         "first _T / terminal-crash wall-clock time",
@@ -1110,7 +1102,7 @@
       "project": "libtiff",
       "rank": 5,
       "repetitions": 3,
-      "runnable_now": false,
+      "runnable_now": true,
       "source": "magma",
       "target_id": "TIF012"
     },

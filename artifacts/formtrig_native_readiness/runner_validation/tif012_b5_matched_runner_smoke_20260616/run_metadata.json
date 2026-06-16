@@ -1,0 +1,12 @@
+{
+  "baselines": "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand",
+  "duration_s": 1,
+  "inventory": "/home/cwh/FORMTRIG/artifacts/magma_canary_inventory.json",
+  "manifest": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/manifests/TIF012.native_draft_magma_canary.hook_b5.final_30s.manifest",
+  "manifest_list": "/tmp/formtrig_tif012_b5_runner_dup_smoke_20260616T222404Z/formtrig_manifest_list.txt",
+  "magma_dir": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma",
+  "mode": "execute",
+  "reps": 2,
+  "target_id": "TIF012",
+  "time_utc": "2026-06-16T22:24:04Z"
+}

@@ -387,11 +387,27 @@ def longrun_task(
         blocking_issue = []
         post_unblock_commands = []
     elif target_id == "TIF012" and str(row.get("source") or "") == "magma":
-        blocking_issue = [
-            "no single reusable matched long-run runner currently coordinates this Magma target and rebuilds the comparison package",
-            "use the recorded TIF012 b5 manifest list and regenerate the comparison package after both arms finish",
-        ]
-        post_unblock_commands = tif012_magma_longrun_steps(duration_s, reps, jobs)
+        runner_path = Path("scripts/run_tif012_b5_matched_longrun.sh")
+        if runner_path.exists():
+            command = shell_join(
+                [
+                    str(runner_path),
+                    "--duration",
+                    str(duration_s),
+                    "--reps",
+                    str(reps),
+                    "--jobs",
+                    str(jobs),
+                ]
+            )
+            blocking_issue = []
+            post_unblock_commands = []
+        else:
+            blocking_issue = [
+                "no single reusable matched long-run runner currently coordinates this Magma target and rebuilds the comparison package",
+                "use the recorded TIF012 b5 manifest list and regenerate the comparison package after both arms finish",
+            ]
+            post_unblock_commands = tif012_magma_longrun_steps(duration_s, reps, jobs)
     if verdict == "positive_endpoint_matched_comparison":
         benefit_to_prove = (
             "Confirm that the current matched-budget endpoint benefit "

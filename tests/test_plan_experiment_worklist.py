@@ -216,16 +216,13 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertEqual(task["target_id"], "TIF012")
             self.assertEqual(task["action"], "extend_matched_longrun")
             self.assertEqual(task["priority"], "P0")
-            self.assertFalse(task["runnable_now"])
+            self.assertTrue(task["runnable_now"])
+            self.assertIn("scripts/run_tif012_b5_matched_longrun.sh", task["command"])
+            self.assertIn("--duration 7200", task["command"])
             self.assertEqual(task["comparison_verdict"], "positive_endpoint_matched_comparison")
             self.assertIn("endpoint benefit", task["benefit_to_prove"])
-            self.assertNotIn("BindingSpec candidate", " ".join(task["blocking_issue"]))
-            self.assertTrue(
-                any("TIF012.b5_current_3rep.list" in command for command in task["post_unblock_commands"])
-            )
-            self.assertTrue(
-                any("tools/compare_formtrig_baselines.py" in command for command in task["post_unblock_commands"])
-            )
+            self.assertEqual(task["blocking_issue"], [])
+            self.assertEqual(task["post_unblock_commands"], [])
 
 
 if __name__ == "__main__":

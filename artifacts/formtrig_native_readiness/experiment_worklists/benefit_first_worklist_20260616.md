@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-16T22:12:03+00:00`
-Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `4`; low-priority skipped: `93`.
+Generated: `2026-06-16T22:23:09+00:00`
+Tasks: `12`; runnable now: `2`; blocked/gated: `10`; demoted controls skipped: `4`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -19,7 +19,7 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 | P1 | 2 | PDF003 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 3 | SSL011 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 4 | SSL015 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
-| P0 | 5 | TIF012 | magma | extend_matched_longrun | blocked | Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not. |
+| P0 | 5 | TIF012 | magma | extend_matched_longrun | yes | Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not. |
 | P1 | 6 | PDF016 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 7 | PHP009 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 8 | GPAC_3403 | real_cve | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -34,6 +34,11 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 
 - Benefit: Confirm that the current first-_T speedup and lower execution cost persist in 3 matched 7200s repetitions.
 - Command: `scripts/run_libarchive_2936_matched_longrun.sh --duration 7200 --reps 3 --jobs 4`
+
+### P0 TIF012
+
+- Benefit: Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not.
+- Command: `scripts/run_tif012_b5_matched_longrun.sh --duration 7200 --reps 3 --jobs 4`
 
 ## Gated Tasks
 
@@ -92,29 +97,6 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 - scripts/run_magma_baselines.sh --target-id SSL015 --durations 600 --jobs 4 --reps 3
 - scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL015.list --duration 600 --jobs 4 --continue-on-fail
 - Evidence paths:
-- artifacts/magma_canary_inventory.json
-
-### P0 TIF012 - extend_matched_longrun
-
-- Benefit to prove: Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not.
-- Endpoint metrics: same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, PRET/TTE under the same seed corpus and oracle
-- Claim boundary: Report as speedup/attribution unless long-run matched baselines stop triggering while FORMTRIG remains successful.
-- Blocking issue:
-- no single reusable matched long-run runner currently coordinates this Magma target and rebuilds the comparison package
-- use the recorded TIF012 b5 manifest list and regenerate the comparison package after both arms finish
-- Mechanism evidence required after benefit:
-- strict_pretrigger_guidance
-- formtrig_terminal_oracle_success
-- matched_budget_endpoint_success
-- Current primary benefits:
-- FORMTRIG reaches terminal success where matched baselines do not trigger in this budget
-- Post-unblock commands or steps:
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/TIF012.b5_current_3rep.list --duration 7200 --jobs 4 --continue-on-fail --out-root 'artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig'
-- scripts/run_magma_baselines.sh --target-id TIF012 --durations 7200 --jobs 4 --out 'artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_baselines' --reps 3
-- scripts/formtrig_experiment_gate.sh --suite TIF012_b5_7200s_3rep --out 'artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/gate' --min-runtime 7200 --run 'rep1=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/001_TIF012/out' --run 'rep2=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/002_TIF012/out' --run 'rep3=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/003_TIF012/out'
-- python3 tools/compare_formtrig_baselines.py --comparison-id 'tif012_b5_matched_7200s_3rep_<UTC>' --target-id TIF012 --formtrig-gate 'b5_7200s_3rep=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_formtrig/gate/gate_summary.csv' --baseline-summary 'aflpp_family_7200s_3rep=artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_<UTC>_baselines/summary.json' --out-dir 'artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_<UTC>' --min-reps 3 --required-baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
-- Evidence paths:
-- artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616/comparison.json
 - artifacts/magma_canary_inventory.json
 
 ### P1 PDF016 - validate_binding_spec_then_short_screen
