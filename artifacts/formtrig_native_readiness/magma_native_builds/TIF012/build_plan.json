@@ -100,6 +100,7 @@
         "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
         "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
         "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
+        "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
         "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
         "LD": "/usr/bin/ld",
         "LDFLAGS": "-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out",
@@ -115,7 +116,7 @@
       "name": "instrument_target",
       "reason": "build FORMTRIG-native target executable and site map via runner",
       "selected": true,
-      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out PROGRAM=tiff_read_rgba_fuzzer SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/libtiff bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/runner_instrument_target.sh",
+      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out PROGRAM=tiff_read_rgba_fuzzer SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/libtiff bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/runner_instrument_target.sh",
       "status": "ok"
     },
     {
@@ -162,7 +163,7 @@
     "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl",
     "target_id": "TIF012"
   },
-  "generated_at_utc": "2026-06-16T18:23:23+00:00",
+  "generated_at_utc": "2026-06-16T18:54:20+00:00",
   "inputs": {
     "afl_cc": "/usr/bin/clang-15",
     "afl_cxx": "/usr/bin/clang++-15",
@@ -316,6 +317,7 @@
         "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
         "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
         "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
+        "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
         "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
         "LD": "/usr/bin/ld",
         "LDFLAGS": "-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out",
@@ -329,7 +331,7 @@
       "name": "instrument_target",
       "reason": "build FORMTRIG-native target executable and site map via runner",
       "selected": true,
-      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out PROGRAM=tiff_read_rgba_fuzzer SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/libtiff bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/runner_instrument_target.sh"
+      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out PROGRAM=tiff_read_rgba_fuzzer SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/libtiff bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/runner_instrument_target.sh"
     }
   ],
   "target": "libtiff",

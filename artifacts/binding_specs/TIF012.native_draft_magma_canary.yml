@@ -333,3 +333,219 @@ bindings:
     value: 1.0
     confidence: 0.55
     observe_window: 'any'
+  - id: 'transferfunction_set_count_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: '_TIFFVSetField reaches TIFFTAG_TRANSFERFUNCTION count decision from samplesperpixel/extrasamples'
+    site_id: 2428864631
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 483
+      inst_no: 1544
+      opcode: 'icmp'
+      column: 54
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+  - id: 'transferfunction_set_array_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: '_TIFFVSetField reaches td_transferfunction array population loop'
+    site_id: 2227386108
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 484
+      inst_no: 1552
+      opcode: 'icmp'
+      column: 17
+    component: 'producer_use'
+    priority: 31
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+  - id: 'sminsamplevalue_set_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: '_TIFFVSetField reaches SMINSAMPLEVALUE array set path'
+    site_id: 1889720481
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 338
+      inst_no: 631
+      opcode: 'icmp'
+      column: 22
+    component: 'producer_use'
+    priority: 32
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.7
+    observe_window: 'any'
+  - id: 'smaxsamplevalue_set_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: '_TIFFVSetField reaches SMAXSAMPLEVALUE array set path'
+    site_id: 4085911284
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 344
+      inst_no: 690
+      opcode: 'icmp'
+      column: 22
+    component: 'producer_use'
+    priority: 33
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.7
+    observe_window: 'any'
+  - id: 'transferfunction_get_root_use'
+    atom: 1
+    role: 'use'
+    expr: '_TIFFVGetField reads td_transferfunction[0] before multi-sample transferfunction use'
+    site_id: 3986070914
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVGetField'
+      file: 'tif_dir.c'
+      line: 1115
+      inst_no: 1389
+      opcode: 'icmp'
+      column: 5
+    component: 'producer_use'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+  - id: 'transferfunction_get_multisample_use'
+    atom: 1
+    role: 'use'
+    expr: '_TIFFVGetField branches on samplesperpixel/extrasamples before reading transferfunction[1:2]'
+    site_id: 2019419709
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVGetField'
+      file: 'tif_dir.c'
+      line: 1116
+      inst_no: 1414
+      opcode: 'icmp'
+      column: 53
+    component: 'producer_use'
+    priority: 41
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+  - id: 'sminsamplevalue_get_use'
+    atom: 1
+    role: 'use'
+    expr: '_TIFFVGetField reaches SMINSAMPLEVALUE state read path'
+    site_id: 1815920006
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVGetField'
+      file: 'tif_dir.c'
+      line: 995
+      inst_no: 450
+      opcode: 'icmp'
+      column: 23
+    component: 'producer_use'
+    priority: 42
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.7
+    observe_window: 'any'
+  - id: 'smaxsamplevalue_get_use'
+    atom: 1
+    role: 'use'
+    expr: '_TIFFVGetField reaches SMAXSAMPLEVALUE state read path'
+    site_id: 380098173
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVGetField'
+      file: 'tif_dir.c'
+      line: 1009
+      inst_no: 543
+      opcode: 'icmp'
+      column: 23
+    component: 'producer_use'
+    priority: 43
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.7
+    observe_window: 'any'
+  - id: 'samplesperpixel_new_color_count_use'
+    atom: 1
+    role: 'use'
+    expr: '_TIFFVSetField computes v - td_extrasamples inside the TIF012 SamplesPerPixel trigger condition'
+    site_id: 344097096
+    observe_at:
+      kind: 'binary'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 492
+      opcode: 'sub'
+      column: 13
+    component: 'producer_use'
+    priority: 44
+    direction: 'higher'
+    value_mode: 'c'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+  - id: 'samplesperpixel_old_color_count_use'
+    atom: 1
+    role: 'use'
+    expr: '_TIFFVSetField computes td_samplesperpixel - td_extrasamples inside the TIF012 stale-state guard'
+    site_id: 2950298346
+    observe_at:
+      kind: 'binary'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 502
+      opcode: 'sub'
+      column: 13
+    component: 'producer_use'
+    priority: 45
+    direction: 'higher'
+    value_mode: 'c'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+  - id: 'tif012_ifd_tag_order_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'classic TIFF header first-IFD pointer selects the directory whose tag order controls TransferFunction-before-SamplesPerPixel state'
+    component: 'input_influence'
+    priority: 50
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+    range_start: 4
+    range_len: 4
+    mutation_hint: 'xor_byte'
+    mutation_value: 1
+    mutation_hook: 'scripts/formtrig_hooks/tiff_tif012_ifd_tag_hook.py'

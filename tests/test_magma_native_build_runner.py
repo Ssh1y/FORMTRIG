@@ -102,8 +102,11 @@ chmod +x "$OUT/afl/$PROGRAM"
             self.assertTrue(script.exists())
             script_text = script.read_text(encoding="utf-8")
             self.assertIn("FORMTRIG_MAGMA_CXX_STDLIB", script_text)
+            self.assertIn("FORMTRIG_SOURCE_DIR", script_text)
             self.assertIn("--afl-cc", script_text)
             self.assertIn("FORMTRIG_LOCAL_CONFIG_AUX", script_text)
+            instrument_step = next(row for row in plan["steps"] if row["name"] == "instrument_target")
+            self.assertTrue(instrument_step["env"]["FORMTRIG_SOURCE_DIR"].endswith("/formtrig"))
             self.assertFalse((out_dir / "out" / "afl" / "pdfimages").exists())
             self.assertIn("Magma FORMTRIG Native Build Plan", (out_dir / "build_plan.md").read_text(encoding="utf-8"))
 

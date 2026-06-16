@@ -4,7 +4,7 @@ This is a validation worklist, not a performance-result table. A runnable
 task executes a short BindingSpec candidate sweep and then summarizes it
 into the existing `binding_validation` schema consumed by target planners.
 
-Generated: `2026-06-16T18:37:31+00:00`
+Generated: `2026-06-16T18:54:49+00:00`
 Tasks: `6`; runnable now: `1`; blocked: `5`
 
 | target | category | runnable | blocker summary | validation record |

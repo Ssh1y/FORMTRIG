@@ -1,6 +1,6 @@
 {
   "benefit_readout": {
-    "execs_done": 215,
+    "execs_done": 50179,
     "has_non_trigger_progress": true,
     "non_trigger_progress_events": 1,
     "pretrigger_lift_guidance_ready": true,
@@ -11,7 +11,7 @@
   },
   "binding_signal": {
     "accepted_non_trigger_progress_events": 1,
-    "candidate_events": 82,
+    "candidate_events": 4089,
     "diagnosis": "role_signal_progress_observed",
     "semantic_candidate_variable_roles": 2,
     "status": "pass"
@@ -34,14 +34,14 @@
     "atom_signals": null,
     "components": null,
     "diagnosis": "queued_tc_rooted_progress",
-    "reached": 216,
+    "reached": 14715,
     "role_signals": null,
     "seed_count": null,
     "spec_lifted": null,
     "status": "pass",
     "triggered": 0
   },
-  "generated_at_utc": "2026-06-16T19:03:52+00:00",
+  "generated_at_utc": "2026-06-16T19:05:48+00:00",
   "native_site_map": {
     "native_runtime_evidence": true,
     "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/formtrig_native/formtrig_sites.tsv"
@@ -56,8 +56,8 @@
   "schema": "formtrig_binding_candidate_validation_v1",
   "source": {
     "candidate_index": 1,
-    "candidate_out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_binding_validation_smoke_2s/candidates/001_TIF012.native_draft_magma_canary.yml",
-    "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_binding_validation_smoke_2s/summary.jsonl"
+    "candidate_out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_binding_validation_60s/candidates/001_TIF012.native_draft_magma_canary.yml",
+    "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_binding_validation_60s/summary.jsonl"
   },
   "status": "native_binding_validated",
   "target_id": "TIF012"

@@ -4,8 +4,8 @@ This report only records discovered validation inputs. It is not endpoint
 performance evidence. A target is runnable only when formal RNT seeds, a
 source-matching `site_map.tsv`, and an executable target command are all present.
 
-Generated: `2026-06-16T18:37:31+00:00`
-Scanned files: `40144`; site maps: `1`; runnable candidates: `1`
+Generated: `2026-06-16T18:54:49+00:00`
+Scanned files: `40169`; site maps: `1`; runnable candidates: `1`
 Assets JSON: `artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json`
 
 | target | program | runnable | best site map | executables | blockers |

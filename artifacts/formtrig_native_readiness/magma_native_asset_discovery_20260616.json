@@ -1,11 +1,11 @@
 {
-  "generated_at_utc": "2026-06-16T18:37:31+00:00",
+  "generated_at_utc": "2026-06-16T18:54:49+00:00",
   "inputs": {
     "drafts": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
     "max_files": 200000,
     "rnt_status": "artifacts/rnt_corpus_status.json",
     "search_roots": [
-      "artifacts/formtrig_native_readiness/magma_native_builds/TIF012",
+      "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012",
       "artifacts/formtrig_native_readiness",
       "experiments/magma_workspace"
     ]
@@ -18,7 +18,7 @@
     "tiff_read_rgba_fuzzer"
   ],
   "runnable_candidate_count": 1,
-  "scanned_file_count": 40144,
+  "scanned_file_count": 40169,
   "schema": "formtrig_magma_native_asset_discovery_v1",
   "site_map_count": 1,
   "targets": [
@@ -68,11 +68,11 @@
     },
     {
       "best_site_map": {
-        "matched_selectors": 16,
+        "matched_selectors": 24,
         "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/formtrig_native/formtrig_sites.tsv",
         "row_count": 26373,
-        "score": 16999,
-        "selector_count": 16
+        "score": 24999,
+        "selector_count": 24
       },
       "blockers": [],
       "executable_candidates": [
@@ -82,7 +82,7 @@
       "rnt_seed_files": 20,
       "rnt_status": "formal_ready",
       "runnable_candidate": true,
-      "selector_count": 16,
+      "selector_count": 24,
       "target_id": "TIF012"
     },
     {

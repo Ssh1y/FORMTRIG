@@ -192,6 +192,31 @@ native_work="$OUT/formtrig_native"
 mkdir -p "$OUT/afl" "$native_work"
 rm -f "$native_work/formtrig_sites.tsv"
 
+if [ -n "${{FORMTRIG_SOURCE_DIR:-}}" ]; then
+  if [ ! -d "$FORMTRIG_SOURCE_DIR/include/formtrig" ] || \
+     [ ! -f "$FORMTRIG_SOURCE_DIR/runtime/formtrig_runtime.c" ] || \
+     [ ! -f "$FORMTRIG_SOURCE_DIR/llvm/formtrig_pass.cpp" ]; then
+    echo "FORMTRIG_SOURCE_DIR does not look like a FORMTRIG runtime tree: $FORMTRIG_SOURCE_DIR" >&2
+    exit 2
+  fi
+  source_formtrig="$(cd "$FORMTRIG_SOURCE_DIR" && pwd -P)"
+  target_formtrig="$FUZZER/formtrig"
+  mkdir -p "$target_formtrig"
+  for rel in include runtime llvm binding_specs; do
+    if [ -e "$source_formtrig/$rel" ]; then
+      rm -rf "$target_formtrig/$rel"
+      cp -a "$source_formtrig/$rel" "$target_formtrig/$rel"
+    fi
+  done
+  if [ -f "$source_formtrig/logger_schema.md" ]; then
+    cp -a "$source_formtrig/logger_schema.md" "$target_formtrig/logger_schema.md"
+  fi
+  if [ ! -f "$target_formtrig/tools/prepare_native_build.py" ]; then
+    echo "FORMTRIG fuzzer overlay is missing tools/prepare_native_build.py: $target_formtrig" >&2
+    exit 2
+  fi
+fi
+
 real_wget="$(command -v wget || true)"
 local_config_aux=""
 for candidate in /usr/share/misc /usr/share/automake-1.16 /usr/share/autoconf/build-aux /usr/share/libtool/build-aux; do
@@ -415,6 +440,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
         "LDFLAGS": " ".join(item for item in ["-g", f"-L{out}", args.extra_ldflags] if item),
         "FORMTRIG_INSTRUMENT_LEVEL": args.instrument_level,
         "FORMTRIG_MAGMA_CXX_STDLIB": args.cxx_stdlib,
+        "FORMTRIG_SOURCE_DIR": str((Path.cwd() / "formtrig").resolve()),
     }
     optional_env = {
         "FORMTRIG_AFL_CC": args.afl_cc,
