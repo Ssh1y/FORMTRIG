@@ -6,11 +6,16 @@
 
 ## Benefit Readout
 
-- summary: current package supports a matched-budget terminal-success benefit, subject to replication
+- summary: current package supports a matched-budget primary benefit, subject to replication
 
-Allowed benefit statements:
-- binary or sparse trigger feedback was lifted into accepted non-trigger search progress
+Primary benefit statements:
 - FORMTRIG reaches terminal success where matched baselines do not trigger in this budget
+
+Endpoint observations:
+- FORMTRIG terminal oracle success is observed
+
+Mechanism benefits:
+- binary or sparse trigger feedback was lifted into accepted non-trigger search progress
 
 Blocked or not-yet-supported statements:
 - FORMTRIG first `_T`/TTE is not recorded for this run

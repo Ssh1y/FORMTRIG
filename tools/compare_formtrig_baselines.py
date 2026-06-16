@@ -385,12 +385,14 @@ def benefit_readout(
         if (value := numeric(group.get("median_trigger_time_s"))) is not None
     ]
 
-    observed_benefits: list[str] = []
+    primary_benefits: list[str] = []
+    endpoint_observations: list[str] = []
+    mechanism_benefits: list[str] = []
     blocked_claims: list[str] = []
     design_evidence: list[str] = []
 
     if strict_formtrig:
-        observed_benefits.append(
+        mechanism_benefits.append(
             "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
         )
         design_evidence.append("strict_pretrigger_guidance")
@@ -398,12 +400,13 @@ def benefit_readout(
         blocked_claims.append("no strict pre-trigger guidance benefit is established")
 
     if terminal_formtrig:
+        endpoint_observations.append("FORMTRIG terminal oracle success is observed")
         design_evidence.append("formtrig_terminal_oracle_success")
     else:
         blocked_claims.append("no FORMTRIG terminal success is established")
 
     if formtrig_ttes:
-        observed_benefits.append(
+        endpoint_observations.append(
             f"FORMTRIG first `_T` upper bound is recorded at {min(formtrig_ttes):g}s"
         )
     else:
@@ -414,7 +417,7 @@ def benefit_readout(
     elif successful_baseline_groups:
         if formtrig_ttes and baseline_ttes:
             if min(formtrig_ttes) < min(baseline_ttes):
-                observed_benefits.append(
+                primary_benefits.append(
                     "FORMTRIG has a lower observed first-`_T` upper bound than matched successful baselines"
                 )
             else:
@@ -426,7 +429,7 @@ def benefit_readout(
                 "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage"
             )
     elif terminal_formtrig:
-        observed_benefits.append(
+        primary_benefits.append(
             "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
         )
 
@@ -435,19 +438,26 @@ def benefit_readout(
     if "low_replication" in analysis.get("reasons", []):
         blocked_claims.append("replication is too low for a final performance claim")
 
-    if not observed_benefits:
+    observed_benefits = primary_benefits + endpoint_observations + mechanism_benefits
+
+    if primary_benefits:
+        summary = "current package supports a matched-budget primary benefit, subject to replication"
+    elif not observed_benefits:
         summary = "no benefit claim is supported by the current package"
     elif any("no later than FORMTRIG" in claim or "also trigger" in claim for claim in blocked_claims):
         summary = "mechanism benefit is present, but performance advantage is not established on this target"
-    elif terminal_formtrig and not successful_baseline_groups and baseline_groups:
-        summary = "current package supports a matched-budget terminal-success benefit, subject to replication"
+    elif endpoint_observations and not baseline_groups:
+        summary = "FORMTRIG endpoint success is observed, but matched-budget benefit is not comparable yet"
     else:
         summary = "current package supports mechanism/search-guidance benefit, subject to remaining blockers"
 
     return {
         "blocked_claims": blocked_claims,
         "design_evidence": design_evidence,
+        "endpoint_observations": endpoint_observations,
+        "mechanism_benefits": mechanism_benefits,
         "observed_benefits": observed_benefits,
+        "primary_benefits": primary_benefits,
         "summary": summary,
     }
 
@@ -494,11 +504,21 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         "",
         f"- summary: {payload['benefit_readout']['summary']}",
         "",
-        "Allowed benefit statements:",
+        "Primary benefit statements:",
     ]
-    for benefit in payload["benefit_readout"]["observed_benefits"]:
+    for benefit in payload["benefit_readout"].get("primary_benefits", []):
         lines.append(f"- {benefit}")
-    if not payload["benefit_readout"]["observed_benefits"]:
+    if not payload["benefit_readout"].get("primary_benefits", []):
+        lines.append("- none")
+    lines.extend(["", "Endpoint observations:"])
+    for observation in payload["benefit_readout"].get("endpoint_observations", []):
+        lines.append(f"- {observation}")
+    if not payload["benefit_readout"].get("endpoint_observations", []):
+        lines.append("- none")
+    lines.extend(["", "Mechanism benefits:"])
+    for benefit in payload["benefit_readout"].get("mechanism_benefits", []):
+        lines.append(f"- {benefit}")
+    if not payload["benefit_readout"].get("mechanism_benefits", []):
         lines.append("- none")
     lines.extend(["", "Blocked or not-yet-supported statements:"])
     for claim in payload["benefit_readout"]["blocked_claims"]:

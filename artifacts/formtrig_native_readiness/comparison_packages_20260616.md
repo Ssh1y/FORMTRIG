@@ -15,7 +15,11 @@ tools/compare_formtrig_baselines.py
 The tool is benefit-first. Each generated Markdown/JSON package starts with a
 `Benefit Readout` that states:
 
-- observed benefit statements allowed by the current evidence;
+- primary benefit statements allowed by matched-budget evidence;
+- endpoint observations such as FORMTRIG terminal success or first `_T` upper
+  bounds;
+- mechanism benefits such as converting binary/sparse trigger feedback into
+  accepted non-trigger search progress;
 - benefit statements that are blocked or not yet supported;
 - design evidence that can be used only for attribution after the benefit is
   stated.
@@ -118,7 +122,7 @@ guidance and terminal oracle evidence. The package is still incomplete because
 the required matched-budget `aflplusplus_cmplog` and `redqueen_operand` runs
 are missing and there is only one repetition.
 
-Benefit readout: this package allows a limited benefit statement against the
+Benefit readout: this package allows a limited primary benefit statement against the
 vanilla reach-only control: FORMTRIG reaches terminal success where vanilla does
 not trigger in the matched 7200-second budget. It blocks final performance
 claims because first FORMTRIG `_T`/TTE was not recorded, CmpLog/Redqueen are
@@ -160,9 +164,10 @@ repetition, but it also records `matched_baseline_also_triggers`. PNG006 should
 therefore be treated as a control/native-readiness target rather than a main
 SOTA-gap target.
 
-Benefit readout: this package allows only the mechanism/search-guidance benefit
-statement: binary or sparse trigger feedback was lifted into accepted
-non-trigger search progress. It blocks the performance-advantage statement
+Benefit readout: this package allows no primary performance benefit statement
+because a matched CmpLog baseline also triggers. It still allows the mechanism
+benefit statement that binary or sparse trigger feedback was lifted into
+accepted non-trigger search progress. It blocks the performance-advantage statement
 because a matched CmpLog baseline also triggers and FORMTRIG first `_T`/TTE was
 not recorded for the saved run.
 

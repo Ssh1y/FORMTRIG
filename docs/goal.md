@@ -1,3 +1,26 @@
+> **FORMTRIG 的最终说服力先来自收益，再来自设计：先证明它在真实实验里减少 R-to-T 成本、产生 matched-budget terminal/TTE 优势或稳定的可实验搜索收益，再用 `D_F`、BindingSpec、dominance frontier 和 typed mutation 解释这个收益为什么来自 FORMTRIG。**
+
+换句话说，中间产物不是论文里的主指标，也不是和 CmpLog、Redqueen、AFL++ 直接比较的分数。
+它们的价值必须体现在收益链上：
+
+```text
+Benefit first
+  1. same-budget terminal success / first _T / TTE / PRET
+  2. repeated-run success rate and cost, including exec/sec
+  3. binary TC converted into accepted, saved, replay-stable non-trigger search progress
+  4. triage savings: easy/control targets are filtered before long budget is spent
+
+Design second
+  5. D_F shows the pre-trigger progress that binary D_T cannot rank
+  6. BindingSpec proves the signal is TC-rooted rather than target-specific leakage
+  7. dominance frontier proves saved seeds are non-dominated progress, not noise
+  8. typed mutation proves the signal is actionable at input-field or event level
+```
+
+正式结果表必须先回答“FORMTRIG 带来了什么收益”。只有当收益成立后，才展开解释“这个收益如何由 lift 机制产生”。如果同预算 faithful baseline 也能很快触发，目标应被降为 control/native-readiness 或 negative evidence，不能靠中间信号强行包装成性能优势。
+
+---
+
 > **不是把 TC 的布尔结果或 native distance 直接拿来做 guidance，而是把 TC 提升成一组更细粒度、更稳定、可排序、可归因、可变异的 trigger-progress features。**
 
 也就是说，FORMTRIG 的 lift 不是单纯“加一些 mutator”，而是四层同时发生：

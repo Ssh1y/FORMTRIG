@@ -136,8 +136,15 @@
     "design_evidence": [
       "formtrig_terminal_oracle_success"
     ],
-    "observed_benefits": [],
-    "summary": "no benefit claim is supported by the current package"
+    "endpoint_observations": [
+      "FORMTRIG terminal oracle success is observed"
+    ],
+    "mechanism_benefits": [],
+    "observed_benefits": [
+      "FORMTRIG terminal oracle success is observed"
+    ],
+    "primary_benefits": [],
+    "summary": "mechanism benefit is present, but performance advantage is not established on this target"
   },
   "comparison_id": "LIBCOAP_35862_asan_terminal_30m_vs_asan_baselines_20260616",
   "formtrig_runs": [

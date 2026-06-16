@@ -6,9 +6,15 @@
 
 ## Benefit Readout
 
-- summary: current package supports mechanism/search-guidance benefit, subject to remaining blockers
+- summary: FORMTRIG endpoint success is observed, but matched-budget benefit is not comparable yet
 
-Allowed benefit statements:
+Primary benefit statements:
+- none
+
+Endpoint observations:
+- FORMTRIG terminal oracle success is observed
+
+Mechanism benefits:
 - binary or sparse trigger feedback was lifted into accepted non-trigger search progress
 
 Blocked or not-yet-supported statements:

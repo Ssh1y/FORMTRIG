@@ -6,9 +6,15 @@
 
 ## Benefit Readout
 
-- summary: no benefit claim is supported by the current package
+- summary: mechanism benefit is present, but performance advantage is not established on this target
 
-Allowed benefit statements:
+Primary benefit statements:
+- none
+
+Endpoint observations:
+- FORMTRIG terminal oracle success is observed
+
+Mechanism benefits:
 - none
 
 Blocked or not-yet-supported statements:

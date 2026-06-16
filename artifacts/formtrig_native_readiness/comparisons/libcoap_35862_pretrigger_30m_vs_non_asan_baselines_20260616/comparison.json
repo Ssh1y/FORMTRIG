@@ -134,9 +134,14 @@
     "design_evidence": [
       "strict_pretrigger_guidance"
     ],
+    "endpoint_observations": [],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
     "observed_benefits": [
       "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
     ],
+    "primary_benefits": [],
     "summary": "current package supports mechanism/search-guidance benefit, subject to remaining blockers"
   },
   "comparison_id": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",

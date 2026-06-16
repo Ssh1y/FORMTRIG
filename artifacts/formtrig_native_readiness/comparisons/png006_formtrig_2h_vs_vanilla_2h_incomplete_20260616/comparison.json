@@ -67,11 +67,21 @@
       "strict_pretrigger_guidance",
       "formtrig_terminal_oracle_success"
     ],
+    "endpoint_observations": [
+      "FORMTRIG terminal oracle success is observed"
+    ],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
     "observed_benefits": [
-      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+      "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+      "FORMTRIG terminal oracle success is observed",
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "primary_benefits": [
       "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
     ],
-    "summary": "current package supports a matched-budget terminal-success benefit, subject to replication"
+    "summary": "current package supports a matched-budget primary benefit, subject to replication"
   },
   "comparison_id": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
   "formtrig_runs": [
