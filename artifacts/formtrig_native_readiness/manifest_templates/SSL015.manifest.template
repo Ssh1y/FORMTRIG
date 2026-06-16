@@ -1,0 +1,14 @@
+# Draft manifest template generated from Magma inventory.
+# Replace TODO_* fields after building a FORMTRIG-native Magma target and site map.
+target_id: SSL015
+category: binary-null
+seed_dir: experiments/magma_workspace/magma/targets/openssl/corpus/asn1
+out_dir: ../../formtrig_native_readiness/raw/ssl015_formtrig_600s
+binding_spec: ../../binding_specs/SSL015.native_draft_magma_canary.yml
+site_map: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv
+duration: 600
+seed_preflight: require
+seed_preflight_max: 32
+seed_preflight_timeout: 5
+target_cwd: TODO_FORMTRIG_NATIVE_TARGET_CWD
+target_cmd: TODO_FORMTRIG_MAGMA_OPENSSL_ASN1_BINARY @@

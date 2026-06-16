@@ -1,0 +1,100 @@
+{
+  "drafts": [
+    {
+      "binding_spec": "artifacts/binding_specs/PDF003.native_draft_magma_canary.yml",
+      "category": "binary-state-null",
+      "location_count": 2,
+      "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/PDF003.manifest.template",
+      "next_step": "compile against a FORMTRIG-native site_map.tsv, then run seed readiness and binding-signal diagnosis before endpoint screening",
+      "program": "pdfimages",
+      "project": "poppler",
+      "secondary_category": "compound-sequence-lifecycle",
+      "source_kind": "cmp",
+      "status": "draft_needs_native_site_map_validation",
+      "target_id": "PDF003"
+    },
+    {
+      "binding_spec": "artifacts/binding_specs/SSL011.native_draft_magma_canary.yml",
+      "category": "binary-state-null",
+      "location_count": 1,
+      "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/SSL011.manifest.template",
+      "next_step": "compile against a FORMTRIG-native site_map.tsv, then run seed readiness and binding-signal diagnosis before endpoint screening",
+      "program": "asn1",
+      "project": "openssl",
+      "secondary_category": "compound-sequence-lifecycle",
+      "source_kind": "cmp",
+      "status": "draft_needs_native_site_map_validation",
+      "target_id": "SSL011"
+    },
+    {
+      "binding_spec": "artifacts/binding_specs/SSL015.native_draft_magma_canary.yml",
+      "category": "binary-state-null",
+      "location_count": 2,
+      "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/SSL015.manifest.template",
+      "next_step": "compile against a FORMTRIG-native site_map.tsv, then run seed readiness and binding-signal diagnosis before endpoint screening",
+      "program": "asn1",
+      "project": "openssl",
+      "secondary_category": "compound-sequence-lifecycle",
+      "source_kind": "cmp",
+      "status": "draft_needs_native_site_map_validation",
+      "target_id": "SSL015"
+    },
+    {
+      "binding_spec": "artifacts/binding_specs/TIF012.native_draft_magma_canary.yml",
+      "category": "binary-state-null",
+      "location_count": 2,
+      "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/TIF012.manifest.template",
+      "next_step": "compile against a FORMTRIG-native site_map.tsv, then run seed readiness and binding-signal diagnosis before endpoint screening",
+      "program": "tiff_read_rgba_fuzzer",
+      "project": "libtiff",
+      "secondary_category": "compound-sequence-lifecycle",
+      "source_kind": "cmp",
+      "status": "draft_needs_native_site_map_validation",
+      "target_id": "TIF012"
+    },
+    {
+      "binding_spec": "artifacts/binding_specs/PDF016.native_draft_magma_canary.yml",
+      "category": "compound-sequence-lifecycle",
+      "location_count": 1,
+      "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/PDF016.manifest.template",
+      "next_step": "compile against a FORMTRIG-native site_map.tsv, then run seed readiness and binding-signal diagnosis before endpoint screening",
+      "program": "pdf_fuzzer",
+      "project": "poppler",
+      "secondary_category": "",
+      "source_kind": "cmp",
+      "status": "draft_needs_native_site_map_validation",
+      "target_id": "PDF016"
+    },
+    {
+      "binding_spec": "artifacts/binding_specs/PHP009.native_draft_magma_canary.yml",
+      "category": "compound-sequence-lifecycle",
+      "location_count": 1,
+      "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/PHP009.manifest.template",
+      "next_step": "compile against a FORMTRIG-native site_map.tsv, then run seed readiness and binding-signal diagnosis before endpoint screening",
+      "program": "exif",
+      "project": "php",
+      "secondary_category": "",
+      "source_kind": "cmp",
+      "status": "draft_needs_native_site_map_validation",
+      "target_id": "PHP009"
+    }
+  ],
+  "generated_at_utc": "2026-06-16T17:05:10+00:00",
+  "inputs": {
+    "inventory": "artifacts/magma_canary_inventory.json",
+    "max_locations": 2,
+    "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
+    "selection_source": "explicit_target_ids",
+    "source_kind": "cmp",
+    "target_ids": [
+      "PDF003",
+      "SSL011",
+      "SSL015",
+      "TIF012",
+      "PDF016",
+      "PHP009"
+    ]
+  },
+  "schema": "formtrig_magma_binding_drafts_v1",
+  "skipped": []
+}

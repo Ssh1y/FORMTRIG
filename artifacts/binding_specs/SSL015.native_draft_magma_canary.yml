@@ -1,0 +1,49 @@
+tc_id: 'SSL015'
+target:
+  project: 'openssl'
+  binary: 'asn1'
+  command: '@@'
+tc:
+  category: 'binary-state-null'
+  expression: 'MAGMA_OR(p7 == NULL, p7->d.ptr) ; MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'MAGMA_OR(p7 == NULL, p7->d.ptr) ; MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)'
+    kind: 'binary-state-null'
+    root: 'p7'
+bindings:
+  - id: 'magma_canary_root_01'
+    atom: 1
+    role: 'root_observe'
+    expr: 'Magma canary source selector for MAGMA_OR(p7 == NULL, p7->d.ptr) ; MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)'
+    observe_at:
+      kind: 'cmp'
+      function: 'PKCS7_dataInit'
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 228
+      column: 8
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02'
+    atom: 1
+    role: 'root_observe'
+    expr: 'Magma canary source selector for MAGMA_OR(p7 == NULL, p7->d.ptr) ; MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)'
+    observe_at:
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 392
+      column: 8
+    component: 'root_state'
+    priority: 11
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'

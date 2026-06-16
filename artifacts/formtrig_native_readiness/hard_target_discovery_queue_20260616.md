@@ -15,13 +15,13 @@ Demoted controls retained outside the main queue: `4`.
 | rank | target | source | project | category | score | lane | comparison packages | next action |
 | ---: | --- | --- | --- | --- | ---: | --- | ---: | --- |
 | 1 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 115 | `real_cve_replacement` | 5 | run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets |
-| 2 | GPAC_3403 | real_cve | gpac | compound-sequence-lifecycle | 92 | `binding_spec_first` | 0 | validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec |
-| 3 | PDF003 | magma | poppler | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
-| 4 | SSL011 | magma | openssl | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
-| 5 | SSL015 | magma | openssl | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
-| 6 | TIF012 | magma | libtiff | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
-| 7 | PDF016 | magma | poppler | compound-sequence-lifecycle | 75 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
-| 8 | PHP009 | magma | php | compound-sequence-lifecycle | 75 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
+| 2 | PDF003 | magma | poppler | binary-state-null+compound-sequence-lifecycle | 90 | `binding_validation_first` | 0 | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
+| 3 | SSL011 | magma | openssl | binary-state-null+compound-sequence-lifecycle | 90 | `binding_validation_first` | 0 | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
+| 4 | SSL015 | magma | openssl | binary-state-null+compound-sequence-lifecycle | 90 | `binding_validation_first` | 0 | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
+| 5 | TIF012 | magma | libtiff | binary-state-null+compound-sequence-lifecycle | 90 | `binding_validation_first` | 0 | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
+| 6 | PDF016 | magma | poppler | compound-sequence-lifecycle | 81 | `binding_validation_first` | 0 | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
+| 7 | PHP009 | magma | php | compound-sequence-lifecycle | 81 | `binding_validation_first` | 0 | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
+| 8 | GPAC_3403 | real_cve | gpac | compound-sequence-lifecycle | 92 | `binding_spec_first` | 0 | validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec |
 | 9 | SQL013 | magma | sqlite3 | compound-sequence-lifecycle | 75 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
 | 10 | SSL009 | magma | openssl | compound-sequence-lifecycle | 75 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
 | 11 | PHP003 | magma | php | compound-sequence-lifecycle+numeric-margin | 74 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
@@ -54,54 +54,54 @@ Demoted controls retained outside the main queue: `4`.
 - Blockers: none recorded
 - Short triage: positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets
 
-### 2. GPAC_3403
+### 2. PDF003
+
+- Benefit hypothesis: binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose
+- Comparison packages: 0
+- Blockers: BindingSpec candidate is not native-site-map validated; no comparison package exists yet
+- Short triage: compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen
+
+### 3. SSL011
+
+- Benefit hypothesis: binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose
+- Comparison packages: 0
+- Blockers: BindingSpec candidate is not native-site-map validated; no comparison package exists yet
+- Short triage: compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen
+
+### 4. SSL015
+
+- Benefit hypothesis: binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose
+- Comparison packages: 0
+- Blockers: BindingSpec candidate is not native-site-map validated; no comparison package exists yet
+- Short triage: compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen
+
+### 5. TIF012
+
+- Benefit hypothesis: binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose
+- Comparison packages: 0
+- Blockers: BindingSpec candidate is not native-site-map validated; no comparison package exists yet
+- Short triage: compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen
+
+### 6. PDF016
+
+- Benefit hypothesis: terminal success depends on event order, object identity, or parser state rather than one scalar branch distance
+- Comparison packages: 0
+- Blockers: BindingSpec candidate is not native-site-map validated; no comparison package exists yet
+- Short triage: compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen
+
+### 7. PHP009
+
+- Benefit hypothesis: terminal success depends on event order, object identity, or parser state rather than one scalar branch distance
+- Comparison packages: 0
+- Blockers: BindingSpec candidate is not native-site-map validated; no comparison package exists yet
+- Short triage: compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen
+
+### 8. GPAC_3403
 
 - Benefit hypothesis: terminal success depends on event order, object identity, or parser state rather than one scalar branch distance
 - Comparison packages: 0
 - Blockers: no BindingSpec candidate exists yet
 - Short triage: validate vulnerable build and PoC replay, write harness admissibility note, then create BindingSpec before fuzzing budget is spent
-
-### 3. PDF003
-
-- Benefit hypothesis: binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose
-- Comparison packages: 0
-- Blockers: no BindingSpec candidate exists yet; no comparison package exists yet
-- Short triage: draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs N`
-
-### 4. SSL011
-
-- Benefit hypothesis: binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose
-- Comparison packages: 0
-- Blockers: no BindingSpec candidate exists yet; no comparison package exists yet
-- Short triage: draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id SSL011 --durations 600 --jobs N`
-
-### 5. SSL015
-
-- Benefit hypothesis: binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose
-- Comparison packages: 0
-- Blockers: no BindingSpec candidate exists yet; no comparison package exists yet
-- Short triage: draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id SSL015 --durations 600 --jobs N`
-
-### 6. TIF012
-
-- Benefit hypothesis: binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose
-- Comparison packages: 0
-- Blockers: no BindingSpec candidate exists yet; no comparison package exists yet
-- Short triage: draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id TIF012 --durations 600 --jobs N`
-
-### 7. PDF016
-
-- Benefit hypothesis: terminal success depends on event order, object identity, or parser state rather than one scalar branch distance
-- Comparison packages: 0
-- Blockers: no BindingSpec candidate exists yet; no comparison package exists yet
-- Short triage: draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs N`
-
-### 8. PHP009
-
-- Benefit hypothesis: terminal success depends on event order, object identity, or parser state rather than one scalar branch distance
-- Comparison packages: 0
-- Blockers: no BindingSpec candidate exists yet; no comparison package exists yet
-- Short triage: draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs N`
 
 ## Controls / Negative Evidence
 

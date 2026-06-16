@@ -1,0 +1,32 @@
+tc_id: 'PDF016'
+target:
+  project: 'poppler'
+  binary: 'pdf_fuzzer'
+  command: '@@'
+tc:
+  category: 'compound-sequence-lifecycle'
+  expression: 'MAGMA_OR(num <=0, gen < 0)'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'MAGMA_OR(num <=0, gen < 0)'
+    kind: 'compound-sequence-lifecycle'
+    root: 'num'
+bindings:
+  - id: 'magma_canary_root_01'
+    atom: 1
+    role: 'root_observe'
+    expr: 'Magma canary source selector for MAGMA_OR(num <=0, gen < 0)'
+    observe_at:
+      kind: 'cmp'
+      function: 'Parser::getObj'
+      file: 'poppler/Parser.cc'
+      line: 163
+      column: 8
+    component: 'lifecycle_prefix'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'

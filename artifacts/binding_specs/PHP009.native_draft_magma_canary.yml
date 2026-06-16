@@ -1,0 +1,32 @@
+tc_id: 'PHP009'
+target:
+  project: 'php'
+  binary: 'exif'
+  command: '@@'
+tc:
+  category: 'compound-sequence-lifecycle'
+  expression: 'MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)'
+    kind: 'compound-sequence-lifecycle'
+    root: 'maker_note->offset'
+bindings:
+  - id: 'magma_canary_root_01'
+    atom: 1
+    role: 'root_observe'
+    expr: 'Magma canary source selector for MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)'
+    observe_at:
+      kind: 'cmp'
+      function: 'exif_process_IFD_in_MAKERNOTE'
+      file: 'ext/exif/exif.c'
+      line: 3162
+      column: 8
+    component: 'lifecycle_prefix'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'

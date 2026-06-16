@@ -2,7 +2,7 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-16T16:39:08+00:00`
+Generated: `2026-06-16T16:59:05+00:00`
 Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `4`; low-priority skipped: `93`.
 
 ## Budget Order
@@ -16,13 +16,13 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 | priority | rank | target | source | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- |
 | P0 | 1 | LIBARCHIVE_2936 | real_cve | extend_matched_longrun | yes | Confirm that the current first-_T speedup and lower execution cost persist in 3 matched 7200s repetitions. |
-| P0 | 2 | GPAC_3403 | real_cve | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
-| P1 | 3 | PDF003 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
-| P1 | 4 | SSL011 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
-| P1 | 5 | SSL015 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
-| P1 | 6 | TIF012 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
-| P1 | 7 | PDF016 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
-| P1 | 8 | PHP009 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
+| P1 | 2 | PDF003 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
+| P1 | 3 | SSL011 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
+| P1 | 4 | SSL015 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
+| P1 | 5 | TIF012 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
+| P1 | 6 | PDF016 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
+| P1 | 7 | PHP009 | magma | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
+| P1 | 8 | GPAC_3403 | real_cve | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P2 | 9 | SQL013 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P2 | 10 | SSL009 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P2 | 11 | PHP003 | magma | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -37,7 +37,121 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 
 ## Gated Tasks
 
-### P0 GPAC_3403 - validate_replay_then_draft_binding_spec
+### P1 PDF003 - validate_binding_spec_then_short_screen
+
+- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
+- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
+- Claim boundary: Validation is a gate, not an efficacy result.
+- Blocking issue:
+- BindingSpec candidate is not native-site-map validated
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- native site-map validation
+- lift audit pass
+- binding-signal diagnosis pass
+- seed readiness with reached non-trigger seeds
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
+### P1 SSL011 - validate_binding_spec_then_short_screen
+
+- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
+- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
+- Claim boundary: Validation is a gate, not an efficacy result.
+- Blocking issue:
+- BindingSpec candidate is not native-site-map validated
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- native site-map validation
+- lift audit pass
+- binding-signal diagnosis pass
+- seed readiness with reached non-trigger seeds
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id SSL011 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL011.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
+### P1 SSL015 - validate_binding_spec_then_short_screen
+
+- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
+- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
+- Claim boundary: Validation is a gate, not an efficacy result.
+- Blocking issue:
+- BindingSpec candidate is not native-site-map validated
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- native site-map validation
+- lift audit pass
+- binding-signal diagnosis pass
+- seed readiness with reached non-trigger seeds
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id SSL015 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL015.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
+### P1 TIF012 - validate_binding_spec_then_short_screen
+
+- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
+- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
+- Claim boundary: Validation is a gate, not an efficacy result.
+- Blocking issue:
+- BindingSpec candidate is not native-site-map validated
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- native site-map validation
+- lift audit pass
+- binding-signal diagnosis pass
+- seed readiness with reached non-trigger seeds
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id TIF012 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/TIF012.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
+### P1 PDF016 - validate_binding_spec_then_short_screen
+
+- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
+- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
+- Claim boundary: Validation is a gate, not an efficacy result.
+- Blocking issue:
+- BindingSpec candidate is not native-site-map validated
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- native site-map validation
+- lift audit pass
+- binding-signal diagnosis pass
+- seed readiness with reached non-trigger seeds
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
+### P1 PHP009 - validate_binding_spec_then_short_screen
+
+- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
+- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
+- Claim boundary: Validation is a gate, not an efficacy result.
+- Blocking issue:
+- BindingSpec candidate is not native-site-map validated
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- native site-map validation
+- lift audit pass
+- binding-signal diagnosis pass
+- seed readiness with reached non-trigger seeds
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
+### P1 GPAC_3403 - validate_replay_then_draft_binding_spec
 
 - Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
 - Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
@@ -55,120 +169,6 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 - draft BindingSpec and run binding-signal sweep
 - Evidence paths:
 - artifacts/cve_bench_candidate_audit.json
-
-### P1 PDF003 - draft_binding_spec_then_short_screen
-
-- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
-- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
-- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
-- Blocking issue:
-- no BindingSpec candidate exists yet
-- no comparison package exists yet
-- Mechanism evidence required after benefit:
-- BindingSpec compiles against native site ids
-- D_F_spec_lifted is non-constant before _T
-- saved non-trigger progress is replay-stable
-- typed mutation, if used, is BindingSpec-provenance tagged
-- Post-unblock commands or steps:
-- scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/magma_canary_inventory.json
-
-### P1 SSL011 - draft_binding_spec_then_short_screen
-
-- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
-- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
-- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
-- Blocking issue:
-- no BindingSpec candidate exists yet
-- no comparison package exists yet
-- Mechanism evidence required after benefit:
-- BindingSpec compiles against native site ids
-- D_F_spec_lifted is non-constant before _T
-- saved non-trigger progress is replay-stable
-- typed mutation, if used, is BindingSpec-provenance tagged
-- Post-unblock commands or steps:
-- scripts/run_magma_baselines.sh --target-id SSL011 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL011.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/magma_canary_inventory.json
-
-### P1 SSL015 - draft_binding_spec_then_short_screen
-
-- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
-- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
-- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
-- Blocking issue:
-- no BindingSpec candidate exists yet
-- no comparison package exists yet
-- Mechanism evidence required after benefit:
-- BindingSpec compiles against native site ids
-- D_F_spec_lifted is non-constant before _T
-- saved non-trigger progress is replay-stable
-- typed mutation, if used, is BindingSpec-provenance tagged
-- Post-unblock commands or steps:
-- scripts/run_magma_baselines.sh --target-id SSL015 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL015.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/magma_canary_inventory.json
-
-### P1 TIF012 - draft_binding_spec_then_short_screen
-
-- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
-- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
-- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
-- Blocking issue:
-- no BindingSpec candidate exists yet
-- no comparison package exists yet
-- Mechanism evidence required after benefit:
-- BindingSpec compiles against native site ids
-- D_F_spec_lifted is non-constant before _T
-- saved non-trigger progress is replay-stable
-- typed mutation, if used, is BindingSpec-provenance tagged
-- Post-unblock commands or steps:
-- scripts/run_magma_baselines.sh --target-id TIF012 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/TIF012.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/magma_canary_inventory.json
-
-### P1 PDF016 - draft_binding_spec_then_short_screen
-
-- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
-- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
-- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
-- Blocking issue:
-- no BindingSpec candidate exists yet
-- no comparison package exists yet
-- Mechanism evidence required after benefit:
-- BindingSpec compiles against native site ids
-- D_F_spec_lifted is non-constant before _T
-- saved non-trigger progress is replay-stable
-- typed mutation, if used, is BindingSpec-provenance tagged
-- Post-unblock commands or steps:
-- scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/magma_canary_inventory.json
-
-### P1 PHP009 - draft_binding_spec_then_short_screen
-
-- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
-- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
-- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
-- Blocking issue:
-- no BindingSpec candidate exists yet
-- no comparison package exists yet
-- Mechanism evidence required after benefit:
-- BindingSpec compiles against native site ids
-- D_F_spec_lifted is non-constant before _T
-- saved non-trigger progress is replay-stable
-- typed mutation, if used, is BindingSpec-provenance tagged
-- Post-unblock commands or steps:
-- scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/magma_canary_inventory.json
 
 ### P2 SQL013 - draft_binding_spec_then_short_screen
 

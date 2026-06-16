@@ -1,0 +1,49 @@
+tc_id: 'PDF003'
+target:
+  project: 'poppler'
+  binary: 'pdfimages'
+  command: '@@ /tmp/out'
+tc:
+  category: 'binary-state-null'
+  expression: 'MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))'
+    kind: 'binary-state-null'
+    root: 'MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))'
+bindings:
+  - id: 'magma_canary_root_01'
+    atom: 1
+    role: 'root_observe'
+    expr: 'Magma canary source selector for MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))'
+    observe_at:
+      kind: 'cmp'
+      function: 'HtmlOutputDev::drawPngImage'
+      file: 'utils/HtmlOutputDev.cc'
+      line: 1444
+      column: 8
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02'
+    atom: 1
+    role: 'root_observe'
+    expr: 'Magma canary source selector for MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))'
+    observe_at:
+      kind: 'cmp'
+      function: 'ImageOutputDev::writeImageFile'
+      file: 'utils/ImageOutputDev.cc'
+      line: 406
+      column: 8
+    component: 'root_state'
+    priority: 11
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
