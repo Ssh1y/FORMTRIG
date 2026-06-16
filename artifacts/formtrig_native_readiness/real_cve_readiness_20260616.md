@@ -7,7 +7,7 @@ or terminal validation.
 
 | rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | short-gate packages | next action |
 | ---: | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
-| 1 | LIBARCHIVE_2936 | binary-state-null | `short_run_replicated_speedup` | yes | yes | yes | yes | yes | 5 | extend to longer matched FORMTRIG/AFL++ vanilla/CmpLog/Redqueen-path runs for the b4 path-hierarchy speedup package |
+| 1 | LIBARCHIVE_2936 | binary-state-null | `ten_min_matched_speedup_confirmed` | yes | yes | yes | yes | yes | 5 | run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets |
 | 2 | GPAC_3403 | compound-sequence-lifecycle | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 3 | LIBARCHIVE_2935 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 4 | LIBARCHIVE_2937 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
@@ -27,8 +27,8 @@ or terminal validation.
 - Binding validation status: native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json
 - Short-gate comparison packages: 5
 - Current speedup package: `artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json`
-- Current benefit: 3/3 FORMTRIG first terminal SIGSEGV, median `1.326s / exec 32`, versus fastest successful baseline family median `24.450s / exec 34379`
-- Blockers: short-run evidence only; needs longer matched runs
+- Current benefit: replicated 60s first-_T speedup: FORMTRIG median 1.326s versus fastest baseline median 24.45s; 18.44x wall-clock and 1074.34x execution speedup by median; matched 10m confirmation: FORMTRIG 1.22s / exec 32 versus fastest baseline 20.671s / exec 28677
+- Blockers: none
 - Program: `benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBARCHIVE_2936/manifest.json`
 
@@ -40,6 +40,8 @@ or terminal validation.
 - Terminal validation signal: SUMMARY: AddressSanitizer: double-free (/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box+0x194f48a) (BuildId: da5c3e139317cf0e2b8580968246bc6803e86243) in free
 - Binding validation status: none
 - Short-gate comparison packages: 0
+- Current speedup package: none
+- Current benefit: none
 - Blockers: no executable BindingSpec candidate
 - Program: `benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box`
 - RNT manifest: `artifacts/rnt_corpus/GPAC_3403/manifest.json`
@@ -52,6 +54,8 @@ or terminal validation.
 - Terminal validation signal: SUMMARY: AddressSanitizer: heap-buffer-overflow (/home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay+0x191878) (BuildId: 8c400a70b41c909bb4562a98f2e8133b3820b542) in __asan_memmove
 - Binding validation status: none
 - Short-gate comparison packages: 0
+- Current speedup package: none
+- Current benefit: none
 - Blockers: no executable BindingSpec candidate
 - Program: `benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBARCHIVE_2935/manifest.json`
@@ -64,6 +68,8 @@ or terminal validation.
 - Terminal validation signal: SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_iso9660.c:5634:8
 - Binding validation status: none
 - Short-gate comparison packages: 0
+- Current speedup package: none
+- Current benefit: none
 - Blockers: no executable BindingSpec candidate
 - Program: `benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBARCHIVE_2937/manifest.json`
@@ -76,6 +82,8 @@ or terminal validation.
 - Terminal validation signal: SUMMARY: AddressSanitizer: heap-buffer-overflow /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_endian.h:140:7 in archive_be16enc
 - Binding validation status: none
 - Short-gate comparison packages: 0
+- Current speedup package: none
+- Current benefit: none
 - Blockers: no executable BindingSpec candidate
 - Program: `benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBARCHIVE_2938/manifest.json`
@@ -88,6 +96,8 @@ or terminal validation.
 - Terminal validation signal: SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libarchive-a819-src/libarchive/archive_write_set_format_zip.c:2306:29
 - Binding validation status: none
 - Short-gate comparison packages: 0
+- Current speedup package: none
+- Current benefit: none
 - Blockers: no executable BindingSpec candidate
 - Program: `benchmarks/cve_build/libarchive-a819-asan/libarchive_zip_empty_dir_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBARCHIVE_2925/manifest.json`
@@ -100,6 +110,8 @@ or terminal validation.
 - Terminal validation signal: SUMMARY: AddressSanitizer: heap-buffer-overflow /home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3398-src/src/isomedia/box_code_base.c:10568:12 in sgpd_del_entry
 - Binding validation status: none
 - Short-gate comparison packages: 0
+- Current speedup package: none
+- Current benefit: none
 - Blockers: no formal RNT seed with R=1,T=0; binary native D_T gap is not established; no executable BindingSpec candidate; no TCIR file; no atom file
 - Program: `benchmarks/cve_build/gpac-3398-src/bin/gcc/MP4Box`
 - RNT manifest: `artifacts/rnt_corpus/GPAC_3398/manifest.json`
@@ -112,6 +124,8 @@ or terminal validation.
 - Terminal validation signal: SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cwh/FORMTRIG/benchmarks/cve_build/libxml2-a7511af0-src/xmlregexp.c:740:20
 - Binding validation status: none
 - Short-gate comparison packages: 0
+- Current speedup package: none
+- Current benefit: none
 - Blockers: existing discovery triage demotes this target: demote_harness_artifact; BindingSpec candidate is not native-site-map validated
 - Program: `benchmarks/cve_build/libxml2-a7511af0-asan/libxml2_regexp_strdup_fail_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBXML2_1107/manifest.json`

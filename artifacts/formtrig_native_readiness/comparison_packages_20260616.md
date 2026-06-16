@@ -404,9 +404,13 @@ fastest successful baseline family by median.
 Benefit readout: this is a speedup/attribution package, not a
 baseline-impossibility package. The endpoint conversion is attributed to the b4
 non-constant `D_F_spec_lifted` signal, accepted non-trigger progress, and the
-BindingSpec-selected path-hierarchy typed mutation hook. It remains a 60s
-short-run package and must be followed by longer matched runs before a final
-performance claim.
+BindingSpec-selected path-hierarchy typed mutation hook. A matched 10-minute
+confirmation is now preserved inside this package under
+`evidence/longrun_10m/`: FORMTRIG reaches first terminal SIGSEGV at
+`1.220s / exec 32`, while the fastest successful baseline is AFL++ CmpLog at
+`20.671s / exec 28677`, a `16.94x` wall-clock and `896.16x` execution speedup.
+It still must be followed by 2-hour repetitions or harder targets before a
+final generalized performance claim.
 
 ## Current Acceptance Implication
 
@@ -423,10 +427,12 @@ The comparison packages make the current evidence state explicit:
 - LIBARCHIVE_2936 is now the leading real-CVE speedup/attribution candidate.
   The path-hierarchy hook package converts b4 pre-trigger guidance into
   terminal crashes and shows a replicated matched 60s first-`_T` speedup over
-  AFL++ vanilla/CmpLog/Redqueen-path. Because all three baseline families are
+  AFL++ vanilla/CmpLog/Redqueen-path. A matched 10m confirmation preserves the
+  direction with first `_T` at `1.220s / exec 32` versus the fastest baseline
+  at `20.671s / exec 28677`. Because all three baseline families are
   baseline-visible, this is not a hard "SOTA cannot solve it" case; it now
-  needs longer matched runs to determine whether the speedup persists beyond
-  short-run repetition.
+  needs 2h repetitions and more targets to determine whether the speedup
+  generalizes.
 - No final "FORMTRIG beats SOTA" claim should be made from these packages
   alone.
 
@@ -458,8 +464,9 @@ Current result: `LIBARCHIVE_2936` is
 `LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616`; `PNG006` and
 `LIBCOAP_CVE_2023_35862` are `demote_to_control_or_negative`; `LIBXML2_1107`
 is `demote_harness_artifact`. The next experiment step for LIBARCHIVE is not
-more signal repair or more 60s repetition; it is longer matched runs to validate
-that the observed first-`_T` speedup persists beyond the short-run setting.
+more signal repair or more 60s repetition; it is 2h matched repetitions if
+LIBARCHIVE remains a paper case, while the main budget should also move to
+harder Magma/real-CVE targets.
 
 ## Hard-Target Discovery
 
@@ -505,9 +512,9 @@ python3 tools/audit_real_cve_readiness.py \
   --out-md artifacts/formtrig_native_readiness/real_cve_readiness_20260616.md
 ```
 
-Current readiness result: `LIBARCHIVE_2936` is `short_run_replicated_speedup`
-with matched AFL++ vanilla/CmpLog/Redqueen-path evidence and a validated
-BindingSpec; its blocker is long-run confirmation, not missing
-assets or constant lifted guidance. `GPAC_3403` has the core opportunity evidence
-(`R=1,T=0`, native `D_T=1`, and terminal validation) but still needs an
-executable BindingSpec candidate.
+Current readiness result: `LIBARCHIVE_2936` is
+`ten_min_matched_speedup_confirmed` with matched AFL++ vanilla/CmpLog/Redqueen
+path evidence and a validated BindingSpec; its blocker is 2h/multi-target
+generality, not missing assets or constant lifted guidance. `GPAC_3403` has the
+core opportunity evidence (`R=1,T=0`, native `D_T=1`, and terminal validation)
+but still needs an executable BindingSpec candidate.

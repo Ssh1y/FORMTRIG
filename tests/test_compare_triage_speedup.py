@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.compare_formtrig_baselines import benefit_readout, classify_evidence
-from tools.triage_formtrig_targets import package_row
+from tools.triage_formtrig_targets import package_row, target_rows
 
 
 class SpeedupClassificationTest(unittest.TestCase):
@@ -109,6 +109,60 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertEqual(row["package_status"], "promote_or_complete_reps")
         self.assertEqual(row["successful_baselines"], ["aflplusplus_vanilla"])
         self.assertEqual(row["tte_speedup_over_fastest_baseline"], 20.0)
+
+    def test_triage_uses_2h_next_action_after_10m_confirmation(self):
+        payload = {
+            "comparison_id": "synthetic_speedup_10m",
+            "target_id": "SYNTH",
+            "analysis": {
+                "verdict": "positive_speedup_matched_comparison",
+                "matched_baseline_count": 1,
+                "missing_required_baselines": [],
+                "best_formtrig_trigger_time_s": 1.0,
+                "fastest_baseline_trigger_time_s": 20.0,
+                "tte_speedup_over_fastest_baseline": 20.0,
+                "reasons": [
+                    "formtrig_terminal_oracle_present",
+                    "formtrig_strict_pretrigger_guidance_present",
+                    "matched_baseline_also_triggers",
+                    "formtrig_faster_than_successful_baselines",
+                ],
+                "baseline_groups": [
+                    {
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 600,
+                        "reps": 1,
+                        "success_rate": 1.0,
+                        "median_trigger_time_s": 20.0,
+                    }
+                ],
+            },
+            "benefit_readout": {
+                "observed_benefits": ["FORMTRIG 10m speedup confirmed"],
+                "blocked_claims": [],
+                "design_evidence": ["matched_budget_tte_speedup"],
+            },
+            "formtrig_runs": [
+                {
+                    "terminal_count": 4,
+                    "strict_pretrigger_guidance": True,
+                }
+            ],
+            "longrun_10m_confirmation": {
+                "formtrig_first_trigger_time_s": 1.0,
+                "fastest_successful_baseline_trigger_time_s": 20.0,
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "comparison.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+
+            row = package_row(path)
+
+        self.assertTrue(row["longrun_10m_confirmed"])
+        target = target_rows([row], [])[0]
+        self.assertEqual(target["disposition"], "candidate_extend_longruns")
+        self.assertIn("2h matched repetitions", target["next_action"])
 
 
 if __name__ == "__main__":

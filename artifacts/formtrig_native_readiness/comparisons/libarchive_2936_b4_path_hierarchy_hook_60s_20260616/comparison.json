@@ -1,77 +1,89 @@
 {
-  "comparison_id": "LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616",
-  "target_id": "LIBARCHIVE_2936",
-  "category": "binary-state-null",
   "analysis": {
-    "verdict": "positive_speedup_matched_comparison",
-    "matched_baseline_count": 3,
-    "missing_required_baselines": [],
     "baseline_groups": [
       {
         "baseline": "aflplusplus_vanilla",
         "budget": 60,
-        "reps": 3,
-        "successes": 3,
-        "success_rate": 1.0,
         "median_terminal_count": 4,
-        "median_trigger_time_s": 24.45,
         "median_trigger_execs": 34379,
-        "trigger_time_s_values": [
-          22.883,
-          24.45,
-          37.648
-        ],
+        "median_trigger_time_s": 24.45,
+        "reps": 3,
+        "success_rate": 1.0,
+        "successes": 3,
         "trigger_exec_values": [
           34379,
           31216,
           50549
+        ],
+        "trigger_time_s_values": [
+          22.883,
+          24.45,
+          37.648
         ]
       },
       {
         "baseline": "aflplusplus_cmplog",
         "budget": 60,
-        "reps": 3,
-        "successes": 3,
-        "success_rate": 1.0,
         "median_terminal_count": 1,
-        "median_trigger_time_s": 34.169,
         "median_trigger_execs": 51119,
-        "trigger_time_s_values": [
-          34.169,
-          28.505,
-          60.976
-        ],
+        "median_trigger_time_s": 34.169,
+        "reps": 3,
+        "success_rate": 1.0,
+        "successes": 3,
         "trigger_exec_values": [
           51119,
           34515,
           71727
+        ],
+        "trigger_time_s_values": [
+          34.169,
+          28.505,
+          60.976
         ]
       },
       {
         "baseline": "redqueen_operand",
         "budget": 60,
-        "reps": 3,
-        "successes": 2,
-        "success_rate": 0.6666666666666666,
         "median_terminal_count": 4,
-        "median_trigger_time_s": 32.546,
         "median_trigger_execs": 45157.5,
-        "trigger_time_s_values": [
-          34.587,
-          30.505
-        ],
+        "median_trigger_time_s": 32.546,
+        "reps": 3,
+        "success_rate": 0.6666666666666666,
+        "successes": 2,
         "trigger_exec_values": [
           47776,
           42539
+        ],
+        "trigger_time_s_values": [
+          34.587,
+          30.505
         ]
       }
     ],
-    "best_formtrig_trigger_time_s": 1.326,
     "best_formtrig_trigger_execs": 32,
-    "fastest_baseline_trigger_time_s": 24.45,
-    "fastest_baseline_trigger_execs": 34379,
-    "tte_speedup_over_fastest_baseline": 18.43891402714932,
+    "best_formtrig_trigger_time_s": 1.326,
     "exec_speedup_over_fastest_baseline": 1074.34375,
+    "fastest_baseline_trigger_execs": 34379,
+    "fastest_baseline_trigger_time_s": 24.45,
+    "longrun_10m_confirmation": {
+      "budget_s": 600,
+      "exec_speedup_over_fastest_successful_baseline": 896.15625,
+      "fastest_successful_baseline": "aflplusplus_cmplog",
+      "fastest_successful_baseline_trigger_execs": 28677,
+      "fastest_successful_baseline_trigger_time_s": 20.671,
+      "formtrig_trigger_execs": 32,
+      "formtrig_trigger_time_s": 1.22,
+      "strict_formtrig_before_all_successful_baselines": true,
+      "time_speedup_over_fastest_successful_baseline": 16.94344262295082
+    },
+    "matched_baseline_count": 3,
+    "missing_required_baselines": [],
+    "next_steps": [
+      "prioritize harder Magma and real-CVE targets where baseline-visible crashes are less immediate, using the 10m confirmation as a control speedup case",
+      "extend LIBARCHIVE_2936 from the confirmed 10m matched speedup point to 2h repeated matched runs if it remains a paper target",
+      "repeat the same replicated protocol on harder Magma and real-CVE targets where baseline-visible crashes are less immediate",
+      "report LIBARCHIVE_2936 as short-run speedup/attribution evidence, not as a baseline-impossibility case"
+    ],
     "reasons": [
       "formtrig_terminal_oracle_present",
       "formtrig_strict_pretrigger_guidance_present",
@@ -84,28 +96,118 @@
       "strict_exec_separation_from_successful_baselines",
       "timeout_adjusted_for_core_pattern_crash_classification"
     ],
-    "next_steps": [
-      "extend LIBARCHIVE_2936 to longer matched runs, e.g. 10m/2h, to test whether the early speedup persists beyond short-run repetition",
-      "repeat the same replicated protocol on harder Magma and real-CVE targets where baseline-visible crashes are less immediate",
-      "report LIBARCHIVE_2936 as short-run speedup/attribution evidence, not as a baseline-impossibility case"
-    ],
-    "strict_time_separation": true,
+    "repetition_summary": "evidence/repetition_summary.json",
     "strict_exec_separation": true,
-    "repetition_summary": "evidence/repetition_summary.json"
+    "strict_time_separation": true,
+    "tte_speedup_over_fastest_baseline": 18.43891402714932,
+    "verdict": "positive_speedup_matched_comparison"
   },
+  "arms": [
+    {
+      "arm": "formtrig",
+      "budget": 60,
+      "median_first_trigger_execs": 32,
+      "median_first_trigger_time_s": 1.326,
+      "note": "matched 60s -t 5000+ repetitions",
+      "reps": 3,
+      "success_rate": 1.0,
+      "successes": 3,
+      "terminal_triggered_execs": 3,
+      "trigger_exec_values": [
+        32,
+        32,
+        32
+      ],
+      "trigger_time_s_values": [
+        1.196,
+        2.0,
+        1.326
+      ]
+    },
+    {
+      "arm": "aflplusplus_vanilla",
+      "budget": 60,
+      "median_first_trigger_execs": 34379,
+      "median_first_trigger_time_s": 24.45,
+      "note": "matched 60s -t 5000+ repetitions",
+      "reps": 3,
+      "success_rate": 1.0,
+      "successes": 3,
+      "terminal_triggered_execs": 3,
+      "trigger_exec_values": [
+        34379,
+        31216,
+        50549
+      ],
+      "trigger_time_s_values": [
+        22.883,
+        24.45,
+        37.648
+      ]
+    },
+    {
+      "arm": "aflplusplus_cmplog",
+      "budget": 60,
+      "median_first_trigger_execs": 51119,
+      "median_first_trigger_time_s": 34.169,
+      "note": "matched 60s -t 5000+ repetitions",
+      "reps": 3,
+      "success_rate": 1.0,
+      "successes": 3,
+      "terminal_triggered_execs": 3,
+      "trigger_exec_values": [
+        51119,
+        34515,
+        71727
+      ],
+      "trigger_time_s_values": [
+        34.169,
+        28.505,
+        60.976
+      ]
+    },
+    {
+      "arm": "redqueen_operand",
+      "budget": 60,
+      "median_first_trigger_execs": 45157.5,
+      "median_first_trigger_time_s": 32.546,
+      "note": "matched 60s -t 5000+ repetitions",
+      "reps": 3,
+      "success_rate": 0.6666666666666666,
+      "successes": 2,
+      "terminal_triggered_execs": 2,
+      "trigger_exec_values": [
+        47776,
+        42539
+      ],
+      "trigger_time_s_values": [
+        34.587,
+        30.505
+      ]
+    }
+  ],
   "benefit_readout": {
-    "summary": "Across 3 matched 60s, -t 5000+ repetitions, LIBARCHIVE_2936 supports short-run replicated speedup evidence: FORMTRIG triggers in 3/3 runs with median first terminal SIGSEGV at 1.326s / exec 32, while the fastest successful baseline family by median is AFL++ vanilla at 24.450s / exec 34379. All FORMTRIG reps trigger before every successful baseline rep.",
-    "primary_benefits": [
-      "FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families",
-      "FORMTRIG median first-`_T` is 18.44x faster by wall-clock than the fastest matched successful baseline family",
-      "FORMTRIG median first terminal crash uses 1074.34x fewer executions than the fastest matched successful baseline family",
-      "All three FORMTRIG repetitions trigger before every successful baseline repetition by both time and execution count"
+    "blocked_claims": [
+      "AFL++ vanilla, CmpLog, and Redqueen/operand are all baseline-visible in this replicated 60s package, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case",
+      "60s repetitions plus one 10m confirmation are still not a substitute for 2h matched repetitions, Magma long-run evidence, and broader real-CVE evidence",
+      "the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped",
+      "10m confirmation is still one additional matched point, not broad generality across Magma and real-CVE targets",
+      "All baseline families trigger in the 10m confirmation, so LIBARCHIVE_2936 remains a speedup/attribution case rather than a baseline-impossibility case"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance",
+      "binding_spec_mutation_hook",
+      "typed_mutation_endpoint_conversion",
+      "formtrig_terminal_oracle_success",
+      "matched_budget_replicated_tte_speedup"
     ],
     "endpoint_observations": [
       "FORMTRIG b4 path-hierarchy hook triggers in 3/3 repetitions; first-`_T` times are 1.196s, 2.000s, and 1.326s",
       "AFL++ vanilla triggers in 3/3 repetitions; first crash times are 22.883s, 24.450s, and 37.648s",
       "AFL++ CmpLog triggers in 3/3 repetitions; first crash times are 34.169s, 28.505s, and 60.976s",
-      "AFL++ Redqueen/operand triggers in 2/3 repetitions; first crash times for successful reps are 34.587s and 30.505s"
+      "AFL++ Redqueen/operand triggers in 2/3 repetitions; first crash times for successful reps are 34.587s and 30.505s",
+      "In the 10m confirmation, FORMTRIG reaches first `_T` at 1.220s / exec 32; AFL++ CmpLog reaches at 20.671s / exec 28677, vanilla at 25.844s / exec 39789, and Redqueen/operand at 62.335s / exec 102947",
+      "FORMTRIG 10m rep4 records 4098 spec-lifted events, 5 saved non-trigger progress events, and 9 saved terminal crashes"
     ],
     "mechanism_benefits": [
       "binary or sparse trigger feedback is lifted into accepted non-trigger search progress before endpoint conversion",
@@ -116,291 +218,372 @@
       "FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families",
       "FORMTRIG median first-`_T` is 18.44x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline family",
       "FORMTRIG b4 path-hierarchy hook saves terminal crashes in 3/3 short-run repetitions",
-      "D_F_spec_lifted is non-constant {0,1} and the endpoint is attributable to BindingSpec typed mutation"
+      "D_F_spec_lifted is non-constant {0,1} and the endpoint is attributable to BindingSpec typed mutation",
+      "The 10m matched confirmation preserves the endpoint benefit: FORMTRIG reaches first `_T` at 1.220s / exec 32 versus the fastest successful baseline at 20.671s / exec 28677",
+      "The 10m matched confirmation gives 16.94x lower wall-clock time and 896.16x fewer executions than the fastest successful baseline in that run"
     ],
-    "blocked_claims": [
-      "AFL++ vanilla, CmpLog, and Redqueen/operand are all baseline-visible in this replicated 60s package, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case",
-      "60s repetition evidence is still not a substitute for long-run Magma and broader real-CVE evidence",
-      "the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped"
+    "primary_benefits": [
+      "FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families",
+      "FORMTRIG median first-`_T` is 18.44x faster by wall-clock than the fastest matched successful baseline family",
+      "FORMTRIG median first terminal crash uses 1074.34x fewer executions than the fastest matched successful baseline family",
+      "All three FORMTRIG repetitions trigger before every successful baseline repetition by both time and execution count",
+      "The 10m matched confirmation preserves the endpoint benefit: 16.94x faster by wall-clock and 896.16x fewer executions than the fastest successful baseline in that run",
+      "FORMTRIG saves accepted non-trigger progress before terminal conversion in the 10m confirmation, with non-constant D_F_spec_lifted={0,1}"
     ],
-    "design_evidence": [
-      "strict_pretrigger_guidance",
-      "binding_spec_mutation_hook",
-      "typed_mutation_endpoint_conversion",
-      "formtrig_terminal_oracle_success",
-      "matched_budget_replicated_tte_speedup"
-    ]
+    "summary": "Across 3 matched 60s, -t 5000+ repetitions, LIBARCHIVE_2936 supports replicated speedup evidence: FORMTRIG median first terminal SIGSEGV is 1.326s / exec 32 versus the fastest successful baseline family median of 24.450s / exec 34379. A matched 10m confirmation run preserves the direction: FORMTRIG first terminal SIGSEGV at 1.220s / exec 32 versus fastest successful baseline AFL++ CmpLog at 20.671s / exec 28677."
   },
-  "formtrig_runs": [
-    {
-      "arm": "formtrig",
-      "source_label": "b4_path_hierarchy_hook_60s",
-      "target_id": "LIBARCHIVE_2936",
-      "budget": 60,
-      "run_time": 61,
-      "success": true,
-      "terminal_count": 4,
-      "trigger_time_s": 1.196,
-      "trigger_time_kind": "afl_crash_file_time_ms",
-      "first_trigger_execs": 32,
-      "execs_done": 116,
-      "corpus_count": 4,
-      "saved_crashes": 4,
-      "saved_hangs": 0,
-      "reached": 62,
-      "accepted_non_trigger": 1,
-      "saved_non_trigger": 1,
-      "spec_lifted": 35,
-      "strict_pretrigger_guidance": true,
-      "binding_signal_status": "pass",
-      "binding_signal_diagnosis": "role_signal_progress_observed",
-      "d_f_spec_lifted_constant": false,
-      "d_f_spec_lifted_min": 0,
-      "d_f_spec_lifted_max": 1,
-      "limiting_reason": "terminal_triggered",
-      "source_path": "evidence/b4_hook_formtrig_summary.json"
-    },
-    {
-      "arm": "formtrig",
-      "source_label": "b4_root_distance_no_hook_10m",
-      "target_id": "LIBARCHIVE_2936",
-      "budget": 600,
-      "run_time": 600,
-      "success": false,
-      "terminal_count": 0,
-      "trigger_time_s": null,
-      "execs_done": 305093,
-      "corpus_count": 846,
-      "saved_crashes": 0,
-      "reached": 162849,
-      "accepted_non_trigger": 10,
-      "saved_non_trigger": 10,
-      "spec_lifted": 4152,
-      "strict_pretrigger_guidance": true,
-      "binding_signal_status": "pass",
-      "binding_signal_diagnosis": "role_signal_progress_observed",
-      "d_f_spec_lifted_constant": false,
-      "d_f_spec_lifted_min": 0,
-      "d_f_spec_lifted_max": 1,
-      "limiting_reason": "none",
-      "source_path": "evidence/b4_no_hook_10m_summary.json"
-    }
-  ],
-  "arms": [
-    {
-      "arm": "formtrig",
-      "budget": 60,
-      "reps": 3,
-      "successes": 3,
-      "success_rate": 1.0,
-      "terminal_triggered_execs": 3,
-      "median_first_trigger_time_s": 1.326,
-      "median_first_trigger_execs": 32,
-      "trigger_time_s_values": [
-        1.196,
-        2.0,
-        1.326
-      ],
-      "trigger_exec_values": [
-        32,
-        32,
-        32
-      ],
-      "note": "matched 60s -t 5000+ repetitions"
-    },
-    {
-      "arm": "aflplusplus_vanilla",
-      "budget": 60,
-      "reps": 3,
-      "successes": 3,
-      "success_rate": 1.0,
-      "terminal_triggered_execs": 3,
-      "median_first_trigger_time_s": 24.45,
-      "median_first_trigger_execs": 34379,
-      "trigger_time_s_values": [
-        22.883,
-        24.45,
-        37.648
-      ],
-      "trigger_exec_values": [
-        34379,
-        31216,
-        50549
-      ],
-      "note": "matched 60s -t 5000+ repetitions"
-    },
-    {
-      "arm": "aflplusplus_cmplog",
-      "budget": 60,
-      "reps": 3,
-      "successes": 3,
-      "success_rate": 1.0,
-      "terminal_triggered_execs": 3,
-      "median_first_trigger_time_s": 34.169,
-      "median_first_trigger_execs": 51119,
-      "trigger_time_s_values": [
-        34.169,
-        28.505,
-        60.976
-      ],
-      "trigger_exec_values": [
-        51119,
-        34515,
-        71727
-      ],
-      "note": "matched 60s -t 5000+ repetitions"
-    },
-    {
-      "arm": "redqueen_operand",
-      "budget": 60,
-      "reps": 3,
-      "successes": 2,
-      "success_rate": 0.6666666666666666,
-      "terminal_triggered_execs": 2,
-      "median_first_trigger_time_s": 32.546,
-      "median_first_trigger_execs": 45157.5,
-      "trigger_time_s_values": [
-        34.587,
-        30.505
-      ],
-      "trigger_exec_values": [
-        47776,
-        42539
-      ],
-      "note": "matched 60s -t 5000+ repetitions"
-    }
-  ],
+  "category": "binary-state-null",
+  "comparison_id": "LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616",
   "crash_replay": "evidence/b4_hook_crash_replay.json",
   "evidence_notes": [
     "All matched 60s rows in this package use AFL++ -V 60 and -t 5000+ so SIGSEGV is classified as a crash despite this host core_pattern delay.",
     "The matched AFL++ vanilla, CmpLog, and Redqueen/operand rows are baseline-visible; the supported LIBARCHIVE_2936 claim is replicated first-_T/TTE speedup plus attribution, not exclusive terminal success.",
     "All three FORMTRIG reps trigger before every successful baseline rep by both wall-clock time and execution count.",
-    "The hook constructs slash-delimited path hierarchy candidates from the safe RNT seed components; it does not embed LIBARCHIVE_2936.poc bytes."
+    "The hook constructs slash-delimited path hierarchy candidates from the safe RNT seed components; it does not embed LIBARCHIVE_2936.poc bytes.",
+    "A matched 10m rep4 confirms the speedup direction: FORMTRIG first terminal SIGSEGV at 1.220s / exec 32 versus fastest successful baseline AFL++ CmpLog at 20.671s / exec 28677; all baseline families trigger eventually, so the claim remains speedup/attribution, not baseline impossibility."
   ],
-  "matched_baseline_runs": [
+  "formtrig_runs": [
     {
-      "rep": 1,
-      "success": true,
-      "trigger_time_s": 22.883,
-      "trigger_execs": 34379,
-      "terminal_count": 13,
-      "saved_crashes": 13,
-      "execs_done": 65592,
-      "run_time": 60,
-      "run_record": "evidence/aflplusplus_vanilla_60s_t5000_run_record.json",
-      "fuzzer_stats": "evidence/aflplusplus_vanilla_60s_t5000_fuzzer_stats.txt",
-      "first_crash": "evidence/baseline_first_crashes/aflplusplus_vanilla_60s_t5000/id:000000,sig:11,src:000278+000255,time:22883,execs:34379,op:splice,rep:9"
-    },
-    {
-      "rep": 2,
-      "success": true,
-      "trigger_time_s": 24.45,
-      "trigger_execs": 31216,
-      "terminal_count": 4,
-      "saved_crashes": 4,
-      "execs_done": 64606,
-      "run_time": 62,
-      "run_record": "evidence/reps/aflplusplus_vanilla_rep2_run_record.json",
-      "fuzzer_stats": "evidence/reps/aflplusplus_vanilla_rep2_fuzzer_stats.txt",
-      "first_crash": "evidence/reps/first_crashes/aflplusplus_vanilla_rep2/id:000000,sig:11,src:000302,time:24450,execs:31216,op:havoc,rep:6",
-      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/aflplusplus_vanilla_rep2"
-    },
-    {
-      "rep": 3,
-      "success": true,
-      "trigger_time_s": 37.648,
-      "trigger_execs": 50549,
-      "terminal_count": 1,
-      "saved_crashes": 1,
-      "execs_done": 61621,
-      "run_time": 60,
-      "run_record": "evidence/reps/aflplusplus_vanilla_rep3_run_record.json",
-      "fuzzer_stats": "evidence/reps/aflplusplus_vanilla_rep3_fuzzer_stats.txt",
-      "first_crash": "evidence/reps/first_crashes/aflplusplus_vanilla_rep3/id:000000,sig:11,src:000346,time:37648,execs:50549,op:havoc,rep:5",
-      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/aflplusplus_vanilla_rep3"
-    },
-    {
-      "rep": 1,
-      "success": true,
-      "trigger_time_s": 34.169,
-      "trigger_execs": 51119,
-      "terminal_count": 12,
-      "saved_crashes": 12,
-      "execs_done": 56512,
-      "run_time": 60,
-      "run_record": "evidence/aflplusplus_cmplog_60s_t5000_run_record.json",
-      "fuzzer_stats": "evidence/aflplusplus_cmplog_60s_t5000_fuzzer_stats.txt",
-      "first_crash": "evidence/baseline_first_crashes/aflplusplus_cmplog_60s_t5000/id:000000,sig:11,src:000352,time:34169,execs:51119,op:havoc,rep:2"
-    },
-    {
-      "rep": 2,
-      "success": true,
-      "trigger_time_s": 28.505,
-      "trigger_execs": 34515,
-      "terminal_count": 1,
-      "saved_crashes": 1,
-      "execs_done": 76087,
-      "run_time": 60,
-      "run_record": "evidence/reps/aflplusplus_cmplog_rep2_run_record.json",
-      "fuzzer_stats": "evidence/reps/aflplusplus_cmplog_rep2_fuzzer_stats.txt",
-      "first_crash": "evidence/reps/first_crashes/aflplusplus_cmplog_rep2/id:000000,sig:11,src:000304,time:28505,execs:34515,op:havoc,rep:4",
-      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/aflplusplus_cmplog_rep2"
-    },
-    {
-      "rep": 3,
-      "success": true,
-      "trigger_time_s": 60.976,
-      "trigger_execs": 71727,
-      "terminal_count": 1,
-      "saved_crashes": 1,
-      "execs_done": 71741,
+      "accepted_non_trigger": 1,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 60,
+      "corpus_count": 4,
+      "d_f_spec_lifted_constant": false,
+      "d_f_spec_lifted_max": 1,
+      "d_f_spec_lifted_min": 0,
+      "execs_done": 116,
+      "first_trigger_execs": 32,
+      "limiting_reason": "terminal_triggered",
+      "reached": 62,
       "run_time": 61,
-      "run_record": "evidence/reps/aflplusplus_cmplog_rep3_run_record.json",
-      "fuzzer_stats": "evidence/reps/aflplusplus_cmplog_rep3_fuzzer_stats.txt",
-      "first_crash": "evidence/reps/first_crashes/aflplusplus_cmplog_rep3/id:000000,sig:11,src:000452,time:60976,execs:71727,op:havoc,rep:2",
-      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/aflplusplus_cmplog_rep3"
-    },
-    {
-      "rep": 1,
-      "success": false,
-      "trigger_time_s": null,
-      "trigger_execs": null,
-      "terminal_count": 0,
-      "saved_crashes": 0,
-      "execs_done": 102222,
-      "run_time": 60,
-      "run_record": "evidence/redqueen_operand_60s_t5000_run_record.json",
-      "fuzzer_stats": "evidence/redqueen_operand_60s_t5000_fuzzer_stats.txt",
-      "first_crash": null
-    },
-    {
-      "rep": 2,
-      "success": true,
-      "trigger_time_s": 34.587,
-      "trigger_execs": 47776,
-      "terminal_count": 5,
-      "saved_crashes": 5,
-      "execs_done": 48906,
-      "run_time": 63,
-      "run_record": "evidence/reps/redqueen_operand_rep2_run_record.json",
-      "fuzzer_stats": "evidence/reps/redqueen_operand_rep2_fuzzer_stats.txt",
-      "first_crash": "evidence/reps/first_crashes/redqueen_operand_rep2/id:000000,sig:11,src:000257,time:34587,execs:47776,op:havoc,rep:7",
-      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/redqueen_operand_rep2"
-    },
-    {
-      "rep": 3,
-      "success": true,
-      "trigger_time_s": 30.505,
-      "trigger_execs": 42539,
-      "terminal_count": 4,
       "saved_crashes": 4,
-      "execs_done": 65170,
-      "run_time": 60,
-      "run_record": "evidence/reps/redqueen_operand_rep3_run_record.json",
-      "fuzzer_stats": "evidence/reps/redqueen_operand_rep3_fuzzer_stats.txt",
-      "first_crash": "evidence/reps/first_crashes/redqueen_operand_rep3/id:000000,sig:11,src:000245,time:30505,execs:42539,op:havoc,rep:2",
-      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/redqueen_operand_rep3"
+      "saved_hangs": 0,
+      "saved_non_trigger": 1,
+      "source_label": "b4_path_hierarchy_hook_60s",
+      "source_path": "evidence/b4_hook_formtrig_summary.json",
+      "spec_lifted": 35,
+      "strict_pretrigger_guidance": true,
+      "success": true,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 4,
+      "trigger_time_kind": "afl_crash_file_time_ms",
+      "trigger_time_s": 1.196
+    },
+    {
+      "accepted_non_trigger": 10,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 600,
+      "corpus_count": 846,
+      "d_f_spec_lifted_constant": false,
+      "d_f_spec_lifted_max": 1,
+      "d_f_spec_lifted_min": 0,
+      "execs_done": 305093,
+      "limiting_reason": "none",
+      "reached": 162849,
+      "run_time": 600,
+      "saved_crashes": 0,
+      "saved_non_trigger": 10,
+      "source_label": "b4_root_distance_no_hook_10m",
+      "source_path": "evidence/b4_no_hook_10m_summary.json",
+      "spec_lifted": 4152,
+      "strict_pretrigger_guidance": true,
+      "success": false,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_count": 0,
+      "trigger_time_s": null
     }
   ],
-  "repetition_summary": "evidence/repetition_summary.json"
+  "longrun_10m_confirmation": {
+    "benefit_statement": "In a matched 10m confirmation run, FORMTRIG reaches terminal SIGSEGV at 1.220s / exec 32; the fastest successful baseline is AFL++ CmpLog at 20.671s / exec 28677, a 16.94x wall-clock and 896.16x execution speedup to first terminal trigger.",
+    "budget_s": 600,
+    "category": "binary-state-null",
+    "exec_speedup_over_fastest_successful_baseline": 896.15625,
+    "fastest_successful_baseline_by_exec": "aflplusplus_cmplog",
+    "fastest_successful_baseline_by_time": "aflplusplus_cmplog",
+    "fastest_successful_baseline_trigger_execs": 28677,
+    "fastest_successful_baseline_trigger_time_s": 20.671,
+    "formtrig_first_trigger_execs": 32,
+    "formtrig_first_trigger_time_s": 1.22,
+    "interpretation": "10m matched confirmation of the 60s speedup/attribution case; all baseline families eventually trigger, so this is not baseline-impossibility evidence",
+    "records": [
+      {
+        "arm": "formtrig",
+        "budget": 600,
+        "corpus_count": 383,
+        "d_f_spec_lifted_constant": false,
+        "d_f_spec_lifted_max": 1,
+        "d_f_spec_lifted_min": 0,
+        "display": "FORMTRIG b4 + path-hierarchy hook",
+        "execs_done": 35200,
+        "execs_per_sec": 58.67,
+        "first_crash": "evidence/longrun_10m/first_crashes/formtrig_10m_rep4/id:000000,sig:11,src:000000,time:1220,execs:32,op:ftgtype,pos:18",
+        "first_crash_detail": {
+          "execs": 32,
+          "file": "evidence/longrun_10m/first_crashes/formtrig_10m_rep4/id:000000,sig:11,src:000000,time:1220,execs:32,op:ftgtype,pos:18",
+          "id": "000000",
+          "op": "ftgtype",
+          "pos": "18",
+          "raw_file": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/formtrig_10m_rep4/fuzzer_out/default/crashes/id:000000,sig:11,src:000000,time:1220,execs:32,op:ftgtype,pos:18",
+          "sig": "11",
+          "src": "000000",
+          "time": 1220,
+          "time_s": 1.22
+        },
+        "fuzzer_stats": "evidence/longrun_10m/formtrig_10m_rep4_fuzzer_stats.txt",
+        "kind": "formtrig",
+        "limiting_reason": "terminal_triggered",
+        "non_trigger_progress_events": 5,
+        "progress_status": "triggered",
+        "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/formtrig_10m_rep4/fuzzer_out",
+        "rep": 4,
+        "run_time": 600,
+        "saved_crashes": 9,
+        "saved_hangs": 0,
+        "saved_non_trigger_progress_events": 5,
+        "spec_lifted_events": 4098,
+        "success": true,
+        "summary_path": "evidence/longrun_10m/formtrig_10m_rep4_summary.json",
+        "terminal_count": 9,
+        "terminal_triggered_execs": 9,
+        "trigger_execs": 32,
+        "trigger_time_s": 1.22
+      },
+      {
+        "arm": "aflplusplus_cmplog",
+        "budget": 600,
+        "corpus_count": 409,
+        "display": "AFL++ CmpLog",
+        "execs_done": 32829,
+        "execs_per_sec": 54.65,
+        "first_crash": "evidence/longrun_10m/first_crashes/aflplusplus_cmplog_10m_rep4/id:000000,sig:11,src:000285,time:20671,execs:28677,op:havoc,rep:2",
+        "first_crash_detail": {
+          "execs": 28677,
+          "file": "evidence/longrun_10m/first_crashes/aflplusplus_cmplog_10m_rep4/id:000000,sig:11,src:000285,time:20671,execs:28677,op:havoc,rep:2",
+          "id": "000000",
+          "op": "havoc",
+          "raw_file": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_cmplog_10m_rep4/fuzzer_out/default/crashes/id:000000,sig:11,src:000285,time:20671,execs:28677,op:havoc,rep:2",
+          "rep": "2",
+          "sig": "11",
+          "src": "000285",
+          "time": 20671,
+          "time_s": 20.671
+        },
+        "fuzzer_stats": "evidence/longrun_10m/aflplusplus_cmplog_10m_rep4_fuzzer_stats.txt",
+        "kind": "baseline",
+        "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_cmplog_10m_rep4",
+        "rep": 4,
+        "run_record": "evidence/longrun_10m/aflplusplus_cmplog_10m_rep4_run_record.json",
+        "run_time": 600,
+        "saved_crashes": 25,
+        "saved_hangs": 0,
+        "success": true,
+        "terminal_count": 25,
+        "trigger_execs": 28677,
+        "trigger_time_s": 20.671
+      },
+      {
+        "arm": "aflplusplus_vanilla",
+        "budget": 600,
+        "corpus_count": 618,
+        "display": "AFL++ vanilla",
+        "execs_done": 138521,
+        "execs_per_sec": 230.21,
+        "first_crash": "evidence/longrun_10m/first_crashes/aflplusplus_vanilla_10m_rep4/id:000000,sig:11,src:000262+000355,time:25844,execs:39789,op:splice,rep:16",
+        "first_crash_detail": {
+          "execs": 39789,
+          "file": "evidence/longrun_10m/first_crashes/aflplusplus_vanilla_10m_rep4/id:000000,sig:11,src:000262+000355,time:25844,execs:39789,op:splice,rep:16",
+          "id": "000000",
+          "op": "splice",
+          "raw_file": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_vanilla_10m_rep4/fuzzer_out/default/crashes/id:000000,sig:11,src:000262+000355,time:25844,execs:39789,op:splice,rep:16",
+          "rep": "16",
+          "sig": "11",
+          "src": "000262+000355",
+          "time": 25844,
+          "time_s": 25.844
+        },
+        "fuzzer_stats": "evidence/longrun_10m/aflplusplus_vanilla_10m_rep4_fuzzer_stats.txt",
+        "kind": "baseline",
+        "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_vanilla_10m_rep4",
+        "rep": 4,
+        "run_record": "evidence/longrun_10m/aflplusplus_vanilla_10m_rep4_run_record.json",
+        "run_time": 601,
+        "saved_crashes": 25,
+        "saved_hangs": 0,
+        "success": true,
+        "terminal_count": 25,
+        "trigger_execs": 39789,
+        "trigger_time_s": 25.844
+      },
+      {
+        "arm": "redqueen_operand",
+        "budget": 600,
+        "corpus_count": 686,
+        "display": "AFL++ Redqueen/operand path",
+        "execs_done": 168770,
+        "execs_per_sec": 280.01,
+        "first_crash": "evidence/longrun_10m/first_crashes/redqueen_operand_10m_rep4/id:000000,sig:11,src:000455,time:62335,execs:102947,op:havoc,rep:6",
+        "first_crash_detail": {
+          "execs": 102947,
+          "file": "evidence/longrun_10m/first_crashes/redqueen_operand_10m_rep4/id:000000,sig:11,src:000455,time:62335,execs:102947,op:havoc,rep:6",
+          "id": "000000",
+          "op": "havoc",
+          "raw_file": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/redqueen_operand_10m_rep4/fuzzer_out/default/crashes/id:000000,sig:11,src:000455,time:62335,execs:102947,op:havoc,rep:6",
+          "rep": "6",
+          "sig": "11",
+          "src": "000455",
+          "time": 62335,
+          "time_s": 62.335
+        },
+        "fuzzer_stats": "evidence/longrun_10m/redqueen_operand_10m_rep4_fuzzer_stats.txt",
+        "kind": "baseline",
+        "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/redqueen_operand_10m_rep4",
+        "rep": 4,
+        "run_record": "evidence/longrun_10m/redqueen_operand_10m_rep4_run_record.json",
+        "run_time": 602,
+        "saved_crashes": 38,
+        "saved_hangs": 0,
+        "success": true,
+        "terminal_count": 38,
+        "trigger_execs": 102947,
+        "trigger_time_s": 62.335
+      }
+    ],
+    "rep": 4,
+    "strict_formtrig_before_all_successful_baselines": true,
+    "summary_path": "evidence/longrun_10m/longrun_10m_summary.json",
+    "target_id": "LIBARCHIVE_2936",
+    "time_speedup_over_fastest_successful_baseline": 16.94344262295082,
+    "timeout_oracle": "-t 5000+"
+  },
+  "matched_baseline_runs": [
+    {
+      "execs_done": 65592,
+      "first_crash": "evidence/baseline_first_crashes/aflplusplus_vanilla_60s_t5000/id:000000,sig:11,src:000278+000255,time:22883,execs:34379,op:splice,rep:9",
+      "fuzzer_stats": "evidence/aflplusplus_vanilla_60s_t5000_fuzzer_stats.txt",
+      "rep": 1,
+      "run_record": "evidence/aflplusplus_vanilla_60s_t5000_run_record.json",
+      "run_time": 60,
+      "saved_crashes": 13,
+      "success": true,
+      "terminal_count": 13,
+      "trigger_execs": 34379,
+      "trigger_time_s": 22.883
+    },
+    {
+      "execs_done": 64606,
+      "first_crash": "evidence/reps/first_crashes/aflplusplus_vanilla_rep2/id:000000,sig:11,src:000302,time:24450,execs:31216,op:havoc,rep:6",
+      "fuzzer_stats": "evidence/reps/aflplusplus_vanilla_rep2_fuzzer_stats.txt",
+      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/aflplusplus_vanilla_rep2",
+      "rep": 2,
+      "run_record": "evidence/reps/aflplusplus_vanilla_rep2_run_record.json",
+      "run_time": 62,
+      "saved_crashes": 4,
+      "success": true,
+      "terminal_count": 4,
+      "trigger_execs": 31216,
+      "trigger_time_s": 24.45
+    },
+    {
+      "execs_done": 61621,
+      "first_crash": "evidence/reps/first_crashes/aflplusplus_vanilla_rep3/id:000000,sig:11,src:000346,time:37648,execs:50549,op:havoc,rep:5",
+      "fuzzer_stats": "evidence/reps/aflplusplus_vanilla_rep3_fuzzer_stats.txt",
+      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/aflplusplus_vanilla_rep3",
+      "rep": 3,
+      "run_record": "evidence/reps/aflplusplus_vanilla_rep3_run_record.json",
+      "run_time": 60,
+      "saved_crashes": 1,
+      "success": true,
+      "terminal_count": 1,
+      "trigger_execs": 50549,
+      "trigger_time_s": 37.648
+    },
+    {
+      "execs_done": 56512,
+      "first_crash": "evidence/baseline_first_crashes/aflplusplus_cmplog_60s_t5000/id:000000,sig:11,src:000352,time:34169,execs:51119,op:havoc,rep:2",
+      "fuzzer_stats": "evidence/aflplusplus_cmplog_60s_t5000_fuzzer_stats.txt",
+      "rep": 1,
+      "run_record": "evidence/aflplusplus_cmplog_60s_t5000_run_record.json",
+      "run_time": 60,
+      "saved_crashes": 12,
+      "success": true,
+      "terminal_count": 12,
+      "trigger_execs": 51119,
+      "trigger_time_s": 34.169
+    },
+    {
+      "execs_done": 76087,
+      "first_crash": "evidence/reps/first_crashes/aflplusplus_cmplog_rep2/id:000000,sig:11,src:000304,time:28505,execs:34515,op:havoc,rep:4",
+      "fuzzer_stats": "evidence/reps/aflplusplus_cmplog_rep2_fuzzer_stats.txt",
+      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/aflplusplus_cmplog_rep2",
+      "rep": 2,
+      "run_record": "evidence/reps/aflplusplus_cmplog_rep2_run_record.json",
+      "run_time": 60,
+      "saved_crashes": 1,
+      "success": true,
+      "terminal_count": 1,
+      "trigger_execs": 34515,
+      "trigger_time_s": 28.505
+    },
+    {
+      "execs_done": 71741,
+      "first_crash": "evidence/reps/first_crashes/aflplusplus_cmplog_rep3/id:000000,sig:11,src:000452,time:60976,execs:71727,op:havoc,rep:2",
+      "fuzzer_stats": "evidence/reps/aflplusplus_cmplog_rep3_fuzzer_stats.txt",
+      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/aflplusplus_cmplog_rep3",
+      "rep": 3,
+      "run_record": "evidence/reps/aflplusplus_cmplog_rep3_run_record.json",
+      "run_time": 61,
+      "saved_crashes": 1,
+      "success": true,
+      "terminal_count": 1,
+      "trigger_execs": 71727,
+      "trigger_time_s": 60.976
+    },
+    {
+      "execs_done": 102222,
+      "first_crash": null,
+      "fuzzer_stats": "evidence/redqueen_operand_60s_t5000_fuzzer_stats.txt",
+      "rep": 1,
+      "run_record": "evidence/redqueen_operand_60s_t5000_run_record.json",
+      "run_time": 60,
+      "saved_crashes": 0,
+      "success": false,
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_s": null
+    },
+    {
+      "execs_done": 48906,
+      "first_crash": "evidence/reps/first_crashes/redqueen_operand_rep2/id:000000,sig:11,src:000257,time:34587,execs:47776,op:havoc,rep:7",
+      "fuzzer_stats": "evidence/reps/redqueen_operand_rep2_fuzzer_stats.txt",
+      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/redqueen_operand_rep2",
+      "rep": 2,
+      "run_record": "evidence/reps/redqueen_operand_rep2_run_record.json",
+      "run_time": 63,
+      "saved_crashes": 5,
+      "success": true,
+      "terminal_count": 5,
+      "trigger_execs": 47776,
+      "trigger_time_s": 34.587
+    },
+    {
+      "execs_done": 65170,
+      "first_crash": "evidence/reps/first_crashes/redqueen_operand_rep3/id:000000,sig:11,src:000245,time:30505,execs:42539,op:havoc,rep:2",
+      "fuzzer_stats": "evidence/reps/redqueen_operand_rep3_fuzzer_stats.txt",
+      "raw_source": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_reps_60s_t5000_20260616T141818Z/redqueen_operand_rep3",
+      "rep": 3,
+      "run_record": "evidence/reps/redqueen_operand_rep3_run_record.json",
+      "run_time": 60,
+      "saved_crashes": 4,
+      "success": true,
+      "terminal_count": 4,
+      "trigger_execs": 42539,
+      "trigger_time_s": 30.505
+    }
+  ],
+  "repetition_summary": "evidence/repetition_summary.json",
+  "target_id": "LIBARCHIVE_2936"
 }

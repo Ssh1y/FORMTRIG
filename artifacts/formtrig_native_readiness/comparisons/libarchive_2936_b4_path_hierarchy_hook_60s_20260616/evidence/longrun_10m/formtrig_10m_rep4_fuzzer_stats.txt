@@ -1,0 +1,61 @@
+start_time        : 1781620680
+last_update       : 1781621280
+run_time          : 600
+fuzzer_pid        : 2200446
+cycles_done       : 0
+cycles_wo_finds   : 0
+time_wo_finds     : 318
+execs_done        : 35200
+execs_per_sec     : 58.67
+execs_ps_last_min : 0.39
+corpus_count      : 383
+corpus_favored    : 72
+corpus_found      : 382
+corpus_imported   : 0
+corpus_variable   : 5
+max_depth         : 4
+cur_item          : 371
+pending_favs      : 68
+pending_total     : 377
+stability         : 99.07%
+bitmap_cvg        : 18.93%
+saved_crashes     : 9
+saved_hangs       : 0
+last_find         : 1781621280
+last_crash        : 1781620954
+last_hang         : 0
+execs_since_crash : 14685
+exec_timeout      : 5000
+slowest_exec_ms   : 0
+peak_rss_mb       : 139
+cpu_affinity      : -1
+edges_found       : 5050
+total_edges       : 26674
+var_byte_count    : 47
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 24949
+testcache_count   : 383
+testcache_evict   : 0
+afl_banner        : /tmp/formtrig_libarchive_2936_build/libarchive_write_replay_formtrig
+afl_version       : ++4.08c
+target_mode       : shmem_testcase default
+command_line      : /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz -i artifacts/rnt_corpus/LIBARCHIVE_2936/seeds -o artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/formtrig_10m_rep4/fuzzer_out -V 600 -t 5000+ -- /tmp/formtrig_libarchive_2936_build/libarchive_write_replay_formtrig @@
+formtrig_seen_execs      : 8636
+formtrig_reached_execs   : 8636
+formtrig_triggered_execs : 0
+formtrig_queued_progress : 5
+formtrig_frontier_count  : 1
+formtrig_frontier_updates: 6
+formtrig_typed_execs     : 256
+formtrig_typed_finds     : 10
+formtrig_typed_skips     : 5
+formtrig_stability_checks: 6
+formtrig_stability_failures: 0
+formtrig_progress_log_events: 4103
+formtrig_saved_progress_log_seen: 5
+formtrig_saved_triggered_log_seen: 0
+formtrig_saved_non_trigger_log_seen: 5
+formtrig_progress_log_dropped: 3892
+formtrig_best_df         : 0
+formtrig_best_dt         : 1.0000000000000001e+300

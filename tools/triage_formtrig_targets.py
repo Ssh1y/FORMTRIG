@@ -224,6 +224,9 @@ def package_row(path: Path) -> dict[str, Any]:
         for row in arms
     )
     benefit = benefit_readout(payload)
+    longrun_10m_confirmed = isinstance(
+        payload.get("longrun_10m_confirmation"), dict
+    ) or isinstance(analysis.get("longrun_10m_confirmation"), dict)
     reasons = set(analysis.get("reasons") or [])
     verdict = str(analysis.get("verdict") or payload.get("verdict") or "")
     speedup_verdict = verdict in {
@@ -270,6 +273,7 @@ def package_row(path: Path) -> dict[str, Any]:
         ),
         "formtrig_terminal": formtrig_terminal,
         "strict_pretrigger_guidance": strict,
+        "longrun_10m_confirmed": longrun_10m_confirmed,
         "missing_required_baselines": list(analysis.get("missing_required_baselines") or []),
         "observed_benefits": list(benefit.get("observed_benefits") or []),
         "blocked_claims": list(benefit.get("blocked_claims") or []),
@@ -322,6 +326,7 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             row.get("verdict") == "positive_speedup_matched_comparison"
             for row in items
         )
+        has_10m_confirmation = any(row.get("longrun_10m_confirmed") for row in items)
         has_terminal_candidate = any(
             row.get("formtrig_terminal")
             and row.get("strict_pretrigger_guidance")
@@ -347,7 +352,13 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
         if has_replicated_speedup:
             disposition = "candidate_extend_longruns"
             priority = 15
-            next_action = "extend to longer matched-budget runs to test whether the replicated FORMTRIG TTE speedup persists"
+            if has_10m_confirmation:
+                next_action = (
+                    "run 2h matched repetitions if retained as a paper case; "
+                    "otherwise shift main budget to harder Magma/real-CVE targets"
+                )
+            else:
+                next_action = "extend to longer matched-budget runs to test whether the replicated FORMTRIG TTE speedup persists"
         elif has_speedup_candidate:
             disposition = "candidate_complete_baselines_and_reps"
             priority = 20

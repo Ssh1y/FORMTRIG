@@ -64,9 +64,19 @@ matched 60s x3 with the same -t 5000+ terminal oracle:
     18.44x faster by first _T wall-clock
     1074.34x fewer executions to first terminal crash
   separation: every FORMTRIG rep triggers before every successful baseline rep
+
+matched 10m confirmation with the same -t 5000+ terminal oracle:
+  FORMTRIG: first _T = 1.220s / exec 32, saved_crashes = 9
+  AFL++ CmpLog: first crash = 20.671s / exec 28677
+  AFL++ vanilla: first crash = 25.844s / exec 39789
+  AFL++ Redqueen/operand path: first crash = 62.335s / exec 102947
+  FORMTRIG vs fastest successful baseline in this run:
+    16.94x faster by first _T wall-clock
+    896.16x fewer executions to first terminal crash
+  mechanism: D_F_spec_lifted values = {0,1}, saved_non_trigger_progress = 5
 ```
 
-因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下复现了 first `_T` speedup。它不是“CmpLog/Redqueen/vanilla 做不到”的 hard-gap 目标，因为三个 baseline family 在 60s repeated package 中都可见；它现在的价值是 short-run replicated speedup + attribution：FORMTRIG 把二值 TC 后的 path-hierarchy lifted signal 变成了更早、更少执行次数的 terminal input。这个结论仍然不是最终长测性能结论，下一步必须做 10m/2h matched runs 和更难的 Magma/real-CVE 目标。
+因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下复现了 first `_T` speedup。它不是“CmpLog/Redqueen/vanilla 做不到”的 hard-gap 目标，因为三个 baseline family 在 60s repeated package 和 10m confirmation 中都可见；它现在的价值是 replicated speedup + attribution：FORMTRIG 把二值 TC 后的 path-hierarchy lifted signal 变成了更早、更少执行次数的 terminal input。这个结论仍然不是最终长测性能结论，下一步必须做 2h matched repetitions 和更难的 Magma/real-CVE 目标。
 
 ---
 

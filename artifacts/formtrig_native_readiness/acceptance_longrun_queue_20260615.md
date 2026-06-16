@@ -82,8 +82,13 @@ Redqueen/operand path are all baseline-visible in repeated 60s runs. The
 benefit is replicated short-run speedup: FORMTRIG triggers in `3/3` reps with
 median first terminal SIGSEGV at `1.326s / exec 32`, while the fastest
 successful baseline family by median is AFL++ vanilla at
-`24.450s / exec 34379`. The next budget for this target should be longer
-matched runs, not more short repetition.
+`24.450s / exec 34379`. A matched 10-minute confirmation preserves the same
+benefit direction: FORMTRIG reaches first terminal SIGSEGV at
+`1.220s / exec 32`, while the fastest successful baseline in that run is
+AFL++ CmpLog at `20.671s / exec 28677`, a `16.94x` wall-clock and `896.16x`
+execution speedup to first terminal trigger. The next budget for this target
+should be 2-hour matched repetitions if it remains a paper case; otherwise
+move scarce long-run budget to harder Magma/real-CVE targets.
 `PNG006` and `LIBCOAP_CVE_2023_35862` remain control/negative evidence because
 matched faithful baselines also trigger without a recorded FORMTRIG speedup.
 `LIBXML2_1107` is demoted because the harness exposes the terminal trigger as a
@@ -117,13 +122,14 @@ python3 tools/audit_real_cve_readiness.py \
   --out-md artifacts/formtrig_native_readiness/real_cve_readiness_20260616.md
 ```
 
-Current readiness result: `GPAC_3403` and `LIBARCHIVE_2936` are the leading
-real-CVE replacements. Both have formal RNT seeds with `R=1,T=0`, native
-`D_T=1`, terminal validation, local executable builds, PoC files, and
-TCIR/atom metadata. Neither has an executable BindingSpec candidate yet, so the
-next real-CVE engineering step is BindingSpec drafting and binding-signal
-validation, not fuzzing-budget expansion. `LIBXML2_1107` remains demoted to
-control/sanity evidence despite being runnable.
+Current readiness result: `LIBARCHIVE_2936` is the leading real-CVE
+speedup/attribution case with validated BindingSpec candidates, replicated 60s
+speedup, and a matched 10m speedup confirmation. `GPAC_3403` remains the next
+real-CVE replacement to prepare because it has a formal RNT seed with `R=1,T=0`,
+native `D_T=1`, terminal validation, a local executable build, PoC file, and
+TCIR/atom metadata, but still needs an executable BindingSpec candidate.
+`LIBXML2_1107` remains demoted to control/sanity evidence despite being
+runnable.
 
 Generic Magma short baselines now use the inventory-driven runner:
 

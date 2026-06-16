@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-16T14:30:59+00:00",
+  "generated_at_utc": "2026-06-16T15:15:40+00:00",
   "package_count": 10,
   "packages": [
     {
@@ -13,6 +13,7 @@
       "comparison_id": "LIBARCHIVE_2936_b4_formtrig_10m_vs_aflpp_10m_20260616",
       "fastest_baseline_trigger_time_s": null,
       "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 2,
       "missing_required_baselines": [
         "redqueen_operand"
@@ -40,16 +41,20 @@
       "best_formtrig_trigger_time_s": 1.326,
       "blocked_claims": [
         "AFL++ vanilla, CmpLog, and Redqueen/operand are all baseline-visible in this replicated 60s package, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case",
-        "60s repetition evidence is still not a substitute for long-run Magma and broader real-CVE evidence",
-        "the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped"
+        "60s repetitions plus one 10m confirmation are still not a substitute for 2h matched repetitions, Magma long-run evidence, and broader real-CVE evidence",
+        "the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped",
+        "10m confirmation is still one additional matched point, not broad generality across Magma and real-CVE targets",
+        "All baseline families trigger in the 10m confirmation, so LIBARCHIVE_2936 remains a speedup/attribution case rather than a baseline-impossibility case"
       ],
       "comparison_id": "LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616",
       "fastest_baseline_trigger_time_s": 24.45,
       "formtrig_terminal": true,
+      "longrun_10m_confirmed": true,
       "matched_baselines": 3,
       "missing_required_baselines": [],
       "next_steps": [
-        "extend LIBARCHIVE_2936 to longer matched runs, e.g. 10m/2h, to test whether the early speedup persists beyond short-run repetition",
+        "prioritize harder Magma and real-CVE targets where baseline-visible crashes are less immediate, using the 10m confirmation as a control speedup case",
+        "extend LIBARCHIVE_2936 from the confirmed 10m matched speedup point to 2h repeated matched runs if it remains a paper target",
         "repeat the same replicated protocol on harder Magma and real-CVE targets where baseline-visible crashes are less immediate",
         "report LIBARCHIVE_2936 as short-run speedup/attribution evidence, not as a baseline-impossibility case"
       ],
@@ -57,7 +62,9 @@
         "FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families",
         "FORMTRIG median first-`_T` is 18.44x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline family",
         "FORMTRIG b4 path-hierarchy hook saves terminal crashes in 3/3 short-run repetitions",
-        "D_F_spec_lifted is non-constant {0,1} and the endpoint is attributable to BindingSpec typed mutation"
+        "D_F_spec_lifted is non-constant {0,1} and the endpoint is attributable to BindingSpec typed mutation",
+        "The 10m matched confirmation preserves the endpoint benefit: FORMTRIG reaches first `_T` at 1.220s / exec 32 versus the fastest successful baseline at 20.671s / exec 28677",
+        "The 10m matched confirmation gives 16.94x lower wall-clock time and 896.16x fewer executions than the fastest successful baseline in that run"
       ],
       "package_status": "promote_or_extend_longruns",
       "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json",
@@ -82,6 +89,7 @@
       "comparison_id": "LIBARCHIVE_2936_binding_signal_repair_60s_20260616",
       "fastest_baseline_trigger_time_s": null,
       "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 0,
       "missing_required_baselines": [
         "aflplusplus_vanilla",
@@ -118,6 +126,7 @@
       "comparison_id": "LIBARCHIVE_2936_formtrig_10m_vs_aflpp_10m_20260616",
       "fastest_baseline_trigger_time_s": null,
       "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 2,
       "missing_required_baselines": [
         "redqueen_operand"
@@ -151,6 +160,7 @@
       "comparison_id": "LIBARCHIVE_2936_root_distance_repair_60s_20260616",
       "fastest_baseline_trigger_time_s": null,
       "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 0,
       "missing_required_baselines": [],
       "next_steps": [
@@ -180,6 +190,7 @@
       "comparison_id": "LIBCOAP_35862_asan_terminal_30m_vs_asan_baselines_20260616",
       "fastest_baseline_trigger_time_s": 1060.0,
       "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 3,
       "missing_required_baselines": [],
       "next_steps": [
@@ -211,6 +222,7 @@
       "comparison_id": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
       "fastest_baseline_trigger_time_s": null,
       "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 3,
       "missing_required_baselines": [],
       "next_steps": [
@@ -237,6 +249,7 @@
       "comparison_id": "PNG006_formtrig_2h_vs_baseline_30m_gap_20260616",
       "fastest_baseline_trigger_time_s": null,
       "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 0,
       "missing_required_baselines": [],
       "next_steps": [
@@ -264,6 +277,7 @@
       "comparison_id": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
       "fastest_baseline_trigger_time_s": null,
       "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 1,
       "missing_required_baselines": [
         "aflplusplus_cmplog",
@@ -297,6 +311,7 @@
       "comparison_id": "PNG006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616",
       "fastest_baseline_trigger_time_s": 120.0,
       "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
       "matched_baselines": 2,
       "missing_required_baselines": [
         "redqueen_operand"
@@ -328,12 +343,12 @@
       "best_formtrig_trigger_time_s": 1.326,
       "best_package": "LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616",
       "best_verdict": "positive_speedup_matched_comparison",
-      "blocked_claims": "AFL++ vanilla, CmpLog, and Redqueen/operand are all baseline-visible in this replicated 60s package, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case; 60s repetition evidence is still not a substitute for long-run Magma and broader real-CVE evidence; the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped; single repetition is not final efficacy evidence",
+      "blocked_claims": "AFL++ vanilla, CmpLog, and Redqueen/operand are all baseline-visible in this replicated 60s package, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case; 60s repetitions plus one 10m confirmation are still not a substitute for 2h matched repetitions, Magma long-run evidence, and broader real-CVE evidence; the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped; 10m confirmation is still one additional matched point, not broad generality across Magma and real-CVE targets; All baseline families trigger in the 10m confirmation, so LIBARCHIVE_2936 remains a speedup/attribution case rather than a baseline-impossibility case; single repetition is not final efficacy evidence",
       "disposition": "candidate_extend_longruns",
       "fastest_baseline_trigger_time_s": 24.45,
       "formtrig_terminal": true,
-      "next_action": "extend to longer matched-budget runs to test whether the replicated FORMTRIG TTE speedup persists",
-      "observed_benefits": "FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families; FORMTRIG median first-`_T` is 18.44x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline family; FORMTRIG b4 path-hierarchy hook saves terminal crashes in 3/3 short-run repetitions; D_F_spec_lifted is non-constant {0,1} and the endpoint is attributable to BindingSpec typed mutation; FORMTRIG saved non-trigger progress improves from 0 to 10 events against the old native FORMTRIG run; D_F_spec_lifted changes from constant [2] to variable [1,0]; binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed; same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events; pretrigger_lift_guidance_ready improves from false to true; diagnostic triage benefit: exact native binding and typed mutation executed without endpoint success; b4 converts b3's producer/use-only role variation into root-observe scalar/spec lift variation visible to FORMTRIG diagnostics.",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
+      "observed_benefits": "FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families; FORMTRIG median first-`_T` is 18.44x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline family; FORMTRIG b4 path-hierarchy hook saves terminal crashes in 3/3 short-run repetitions; D_F_spec_lifted is non-constant {0,1} and the endpoint is attributable to BindingSpec typed mutation; The 10m matched confirmation preserves the endpoint benefit: FORMTRIG reaches first `_T` at 1.220s / exec 32 versus the fastest successful baseline at 20.671s / exec 28677; The 10m matched confirmation gives 16.94x lower wall-clock time and 896.16x fewer executions than the fastest successful baseline in that run; FORMTRIG saved non-trigger progress improves from 0 to 10 events against the old native FORMTRIG run; D_F_spec_lifted changes from constant [2] to variable [1,0]; binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed; same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events; pretrigger_lift_guidance_ready improves from false to true; diagnostic triage benefit: exact native binding and typed mutation executed without endpoint success; b4 converts b3's producer/use-only role variation into root-observe scalar/spec lift variation visible to FORMTRIG diagnostics.",
       "priority": 15,
       "sources": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_binding_signal_repair_60s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_root_distance_repair_60s_20260616/comparison.json",
       "strict_pretrigger_guidance": true,

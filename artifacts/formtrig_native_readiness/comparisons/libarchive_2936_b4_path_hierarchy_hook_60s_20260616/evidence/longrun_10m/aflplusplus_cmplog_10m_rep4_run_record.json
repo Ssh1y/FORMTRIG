@@ -1,0 +1,76 @@
+{
+  "baseline": "aflplusplus_cmplog",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/instrumentation/README.cmplog.md",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ CmpLog instrumentation plus matching cmplog binary",
+    "information_budget": "AFL++ CmpLog operand map and normal AFL++ feedback; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "comparison operand logging and comparison-guided mutation from AFL++",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "faithful AFL++ CmpLog baseline for visible scalar/string comparison feedback"
+  },
+  "budget": 600,
+  "command_line": [
+    "experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "artifacts/rnt_corpus/LIBARCHIVE_2936/seeds",
+    "-o",
+    "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_cmplog_10m_rep4/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "600",
+    "-c",
+    "/tmp/formtrig_libarchive_2936_aflpp_cmplog_build/libarchive_write_replay_aflpp_cmplog",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_libarchive_2936_aflpp_plain_build/libarchive_write_replay_aflpp_plain",
+    "@@"
+  ],
+  "config_path": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_cmplog_10m_rep4/run_config.json",
+  "first_crash": {
+    "execs": 28677,
+    "file": "evidence/longrun_10m/first_crashes/aflplusplus_cmplog_10m_rep4/id:000000,sig:11,src:000285,time:20671,execs:28677,op:havoc,rep:2",
+    "id": "000000",
+    "op": "havoc",
+    "raw_file": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_cmplog_10m_rep4/fuzzer_out/default/crashes/id:000000,sig:11,src:000285,time:20671,execs:28677,op:havoc,rep:2",
+    "rep": "2",
+    "sig": "11",
+    "src": "000285",
+    "time": 20671,
+    "time_s": 20.671
+  },
+  "fuzzer_stats": "evidence/longrun_10m/aflplusplus_cmplog_10m_rep4_fuzzer_stats.txt",
+  "last_crash_time_s": 598,
+  "magma_monitor": null,
+  "raw_fuzzer_stats": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_cmplog_10m_rep4/fuzzer_out/default/fuzzer_stats",
+  "raw_run_record": "artifacts/formtrig_native_readiness/raw/libarchive_2936_speedup_10m_t5000_20260616T143759Z/aflplusplus_cmplog_10m_rep4/run_record.json",
+  "run_id": "LIBARCHIVE_2936:aflplusplus_cmplog:rep4",
+  "seed_set_id": "artifacts/rnt_corpus/LIBARCHIVE_2936/seeds",
+  "stats": {
+    "corpus_count": 409,
+    "execs_done": 32829,
+    "execs_per_sec": "54.65",
+    "magma_reached": 0,
+    "magma_triggered": 0,
+    "run_time": 600,
+    "saved_crashes": 25,
+    "saved_hangs": 0
+  },
+  "success": true,
+  "target_id": "LIBARCHIVE_2936",
+  "tc_category": "binary-state-null",
+  "timeout": false,
+  "trigger_execs": 28677,
+  "trigger_time_kind": "exact",
+  "trigger_time_s": 20.671
+}

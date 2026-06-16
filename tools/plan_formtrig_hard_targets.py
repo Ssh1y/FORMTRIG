@@ -253,7 +253,14 @@ def suggested_triage(
     specs: list[str],
     specs_validated: bool,
     comparison_count: int = 0,
+    disposition: str = "",
 ) -> str:
+    if disposition == "candidate_extend_longruns":
+        return (
+            "positive speedup evidence already exists; run 2h matched "
+            "FORMTRIG/AFL++ family repetitions only if this target remains in "
+            "paper scope, otherwise shift budget to harder targets"
+        )
     if specs and not specs_validated:
         if source == "real_cve":
             return (
@@ -407,8 +414,24 @@ def build_magma_rows(
                 "existing_disposition": disposition,
                 "benefit_hypothesis": benefit_hypothesis("magma", primary, secondary),
                 "blockers": "; ".join(blockers),
-                "next_action": next_action(status, "magma", target_id, primary, secondary, specs, specs_validated),
-                "suggested_short_triage": suggested_triage("magma", target_id, specs, specs_validated, comparison_count),
+                "next_action": next_action(
+                    status,
+                    "magma",
+                    target_id,
+                    primary,
+                    secondary,
+                    specs,
+                    specs_validated,
+                    disposition,
+                ),
+                "suggested_short_triage": suggested_triage(
+                    "magma",
+                    target_id,
+                    specs,
+                    specs_validated,
+                    comparison_count,
+                    disposition,
+                ),
                 "source_evidence": str(inventory_path),
                 "raw": {
                     "canary_expression": record.get("canary_expression"),
@@ -485,8 +508,24 @@ def build_cve_rows(
                 "existing_disposition": disposition,
                 "benefit_hypothesis": benefit_hypothesis("real_cve", primary, secondary),
                 "blockers": "; ".join(blockers),
-                "next_action": next_action(status, "real_cve", target_id, primary, secondary, specs, specs_validated),
-                "suggested_short_triage": suggested_triage("real_cve", target_id, specs, specs_validated, comparison_count),
+                "next_action": next_action(
+                    status,
+                    "real_cve",
+                    target_id,
+                    primary,
+                    secondary,
+                    specs,
+                    specs_validated,
+                    disposition,
+                ),
+                "suggested_short_triage": suggested_triage(
+                    "real_cve",
+                    target_id,
+                    specs,
+                    specs_validated,
+                    comparison_count,
+                    disposition,
+                ),
                 "source_evidence": str(inventory_path),
                 "raw": {
                     "bug_type": record.get("bug_type"),
@@ -510,9 +549,15 @@ def next_action(
     secondary: str,
     specs: list[str],
     specs_validated: bool,
+    disposition: str = "",
 ) -> str:
     if status == "do_not_promote":
         return "keep as control or negative evidence; do not spend main long-run budget"
+    if disposition == "candidate_extend_longruns":
+        return (
+            "run 2h matched repetitions if retained as a paper case; otherwise "
+            "shift main budget to harder Magma/real-CVE targets"
+        )
     if status == "short_gate_triaged":
         return "inspect short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance"
     if source == "real_cve":

@@ -5,17 +5,17 @@
       "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml,LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
       "binding_spec_validated": true,
       "blockers": "",
-      "comparison_count": 4,
-      "existing_disposition": "mechanism_only_needs_terminal_oracle",
+      "comparison_count": 5,
+      "existing_disposition": "candidate_extend_longruns",
       "lane": "real_cve_replacement",
-      "next_action": "inspect short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
       "primary_category": "binary-state-null",
       "project": "libarchive",
       "rank": 1,
       "raw": {
         "bug_type": "NULL Pointer Dereference",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 4,
+        "comparison_count": 5,
         "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
         "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
         "pull_links": "",
@@ -26,7 +26,7 @@
       "source": "real_cve",
       "source_evidence": "artifacts/cve_bench_candidate_audit.json",
       "status": "short_gate_triaged",
-      "suggested_short_triage": "short-gate comparison package already exists; inspect the benefit readout first, promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance before rerunning",
+      "suggested_short_triage": "positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets",
       "target_id": "LIBARCHIVE_2936"
     },
     {
@@ -3824,7 +3824,7 @@
       "benefit_hypothesis": "current evidence does not support a main hard-target benefit claim",
       "binding_spec": "",
       "binding_spec_validated": false,
-      "blockers": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage; replication is too low for a final performance claim",
+      "blockers": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; replication is too low for a final performance claim; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
       "comparison_count": 0,
       "existing_disposition": "demote_to_control_or_negative",
       "lane": "control_or_negative",
@@ -3835,18 +3835,20 @@
       "raw": {
         "triage_row": {
           "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+          "best_formtrig_trigger_time_s": null,
           "best_package": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
           "best_verdict": "pretrigger_guidance_only",
-          "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage; replication is too low for a final performance claim",
+          "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; replication is too low for a final performance claim; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
           "disposition": "demote_to_control_or_negative",
           "fastest_baseline_trigger_time_s": 1060.0,
           "formtrig_terminal": true,
           "next_action": "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets",
-          "observed_benefits": "FORMTRIG terminal oracle success is observed; binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+          "observed_benefits": "binary or sparse trigger feedback was lifted into accepted non-trigger search progress; FORMTRIG terminal oracle success is observed",
           "priority": 90,
           "sources": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_asan_terminal_30m_vs_asan_baselines_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libcoap_35862_pretrigger_30m_vs_non_asan_baselines_20260616/comparison.json",
           "strict_pretrigger_guidance": true,
-          "target_id": "LIBCOAP_CVE_2023_35862"
+          "target_id": "LIBCOAP_CVE_2023_35862",
+          "tte_speedup_over_fastest_baseline": null
         }
       },
       "score": -99,
@@ -3858,7 +3860,7 @@
       "target_id": "LIBCOAP_CVE_2023_35862"
     }
   ],
-  "generated_at_utc": "2026-06-16T11:32:35+00:00",
+  "generated_at_utc": "2026-06-16T15:15:40+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -3875,17 +3877,17 @@
       "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml,LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
       "binding_spec_validated": true,
       "blockers": "",
-      "comparison_count": 4,
-      "existing_disposition": "mechanism_only_needs_terminal_oracle",
+      "comparison_count": 5,
+      "existing_disposition": "candidate_extend_longruns",
       "lane": "real_cve_replacement",
-      "next_action": "inspect short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
       "primary_category": "binary-state-null",
       "project": "libarchive",
       "rank": 1,
       "raw": {
         "bug_type": "NULL Pointer Dereference",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 4,
+        "comparison_count": 5,
         "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
         "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
         "pull_links": "",
@@ -3896,7 +3898,7 @@
       "source": "real_cve",
       "source_evidence": "artifacts/cve_bench_candidate_audit.json",
       "status": "short_gate_triaged",
-      "suggested_short_triage": "short-gate comparison package already exists; inspect the benefit readout first, promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance before rerunning",
+      "suggested_short_triage": "positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets",
       "target_id": "LIBARCHIVE_2936"
     },
     {

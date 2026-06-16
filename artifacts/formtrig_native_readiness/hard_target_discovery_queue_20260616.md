@@ -14,7 +14,7 @@ Demoted controls retained outside the main queue: `3`.
 
 | rank | target | source | project | category | score | lane | comparison packages | next action |
 | ---: | --- | --- | --- | --- | ---: | --- | ---: | --- |
-| 1 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 115 | `real_cve_replacement` | 5 | extend matched speedup runs for the b4 path-hierarchy package beyond 60s |
+| 1 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 115 | `real_cve_replacement` | 5 | run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets |
 | 2 | PNG007 | magma | libpng | binary-state-null | 77 | `binding_validation_first` | 0 | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
 | 3 | GPAC_3403 | real_cve | gpac | compound-sequence-lifecycle | 92 | `binding_spec_first` | 0 | validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec |
 | 4 | PDF003 | magma | poppler | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
@@ -52,7 +52,7 @@ Demoted controls retained outside the main queue: `3`.
 - Benefit hypothesis: native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T
 - Comparison packages: 5
 - Blockers: none recorded
-- Short triage: replicated 60s speedup package exists (`LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616`); next action is longer matched FORMTRIG/AFL++ vanilla/CmpLog/Redqueen-path runs, not more signal repair
+- Short triage: positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets
 
 ### 2. PNG007
 

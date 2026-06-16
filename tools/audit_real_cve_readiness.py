@@ -42,6 +42,8 @@ FIELDS = [
     "seed_count",
     "native_dt_values",
     "source_locations",
+    "current_speedup_package",
+    "current_benefit",
     "blockers",
     "next_action",
 ]
@@ -176,6 +178,55 @@ def comparison_records(
         record["_path"] = str(path)
         records.append(record)
     return records
+
+
+def speedup_comparison(records: list[dict[str, Any]]) -> dict[str, Any] | None:
+    positives = [
+        record
+        for record in records
+        if str(record.get("analysis", {}).get("verdict") or "")
+        == "positive_speedup_matched_comparison"
+    ]
+    if not positives:
+        return None
+    positives.sort(
+        key=lambda record: (
+            0 if isinstance(record.get("longrun_10m_confirmation"), dict) else 1,
+            str(record.get("_path") or ""),
+        )
+    )
+    return positives[0]
+
+
+def speedup_benefit(record: dict[str, Any] | None) -> str:
+    if not record:
+        return ""
+    analysis = record.get("analysis", {})
+    confirmation = record.get("longrun_10m_confirmation")
+    median_formtrig = analysis.get("best_formtrig_trigger_time_s")
+    median_baseline = analysis.get("fastest_baseline_trigger_time_s")
+    median_exec_speedup = analysis.get("exec_speedup_over_fastest_baseline")
+    median_time_speedup = analysis.get("tte_speedup_over_fastest_baseline")
+    parts = []
+    if median_formtrig is not None and median_baseline is not None:
+        parts.append(
+            "replicated 60s first-_T speedup: FORMTRIG median "
+            f"{median_formtrig}s versus fastest baseline median {median_baseline}s"
+        )
+    if median_time_speedup is not None and median_exec_speedup is not None:
+        parts.append(
+            f"{float(median_time_speedup):.2f}x wall-clock and "
+            f"{float(median_exec_speedup):.2f}x execution speedup by median"
+        )
+    if isinstance(confirmation, dict):
+        parts.append(
+            "matched 10m confirmation: FORMTRIG "
+            f"{confirmation.get('formtrig_first_trigger_time_s')}s / exec "
+            f"{confirmation.get('formtrig_first_trigger_execs')} versus fastest "
+            f"baseline {confirmation.get('fastest_successful_baseline_trigger_time_s')}s "
+            f"/ exec {confirmation.get('fastest_successful_baseline_trigger_execs')}"
+        )
+    return "; ".join(parts)
 
 
 def load_rnt_manifest(path: Path) -> dict[str, Any]:
@@ -328,6 +379,10 @@ def audit_target(
     binding_status = binding_validation_status(validation_records)
     comparisons = comparison_records(target_id, comparison_root)
     comparison_count = len(comparisons)
+    best_speedup = speedup_comparison(comparisons)
+    has_10m_speedup = bool(
+        best_speedup and isinstance(best_speedup.get("longrun_10m_confirmation"), dict)
+    )
     atom_path = Path("artifacts/atoms") / f"{target_id}.json"
     tcir_path = Path("artifacts/tcir") / f"{target_id}.json"
     trigger_graph_path = Path("artifacts/trigger_graphs") / f"{target_id}.json"
@@ -364,7 +419,21 @@ def audit_target(
         next_action = "keep as control/sanity evidence; do not spend main real-CVE long-run budget"
         priority = 95
     elif rnt_ready and binary_dt_gap and terminal_validated and binding_spec_validated:
-        if comparison_count:
+        if has_10m_speedup:
+            readiness = "ten_min_matched_speedup_confirmed"
+            next_action = (
+                "run 2h matched repetitions if retained as a paper case; otherwise "
+                "shift main budget to harder Magma/real-CVE targets"
+            )
+            priority = 5
+        elif best_speedup:
+            readiness = "short_run_replicated_speedup"
+            next_action = (
+                "extend to 10m/2h matched FORMTRIG/AFL++ vanilla/CmpLog/"
+                "Redqueen-path runs for the speedup package"
+            )
+            priority = 8
+        elif comparison_count:
             readiness = "short_gate_triaged"
             next_action = (
                 "inspect latest short-gate benefit readout; promote only positive "
@@ -423,6 +492,8 @@ def audit_target(
         "seed_count": intish(manifest.get("unique_rnt_seed_count")),
         "native_dt_values": ",".join(native_dt_values),
         "source_locations": "; ".join(source_locations),
+        "current_speedup_package": best_speedup.get("_path", "") if best_speedup else "",
+        "current_benefit": speedup_benefit(best_speedup),
         "blockers": "; ".join(blockers),
         "next_action": next_action,
         "paths": {
@@ -506,6 +577,8 @@ def write_markdown(path: Path, rows: list[dict[str, Any]]) -> None:
                 f"- Terminal validation signal: {row.get('validation_signal') or 'none'}",
                 f"- Binding validation status: {row.get('binding_validation_status') or 'none'}",
                 f"- Short-gate comparison packages: {row.get('comparison_count', 0)}",
+                f"- Current speedup package: `{row.get('current_speedup_package')}`" if row.get("current_speedup_package") else "- Current speedup package: none",
+                f"- Current benefit: {row.get('current_benefit')}" if row.get("current_benefit") else "- Current benefit: none",
                 f"- Blockers: {row.get('blockers') or 'none'}",
                 f"- Program: `{row.get('paths', {}).get('program', '')}`",
                 f"- RNT manifest: `{row.get('paths', {}).get('rnt_manifest', '')}`",
