@@ -264,15 +264,28 @@ static int load_site_map(const char *path) {
   return 1;
 }
 
+static int one_way_path_suffix_match(const char *suffix_text,
+                                     const char *path_text) {
+  if (!suffix_text || !*suffix_text) return 1;
+  if (!path_text || !*path_text) return 0;
+  size_t suffix_len = strlen(suffix_text);
+  size_t path_len = strlen(path_text);
+  if (suffix_len > path_len) return 0;
+  const char *suffix = path_text + path_len - suffix_len;
+  if (strcmp(suffix, suffix_text) != 0) return 0;
+  return suffix == path_text || suffix[-1] == '/';
+}
+
 static int path_suffix_match(const char *want, const char *have) {
-  if (!want || !*want) return 1;
-  if (!have || !*have) return 0;
-  size_t want_len = strlen(want);
-  size_t have_len = strlen(have);
-  if (want_len > have_len) return 0;
-  const char *suffix = have + have_len - want_len;
-  if (strcmp(suffix, want) != 0) return 0;
-  return suffix == have || suffix[-1] == '/';
+  return one_way_path_suffix_match(want, have) ||
+         one_way_path_suffix_match(have, want);
+}
+
+static int line_matches(uint32_t want, uint32_t have, int relax_line) {
+  if (want == have) return 1;
+  if (!relax_line) return 0;
+  uint32_t delta = want > have ? want - have : have - want;
+  return delta <= 3u;
 }
 
 static int equivalent_site_rows(const site_row_t *a, const site_row_t *b) {
@@ -301,7 +314,7 @@ static int binding_has_source_selectors(const binding_spec_t *binding) {
 
 static int site_matches_binding_source(const site_row_t *site,
                                        const binding_spec_t *binding,
-                                       int relax_inst_no,
+                                       int relax_inst_no, int relax_line,
                                        int relax_column) {
   if (binding->site_kind[0] && !eq(binding->site_kind, site->kind))
     return 0;
@@ -310,7 +323,9 @@ static int site_matches_binding_source(const site_row_t *site,
   if (binding->opcode[0] && !eq(binding->opcode, site->opcode)) return 0;
   if (binding->file[0] && !path_suffix_match(binding->file, site->file))
     return 0;
-  if (binding->have_line && binding->line != site->line) return 0;
+  if (binding->have_line &&
+      !line_matches(binding->line, site->line, relax_line))
+    return 0;
   if (!relax_inst_no && binding->have_inst_no &&
       binding->inst_no != site->inst_no)
     return 0;
@@ -321,7 +336,8 @@ static int site_matches_binding_source(const site_row_t *site,
 }
 
 static uint32_t collect_source_matches(const binding_spec_t *binding,
-                                       int relax_inst_no, int relax_column,
+                                       int relax_inst_no, int relax_line,
+                                       int relax_column,
                                        const site_row_t **found) {
   const site_row_t **matches = NULL;
   uint32_t match_capacity = 0;
@@ -329,7 +345,7 @@ static uint32_t collect_source_matches(const binding_spec_t *binding,
   if (found) *found = NULL;
   for (uint32_t i = 0; i < site_count; i++) {
     if (!site_matches_binding_source(&sites[i], binding, relax_inst_no,
-                                     relax_column))
+                                     relax_line, relax_column))
       continue;
     if (site_already_counted(matches, match_count, &sites[i])) continue;
     if (match_count == match_capacity) {
@@ -394,7 +410,7 @@ static int resolve_site(binding_spec_t *binding) {
     const site_row_t *by_id = find_unique_site_id(binding->site_id, &id_matches);
     if (id_matches == 1u &&
         (!binding_has_source_selectors(binding) ||
-         site_matches_binding_source(by_id, binding, 0, 0))) {
+         site_matches_binding_source(by_id, binding, 0, 0, 0))) {
       bind_to_site(binding, by_id);
       return 1;
     }
@@ -402,20 +418,37 @@ static int resolve_site(binding_spec_t *binding) {
 
   if (binding_has_source_selectors(binding)) {
     const site_row_t *found = NULL;
-    uint32_t matches = collect_source_matches(binding, 0, 0, &found);
+    uint32_t matches = collect_source_matches(binding, 0, 0, 0, &found);
     const char *mode = "exact";
 
     if (!matches && binding->have_inst_no) {
-      matches = collect_source_matches(binding, 1, 0, &found);
+      matches = collect_source_matches(binding, 1, 0, 0, &found);
       mode = "relaxed_inst_no";
     }
     if (!matches && binding->have_column) {
-      matches = collect_source_matches(binding, 0, 1, &found);
+      matches = collect_source_matches(binding, 0, 0, 1, &found);
       mode = "relaxed_column";
     }
     if (!matches && binding->have_inst_no && binding->have_column) {
-      matches = collect_source_matches(binding, 1, 1, &found);
+      matches = collect_source_matches(binding, 1, 0, 1, &found);
       mode = "relaxed_inst_no_column";
+    }
+    if (!matches && binding->have_line) {
+      matches = collect_source_matches(binding, 0, 1, 0, &found);
+      mode = "relaxed_line";
+    }
+    if (!matches && binding->have_line && binding->have_column) {
+      matches = collect_source_matches(binding, 0, 1, 1, &found);
+      mode = "relaxed_line_column";
+    }
+    if (!matches && binding->have_inst_no && binding->have_line) {
+      matches = collect_source_matches(binding, 1, 1, 0, &found);
+      mode = "relaxed_inst_no_line";
+    }
+    if (!matches && binding->have_inst_no && binding->have_line &&
+        binding->have_column) {
+      matches = collect_source_matches(binding, 1, 1, 1, &found);
+      mode = "relaxed_inst_no_line_column";
     }
 
     if (matches == 1u) {

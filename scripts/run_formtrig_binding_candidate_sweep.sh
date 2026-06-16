@@ -439,7 +439,7 @@ for candidate in "${candidates[@]}"; do
     "$semantic_roles" "$candidate_out" \
     >> "$summary_tmp"
 
-  jq -n \
+  jq -c -n \
     --arg candidate "$candidate" \
     --arg out_dir "$candidate_out" \
     --argjson index "$idx" \

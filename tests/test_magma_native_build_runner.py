@@ -87,6 +87,7 @@ chmod +x "$OUT/afl/$PROGRAM"
             plan = json.loads((out_dir / "build_plan.json").read_text(encoding="utf-8"))
             self.assertEqual(plan["status"], "planned")
             self.assertEqual(plan["mode"], "dry-run")
+            self.assertEqual(plan["inputs"]["instrument_entry"], "runner")
             self.assertEqual(plan["expected_validation_asset"]["program_args"], "@@ /tmp/out")
             self.assertEqual(
                 plan["expected_validation_asset"]["site_map"],
@@ -97,6 +98,12 @@ chmod +x "$OUT/afl/$PROGRAM"
                 str(out_dir / "out" / "afl"),
             )
             self.assertIn("instrument_target", [row["name"] for row in plan["steps"] if row["selected"]])
+            script = out_dir / "runner_instrument_target.sh"
+            self.assertTrue(script.exists())
+            script_text = script.read_text(encoding="utf-8")
+            self.assertIn("FORMTRIG_MAGMA_CXX_STDLIB", script_text)
+            self.assertIn("--afl-cc", script_text)
+            self.assertIn("FORMTRIG_LOCAL_CONFIG_AUX", script_text)
             self.assertFalse((out_dir / "out" / "afl" / "pdfimages").exists())
             self.assertIn("Magma FORMTRIG Native Build Plan", (out_dir / "build_plan.md").read_text(encoding="utf-8"))
 
@@ -122,6 +129,8 @@ chmod +x "$OUT/afl/$PROGRAM"
                     "--skip-fuzzer-build",
                     "--skip-target-fetch",
                     "--skip-patches",
+                    "--instrument-entry",
+                    "fuzzer",
                     "--execute",
                 ]
             )
@@ -143,6 +152,31 @@ chmod +x "$OUT/afl/$PROGRAM"
                 [row["status"] for row in plan["executed_steps"] if row["selected"]],
                 ["ok"],
             )
+
+    def test_failure_log_summary_extracts_missing_dependencies(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+        with tempfile.TemporaryDirectory() as tmp:
+            log = Path(tmp) / "instrument_target.log"
+            log.write_text(
+                "\n".join(
+                    [
+                        "/usr/bin/ld: cannot find -ljpeg: No such file or directory",
+                        "/usr/bin/ld: cannot find -llzma: No such file or directory",
+                        "/usr/bin/ld: cannot find /usr/local/lib/clang/11.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.a",
+                        "clang: error: linker command failed with exit code 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            summary = runner.summarize_failure_log(log)
+
+            self.assertEqual(summary["missing_link_libraries"], ["jpeg", "lzma"])
+            self.assertIn("libjpeg-dev", summary["apt_package_hints"])
+            self.assertIn("liblzma-dev", summary["apt_package_hints"])
+            self.assertIn("libclang-rt-11-dev", summary["apt_package_hints"])
+            self.assertIn("clang: error: linker command failed with exit code 1", summary["error_lines"])
+            self.assertIn("clang: error: linker command failed with exit code 1", summary["tail_lines"])
 
 
 if __name__ == "__main__":

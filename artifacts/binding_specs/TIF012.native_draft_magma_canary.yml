@@ -13,16 +13,19 @@ atoms:
     kind: 'binary-state-null'
     root: 'v'
 bindings:
-  - id: 'magma_canary_root_01'
+  - id: 'magma_canary_root_01_cmp_126'
     atom: 1
     role: 'root_observe'
-    expr: 'Magma canary source selector for MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))'
+    expr: 'TIF012 canary cmp at setExtraSamples:134'
+    site_id: 2633682639
     observe_at:
       kind: 'cmp'
       function: 'setExtraSamples'
-      file: 'libtiff/tif_dir.c'
-      line: 133
-      column: 8
+      file: 'tif_dir.c'
+      line: 134
+      inst_no: 126
+      opcode: 'icmp'
+      column: 9
     component: 'root_state'
     priority: 10
     direction: 'higher'
@@ -30,18 +33,301 @@ bindings:
     value: 1.0
     confidence: 0.55
     observe_window: 'any'
-  - id: 'magma_canary_root_02'
+  - id: 'magma_canary_root_01_cmp_129'
     atom: 1
     role: 'root_observe'
-    expr: 'Magma canary source selector for MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))'
+    expr: 'TIF012 canary cmp at setExtraSamples:134'
+    site_id: 2717570734
+    observe_at:
+      kind: 'cmp'
+      function: 'setExtraSamples'
+      file: 'tif_dir.c'
+      line: 134
+      inst_no: 129
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 11
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_01_cmp_138'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at setExtraSamples:134'
+    site_id: 2633535544
+    observe_at:
+      kind: 'cmp'
+      function: 'setExtraSamples'
+      file: 'tif_dir.c'
+      line: 134
+      inst_no: 138
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 12
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_01_cmp_147'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at setExtraSamples:134'
+    site_id: 2617890758
+    observe_at:
+      kind: 'cmp'
+      function: 'setExtraSamples'
+      file: 'tif_dir.c'
+      line: 134
+      inst_no: 147
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 13
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_01_cmp_155'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at setExtraSamples:134'
+    site_id: 2651298901
+    observe_at:
+      kind: 'cmp'
+      function: 'setExtraSamples'
+      file: 'tif_dir.c'
+      line: 134
+      inst_no: 155
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 14
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_01_cmp_165'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at setExtraSamples:134'
+    site_id: 772058478
+    observe_at:
+      kind: 'cmp'
+      function: 'setExtraSamples'
+      file: 'tif_dir.c'
+      line: 134
+      inst_no: 165
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 15
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_01_cmp_172'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at setExtraSamples:134'
+    site_id: 788689002
+    observe_at:
+      kind: 'cmp'
+      function: 'setExtraSamples'
+      file: 'tif_dir.c'
+      line: 134
+      inst_no: 172
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 16
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_457'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 2305107043
     observe_at:
       kind: 'cmp'
       function: '_TIFFVSetField'
-      file: 'libtiff/tif_dir.c'
-      line: 312
-      column: 8
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 457
+      opcode: 'icmp'
+      column: 13
     component: 'root_state'
-    priority: 11
+    priority: 17
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_460'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 140647097
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 460
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 18
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_469'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 258090430
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 469
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 19
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_477'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 157277621
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 477
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_481'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 461687524
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 481
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 21
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_486'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 444909905
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 486
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 22
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_493'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 360874715
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 493
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 23
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_503'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 2967075965
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 503
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 24
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'magma_canary_root_02_cmp_512'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TIF012 canary cmp at _TIFFVSetField:313'
+    site_id: 2984000679
+    observe_at:
+      kind: 'cmp'
+      function: '_TIFFVSetField'
+      file: 'tif_dir.c'
+      line: 313
+      inst_no: 512
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 25
     direction: 'higher'
     value_mode: 'outcome'
     value: 1.0

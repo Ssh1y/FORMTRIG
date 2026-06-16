@@ -16,6 +16,58 @@ def load_tool(name: str):
 
 
 class MagmaNativeAssetDiscoveryTest(unittest.TestCase):
+    def test_discovers_formtrig_native_site_map_name(self):
+        discovery = load_tool("discover_magma_native_assets")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            site_map = root / "out" / "formtrig_native" / "formtrig_sites.tsv"
+            site_map.parent.mkdir(parents=True)
+            site_map.write_text("", encoding="utf-8")
+
+            files = discovery.walk_files([root], max_files=20)
+
+            self.assertEqual(discovery.site_map_paths(files), [site_map])
+
+    def test_selector_match_accepts_suffix_paths_and_small_line_drift(self):
+        discovery = load_tool("discover_magma_native_assets")
+
+        self.assertTrue(
+            discovery.selector_matches_row(
+                {
+                    "kind": "cmp",
+                    "function": "_TIFFVSetField",
+                    "file": "libtiff/tif_dir.c",
+                    "line": "312",
+                    "column": "8",
+                },
+                {
+                    "kind": "cmp",
+                    "function": "_TIFFVSetField",
+                    "file": "tif_dir.c",
+                    "line": "313",
+                    "column": "13",
+                },
+            )
+        )
+
+        self.assertFalse(
+            discovery.selector_matches_row(
+                {
+                    "kind": "cmp",
+                    "function": "_TIFFVSetField",
+                    "file": "libtiff/tif_dir.c",
+                    "line": "312",
+                },
+                {
+                    "kind": "cmp",
+                    "function": "_TIFFVSetField",
+                    "file": "tif_dir.c",
+                    "line": "400",
+                    "column": "13",
+                },
+            )
+        )
+
     def test_discovers_runnable_assets_when_all_native_inputs_match(self):
         discovery = load_tool("discover_magma_native_assets")
         with tempfile.TemporaryDirectory() as tmp:

@@ -152,7 +152,12 @@ def site_map_paths(files: list[Path]) -> list[Path]:
     out: list[Path] = []
     for path in files:
         name = path.name
-        if name == "site_map.tsv" or name.endswith("_site_map.tsv") or "site_map" in name and name.endswith(".tsv"):
+        if (
+            name in {"site_map.tsv", "formtrig_sites.tsv"}
+            or name.endswith("_site_map.tsv")
+            or name.endswith("_sites.tsv")
+            or "site_map" in name and name.endswith(".tsv")
+        ):
             out.append(path)
     return sorted(out)
 
@@ -168,6 +173,13 @@ def executable_paths(files: list[Path], program_names: set[str]) -> dict[str, li
         except OSError:
             continue
     return {name: sorted(paths) for name, paths in out.items()}
+
+
+def stable_path(path: Path) -> str:
+    try:
+        return str(path.resolve())
+    except OSError:
+        return str(path)
 
 
 def read_site_rows(path: Path, *, max_rows: int = 200000) -> list[dict[str, str]]:
@@ -197,18 +209,33 @@ def read_site_rows(path: Path, *, max_rows: int = 200000) -> list[dict[str, str]
     return rows
 
 
+def source_file_matches(selector_file: str, row_file: str) -> bool:
+    selector = selector_file.replace("\\", "/").strip("/")
+    row = row_file.replace("\\", "/").strip("/")
+    if not selector:
+        return True
+    return selector == row or selector.endswith(f"/{row}") or row.endswith(f"/{selector}")
+
+
+def source_line_matches(selector_line: str, row_line: str, *, tolerance: int = 3) -> bool:
+    if not selector_line:
+        return True
+    try:
+        return abs(int(selector_line) - int(row_line)) <= tolerance
+    except ValueError:
+        return str(selector_line) == str(row_line)
+
+
 def selector_matches_row(selector: dict[str, str], row: dict[str, str]) -> bool:
     if selector.get("kind") and selector["kind"] != row.get("kind"):
         return False
-    if selector.get("line") and str(selector["line"]) != str(row.get("line", "")):
+    if not source_line_matches(selector.get("line", ""), row.get("line", "")):
         return False
     selector_file = selector.get("file", "")
-    if selector_file and selector_file not in row.get("file", ""):
+    if selector_file and not source_file_matches(selector_file, row.get("file", "")):
         return False
     selector_function = selector.get("function", "")
     if selector_function and selector_function != row.get("function", ""):
-        return False
-    if selector.get("column") and str(selector["column"]) != str(row.get("column", "")):
         return False
     return True
 
@@ -216,13 +243,13 @@ def selector_matches_row(selector: dict[str, str], row: dict[str, str]) -> bool:
 def score_site_map(path: Path, selectors: list[dict[str, str]]) -> dict[str, Any]:
     rows = read_site_rows(path)
     if not rows:
-        return {"path": str(path), "score": 0, "matched_selectors": 0, "row_count": 0}
+        return {"path": stable_path(path), "score": 0, "matched_selectors": 0, "row_count": 0}
     matched = 0
     for selector in selectors:
         if any(selector_matches_row(selector, row) for row in rows):
             matched += 1
     return {
-        "path": str(path),
+        "path": stable_path(path),
         "score": matched * 1000 + min(len(rows), 999),
         "matched_selectors": matched,
         "selector_count": len(selectors),
@@ -231,7 +258,7 @@ def score_site_map(path: Path, selectors: list[dict[str, str]]) -> dict[str, Any
 
 
 def target_command(executable: Path, args_template: str) -> str:
-    binary = shlex.quote(str(executable))
+    binary = shlex.quote(stable_path(executable))
     if not args_template:
         return f"{binary} @@"
     return f"{binary} {args_template}"
@@ -333,10 +360,10 @@ def build_discovery(
             "binding_spec": str(spec),
             "seed_dir": seed_dir if rnt_ready else f"TODO_FORMAL_RNT_SEED_DIR_FOR_{target_id}",
             "site_map": best_site["path"] if best_site else f"TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_{target_id}.tsv",
-            "target_cwd": str(best_exe.parent) if best_exe else f"TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_{target_id}",
-                "target_cmd": target_command(best_exe, args_template) if best_exe else manifest.get("target_cmd", ""),
-                "category": str(draft.get("category") or "generic"),
-                "runner_category": manifest.get("category", "") or category_for_runner(str(draft.get("category") or "")),
+            "target_cwd": stable_path(best_exe.parent) if best_exe else f"TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_{target_id}",
+            "target_cmd": target_command(best_exe, args_template) if best_exe else manifest.get("target_cmd", ""),
+            "category": str(draft.get("category") or "generic"),
+            "runner_category": manifest.get("category", "") or category_for_runner(str(draft.get("category") or "")),
             "duration_s": 600,
             "seed_preflight_max": 32,
             "seed_preflight_timeout": 5,
@@ -352,7 +379,7 @@ def build_discovery(
                 "rnt_seed_files": intish(rnt.get("seed_files")),
                 "selector_count": len(selectors),
                 "best_site_map": best_site,
-                "executable_candidates": [str(path) for path in exe_candidates[:5]],
+                "executable_candidates": [stable_path(path) for path in exe_candidates[:5]],
                 "runnable_candidate": not blockers,
                 "blockers": blockers,
             }

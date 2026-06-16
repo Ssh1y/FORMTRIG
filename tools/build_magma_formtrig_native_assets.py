@@ -27,6 +27,82 @@ DEFAULT_MAGMA_ROOT = Path("experiments/magma_workspace/magma")
 DEFAULT_OUT_ROOT = Path("artifacts/formtrig_native_readiness/magma_native_builds")
 
 
+CANARY_HEADER = r"""#ifndef CANARY_H_
+#define CANARY_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if defined(__x86_64__) || defined (__i386__)
+#include "arch/x86.h"
+#else
+#include "arch/noarch.h"
+#endif
+
+#include "formtrig/formtrig_runtime.h"
+
+extern void magma_log(const char *bug, int condition);
+
+#define MAGMA_LOG(b,c) do { \
+    const char *__ft_bug = (b); \
+    if (formtrig_target_selected(__ft_bug)) { \
+      if (formtrig_target_from_canary()) formtrig_target_hit(__ft_bug); \
+      int __ft_sup = formtrig_suppress_canary_events(); \
+      if (__ft_sup) formtrig_suppress_begin(); \
+      int __ft_cond = (int)(c); \
+      if (__ft_sup) formtrig_suppress_end(); \
+      formtrig_crash_predicate(__ft_cond, __ft_bug); \
+      magma_log(__ft_bug, __ft_cond); \
+    } else { \
+      magma_log(__ft_bug, 0); \
+    } \
+  } while (0)
+
+#ifdef __cplusplus
+#define MAGMA_LOG_V(b,c) ([&]() -> int { \
+    const char *__ft_bug = (b); \
+    if (formtrig_target_selected(__ft_bug)) { \
+      if (formtrig_target_from_canary()) formtrig_target_hit(__ft_bug); \
+      int __ft_sup = formtrig_suppress_canary_events(); \
+      if (__ft_sup) formtrig_suppress_begin(); \
+      int __ft_cond = (int)(c); \
+      if (__ft_sup) formtrig_suppress_end(); \
+      formtrig_crash_predicate(__ft_cond, __ft_bug); \
+      magma_log(__ft_bug, __ft_cond); \
+      return __ft_cond; \
+    } \
+    magma_log(__ft_bug, 0); \
+    return 0; \
+  }())
+#else
+#define MAGMA_LOG_V(b,c) ({ \
+    const char *__ft_bug = (b); \
+    int __ft_ret = 0; \
+    if (formtrig_target_selected(__ft_bug)) { \
+      if (formtrig_target_from_canary()) formtrig_target_hit(__ft_bug); \
+      int __ft_sup = formtrig_suppress_canary_events(); \
+      if (__ft_sup) formtrig_suppress_begin(); \
+      __ft_ret = (int)(c); \
+      if (__ft_sup) formtrig_suppress_end(); \
+      formtrig_crash_predicate(__ft_ret, __ft_bug); \
+      magma_log(__ft_bug, __ft_ret); \
+    } else { \
+      magma_log(__ft_bug, 0); \
+    } \
+    __ft_ret; \
+  })
+#endif
+
+#define MAGMA_AND(a,b) magma_and((a),(b))
+#define MAGMA_OR(a,b) magma_or((a),(b))
+
+#ifdef __cplusplus
+}
+#endif
+#endif
+"""
+
+
 def shell_join(parts: list[str]) -> str:
     return " ".join(shlex.quote(str(part)) for part in parts)
 
@@ -103,6 +179,189 @@ def step(
     }
 
 
+def runner_instrument_script_text() -> str:
+    canary = CANARY_HEADER.rstrip("\n")
+    return f"""#!/usr/bin/env bash
+set -euo pipefail
+
+cat > "$MAGMA/src/canary.h" <<'EOF'
+{canary}
+EOF
+
+native_work="$OUT/formtrig_native"
+mkdir -p "$OUT/afl" "$native_work"
+rm -f "$native_work/formtrig_sites.tsv"
+
+real_wget="$(command -v wget || true)"
+local_config_aux=""
+for candidate in /usr/share/misc /usr/share/automake-1.16 /usr/share/autoconf/build-aux /usr/share/libtool/build-aux; do
+  if [ -x "$candidate/config.guess" ] && [ -x "$candidate/config.sub" ]; then
+    local_config_aux="$candidate"
+    break
+  fi
+done
+if [ -n "$local_config_aux" ]; then
+  mkdir -p "$native_work/bin"
+  cat > "$native_work/bin/wget" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+out=""
+args=("$@")
+for ((idx = 0; idx < ${{#args[@]}}; idx++)); do
+  case "${{args[$idx]}}" in
+    -O)
+      if (( idx + 1 < ${{#args[@]}} )); then
+        out="${{args[$((idx + 1))]}}"
+      fi
+      ;;
+    -O*)
+      out="${{args[$idx]#-O}}"
+      ;;
+  esac
+done
+last_index=$((${{#args[@]}} - 1))
+url="${{args[$last_index]}}"
+for file in config.guess config.sub; do
+  if [[ "$url" == *"/$file" ]]; then
+    src="${{FORMTRIG_LOCAL_CONFIG_AUX}}/$file"
+    if [ -n "$out" ]; then
+      cp "$src" "$out"
+    else
+      cat "$src"
+    fi
+    exit 0
+  fi
+done
+if [ -n "${{FORMTRIG_REAL_WGET:-}}" ]; then
+  exec "$FORMTRIG_REAL_WGET" "$@"
+fi
+echo "wget unavailable and URL is not a local config-aux file: $url" >&2
+exit 127
+EOF
+  chmod +x "$native_work/bin/wget"
+  export FORMTRIG_REAL_WGET="$real_wget"
+  export FORMTRIG_LOCAL_CONFIG_AUX="$local_config_aux"
+  export PATH="$native_work/bin:$PATH"
+fi
+
+prepare_args=(
+  python3 "$FUZZER/formtrig/tools/prepare_native_build.py"
+  --work-dir "$native_work"
+  --cc-compiler "$FUZZER/repo/afl-clang-fast"
+  --cxx-compiler "$FUZZER/repo/afl-clang-fast++"
+  --runtime-cc "${{FORMTRIG_RUNTIME_CC:-clang}}"
+  --instrument-level "${{FORMTRIG_INSTRUMENT_LEVEL:-balanced}}"
+  --skip-pass-regex '(^|/)(magma/magma/src|magma/src)/'
+  --env AFL_QUIET=1
+  --force
+)
+if [ -n "${{FORMTRIG_AFL_CC:-}}" ]; then
+  prepare_args+=(--afl-cc "$FORMTRIG_AFL_CC")
+fi
+if [ -n "${{FORMTRIG_AFL_CXX:-}}" ]; then
+  prepare_args+=(--afl-cxx "$FORMTRIG_AFL_CXX")
+fi
+if [ -n "${{FORMTRIG_PASS_CXX:-}}" ]; then
+  prepare_args+=(--pass-cxx "$FORMTRIG_PASS_CXX")
+fi
+if [ -n "${{FORMTRIG_LLVM_CONFIG:-}}" ]; then
+  prepare_args+=(--llvm-config "$FORMTRIG_LLVM_CONFIG")
+fi
+
+"${{prepare_args[@]}}"
+
+# shellcheck disable=SC1090
+source "$native_work/formtrig_build_env.sh"
+
+driver="$FUZZER/repo/utils/aflpp_driver/libAFLDriver.a"
+case "${{FORMTRIG_MAGMA_CXX_STDLIB:-libc++}}" in
+  libc++)
+    export LIBS="$LIBS -lc++ -lc++abi $driver"
+    export CXXFLAGS="$CXXFLAGS -stdlib=libc++"
+    ;;
+  libstdc++)
+    export LIBS="$LIBS -lstdc++ $driver"
+    ;;
+  none)
+    export LIBS="$LIBS $driver"
+    ;;
+  *)
+    echo "unsupported FORMTRIG_MAGMA_CXX_STDLIB=$FORMTRIG_MAGMA_CXX_STDLIB" >&2
+    exit 2
+    ;;
+esac
+
+export OUT="$OUT/afl"
+export LDFLAGS="$LDFLAGS -L$OUT"
+
+"$MAGMA/build.sh"
+"$TARGET/build.sh"
+"""
+
+
+def write_runner_instrument_script(path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(runner_instrument_script_text(), encoding="utf-8")
+    path.chmod(0o755)
+
+
+LINK_LIBRARY_PACKAGE_HINTS = {
+    "c++": ["libc++-dev"],
+    "c++abi": ["libc++abi-dev"],
+    "jpeg": ["libjpeg-dev"],
+    "lzma": ["liblzma-dev"],
+}
+
+
+def summarize_failure_log(log_path: Path, *, max_lines: int = 20) -> dict[str, Any]:
+    if not log_path.exists():
+        return {}
+    text = log_path.read_text(encoding="utf-8", errors="replace")
+    missing_link_libraries = sorted(set(re.findall(r"cannot find -l([A-Za-z0-9_+.-]+)", text)))
+    missing_files = sorted(
+        set(
+            match
+            for match in re.findall(r"cannot find\s+(/[^:\s]+)", text)
+            if not match.startswith("-l")
+        )
+    )
+    interesting_lines: list[str] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        lower = line.lower()
+        if not line:
+            continue
+        if (
+            "cannot find" in lower
+            or "configure: error" in lower
+            or "error:" in lower
+            or "undefined reference" in lower
+        ):
+            if line not in interesting_lines:
+                interesting_lines.append(line)
+    packages: set[str] = set()
+    for lib in missing_link_libraries:
+        packages.update(LINK_LIBRARY_PACKAGE_HINTS.get(lib, []))
+    for path in missing_files:
+        match = re.search(r"/clang/([0-9]+)(?:\.|/)", path)
+        if "libclang_rt." in path and match:
+            packages.add(f"libclang-rt-{match.group(1)}-dev")
+    summary: dict[str, Any] = {}
+    if missing_link_libraries:
+        summary["missing_link_libraries"] = missing_link_libraries
+    if missing_files:
+        summary["missing_files"] = missing_files
+    if packages:
+        summary["apt_package_hints"] = sorted(packages)
+    if interesting_lines:
+        summary["error_lines"] = interesting_lines[-max_lines:]
+    tail_lines = [line.strip() for line in text.splitlines() if line.strip()][-max_lines:]
+    if tail_lines:
+        summary["tail_lines"] = tail_lines
+    return summary
+
+
 def build_plan(args: argparse.Namespace) -> dict[str, Any]:
     magma_root = args.magma_root.resolve()
     magma = magma_root / "magma"
@@ -112,6 +371,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
     out = out_dir / "out"
     shared = out_dir / "shared"
     logs = out_dir / "logs"
+    runner_instrument = out_dir / "runner_instrument_target.sh"
     site_map = out / "formtrig_native" / "formtrig_sites.tsv"
     target_cwd = out / "afl"
     executable = target_cwd / args.program
@@ -154,7 +414,16 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
         "LIBS": " ".join(item for item in ["-l:magma.o", "-lrt", args.extra_libs] if item),
         "LDFLAGS": " ".join(item for item in ["-g", f"-L{out}", args.extra_ldflags] if item),
         "FORMTRIG_INSTRUMENT_LEVEL": args.instrument_level,
+        "FORMTRIG_MAGMA_CXX_STDLIB": args.cxx_stdlib,
     }
+    optional_env = {
+        "FORMTRIG_AFL_CC": args.afl_cc,
+        "FORMTRIG_AFL_CXX": args.afl_cxx,
+        "FORMTRIG_PASS_CXX": args.pass_cxx,
+        "FORMTRIG_LLVM_CONFIG": args.llvm_config,
+        "FORMTRIG_RUNTIME_CC": args.runtime_cc,
+    }
+    build_env.update({key: value for key, value in optional_env.items() if value})
     if args.formtrig_target_bug:
         build_env["FORMTRIG_TARGET_BUG"] = args.formtrig_target_bug
 
@@ -172,6 +441,11 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
     target_needs_fetch = args.force_target_fetch or not target_repo.exists()
     patches_needed = args.force_patches or target_needs_fetch or not repo_has_magma_log(target_repo)
 
+    instrument_command = (
+        ["bash", str(runner_instrument)]
+        if args.instrument_entry == "runner"
+        else ["bash", str(fuzzer / "instrument.sh")]
+    )
     steps = [
         step(
             "fuzzer_fetch",
@@ -210,10 +484,10 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
         ),
         step(
             "instrument_target",
-            ["bash", str(fuzzer / "instrument.sh")],
+            instrument_command,
             env=build_env,
             selected=True,
-            reason="build FORMTRIG-native target executable and site map",
+            reason=f"build FORMTRIG-native target executable and site map via {args.instrument_entry}",
         ),
     ]
 
@@ -270,6 +544,13 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
             "skip_target_fetch": args.skip_target_fetch,
             "skip_patches": args.skip_patches,
             "refresh_discovery": args.refresh_discovery,
+            "instrument_entry": args.instrument_entry,
+            "cxx_stdlib": args.cxx_stdlib,
+            "afl_cc": args.afl_cc,
+            "afl_cxx": args.afl_cxx,
+            "pass_cxx": args.pass_cxx,
+            "llvm_config": args.llvm_config,
+            "runtime_cc": args.runtime_cc,
         },
         "paths": {
             "out_dir": str(out_dir),
@@ -282,6 +563,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
             "site_map": str(site_map),
             "target_cwd": str(target_cwd),
             "executable": str(executable),
+            "runner_instrument": str(runner_instrument),
         },
         "expected_validation_asset": {
             "target_id": args.target_id,
@@ -313,12 +595,17 @@ def run_step(row: dict[str, Any], *, cwd: Path, logs: Path) -> dict[str, Any]:
             check=False,
             text=True,
         )
-    return {
+    result = {
         **row,
         "status": "ok" if proc.returncode == 0 else "failed",
         "exit_code": proc.returncode,
         "log": str(log_path),
     }
+    if proc.returncode != 0:
+        summary = summarize_failure_log(log_path)
+        if summary:
+            result["failure_summary"] = summary
+    return result
 
 
 def execute_plan(plan: dict[str, Any], *, cwd: Path) -> dict[str, Any]:
@@ -334,6 +621,11 @@ def execute_plan(plan: dict[str, Any], *, cwd: Path) -> dict[str, Any]:
         executed_steps.append(result)
         if result["status"] == "failed":
             failed = True
+            if result.get("failure_summary"):
+                plan["failure_summary"] = {
+                    "failed_step": result["name"],
+                    **result["failure_summary"],
+                }
             break
     if not failed:
         for row in plan["post_build_steps"]:
@@ -341,6 +633,11 @@ def execute_plan(plan: dict[str, Any], *, cwd: Path) -> dict[str, Any]:
             executed_steps.append(result)
             if result["status"] == "failed":
                 failed = True
+                if result.get("failure_summary"):
+                    plan["failure_summary"] = {
+                        "failed_step": result["name"],
+                        **result["failure_summary"],
+                    }
                 break
     plan["executed_steps"] = executed_steps
     plan["status"] = "failed" if failed else "executed"
@@ -359,6 +656,7 @@ def write_markdown(path: Path, plan: dict[str, Any]) -> None:
         f"Generated: `{plan['generated_at_utc']}`",
         f"Mode: `{plan['mode']}`",
         f"Target: `{plan['target_id'] or plan['target']}` / `{plan['program']}`",
+        f"Instrumentation entry: `{plan['inputs']['instrument_entry']}`",
         f"Expected site map: `{plan['paths']['site_map']}`",
         f"Expected executable: `{plan['paths']['executable']}`",
         "",
@@ -388,6 +686,25 @@ def write_markdown(path: Path, plan: dict[str, Any]) -> None:
                 + (f" log=`{row['log']}`" if row.get("log") else "")
             )
         lines.append("")
+    if plan.get("failure_summary"):
+        summary = plan["failure_summary"]
+        lines.extend(["## Failure Summary", ""])
+        lines.append(f"- `failed_step`: `{summary.get('failed_step', '')}`")
+        if summary.get("missing_link_libraries"):
+            lines.append("- `missing_link_libraries`: `" + ", ".join(summary["missing_link_libraries"]) + "`")
+        if summary.get("missing_files"):
+            lines.append("- `missing_files`: `" + ", ".join(summary["missing_files"]) + "`")
+        if summary.get("apt_package_hints"):
+            lines.append("- `apt_package_hints`: `" + " ".join(summary["apt_package_hints"]) + "`")
+        if summary.get("error_lines"):
+            lines.append("- recent error lines:")
+            for line in summary["error_lines"]:
+                lines.append(f"  - `{line}`")
+        elif summary.get("tail_lines"):
+            lines.append("- recent log lines:")
+            for line in summary["tail_lines"]:
+                lines.append(f"  - `{line}`")
+        lines.append("")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")
 
@@ -404,6 +721,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--out-md", type=Path)
     parser.add_argument("--args-template", default="", help="Override target args template; defaults to target configrc or @@")
     parser.add_argument("--instrument-level", default="balanced")
+    parser.add_argument("--instrument-entry", choices=["runner", "fuzzer"], default="runner")
+    parser.add_argument("--cxx-stdlib", choices=["libc++", "libstdc++", "none"], default="libc++")
+    parser.add_argument("--afl-cc", default="", help="Set AFL_CC inside generated FORMTRIG wrappers")
+    parser.add_argument("--afl-cxx", default="", help="Set AFL_CXX inside generated FORMTRIG wrappers")
+    parser.add_argument("--pass-cxx", default="", help="C++ compiler used to build the FORMTRIG LLVM pass")
+    parser.add_argument("--llvm-config", default="", help="llvm-config matching --pass-cxx and AFL backend clang")
+    parser.add_argument("--runtime-cc", default="", help="C compiler used to build FORMTRIG runtime")
     parser.add_argument("--formtrig-target-bug", default="")
     parser.add_argument("--ld", default=shutil.which("ld") or "/usr/bin/ld")
     parser.add_argument("--extra-cflags", default="")
@@ -430,6 +754,8 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = Path(plan["paths"]["out_dir"])
     out_json = args.out_json or (out_dir / "build_plan.json")
     out_md = args.out_md or (out_dir / "build_plan.md")
+    if args.instrument_entry == "runner":
+        write_runner_instrument_script(Path(plan["paths"]["runner_instrument"]))
     if args.execute:
         plan = execute_plan(plan, cwd=Path.cwd())
     else:
