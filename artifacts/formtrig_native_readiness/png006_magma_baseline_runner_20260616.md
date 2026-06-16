@@ -13,12 +13,24 @@ This update adds the missing runner path:
 scripts/run_magma_png006_baselines.sh \
   --out /tmp/formtrig_png006_baselines_20260616 \
   --durations 1800,7200 \
+  --reps 1 \
   --baselines aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
 ```
 
 The runner uses Magma captain to execute `libpng_read_fuzzer` and then harvests
 the produced `findings/default/fuzzer_stats` plus `monitor/` snapshots through
 `tools/run_post_reach_baseline.py --mode harvest`.
+
+After sweeps complete, the runner writes:
+
+```text
+summary.json
+summary.tsv
+```
+
+through `tools/summarize_post_reach_baselines.py`. Use `--reps N` to run
+multiple repetitions per baseline/budget. When `N > 1`, run directories are
+suffixed with `_repN`.
 
 ## Oracle
 
@@ -153,3 +165,26 @@ That run also validated the corrected oracle rule. `aflplusplus_vanilla` saved
 two AFL crashes but had `PNG006_T=0`, so it is recorded as `success=false` for
 PNG006. `aflplusplus_cmplog` and `redqueen_operand` both produced target
 `_T`, with final `PNG006_T=204` and `PNG006_T=1269`, respectively.
+
+The 30-minute raw evidence also includes `summary.json` and `summary.tsv`.
+
+## Repetition/Summary Smoke
+
+The repetition-aware runner path was checked with a bounded real Magma smoke:
+
+```bash
+scripts/run_magma_png006_baselines.sh \
+  --out /tmp/formtrig_png006_runner_reps_execute_smoke \
+  --no-build \
+  --durations 30 \
+  --baselines aflplusplus_vanilla \
+  --reps 2 \
+  --poll 15
+```
+
+Result: both repetitions harvested successfully, and the generated
+`summary.json` reported one group with `reps=2`, `successes=0`, and
+`success_rate=0.0`. The per-repetition run records had `PNG006_T=0` and
+nonzero `PNG006_R`, confirming that the repeated run directory layout,
+Magma monitor harvest, and summary aggregation path work before launching
+longer 2-hour/repetition campaigns.

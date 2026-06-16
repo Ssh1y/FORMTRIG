@@ -91,6 +91,7 @@ Completed 30-minute baseline package:
   `artifacts/formtrig_native_readiness/png006_magma_baselines_30m_20260616.md`
 - Raw evidence:
   `artifacts/formtrig_native_readiness/raw/png006_baselines_30m_20260616T013914Z`
+  including `summary.json` and `summary.tsv`.
 - Result over 30 minutes:
   `aflplusplus_vanilla` reached `PNG006_R=7523009` with `PNG006_T=0`;
   `aflplusplus_cmplog` reached `PNG006_R=6951839` with `PNG006_T=204`;

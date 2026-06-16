@@ -25,7 +25,8 @@ artifacts/formtrig_native_readiness/raw/png006_baselines_30m_20260616T013914Z
 
 The preserved subset keeps run records, configs, events, captain logs, all
 Magma monitor snapshots, AFL `fuzzer_stats`, `plot_data`, `fuzzer_setup`, and
-`cmdline` files. Full AFL queue directories were not copied.
+`cmdline` files, plus generated `summary.json` and `summary.tsv`. Full AFL
+queue directories were not copied.
 
 ## Harvester Correction
 

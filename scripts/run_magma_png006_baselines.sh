@@ -10,6 +10,7 @@ seed_dir="$repo_root/artifacts/rnt_corpus/PNG006/seeds"
 durations="1800"
 baselines="aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 poll="30"
+reps="1"
 run_build=1
 run_sweeps=1
 
@@ -26,6 +27,7 @@ options:
   --seed-dir DIR        RNT/post-reach seed directory
   --durations LIST      comma/space-separated budgets in seconds
   --baselines LIST      comma/space-separated baseline ids
+  --reps N              repetitions per baseline/budget, default 1
   --poll SEC            Magma monitor poll interval, default 30
   --no-build            skip captain build
   --no-sweeps           build only
@@ -85,11 +87,16 @@ build_magma_fuzzer() {
 run_one_baseline() {
   local baseline="$1"
   local duration="$2"
+  local rep="$3"
   local fuzzer
   fuzzer="$(magma_fuzzer_for_baseline "$baseline")"
 
-  local shared="$out_dir/magma/${baseline}_${duration}s"
-  local run_out="$out_dir/runs/${baseline}_${duration}s"
+  local suffix="${baseline}_${duration}s"
+  if [[ "$reps" -gt 1 ]]; then
+    suffix="${suffix}_rep${rep}"
+  fi
+  local shared="$out_dir/magma/$suffix"
+  local run_out="$out_dir/runs/$suffix"
   mkdir -p "$shared" "$run_out"
   rm -rf "$shared/input_corpus"
   mkdir -p "$shared/input_corpus"
@@ -115,7 +122,7 @@ run_one_baseline() {
     --seed-corpus "$seed_dir" \
     --out-dir "$run_out" \
     --budget-sec "$duration" \
-    --rep 1 \
+    --rep "$rep" \
     --mode harvest \
     --existing-fuzzer-out "$shared/findings" \
     --magma-monitor-dir "$shared/monitor" \
@@ -143,6 +150,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --baselines)
       baselines="${2:-}"
+      shift 2
+      ;;
+    --reps)
+      reps="${2:-}"
       shift 2
       ;;
     --poll)
@@ -177,6 +188,10 @@ seed_dir="$(abs_path "$seed_dir")"
 require_path "$magma_dir/tools/captain/build.sh"
 require_path "$magma_dir/tools/captain/start.sh"
 require_path "$seed_dir"
+if ! [[ "$reps" =~ ^[0-9]+$ ]] || [[ "$reps" -lt 1 ]]; then
+  echo "--reps must be a positive integer: $reps" >&2
+  exit 2
+fi
 
 {
   printf 'out_dir=%s\n' "$out_dir"
@@ -184,6 +199,7 @@ require_path "$seed_dir"
   printf 'seed_dir=%s\n' "$seed_dir"
   printf 'baselines=%s\n' "$baselines"
   printf 'durations=%s\n' "$durations"
+  printf 'reps=%s\n' "$reps"
   printf 'poll=%s\n' "$poll"
 } > "$out_dir/run_metadata.txt"
 
@@ -201,13 +217,21 @@ fi
 
 if [[ "$run_sweeps" == "1" ]]; then
   while IFS= read -r duration; do
-    while IFS= read -r baseline; do
-      run_one_baseline "$baseline" "$duration"
-    done < <(split_list "$baselines")
+    for ((rep = 1; rep <= reps; rep++)); do
+      while IFS= read -r baseline; do
+        run_one_baseline "$baseline" "$duration" "$rep"
+      done < <(split_list "$baselines")
+    done
   done < <(split_list "$durations")
+
+  python3 "$repo_root/tools/summarize_post_reach_baselines.py" \
+    --root "$out_dir/runs" \
+    --out-json "$out_dir/summary.json" \
+    --out-tsv "$out_dir/summary.tsv"
 fi
 
 echo "PNG006 Magma baseline flow complete"
 echo "  out=$out_dir"
 echo "  baselines=$baselines"
 echo "  durations=$durations"
+echo "  reps=$reps"
