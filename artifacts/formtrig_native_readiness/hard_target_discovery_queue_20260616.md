@@ -14,7 +14,7 @@ Demoted controls retained outside the main queue: `3`.
 
 | rank | target | source | project | category | score | lane | comparison packages | next action |
 | ---: | --- | --- | --- | --- | ---: | --- | ---: | --- |
-| 1 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 113 | `real_cve_replacement` | 1 | inspect short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance |
+| 1 | LIBARCHIVE_2936 | real_cve | libarchive | binary-state-null | 114 | `real_cve_replacement` | 2 | inspect short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance |
 | 2 | PNG007 | magma | libpng | binary-state-null | 77 | `binding_validation_first` | 0 | validate BindingSpec against native site map and binding-signal diagnosis before short gate |
 | 3 | GPAC_3403 | real_cve | gpac | compound-sequence-lifecycle | 92 | `binding_spec_first` | 0 | validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec |
 | 4 | PDF003 | magma | poppler | binary-state-null+compound-sequence-lifecycle | 84 | `binding_spec_first` | 0 | draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage |
@@ -50,7 +50,7 @@ Demoted controls retained outside the main queue: `3`.
 ### 1. LIBARCHIVE_2936
 
 - Benefit hypothesis: native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T
-- Comparison packages: 1
+- Comparison packages: 2
 - Blockers: none recorded
 - Short triage: short-gate comparison package already exists; inspect the benefit readout first, promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance before rerunning
 

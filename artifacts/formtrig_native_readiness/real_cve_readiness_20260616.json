@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-16T10:22:30+00:00",
+  "generated_at_utc": "2026-06-16T10:45:29+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -18,22 +18,24 @@
       "blockers": "",
       "build_ready": true,
       "category": "binary-state-null",
-      "comparison_count": 1,
+      "comparison_count": 2,
       "discovery_lane": "real_cve_replacement",
       "discovery_rank": 1,
-      "existing_disposition": "short_gate_needs_signal_refinement",
+      "existing_disposition": "mechanism_only_needs_terminal_oracle",
       "harness_source_ready": true,
       "native_dt_values": "1",
       "next_action": "inspect latest short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance",
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2936.json",
         "binding_specs": [
-          "LIBARCHIVE_2936.native_b2_path_table_candidate.yml"
+          "LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
+          "LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml"
         ],
         "binding_validation_records": [
           "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2936.native_b2_path_table_candidate.validation.json"
         ],
         "comparison_records": [
+          "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_binding_signal_repair_60s_20260616/comparison.json",
           "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json"
         ],
         "harness_sources": [

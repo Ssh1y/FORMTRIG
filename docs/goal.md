@@ -19,6 +19,22 @@ Design second
 
 正式结果表必须先回答“FORMTRIG 带来了什么收益”。只有当收益成立后，才展开解释“这个收益如何由 lift 机制产生”。如果同预算 faithful baseline 也能很快触发，目标应被降为 control/native-readiness 或 negative evidence，不能靠中间信号强行包装成性能优势。
 
+当前 LIBARCHIVE_2936 的 60s signal-repair 结果给出了这个口径的最小正例：
+
+```text
+old saturated hit-role BindingSpec:
+  _T = 0
+  saved_non_trigger_progress = 0
+  BindingSignal = fail / constant_lift_signal
+
+path-table-count BindingSpec:
+  _T = 0
+  saved_non_trigger_progress = 3
+  BindingSignal = pass / role_signal_progress_observed
+```
+
+这不能写成 endpoint/TTE 性能收益；它只能写成“中间产物开始产生可实验的搜索收益”。下一步必须把这个 producer/use 变量信号继续推进到 root-proximal 或 lower-is-better 的可优化信号，再做 10-30m screen 和 faithful baseline 对照。
+
 ---
 
 > **不是把 TC 的布尔结果或 native distance 直接拿来做 guidance，而是把 TC 提升成一组更细粒度、更稳定、可排序、可归因、可变异的 trigger-progress features。**

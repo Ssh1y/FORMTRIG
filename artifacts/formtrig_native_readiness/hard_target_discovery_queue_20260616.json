@@ -2,11 +2,11 @@
   "all_targets": [
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
+      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml",
       "binding_spec_validated": true,
       "blockers": "",
-      "comparison_count": 1,
-      "existing_disposition": "short_gate_needs_signal_refinement",
+      "comparison_count": 2,
+      "existing_disposition": "mechanism_only_needs_terminal_oracle",
       "lane": "real_cve_replacement",
       "next_action": "inspect short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance",
       "primary_category": "binary-state-null",
@@ -15,13 +15,13 @@
       "raw": {
         "bug_type": "NULL Pointer Dereference",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 1,
+        "comparison_count": 2,
         "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
         "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
         "pull_links": "",
         "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
       },
-      "score": 113,
+      "score": 114,
       "secondary_category": "",
       "source": "real_cve",
       "source_evidence": "artifacts/cve_bench_candidate_audit.json",
@@ -3858,7 +3858,7 @@
       "target_id": "LIBCOAP_CVE_2023_35862"
     }
   ],
-  "generated_at_utc": "2026-06-16T10:22:30+00:00",
+  "generated_at_utc": "2026-06-16T10:45:29+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -3872,11 +3872,11 @@
   "top_targets": [
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
+      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml",
       "binding_spec_validated": true,
       "blockers": "",
-      "comparison_count": 1,
-      "existing_disposition": "short_gate_needs_signal_refinement",
+      "comparison_count": 2,
+      "existing_disposition": "mechanism_only_needs_terminal_oracle",
       "lane": "real_cve_replacement",
       "next_action": "inspect short-gate benefit readout; promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance",
       "primary_category": "binary-state-null",
@@ -3885,13 +3885,13 @@
       "raw": {
         "bug_type": "NULL Pointer Dereference",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 1,
+        "comparison_count": 2,
         "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
         "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
         "pull_links": "",
         "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
       },
-      "score": 113,
+      "score": 114,
       "secondary_category": "",
       "source": "real_cve",
       "source_evidence": "artifacts/cve_bench_candidate_audit.json",

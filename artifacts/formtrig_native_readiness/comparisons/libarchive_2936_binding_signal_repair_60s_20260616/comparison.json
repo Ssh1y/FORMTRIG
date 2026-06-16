@@ -1,0 +1,172 @@
+{
+  "analysis": {
+    "matched_baseline_count": 0,
+    "missing_required_baselines": [
+      "aflplusplus_vanilla",
+      "aflplusplus_cmplog",
+      "redqueen_operand"
+    ],
+    "next_steps": [
+      "promote only to 10-30m FORMTRIG screen after root-proximal or lower-is-better scalar guidance is added",
+      "keep faithful AFL++/CmpLog/Redqueen comparisons separate from this mechanism package",
+      "preserve this package as evidence that saturated hit-role bindings can be repaired into saved non-trigger progress"
+    ],
+    "reasons": [
+      "formtrig_strict_pretrigger_guidance_present",
+      "same_budget_binding_signal_repair",
+      "no_formtrig_terminal_success",
+      "no_matched_baseline_performance_comparison",
+      "scalar_d_f_spec_lifted_still_constant",
+      "low_replication"
+    ],
+    "verdict": "mechanism_benefit_no_endpoint_success"
+  },
+  "benefit_readout": {
+    "blocked_claims": [
+      "no endpoint/TTE benefit is established",
+      "scalar D_F_spec_lifted is still constant at 2, so the next repair should expose a lower-is-better scalar or root-proximal value",
+      "single 60s repetition is not final efficacy evidence",
+      "no faithful AFL++/CmpLog/Redqueen performance comparison is made in this mechanism package"
+    ],
+    "design_evidence": [
+      "BindingSpec path-table count growth",
+      "runtime_event_map_exact_B4",
+      "role_signal_progress_observed",
+      "saved_non_trigger_progress_events"
+    ],
+    "endpoint_observations": [
+      "old B2 hit-role spec: terminal_triggered_execs=0 in 60s",
+      "new B3 path-table-count spec: terminal_triggered_execs=0 in 60s",
+      "there is no TTE or crash-speedup claim from this package"
+    ],
+    "mechanism_benefits": [
+      "desired_producer candidate values widen from [1] to [2,3,4,7]",
+      "use candidate values widen from [1] to [1,16,24,32,56]",
+      "runtime event-map remains exact/B4 for all bound rows",
+      "accepted non-trigger progress is mapped to spec-lifted, non-heuristic, non-manual components"
+    ],
+    "observed_benefits": [
+      "same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events",
+      "binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed",
+      "pretrigger_lift_guidance_ready improves from false to true"
+    ],
+    "primary_benefits": [
+      "same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events",
+      "binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed",
+      "pretrigger_lift_guidance_ready improves from false to true"
+    ],
+    "summary": "No endpoint performance benefit is established: both FORMTRIG arms have terminal_triggered_execs=0 in 60s. The observed benefit is a mechanism/search-readiness benefit: the count-based BindingSpec turns saturated hit roles into variable producer/use roles and yields saved non-trigger progress."
+  },
+  "budget_s": 60,
+  "comparison_id": "LIBARCHIVE_2936_binding_signal_repair_60s_20260616",
+  "evidence_files": [
+    "count_binding_signal_diagnosis.json",
+    "count_formtrig_diagnosis.json",
+    "count_formtrig_summary.json",
+    "count_lift_feature_audit.json",
+    "count_runtime_event_map.csv",
+    "old_binding_signal_diagnosis.json",
+    "old_formtrig_diagnosis.json",
+    "old_formtrig_summary.json",
+    "old_lift_feature_audit.json",
+    "old_runtime_event_map.csv"
+  ],
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 0,
+      "binding_signal_diagnosis": "constant_lift_signal",
+      "binding_signal_status": "fail",
+      "budget": 60,
+      "label": "old_b2_hit_roles_60s",
+      "reached": 8451,
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "terminal_count": 0,
+      "trigger_time_s": null
+    },
+    {
+      "accepted_non_trigger": 3,
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 60,
+      "label": "count_b3_path_table_count_60s",
+      "reached": 8951,
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": true,
+      "success": false,
+      "terminal_count": 0,
+      "trigger_time_s": null
+    }
+  ],
+  "rows": [
+    {
+      "accepted_non_trigger_progress_events": 0,
+      "arm": "old_b2_hit_roles_60s",
+      "binding_signal_diagnosis": "constant_lift_signal",
+      "binding_signal_status": "fail",
+      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
+      "budget_s": 60,
+      "candidate_variable_roles": [],
+      "corpus_count": 476,
+      "d_f_spec_lifted_max": 2,
+      "d_f_spec_lifted_min": 2,
+      "desired_producer_candidate_values": [
+        1
+      ],
+      "diagnosis": "constant_lift_signal",
+      "execs_done": 43254,
+      "formtrig_queued_progress": 0,
+      "formtrig_reached_execs": 8451,
+      "pretrigger_lift_guidance_ready": false,
+      "saved_non_trigger_progress_events": 0,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_triggered_execs": 0,
+      "typed_execs": 256,
+      "typed_finds": 10,
+      "use_candidate_values": [
+        1
+      ]
+    },
+    {
+      "accepted_non_trigger_progress_events": 3,
+      "arm": "count_b3_path_table_count_60s",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "binding_spec": "LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml",
+      "budget_s": 60,
+      "candidate_variable_roles": [
+        "desired_producer",
+        "use"
+      ],
+      "corpus_count": 438,
+      "d_f_spec_lifted_max": 2,
+      "d_f_spec_lifted_min": 2,
+      "desired_producer_candidate_values": [
+        2,
+        3,
+        4,
+        7
+      ],
+      "diagnosis": "queued_tc_rooted_progress",
+      "execs_done": 38914,
+      "formtrig_queued_progress": 3,
+      "formtrig_reached_execs": 8951,
+      "pretrigger_lift_guidance_ready": true,
+      "saved_non_trigger_progress_events": 3,
+      "target_id": "LIBARCHIVE_2936",
+      "terminal_triggered_execs": 0,
+      "typed_execs": 256,
+      "typed_finds": 8,
+      "use_candidate_values": [
+        1,
+        16,
+        24,
+        32,
+        56
+      ]
+    }
+  ],
+  "target_id": "LIBARCHIVE_2936",
+  "verdict": "mechanism_benefit_no_endpoint_success"
+}

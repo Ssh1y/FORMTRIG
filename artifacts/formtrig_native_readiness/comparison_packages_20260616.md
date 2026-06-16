@@ -284,6 +284,38 @@ or typed mutation until non-trigger `D_F` variability appears, then rerun a
 10-30 minute FORMTRIG/baseline screen. Redqueen/operand-aware baseline remains
 missing for any final baseline-family claim.
 
+### LIBARCHIVE_2936: same-budget BindingSpec signal repair 60s
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/libarchive_2936_binding_signal_repair_60s_20260616
+```
+
+Verdict:
+
+```text
+mechanism_benefit_no_endpoint_success
+```
+
+Reason: this package compares the old hit-role BindingSpec against the new
+path-table-count BindingSpec with the same 60-second FORMTRIG budget. Both arms
+still have `_T=0`, so no endpoint/TTE performance claim is established. The
+benefit is mechanism/search-readiness: saved non-trigger progress improves from
+`0` to `3`, `binding_signal_status` improves from
+`fail/constant_lift_signal` to `pass/role_signal_progress_observed`, and
+`pretrigger_lift_guidance_ready` improves from `false` to `true`.
+
+Benefit readout: this package is the first LIBARCHIVE_2936 evidence that a
+FORMTRIG intermediate product produces experiment-visible search benefit rather
+than only diagnosis. The new BindingSpec keeps the same TC root but binds
+producer/use progress to path-table cardinality and allocation scale:
+`desired_producer` candidate values widen from `[1]` to `[2,3,4,7]`, and `use`
+candidate values widen from `[1]` to `[1,16,24,32,56]`. The scalar
+`D_F_spec_lifted` is still constant at `2`, so the next repair must expose a
+root-proximal lower-is-better scalar or stronger typed mutation before
+long-run promotion.
+
 ## Current Acceptance Implication
 
 The comparison packages make the current evidence state explicit:
@@ -297,9 +329,11 @@ The comparison packages make the current evidence state explicit:
   plumbing, but it does not prove a SOTA advantage because the ASAN baselines
   also trigger.
 - LIBARCHIVE_2936 is a valid real-CVE binary-state-null target with a validated
-  native BindingSpec and matched 600-second vanilla/CmpLog screens. The current
-  package proves no performance benefit; it localizes the algorithmic blocker
-  to constant lifted guidance that must be repaired before long-run promotion.
+  native BindingSpec and matched 600-second vanilla/CmpLog screens. The 10m
+  package proves no performance benefit; the 60s signal-repair package shows
+  the intermediate guidance can be made useful enough to save non-trigger
+  progress. The remaining blocker is still endpoint/root-proximal guidance:
+  `_T=0` and scalar `D_F_spec_lifted=2` in the repaired short gate.
 - No final "FORMTRIG beats SOTA" claim should be made from these packages
   alone.
 

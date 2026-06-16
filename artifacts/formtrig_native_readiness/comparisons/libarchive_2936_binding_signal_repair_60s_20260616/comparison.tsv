@@ -1,0 +1,3 @@
+target_id	arm	binding_spec	budget_s	execs_done	terminal_triggered_execs	formtrig_queued_progress	saved_non_trigger_progress_events	typed_execs	typed_finds	diagnosis	pretrigger_lift_guidance_ready	binding_signal_status	binding_signal_diagnosis	accepted_non_trigger_progress_events	candidate_variable_roles	desired_producer_candidate_values	use_candidate_values
+LIBARCHIVE_2936	old_b2_hit_roles_60s	LIBARCHIVE_2936.native_b2_path_table_candidate.yml	60	43254	0	0	0	256	10	constant_lift_signal	False	fail	constant_lift_signal	0		1	1
+LIBARCHIVE_2936	count_b3_path_table_count_60s	LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml	60	38914	0	3	3	256	8	queued_tc_rooted_progress	True	pass	role_signal_progress_observed	3	desired_producer,use	2,3,4,7	1,16,24,32,56

@@ -359,18 +359,18 @@ static const char *primary_diagnosis(const diagnosis_t *d) {
     return "no_actionable_lifted_component";
   if (!d->has_atom_signal || !d->atom_signal_events) return "no_atom_signal";
   if (!d->has_role_signal || !d->role_signal_events) return "no_role_signal";
+  if (d->binding_signal_present && !d->binding_signal_pass &&
+      d->binding_signal_diagnosis[0])
+    return d->binding_signal_diagnosis;
   if (!strcmp(d->limiting_reason, "no_valid_hot_range"))
     return "no_valid_hot_range";
+  if (has_non_trigger_progress(d)) return "queued_tc_rooted_progress";
+  if (has_queued_progress(d)) return "queued_trigger_progress";
+  if (has_frontier_progress(d)) return "frontier_tc_rooted_progress_not_saved";
   if (!strcmp(d->limiting_reason, "typed_mutation_no_lift_delta"))
     return "typed_mutation_no_lift_delta";
   if (d->d_f_spec_lifted_constant) return "constant_lift_signal";
   if (d->d_f_constant) return "constant_final_d_f";
-  if (has_non_trigger_progress(d)) return "queued_tc_rooted_progress";
-  if (has_queued_progress(d)) return "queued_trigger_progress";
-  if (has_frontier_progress(d)) return "frontier_tc_rooted_progress_not_saved";
-  if (d->binding_signal_present && !d->binding_signal_pass &&
-      d->binding_signal_diagnosis[0])
-    return d->binding_signal_diagnosis;
   if (!strcmp(d->limiting_reason, "typed_stage_parent_not_replay_stable") ||
       (d->typed_skip_not_replay_stable_events && !d->typed_stage_start_events))
     return "typed_stage_parent_not_replay_stable";

@@ -1,0 +1,139 @@
+tc_id: 'LIBARCHIVE_2936'
+target:
+  project: 'libarchive'
+  binary: 'libarchive_write_replay'
+  command: './libarchive_write_replay @@'
+tc:
+  category: 'binary-state-null'
+  expression: 'ISO9660 path-table comparator reaches _compare_path_table with a NULL isoent parent state'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'isoent->parent == NULL before parent dir_number use'
+    kind: 'binary-state-null'
+    root: 'isoent->parent'
+bindings:
+  - id: 'path_table_parent_dir_number_root'
+    atom: 1
+    role: 'root_observe'
+    expr: 'path-table comparator computes parent dir_number ordering after parent dereference'
+    observe_at:
+      kind: 'binary'
+      function: '_compare_path_table'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 6823
+      column: 31
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'pathname_parentdir_guard'
+    atom: 1
+    role: 'guard'
+    expr: 'pathname parsing counts slash-separated parent directory components'
+    observe_at:
+      kind: 'branch'
+      function: 'isofile_gen_utility_names'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 4973
+    component: 'guard_progress'
+    priority: 15
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'path_table_count_growth'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'directory entries are collected into the path table and increase pathtbl->cnt'
+    observe_at:
+      kind: 'binary'
+      function: 'path_table_add_entry'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 6901
+      column: 15
+    component: 'producer_use'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'c'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'path_table_allocation_scale'
+    atom: 1
+    role: 'use'
+    expr: 'path-table sorting allocates an entry table whose size scales with pt->cnt'
+    observe_at:
+      kind: 'binary'
+      function: 'isoent_make_path_table_2'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 6931
+      column: 26
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'c'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'path_table_nonempty_use'
+    atom: 1
+    role: 'use'
+    expr: 'path table depth has at least one collected directory entry'
+    observe_at:
+      kind: 'cmp'
+      function: 'isoent_make_path_table_2'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 6927
+      column: 14
+    component: 'producer_use'
+    priority: 31
+    direction: 'higher'
+    value_mode: 'not_outcome'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'first_pathname_nested_component_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'RNT first entry pathname bytes contain slash-separated nested directory components'
+    observe_at:
+      kind: 'branch'
+      function: 'isofile_gen_utility_names'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 4973
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 3
+    range_len: 16
+    mutation_hint: 'insert_byte'
+    mutation_value: 47
+  - id: 'second_pathname_nested_component_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'RNT second entry pathname bytes contain slash-separated sibling nested directory components'
+    observe_at:
+      kind: 'branch'
+      function: 'isofile_gen_utility_names'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 4973
+    component: 'input_influence'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 18
+    range_len: 16
+    mutation_hint: 'insert_byte'
+    mutation_value: 47
