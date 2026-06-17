@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-17T12:37:24+00:00",
+  "generated_at_utc": "2026-06-17T13:20:54+00:00",
   "schema": "formtrig_magma_binding_validation_assets_template_v1",
   "source_worklist": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
   "targets": {
@@ -62,13 +62,12 @@
         "Replace TODO_* fields with paths from a FORMTRIG-native Magma build.",
         "Use formal RNT seeds for pre-trigger validation; do not substitute the initial Magma corpus unless a new RNT seed source is validated."
       ],
-      "rnt_blocker": "No strict RNT seed is available under asn1: SSL011 is logged in PKCS7_dataDecode, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform PKCS7 dataDecode workflows.",
       "runner_category": "binary-null",
-      "seed_dir": "TODO_FORMAL_RNT_SEED_DIR_FOR_SSL011",
+      "seed_dir": "artifacts/rnt_corpus/SSL011/seeds",
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL011.tsv",
-      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1 @@",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl/pkcs7_decode -",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL011",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL011.native_draft_magma_canary.validation.json"
     },
@@ -86,7 +85,7 @@
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv",
-      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1 @@",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl/asn1 @@",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL015",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_draft_magma_canary.validation.json"
     },
@@ -103,7 +102,7 @@
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_TIF012.tsv",
-      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl/tiff_read_rgba_fuzzer @@",
+      "target_cmd": "TODO_FORMTRIG_MAGMA_LIBTIFF_TIFF_READ_RGBA_FUZZER_BINARY @@",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_TIF012",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/TIF012.native_draft_magma_canary.validation.json"
     }

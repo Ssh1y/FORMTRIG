@@ -1,0 +1,47 @@
+{
+  "status": "pass",
+  "diagnosis": "triggered",
+  "progress_events": 3105,
+  "candidate_events": 1559,
+  "calibration_events": 0,
+  "accepted_progress_events": 1559,
+  "accepted_triggered_progress_events": 1559,
+  "accepted_non_trigger_progress_events": 0,
+  "triggered_events": 3100,
+  "spec_role_samples": 9300,
+  "spec_role_candidate_samples": 4677,
+  "spec_d_f_samples": 3100,
+  "spec_d_f_candidate_samples": 1559,
+  "spec_d_f_triggered_candidate_samples": 1559,
+  "spec_d_f_non_trigger_candidate_samples": 0,
+  "spec_d_f_calibration_samples": 0,
+  "spec_d_f_candidate_min": 3,
+  "spec_d_f_triggered_candidate_min": 3,
+  "spec_d_f_non_trigger_candidate_min": null,
+  "spec_d_f_calibration_min": null,
+  "spec_d_f_candidate_values": [3],
+  "spec_d_f_triggered_candidate_values": [3],
+  "spec_d_f_non_trigger_candidate_values": [],
+  "spec_d_f_calibration_values": [],
+  "triggered_candidate_lift_delta": false,
+  "non_trigger_candidate_lift_delta": false,
+  "lift_delta_only_on_triggered_candidates": false,
+  "atoms": [
+    {
+      "atom_id": 1,
+      "category": "binary-state-null",
+      "lift_allowed": true,
+      "bound_roles": ["root_observe","producer","use"],
+      "sampled_roles": ["root_observe","producer","use"],
+      "candidate_sampled_roles": ["root_observe","producer","use"],
+      "variable_roles": [],
+      "candidate_variable_roles": [],
+      "diagnosis": "constant_lift_signal",
+      "roles": [
+        {"role":"root_observe","bound":true,"samples":3100,"candidate_samples":1559,"calibration_samples":0,"unique_values":1,"candidate_unique_values":1,"values":[0],"candidate_values":[0],"flags_or":86,"max_confidence":0.55000000000000004},
+        {"role":"producer","bound":true,"samples":3100,"candidate_samples":1559,"calibration_samples":0,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":0.45000000000000001},
+        {"role":"use","bound":true,"samples":3100,"candidate_samples":1559,"calibration_samples":0,"unique_values":1,"candidate_unique_values":1,"values":[0],"candidate_values":[0],"flags_or":86,"max_confidence":0.45000000000000001}
+      ]
+    }
+  ]
+}

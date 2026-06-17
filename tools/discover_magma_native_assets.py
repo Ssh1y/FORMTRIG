@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shlex
 from datetime import datetime, timezone
 from pathlib import Path
@@ -290,12 +291,36 @@ def intish(value: Any) -> int:
         return 0
 
 
-def formal_rnt_ready(row: dict[str, Any]) -> bool:
+def rnt_program_matches(row: dict[str, Any], program: str) -> bool:
+    row_program = str(row.get("program") or "")
+    return not row_program or not program or row_program == program
+
+
+def formal_rnt_ready(row: dict[str, Any], *, program: str = "") -> bool:
     return (
         str(row.get("status") or "") == "formal_ready"
         and str(row.get("seed_dir_exists") or "").lower() == "true"
         and intish(row.get("seed_files")) > 0
+        and rnt_program_matches(row, program)
     )
+
+
+def rnt_seed_todo(target_id: str, program: str) -> str:
+    suffix = re.sub(r"[^A-Za-z0-9]+", "_", program).strip("_").upper()
+    if suffix:
+        return f"TODO_FORMAL_RNT_SEED_DIR_FOR_{target_id}_{suffix}"
+    return f"TODO_FORMAL_RNT_SEED_DIR_FOR_{target_id}"
+
+
+def rnt_blocker(row: dict[str, Any], *, program: str) -> str:
+    status = str(row.get("status") or "unknown")
+    row_program = str(row.get("program") or "")
+    if row_program and program and row_program != program:
+        return (
+            f"formal RNT seed corpus is not ready for program {program}: "
+            f"existing RNT status is for {row_program} ({status})"
+        )
+    return "formal RNT seed corpus is not ready" + (f": {status}" if status else "")
 
 
 def category_for_runner(category: str) -> str:
@@ -342,15 +367,12 @@ def build_discovery(
         exe_candidates = executables.get(program, [])
         best_exe = exe_candidates[0] if exe_candidates else None
         rnt = rnt_rows.get(target_id, {})
-        rnt_ready = formal_rnt_ready(rnt)
-        seed_dir = str(rnt.get("seed_dir") or f"TODO_FORMAL_RNT_SEED_DIR_FOR_{target_id}")
+        rnt_ready = formal_rnt_ready(rnt, program=program)
+        seed_dir = str(rnt.get("seed_dir") or rnt_seed_todo(target_id, program))
 
         blockers: list[str] = []
         if not rnt_ready:
-            blockers.append(
-                "formal RNT seed corpus is not ready"
-                + (f": {rnt.get('status')}" if rnt.get("status") else "")
-            )
+            blockers.append(rnt_blocker(rnt, program=program))
         if not best_site:
             blockers.append("no site_map.tsv matched the BindingSpec source selectors")
         if not best_exe:
@@ -358,7 +380,7 @@ def build_discovery(
 
         asset_targets[target_id] = {
             "binding_spec": str(spec),
-            "seed_dir": seed_dir if rnt_ready else f"TODO_FORMAL_RNT_SEED_DIR_FOR_{target_id}",
+            "seed_dir": seed_dir if rnt_ready else rnt_seed_todo(target_id, program),
             "site_map": best_site["path"] if best_site else f"TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_{target_id}.tsv",
             "target_cwd": stable_path(best_exe.parent) if best_exe else f"TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_{target_id}",
             "target_cmd": target_command(best_exe, args_template) if best_exe else manifest.get("target_cmd", ""),
@@ -376,6 +398,7 @@ def build_discovery(
                 "target_id": target_id,
                 "program": program,
                 "rnt_status": str(rnt.get("status") or ""),
+                "rnt_program": str(rnt.get("program") or ""),
                 "rnt_seed_files": intish(rnt.get("seed_files")),
                 "selector_count": len(selectors),
                 "best_site_map": best_site,

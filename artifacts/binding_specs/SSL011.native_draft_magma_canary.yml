@@ -1,8 +1,8 @@
 tc_id: 'SSL011'
 target:
   project: 'openssl'
-  binary: 'asn1'
-  command: '@@'
+  binary: 'pkcs7_decode'
+  command: '-'
 tc:
   category: 'binary-state-null'
   expression: 'MAGMA_AND(data_body == NULL, in_bio == NULL)'
@@ -18,15 +18,55 @@ bindings:
     role: 'root_observe'
     expr: 'Magma canary source selector for MAGMA_AND(data_body == NULL, in_bio == NULL)'
     observe_at:
+      site_id: 1315756502
       kind: 'cmp'
       function: 'PKCS7_dataDecode'
+      inst_no: 91
       file: 'crypto/pkcs7/pk7_doit.c'
-      line: 440
-      column: 8
+      line: 436
+      column: 5
     component: 'root_state'
     priority: 10
     direction: 'higher'
     value_mode: 'outcome'
     value: 1.0
     confidence: 0.55
+    observe_window: 'any'
+  - id: 'pkcs7_data_body_producer_01'
+    atom: 1
+    role: 'producer'
+    expr: 'data_body state after signed-data content extraction'
+    observe_at:
+      site_id: 1313567898
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 154
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 451
+      column: 14
+    component: 'producer_use'
+    priority: 8
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.45
+    observe_window: 'any'
+  - id: 'pkcs7_in_bio_use_01'
+    atom: 1
+    role: 'use'
+    expr: 'in_bio/data_body source selection before content BIO creation'
+    observe_at:
+      site_id: 3881733592
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 620
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 659
+      column: 42
+    component: 'producer_use'
+    priority: 8
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.45
     observe_window: 'any'

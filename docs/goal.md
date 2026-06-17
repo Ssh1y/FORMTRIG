@@ -954,16 +954,24 @@ PDF003:
   当前 blocker 是 native Poppler build 依赖，不是算法证据。
 
 SSL011:
-  OpenSSL native build 已产出 asn1 executable 和 source-matching site-map。
-  当前 blocker 从 native asset 缺失收敛为 harness/RNT mismatch：
-  asn1 runner 不覆盖 PKCS7_dataDecode workflow，因此没有 formal RNT seeds。
+  OpenSSL native build 已从错误的 asn1 runner 收敛到 pkcs7_decode runner。
+  pkcs7_decode 覆盖 PKCS7_dataDecode workflow，已有 native executable、
+  source-matching site-map、formal RNT seed 和 runnable validation worklist。
+  但 60s BindingSpec validation 当前是负结果：
+  static B2 通过，seed readiness 也能看到 R=1/T=0/spec_lifted，
+  campaign 中 14033 个 reached exec 全部也是 triggered exec，
+  saved_non_trigger_progress=0，spec D_F candidate values 恒为 [3]。
+  这说明当前 BindingSpec 还没有给出有效 pre-trigger guidance，
+  不能作为 endpoint 或 SOTA-pain 证据；它现在是更硬的 spec 修复候选。
 ```
 
 下一步主线不是修改论文定位，而是改善实验设计：
 
 ```text
 1. 解锁 PDF003/SSL/PHP 等 hard Magma target 的 native site-map/executable。
-2. 先做 BindingSpec validation 和 non-trigger guidance gate。
+2. 先做 BindingSpec validation 和 non-trigger guidance gate；像 SSL011 这种
+   “native/RNT 已可跑但 D_F 恒定、只在 terminal 附近触发”的结果，必须先修
+   producer/use/typed hook 或 seed-distance 设计，不能直接进入主比较。
 3. 再跑 same-budget faithful baselines: AFL++ vanilla, CmpLog, local Redqueen/operand。
 4. 只有当 baseline 出现低成功率、长 R2T tail 或高方差，而 FORMTRIG 改善 first _T / success rate / cost 时，才作为主 SOTA-pain 结果。
 ```

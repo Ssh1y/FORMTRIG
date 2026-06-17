@@ -1,0 +1,15 @@
+{
+  "created_at_utc": "2026-06-17T13:18:30Z",
+  "formal_replay_log": "artifacts/formtrig_native_readiness/rnt_screens/SSL011_pkcs7_decode_cms_full/seed_readiness.json",
+  "metadata_status": "formal_replay_verified_rnt",
+  "native_DT_semantics": "binary R/T oracle distance from FORMTRIG-native Magma SSL011 replay under pkcs7_decode",
+  "native_DT_status": "computed",
+  "producer": "pkcs7_decode_cms_corpus_replay",
+  "program": "pkcs7_decode",
+  "seed_count": 1,
+  "source_seedbank": "experiments/magma_workspace/magma/targets/openssl/corpus/cms",
+  "suite": "magma",
+  "target_id": "SSL011",
+  "tc_root_state_status": "computed",
+  "unique_rnt_seed_count": 1
+}

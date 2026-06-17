@@ -380,6 +380,97 @@ class MagmaBindingValidationWorkflowTest(unittest.TestCase):
             self.assertEqual(task["seed_dir"], str(initial_seed_dir))
             self.assertIn("formal RNT seed corpus is not ready: excluded", "; ".join(task["blockers"]))
 
+    def test_validation_worklist_blocks_rnt_from_different_program(self):
+        planner = load_tool("plan_magma_binding_validation")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = root / "SSL011.yml"
+            seed_dir = root / "initial"
+            rnt_seed_dir = root / "rnt" / "SSL011" / "seeds"
+            site_map = root / "site_map.tsv"
+            target_cwd = root / "target"
+            spec.write_text("tc_id: SSL011\n", encoding="utf-8")
+            seed_dir.mkdir()
+            rnt_seed_dir.mkdir(parents=True)
+            site_map.write_text("1\tcmp\tPKCS7_dataDecode\t1\ticmp\tpk7_doit.c\t436\t5\n", encoding="utf-8")
+            target_cwd.mkdir()
+            manifest = root / "SSL011.manifest.template"
+            manifest.write_text(
+                "\n".join(
+                    [
+                        "target_id: SSL011",
+                        "category: binary-null",
+                        f"seed_dir: {seed_dir}",
+                        f"binding_spec: {spec}",
+                        f"site_map: {site_map}",
+                        f"target_cwd: {target_cwd}",
+                        "target_cmd: ./pkcs7_decode @@",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            drafts = root / "drafts.json"
+            drafts.write_text(
+                json.dumps(
+                    {
+                        "drafts": [
+                            {
+                                "target_id": "SSL011",
+                                "project": "openssl",
+                                "program": "pkcs7_decode",
+                                "category": "binary-state-null",
+                                "binding_spec": str(spec),
+                                "manifest_template": str(manifest),
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            rnt_status = root / "rnt_status.json"
+            rnt_status.write_text(
+                json.dumps(
+                    {
+                        "records": [
+                            {
+                                "target_id": "SSL011",
+                                "program": "asn1",
+                                "status": "formal_ready",
+                                "seed_dir_exists": "true",
+                                "seed_dir": str(rnt_seed_dir),
+                                "seed_files": "3",
+                                "blocking_reason": "old asn1 reason",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                drafts_path=drafts,
+                assets_path=None,
+                rnt_status_path=rnt_status,
+                duration_s=600,
+                raw_root=root / "raw",
+                validation_root=root / "validation",
+                aflpp_dir="AFLplusplus",
+                seed_preflight_max=16,
+                seed_preflight_timeout=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertFalse(task["runnable_now"])
+            self.assertEqual(task["rnt_program"], "asn1")
+            self.assertEqual(task["seed_source"], "manifest_template_initial_corpus")
+            self.assertEqual(task["seed_dir"], str(seed_dir))
+            blockers = "; ".join(task["blockers"])
+            self.assertIn("formal RNT seed corpus is not ready for program pkcs7_decode", blockers)
+            self.assertNotIn("old asn1 reason", blockers)
+
     def test_summarizer_writes_native_binding_validated_record(self):
         summarizer = load_tool("summarize_binding_candidate_sweep")
         with tempfile.TemporaryDirectory() as tmp:

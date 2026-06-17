@@ -111,6 +111,11 @@ chmod +x "$OUT/afl/$PROGRAM"
             self.assertIn("freetype2/src/tools", script_text)
             self.assertIn("AFLGO_CONFIGURE_NATIVE", script_text)
             self.assertIn("AFLGO_CONFIGURE_CC", script_text)
+            self.assertIn("pkcs7_decode.c", script_text)
+            self.assertIn("PKCS7_dataDecode", script_text)
+            self.assertIn("OPENSSL_NO_FUZZ_LIBFUZZER", script_text)
+            self.assertIn('rstrip() + "\\n"', script_text)
+            self.assertIn('text.rstrip() + "\\n\\n" + fragment', script_text)
             instrument_step = next(row for row in plan["steps"] if row["name"] == "instrument_target")
             self.assertTrue(instrument_step["env"]["FORMTRIG_SOURCE_DIR"].endswith("/formtrig"))
             self.assertFalse((out_dir / "out" / "afl" / "pdfimages").exists())
@@ -204,6 +209,15 @@ chmod +x "$OUT/afl/$PROGRAM"
             [row["status"] for row in summary["checks"]],
             ["missing", "missing"],
         )
+
+    def test_openssl_programs_default_to_stdin_args(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+        with tempfile.TemporaryDirectory() as tmp:
+            configrc = Path(tmp) / "openssl" / "configrc"
+            configrc.parent.mkdir()
+            configrc.write_text("PROGRAMS=(asn1)\n", encoding="utf-8")
+
+            self.assertEqual(runner.parse_program_args(configrc, "pkcs7_decode"), "-")
 
 
 if __name__ == "__main__":

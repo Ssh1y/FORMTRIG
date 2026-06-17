@@ -39,6 +39,7 @@ CSV_FIELDS = [
     "seed_source",
     "seed_dir",
     "rnt_status",
+    "rnt_program",
     "rnt_seed_files",
     "site_map",
     "target_cwd",
@@ -121,6 +122,25 @@ def intish(value: Any) -> int:
         return 0
 
 
+def rnt_program_matches(row: dict[str, Any], program: str) -> bool:
+    row_program = str(row.get("program") or "")
+    return not row_program or not program or row_program == program
+
+
+def rnt_not_ready_message(row: dict[str, Any], *, program: str) -> str:
+    status = str(row.get("status") or "unknown")
+    row_program = str(row.get("program") or "")
+    if row_program and program and row_program != program:
+        return (
+            f"formal RNT seed corpus is not ready for program {program}: "
+            f"existing RNT status is for {row_program} ({status})"
+        )
+    message = f"formal RNT seed corpus is not ready: {status}"
+    if row.get("blocking_reason"):
+        message += f" ({row.get('blocking_reason')})"
+    return message
+
+
 def repo_path(value: str, *, base: Path | None = None) -> Path:
     path = Path(value)
     if path.is_absolute() or base is None:
@@ -184,6 +204,7 @@ def task_from_draft(
     seed_preflight_timeout: int,
 ) -> dict[str, Any]:
     target_id = str(draft.get("target_id") or "")
+    program = str(draft.get("program") or "")
     asset = assets.get(target_id, {})
     rnt = rnt_status.get(target_id, {})
     manifest_template = Path(str(draft.get("manifest_template") or ""))
@@ -193,7 +214,11 @@ def task_from_draft(
     binding_spec = str(asset.get("binding_spec") or draft.get("binding_spec") or template.get("binding_spec") or "")
     explicit_seed_dir = str(asset.get("seed_dir") or "")
     rnt_seed_dir = str(rnt.get("seed_dir") or "")
-    rnt_ready = str(rnt.get("status") or "") == "formal_ready" and str(rnt.get("seed_dir_exists") or "").lower() == "true"
+    rnt_ready = (
+        str(rnt.get("status") or "") == "formal_ready"
+        and str(rnt.get("seed_dir_exists") or "").lower() == "true"
+        and rnt_program_matches(rnt, program)
+    )
     if explicit_seed_dir and not has_todo(explicit_seed_dir):
         seed_dir = explicit_seed_dir
         seed_source = "assets"
@@ -224,15 +249,7 @@ def task_from_draft(
         blockers.append(f"seed_dir is missing or unresolved: {seed_dir or '<empty>'}")
     if seed_source != "assets":
         if rnt and not rnt_ready:
-            blockers.append(
-                "formal RNT seed corpus is not ready: "
-                f"{rnt.get('status') or 'unknown'}"
-                + (
-                    f" ({rnt.get('blocking_reason')})"
-                    if rnt.get("blocking_reason")
-                    else ""
-                )
-            )
+            blockers.append(rnt_not_ready_message(rnt, program=program))
         elif not rnt:
             blockers.append("formal RNT seed status is missing for this target")
     if has_todo(site_map) or not resolved_site_map.exists():
@@ -311,7 +328,7 @@ def task_from_draft(
     return {
         "target_id": target_id,
         "project": str(draft.get("project") or ""),
-        "program": str(draft.get("program") or ""),
+        "program": program,
         "category": category,
         "runner_category": runner_category,
         "action": "run_binding_candidate_sweep_then_summarize_validation",
@@ -323,6 +340,7 @@ def task_from_draft(
         "seed_source": seed_source,
         "seed_dir": display_path(resolved_seed_dir),
         "rnt_status": str(rnt.get("status") or ""),
+        "rnt_program": str(rnt.get("program") or ""),
         "rnt_seed_files": intish(rnt.get("seed_files")),
         "rnt_blocking_reason": str(rnt.get("blocking_reason") or ""),
         "site_map": display_path(resolved_site_map),

@@ -133,6 +133,75 @@ extern void magma_log(const char *bug, int condition);
 """
 
 
+OPENSSL_PKCS7_DECODE_FUZZER = r"""/*
+ * FORMTRIG SSL011 validation runner.
+ *
+ * The stock OpenSSL asn1/cms fuzzers parse or serialize inputs but do not
+ * exercise PKCS7_dataDecode, where Magma's SSL011 canary is logged. This
+ * runner keeps the normal OpenSSL fuzz driver while making that workflow
+ * explicit so the target can be used for BindingSpec validation.
+ */
+
+#include <limits.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <openssl/bio.h>
+#include <openssl/crypto.h>
+#include <openssl/err.h>
+#include <openssl/pkcs7.h>
+#include "fuzzer.h"
+
+int FuzzerInitialize(int *argc, char ***argv)
+{
+    OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+    ERR_clear_error();
+    CRYPTO_free_ex_index(0, -1);
+    return 1;
+}
+
+int FuzzerTestOneInput(const uint8_t *buf, size_t len)
+{
+    BIO *in;
+    BIO *decoded;
+    PKCS7 *p7;
+
+    if (len == 0 || len > INT_MAX)
+        return 0;
+
+    in = BIO_new_mem_buf(buf, (int)len);
+    if (in == NULL)
+        return 0;
+
+    p7 = d2i_PKCS7_bio(in, NULL);
+    if (p7 != NULL) {
+        decoded = PKCS7_dataDecode(p7, NULL, NULL, NULL);
+        if (decoded != NULL)
+            BIO_free_all(decoded);
+        PKCS7_free(p7);
+    }
+
+    BIO_free(in);
+    ERR_clear_error();
+    return 0;
+}
+
+void FuzzerCleanup(void)
+{
+}
+"""
+
+
+OPENSSL_PKCS7_BUILD_FRAGMENT = r"""
+# FORMTRIG custom OpenSSL PKCS7 dataDecode fuzzer.
+if [ -f "$TARGET/src/pkcs7_decode.c" ]; then
+    "$CC" $CFLAGS -I. -Iinclude -Ifuzz -DOPENSSL_NO_FUZZ_LIBFUZZER \
+        "$TARGET/src/pkcs7_decode.c" fuzz/driver.c \
+        -o "$OUT/pkcs7_decode" \
+        $LDFLAGS libcrypto.a $LIBS -ldl -pthread
+fi
+"""
+
+
 def shell_join(parts: list[str]) -> str:
     return " ".join(shlex.quote(str(part)) for part in parts)
 
@@ -146,9 +215,15 @@ def quote_env(env: dict[str, str]) -> str:
     return " ".join(f"{key}={shlex.quote(value)}" for key, value in sorted(env.items()))
 
 
+def default_program_args(configrc: Path, program: str) -> str:
+    if configrc.parent.name == "openssl":
+        return "-"
+    return "@@"
+
+
 def parse_program_args(configrc: Path, program: str) -> str:
     if not configrc.exists():
-        return "@@"
+        return default_program_args(configrc, program)
     pattern = re.compile(rf"^{re.escape(program)}_ARGS=(.*)$")
     for raw in configrc.read_text(encoding="utf-8", errors="replace").splitlines():
         line = raw.strip()
@@ -158,8 +233,8 @@ def parse_program_args(configrc: Path, program: str) -> str:
         value = match.group(1).strip()
         if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
             return value[1:-1]
-        return value or "@@"
-    return "@@"
+        return value or default_program_args(configrc, program)
+    return default_program_args(configrc, program)
 
 
 def repo_has_magma_log(repo: Path) -> bool:
@@ -278,6 +353,8 @@ def step(
 
 def runner_instrument_script_text() -> str:
     canary = CANARY_HEADER.rstrip("\n")
+    openssl_pkcs7_decode = OPENSSL_PKCS7_DECODE_FUZZER.rstrip("\n")
+    openssl_pkcs7_build = OPENSSL_PKCS7_BUILD_FRAGMENT.rstrip("\n")
     return f"""#!/usr/bin/env bash
 set -euo pipefail
 
@@ -455,6 +532,27 @@ if patched != text:
     build_sh.write_text(patched, encoding="utf-8")
 PY
   fi
+fi
+
+if [ "$(basename "$TARGET")" = "openssl" ] && [ "${{PROGRAM:-}}" = "pkcs7_decode" ]; then
+  mkdir -p "$TARGET/src"
+  cat > "$TARGET/src/pkcs7_decode.c" <<'EOF'
+{openssl_pkcs7_decode}
+EOF
+  cat > "$native_work/openssl_pkcs7_decode_build.sh" <<'EOF'
+{openssl_pkcs7_build}
+EOF
+  python3 - "$TARGET/build.sh" "$native_work/openssl_pkcs7_decode_build.sh" <<'PY'
+import sys
+from pathlib import Path
+
+build_sh = Path(sys.argv[1])
+fragment = Path(sys.argv[2]).read_text(encoding="utf-8").rstrip() + "\\n"
+text = build_sh.read_text(encoding="utf-8")
+marker = "# FORMTRIG custom OpenSSL PKCS7 dataDecode fuzzer."
+if marker not in text:
+    build_sh.write_text(text.rstrip() + "\\n\\n" + fragment, encoding="utf-8")
+PY
 fi
 
 export OUT="$OUT/afl"

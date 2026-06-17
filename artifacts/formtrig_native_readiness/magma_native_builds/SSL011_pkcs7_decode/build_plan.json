@@ -1,0 +1,346 @@
+{
+  "dependency_preflight": {
+    "apt_package_hints": [],
+    "checks": [],
+    "status": "not_required",
+    "target": "openssl"
+  },
+  "executed_steps": [
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh"
+      ],
+      "env": {
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "fuzzer_fetch",
+      "reason": "fuzzer repo already present",
+      "selected": false,
+      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh"
+      ],
+      "env": {
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out",
+        "PROGRAM": "pkcs7_decode",
+        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared",
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "fuzzer_build",
+      "reason": "AFL++/driver artifacts already present",
+      "selected": false,
+      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out PROGRAM=pkcs7_decode SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl/preinstall.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "target_preinstall",
+      "reason": "explicit --run-preinstall requested",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl/preinstall.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl/fetch.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "target_fetch",
+      "reason": "target repo already present",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl/fetch.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "apply_patches",
+      "reason": "target repo already has MAGMA_LOG markers",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/runner_instrument_target.sh"
+      ],
+      "env": {
+        "CFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "CXXFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "FORMTRIG_AFL_CC": "/usr/bin/clang-15",
+        "FORMTRIG_AFL_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_INSTRUMENT_LEVEL": "balanced",
+        "FORMTRIG_LLVM_CONFIG": "/usr/bin/llvm-config-15",
+        "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
+        "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
+        "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+        "LD": "/usr/bin/ld",
+        "LDFLAGS": "-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out",
+        "LIBS": "-l:magma.o -lrt",
+        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out",
+        "PROGRAM": "pkcs7_decode",
+        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared",
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "exit_code": 0,
+      "log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/logs/instrument_target.log",
+      "name": "instrument_target",
+      "reason": "build FORMTRIG-native target executable and site map via runner",
+      "selected": true,
+      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out PROGRAM=pkcs7_decode SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/runner_instrument_target.sh",
+      "status": "ok"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "tools/discover_magma_native_assets.py",
+        "--search-root",
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode",
+        "--search-root",
+        "artifacts/formtrig_native_readiness",
+        "--search-root",
+        "experiments/magma_workspace"
+      ],
+      "env": {},
+      "exit_code": 0,
+      "log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/logs/refresh_asset_discovery.log",
+      "name": "refresh_asset_discovery",
+      "reason": "explicit --refresh-discovery requested",
+      "selected": true,
+      "shell": "/usr/bin/python3 tools/discover_magma_native_assets.py --search-root /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode --search-root artifacts/formtrig_native_readiness --search-root experiments/magma_workspace",
+      "status": "ok"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "tools/plan_magma_binding_validation.py",
+        "--assets",
+        "artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json"
+      ],
+      "env": {},
+      "exit_code": 0,
+      "log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/logs/refresh_validation_worklist.log",
+      "name": "refresh_validation_worklist",
+      "reason": "explicit --refresh-discovery requested",
+      "selected": true,
+      "shell": "/usr/bin/python3 tools/plan_magma_binding_validation.py --assets artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json",
+      "status": "ok"
+    }
+  ],
+  "expected_validation_asset": {
+    "program_args": "-",
+    "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/formtrig_native/formtrig_sites.tsv",
+    "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl/pkcs7_decode -",
+    "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl",
+    "target_id": "SSL011"
+  },
+  "generated_at_utc": "2026-06-17T13:10:22+00:00",
+  "inputs": {
+    "afl_cc": "/usr/bin/clang-15",
+    "afl_cxx": "/usr/bin/clang++-15",
+    "cxx_stdlib": "libstdc++",
+    "fuzzer": "formtrig_native",
+    "instrument_entry": "runner",
+    "instrument_level": "balanced",
+    "llvm_config": "/usr/bin/llvm-config-15",
+    "magma_root": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma",
+    "pass_cxx": "/usr/bin/clang++-15",
+    "refresh_discovery": true,
+    "run_preinstall": false,
+    "runtime_cc": "/usr/bin/clang-15",
+    "skip_dependency_preflight": false,
+    "skip_fuzzer_build": false,
+    "skip_fuzzer_fetch": false,
+    "skip_patches": true,
+    "skip_target_fetch": true
+  },
+  "mode": "execute",
+  "paths": {
+    "executable": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl/pkcs7_decode",
+    "fuzzer": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+    "logs": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/logs",
+    "magma": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+    "out": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out",
+    "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode",
+    "runner_instrument": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/runner_instrument_target.sh",
+    "shared": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared",
+    "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/formtrig_native/formtrig_sites.tsv",
+    "target": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl",
+    "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl"
+  },
+  "post_build_steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "tools/discover_magma_native_assets.py",
+        "--search-root",
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode",
+        "--search-root",
+        "artifacts/formtrig_native_readiness",
+        "--search-root",
+        "experiments/magma_workspace"
+      ],
+      "env": {},
+      "name": "refresh_asset_discovery",
+      "reason": "explicit --refresh-discovery requested",
+      "selected": true,
+      "shell": "/usr/bin/python3 tools/discover_magma_native_assets.py --search-root /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode --search-root artifacts/formtrig_native_readiness --search-root experiments/magma_workspace"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "tools/plan_magma_binding_validation.py",
+        "--assets",
+        "artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json"
+      ],
+      "env": {},
+      "name": "refresh_validation_worklist",
+      "reason": "explicit --refresh-discovery requested",
+      "selected": true,
+      "shell": "/usr/bin/python3 tools/plan_magma_binding_validation.py --assets artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json"
+    }
+  ],
+  "program": "pkcs7_decode",
+  "schema": "formtrig_magma_native_build_plan_v1",
+  "status": "executed",
+  "steps": [
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh"
+      ],
+      "env": {
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native"
+      },
+      "name": "fuzzer_fetch",
+      "reason": "fuzzer repo already present",
+      "selected": false,
+      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh"
+      ],
+      "env": {
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out",
+        "PROGRAM": "pkcs7_decode",
+        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared",
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "name": "fuzzer_build",
+      "reason": "AFL++/driver artifacts already present",
+      "selected": false,
+      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out PROGRAM=pkcs7_decode SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl/preinstall.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "name": "target_preinstall",
+      "reason": "explicit --run-preinstall requested",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl/preinstall.sh"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl/fetch.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "name": "target_fetch",
+      "reason": "target repo already present",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl/fetch.sh"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "name": "apply_patches",
+      "reason": "target repo already has MAGMA_LOG markers",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/runner_instrument_target.sh"
+      ],
+      "env": {
+        "CFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "CXXFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "FORMTRIG_AFL_CC": "/usr/bin/clang-15",
+        "FORMTRIG_AFL_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_INSTRUMENT_LEVEL": "balanced",
+        "FORMTRIG_LLVM_CONFIG": "/usr/bin/llvm-config-15",
+        "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
+        "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
+        "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+        "LD": "/usr/bin/ld",
+        "LDFLAGS": "-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out",
+        "LIBS": "-l:magma.o -lrt",
+        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out",
+        "PROGRAM": "pkcs7_decode",
+        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared",
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl"
+      },
+      "name": "instrument_target",
+      "reason": "build FORMTRIG-native target executable and site map via runner",
+      "selected": true,
+      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out PROGRAM=pkcs7_decode SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/openssl bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/runner_instrument_target.sh"
+    }
+  ],
+  "target": "openssl",
+  "target_id": "SSL011"
+}
