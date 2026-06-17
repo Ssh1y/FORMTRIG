@@ -92,6 +92,29 @@ matched 7200s x3 with the same -t 5000+ terminal oracle:
 
 这不是改论文口径来退缩，而是实验设计 gate 的结果：`tools/compare_formtrig_baselines.py` 现在输出 `experiment_strength.main_claim_strength=weak_near_seed_or_harness_shaped_speedup`；triage/worklist 会把 LIBARCHIVE_2936 路由到 `improve_experiment_design`，要求更高保真/raw-format harness、更远 RNT seeds、no-hook/generic-hook ablation，或把 hard-gap 预算转向 baseline 低成功率/长尾明显的 Magma/真实 CVE 目标。
 
+LIBARCHIVE_2936 现在也有了第一版 external typed-hook ablation smoke：
+
+```text
+60s x1 same seed/oracle ablation:
+  hooked BindingSpec target-specific external hook:
+    first _T = 1.196s / exec 32, terminal crashes = 4
+  no external hook, built-in FORMTRIG typed mutation only:
+    first _T = 25.652s / exec 18532, terminal crashes = 7
+  generic external delimiter/range hook:
+    first _T = 55.178s / exec 44842, terminal crashes = 1
+
+attribution:
+  target-specific hook is 21.45x faster than no-hook by first _T
+  target-specific hook is 46.14x faster than generic-hook by first _T
+
+claim boundary:
+  this is a 1-rep smoke, so it is not final ablation evidence
+  no-hook and generic-hook controls also trigger, so this target remains weak
+  SOTA-gap evidence under the current harness/RNT design
+```
+
+这个结果有两个作用。第一，它把“是不是 harness 把漏洞写在脸上”进一步拆开：即使不使用 target-specific hook，FORMTRIG 内置 typed stage 和 generic hook 都能在 60s 内触发，说明当前 LIBARCHIVE seed/harness 确实偏近。第二，它证明 target-specific BindingSpec hook 不是没有贡献：它显著降低了 R2T 时间和 exec 成本。后续主证据不能靠 LIBARCHIVE 当前 harness，但 typed-hook 归因实验可以沿用这套 `hooked/nohook/generic` ablation runner 和 summarizer。
+
 当前 TIF012 B5 7200s x3 matched long-run 给出了 Magma 上更长预算的同类结论：
 
 ```text

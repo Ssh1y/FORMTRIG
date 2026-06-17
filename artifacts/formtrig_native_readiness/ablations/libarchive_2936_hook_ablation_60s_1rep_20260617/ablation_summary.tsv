@@ -1,0 +1,4 @@
+label	run	hook_source	hook_enabled	run_time	execs_done	terminal_count	first_terminal_time_s	first_terminal_execs	accepted_non_trigger	saved_non_trigger	spec_lifted	strict_pretrigger_guidance	typed_execs	typed_finds	source_path
+hooked	formtrig_rep1	binding_spec	True	60	100	4	1.196	32	1	1	29	True	73	0	artifacts/formtrig_native_readiness/ablations/libarchive_2936_hook_ablation_60s_1rep_20260617/hooked_gate_summary.csv
+nohook	formtrig_nohook_rep1	disabled_ablation	False	60	31761	7	25.652	18532	4	4	4096	True	256	8	artifacts/formtrig_native_readiness/ablations/libarchive_2936_hook_ablation_60s_1rep_20260617/nohook_gate_summary.csv
+generic	formtrig_generic_hook_rep1	cli_override	True	60	48334	1	55.178	44842	3	3	4092	True	256	19	artifacts/formtrig_native_readiness/ablations/libarchive_2936_hook_ablation_60s_1rep_20260617/generic_hook_gate_summary.csv

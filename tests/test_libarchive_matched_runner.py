@@ -10,6 +10,42 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 class LibarchiveMatchedRunnerTest(unittest.TestCase):
+    def test_generic_hook_writes_target_agnostic_mutation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            orig = root / "orig"
+            mut = root / "mut"
+            out = root / "out"
+            orig.write_bytes(b"alpha_beta")
+            mut.write_bytes(b"alphaXbeta")
+
+            subprocess.run(
+                [
+                    str(REPO_ROOT / "scripts" / "formtrig_hooks" / "generic_ascii_delimiter_hook.py"),
+                    str(orig),
+                    str(mut),
+                    str(out),
+                    "10",
+                    "0",
+                    "5",
+                    "5",
+                    "1",
+                    "2",
+                    "0",
+                    "0",
+                    "1",
+                    "1",
+                    "4",
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            result = out.read_bytes()
+            self.assertTrue(result)
+            self.assertLessEqual(len(result), 4096)
+            self.assertNotEqual(result, orig.read_bytes())
+
     def test_dry_run_emits_matched_formtrig_and_baseline_plan(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "matched"
@@ -55,6 +91,47 @@ class LibarchiveMatchedRunnerTest(unittest.TestCase):
             self.assertIn("tools/run_post_reach_baseline.py", plan)
             self.assertIn("--budget-sec 60", plan)
             self.assertIn("5000+", plan)
+
+    def test_dry_run_emits_formtrig_ablation_arms(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "ablations"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_libarchive_2936_matched_longrun.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "60",
+                    "--reps",
+                    "1",
+                    "--arms",
+                    "formtrig,formtrig_nohook,formtrig_generic_hook",
+                    "--out",
+                    str(out_dir),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+
+            self.assertEqual(
+                [(record["arm"], record["rep"]) for record in records],
+                [
+                    ("formtrig", 1),
+                    ("formtrig_nohook", 1),
+                    ("formtrig_generic_hook", 1),
+                ],
+            )
+            commands = {record["arm"]: record["command"] for record in records}
+            self.assertNotIn("--no-mutation-hook", commands["formtrig"])
+            self.assertNotIn("--mutation-hook", commands["formtrig"])
+            self.assertIn("--no-mutation-hook", commands["formtrig_nohook"])
+            self.assertIn("--mutation-hook", commands["formtrig_generic_hook"])
+            self.assertIn("generic_ascii_delimiter_hook.py", commands["formtrig_generic_hook"])
 
     def test_gate_prefers_exact_crash_filename_time_and_execs(self):
         with tempfile.TemporaryDirectory() as tmp:

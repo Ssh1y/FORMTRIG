@@ -1,0 +1,14 @@
+{
+  "arms": "formtrig,formtrig_nohook,formtrig_generic_hook",
+  "baselines": "",
+  "binding_spec": "/home/cwh/FORMTRIG/artifacts/binding_specs/LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
+  "category": "binary-state-null",
+  "duration_s": 60,
+  "mode": "execute",
+  "reps": 1,
+  "seed_dir": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/LIBARCHIVE_2936/seeds",
+  "site_map": "/tmp/formtrig_libarchive_2936_native_env/site_map.tsv",
+  "target_id": "LIBARCHIVE_2936",
+  "time_utc": "2026-06-17T11:46:57Z",
+  "timeout_oracle": "-t 5000+"
+}

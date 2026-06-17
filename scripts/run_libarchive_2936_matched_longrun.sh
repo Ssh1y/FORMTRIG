@@ -18,6 +18,7 @@ site_map="/tmp/formtrig_libarchive_2936_native_env/site_map.tsv"
 formtrig_binary="/tmp/formtrig_libarchive_2936_build/libarchive_write_replay_formtrig"
 plain_binary="/tmp/formtrig_libarchive_2936_aflpp_plain_build/libarchive_write_replay_aflpp_plain"
 cmplog_binary="/tmp/formtrig_libarchive_2936_aflpp_cmplog_build/libarchive_write_replay_aflpp_cmplog"
+generic_mutation_hook="$repo_root/scripts/formtrig_hooks/generic_ascii_delimiter_hook.py"
 afl_fuzz="$repo_root/experiments/aflplusplus/AFLplusplus/afl-fuzz"
 baselines="aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 arms="formtrig,aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
@@ -47,6 +48,7 @@ options:
   --formtrig-binary F  FORMTRIG-instrumented target
   --plain-binary F     plain AFL++ target
   --cmplog-binary F    AFL++ CmpLog target
+  --generic-hook FILE  generic FORMTRIG external mutation-hook ablation
   --afl-fuzz FILE      AFL++ afl-fuzz
   --monitor-poll SEC   FORMTRIG stats monitor poll, default 1
   --continue-on-fail   keep summarizing if an arm fails
@@ -182,8 +184,9 @@ baseline_command_array() {
 }
 
 formtrig_command_array() {
-  local rep="$1"
-  local run_out="$2"
+  local arm="$1"
+  local rep="$2"
+  local run_out="$3"
   FORMTRIG_CMD=(
     "$repo_root/scripts/run_formtrig_aflpp_campaign.sh"
     --in "$seed_dir"
@@ -198,8 +201,22 @@ formtrig_command_array() {
     --seed-preflight-timeout 5
     --afl-arg "-t"
     --afl-arg "$timeout_arg"
-    -- "$formtrig_binary" "@@"
   )
+  case "$arm" in
+    formtrig)
+      ;;
+    formtrig_nohook)
+      FORMTRIG_CMD+=(--no-mutation-hook)
+      ;;
+    formtrig_generic_hook)
+      FORMTRIG_CMD+=(--mutation-hook "$generic_mutation_hook")
+      ;;
+    *)
+      echo "unsupported FORMTRIG arm: $arm" >&2
+      exit 2
+      ;;
+  esac
+  FORMTRIG_CMD+=(-- "$formtrig_binary" "@@")
 }
 
 run_baseline_one() {
@@ -221,18 +238,19 @@ run_baseline_one() {
 }
 
 run_formtrig_one() {
-  local rep="$1"
-  local run_out="$out_dir/runs/formtrig_rep${rep}"
+  local arm="$1"
+  local rep="$2"
+  local run_out="$out_dir/runs/${arm}_rep${rep}"
   mkdir -p "$run_out"
-  formtrig_command_array "$rep" "$run_out"
+  formtrig_command_array "$arm" "$rep" "$run_out"
   local rendered
   rendered="FORMTRIG_STATS_MONITOR_POLL=$monitor_poll $(quote_cmd "${FORMTRIG_CMD[@]}")"
-  record_plan "formtrig" "$rep" "formtrig" "$rendered"
+  record_plan "$arm" "$rep" "formtrig" "$rendered"
   if [[ "$mode" == "dry-run" ]]; then
     return 0
   fi
   {
-    printf 'running formtrig rep%s at %s\n' "$rep" "$(date -u +%FT%TZ)"
+    printf 'running %s rep%s at %s\n' "$arm" "$rep" "$(date -u +%FT%TZ)"
     printf '%s\n' "$rendered"
     FORMTRIG_STATS_MONITOR_POLL="$monitor_poll" "${FORMTRIG_CMD[@]}"
   } > "$run_out/run.log" 2>&1
@@ -315,6 +333,10 @@ while [[ $# -gt 0 ]]; do
       cmplog_binary="${2:-}"
       shift 2
       ;;
+    --generic-hook)
+      generic_mutation_hook="${2:-}"
+      shift 2
+      ;;
     --afl-fuzz)
       afl_fuzz="${2:-}"
       shift 2
@@ -361,6 +383,7 @@ if [[ "$site_map" != /* ]]; then site_map="$(abs_path "$site_map")"; fi
 if [[ "$formtrig_binary" != /* ]]; then formtrig_binary="$(abs_path "$formtrig_binary")"; fi
 if [[ "$plain_binary" != /* ]]; then plain_binary="$(abs_path "$plain_binary")"; fi
 if [[ "$cmplog_binary" != /* ]]; then cmplog_binary="$(abs_path "$cmplog_binary")"; fi
+if [[ "$generic_mutation_hook" != /* ]]; then generic_mutation_hook="$(abs_path "$generic_mutation_hook")"; fi
 
 if [[ -z "$out_dir" ]]; then
   timeout_safe="${timeout_arg//[^A-Za-z0-9]/}"
@@ -386,6 +409,11 @@ if [[ "$mode" == "execute" ]]; then
   require_path "$formtrig_binary"
   require_path "$plain_binary"
   require_path "$afl_fuzz"
+  for arm in $(split_list "$arms"); do
+    if [[ "$arm" == "formtrig_generic_hook" ]]; then
+      require_path "$generic_mutation_hook"
+    fi
+  done
   for baseline in $(split_list "$baselines"); do
     if baseline_needs_cmplog "$baseline"; then
       require_path "$cmplog_binary"
@@ -396,12 +424,12 @@ fi
 for rep in $(seq 1 "$reps"); do
   for arm in $(split_list "$arms"); do
     case "$arm" in
-      formtrig)
+      formtrig|formtrig_nohook|formtrig_generic_hook)
         if [[ "$mode" == "dry-run" ]]; then
-          run_formtrig_one "$rep"
+          run_formtrig_one "$arm" "$rep"
         else
           wait_for_job_slot "$jobs"
-          run_formtrig_one "$rep" &
+          run_formtrig_one "$arm" "$rep" &
         fi
         ;;
       aflplusplus_vanilla|aflplusplus_cmplog|redqueen_operand)
@@ -428,24 +456,36 @@ if [[ "$mode" == "dry-run" ]]; then
   exit 0
 fi
 
-gate_args=(
-  "$repo_root/scripts/formtrig_experiment_gate.sh"
-  --suite "LIBARCHIVE_2936_matched_${duration}s"
-  --out "$out_dir/formtrig_gate"
-  --min-runtime "$duration"
-)
-for rep in $(seq 1 "$reps"); do
-  if [[ -d "$out_dir/runs/formtrig_rep${rep}/fuzzer_out" ]]; then
-    gate_args+=(--run "formtrig_rep${rep}=$out_dir/runs/formtrig_rep${rep}/fuzzer_out")
-  fi
+for arm in $(split_list "$arms"); do
+  case "$arm" in
+    formtrig|formtrig_nohook|formtrig_generic_hook)
+      gate_out="$out_dir/${arm}_gate"
+      if [[ "$arm" == "formtrig" ]]; then
+        gate_out="$out_dir/formtrig_gate"
+      fi
+      gate_args=(
+        "$repo_root/scripts/formtrig_experiment_gate.sh"
+        --suite "LIBARCHIVE_2936_${arm}_matched_${duration}s"
+        --out "$gate_out"
+        --min-runtime "$duration"
+      )
+      for rep in $(seq 1 "$reps"); do
+        if [[ -d "$out_dir/runs/${arm}_rep${rep}/fuzzer_out" ]]; then
+          gate_args+=(--run "${arm}_rep${rep}=$out_dir/runs/${arm}_rep${rep}/fuzzer_out")
+        fi
+      done
+      if [[ "${#gate_args[@]}" -gt 7 ]]; then
+        if ! "${gate_args[@]}"; then
+          if [[ "$continue_on_fail" == "0" ]]; then
+            exit 1
+          fi
+        fi
+      fi
+      ;;
+    *)
+      ;;
+  esac
 done
-if [[ "${#gate_args[@]}" -gt 7 ]]; then
-  if ! "${gate_args[@]}"; then
-    if [[ "$continue_on_fail" == "0" ]]; then
-      exit 1
-    fi
-  fi
-fi
 
 python3 "$repo_root/tools/summarize_post_reach_baselines.py" \
   --root "$out_dir/runs" \
@@ -468,5 +508,7 @@ echo "LIBARCHIVE_2936 matched long-run complete"
 echo "  out=$out_dir"
 echo "  plan=$plan_sh"
 echo "  gate=$out_dir/formtrig_gate/gate_summary.csv"
+echo "  nohook_gate=$out_dir/formtrig_nohook_gate/gate_summary.csv"
+echo "  generic_hook_gate=$out_dir/formtrig_generic_hook_gate/gate_summary.csv"
 echo "  baseline_summary=$out_dir/baseline_summary.json"
 echo "  comparison=$out_dir/comparison/comparison.json"

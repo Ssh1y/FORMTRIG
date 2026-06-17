@@ -1,0 +1,124 @@
+{
+  "ablation_id": "libarchive_2936_hook_ablation_60s_1rep_20260617",
+  "analysis": {
+    "blocked_claims": [
+      "ablation evidence is a smoke result until replicated",
+      "controls also trigger, so this target remains weak SOTA-gap evidence"
+    ],
+    "control_reps": {
+      "generic": 1,
+      "nohook": 1
+    },
+    "generic_exec_speedup": 1401.3125,
+    "generic_time_speedup": 46.135451505016725,
+    "min_reps": 3,
+    "nohook_exec_speedup": 579.125,
+    "nohook_time_speedup": 21.448160535117058,
+    "primary_label": "hooked",
+    "primary_reps": 1,
+    "reasons": [
+      "primary_hook_terminal_success",
+      "nohook_control_also_triggers",
+      "generic_hook_control_also_triggers",
+      "low_replication",
+      "primary_hook_faster_than_nohook_and_generic"
+    ],
+    "verdict": "target_specific_hook_accelerates_ablation_controls"
+  },
+  "runs": [
+    {
+      "accepted_non_trigger": 1,
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "execs_done": 100,
+      "execs_per_sec": 1.65,
+      "first_terminal_execs": 32,
+      "first_terminal_time_kind": "afl_crash_filename_exact",
+      "first_terminal_time_s": 1.196,
+      "hook": {
+        "enabled": true,
+        "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/libarchive_rnt_path_hierarchy_hook.py",
+        "sha256": "747e1caa02f34385cd60d7d749669baa537160031d4c87ac2f832eba13ad1b8a",
+        "source": "binding_spec"
+      },
+      "hook_enabled": true,
+      "hook_path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/libarchive_rnt_path_hierarchy_hook.py",
+      "hook_sha256": "747e1caa02f34385cd60d7d749669baa537160031d4c87ac2f832eba13ad1b8a",
+      "hook_source": "binding_spec",
+      "label": "hooked",
+      "run": "formtrig_rep1",
+      "run_time": 60,
+      "saved_non_trigger": 1,
+      "source_path": "artifacts/formtrig_native_readiness/ablations/libarchive_2936_hook_ablation_60s_1rep_20260617/hooked_gate_summary.csv",
+      "spec_lifted": 29,
+      "strict_pretrigger_guidance": true,
+      "terminal_count": 4,
+      "typed_execs": 73,
+      "typed_finds": 0,
+      "typed_skips": 0
+    },
+    {
+      "accepted_non_trigger": 4,
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "execs_done": 31761,
+      "execs_per_sec": 529.24,
+      "first_terminal_execs": 18532,
+      "first_terminal_time_kind": "afl_crash_filename_exact",
+      "first_terminal_time_s": 25.652,
+      "hook": {
+        "enabled": false,
+        "path": null,
+        "sha256": null,
+        "source": "disabled_ablation"
+      },
+      "hook_enabled": false,
+      "hook_path": null,
+      "hook_sha256": null,
+      "hook_source": "disabled_ablation",
+      "label": "nohook",
+      "run": "formtrig_nohook_rep1",
+      "run_time": 60,
+      "saved_non_trigger": 4,
+      "source_path": "artifacts/formtrig_native_readiness/ablations/libarchive_2936_hook_ablation_60s_1rep_20260617/nohook_gate_summary.csv",
+      "spec_lifted": 4096,
+      "strict_pretrigger_guidance": true,
+      "terminal_count": 7,
+      "typed_execs": 256,
+      "typed_finds": 8,
+      "typed_skips": 4
+    },
+    {
+      "accepted_non_trigger": 3,
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "execs_done": 48334,
+      "execs_per_sec": 805.45,
+      "first_terminal_execs": 44842,
+      "first_terminal_time_kind": "afl_crash_filename_exact",
+      "first_terminal_time_s": 55.178,
+      "hook": {
+        "enabled": true,
+        "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/generic_ascii_delimiter_hook.py",
+        "sha256": "9edd782dc54fb58cd6971c4924699af3c02352d2cc5d5e8c415ab1a7fe6515bb",
+        "source": "cli_override"
+      },
+      "hook_enabled": true,
+      "hook_path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/generic_ascii_delimiter_hook.py",
+      "hook_sha256": "9edd782dc54fb58cd6971c4924699af3c02352d2cc5d5e8c415ab1a7fe6515bb",
+      "hook_source": "cli_override",
+      "label": "generic",
+      "run": "formtrig_generic_hook_rep1",
+      "run_time": 60,
+      "saved_non_trigger": 3,
+      "source_path": "artifacts/formtrig_native_readiness/ablations/libarchive_2936_hook_ablation_60s_1rep_20260617/generic_hook_gate_summary.csv",
+      "spec_lifted": 4092,
+      "strict_pretrigger_guidance": true,
+      "terminal_count": 1,
+      "typed_execs": 256,
+      "typed_finds": 19,
+      "typed_skips": 4
+    }
+  ],
+  "target_id": "LIBARCHIVE_2936"
+}

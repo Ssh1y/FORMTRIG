@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "source": "cli_override",
+  "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/generic_ascii_delimiter_hook.py",
+  "sha256": "9edd782dc54fb58cd6971c4924699af3c02352d2cc5d5e8c415ab1a7fe6515bb"
+}

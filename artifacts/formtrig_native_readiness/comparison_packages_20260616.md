@@ -64,6 +64,33 @@ incomplete_required_baseline_set
 
 ## Generated Packages
 
+### LIBARCHIVE_2936: external typed-hook ablation smoke
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/ablations/libarchive_2936_hook_ablation_60s_1rep_20260617
+```
+
+Tool:
+
+```bash
+tools/summarize_formtrig_ablation.py
+```
+
+Verdict:
+
+```text
+target_specific_hook_accelerates_ablation_controls
+```
+
+Reason: under the same 60s seed/oracle smoke, the BindingSpec target-specific
+external hook reaches first `_T` at 1.196s / exec 32, the no-external-hook arm
+reaches first `_T` at 25.652s / exec 18532, and the generic delimiter/range hook
+reaches first `_T` at 55.178s / exec 44842. This supports a typed-hook
+attribution benefit on LIBARCHIVE_2936, but it is not main SOTA-gap evidence:
+the run has only one repetition, and both controls also trigger within 60s.
+
 ### PNG006: FORMTRIG 2h vs baseline 30m gap
 
 Command:

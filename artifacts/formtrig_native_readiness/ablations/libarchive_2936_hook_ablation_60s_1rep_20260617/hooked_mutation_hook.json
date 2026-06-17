@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "source": "binding_spec",
+  "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/libarchive_rnt_path_hierarchy_hook.py",
+  "sha256": "747e1caa02f34385cd60d7d749669baa537160031d4c87ac2f832eba13ad1b8a"
+}

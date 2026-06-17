@@ -17,6 +17,8 @@ duration="60"
 seed_preflight="warn"
 seed_preflight_max="32"
 seed_preflight_timeout="2"
+mutation_hook_override=""
+disable_mutation_hook=0
 extra_afl_args=()
 
 usage() {
@@ -33,6 +35,8 @@ options:
   --seed-preflight M   off|warn|require native seed readiness check (default: warn)
   --seed-preflight-max N       max seeds to replay before fuzzing (default: 32)
   --seed-preflight-timeout SEC per-seed replay timeout (default: 2)
+  --mutation-hook FILE override the BindingSpec external typed mutation hook
+  --no-mutation-hook  disable the BindingSpec/env external mutation hook
   --aflpp-dir DIR      AFL++ checkout/build directory
   --afl-arg ARG        extra afl-fuzz argument, repeatable
 
@@ -211,6 +215,14 @@ while [[ $# -gt 0 ]]; do
       seed_preflight_timeout="${2:-}"
       shift 2
       ;;
+    --mutation-hook)
+      mutation_hook_override="${2:-}"
+      shift 2
+      ;;
+    --no-mutation-hook)
+      disable_mutation_hook=1
+      shift
+      ;;
     --aflpp-dir)
       aflpp_dir="${2:-}"
       afl_fuzz="$aflpp_dir/afl-fuzz"
@@ -251,6 +263,10 @@ fi
 
 if [[ -n "$binding_spec" && -z "$site_map" ]]; then
   echo "--binding-spec requires --site-map so source bindings are runtime-grounded" >&2
+  exit 2
+fi
+if [[ "$disable_mutation_hook" == "1" && -n "$mutation_hook_override" ]]; then
+  echo "--no-mutation-hook and --mutation-hook are mutually exclusive" >&2
   exit 2
 fi
 
@@ -354,21 +370,31 @@ if [[ -n "$runtime_lift_spec" ]] &&
   pre_reach_events=1
 fi
 
-mutation_hook="${FORMTRIG_TYPED_MUTATION_HOOK:-}"
-mutation_hook_source="environment"
-if [[ -z "$mutation_hook" ]]; then
-  mutation_hook_source="none"
-fi
-if [[ -n "$mutation_hook" && "$mutation_hook" != /* ]]; then
-  mutation_hook="$(pwd)/$mutation_hook"
-fi
-if [[ -z "$mutation_hook" && -n "$lift_spec" ]]; then
-  mutation_hook="$(awk '$1 == "mutation_hook" { print $2; exit }' "$lift_spec")"
-  if [[ -n "$mutation_hook" && "$mutation_hook" != /* ]]; then
+mutation_hook=""
+mutation_hook_source="none"
+if [[ "$disable_mutation_hook" == "1" ]]; then
+  mutation_hook_source="disabled_ablation"
+elif [[ -n "$mutation_hook_override" ]]; then
+  mutation_hook="$mutation_hook_override"
+  if [[ "$mutation_hook" != /* ]]; then
     mutation_hook="$repo_root/$mutation_hook"
   fi
+  mutation_hook_source="cli_override"
+else
+  mutation_hook="${FORMTRIG_TYPED_MUTATION_HOOK:-}"
   if [[ -n "$mutation_hook" ]]; then
-    mutation_hook_source="binding_spec"
+    mutation_hook_source="environment"
+    if [[ "$mutation_hook" != /* ]]; then
+      mutation_hook="$(pwd)/$mutation_hook"
+    fi
+  elif [[ -n "$lift_spec" ]]; then
+    mutation_hook="$(awk '$1 == "mutation_hook" { print $2; exit }' "$lift_spec")"
+    if [[ -n "$mutation_hook" && "$mutation_hook" != /* ]]; then
+      mutation_hook="$repo_root/$mutation_hook"
+    fi
+    if [[ -n "$mutation_hook" ]]; then
+      mutation_hook_source="binding_spec"
+    fi
   fi
 fi
 if [[ -n "$mutation_hook" ]]; then
@@ -392,7 +418,7 @@ fi
     printf '  "sha256": "%s"\n' "$hook_sha256"
   else
     printf '  "enabled": false,\n'
-    printf '  "source": "none",\n'
+    printf '  "source": "%s",\n' "$mutation_hook_source"
     printf '  "path": null,\n'
     printf '  "sha256": null\n'
   fi
