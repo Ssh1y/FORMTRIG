@@ -1,7 +1,8 @@
-# tif012_b5_matched_7200s_3rep_20260616T223012Z
+# tif012_b5_matched_7200s_3rep_20260617
 
 - target: `TIF012`
 - verdict: `positive_speedup_matched_comparison`
+- main claim strength: `hard_speedup_or_reliability_candidate`
 - matched baselines: `9`
 
 ## Benefit Readout
@@ -28,13 +29,21 @@ Design evidence used for attribution:
 - `strict_pretrigger_guidance`
 - `formtrig_terminal_oracle_success`
 
+## Experiment Strength
+
+- main claim strength: `hard_speedup_or_reliability_candidate`
+- reasons:
+  - `some_required_baseline_families_fail_or_are_unstable`
+- required design actions:
+  - quantify success-rate and TTE-tail improvement with additional repetitions
+
 ## FORMTRIG Runs
 
 | label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |
 | --- | ---: | ---: | --- | ---: | ---: | ---: |
-| b5_7200s_3rep | 7200 | 1379546 | false | 2749423 | 1647188 | 165507 |
-| b5_7200s_3rep | 7200 | 1234445 | true | 3993820 | 1893870 | 149750 |
-| b5_7200s_3rep | 7200 | 2045147 | false | 3947580 | 2518098 | 239540 |
+| formtrig | 7200 | 1379546 | false | 2749423 | 1647188 | 165507 |
+| formtrig | 7200 | 1234445 | true | 3993820 | 1893870 | 149750 |
+| formtrig | 7200 | 2045147 | false | 3947580 | 2518098 | 239540 |
 
 ## Matched Baseline Groups
 

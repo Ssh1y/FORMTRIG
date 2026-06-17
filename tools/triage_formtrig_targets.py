@@ -26,6 +26,8 @@ CSV_FIELDS = [
     "fastest_baseline_trigger_time_s",
     "best_formtrig_trigger_time_s",
     "tte_speedup_over_fastest_baseline",
+    "main_claim_strength",
+    "max_budget_s",
     "formtrig_terminal",
     "strict_pretrigger_guidance",
     "observed_benefits",
@@ -45,6 +47,8 @@ PACKAGE_FIELDS = [
     "fastest_baseline_trigger_time_s",
     "best_formtrig_trigger_time_s",
     "tte_speedup_over_fastest_baseline",
+    "main_claim_strength",
+    "max_budget_s",
     "formtrig_terminal",
     "strict_pretrigger_guidance",
     "missing_required_baselines",
@@ -224,6 +228,13 @@ def package_row(path: Path) -> dict[str, Any]:
         for row in arms
     )
     benefit = benefit_readout(payload)
+    strength = analysis.get("experiment_strength")
+    if isinstance(strength, dict):
+        main_claim_strength = str(strength.get("main_claim_strength") or "")
+        strength_actions = list(strength.get("recommended_design_actions") or [])
+    else:
+        main_claim_strength = ""
+        strength_actions = []
     longrun_10m_confirmed = isinstance(
         payload.get("longrun_10m_confirmation"), dict
     ) or isinstance(analysis.get("longrun_10m_confirmation"), dict)
@@ -238,8 +249,25 @@ def package_row(path: Path) -> dict[str, Any]:
         "positive_endpoint_matched_comparison",
         "positive_endpoint_but_under_replicated",
     } or "formtrig_endpoint_where_matched_baselines_do_not_trigger" in reasons
+    budgets = [
+        numeric(group.get("budget"))
+        for group in groups
+        if numeric(group.get("budget")) is not None
+    ] + [
+        numeric(row.get("budget"))
+        for row in formtrig_runs
+        if numeric(row.get("budget")) is not None
+    ]
+    max_budget = max(budgets) if budgets else None
 
-    if verdict == "positive_speedup_matched_comparison":
+    weak_main_claim = main_claim_strength in {
+        "weak_near_seed_or_harness_shaped_speedup",
+        "moderate_speedup_needs_harder_design",
+    }
+
+    if weak_main_claim:
+        status = "needs_harder_experiment_design"
+    elif verdict == "positive_speedup_matched_comparison":
         status = "promote_or_extend_longruns"
     elif speedup_verdict:
         status = "promote_or_complete_reps"
@@ -280,13 +308,18 @@ def package_row(path: Path) -> dict[str, Any]:
         "tte_speedup_over_fastest_baseline": numeric(
             analysis.get("tte_speedup_over_fastest_baseline")
         ),
+        "main_claim_strength": main_claim_strength,
+        "max_budget_s": max_budget,
         "formtrig_terminal": formtrig_terminal,
         "strict_pretrigger_guidance": strict,
         "longrun_10m_confirmed": longrun_10m_confirmed,
         "missing_required_baselines": list(analysis.get("missing_required_baselines") or []),
         "observed_benefits": list(benefit.get("observed_benefits") or []),
         "blocked_claims": list(benefit.get("blocked_claims") or []),
-        "next_steps": list(analysis.get("next_steps") or payload.get("next_actions") or []),
+        "next_steps": unique(
+            strength_actions
+            + list(analysis.get("next_steps") or payload.get("next_actions") or [])
+        ),
         "source_path": str(path),
     }
 
@@ -377,8 +410,21 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
         )
         has_signal_refinement = any(row.get("package_status") == "needs_signal_refinement" for row in items)
         has_incomparable = any(row.get("package_status") == "incomparable_needs_matched_budget" for row in items)
+        has_weak_main_claim = any(
+            row.get("package_status") == "needs_harder_experiment_design"
+            for row in items
+        )
 
-        if has_replicated_speedup:
+        if has_weak_main_claim:
+            disposition = "needs_harder_experiment_design"
+            priority = 12
+            next_action = (
+                "improve experiment design before spending more main budget: "
+                "use a higher-fidelity/raw-format harness or farther RNT seeds, "
+                "add no-hook and generic-hook FORMTRIG ablations, and move hard-gap "
+                "budget to targets where strong baselines have low success or long R2T tails"
+            )
+        elif has_replicated_speedup:
             disposition = "candidate_extend_longruns"
             priority = 15
             if has_10m_confirmation:
@@ -425,7 +471,17 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             priority = 70
             next_action = "collect FORMTRIG gate evidence and matched baseline package"
 
-        best = sorted(items, key=package_rank)[0]
+        if has_weak_main_claim:
+            best = sorted(
+                [
+                    row
+                    for row in items
+                    if row.get("package_status") == "needs_harder_experiment_design"
+                ],
+                key=package_rank,
+            )[0]
+        else:
+            best = sorted(items, key=package_rank)[0]
         sources = unique([str(row.get("source_path")) for row in items])
         observed = unique(
             list(best.get("observed_benefits") or [])
@@ -569,6 +625,8 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 "tte_speedup_over_fastest_baseline": best.get(
                     "tte_speedup_over_fastest_baseline", ""
                 ),
+                "main_claim_strength": best.get("main_claim_strength", ""),
+                "max_budget_s": best.get("max_budget_s", ""),
                 "formtrig_terminal": has_any_terminal,
                 "strict_pretrigger_guidance": has_any_strict,
                 "observed_benefits": join_values(observed),
@@ -586,6 +644,7 @@ def status_rank(status: str) -> int:
     ranks = {
         "promote_or_complete_reps": 0,
         "promote_or_extend_longruns": 0,
+        "needs_harder_experiment_design": 1,
         "candidate_needs_required_baselines": 1,
         "mechanism_only_needs_terminal_oracle": 2,
         "needs_signal_refinement": 3,
@@ -613,9 +672,10 @@ def verdict_rank(verdict: str) -> int:
     return ranks.get(verdict, 50)
 
 
-def package_rank(row: dict[str, Any]) -> tuple[int, int, str]:
+def package_rank(row: dict[str, Any]) -> tuple[int, int, int, str]:
     return (
         status_rank(str(row.get("package_status"))),
+        -int_value(row.get("max_budget_s")),
         verdict_rank(str(row.get("verdict"))),
         str(row.get("comparison_id")),
     )

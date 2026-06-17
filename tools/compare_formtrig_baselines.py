@@ -42,6 +42,9 @@ TSV_FIELDS = [
     "source_path",
 ]
 
+EARLY_BASELINE_FAMILY_MEDIAN_TTE_S = 60.0
+MODERATE_BASELINE_FAMILY_MEDIAN_TTE_S = 300.0
+
 
 def read_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as handle:
@@ -347,6 +350,104 @@ def successful_baseline_family_median_ttes(groups: list[dict[str, Any]]) -> list
     ]
 
 
+def main_claim_strength(
+    groups: list[dict[str, Any]],
+    successful_baselines: list[dict[str, Any]],
+    terminal_without_successful_baseline: bool,
+    speedup_observed: bool,
+    required_baselines: list[str],
+    min_reps: int,
+    best_baseline_family_median_tte: float | int | None,
+) -> dict[str, Any]:
+    """Separate performance benefit from main-claim experiment hardness.
+
+    A speedup can be real while the experiment is too close to the trigger to
+    prove that binary TC feedback remains a hard SOTA problem. This gate keeps
+    those facts separate so weak harness/near-seed cases drive stronger
+    experimental design instead of being silently promoted as hard evidence.
+    """
+
+    reasons: list[str] = []
+    next_steps: list[str] = []
+
+    complete_groups = [
+        group for group in groups if int_value(group.get("reps")) >= min_reps
+    ]
+    required_group_names = set(required_baselines)
+    if required_group_names:
+        hardness_groups = [
+            group for group in complete_groups if group.get("baseline") in required_group_names
+        ]
+    else:
+        hardness_groups = complete_groups
+
+    all_required_successful = bool(hardness_groups) and all(
+        float(group.get("success_rate") or 0.0) >= 1.0 for group in hardness_groups
+    )
+
+    if terminal_without_successful_baseline:
+        strength = "hard_endpoint_gap_candidate"
+        reasons.append("matched_baselines_do_not_trigger")
+        next_steps.append(
+            "promote to replicated long-run or cross-target confirmation if harness fidelity passes"
+        )
+    elif speedup_observed:
+        if all_required_successful:
+            reasons.append("all_required_baseline_families_trigger_in_replicated_runs")
+            if (
+                best_baseline_family_median_tte is not None
+                and float(best_baseline_family_median_tte)
+                <= EARLY_BASELINE_FAMILY_MEDIAN_TTE_S
+            ):
+                strength = "weak_near_seed_or_harness_shaped_speedup"
+                reasons.append("baseline_family_median_trigger_time_is_under_60s")
+                next_steps.extend(
+                    [
+                        "do not spend main hard-evidence budget on this harness shape alone",
+                        "rerun with a higher-fidelity/raw-format harness or a farther RNT seed",
+                        "add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution",
+                        "prioritize targets where at least one strong baseline family has low success rate or long median R2T",
+                    ]
+                )
+            elif (
+                best_baseline_family_median_tte is not None
+                and float(best_baseline_family_median_tte)
+                <= MODERATE_BASELINE_FAMILY_MEDIAN_TTE_S
+            ):
+                strength = "moderate_speedup_needs_harder_design"
+                reasons.append("baseline_family_median_trigger_time_is_under_300s")
+                next_steps.extend(
+                    [
+                        "keep as secondary speedup evidence",
+                        "add ablations and a harder target/harness before using as main SOTA-gap evidence",
+                    ]
+                )
+            else:
+                strength = "hard_speedup_variance_candidate"
+                reasons.append("baseline_successful_but_not_early_across_families")
+                next_steps.append(
+                    "use as candidate hard speedup evidence after harness fidelity and ablation checks"
+                )
+        else:
+            strength = "hard_speedup_or_reliability_candidate"
+            reasons.append("some_required_baseline_families_fail_or_are_unstable")
+            next_steps.append(
+                "quantify success-rate and TTE-tail improvement with additional repetitions"
+            )
+    else:
+        strength = "not_supporting_main_claim"
+        reasons.append("no_endpoint_or_speedup_advantage_for_formtrig")
+        next_steps.append("repair BindingSpec/mutation design or move budget to a harder target")
+
+    return {
+        "best_baseline_family_median_trigger_time_s": best_baseline_family_median_tte,
+        "early_baseline_family_median_threshold_s": EARLY_BASELINE_FAMILY_MEDIAN_TTE_S,
+        "main_claim_strength": strength,
+        "reasons": reasons,
+        "recommended_design_actions": next_steps,
+    }
+
+
 def classify_evidence(
     formtrig_rows: list[dict[str, Any]],
     baseline_rows: list[dict[str, Any]],
@@ -467,8 +568,25 @@ def classify_evidence(
     if strict_formtrig and not terminal_formtrig:
         next_steps.append("pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims")
 
+    strength = main_claim_strength(
+        groups=groups,
+        successful_baselines=successful_baselines,
+        terminal_without_successful_baseline=terminal_without_successful_baseline,
+        speedup_observed="formtrig_faster_than_successful_baselines" in reasons,
+        required_baselines=required_baselines,
+        min_reps=min_reps,
+        best_baseline_family_median_tte=best_baseline_family_median_tte,
+    )
+    if strength["main_claim_strength"] in {
+        "weak_near_seed_or_harness_shaped_speedup",
+        "moderate_speedup_needs_harder_design",
+    }:
+        reasons.append(strength["main_claim_strength"])
+        next_steps.extend(strength["recommended_design_actions"])
+
     return {
         "baseline_groups": groups,
+        "experiment_strength": strength,
         "matched_baseline_count": len(matched_baselines),
         "missing_required_baselines": missing_required,
         "next_steps": next_steps,
@@ -579,6 +697,19 @@ def benefit_readout(
         blocked_claims.append("required baseline families are still missing")
     if "low_replication" in analysis.get("reasons", []):
         blocked_claims.append("replication is too low for a final performance claim")
+    strength = analysis.get("experiment_strength")
+    if isinstance(strength, dict):
+        main_strength = strength.get("main_claim_strength")
+        if main_strength == "weak_near_seed_or_harness_shaped_speedup":
+            blocked_claims.append(
+                "current experiment is too near-trigger or harness-shaped to serve as main SOTA-gap evidence"
+            )
+            design_evidence.append("experiment_strength_gate")
+        elif main_strength == "moderate_speedup_needs_harder_design":
+            blocked_claims.append(
+                "current experiment needs harder harness/target design or ablations before main-claim use"
+            )
+            design_evidence.append("experiment_strength_gate")
 
     observed_benefits = primary_benefits + endpoint_observations + mechanism_benefits
 
@@ -648,6 +779,8 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         "",
         f"- target: `{payload['target_id']}`",
         f"- verdict: `{payload['analysis']['verdict']}`",
+        "- main claim strength: "
+        f"`{payload['analysis'].get('experiment_strength', {}).get('main_claim_strength', 'unknown')}`",
         f"- matched baselines: `{payload['analysis']['matched_baseline_count']}`",
         "",
         "## Benefit Readout",
@@ -685,6 +818,26 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         lines.append(f"- `{evidence}`")
     if not payload["benefit_readout"]["design_evidence"]:
         lines.append("- none")
+
+    strength = payload["analysis"].get("experiment_strength", {})
+    lines.extend(
+        [
+            "",
+            "## Experiment Strength",
+            "",
+            f"- main claim strength: `{strength.get('main_claim_strength', 'unknown')}`",
+            "- reasons:",
+        ]
+    )
+    for reason in strength.get("reasons", []):
+        lines.append(f"  - `{reason}`")
+    if not strength.get("reasons"):
+        lines.append("  - none")
+    lines.append("- required design actions:")
+    for action in strength.get("recommended_design_actions", []):
+        lines.append(f"  - {action}")
+    if not strength.get("recommended_design_actions"):
+        lines.append("  - none")
     lines.extend(
         [
             "",

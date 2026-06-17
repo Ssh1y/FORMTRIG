@@ -1,0 +1,10 @@
+target_id	baseline	budget	rep	success	trigger_time_s	trigger_time_kind	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	magma_reached	magma_triggered	magma_first_reach_time_s	magma_first_trigger_time_s	magma_snapshot_count
+LIBARCHIVE_2936	aflplusplus_cmplog	7200	1	true	51.275	exact	7203	243788	33.84	652	23	44	0	0	NA	NA	NA
+LIBARCHIVE_2936	aflplusplus_cmplog	7200	2	true	537.231	exact	7204	604737	83.93	827	26	59	0	0	NA	NA	NA
+LIBARCHIVE_2936	aflplusplus_cmplog	7200	3	true	52.977	exact	7200	554330	76.99	788	69	0	0	0	NA	NA	NA
+LIBARCHIVE_2936	aflplusplus_vanilla	7200	1	true	42.154	exact	7204	153742	21.34	723	17	51	0	0	NA	NA	NA
+LIBARCHIVE_2936	aflplusplus_vanilla	7200	2	true	369.432	exact	7202	555758	77.16	882	33	66	0	0	NA	NA	NA
+LIBARCHIVE_2936	aflplusplus_vanilla	7200	3	true	56.056	exact	7202	507515	70.47	831	64	0	0	0	NA	NA	NA
+LIBARCHIVE_2936	redqueen_operand	7200	1	true	9.456	exact	7204	393037	54.55	737	25	48	0	0	NA	NA	NA
+LIBARCHIVE_2936	redqueen_operand	7200	2	true	39.068	exact	7204	505599	70.17	752	24	80	0	0	NA	NA	NA
+LIBARCHIVE_2936	redqueen_operand	7200	3	true	32.517	exact	7204	594815	82.57	803	69	0	0	0	NA	NA	NA

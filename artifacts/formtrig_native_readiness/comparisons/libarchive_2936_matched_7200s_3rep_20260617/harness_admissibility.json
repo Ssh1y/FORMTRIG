@@ -1,0 +1,24 @@
+{
+  "core_evidence_allowed": true,
+  "flags": [],
+  "inputs": {
+    "binding_spec": "artifacts/binding_specs/LIBARCHIVE_2936.native_b2_path_table_candidate.yml",
+    "harness": "benchmarks/cve_harnesses/libarchive_write_replay.c",
+    "seed_dir": "artifacts/rnt_corpus/LIBARCHIVE_2936/seeds"
+  },
+  "recommendations": [],
+  "schema": "formtrig_harness_admissibility_v1",
+  "seed_summary": {
+    "file_count": 1,
+    "max_size": 36,
+    "min_size": 36,
+    "path": "artifacts/rnt_corpus/LIBARCHIVE_2936/seeds",
+    "provided": true,
+    "sizes": [
+      36
+    ]
+  },
+  "status": "admissible",
+  "summary": "No harness-bias pattern was detected by this static audit.",
+  "target_id": "LIBARCHIVE_2936"
+}

@@ -69,6 +69,11 @@ COMPLETE_REPS_VERDICTS = {
     "speedup_but_under_replicated",
 }
 
+WEAK_MAIN_CLAIM_STRENGTHS = {
+    "weak_near_seed_or_harness_shaped_speedup",
+    "moderate_speedup_needs_harder_design",
+}
+
 BASELINE_FAMILY = "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 
 
@@ -131,7 +136,77 @@ def comparison_verdict(comparison: dict[str, Any] | None) -> str:
     return str(analysis.get("verdict") or comparison.get("verdict") or "")
 
 
+def comparison_main_claim_strength(comparison: dict[str, Any] | None) -> str:
+    if not comparison:
+        return ""
+    analysis = comparison.get("analysis") if isinstance(comparison.get("analysis"), dict) else {}
+    strength = (
+        analysis.get("experiment_strength")
+        if isinstance(analysis.get("experiment_strength"), dict)
+        else {}
+    )
+    return str(strength.get("main_claim_strength") or "")
+
+
+def comparison_max_budget(comparison: dict[str, Any] | None) -> int:
+    if not comparison:
+        return 0
+    analysis = comparison.get("analysis") if isinstance(comparison.get("analysis"), dict) else {}
+    budgets = [
+        int_value(group.get("budget"))
+        for group in analysis.get("baseline_groups", [])
+        if int_value(group.get("budget")) > 0
+    ]
+    budgets.extend(
+        int_value(row.get("budget"))
+        for row in comparison.get("formtrig_runs", [])
+        if int_value(row.get("budget")) > 0
+    )
+    return max(budgets) if budgets else 0
+
+
+def comparison_min_baseline_reps(comparison: dict[str, Any] | None) -> int:
+    if not comparison:
+        return 0
+    analysis = comparison.get("analysis") if isinstance(comparison.get("analysis"), dict) else {}
+    reps = [
+        int_value(group.get("reps"))
+        for group in analysis.get("baseline_groups", [])
+        if int_value(group.get("reps")) > 0
+    ]
+    return min(reps) if reps else 0
+
+
+def comparison_formtrig_reps_at_budget(
+    comparison: dict[str, Any] | None,
+    duration_s: int,
+) -> int:
+    if not comparison:
+        return 0
+    return sum(
+        1
+        for row in comparison.get("formtrig_runs", [])
+        if int_value(row.get("budget")) >= duration_s
+        or int_value(row.get("run_time")) >= duration_s
+    )
+
+
+def comparison_longrun_complete(
+    comparison: dict[str, Any] | None,
+    *,
+    duration_s: int,
+    reps: int,
+) -> bool:
+    return (
+        comparison_max_budget(comparison) >= duration_s
+        and comparison_min_baseline_reps(comparison) >= reps
+        and comparison_formtrig_reps_at_budget(comparison, duration_s) >= reps
+    )
+
+
 def comparison_promotes_longrun(comparison: dict[str, Any] | None) -> bool:
+    if comparison_main_claim_strength(comparison) in WEAK_MAIN_CLAIM_STRENGTHS:
+        return False
     return comparison_verdict(comparison) in LONGRUN_PROMOTION_VERDICTS
 
 
@@ -139,11 +214,14 @@ def strongest_comparison(comparisons: list[dict[str, Any]]) -> dict[str, Any] | 
     if not comparisons:
         return None
 
-    def score(payload: dict[str, Any]) -> tuple[int, int, int, int, str]:
+    def score(payload: dict[str, Any]) -> tuple[int, int, int, int, int, str]:
         analysis = payload.get("analysis") if isinstance(payload.get("analysis"), dict) else {}
         benefit = payload.get("benefit_readout") if isinstance(payload.get("benefit_readout"), dict) else {}
         verdict = comparison_verdict(payload)
-        if verdict in LONGRUN_PROMOTION_VERDICTS:
+        strength = comparison_main_claim_strength(payload)
+        if strength in WEAK_MAIN_CLAIM_STRENGTHS:
+            verdict_score = 1
+        elif verdict in LONGRUN_PROMOTION_VERDICTS:
             verdict_score = 4
         elif verdict in COMPLETE_REPS_VERDICTS:
             verdict_score = 3
@@ -157,12 +235,32 @@ def strongest_comparison(comparisons: list[dict[str, Any]]) -> dict[str, Any] | 
         return (
             verdict_score,
             has_longrun,
+            comparison_max_budget(payload),
             matched_baselines,
             benefit_count,
             str(payload.get("_comparison_path") or ""),
         )
 
     return max(comparisons, key=score)
+
+
+def weak_design_comparison(comparisons: list[dict[str, Any]]) -> dict[str, Any] | None:
+    weak = [
+        comparison
+        for comparison in comparisons
+        if comparison_main_claim_strength(comparison) in WEAK_MAIN_CLAIM_STRENGTHS
+    ]
+    if not weak:
+        return None
+    hard = [
+        comparison
+        for comparison in comparisons
+        if comparison_main_claim_strength(comparison)
+        and comparison_main_claim_strength(comparison) not in WEAK_MAIN_CLAIM_STRENGTHS
+    ]
+    if hard:
+        return None
+    return max(weak, key=lambda payload: str(payload.get("_comparison_path") or ""))
 
 
 def is_demoted_control(row: dict[str, Any]) -> bool:
@@ -227,9 +325,16 @@ def comparison_summary(comparison: dict[str, Any] | None) -> dict[str, Any]:
             "design_evidence": [],
             "blocked_claims": [],
             "longrun_10m_confirmation": None,
+            "main_claim_strength": "",
+            "recommended_design_actions": [],
         }
     analysis = comparison.get("analysis") if isinstance(comparison.get("analysis"), dict) else {}
     benefit = comparison.get("benefit_readout") if isinstance(comparison.get("benefit_readout"), dict) else {}
+    strength = (
+        analysis.get("experiment_strength")
+        if isinstance(analysis.get("experiment_strength"), dict)
+        else {}
+    )
     return {
         "verdict": str(analysis.get("verdict") or ""),
         "primary_benefits": as_list(benefit.get("primary_benefits"))[:4],
@@ -237,6 +342,8 @@ def comparison_summary(comparison: dict[str, Any] | None) -> dict[str, Any]:
         "blocked_claims": as_list(benefit.get("blocked_claims"))[:4],
         "longrun_10m_confirmation": analysis.get("longrun_10m_confirmation")
         or comparison.get("longrun_10m_confirmation"),
+        "main_claim_strength": str(strength.get("main_claim_strength") or ""),
+        "recommended_design_actions": as_list(strength.get("recommended_design_actions")),
     }
 
 
@@ -460,6 +567,108 @@ def longrun_task(
     }
 
 
+def improve_experiment_design_task(
+    row: dict[str, Any],
+    comparison: dict[str, Any] | None,
+) -> dict[str, Any]:
+    summary = comparison_summary(comparison)
+    design_actions = summary["recommended_design_actions"] or [
+        "rerun with a higher-fidelity/raw-format harness or a farther RNT seed",
+        "add no-hook and generic-hook FORMTRIG ablations",
+        "move hard-gap budget to targets where strong baselines have low success or long R2T tails",
+    ]
+    return {
+        "priority": "P0",
+        "rank": int(row.get("rank") or 0),
+        "target_id": str(row.get("target_id") or ""),
+        "source": str(row.get("source") or ""),
+        "project": str(row.get("project") or ""),
+        "category": category_text(row),
+        "lane": str(row.get("lane") or ""),
+        "action": "improve_experiment_design",
+        "duration_s": "",
+        "repetitions": "",
+        "benefit_to_prove": (
+            "Make the experiment hard enough to expose SOTA R2T pain: current "
+            "speedup is real, but matched baselines trigger too early for this "
+            "package to serve as main binary-TC gap evidence."
+        ),
+        "primary_endpoint_metrics": [
+            "baseline success-rate gap under matched budget",
+            "baseline R2T tail or median above early-trigger threshold",
+            "FORMTRIG TTE and exec-count advantage after no-hook/generic-hook ablations",
+        ],
+        "mechanism_evidence_required": summary["design_evidence"]
+        or [
+            "strict pre-trigger D_F progress",
+            "typed mutation provenance",
+            "same timeout/oracle as baselines",
+        ],
+        "blocking_issue": [
+            f"main_claim_strength={summary['main_claim_strength']}",
+            "current comparison is not hard enough for SOTA-gap evidence",
+        ],
+        "claim_boundary": (
+            "Keep the current speedup as secondary engineering evidence only; "
+            "do not promote it as main hard-gap evidence until the experiment "
+            "is made harder."
+        ),
+        "command": "",
+        "runnable_now": False,
+        "post_unblock_commands": design_actions,
+        "comparison_verdict": summary["verdict"],
+        "current_primary_benefits": summary["primary_benefits"],
+        "blocked_claims": summary["blocked_claims"],
+        "evidence_paths": evidence_paths(row, comparison),
+    }
+
+
+def expand_hard_evidence_task(
+    row: dict[str, Any],
+    comparison: dict[str, Any] | None,
+) -> dict[str, Any]:
+    summary = comparison_summary(comparison)
+    return {
+        "priority": "P0",
+        "rank": int(row.get("rank") or 0),
+        "target_id": str(row.get("target_id") or ""),
+        "source": str(row.get("source") or ""),
+        "project": str(row.get("project") or ""),
+        "category": category_text(row),
+        "lane": str(row.get("lane") or ""),
+        "action": "expand_cross_target_hard_evidence",
+        "duration_s": "",
+        "repetitions": "",
+        "benefit_to_prove": (
+            "The matched long-run budget is already complete for this target; "
+            "spend new budget on cross-target hard evidence instead of rerunning "
+            "the same campaign."
+        ),
+        "primary_endpoint_metrics": [
+            "replicated matched-budget terminal success rate",
+            "first _T / terminal-crash wall-clock time",
+            "baseline R2T tail and success-rate variance across targets",
+        ],
+        "mechanism_evidence_required": summary["design_evidence"],
+        "blocking_issue": [],
+        "claim_boundary": (
+            "Use this target as one hard-speedup data point; broad claims still "
+            "require additional Magma and real-CVE targets."
+        ),
+        "command": "",
+        "runnable_now": False,
+        "post_unblock_commands": [
+            "run the next hard Magma/real-CVE target with matched baselines",
+            "prioritize targets where strong baselines have low success or long R2T tails",
+            "add ablations for any target-specific typed hook before main-claim use",
+        ],
+        "comparison_verdict": summary["verdict"],
+        "current_primary_benefits": summary["primary_benefits"],
+        "blocked_claims": summary["blocked_claims"],
+        "evidence_paths": evidence_paths(row, comparison),
+    }
+
+
 def binding_spec_first_task(
     row: dict[str, Any],
     comparison: dict[str, Any] | None,
@@ -657,9 +866,19 @@ def task_for_row(
     longrun_reps: int,
 ) -> dict[str, Any]:
     target_id = str(row.get("target_id") or "")
-    comparison = strongest_comparison(comparisons.get(target_id, []))
+    target_comparisons = comparisons.get(target_id, [])
+    weak_comparison = weak_design_comparison(target_comparisons)
+    comparison = weak_comparison or strongest_comparison(target_comparisons)
     disposition = str(row.get("existing_disposition") or "")
     lane = str(row.get("lane") or "")
+    if weak_comparison or comparison_main_claim_strength(comparison) in WEAK_MAIN_CLAIM_STRENGTHS:
+        return improve_experiment_design_task(row, comparison)
+    if comparison_promotes_longrun(comparison) and comparison_longrun_complete(
+        comparison,
+        duration_s=longrun_duration_s,
+        reps=longrun_reps,
+    ):
+        return expand_hard_evidence_task(row, comparison)
     if comparison_promotes_longrun(comparison):
         return longrun_task(row, comparison, duration_s=longrun_duration_s, reps=longrun_reps, jobs=jobs)
     if disposition == "candidate_extend_longruns":

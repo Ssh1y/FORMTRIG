@@ -74,9 +74,23 @@ matched 10m confirmation with the same -t 5000+ terminal oracle:
     16.94x faster by first _T wall-clock
     896.16x fewer executions to first terminal crash
   mechanism: D_F_spec_lifted values = {0,1}, saved_non_trigger_progress = 5
+
+matched 7200s x3 with the same -t 5000+ terminal oracle:
+  FORMTRIG: 3/3 _T, first _T = 1.358s, 2.320s, 1.494s
+  AFL++ vanilla: 3/3 _T, median first _T = 56.056s, fastest = 42.154s
+  AFL++ CmpLog: 3/3 _T, median first _T = 52.977s, fastest = 51.275s
+  AFL++ Redqueen/operand path: 3/3 _T, median first _T = 32.517s, fastest = 9.456s
+  FORMTRIG vs fastest successful baseline run:
+    6.96x faster by first _T wall-clock
+  FORMTRIG vs fastest successful baseline-family median:
+    23.94x faster by first _T wall-clock
+  experiment strength gate:
+    weak_near_seed_or_harness_shaped_speedup
 ```
 
-因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下复现了 first `_T` speedup。它不是“CmpLog/Redqueen/vanilla 做不到”的 hard-gap 目标，因为三个 baseline family 在 60s repeated package 和 10m confirmation 中都可见；它现在的价值是 replicated speedup + attribution：FORMTRIG 把二值 TC 后的 path-hierarchy lifted signal 变成了更早、更少执行次数的 terminal input。这个结论仍然不是最终长测性能结论，下一步必须做 2h matched repetitions 和更难的 Magma/real-CVE 目标。
+因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下复现了 first `_T` speedup。但完整 2h x3 结果也证明：这个目标的当前 harness/RNT 设计太近，不能体现 SOTA 工具的痛点。三个 baseline family 全部 3/3 触发，且最快 baseline-family median 低于 60s；这说明该 replay harness 和 seed 对 baseline 也足够友好。它现在只能作为真实 CVE speedup + attribution 工程证据，不能作为主结果里的 hard SOTA-gap 证据。
+
+这不是改论文口径来退缩，而是实验设计 gate 的结果：`tools/compare_formtrig_baselines.py` 现在输出 `experiment_strength.main_claim_strength=weak_near_seed_or_harness_shaped_speedup`；triage/worklist 会把 LIBARCHIVE_2936 路由到 `improve_experiment_design`，要求更高保真/raw-format harness、更远 RNT seeds、no-hook/generic-hook ablation，或把 hard-gap 预算转向 baseline 低成功率/长尾明显的 Magma/真实 CVE 目标。
 
 当前 TIF012 B5 7200s x3 matched long-run 给出了 Magma 上更长预算的同类结论：
 

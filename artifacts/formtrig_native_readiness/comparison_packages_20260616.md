@@ -417,6 +417,44 @@ confirmation is now preserved inside this package under
 It still must be followed by 2-hour repetitions or harder targets before a
 final generalized performance claim.
 
+### LIBARCHIVE_2936: matched 7200s x3 with experiment-strength gate
+
+Output:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617
+```
+
+Verdict:
+
+```text
+positive_speedup_matched_comparison
+```
+
+Experiment strength:
+
+```text
+weak_near_seed_or_harness_shaped_speedup
+```
+
+Reason: the 2h x3 run preserves a FORMTRIG speedup, but it does not expose the
+SOTA pain point. FORMTRIG triggers in `3/3` with first `_T` values `1.358s`,
+`2.320s`, and `1.494s`. AFL++ vanilla, AFL++ CmpLog, and the local
+Redqueen/operand path also trigger in `3/3`; their fastest baseline-family
+median is `32.517s`, and the fastest individual baseline run is `9.456s`.
+FORMTRIG is therefore `6.96x` faster than the fastest successful baseline run
+and `23.94x` faster than the fastest successful baseline-family median, but all
+required baseline families solve the R2T step early under this replay harness.
+
+Benefit readout: this package is valid real-CVE speedup/attribution evidence,
+not main hard-gap evidence. The static harness audit passes because
+`libarchive_write_replay` is a generic byte grammar and does not hard-code
+`_compare_path_table` or the NULL-parent crash. The current harness/RNT design
+is still too near-trigger to show the unresolved SOTA problem. Required next
+steps are a higher-fidelity/raw-format harness or farther RNT seed, no-hook and
+generic-hook FORMTRIG ablations, and shifting hard-gap budget toward targets
+where strong baselines have low success rates or long R2T tails.
+
 ## Current Acceptance Implication
 
 The comparison packages make the current evidence state explicit:
@@ -429,15 +467,13 @@ The comparison packages make the current evidence state explicit:
 - LIBCOAP demonstrates real-CVE pre-trigger guidance and terminal-oracle
   plumbing, but it does not prove a SOTA advantage because the ASAN baselines
   also trigger.
-- LIBARCHIVE_2936 is now the leading real-CVE speedup/attribution candidate.
-  The path-hierarchy hook package converts b4 pre-trigger guidance into
-  terminal crashes and shows a replicated matched 60s first-`_T` speedup over
-  AFL++ vanilla/CmpLog/Redqueen-path. A matched 10m confirmation preserves the
-  direction with first `_T` at `1.220s / exec 32` versus the fastest baseline
-  at `20.671s / exec 28677`. Because all three baseline families are
-  baseline-visible, this is not a hard "SOTA cannot solve it" case; it now
-  needs 2h repetitions and more targets to determine whether the speedup
-  generalizes.
+- LIBARCHIVE_2936 is a valid real-CVE speedup/attribution case but no longer a
+  main hard-gap candidate under the current harness/RNT design. The 7200s x3
+  run preserves FORMTRIG speedup, but all three baseline families trigger in
+  3/3 and the fastest baseline-family median is under 60s. The regenerated
+  comparison marks it as `weak_near_seed_or_harness_shaped_speedup`; the
+  target now needs improved experiment design rather than more main-budget
+  repetition on the same setup.
 - No final "FORMTRIG beats SOTA" claim should be made from these packages
   alone.
 
@@ -464,14 +500,13 @@ artifacts/formtrig_native_readiness/hard_target_triage_packages_20260616.csv
 artifacts/formtrig_native_readiness/hard_target_triage_20260616.md
 ```
 
-Current result: `LIBARCHIVE_2936` is
-`candidate_extend_longruns` with best package
-`LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616`; `PNG006` and
-`LIBCOAP_CVE_2023_35862` are `demote_to_control_or_negative`; `LIBXML2_1107`
-is `demote_harness_artifact`. The next experiment step for LIBARCHIVE is not
-more signal repair or more 60s repetition; it is 2h matched repetitions if
-LIBARCHIVE remains a paper case, while the main budget should also move to
-harder Magma/real-CVE targets.
+Current 2026-06-17 result: `LIBARCHIVE_2936` is
+`needs_harder_experiment_design` with best package
+`libarchive_2936_matched_7200s_3rep_20260617T070307Z`; `TIF012` remains the
+runnable matched long-run/speedup candidate; `PNG006`, `LIBCOAP_CVE_2023_35862`,
+and `LIBXML2_1107` remain controls or inadmissible harness evidence. The next
+experiment step for LIBARCHIVE is not more repetition on the same setup; it is
+harder harness/seed design and ablations.
 
 ## Hard-Target Discovery
 

@@ -164,6 +164,159 @@ class SpeedupClassificationTest(unittest.TestCase):
             any("faster" in benefit for benefit in readout["primary_benefits"])
         )
 
+    def test_near_seed_all_successful_baselines_are_weak_main_claim_evidence(self):
+        formtrig_rows = [
+            {
+                "budget": 7200,
+                "strict_pretrigger_guidance": True,
+                "terminal_count": 10,
+                "trigger_time_s": 1.358,
+            },
+            {
+                "budget": 7200,
+                "strict_pretrigger_guidance": True,
+                "terminal_count": 23,
+                "trigger_time_s": 2.32,
+            },
+            {
+                "budget": 7200,
+                "strict_pretrigger_guidance": True,
+                "terminal_count": 46,
+                "trigger_time_s": 1.494,
+            },
+        ]
+        baseline_rows = []
+        for baseline, ttes in {
+            "aflplusplus_vanilla": [42.154, 369.432, 56.056],
+            "aflplusplus_cmplog": [51.275, 537.231, 52.977],
+            "redqueen_operand": [9.456, 39.068, 32.517],
+        }.items():
+            for rep, tte in enumerate(ttes, 1):
+                baseline_rows.append(
+                    {
+                        "source_label": "matched",
+                        "baseline": baseline,
+                        "budget": 7200,
+                        "rep": rep,
+                        "success": True,
+                        "terminal_count": 1,
+                        "trigger_time_s": tte,
+                    }
+                )
+
+        analysis = classify_evidence(
+            formtrig_rows,
+            baseline_rows,
+            tolerance=0,
+            min_reps=3,
+            required_baselines=[
+                "aflplusplus_vanilla",
+                "aflplusplus_cmplog",
+                "redqueen_operand",
+            ],
+        )
+
+        self.assertEqual(analysis["verdict"], "positive_speedup_matched_comparison")
+        self.assertEqual(
+            analysis["experiment_strength"]["main_claim_strength"],
+            "weak_near_seed_or_harness_shaped_speedup",
+        )
+        self.assertIn(
+            "baseline_family_median_trigger_time_is_under_60s",
+            analysis["experiment_strength"]["reasons"],
+        )
+        self.assertTrue(
+            any("no-hook" in step for step in analysis["experiment_strength"]["recommended_design_actions"])
+        )
+
+        readout = benefit_readout(formtrig_rows, analysis)
+        self.assertIn("experiment_strength_gate", readout["design_evidence"])
+        self.assertTrue(
+            any("too near-trigger" in claim for claim in readout["blocked_claims"])
+        )
+
+    def test_unstable_or_long_tail_baselines_remain_hard_speedup_candidate(self):
+        formtrig_rows = [
+            {
+                "budget": 7200,
+                "strict_pretrigger_guidance": True,
+                "terminal_count": 100,
+                "trigger_time_s": 0.035,
+            }
+        ]
+        baseline_rows = [
+            {
+                "source_label": "matched",
+                "baseline": "aflplusplus_vanilla",
+                "budget": 7200,
+                "rep": 1,
+                "success": True,
+                "terminal_count": 1,
+                "trigger_time_s": 930.0,
+            },
+            {
+                "source_label": "matched",
+                "baseline": "aflplusplus_vanilla",
+                "budget": 7200,
+                "rep": 2,
+                "success": True,
+                "terminal_count": 1,
+                "trigger_time_s": 1410.0,
+            },
+            {
+                "source_label": "matched",
+                "baseline": "aflplusplus_vanilla",
+                "budget": 7200,
+                "rep": 3,
+                "success": True,
+                "terminal_count": 1,
+                "trigger_time_s": 1560.0,
+            },
+            {
+                "source_label": "matched",
+                "baseline": "aflplusplus_cmplog",
+                "budget": 7200,
+                "rep": 1,
+                "success": False,
+                "terminal_count": 0,
+            },
+            {
+                "source_label": "matched",
+                "baseline": "aflplusplus_cmplog",
+                "budget": 7200,
+                "rep": 2,
+                "success": False,
+                "terminal_count": 0,
+            },
+            {
+                "source_label": "matched",
+                "baseline": "aflplusplus_cmplog",
+                "budget": 7200,
+                "rep": 3,
+                "success": True,
+                "terminal_count": 1,
+                "trigger_time_s": 4950.0,
+            },
+        ]
+
+        analysis = classify_evidence(
+            formtrig_rows,
+            baseline_rows,
+            tolerance=0,
+            min_reps=3,
+            required_baselines=["aflplusplus_vanilla", "aflplusplus_cmplog"],
+        )
+
+        self.assertEqual(analysis["verdict"], "positive_speedup_matched_comparison")
+        self.assertEqual(
+            analysis["experiment_strength"]["main_claim_strength"],
+            "hard_speedup_or_reliability_candidate",
+        )
+        self.assertIn(
+            "some_required_baseline_families_fail_or_are_unstable",
+            analysis["experiment_strength"]["reasons"],
+        )
+
     def test_triage_promotes_speedup_package_even_when_baseline_triggers(self):
         payload = {
             "comparison_id": "synthetic_speedup",
@@ -213,6 +366,60 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertEqual(row["package_status"], "promote_or_complete_reps")
         self.assertEqual(row["successful_baselines"], ["aflplusplus_vanilla"])
         self.assertEqual(row["tte_speedup_over_fastest_baseline"], 20.0)
+
+    def test_triage_routes_near_seed_speedup_to_harder_experiment_design(self):
+        payload = {
+            "comparison_id": "synthetic_near_seed_speedup",
+            "target_id": "SYNTH",
+            "analysis": {
+                "verdict": "positive_speedup_matched_comparison",
+                "matched_baseline_count": 9,
+                "missing_required_baselines": [],
+                "best_formtrig_trigger_time_s": 1.0,
+                "fastest_baseline_trigger_time_s": 9.0,
+                "tte_speedup_over_fastest_baseline": 9.0,
+                "experiment_strength": {
+                    "main_claim_strength": "weak_near_seed_or_harness_shaped_speedup",
+                    "recommended_design_actions": [
+                        "rerun with a higher-fidelity/raw-format harness or a farther RNT seed",
+                        "add no-hook and generic-hook FORMTRIG ablations",
+                    ],
+                },
+                "baseline_groups": [
+                    {
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 7200,
+                        "reps": 3,
+                        "success_rate": 1.0,
+                        "median_trigger_time_s": 20.0,
+                    }
+                ],
+            },
+            "benefit_readout": {
+                "observed_benefits": ["FORMTRIG is faster"],
+                "blocked_claims": [
+                    "current experiment is too near-trigger or harness-shaped to serve as main SOTA-gap evidence"
+                ],
+                "design_evidence": ["experiment_strength_gate"],
+            },
+            "formtrig_runs": [
+                {
+                    "terminal_count": 4,
+                    "strict_pretrigger_guidance": True,
+                }
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "comparison.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+
+            row = package_row(path)
+            target = target_rows([row], [])[0]
+
+        self.assertEqual(row["package_status"], "needs_harder_experiment_design")
+        self.assertEqual(row["main_claim_strength"], "weak_near_seed_or_harness_shaped_speedup")
+        self.assertEqual(target["disposition"], "needs_harder_experiment_design")
+        self.assertIn("higher-fidelity", target["next_action"])
 
     def test_triage_prefers_replicated_endpoint_package_over_stale_negative(self):
         packages = [
