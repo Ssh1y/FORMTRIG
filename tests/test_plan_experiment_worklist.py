@@ -526,6 +526,40 @@ class ExperimentWorklistTest(unittest.TestCase):
                 task["evidence_paths"],
             )
 
+    def test_validated_short_screen_reuses_manifest_afl_args_for_baselines(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest_root = root / "manifests"
+            manifest_root.mkdir()
+            manifest = root / "PDF003.native_draft_magma_canary.600s.manifest"
+            manifest.write_text(
+                "\n".join(
+                    [
+                        "target_id: PDF003",
+                        "category: binary-null",
+                        "afl_args: -t 5000",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            (manifest_root / "PDF003.list").write_text(
+                f"{manifest}\n",
+                encoding="utf-8",
+            )
+
+            command, _followups = planner.validated_short_screen_command(
+                "PDF003",
+                600,
+                4,
+                1,
+                manifest_root,
+            )
+
+            self.assertIn("--afl-arg -t --afl-arg 5000", command)
+            self.assertIn("scripts/run_formtrig_manifest_batch.sh", command)
+
     def test_completed_longrun_routes_to_cross_target_expansion(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

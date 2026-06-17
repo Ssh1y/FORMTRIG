@@ -1,0 +1,6 @@
+arm	source_label	target_id	budget	run_time	rep	success	terminal_count	trigger_time_s	trigger_time_kind	trigger_execs	execs_done	execs_per_sec	reached	accepted_non_trigger	saved_non_trigger	spec_lifted	heuristic_lifted	manual_lifted	strict_pretrigger_guidance	binding_signal_status	source_path
+formtrig	pdf003_formtrig_600s	PDF003	600	600	1	false	0				3611	6.02	2449	0	0	396	0	0	false	pass	evidence/formtrig_batch_summary.csv
+baseline	aflpp_family_600s_1rep	PDF003	600	577	1	false	0				82301	142.53	41301						false		evidence/baseline_summary.tsv
+baseline	aflpp_family_600s_1rep	PDF003	600	577	1	false	0				112842	195.40	110824						false		evidence/baseline_summary.tsv
+baseline	aflpp_family_600s_1rep	PDF003	600	577	1	false	0				101717	176.15	42444						false		evidence/baseline_summary.tsv
+formtrig	pdf003_fallback_smoke_120s	PDF003	120	120	1	false	0				907	7.50	417	0	0	164	0	0	false	pass	evidence/post_fallback_120s_batch_summary.csv

@@ -19,6 +19,7 @@ run_sweeps=1
 failed_jobs=0
 target_repo_path=""
 target_repo_backup=""
+declare -a extra_fuzz_args=()
 
 usage() {
   cat >&2 <<EOF
@@ -40,6 +41,7 @@ options:
   --reps N              repetitions per baseline/budget, default 1
   --jobs N              concurrent baseline runs, default FORMTRIG_JOBS or 1
   --poll SEC            Magma monitor poll interval, default 30
+  --afl-arg ARG         extra AFL++ argument passed through FUZZARGS; repeatable
   --no-build            skip captain build
   --no-sweeps           build only
 EOF
@@ -181,8 +183,31 @@ from pathlib import Path
 
 path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
+changed = False
+if (
+    "FORMTRIG_POPPLER_DEFAULT_CONFIGURE_NATIVE" not in text
+    and 'pushd "$TARGET/freetype2"' in text
+    and 'if [ -n "$AFLGO_CONFIGURE_NATIVE" ]; then' in text
+):
+    poppler_configure = '''if [ -z "${AFLGO_CONFIGURE_NATIVE:-}" ]; then
+    export AFLGO_CONFIGURE_NATIVE=1
+    export AFLGO_CONFIGURE_CC="${AFLGO_CONFIGURE_CC:-clang}"
+    export AFLGO_CONFIGURE_CXX="${AFLGO_CONFIGURE_CXX:-clang++}"
+    export AFLGO_CONFIGURE_CFLAGS="${AFLGO_CONFIGURE_CFLAGS:-}"
+    export AFLGO_CONFIGURE_CXXFLAGS="${AFLGO_CONFIGURE_CXXFLAGS:-}"
+    export AFLGO_CONFIGURE_LDFLAGS="${AFLGO_CONFIGURE_LDFLAGS:-}"
+    export AFLGO_CONFIGURE_LIBS="${AFLGO_CONFIGURE_LIBS:-}"
+fi
+# FORMTRIG_POPPLER_DEFAULT_CONFIGURE_NATIVE
+
+'''
+    text = text.replace(
+        'if [ -n "$AFLGO_CONFIGURE_NATIVE" ]; then',
+        poppler_configure + 'if [ -n "$AFLGO_CONFIGURE_NATIVE" ]; then',
+        1,
+    )
+    changed = True
 if "FORMTRIG_LOCAL_CONFIG_AUX" in text:
-    changed = False
     if "FORMTRIG_CANARY_TARGET_CFLAGS" not in text:
         extra = '''if [ -d "$MAGMA/formtrig/include" ]; then
     export CFLAGS="${CFLAGS:-} -I$MAGMA/formtrig/include"
@@ -206,7 +231,20 @@ fi
 
 needle = 'cd "$TARGET/repo"\n'
 if needle not in text:
-    raise SystemExit("could not locate target repo cd in build.sh")
+    cmake_needle = 'cmake "$TARGET/repo"'
+    if cmake_needle in text and "FORMTRIG_CANARY_TARGET_CFLAGS" not in text:
+        extra = '''if [ -d "$MAGMA/formtrig/include" ]; then
+    export CFLAGS="${CFLAGS:-} -I$MAGMA/formtrig/include"
+    export CXXFLAGS="${CXXFLAGS:-} -I$MAGMA/formtrig/include"
+fi
+# FORMTRIG_CANARY_TARGET_CFLAGS
+
+'''
+        text = text.replace(cmake_needle, extra + cmake_needle, 1)
+        changed = True
+    if changed:
+        path.write_text(text, encoding="utf-8")
+    raise SystemExit(0)
 
 insert = r'''
 formtrig_config_aux=""
@@ -418,12 +456,11 @@ PY
 restore_target_context() {
   if [[ -n "${target_repo_backup:-}" && -d "$target_repo_backup/repo" ]]; then
     if [[ -e "$target_repo_path" ]]; then
-      echo "target repo restore skipped because path exists: $target_repo_path" >&2
-    else
-      mkdir -p "$(dirname "$target_repo_path")"
-      mv "$target_repo_backup/repo" "$target_repo_path"
-      rmdir "$target_repo_backup" 2>/dev/null || true
+      rm -rf "$target_repo_path"
     fi
+    mkdir -p "$(dirname "$target_repo_path")"
+    mv "$target_repo_backup/repo" "$target_repo_path"
+    rmdir "$target_repo_backup" 2>/dev/null || true
   fi
 }
 
@@ -489,11 +526,27 @@ magma_fuzzer_for_baseline() {
 
 build_magma_fuzzer() {
   local fuzzer="$1"
+  local build_env=(
+    FUZZER="$fuzzer"
+    TARGET="$magma_target"
+    PROGRAM="$program"
+    CANARY_MODE=1
+    FORMTRIG_TARGET_BUG="$target_id"
+  )
+  if grep -q 'AFLGO_CONFIGURE_NATIVE' "$magma_dir/targets/$magma_target/build.sh"; then
+    build_env+=(
+      AFLGO_CONFIGURE_NATIVE=1
+      AFLGO_CONFIGURE_CC="${FORMTRIG_BASELINE_CONFIGURE_CC:-clang}"
+      AFLGO_CONFIGURE_CXX="${FORMTRIG_BASELINE_CONFIGURE_CXX:-clang++}"
+      AFLGO_CONFIGURE_CFLAGS="${FORMTRIG_BASELINE_CONFIGURE_CFLAGS:-}"
+      AFLGO_CONFIGURE_CXXFLAGS="${FORMTRIG_BASELINE_CONFIGURE_CXXFLAGS:-}"
+      AFLGO_CONFIGURE_LDFLAGS="${FORMTRIG_BASELINE_CONFIGURE_LDFLAGS:-}"
+      AFLGO_CONFIGURE_LIBS="${FORMTRIG_BASELINE_CONFIGURE_LIBS:-}"
+    )
+  fi
   (
     cd "$magma_dir"
-    FUZZER="$fuzzer" TARGET="$magma_target" PROGRAM="$program" \
-      CANARY_MODE=1 FORMTRIG_TARGET_BUG="$target_id" \
-      ./tools/captain/build.sh
+    env "${build_env[@]}" ./tools/captain/build.sh
   ) > "$out_dir/build_${fuzzer}.log" 2>&1
 }
 
@@ -529,6 +582,7 @@ run_one_baseline() {
     FUZZER="$fuzzer" TARGET="$magma_target" PROGRAM="$program" \
       ARGS="$args_template" CANARY_MODE=1 SHARED="$shared" POLL="$poll" \
       TIMEOUT="${duration}s" MAGMA_INPUT_CORPUS=/magma_shared/input_corpus \
+      FUZZARGS="${extra_fuzz_args[*]}" \
       MAGMA_SKIP_SEED_PRUNE=1 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
       FORMTRIG_TARGET_BUG="$target_id" ./tools/captain/start.sh
   ) > "$run_out/captain_stdout.log" 2> "$run_out/captain_stderr.log"
@@ -609,6 +663,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --poll)
       poll="${2:-}"
+      shift 2
+      ;;
+    --afl-arg)
+      extra_fuzz_args+=("${2:-}")
       shift 2
       ;;
     --no-build)
@@ -696,6 +754,7 @@ fi
   printf 'reps=%s\n' "$reps"
   printf 'jobs=%s\n' "$jobs"
   printf 'poll=%s\n' "$poll"
+  printf 'fuzz_args=%s\n' "${extra_fuzz_args[*]}"
 } > "$out_dir/run_metadata.txt"
 
 prepare_clean_target_context

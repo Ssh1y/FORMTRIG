@@ -2,7 +2,7 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-17T19:05:08+00:00`
+Generated: `2026-06-17T19:30:09+00:00`
 Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `7`; low-priority skipped: `93`.
 
 ## Budget Order
@@ -35,7 +35,7 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 - Benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
 - SOTA pain: `not recorded`
 - SOTA pain evidence: not recorded
-- Command: `scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_baselines && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_formtrig`
+- Command: `scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_baselines --afl-arg -t --afl-arg 5000 && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_formtrig`
 
 ## Gated Tasks
 

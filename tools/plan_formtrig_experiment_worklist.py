@@ -541,6 +541,48 @@ def shell_join(args: list[str]) -> str:
     return " ".join(shlex.quote(arg) for arg in args)
 
 
+def manifest_key_values(path: Path) -> dict[str, str]:
+    values: dict[str, str] = {}
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return values
+    for raw in lines:
+        line = raw.split("#", 1)[0].strip()
+        if not line or ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        values[key.strip()] = value.strip()
+    return values
+
+
+def manifest_list_paths(path: Path) -> list[Path]:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return []
+    paths: list[Path] = []
+    for raw in lines:
+        line = raw.split("#", 1)[0].strip()
+        if not line:
+            continue
+        paths.append(Path(line))
+    return paths
+
+
+def afl_args_for_manifest_list(manifest_list: str) -> list[str]:
+    for manifest in manifest_list_paths(Path(manifest_list)):
+        values = manifest_key_values(manifest)
+        raw = values.get("afl_args", "")
+        if not raw:
+            continue
+        try:
+            return shlex.split(raw)
+        except ValueError:
+            return []
+    return []
+
+
 def magma_baseline_command(
     target_id: str,
     duration_s: int,
@@ -548,6 +590,7 @@ def magma_baseline_command(
     reps: int,
     *,
     out_dir: str | None = None,
+    afl_args: list[str] | None = None,
 ) -> str:
     args = [
         "scripts/run_magma_baselines.sh",
@@ -560,6 +603,8 @@ def magma_baseline_command(
     ]
     if out_dir:
         args.extend(["--out", out_dir])
+    for arg in afl_args or []:
+        args.extend(["--afl-arg", arg])
     if reps > 1:
         args.extend(["--reps", str(reps)])
     return shell_join(args)
@@ -605,6 +650,7 @@ def validated_short_screen_command(
     baseline_out = f"artifacts/formtrig_native_readiness/raw/{tag}_baselines"
     formtrig_out = f"artifacts/formtrig_native_readiness/raw/{tag}_formtrig"
     manifest_list = preferred_manifest_list(target_id, manifest_root)
+    baseline_afl_args = afl_args_for_manifest_list(manifest_list)
     commands = [
         magma_baseline_command(
             target_id,
@@ -612,6 +658,7 @@ def validated_short_screen_command(
             jobs,
             reps,
             out_dir=baseline_out,
+            afl_args=baseline_afl_args,
         ),
         formtrig_manifest_batch_command(
             manifest_list,

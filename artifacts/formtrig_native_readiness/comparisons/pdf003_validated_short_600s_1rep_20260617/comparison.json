@@ -1,0 +1,124 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 600,
+        "magma_reached": 41301,
+        "magma_triggered": 0,
+        "reps": 1,
+        "success_rate": 0.0
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 600,
+        "magma_reached": 110824,
+        "magma_triggered": 0,
+        "reps": 1,
+        "success_rate": 0.0
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget": 600,
+        "magma_reached": 42444,
+        "magma_triggered": 0,
+        "reps": 1,
+        "success_rate": 0.0
+      }
+    ],
+    "best_formtrig_trigger_time_s": null,
+    "experiment_strength": {
+      "baseline_guidance_gap": {
+        "required_evidence": [
+          "matched faithful baselines repeatedly reach the Magma _R site",
+          "matched faithful baselines do not trigger the Magma _T oracle within the short screen",
+          "FORMTRIG must still demonstrate R2T conversion under the same target"
+        ],
+        "status": "short_screen_pain_observed"
+      },
+      "main_claim_strength": "baseline_binary_tc_pain_observed_short_screen",
+      "recommended_design_actions": [
+        "treat PDF003 as a hard R2T target rather than a positive FORMTRIG endpoint result",
+        "repair the no-hot-range and dominated-frontier handoff before promoting FORMTRIG on PDF003",
+        "rerun matched repetitions after the R2T repair"
+      ]
+    },
+    "matched_baseline_count": 3,
+    "reasons": [
+      "matched_faithful_baselines_have_many_R_zero_T",
+      "formtrig_has_lifted_signal",
+      "formtrig_has_zero_T",
+      "formtrig_has_no_accepted_non_trigger_progress",
+      "typed_mutation_did_not_execute_before_fallback_repair",
+      "fallback_repair_enables_typed_stage_in_120s_smoke",
+      "dominance_acceptance_remains_blocked"
+    ],
+    "verdict": "negative_formtrig_r2t_gap_with_sota_pain"
+  },
+  "benefit_readout": {
+    "blocked_claims": [
+      "FORMTRIG does not currently solve PDF003 R2T within the 600s short screen",
+      "no endpoint speedup or success-rate benefit is supported by this PDF003 run",
+      "no strict pre-trigger guidance benefit is supported because accepted non-trigger progress is zero"
+    ],
+    "primary_benefits": [
+      "the matched SOTA baselines expose a binary-TC pain point on PDF003: heavy _R traffic and zero _T",
+      "FORMTRIG instrumentation exposes the failure mode instead of leaving it as a black-box miss"
+    ],
+    "summary": "PDF003 is useful hard-target evidence, but current FORMTRIG does not yet convert lifted signal into R2T progress."
+  },
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger_progress": 0,
+      "binding_signal_diagnosis": "no_new_non_dominated_progress",
+      "binding_signal_status": "pass",
+      "budget": 600,
+      "diagnosis": "no_valid_hot_range",
+      "execs_done": 3611,
+      "has_lifted_signal": true,
+      "heuristic_lifted": 0,
+      "label": "pdf003_formtrig_600s",
+      "manual_lifted": 0,
+      "progress_events": 396,
+      "reached": 2449,
+      "run_time": 600,
+      "saved_non_trigger_progress": 0,
+      "spec_lifted": 396,
+      "terminal_count": 0,
+      "typed_execs": 0
+    }
+  ],
+  "followup_repair_smoke": {
+    "accepted_non_trigger_progress": 0,
+    "budget": 120,
+    "diagnosis": "no_new_non_dominated_progress",
+    "execs_done": 907,
+    "limiting_reason": "dominance_rejected",
+    "purpose": "verify bounded typed fallback removes the no_valid_hot_range typed-stage blocker; not endpoint evidence",
+    "reached": 417,
+    "spec_lifted": 164,
+    "terminal_count": 0,
+    "typed_execs": 128,
+    "typed_finds": 5,
+    "typed_skips": 0,
+    "typed_stage_reason": "fallback_no_hot_range"
+  },
+  "evidence_paths": [
+    "evidence/baseline_summary.tsv",
+    "evidence/baseline_summary.json",
+    "evidence/aflplusplus_cmplog_600s_monitor_final.csv",
+    "evidence/aflplusplus_vanilla_600s_monitor_final.csv",
+    "evidence/redqueen_operand_600s_monitor_final.csv",
+    "evidence/formtrig_batch_summary.csv",
+    "evidence/formtrig_summary.json",
+    "evidence/formtrig_diagnosis.json",
+    "evidence/formtrig_binding_signal_diagnosis.json",
+    "evidence/formtrig_final.stats",
+    "evidence/post_fallback_120s_batch_summary.csv",
+    "evidence/post_fallback_120s_fuzzer_stats.txt",
+    "evidence/post_fallback_120s_formtrig_summary.json",
+    "evidence/post_fallback_120s_formtrig_diagnosis.json",
+    "evidence/post_fallback_120s_binding_signal_diagnosis.json",
+    "evidence/post_fallback_120s_typed_events.tsv"
+  ]
+}

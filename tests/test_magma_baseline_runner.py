@@ -26,6 +26,7 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
         self.assertIn("restore_target_context", script)
         self.assertIn("git -C \"$target_repo_path\" status", script)
         self.assertIn("mktemp -d", script)
+        self.assertIn("rm -rf \"$target_repo_path\"", script)
         self.assertIn("trap restore_target_context EXIT", script)
 
     def test_runner_patches_libtiff_autogen_without_network_dependency(self):
@@ -51,6 +52,37 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
         self.assertIn("changed = False", script)
         self.assertIn("if changed:", script)
         self.assertIn("patch_target_build_helpers\npatch_target_canary_include_flags", script)
+
+    def test_runner_handles_cmake_targets_without_repo_cd(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("cmake_needle = 'cmake \"$TARGET/repo\"'", script)
+        self.assertIn("text.replace(cmake_needle, extra + cmake_needle, 1)", script)
+        self.assertIn("raise SystemExit(0)", script)
+        self.assertIn("FORMTRIG_POPPLER_DEFAULT_CONFIGURE_NATIVE", script)
+        self.assertIn('pushd "$TARGET/freetype2"', script)
+
+    def test_runner_uses_native_configure_compiler_for_autoconf_targets(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("FORMTRIG_BASELINE_CONFIGURE_CC", script)
+        self.assertIn("AFLGO_CONFIGURE_NATIVE=1", script)
+        self.assertIn("AFLGO_CONFIGURE_CC=", script)
+        self.assertIn('env "${build_env[@]}" ./tools/captain/build.sh', script)
+
+    def test_runner_passes_extra_afl_args_to_magma_fuzzargs(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("declare -a extra_fuzz_args=()", script)
+        self.assertIn("--afl-arg", script)
+        self.assertIn('FUZZARGS="${extra_fuzz_args[*]}"', script)
+        self.assertIn("fuzz_args=%s", script)
 
     def test_runner_patches_php_icu_bool_host_compatibility(self):
         script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(

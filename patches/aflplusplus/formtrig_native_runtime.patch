@@ -363,6 +363,8 @@ index 2ad4697..771bd79 100644
 +#define FORMTRIG_TYPED_RANGE_WINDOW_HARD_MAX 4096u
 +#define FORMTRIG_TYPED_RANGE_SAMPLES_DEFAULT 4u
 +#define FORMTRIG_TYPED_RANGE_SAMPLES_HARD_MAX 64u
++#define FORMTRIG_TYPED_FALLBACK_RANGES_DEFAULT 8u
++#define FORMTRIG_TYPED_FALLBACK_RANGES_HARD_MAX 64u
 +
 +static u8 formtrig_fuzz_one_finite(double v) {
 +
@@ -412,6 +414,14 @@ index 2ad4697..771bd79 100644
 +  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_RANGE_SAMPLES",
 +                                   FORMTRIG_TYPED_RANGE_SAMPLES_DEFAULT, 1u,
 +                                   FORMTRIG_TYPED_RANGE_SAMPLES_HARD_MAX);
++
++}
++
++static u32 formtrig_typed_fallback_ranges(void) {
++
++  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_FALLBACK_RANGES",
++                                   FORMTRIG_TYPED_FALLBACK_RANGES_DEFAULT, 0u,
++                                   FORMTRIG_TYPED_FALLBACK_RANGES_HARD_MAX);
 +
 +}
 +
@@ -737,8 +747,8 @@ index 2ad4697..771bd79 100644
 +
 +}
 +
-+static u32 formtrig_typed_hot_range_count(const formtrig_queue_meta_t *m,
-+                                          u32 len) {
++static u32 formtrig_typed_native_hot_range_count(
++    const formtrig_queue_meta_t *m, u32 len) {
 +
 +  if (!m || !len) { return 0; }
 +  u32 count = m->hot_range_count;
@@ -761,6 +771,49 @@ index 2ad4697..771bd79 100644
 +
 +}
 +
++static u32 formtrig_typed_fallback_hot_range_count(
++    const formtrig_queue_meta_t *m, u32 len) {
++
++  if (!m || !len || !m->lifted || !formtrig_typed_actionable_count(m)) {
++
++    return 0;
++
++  }
++
++  u32 ranges = formtrig_typed_fallback_ranges();
++  if (ranges > len) { ranges = len; }
++  return ranges;
++
++}
++
++static u8 formtrig_typed_fallback_hot_range(const formtrig_queue_meta_t *m,
++                                            u32 len, u32 nth, u32 *start,
++                                            u32 *span, u32 *hint_kind,
++                                            u32 *hint_value) {
++
++  u32 count = formtrig_typed_fallback_hot_range_count(m, len);
++  if (!count || nth >= count) { return 0; }
++
++  u32 window = formtrig_typed_range_window();
++  u32 clipped = len < window ? len : window;
++  if (!clipped) { return 0; }
++
++  u32 max_start = len - clipped;
++  u32 begin = 0;
++  if (count > 1 && max_start) {
++
++    begin = (u32)(((u64)nth * (u64)max_start) / (u64)(count - 1));
++
++  }
++
++  *start = begin;
++  *span = clipped;
++  if (hint_kind) { *hint_kind = FORMTRIG_MUTATION_HINT_NONE; }
++  if (hint_value) { *hint_value = 0; }
++  return 1;
++
++}
++
 +static u8 formtrig_typed_hot_range(const formtrig_queue_meta_t *m, u32 len,
 +                                   u32 nth, u32 *start, u32 *span,
 +                                   u32 *hint_kind, u32 *hint_value) {
@@ -768,6 +821,7 @@ index 2ad4697..771bd79 100644
 +  if (!m || !len) { return 0; }
 +  u32 count = m->hot_range_count;
 +  if (count > FORMTRIG_MAX_HOT_RANGES) { count = FORMTRIG_MAX_HOT_RANGES; }
++  u32 valid = 0;
 +
 +  for (u32 i = 0; i < count; ++i) {
 +
@@ -778,11 +832,13 @@ index 2ad4697..771bd79 100644
 +
 +    }
 +
-+    if (!nth--) { return 1; }
++    if (valid++ == nth) { return 1; }
 +
 +  }
 +
-+  return 0;
++  if (valid) { return 0; }
++  return formtrig_typed_fallback_hot_range(m, len, nth, start, span, hint_kind,
++                                           hint_value);
 +
 +}
 +
@@ -1215,7 +1271,10 @@ index 2ad4697..771bd79 100644
 +  }
 +
 +  u32 component_count = formtrig_typed_actionable_count(m);
-+  u32 range_count = formtrig_typed_hot_range_count(m, len);
++  u32 native_range_count = formtrig_typed_native_hot_range_count(m, len);
++  u32 range_count = native_range_count
++                        ? native_range_count
++                        : formtrig_typed_fallback_hot_range_count(m, len);
 +  if (!component_count) {
 +
 +    ++afl->formtrig_typed_skips;
@@ -1248,8 +1307,10 @@ index 2ad4697..771bd79 100644
 +  afl->stage_short = "ftgtype";
 +  afl->stage_max = stage_max;
 +  afl->stage_val_type = STAGE_VAL_NONE;
-+  formtrig_log_progress(afl, "typed_stage_start", "planned", m, queue_id,
-+                        stage_max);
++  formtrig_log_progress(
++      afl, "typed_stage_start",
++      native_range_count ? "planned" : "fallback_no_hot_range", m, queue_id,
++      stage_max);
 +
 +  u64 orig_hit_cnt = afl->queued_items + afl->saved_crashes;
 +

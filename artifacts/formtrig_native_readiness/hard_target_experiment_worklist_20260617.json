@@ -8,7 +8,7 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-17T19:05:08+00:00",
+  "generated_at_utc": "2026-06-17T19:30:09+00:00",
   "inputs": {
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -948,7 +948,7 @@
       "blocking_issue": [],
       "category": "binary-state-null+compound-sequence-lifecycle",
       "claim_boundary": "A passing short screen is still promotion evidence, not final 2h evidence; if baselines trigger early with acceptable time cost, demote to control/design work.",
-      "command": "scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_baselines && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_formtrig",
+      "command": "scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_baselines --afl-arg -t --afl-arg 5000 && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_formtrig",
       "comparison_verdict": "",
       "current_primary_benefits": [],
       "duration_s": 600,

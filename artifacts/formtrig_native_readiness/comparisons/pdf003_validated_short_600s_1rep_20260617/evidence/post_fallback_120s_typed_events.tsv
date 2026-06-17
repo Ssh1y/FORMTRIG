@@ -1,0 +1,3 @@
+event	reason	aux
+typed_stage_start	fallback_no_hot_range	128
+typed_stage_end	completed	5
