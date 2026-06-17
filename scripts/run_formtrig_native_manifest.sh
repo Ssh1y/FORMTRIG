@@ -39,6 +39,7 @@ Or generate a first-pass BindingSpec from one source site:
 
 Optional manifest keys:
   duration: SEC                  # default 60
+  afl_args: ARGS                 # extra AFL++ args, e.g. -t 5000
   aflpp_dir: DIR
   seed_preflight: off|warn|require
   seed_preflight_max: N
@@ -107,6 +108,7 @@ seed_dir="$(resolve_path "$seed_dir")"
 out_dir="$(resolve_path "${cfg[out_dir]:-}")"
 target_cmd="${cfg[target_cmd]:-}"
 duration="${cfg[duration]:-60}"
+afl_args="${cfg[afl_args]:-}"
 aflpp_dir="$(resolve_path "${cfg[aflpp_dir]:-$repo_root/experiments/aflplusplus/AFLplusplus}")"
 seed_preflight="${cfg[seed_preflight]:-warn}"
 seed_preflight_max="${cfg[seed_preflight_max]:-32}"
@@ -189,6 +191,7 @@ if [[ "${#target_argv[@]}" -eq 0 ]]; then
   echo "target_cmd expanded to an empty command" >&2
   exit 2
 fi
+read -r -a extra_afl_args <<< "$afl_args"
 
 campaign_args=(
   --in "$seed_dir"
@@ -206,6 +209,9 @@ campaign_args=(
 if [[ -n "$target_site_ids" ]]; then
   campaign_args+=(--target-site-ids "$target_site_ids")
 fi
+for arg in "${extra_afl_args[@]}"; do
+  campaign_args+=(--afl-arg "$arg")
+done
 
 (
   cd "$target_cwd"

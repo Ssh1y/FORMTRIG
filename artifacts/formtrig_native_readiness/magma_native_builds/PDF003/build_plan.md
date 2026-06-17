@@ -4,25 +4,24 @@ This is a build/readiness artifact, not endpoint performance evidence.
 A successful build should be followed by native asset discovery and a
 BindingSpec validation sweep before any long-run benefit claim.
 
-Generated: `2026-06-17T17:49:44+00:00`
+Generated: `2026-06-17T18:23:04+00:00`
 Mode: `execute`
 Target: `PDF003` / `pdfimages`
-Instrumentation entry: `runner`
+Instrumentation entry: `cli`
 Expected site map: `/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv`
 Expected executable: `/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages`
 
 ## Dependency Preflight
 
-- `status`: `missing`
+- `status`: `ok`
 - `poppler_cairo_pkg_config`: `ok` value=`cairo`
 - `poppler_openjpeg_cmake_config`: `ok` value=`/usr/lib/x86_64-linux-gnu/openjpeg-2.1/OpenJPEGConfig.cmake`
-- `poppler_tiff_pkg_config`: `missing` apt=`libtiff-dev`
-- `poppler_lcms_pkg_config`: `missing` apt=`liblcms2-dev`
-- install hint: `sudo apt-get install -y liblcms2-dev libtiff-dev`
+- `poppler_tiff_pkg_config`: `ok` value=`libtiff-4`
+- `poppler_lcms_pkg_config`: `ok` value=`lcms2`
 
 ## Selected Steps
 
-- `instrument_target`: `CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh`
+- `instrument_target`: `CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_MAGMA_LINK_AFL_DRIVER=0 FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh`
 - `refresh_asset_discovery`: `/usr/bin/python3 tools/discover_magma_native_assets.py --search-root /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003 --search-root artifacts/formtrig_native_readiness --search-root experiments/magma_workspace`
 - `refresh_validation_worklist`: `/usr/bin/python3 tools/plan_magma_binding_validation.py --assets artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json`
 
@@ -34,11 +33,11 @@ Expected executable: `/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/mag
 
 ## Execution
 
-- `dependency_preflight`: `failed`
-
-## Failure Summary
-
-- `failed_step`: `dependency_preflight`
-- `apt_package_hints`: `liblcms2-dev libtiff-dev`
-- recent error lines:
-  - `missing native build dependencies for poppler: liblcms2-dev libtiff-dev`
+- `fuzzer_fetch`: `skipped`
+- `fuzzer_build`: `skipped`
+- `target_preinstall`: `skipped`
+- `target_fetch`: `skipped`
+- `apply_patches`: `skipped`
+- `instrument_target`: `ok` log=`/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/logs/instrument_target.log`
+- `refresh_asset_discovery`: `ok` log=`/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/logs/refresh_asset_discovery.log`
+- `refresh_validation_worklist`: `ok` log=`/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/logs/refresh_validation_worklist.log`

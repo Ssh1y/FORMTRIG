@@ -4,19 +4,25 @@ This is a validation worklist, not a performance-result table. A runnable
 task executes a short BindingSpec candidate sweep and then summarizes it
 into the existing `binding_validation` schema consumed by target planners.
 
-Generated: `2026-06-17T17:59:42+00:00`
-Tasks: `6`; runnable now: `3`; blocked: `3`
+Generated: `2026-06-17T19:03:24+00:00`
+Tasks: `6`; runnable now: `4`; blocked: `2`
 
 | target | category | runnable | blocker summary | validation record |
 | --- | --- | --- | --- | --- |
-| PDF003 | binary-state-null | blocked | site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF003.tsv; target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF003; target_cmd is missing or still contains TODO | `artifacts/formtrig_native_readiness/binding_validation/PDF003.native_draft_magma_canary.validation.json` |
+| PDF003 | binary-state-null | yes | none | `artifacts/formtrig_native_readiness/binding_validation/PDF003.native_draft_magma_canary.validation.json` |
 | SSL011 | binary-state-null | yes | none | `artifacts/formtrig_native_readiness/binding_validation/SSL011.native_draft_magma_canary.validation.json` |
 | SSL015 | binary-state-null | blocked | formal RNT seed corpus is not ready: excluded (No strict RNT seed is available under asn1: SSL015 is logged in PKCS7 data init/decode/final/verify workflows, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform those PKCS7 workflows.); site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv | `artifacts/formtrig_native_readiness/binding_validation/SSL015.native_draft_magma_canary.validation.json` |
 | TIF012 | binary-state-null | yes | none | `artifacts/formtrig_native_readiness/binding_validation/TIF012.native_draft_magma_canary.validation.json` |
-| PDF016 | compound-sequence-lifecycle | blocked | site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF016.tsv; target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016; target_cmd is missing or still contains TODO | `artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json` |
+| PDF016 | compound-sequence-lifecycle | blocked | target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016; target_cmd is missing or still contains TODO | `artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json` |
 | PHP009 | numeric-margin | yes | none | `artifacts/formtrig_native_readiness/binding_validation/PHP009.native_draft_magma_canary.validation.json` |
 
 ## Runnable Commands
+
+### PDF003
+
+```bash
+(cd /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl && /home/cwh/FORMTRIG/scripts/run_formtrig_binding_candidate_sweep.sh --in /home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF003/seeds --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_binding_validation_600s --target-bug PDF003 --category binary-null --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv --candidate /home/cwh/FORMTRIG/artifacts/binding_specs/PDF003.native_draft_magma_canary.yml --candidate-kind binding-spec --duration 600 --seed-preflight require --seed-preflight-max 32 --seed-preflight-timeout 5 --aflpp-dir /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus --afl-arg -t --afl-arg 5000 -- /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages @@ /tmp/out) && python3 /home/cwh/FORMTRIG/tools/summarize_binding_candidate_sweep.py --summary-jsonl /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_binding_validation_600s/summary.jsonl --target-id PDF003 --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PDF003.native_draft_magma_canary.validation.json --out-md /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PDF003.native_draft_magma_canary.validation.md --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/PDF003.native_draft_magma_canary.yml
+```
 
 ### SSL011
 
@@ -39,12 +45,6 @@ Tasks: `6`; runnable now: `3`; blocked: `3`
 
 ## Blocked Tasks
 
-### PDF003
-- RNT status: `formal_ready`; seed files: `12`
-- site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF003.tsv
-- target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF003
-- target_cmd is missing or still contains TODO
-
 ### SSL015
 - RNT status: `excluded`; seed files: `0`
 - formal RNT seed corpus is not ready: excluded (No strict RNT seed is available under asn1: SSL015 is logged in PKCS7 data init/decode/final/verify workflows, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform those PKCS7 workflows.)
@@ -52,6 +52,5 @@ Tasks: `6`; runnable now: `3`; blocked: `3`
 
 ### PDF016
 - RNT status: `formal_ready`; seed files: `20`
-- site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF016.tsv
 - target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016
 - target_cmd is missing or still contains TODO

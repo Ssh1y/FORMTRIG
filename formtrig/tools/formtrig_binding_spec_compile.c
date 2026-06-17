@@ -164,6 +164,53 @@ static int eq(const char *a, const char *b) {
   return a && b && strcmp(a, b) == 0;
 }
 
+static int append_text(char *dst, size_t dst_size, size_t *used,
+                       const char *src, size_t src_len) {
+  if (!dst || !dst_size || !used) return 0;
+  if (*used + src_len + 1u > dst_size) return 0;
+  memcpy(dst + *used, src, src_len);
+  *used += src_len;
+  dst[*used] = '\0';
+  return 1;
+}
+
+static int itanium_member_prefix(const char *symbol, char *out,
+                                 size_t out_size) {
+  if (!symbol || !out || !out_size) return 0;
+  out[0] = '\0';
+  if (strncmp(symbol, "_ZN", 3) != 0) return 0;
+
+  size_t index = 3u;
+  while (symbol[index] && strchr("KVRO", symbol[index])) index++;
+
+  size_t used = 0u;
+  uint32_t parts = 0u;
+  while (isdigit((unsigned char)symbol[index])) {
+    unsigned long len = 0;
+    while (isdigit((unsigned char)symbol[index])) {
+      len = len * 10ul + (unsigned long)(symbol[index] - '0');
+      index++;
+    }
+    if (!len || strlen(symbol + index) < len) break;
+    if (parts && !append_text(out, out_size, &used, "::", 2u)) return 0;
+    if (!append_text(out, out_size, &used, symbol + index, (size_t)len))
+      return 0;
+    index += (size_t)len;
+    parts++;
+  }
+  return parts >= 2u;
+}
+
+static int function_matches(const char *want, const char *have) {
+  if (!want || !*want) return 1;
+  if (eq(want, have)) return 1;
+  char prefix[160];
+  if (itanium_member_prefix(have, prefix, sizeof(prefix)) &&
+      eq(want, prefix))
+    return 1;
+  return 0;
+}
+
 static uint32_t label_site_id(const char *label) {
   uint32_t hash = 2166136261u;
   if (!label) label = "";
@@ -314,11 +361,11 @@ static int binding_has_source_selectors(const binding_spec_t *binding) {
 
 static int site_matches_binding_source(const site_row_t *site,
                                        const binding_spec_t *binding,
-                                       int relax_inst_no, int relax_line,
+  int relax_inst_no, int relax_line,
                                        int relax_column) {
   if (binding->site_kind[0] && !eq(binding->site_kind, site->kind))
     return 0;
-  if (binding->function[0] && !eq(binding->function, site->function))
+  if (binding->function[0] && !function_matches(binding->function, site->function))
     return 0;
   if (binding->opcode[0] && !eq(binding->opcode, site->opcode)) return 0;
   if (binding->file[0] && !path_suffix_match(binding->file, site->file))

@@ -44,6 +44,7 @@ CSV_FIELDS = [
     "site_map",
     "target_cwd",
     "target_cmd",
+    "afl_args",
     "blockers",
     "command",
     "summary_command",
@@ -191,6 +192,24 @@ def parse_target_cmd(target_cmd: str) -> tuple[list[str], str | None]:
     return argv, None
 
 
+def parse_afl_args(value: Any) -> tuple[list[str], str | None]:
+    if value in (None, ""):
+        return [], None
+    if isinstance(value, str):
+        try:
+            return shlex.split(value), None
+        except ValueError as exc:
+            return [], f"afl_args cannot be parsed by shlex: {exc}"
+    if isinstance(value, list):
+        args: list[str] = []
+        for item in value:
+            if not isinstance(item, (str, int, float)):
+                return [], "afl_args must contain only scalar command-line arguments"
+            args.append(str(item))
+        return args, None
+    return [], "afl_args must be a list or shell-style string"
+
+
 def task_from_draft(
     draft: dict[str, Any],
     *,
@@ -236,6 +255,7 @@ def task_from_draft(
     runner_category = str(asset.get("runner_category") or category_for_runner(category))
     duration = int(asset.get("duration_s") or asset.get("duration") or duration_s)
     target_aflpp_dir = str(asset.get("aflpp_dir") or aflpp_dir)
+    afl_args, afl_args_error = parse_afl_args(asset.get("afl_args", asset.get("extra_afl_args")))
 
     resolved_binding_spec = repo_path(binding_spec, base=manifest_dir if binding_spec.startswith("..") else None)
     resolved_seed_dir = repo_path(seed_dir, base=manifest_dir if seed_dir.startswith("..") else None)
@@ -260,6 +280,8 @@ def task_from_draft(
     target_argv, cmd_error = parse_target_cmd(target_cmd)
     if cmd_error:
         blockers.append(cmd_error)
+    if afl_args_error:
+        blockers.append(afl_args_error)
 
     out_dir = Path(str(asset.get("out_dir") or raw_root / f"{target_id.lower()}_binding_validation_{duration}s"))
     validation_record = Path(
@@ -298,6 +320,8 @@ def task_from_draft(
     ]
     if target_site_ids:
         sweep_args.extend(["--target-site-ids", target_site_ids])
+    for arg in afl_args:
+        sweep_args.extend(["--afl-arg", arg])
     sweep_args.append("--")
     sweep_args.extend(target_argv)
 
@@ -346,6 +370,7 @@ def task_from_draft(
         "site_map": display_path(resolved_site_map),
         "target_cwd": display_path(resolved_target_cwd),
         "target_cmd": target_cmd,
+        "afl_args": " ".join(shlex.quote(arg) for arg in afl_args),
         "target_site_ids": target_site_ids,
         "out_dir": str(out_dir),
         "validation_record": str(validation_record),
@@ -504,6 +529,7 @@ def build_assets_template(payload: dict[str, Any]) -> dict[str, Any]:
             "site_map": f"TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_{target_id}.tsv",
             "target_cwd": f"TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_{target_id}",
             "target_cmd": task["target_cmd"],
+            "afl_args": task.get("afl_args", ""),
             "category": task["category"],
             "runner_category": task["runner_category"],
             "duration_s": task["duration_s"],

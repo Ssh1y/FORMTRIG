@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-17T17:59:34+00:00",
+  "generated_at_utc": "2026-06-17T18:26:10+00:00",
   "inputs": {
     "drafts": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
     "max_files": 500000,
@@ -17,23 +17,30 @@
     "pkcs7_decode",
     "tiff_read_rgba_fuzzer"
   ],
-  "runnable_candidate_count": 3,
-  "scanned_file_count": 73405,
+  "runnable_candidate_count": 4,
+  "scanned_file_count": 73668,
   "schema": "formtrig_magma_native_asset_discovery_v1",
   "site_map_count": 6,
   "targets": [
     {
-      "best_site_map": null,
-      "blockers": [
-        "no site_map.tsv matched the BindingSpec source selectors",
-        "no executable found for program pdfimages"
+      "best_site_map": {
+        "matched_selectors": 1,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv",
+        "row_count": 47790,
+        "same_build_as_executable": true,
+        "score": 1999,
+        "selector_count": 2
+      },
+      "blockers": [],
+      "executable_candidates": [
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/work/poppler/utils/pdfimages"
       ],
-      "executable_candidates": [],
       "program": "pdfimages",
       "rnt_program": "pdfimages",
       "rnt_seed_files": 12,
       "rnt_status": "formal_ready",
-      "runnable_candidate": false,
+      "runnable_candidate": true,
       "selector_count": 2,
       "target_id": "PDF003"
     },
@@ -101,9 +108,15 @@
       "target_id": "TIF012"
     },
     {
-      "best_site_map": null,
+      "best_site_map": {
+        "matched_selectors": 1,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv",
+        "row_count": 47790,
+        "same_build_as_executable": false,
+        "score": 1999,
+        "selector_count": 1
+      },
       "blockers": [
-        "no site_map.tsv matched the BindingSpec source selectors",
         "no executable found for program pdf_fuzzer"
       ],
       "executable_candidates": [],

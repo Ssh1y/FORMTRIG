@@ -256,10 +256,50 @@ def patch_poppler_openjpeg_dir(text, openjpeg_dir):
     return pattern.sub(replace, text)
 
 
+def patch_poppler_freetype_optional_codecs(text):
+    pattern = re.compile(
+        r'(?m)^(?P<prefix>\./configure\s+--prefix="\$WORK"\s+--disable-shared)'
+        r'(?P<rest>\s+PKG_CONFIG_PATH="\$WORK/lib/pkgconfig")$'
+    )
+
+    def replace(match):
+        line = match.group(0)
+        if "--with-bzip2=no" in line or "--with-brotli=no" in line:
+            return line
+        return (
+            f"{match.group('prefix')} --with-bzip2=no --with-brotli=no"
+            f"{match.group('rest')}"
+        )
+
+    return pattern.sub(replace, text)
+
+
+def patch_poppler_pdf_fuzzer_guard(text):
+    needle = '''$CXX $CXXFLAGS -std=c++11 -I"$WORK/poppler/cpp" -I"$TARGET/repo/cpp" \\
+    "$TARGET/src/pdf_fuzzer.cc" -o "$OUT/pdf_fuzzer" \\
+    "$WORK/poppler/cpp/libpoppler-cpp.a" "$WORK/poppler/libpoppler.a" \\
+    "$WORK/lib/libfreetype.a" $LDFLAGS $LIBS -ljpeg -lz \\
+    -lopenjp2 -lpng -ltiff -llcms2 -lm -lpthread -pthread
+'''
+    if 'if [ "${PROGRAM:-}" = "pdf_fuzzer" ]; then' in text:
+        return text
+    replacement = '''if [ "${PROGRAM:-}" = "pdf_fuzzer" ]; then
+    $CXX $CXXFLAGS -std=c++11 -I"$WORK/poppler/cpp" -I"$TARGET/repo/cpp" \\
+        "$TARGET/src/pdf_fuzzer.cc" -o "$OUT/pdf_fuzzer" \\
+        "$WORK/poppler/cpp/libpoppler-cpp.a" "$WORK/poppler/libpoppler.a" \\
+        "$WORK/lib/libfreetype.a" $LDFLAGS $LIBS -ljpeg -lz \\
+        -lopenjp2 -lpng -ltiff -llcms2 -lm -lpthread -pthread
+fi
+'''
+    return text.replace(needle, replacement)
+
+
 build_sh = Path(sys.argv[1])
 openjpeg_dir = sys.argv[2]
 text = build_sh.read_text(encoding="utf-8")
 patched = patch_poppler_openjpeg_dir(text, openjpeg_dir)
+patched = patch_poppler_freetype_optional_codecs(patched)
+patched = patch_poppler_pdf_fuzzer_guard(patched)
 if patched != text:
     build_sh.write_text(patched, encoding="utf-8")
 """
@@ -275,6 +315,52 @@ def patch_poppler_openjpeg_dir_text(text: str, openjpeg_dir: str) -> str:
         return f"{match.group('prefix')}{openjpeg_dir}\""
 
     return pattern.sub(replace, text)
+
+
+def patch_poppler_freetype_optional_codecs_text(text: str) -> str:
+    pattern = re.compile(
+        r'(?m)^(?P<prefix>\./configure\s+--prefix="\$WORK"\s+--disable-shared)'
+        r'(?P<rest>\s+PKG_CONFIG_PATH="\$WORK/lib/pkgconfig")$'
+    )
+
+    def replace(match: re.Match[str]) -> str:
+        line = match.group(0)
+        if "--with-bzip2=no" in line or "--with-brotli=no" in line:
+            return line
+        return (
+            f"{match.group('prefix')} --with-bzip2=no --with-brotli=no"
+            f"{match.group('rest')}"
+        )
+
+    return pattern.sub(replace, text)
+
+
+def patch_poppler_pdf_fuzzer_guard_text(text: str) -> str:
+    needle = """$CXX $CXXFLAGS -std=c++11 -I"$WORK/poppler/cpp" -I"$TARGET/repo/cpp" \\
+    "$TARGET/src/pdf_fuzzer.cc" -o "$OUT/pdf_fuzzer" \\
+    "$WORK/poppler/cpp/libpoppler-cpp.a" "$WORK/poppler/libpoppler.a" \\
+    "$WORK/lib/libfreetype.a" $LDFLAGS $LIBS -ljpeg -lz \\
+    -lopenjp2 -lpng -ltiff -llcms2 -lm -lpthread -pthread
+"""
+    if 'if [ "${PROGRAM:-}" = "pdf_fuzzer" ]; then' in text:
+        return text
+    replacement = """if [ "${PROGRAM:-}" = "pdf_fuzzer" ]; then
+    $CXX $CXXFLAGS -std=c++11 -I"$WORK/poppler/cpp" -I"$TARGET/repo/cpp" \\
+        "$TARGET/src/pdf_fuzzer.cc" -o "$OUT/pdf_fuzzer" \\
+        "$WORK/poppler/cpp/libpoppler-cpp.a" "$WORK/poppler/libpoppler.a" \\
+        "$WORK/lib/libfreetype.a" $LDFLAGS $LIBS -ljpeg -lz \\
+        -lopenjp2 -lpng -ltiff -llcms2 -lm -lpthread -pthread
+fi
+"""
+    return text.replace(needle, replacement)
+
+
+def patch_poppler_build_text(text: str, openjpeg_dir: str) -> str:
+    return patch_poppler_pdf_fuzzer_guard_text(
+        patch_poppler_freetype_optional_codecs_text(
+            patch_poppler_openjpeg_dir_text(text, openjpeg_dir)
+        )
+    )
 
 
 def shell_join(parts: list[str]) -> str:
@@ -578,16 +664,20 @@ fi
 source "$native_work/formtrig_build_env.sh"
 
 driver="$FUZZER/repo/utils/aflpp_driver/libAFLDriver.a"
+driver_lib=""
+if [ "${{FORMTRIG_MAGMA_LINK_AFL_DRIVER:-1}}" != "0" ]; then
+  driver_lib=" $driver"
+fi
 case "${{FORMTRIG_MAGMA_CXX_STDLIB:-libc++}}" in
   libc++)
-    export LIBS="$LIBS -lc++ -lc++abi $driver"
+    export LIBS="$LIBS -lc++ -lc++abi$driver_lib"
     export CXXFLAGS="$CXXFLAGS -stdlib=libc++"
     ;;
   libstdc++)
-    export LIBS="$LIBS -lstdc++ $driver"
+    export LIBS="$LIBS -lstdc++$driver_lib"
     ;;
   none)
-    export LIBS="$LIBS $driver"
+    export LIBS="$LIBS$driver_lib"
     ;;
   *)
     echo "unsupported FORMTRIG_MAGMA_CXX_STDLIB=$FORMTRIG_MAGMA_CXX_STDLIB" >&2
@@ -852,18 +942,24 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
         "FORMTRIG_RUNTIME_CC": args.runtime_cc,
     }
     build_env.update({key: value for key, value in optional_env.items() if value})
+    if args.instrument_entry == "cli":
+        build_env["FORMTRIG_MAGMA_LINK_AFL_DRIVER"] = "0"
     if args.formtrig_target_bug:
         build_env["FORMTRIG_TARGET_BUG"] = args.formtrig_target_bug
 
     fuzzer_repo = fuzzer / "repo"
     fuzzer_needs_fetch = args.force_fuzzer_fetch or not fuzzer_repo.exists()
+    required_fuzzer_artifacts = [
+        fuzzer_repo / "afl-clang-fast",
+        fuzzer_repo / "afl-clang-fast++",
+    ]
+    if args.instrument_entry != "cli":
+        required_fuzzer_artifacts.append(
+            fuzzer_repo / "utils" / "aflpp_driver" / "libAFLDriver.a"
+        )
     fuzzer_needs_build = args.force_fuzzer_build or not all(
         path.exists()
-        for path in [
-            fuzzer_repo / "afl-clang-fast",
-            fuzzer_repo / "afl-clang-fast++",
-            fuzzer_repo / "utils" / "aflpp_driver" / "libAFLDriver.a",
-        ]
+        for path in required_fuzzer_artifacts
     )
     target_repo = target / "repo"
     target_needs_fetch = args.force_target_fetch or not target_repo.exists()
@@ -871,7 +967,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
 
     instrument_command = (
         ["bash", str(runner_instrument)]
-        if args.instrument_entry == "runner"
+        if args.instrument_entry in {"runner", "cli"}
         else ["bash", str(fuzzer / "instrument.sh")]
     )
     steps = [
@@ -1208,7 +1304,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--out-md", type=Path)
     parser.add_argument("--args-template", default="", help="Override target args template; defaults to target configrc or @@")
     parser.add_argument("--instrument-level", default="balanced")
-    parser.add_argument("--instrument-entry", choices=["runner", "fuzzer"], default="runner")
+    parser.add_argument("--instrument-entry", choices=["runner", "fuzzer", "cli"], default="runner")
     parser.add_argument("--cxx-stdlib", choices=["libc++", "libstdc++", "none"], default="libc++")
     parser.add_argument("--afl-cc", default="", help="Set AFL_CC inside generated FORMTRIG wrappers")
     parser.add_argument("--afl-cxx", default="", help="Set AFL_CXX inside generated FORMTRIG wrappers")
@@ -1246,7 +1342,7 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = Path(plan["paths"]["out_dir"])
     out_json = args.out_json or (out_dir / "build_plan.json")
     out_md = args.out_md or (out_dir / "build_plan.md")
-    if args.instrument_entry == "runner":
+    if args.instrument_entry in {"runner", "cli"}:
         write_runner_instrument_script(Path(plan["paths"]["runner_instrument"]))
     if args.execute:
         plan = execute_plan(plan, cwd=Path.cwd())

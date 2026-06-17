@@ -6,8 +6,7 @@ set -euo pipefail
 
 # PDF003 run_binding_candidate_sweep_then_summarize_validation
 # benefit: Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.
-# blocked: site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF003.tsv; target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF003; target_cmd is missing or still contains TODO
-# next: provide site_map, target_cwd, and target_cmd in a validation assets JSON
+(cd /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl && /home/cwh/FORMTRIG/scripts/run_formtrig_binding_candidate_sweep.sh --in /home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF003/seeds --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_binding_validation_600s --target-bug PDF003 --category binary-null --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv --candidate /home/cwh/FORMTRIG/artifacts/binding_specs/PDF003.native_draft_magma_canary.yml --candidate-kind binding-spec --duration 600 --seed-preflight require --seed-preflight-max 32 --seed-preflight-timeout 5 --aflpp-dir /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus --afl-arg -t --afl-arg 5000 -- /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages @@ /tmp/out) && python3 /home/cwh/FORMTRIG/tools/summarize_binding_candidate_sweep.py --summary-jsonl /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_binding_validation_600s/summary.jsonl --target-id PDF003 --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PDF003.native_draft_magma_canary.validation.json --out-md /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PDF003.native_draft_magma_canary.validation.md --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/PDF003.native_draft_magma_canary.yml
 
 # SSL011 run_binding_candidate_sweep_then_summarize_validation
 # benefit: Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.
@@ -24,7 +23,7 @@ set -euo pipefail
 
 # PDF016 run_binding_candidate_sweep_then_summarize_validation
 # benefit: Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.
-# blocked: site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF016.tsv; target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016; target_cmd is missing or still contains TODO
+# blocked: target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016; target_cmd is missing or still contains TODO
 # next: provide site_map, target_cwd, and target_cmd in a validation assets JSON
 
 # PHP009 run_binding_candidate_sweep_then_summarize_validation

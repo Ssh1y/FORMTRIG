@@ -106,6 +106,50 @@ class MagmaNativeAssetDiscoveryTest(unittest.TestCase):
             )
         )
 
+    def test_selector_match_accepts_itanium_mangled_cpp_member_names(self):
+        discovery = load_tool("discover_magma_native_assets")
+
+        self.assertEqual(
+            discovery.itanium_member_prefix(
+                "_ZN14ImageOutputDev14writeImageFileEP9ImgWriterNS_11ImageFormatEPKcP6StreamiiP16GfxImageColorMap"
+            ),
+            "ImageOutputDev::writeImageFile",
+        )
+        self.assertTrue(
+            discovery.selector_matches_row(
+                {
+                    "kind": "cmp",
+                    "function": "ImageOutputDev::writeImageFile",
+                    "file": "utils/ImageOutputDev.cc",
+                    "line": "406",
+                },
+                {
+                    "kind": "cmp",
+                    "function": "_ZN14ImageOutputDev14writeImageFileEP9ImgWriterNS_11ImageFormatEPKcP6StreamiiP16GfxImageColorMap",
+                    "file": "/work/poppler/repo/utils/ImageOutputDev.cc",
+                    "line": "407",
+                    "column": "9",
+                },
+            )
+        )
+        self.assertFalse(
+            discovery.selector_matches_row(
+                {
+                    "kind": "cmp",
+                    "function": "ImageOutputDev::writeImageFile",
+                    "file": "utils/ImageOutputDev.cc",
+                    "line": "406",
+                },
+                {
+                    "kind": "cmp",
+                    "function": "_ZN14ImageOutputDev20getInlineImageLengthEP6StreamiiP16GfxImageColorMap",
+                    "file": "/work/poppler/repo/utils/ImageOutputDev.cc",
+                    "line": "407",
+                    "column": "9",
+                },
+            )
+        )
+
     def test_discovers_runnable_assets_when_all_native_inputs_match(self):
         discovery = load_tool("discover_magma_native_assets")
         with tempfile.TemporaryDirectory() as tmp:

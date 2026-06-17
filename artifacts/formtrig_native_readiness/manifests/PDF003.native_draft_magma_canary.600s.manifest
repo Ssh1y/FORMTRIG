@@ -1,0 +1,17 @@
+# FORMTRIG native short-screen manifest for Magma PDF003.
+# Generated after PDF003.native_draft_magma_canary passed the BindingSpec
+# validation gate. This is a treatment-arm endpoint screen, not a standalone
+# efficacy claim without matched baselines.
+target_id: PDF003
+category: binary-null
+seed_dir: /home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF003/seeds
+out_dir: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_formtrig_short_600s_20260617
+binding_spec: /home/cwh/FORMTRIG/artifacts/binding_specs/PDF003.native_draft_magma_canary.yml
+site_map: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv
+duration: 600
+afl_args: -t 5000
+seed_preflight: require
+seed_preflight_max: 32
+seed_preflight_timeout: 5
+target_cwd: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl
+target_cmd: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages @@ /tmp/out

@@ -73,6 +73,7 @@ class MagmaBindingValidationWorkflowTest(unittest.TestCase):
                                 "site_map": str(site_map),
                                 "target_cwd": str(target_cwd),
                                 "target_cmd": "./pdfimages @@ /tmp/out",
+                                "afl_args": ["-t", "5000"],
                             }
                         }
                     }
@@ -99,6 +100,8 @@ class MagmaBindingValidationWorkflowTest(unittest.TestCase):
             self.assertIn(f"(cd {target_cwd}", task["command"])
             self.assertIn("run_formtrig_binding_candidate_sweep.sh", task["command"])
             self.assertIn("--candidate-kind binding-spec", task["command"])
+            self.assertEqual(task["afl_args"], "-t 5000")
+            self.assertIn("--afl-arg -t --afl-arg 5000", task["command"])
             self.assertIn("summarize_binding_candidate_sweep.py", task["command"])
             self.assertIn("--seed-preflight-max 16", task["command"])
 

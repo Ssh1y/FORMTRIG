@@ -1,31 +1,31 @@
 {
-  "generated_at_utc": "2026-06-17T17:59:34+00:00",
+  "generated_at_utc": "2026-06-17T18:26:10+00:00",
   "schema": "formtrig_magma_binding_validation_assets_discovered_v1",
   "source_discovery": "artifacts/formtrig_native_readiness/magma_native_asset_discovery_20260616.json",
   "targets": {
     "PDF003": {
       "binding_spec": "artifacts/binding_specs/PDF003.native_draft_magma_canary.yml",
       "category": "binary-state-null",
-      "discovery_blockers": [
-        "no site_map.tsv matched the BindingSpec source selectors",
-        "no executable found for program pdfimages"
-      ],
-      "discovery_status": "blocked",
+      "discovery_blockers": [],
+      "discovery_status": "runnable_candidate",
       "duration_s": 600,
+      "afl_args": [
+        "-t",
+        "5000"
+      ],
       "runner_category": "binary-null",
       "seed_dir": "artifacts/rnt_corpus/PDF003/seeds",
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF003.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_POPPLER_PDFIMAGES_BINARY @@ /tmp/out",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF003",
+      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages @@ /tmp/out",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PDF003.native_draft_magma_canary.validation.json"
     },
     "PDF016": {
       "binding_spec": "artifacts/binding_specs/PDF016.native_draft_magma_canary.yml",
       "category": "compound-sequence-lifecycle",
       "discovery_blockers": [
-        "no site_map.tsv matched the BindingSpec source selectors",
         "no executable found for program pdf_fuzzer"
       ],
       "discovery_status": "blocked",
@@ -34,7 +34,7 @@
       "seed_dir": "artifacts/rnt_corpus/PDF016/seeds",
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF016.tsv",
+      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv",
       "target_cmd": "TODO_FORMTRIG_MAGMA_POPPLER_PDF_FUZZER_BINARY @@",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json"

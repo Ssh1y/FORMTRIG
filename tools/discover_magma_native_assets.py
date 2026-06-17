@@ -244,6 +244,47 @@ def source_line_matches(selector_line: str, row_line: str, *, tolerance: int = 8
         return str(selector_line) == str(row_line)
 
 
+def itanium_member_prefix(symbol: str) -> str:
+    """Return a light demangled C++ member prefix for Itanium ABI names.
+
+    FORMTRIG site maps record raw LLVM function symbols. C++ targets therefore
+    often store `_ZN14ImageOutputDev14writeImageFile...` while BindingSpecs use
+    source-level `ImageOutputDev::writeImageFile`. Full demangling would add a
+    fragile tool dependency to discovery, so this parser only extracts nested
+    name length fields and stops before the type signature.
+    """
+
+    if not symbol.startswith("_ZN"):
+        return symbol
+    index = 3
+    while index < len(symbol) and symbol[index] in {"K", "V", "R", "O"}:
+        index += 1
+    parts: list[str] = []
+    while index < len(symbol) and symbol[index].isdigit():
+        start = index
+        while index < len(symbol) and symbol[index].isdigit():
+            index += 1
+        try:
+            length = int(symbol[start:index])
+        except ValueError:
+            break
+        if length <= 0 or index + length > len(symbol):
+            break
+        parts.append(symbol[index:index + length])
+        index += length
+    if len(parts) >= 2:
+        return "::".join(parts)
+    return symbol
+
+
+def function_matches(selector_function: str, row_function: str) -> bool:
+    if not selector_function:
+        return True
+    if selector_function == row_function:
+        return True
+    return selector_function == itanium_member_prefix(row_function)
+
+
 def selector_matches_row(selector: dict[str, str], row: dict[str, str]) -> bool:
     if selector.get("kind") and selector["kind"] != row.get("kind"):
         return False
@@ -253,7 +294,7 @@ def selector_matches_row(selector: dict[str, str], row: dict[str, str]) -> bool:
     if selector_file and not source_file_matches(selector_file, row.get("file", "")):
         return False
     selector_function = selector.get("function", "")
-    if selector_function and selector_function != row.get("function", ""):
+    if not function_matches(selector_function, row.get("function", "")):
         return False
     return True
 

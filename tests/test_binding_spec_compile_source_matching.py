@@ -107,6 +107,67 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
             self.assertNotEqual(proc.returncode, 0)
             self.assertIn("source mapping is missing", proc.stderr)
 
+    def test_compiler_accepts_cpp_itanium_member_prefix(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tool = self.build_tool(root)
+            site_map = root / "formtrig_sites.tsv"
+            spec = root / "PDF003.yml"
+            site_map.write_text(
+                "\n".join(
+                    [
+                        "1856372469\tcmp\t_ZN14ImageOutputDev14writeImageFileEP9ImgWriterNS_11ImageFormatEPKcP6StreamiiP16GfxImageColorMap\t144\ticmp\t/home/cwh/poppler/utils/ImageOutputDev.cc\t407\t9",
+                        "1806039612\tcmp\t_ZN14ImageOutputDev14writeImageFileEP9ImgWriterNS_11ImageFormatEPKcP6StreamiiP16GfxImageColorMap\t147\ticmp\t/home/cwh/poppler/utils/ImageOutputDev.cc\t407\t9",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            spec.write_text(
+                "\n".join(
+                    [
+                        "tc_id: PDF003",
+                        "tc:",
+                        "  category: binary-state-null",
+                        "  expression: synthetic",
+                        "atoms:",
+                        "  - id: 1",
+                        "    expr: synthetic",
+                        "    kind: binary-state-null",
+                        "    root: colorMap",
+                        "bindings:",
+                        "  - id: pdf003_source",
+                        "    atom: 1",
+                        "    role: root_observe",
+                        "    expr: source selector",
+                        "    observe_at:",
+                        "      kind: cmp",
+                        "      function: ImageOutputDev::writeImageFile",
+                        "      file: utils/ImageOutputDev.cc",
+                        "      line: 407",
+                        "      inst_no: 144",
+                        "      column: 9",
+                        "    component: root_state",
+                        "    priority: 10",
+                        "    direction: higher",
+                        "    value_mode: outcome",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            proc = subprocess.run(
+                [str(tool), "--site-map", str(site_map), str(spec)],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertIn("role_component 7 1856372469", proc.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

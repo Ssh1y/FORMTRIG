@@ -4,12 +4,9 @@ set -euo pipefail
 # Generated FORMTRIG benefit-first runnable commands.
 # Gated tasks are intentionally emitted as comments.
 
-# P1 PDF003 validate_binding_spec_then_short_screen
-# benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
-# blocked: BindingSpec candidate is not native-site-map validated; no comparison package exists yet; native build dependencies missing: liblcms2-dev libtiff-dev; poppler_tiff_pkg_config apt=libtiff-dev; poppler_lcms_pkg_config apt=liblcms2-dev
-# post-unblock: sudo apt-get install -y liblcms2-dev libtiff-dev
-# post-unblock: scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4
-# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail
+# P1 PDF003 run_validated_matched_short_screen
+# benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
+scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_baselines && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_formtrig
 
 # P1 SSL015 validate_binding_spec_then_short_screen
 # benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.

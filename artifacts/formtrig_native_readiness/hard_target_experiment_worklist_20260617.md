@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-17T17:52:32+00:00`
-Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `7`; low-priority skipped: `93`.
+Generated: `2026-06-17T19:05:08+00:00`
+Tasks: `20`; runnable now: `1`; blocked/gated: `19`; demoted controls skipped: `7`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -15,7 +15,7 @@ Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `
 
 | priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
-| P1 | 3 | PDF003 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
+| P1 | 3 | PDF003 | magma |  | run_validated_matched_short_screen | yes | Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost. |
 | P1 | 4 | SSL015 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 5 | PDF016 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 7 | LIBXML2_1107 | real_cve |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
@@ -38,35 +38,14 @@ Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `
 
 ## Runnable Now
 
-No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
+### P1 PDF003
 
-## Gated Tasks
-
-### P1 PDF003 - validate_binding_spec_then_short_screen
-
-- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
+- Benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
 - SOTA pain: `not recorded`
 - SOTA pain evidence: not recorded
-- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
-- Claim boundary: Validation is a gate, not an efficacy result.
-- Blocking issue:
-- BindingSpec candidate is not native-site-map validated
-- no comparison package exists yet
-- native build dependencies missing: liblcms2-dev libtiff-dev
-- poppler_tiff_pkg_config apt=libtiff-dev
-- poppler_lcms_pkg_config apt=liblcms2-dev
-- Mechanism evidence required after benefit:
-- native site-map validation
-- lift audit pass
-- binding-signal diagnosis pass
-- seed readiness with reached non-trigger seeds
-- Post-unblock commands or steps:
-- sudo apt-get install -y liblcms2-dev libtiff-dev
-- scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/magma_canary_inventory.json
-- artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json
+- Command: `scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_baselines && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_1rep_formtrig`
+
+## Gated Tasks
 
 ### P1 SSL015 - validate_binding_spec_then_short_screen
 

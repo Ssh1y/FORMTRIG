@@ -180,6 +180,54 @@ chmod +x "$OUT/afl/$PROGRAM"
                 ["ok"],
             )
 
+    def test_cli_entry_does_not_require_or_link_afl_driver(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            magma_root = self.make_fake_magma(root)
+            driver = (
+                magma_root
+                / "fuzzers"
+                / "formtrig_native"
+                / "repo"
+                / "utils"
+                / "aflpp_driver"
+                / "libAFLDriver.a"
+            )
+            driver.unlink()
+            out_dir = root / "build"
+
+            code = runner.main(
+                [
+                    "--target",
+                    "poppler",
+                    "--program",
+                    "pdfimages",
+                    "--target-id",
+                    "PDF003",
+                    "--magma-root",
+                    str(magma_root),
+                    "--out-dir",
+                    str(out_dir),
+                    "--instrument-entry",
+                    "cli",
+                ]
+            )
+
+            self.assertEqual(code, 0)
+            plan = json.loads((out_dir / "build_plan.json").read_text(encoding="utf-8"))
+            self.assertEqual(plan["inputs"]["instrument_entry"], "cli")
+            self.assertFalse(
+                next(row for row in plan["steps"] if row["name"] == "fuzzer_build")[
+                    "selected"
+                ]
+            )
+            instrument_step = next(row for row in plan["steps"] if row["name"] == "instrument_target")
+            self.assertEqual(instrument_step["env"]["FORMTRIG_MAGMA_LINK_AFL_DRIVER"], "0")
+            script_text = (out_dir / "runner_instrument_target.sh").read_text(encoding="utf-8")
+            self.assertIn("FORMTRIG_MAGMA_LINK_AFL_DRIVER", script_text)
+            self.assertIn('driver_lib=" $driver"', script_text)
+
     def test_failure_log_summary_extracts_missing_dependencies(self):
         runner = load_tool("build_magma_formtrig_native_assets")
         with tempfile.TemporaryDirectory() as tmp:
@@ -246,6 +294,34 @@ chmod +x "$OUT/afl/$PROGRAM"
         )
         self.assertEqual(fixed, expected)
         self.assertEqual(repaired, expected)
+
+    def test_poppler_build_patch_disables_unused_freetype_codecs(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+
+        patched = runner.patch_poppler_build_text(
+            "\n".join(
+                [
+                    './configure --prefix="$WORK" --disable-shared PKG_CONFIG_PATH="$WORK/lib/pkgconfig"',
+                    '    EXTRA="$EXTRA -DOpenJPEG_DIR=/old/path',
+                    '$CXX $CXXFLAGS -std=c++11 -I"$WORK/poppler/cpp" -I"$TARGET/repo/cpp" \\',
+                    '    "$TARGET/src/pdf_fuzzer.cc" -o "$OUT/pdf_fuzzer" \\',
+                    '    "$WORK/poppler/cpp/libpoppler-cpp.a" "$WORK/poppler/libpoppler.a" \\',
+                    '    "$WORK/lib/libfreetype.a" $LDFLAGS $LIBS -ljpeg -lz \\',
+                    '    -lopenjp2 -lpng -ltiff -llcms2 -lm -lpthread -pthread',
+                ]
+            )
+            + "\n",
+            "/usr/lib/x86_64-linux-gnu/openjpeg-2.1",
+        )
+        repatched = runner.patch_poppler_build_text(
+            patched,
+            "/usr/lib/x86_64-linux-gnu/openjpeg-2.1",
+        )
+
+        self.assertIn("--with-bzip2=no --with-brotli=no", patched)
+        self.assertIn('-DOpenJPEG_DIR=/usr/lib/x86_64-linux-gnu/openjpeg-2.1"', patched)
+        self.assertIn('if [ "${PROGRAM:-}" = "pdf_fuzzer" ]; then', patched)
+        self.assertEqual(repatched, patched)
 
     def test_dependency_preflight_reports_php_build_tools(self):
         runner = load_tool("build_magma_formtrig_native_assets")

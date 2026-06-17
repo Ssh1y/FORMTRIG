@@ -13,37 +13,183 @@ atoms:
     kind: 'binary-state-null'
     root: 'MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))'
 bindings:
-  - id: 'magma_canary_root_01'
+  - id: 'pdf003_colormap_guard_cmp_135'
     atom: 1
-    role: 'root_observe'
-    expr: 'Magma canary source selector for MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))'
-    observe_at:
-      kind: 'cmp'
-      function: 'HtmlOutputDev::drawPngImage'
-      file: 'utils/HtmlOutputDev.cc'
-      line: 1444
-      column: 8
-    component: 'root_state'
-    priority: 10
-    direction: 'higher'
-    value_mode: 'outcome'
-    value: 1.0
-    confidence: 0.55
-    observe_window: 'any'
-  - id: 'magma_canary_root_02'
-    atom: 1
-    role: 'root_observe'
-    expr: 'Magma canary source selector for MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))'
+    role: 'guard'
+    expr: 'PDF003 pre-canary guard: colorMap is present before mask inversion logic'
+    site_id: 1840433493
     observe_at:
       kind: 'cmp'
       function: 'ImageOutputDev::writeImageFile'
       file: 'utils/ImageOutputDev.cc'
-      line: 406
-      column: 8
+      line: 404
+      inst_no: 135
+      opcode: 'icmp'
+      column: 9
+    component: 'guard_progress'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.7
+    observe_window: 'any'
+  - id: 'pdf003_canary_cmp_144'
+    atom: 1
+    role: 'root_observe'
+    expr: 'PDF003 Magma canary cmp at ImageOutputDev::writeImageFile:407'
+    site_id: 1856372469
+    observe_at:
+      kind: 'cmp'
+      function: 'ImageOutputDev::writeImageFile'
+      file: 'utils/ImageOutputDev.cc'
+      line: 407
+      inst_no: 144
+      opcode: 'icmp'
+      column: 9
     component: 'root_state'
     priority: 11
     direction: 'higher'
     value_mode: 'outcome'
     value: 1.0
     confidence: 0.55
+    observe_window: 'any'
+  - id: 'pdf003_canary_cmp_147'
+    atom: 1
+    role: 'root_observe'
+    expr: 'PDF003 Magma canary cmp at ImageOutputDev::writeImageFile:407'
+    site_id: 1806039612
+    observe_at:
+      kind: 'cmp'
+      function: 'ImageOutputDev::writeImageFile'
+      file: 'utils/ImageOutputDev.cc'
+      line: 407
+      inst_no: 147
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 12
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'pdf003_canary_cmp_156'
+    atom: 1
+    role: 'root_observe'
+    expr: 'PDF003 Magma canary cmp at ImageOutputDev::writeImageFile:407'
+    site_id: 1789114898
+    observe_at:
+      kind: 'cmp'
+      function: 'ImageOutputDev::writeImageFile'
+      file: 'utils/ImageOutputDev.cc'
+      line: 407
+      inst_no: 156
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 13
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'pdf003_canary_cmp_163'
+    atom: 1
+    role: 'root_observe'
+    expr: 'PDF003 Magma canary cmp at ImageOutputDev::writeImageFile:407'
+    site_id: 4155200462
+    observe_at:
+      kind: 'cmp'
+      function: 'ImageOutputDev::writeImageFile'
+      file: 'utils/ImageOutputDev.cc'
+      line: 407
+      inst_no: 163
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 14
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'pdf003_canary_cmp_167'
+    atom: 1
+    role: 'root_observe'
+    expr: 'PDF003 Magma canary cmp at ImageOutputDev::writeImageFile:407'
+    site_id: 4222310938
+    observe_at:
+      kind: 'cmp'
+      function: 'ImageOutputDev::writeImageFile'
+      file: 'utils/ImageOutputDev.cc'
+      line: 407
+      inst_no: 167
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 15
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'pdf003_canary_cmp_172'
+    atom: 1
+    role: 'root_observe'
+    expr: 'PDF003 Magma canary cmp at ImageOutputDev::writeImageFile:407'
+    site_id: 1856519564
+    observe_at:
+      kind: 'cmp'
+      function: 'ImageOutputDev::writeImageFile'
+      file: 'utils/ImageOutputDev.cc'
+      line: 407
+      inst_no: 172
+      opcode: 'icmp'
+      column: 9
+    component: 'root_state'
+    priority: 16
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'pdf003_colormap2_default_path_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'GfxImageColorMap default color-space path leaves colorSpace2 null before image output consumes it'
+    site_id: 1187494715
+    observe_at:
+      kind: 'cmp'
+      function: 'GfxImageColorMap::GfxImageColorMap'
+      file: 'poppler/GfxState.cc'
+      line: 5709
+      inst_no: 612
+      opcode: 'icmp'
+      column: 44
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.65
+    observe_window: 'any'
+  - id: 'pdf003_colormap2_null_getgray_use'
+    atom: 1
+    role: 'use'
+    expr: 'GfxImageColorMap::getGray consumes colorSpace2; the PDF003 target state is the null-side use'
+    site_id: 738567632
+    observe_at:
+      kind: 'cmp'
+      function: 'GfxImageColorMap::getGray'
+      file: 'poppler/GfxState.cc'
+      line: 5807
+      inst_no: 16
+      opcode: 'icmp'
+      column: 9
+    component: 'producer_use'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'not_outcome'
+    value: 1.0
+    confidence: 0.75
     observe_window: 'any'

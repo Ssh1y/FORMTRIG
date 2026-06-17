@@ -1,9 +1,6 @@
 {
   "dependency_preflight": {
-    "apt_package_hints": [
-      "liblcms2-dev",
-      "libtiff-dev"
-    ],
+    "apt_package_hints": [],
     "checks": [
       {
         "apt_package_hints": [
@@ -32,8 +29,8 @@
         "id": "poppler_tiff_pkg_config",
         "kind": "pkg_config",
         "reason": "Poppler's selected utility build compiles TIFF writer support.",
-        "status": "missing",
-        "value": ""
+        "status": "ok",
+        "value": "libtiff-4"
       },
       {
         "apt_package_hints": [
@@ -42,29 +39,169 @@
         "id": "poppler_lcms_pkg_config",
         "kind": "pkg_config",
         "reason": "Poppler's selected utility build links Little CMS support.",
-        "status": "missing",
-        "value": ""
+        "status": "ok",
+        "value": "lcms2"
       }
     ],
-    "status": "missing",
+    "status": "ok",
     "target": "poppler"
   },
   "executed_steps": [
     {
-      "exit_code": 2,
-      "failure_summary": {
-        "apt_package_hints": [
-          "liblcms2-dev",
-          "libtiff-dev"
-        ],
-        "error_lines": [
-          "missing native build dependencies for poppler: liblcms2-dev libtiff-dev"
-        ]
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh"
+      ],
+      "env": {
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native"
       },
+      "exit_code": null,
       "log": "",
-      "name": "dependency_preflight",
+      "name": "fuzzer_fetch",
+      "reason": "fuzzer repo already present",
+      "selected": false,
+      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh"
+      ],
+      "env": {
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out",
+        "PROGRAM": "pdfimages",
+        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared",
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "fuzzer_build",
+      "reason": "AFL++/driver artifacts already present",
+      "selected": false,
+      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/preinstall.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "target_preinstall",
+      "reason": "explicit --run-preinstall requested",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/preinstall.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/fetch.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "target_fetch",
+      "reason": "target repo already present",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/fetch.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "apply_patches",
+      "reason": "target repo already has MAGMA_LOG markers",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh"
+      ],
+      "env": {
+        "CFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "CXXFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "FORMTRIG_AFL_CC": "/usr/bin/clang-15",
+        "FORMTRIG_AFL_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_INSTRUMENT_LEVEL": "balanced",
+        "FORMTRIG_LLVM_CONFIG": "/usr/bin/llvm-config-15",
+        "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
+        "FORMTRIG_MAGMA_LINK_AFL_DRIVER": "0",
+        "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
+        "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+        "LD": "/usr/bin/ld",
+        "LDFLAGS": "-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out",
+        "LIBS": "-l:magma.o -lrt",
+        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out",
+        "PROGRAM": "pdfimages",
+        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared",
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
+      },
+      "exit_code": 0,
+      "log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/logs/instrument_target.log",
+      "name": "instrument_target",
+      "reason": "build FORMTRIG-native target executable and site map via cli",
       "selected": true,
-      "status": "failed"
+      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_MAGMA_LINK_AFL_DRIVER=0 FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh",
+      "status": "ok"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "tools/discover_magma_native_assets.py",
+        "--search-root",
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003",
+        "--search-root",
+        "artifacts/formtrig_native_readiness",
+        "--search-root",
+        "experiments/magma_workspace"
+      ],
+      "env": {},
+      "exit_code": 0,
+      "log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/logs/refresh_asset_discovery.log",
+      "name": "refresh_asset_discovery",
+      "reason": "explicit --refresh-discovery requested",
+      "selected": true,
+      "shell": "/usr/bin/python3 tools/discover_magma_native_assets.py --search-root /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003 --search-root artifacts/formtrig_native_readiness --search-root experiments/magma_workspace",
+      "status": "ok"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "tools/plan_magma_binding_validation.py",
+        "--assets",
+        "artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json"
+      ],
+      "env": {},
+      "exit_code": 0,
+      "log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/logs/refresh_validation_worklist.log",
+      "name": "refresh_validation_worklist",
+      "reason": "explicit --refresh-discovery requested",
+      "selected": true,
+      "shell": "/usr/bin/python3 tools/plan_magma_binding_validation.py --assets artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json",
+      "status": "ok"
     }
   ],
   "expected_validation_asset": {
@@ -74,24 +211,14 @@
     "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl",
     "target_id": "PDF003"
   },
-  "failure_summary": {
-    "apt_package_hints": [
-      "liblcms2-dev",
-      "libtiff-dev"
-    ],
-    "error_lines": [
-      "missing native build dependencies for poppler: liblcms2-dev libtiff-dev"
-    ],
-    "failed_step": "dependency_preflight"
-  },
-  "generated_at_utc": "2026-06-17T17:49:44+00:00",
+  "generated_at_utc": "2026-06-17T18:23:04+00:00",
   "host_compatibility_patches": [],
   "inputs": {
     "afl_cc": "/usr/bin/clang-15",
     "afl_cxx": "/usr/bin/clang++-15",
     "cxx_stdlib": "libstdc++",
     "fuzzer": "formtrig_native",
-    "instrument_entry": "runner",
+    "instrument_entry": "cli",
     "instrument_level": "balanced",
     "llvm_config": "/usr/bin/llvm-config-15",
     "magma_root": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma",
@@ -100,10 +227,10 @@
     "run_preinstall": false,
     "runtime_cc": "/usr/bin/clang-15",
     "skip_dependency_preflight": false,
-    "skip_fuzzer_build": true,
-    "skip_fuzzer_fetch": true,
-    "skip_patches": true,
-    "skip_target_fetch": true
+    "skip_fuzzer_build": false,
+    "skip_fuzzer_fetch": false,
+    "skip_patches": false,
+    "skip_target_fetch": false
   },
   "mode": "execute",
   "paths": {
@@ -153,7 +280,7 @@
   ],
   "program": "pdfimages",
   "schema": "formtrig_magma_native_build_plan_v1",
-  "status": "failed",
+  "status": "executed",
   "steps": [
     {
       "command": [
@@ -238,6 +365,7 @@
         "FORMTRIG_INSTRUMENT_LEVEL": "balanced",
         "FORMTRIG_LLVM_CONFIG": "/usr/bin/llvm-config-15",
         "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
+        "FORMTRIG_MAGMA_LINK_AFL_DRIVER": "0",
         "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
         "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
         "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
@@ -252,9 +380,9 @@
         "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
       },
       "name": "instrument_target",
-      "reason": "build FORMTRIG-native target executable and site map via runner",
+      "reason": "build FORMTRIG-native target executable and site map via cli",
       "selected": true,
-      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh"
+      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_MAGMA_LINK_AFL_DRIVER=0 FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh"
     }
   ],
   "target": "poppler",
