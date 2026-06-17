@@ -78,6 +78,38 @@ matched 10m confirmation with the same -t 5000+ terminal oracle:
 
 因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下复现了 first `_T` speedup。它不是“CmpLog/Redqueen/vanilla 做不到”的 hard-gap 目标，因为三个 baseline family 在 60s repeated package 和 10m confirmation 中都可见；它现在的价值是 replicated speedup + attribution：FORMTRIG 把二值 TC 后的 path-hierarchy lifted signal 变成了更早、更少执行次数的 terminal input。这个结论仍然不是最终长测性能结论，下一步必须做 2h matched repetitions 和更难的 Magma/real-CVE 目标。
 
+当前 TIF012 B5 7200s x3 matched long-run 给出了 Magma 上更长预算的同类结论：
+
+```text
+FORMTRIG B5:
+  3/3 terminal _T
+  first _T = 0.035s, 0.036s, 0.034s
+  first trigger queue/progress exec = 146 in all three rows
+
+AFL++ vanilla:
+  3/3 terminal _T
+  first _T = 930s, 1410s, 1560s
+  median first _T = 1410s
+
+AFL++ CmpLog:
+  1/3 terminal _T
+  first _T = 4950s in the successful rep
+  2/3 have no _T in 7200s
+
+local AFL++ Redqueen/operand path:
+  2/3 terminal _T
+  first _T = 6540s and 210s in successful reps
+  1/3 has no _T in 7200s
+
+FORMTRIG vs fastest individual successful baseline run:
+  6176.47x faster by first _T wall-clock upper bound
+
+FORMTRIG vs fastest successful baseline-family median:
+  41470.59x faster by first _T wall-clock upper bound
+```
+
+TIF012 因此也不是“baseline 做不到”的 hard-gap 目标：vanilla 是 3/3 成功，Redqueen/operand 也有快速成功的 rep。它的价值是更严格的 speedup/stability 证据：在二值 `_T` 反馈下，强 baseline 的 R2T 表现有长尾和高方差；FORMTRIG 把同一个 repaired typed trigger knowledge 转成了稳定的早期 terminal evidence。注意这个 run 的 strict pre-trigger gate 是 mixed：3 个 FORMTRIG rep 都 endpoint 成功，但只有 1/3 满足 `strict_pretrigger_guidance=true`；因此论文主收益应写 endpoint TTE/stability，机制解释可以引用 typed mutation 和 spec-lifted evidence，但不能把三 rep 都包装成连续非触发 `D_F` 梯度成功。
+
 ---
 
 > **不是把 TC 的布尔结果或 native distance 直接拿来做 guidance，而是把 TC 提升成一组更细粒度、更稳定、可排序、可归因、可变异的 trigger-progress features。**

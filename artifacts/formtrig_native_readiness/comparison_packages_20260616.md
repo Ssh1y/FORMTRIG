@@ -42,6 +42,11 @@ comparison should use same-budget terminal success, TTE/first-trigger upper
 bounds, throughput/cost, and repetitions. Terminal-state volume is auxiliary
 unless the compared arms use the same oracle and counter semantics.
 
+For speedup packages, the tool reports both the fastest successful individual
+baseline run and the fastest successful baseline-family median. The individual
+run is the conservative headline comparison; the family median is useful for
+distribution-level summaries and tables.
+
 It refuses to silently compare different budgets. A comparison with no matched
 baseline budget receives:
 
@@ -553,3 +558,43 @@ terminal `_T` in 600s. Matched faithful baselines show AFL++ vanilla triggering
 by the 300s Magma monitor snapshot and Redqueen/operand triggering by 540s;
 CmpLog does not trigger. Keep this target as repair evidence for the lifted
 signal/mutation policy, not as a positive result.
+
+### TIF012 B5: matched 7200s x3 speedup confirmation
+
+Command:
+
+```bash
+scripts/run_tif012_b5_matched_longrun.sh \
+  --duration 7200 \
+  --reps 3 \
+  --jobs 4 \
+  --out artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z \
+  --continue-on-fail
+```
+
+Persistent package:
+
+```text
+artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260617
+```
+
+Verdict:
+
+```text
+positive_speedup_matched_comparison
+```
+
+Benefit readout: this is a speedup result, not a baseline-impossibility result.
+FORMTRIG reaches terminal `_T` in 3/3 runs with first `_T` at 0.034-0.036s
+and queue/progress exec 146. Matched AFL++ vanilla also succeeds in 3/3, but
+first `_T` is 930s, 1410s, and 1560s. AFL++ CmpLog succeeds in 1/3 with first
+`_T` at 4950s, and the other two reps have no `_T` in 7200s. The local AFL++
+Redqueen/operand path succeeds in 2/3 with first `_T` at 6540s and 210s, and
+one rep has no `_T` in 7200s.
+
+The fastest individual successful baseline run is the local Redqueen/operand
+path at 210s; FORMTRIG's best first `_T` is 0.034s, a 6176.47x speedup against
+that individual run. The fastest successful baseline-family median is AFL++
+vanilla at 1410s, giving a 41470.59x median-family speedup. Therefore TIF012
+should be used as a replicated R2T speedup/high-variance-baseline case, not as
+evidence that matched baselines cannot ever trigger.

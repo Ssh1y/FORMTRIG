@@ -329,6 +329,7 @@ def summarize_baseline_groups(rows: list[dict[str, Any]]) -> list[dict[str, Any]
                 "reps": len(group),
                 "successes": len(successes),
                 "success_rate": len(successes) / len(group) if group else 0.0,
+                "min_trigger_time_s": min(trigger_times) if trigger_times else None,
                 "median_trigger_time_s": median(trigger_times),
                 "median_trigger_execs": median(trigger_execs),
                 "median_terminal_count": median(terminal_counts),
@@ -337,7 +338,7 @@ def summarize_baseline_groups(rows: list[dict[str, Any]]) -> list[dict[str, Any]
     return summaries
 
 
-def successful_baseline_ttes(groups: list[dict[str, Any]]) -> list[float]:
+def successful_baseline_family_median_ttes(groups: list[dict[str, Any]]) -> list[float]:
     return [
         float(value)
         for group in groups
@@ -392,11 +393,23 @@ def classify_evidence(
     ]
     formtrig_ttes = numeric_values(formtrig_successes, "trigger_time_s")
     best_formtrig_tte = min(formtrig_ttes) if formtrig_ttes else None
-    baseline_ttes = successful_baseline_ttes(groups)
-    best_baseline_tte = min(baseline_ttes) if baseline_ttes else None
+    successful_baseline_rows = [row for row in matched_baselines if row.get("success")]
+    baseline_run_ttes = numeric_values(successful_baseline_rows, "trigger_time_s")
+    best_baseline_tte = min(baseline_run_ttes) if baseline_run_ttes else None
+    baseline_family_median_ttes = successful_baseline_family_median_ttes(groups)
+    best_baseline_family_median_tte = (
+        min(baseline_family_median_ttes) if baseline_family_median_ttes else None
+    )
     tte_speedup = (
         best_baseline_tte / best_formtrig_tte
         if best_formtrig_tte and best_baseline_tte and best_formtrig_tte > 0
+        else None
+    )
+    family_median_tte_speedup = (
+        best_baseline_family_median_tte / best_formtrig_tte
+        if best_formtrig_tte
+        and best_baseline_family_median_tte
+        and best_formtrig_tte > 0
         else None
     )
     low_rep_groups = [group for group in groups if int_value(group.get("reps")) < min_reps]
@@ -462,7 +475,9 @@ def classify_evidence(
         "reasons": reasons,
         "best_formtrig_trigger_time_s": best_formtrig_tte,
         "fastest_baseline_trigger_time_s": best_baseline_tte,
+        "fastest_baseline_family_median_trigger_time_s": best_baseline_family_median_tte,
         "tte_speedup_over_fastest_baseline": tte_speedup,
+        "tte_speedup_over_fastest_baseline_family_median": family_median_tte_speedup,
         "verdict": verdict,
     }
 
@@ -489,11 +504,10 @@ def benefit_readout(
         for group in baseline_groups
         if float(group.get("success_rate") or 0.0) > 0.0
     ]
-    baseline_ttes = [
-        float(value)
-        for group in successful_baseline_groups
-        if (value := numeric(group.get("median_trigger_time_s"))) is not None
-    ]
+    fastest_baseline_tte = numeric(analysis.get("fastest_baseline_trigger_time_s"))
+    fastest_family_median_tte = numeric(
+        analysis.get("fastest_baseline_family_median_trigger_time_s")
+    )
 
     primary_benefits: list[str] = []
     endpoint_observations: list[str] = []
@@ -525,19 +539,28 @@ def benefit_readout(
     if not baseline_groups:
         blocked_claims.append("no matched-budget baseline benefit comparison is available")
     elif successful_baseline_groups:
-        if formtrig_ttes and baseline_ttes:
-            if min(formtrig_ttes) < min(baseline_ttes):
-                speedup = min(baseline_ttes) / min(formtrig_ttes) if min(formtrig_ttes) > 0 else None
+        if formtrig_ttes and fastest_baseline_tte is not None:
+            if min(formtrig_ttes) < fastest_baseline_tte:
+                speedup = (
+                    fastest_baseline_tte / min(formtrig_ttes)
+                    if min(formtrig_ttes) > 0
+                    else None
+                )
                 primary_benefits.append(
-                    "FORMTRIG has a lower observed first-`_T` upper bound than matched successful baselines"
+                    "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run"
                 )
                 if speedup is not None:
                     primary_benefits.append(
-                        f"FORMTRIG observed first-`_T` is {speedup:.2f}x faster than the fastest matched successful baseline"
+                        f"FORMTRIG observed first-`_T` is {speedup:.2f}x faster than the fastest matched successful baseline run"
                     )
                 endpoint_observations.append(
-                    f"fastest matched successful baseline first `_T` upper bound is {min(baseline_ttes):g}s"
+                    f"fastest matched successful baseline-run first `_T` upper bound is {fastest_baseline_tte:g}s"
                 )
+                if fastest_family_median_tte is not None:
+                    endpoint_observations.append(
+                        "fastest matched successful baseline-family median first `_T` "
+                        f"upper bound is {fastest_family_median_tte:g}s"
+                    )
             else:
                 blocked_claims.append(
                     "matched successful baseline first-`_T` is no later than FORMTRIG on current evidence"
