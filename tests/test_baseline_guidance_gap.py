@@ -111,6 +111,15 @@ class BaselineGuidanceGapTest(unittest.TestCase):
         self.assertTrue(analysis["pretrigger_binary_flat_pass"])
         self.assertTrue(analysis["endpoint_cost_pass"])
         self.assertIn("pretrigger_binary_oracle_flat_before_T", analysis["reasons"])
+        vanilla_group = next(
+            group
+            for group in analysis["baseline_groups"]
+            if group["baseline"] == "aflplusplus_vanilla"
+        )
+        self.assertEqual(vanilla_group["total_reached"], 3000)
+        self.assertEqual(vanilla_group["total_triggered"], 10)
+        self.assertEqual(vanilla_group["total_reached_without_trigger"], 2990)
+        self.assertIsNone(vanilla_group["zero_trigger_rule_of_three_95_upper_bound_per_reach"])
 
     def test_fast_successful_baseline_demotes_hard_pain_claim(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -152,6 +161,52 @@ class BaselineGuidanceGapTest(unittest.TestCase):
         self.assertTrue(analysis["pretrigger_binary_flat_pass"])
         self.assertFalse(analysis["endpoint_cost_pass"])
         self.assertIn("fast_successful_baseline_within_acceptable_threshold", analysis["reasons"])
+
+    def test_zero_trigger_runs_report_random_hit_upper_bound(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            records = []
+            for rep in range(1, 4):
+                run_record = self.write_run_record(
+                    root,
+                    name=f"vanilla_{rep}",
+                    baseline="aflplusplus_vanilla",
+                    latest_reached=1000,
+                    latest_triggered=0,
+                    success=False,
+                )
+                records.append(
+                    {
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 7200,
+                        "rep": rep,
+                        "run_record": str(run_record),
+                        "success": False,
+                        "target_id": "TGT",
+                        "trigger_time_s": None,
+                    }
+                )
+            summary = self.write_summary(root, records)
+
+            rows = load_baseline_rows([f"matched={summary}"])
+            analysis = target_analysis(
+                rows,
+                required_baselines=["aflplusplus_vanilla"],
+                min_reps=3,
+                acceptable_trigger_s=600,
+                hard_trigger_s=1800,
+                variance_trigger_s=1800,
+            )
+
+        group = analysis["baseline_groups"][0]
+        self.assertEqual(group["total_reached"], 3000)
+        self.assertEqual(group["total_triggered"], 0)
+        self.assertEqual(group["zero_trigger_runs"], 3)
+        self.assertAlmostEqual(
+            group["zero_trigger_rule_of_three_95_upper_bound_per_reach"],
+            0.001,
+        )
+        self.assertEqual(group["aggregate_empirical_trigger_rate_per_reach"], 0)
 
     def test_missing_monitor_keeps_no_guidance_claim_unmeasured(self):
         with tempfile.TemporaryDirectory() as tmp:
