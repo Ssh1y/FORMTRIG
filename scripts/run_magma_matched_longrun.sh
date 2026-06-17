@@ -56,6 +56,8 @@ outputs:
   OUT/run_plan.jsonl
   OUT/formtrig/
   OUT/baselines/
+  OUT/live_status.json
+  OUT/live_status.md
   OUT/formtrig_gate/gate_summary.csv
   OUT/baseline_guidance_gap/baseline_guidance_gap.json
   OUT/comparison/comparison.json
@@ -382,6 +384,7 @@ require_path "$inventory"
 require_path "$repo_root/scripts/run_formtrig_manifest_batch.sh"
 require_path "$repo_root/scripts/run_magma_baselines.sh"
 require_path "$repo_root/scripts/formtrig_experiment_gate.sh"
+require_path "$repo_root/tools/live_magma_matched_status.py"
 require_path "$repo_root/tools/analyze_baseline_guidance_gap.py"
 require_path "$repo_root/tools/compare_formtrig_baselines.py"
 require_path "$repo_root/tools/package_magma_matched_evidence.py"
@@ -446,6 +449,16 @@ run_async_step "formtrig_batch" "$out_dir/logs/formtrig_batch.log" "${FORMTRIG_C
 run_async_step "magma_baselines" "$out_dir/logs/magma_baselines.log" "${BASELINE_CMD[@]}"
 wait_for_parallel_arms
 
+LIVE_STATUS_CMD=(
+  python3 "$repo_root/tools/live_magma_matched_status.py"
+  --target-id "$target_id"
+  --run-root "$out_dir"
+  --format "md"
+  --out-json "$out_dir/live_status.json"
+  --out-md "$out_dir/live_status.md"
+)
+run_step "live_status" "$out_dir/logs/live_status.log" 1 "${LIVE_STATUS_CMD[@]}" || true
+
 GATE_CMD=(
   "$repo_root/scripts/formtrig_experiment_gate.sh"
   --suite "${target_id}_matched_${duration}s_${reps}rep"
@@ -502,6 +515,7 @@ echo "  out=$out_dir"
 echo "  plan=$plan_sh"
 echo "  formtrig=$formtrig_out"
 echo "  baselines=$baseline_out"
+echo "  live_status=$out_dir/live_status.md"
 echo "  gate=$gate_out/gate_summary.csv"
 echo "  guidance_gap=$guidance_out/baseline_guidance_gap.json"
 echo "  comparison=$comparison_out/comparison.json"

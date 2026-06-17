@@ -61,6 +61,7 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
                 [
                     "formtrig_batch",
                     "magma_baselines",
+                    "live_status",
                     "formtrig_gate",
                     "baseline_guidance_gap",
                     "comparison",
@@ -72,6 +73,7 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
             self.assertIn("run_formtrig_manifest_batch.sh", plan)
             self.assertIn("run_magma_baselines.sh", plan)
+            self.assertIn("live_magma_matched_status.py", plan)
             self.assertIn("analyze_baseline_guidance_gap.py", plan)
             self.assertIn("compare_formtrig_baselines.py", plan)
             self.assertIn("package_magma_matched_evidence.py", plan)
