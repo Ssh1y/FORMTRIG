@@ -42,6 +42,8 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
                     "2",
                     "--jobs",
                     "2",
+                    "--baseline-jobs",
+                    "6",
                     "--out",
                     str(out_dir),
                     "--manifest-list",
@@ -71,6 +73,8 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             )
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
             self.assertTrue(metadata["parallel_arms"])
+            self.assertEqual(metadata["formtrig_jobs"], 2)
+            self.assertEqual(metadata["baseline_jobs"], 6)
             plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
             self.assertIn("run_formtrig_manifest_batch.sh", plan)
             self.assertIn("run_magma_baselines.sh", plan)
@@ -80,6 +84,8 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             self.assertIn("compare_formtrig_baselines.py", plan)
             self.assertIn("package_magma_matched_evidence.py", plan)
             self.assertIn("--afl-arg -t --afl-arg 5000", plan)
+            self.assertIn("--jobs 2", plan)
+            self.assertIn("--jobs 6", plan)
             self.assertIn("001_PDF003/out", plan)
             self.assertIn("002_PDF003/out", plan)
 
@@ -98,6 +104,8 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
                     "2",
                     "--jobs",
                     "2",
+                    "--baseline-jobs",
+                    "6",
                     "--out",
                     str(out_dir),
                     "--no-build-baselines",
@@ -123,9 +131,15 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             self.assertIn("--duration 60", plan)
             self.assertIn("--durations 60", plan)
             self.assertIn("--reps 2", plan)
+            self.assertIn("--jobs 2", plan)
+            self.assertIn("--jobs 6", plan)
             self.assertIn("--no-build", plan)
             self.assertIn("001_TIF012/out", plan)
             self.assertIn("002_TIF012/out", plan)
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["formtrig_jobs"], 2)
+            self.assertEqual(metadata["baseline_jobs"], 6)
 
             manifest_list = out_dir / "formtrig_manifest_list.txt"
             self.assertEqual(

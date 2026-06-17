@@ -8,6 +8,7 @@ target_id=""
 duration="7200"
 reps="3"
 jobs="${FORMTRIG_JOBS:-1}"
+baseline_jobs="${FORMTRIG_BASELINE_JOBS:-}"
 mode="execute"
 continue_on_fail=0
 run_baseline_build=1
@@ -35,7 +36,8 @@ options:
   --target-id ID            Magma target id, for example PDF003
   --duration SEC            per-arm budget, default 7200
   --reps N                  repetitions, default 3
-  --jobs N                  concurrent jobs passed to each child runner
+  --jobs N                  concurrent FORMTRIG manifest jobs
+  --baseline-jobs N         concurrent baseline runs, default --jobs
   --mode MODE               execute|dry-run, default execute
   --out DIR                 output root
   --manifest FILE           single FORMTRIG manifest repeated --reps times
@@ -228,6 +230,8 @@ write_metadata() {
 {
   "baselines": "$baselines",
   "duration_s": $duration,
+  "formtrig_jobs": $jobs,
+  "baseline_jobs": $baseline_jobs,
   "inventory": "$inventory",
   "manifest": "$manifest",
   "manifest_list": "$manifest_list_path",
@@ -257,6 +261,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --jobs)
       jobs="${2:-}"
+      shift 2
+      ;;
+    --baseline-jobs)
+      baseline_jobs="${2:-}"
       shift 2
       ;;
     --mode)
@@ -335,9 +343,12 @@ if [[ -z "$target_id" ]]; then
   usage
   exit 2
 fi
-for numeric in "$duration" "$reps" "$jobs" "$poll"; do
+if [[ -z "$baseline_jobs" ]]; then
+  baseline_jobs="$jobs"
+fi
+for numeric in "$duration" "$reps" "$jobs" "$baseline_jobs" "$poll"; do
   if ! [[ "$numeric" =~ ^[0-9]+$ ]] || [[ "$numeric" -lt 1 ]]; then
-    echo "duration, reps, jobs, and poll must be positive integers" >&2
+    echo "duration, reps, jobs, baseline-jobs, and poll must be positive integers" >&2
     exit 2
   fi
 done
@@ -436,7 +447,7 @@ BASELINE_CMD=(
   --durations "$duration"
   --baselines "$baselines"
   --reps "$reps"
-  --jobs "$jobs"
+  --jobs "$baseline_jobs"
   --poll "$poll"
 )
 if [[ "$run_baseline_build" == "0" ]]; then
