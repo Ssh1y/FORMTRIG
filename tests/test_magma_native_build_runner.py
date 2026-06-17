@@ -140,6 +140,7 @@ chmod +x "$OUT/afl/$PROGRAM"
                     "--skip-patches",
                     "--instrument-entry",
                     "fuzzer",
+                    "--skip-dependency-preflight",
                     "--execute",
                 ]
             )
@@ -186,6 +187,23 @@ chmod +x "$OUT/afl/$PROGRAM"
             self.assertIn("libclang-rt-11-dev", summary["apt_package_hints"])
             self.assertIn("clang: error: linker command failed with exit code 1", summary["error_lines"])
             self.assertIn("clang: error: linker command failed with exit code 1", summary["tail_lines"])
+
+    def test_dependency_preflight_reports_poppler_dev_packages(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+
+        summary = runner.dependency_preflight_for_target(
+            "poppler",
+            pkg_exists=lambda _name: False,
+            glob_match=lambda _patterns: "",
+        )
+
+        self.assertEqual(summary["status"], "missing")
+        self.assertIn("libcairo2-dev", summary["apt_package_hints"])
+        self.assertIn("libopenjp2-7-dev", summary["apt_package_hints"])
+        self.assertEqual(
+            [row["status"] for row in summary["checks"]],
+            ["missing", "missing"],
+        )
 
 
 if __name__ == "__main__":

@@ -1,146 +1,49 @@
 {
+  "dependency_preflight": {
+    "apt_package_hints": [
+      "libcairo2-dev",
+      "libopenjp2-7-dev"
+    ],
+    "checks": [
+      {
+        "apt_package_hints": [
+          "libcairo2-dev"
+        ],
+        "id": "poppler_cairo_pkg_config",
+        "kind": "pkg_config",
+        "reason": "Poppler build enables Cairo support through pkg-config.",
+        "status": "missing",
+        "value": ""
+      },
+      {
+        "apt_package_hints": [
+          "libopenjp2-7-dev"
+        ],
+        "id": "poppler_openjpeg_cmake_config",
+        "kind": "path_glob",
+        "reason": "Poppler build enables the OpenJPEG JPX decoder.",
+        "status": "missing",
+        "value": ""
+      }
+    ],
+    "status": "missing",
+    "target": "poppler"
+  },
   "executed_steps": [
     {
-      "command": [
-        "bash",
-        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh"
-      ],
-      "env": {
-        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native"
-      },
-      "exit_code": null,
-      "log": "",
-      "name": "fuzzer_fetch",
-      "reason": "fuzzer repo already present",
-      "selected": false,
-      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh",
-      "status": "skipped"
-    },
-    {
-      "command": [
-        "bash",
-        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh"
-      ],
-      "env": {
-        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
-        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
-        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out",
-        "PROGRAM": "pdfimages",
-        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared",
-        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
-      },
-      "exit_code": null,
-      "log": "",
-      "name": "fuzzer_build",
-      "reason": "AFL++/driver artifacts already present",
-      "selected": false,
-      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh",
-      "status": "skipped"
-    },
-    {
-      "command": [
-        "bash",
-        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/preinstall.sh"
-      ],
-      "env": {
-        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
-      },
-      "exit_code": null,
-      "log": "",
-      "name": "target_preinstall",
-      "reason": "explicit --run-preinstall requested",
-      "selected": false,
-      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/preinstall.sh",
-      "status": "skipped"
-    },
-    {
-      "command": [
-        "bash",
-        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/fetch.sh"
-      ],
-      "env": {
-        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
-      },
-      "exit_code": null,
-      "log": "",
-      "name": "target_fetch",
-      "reason": "target repo already present",
-      "selected": false,
-      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/fetch.sh",
-      "status": "skipped"
-    },
-    {
-      "command": [
-        "bash",
-        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh"
-      ],
-      "env": {
-        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
-      },
-      "exit_code": null,
-      "log": "",
-      "name": "apply_patches",
-      "reason": "target repo already has MAGMA_LOG markers",
-      "selected": false,
-      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh",
-      "status": "skipped"
-    },
-    {
-      "command": [
-        "bash",
-        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh"
-      ],
-      "env": {
-        "CFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
-        "CXXFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
-        "FORMTRIG_AFL_CC": "/usr/bin/clang-15",
-        "FORMTRIG_AFL_CXX": "/usr/bin/clang++-15",
-        "FORMTRIG_INSTRUMENT_LEVEL": "balanced",
-        "FORMTRIG_LLVM_CONFIG": "/usr/bin/llvm-config-15",
-        "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
-        "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
-        "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
-        "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
-        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
-        "LD": "/usr/bin/ld",
-        "LDFLAGS": "-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out",
-        "LIBS": "-l:magma.o -lrt",
-        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
-        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out",
-        "PROGRAM": "pdfimages",
-        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared",
-        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler"
-      },
-      "exit_code": 1,
+      "exit_code": 2,
       "failure_summary": {
-        "tail_lines": [
-          "CMake Warning at CMakeLists.txt:256 (find_package):",
-          "By not providing \"FindOpenJPEG.cmake\" in CMAKE_MODULE_PATH this project has",
-          "asked CMake to find a package configuration file provided by \"OpenJPEG\",",
-          "but CMake did not find one.",
-          "Could not find a package configuration file provided by \"OpenJPEG\" with any",
-          "of the following names:",
-          "OpenJPEGConfig.cmake",
-          "openjpeg-config.cmake",
-          "Add the installation prefix of \"OpenJPEG\" to CMAKE_PREFIX_PATH or set",
-          "\"OpenJPEG_DIR\" to a directory containing one of the above files.  If",
-          "\"OpenJPEG\" provides a separate development package or SDK, be sure it has",
-          "been installed.",
-          "-- Could NOT find openjpeg2.",
-          "CMake Error at CMakeLists.txt:260 (message):",
-          "Install libopenjpeg2 before trying to build poppler.  You can also decide",
-          "to use the internal unmaintained JPX decoder or none at all.",
-          "Possible options are: -DENABLE_LIBOPENJPEG=openjpeg2,",
-          "-DENABLE_LIBOPENJPEG=none, -DENABLE_LIBOPENJPEG=unmaintained,",
-          "-- Configuring incomplete, errors occurred!",
-          "$ CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh"
+        "apt_package_hints": [
+          "libcairo2-dev",
+          "libopenjp2-7-dev"
+        ],
+        "error_lines": [
+          "missing native build dependencies for poppler: libcairo2-dev libopenjp2-7-dev"
         ]
       },
-      "log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/logs/instrument_target.log",
-      "name": "instrument_target",
-      "reason": "build FORMTRIG-native target executable and site map via runner",
+      "log": "",
+      "name": "dependency_preflight",
       "selected": true,
-      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh",
       "status": "failed"
     }
   ],
@@ -152,31 +55,16 @@
     "target_id": "PDF003"
   },
   "failure_summary": {
-    "failed_step": "instrument_target",
-    "tail_lines": [
-      "CMake Warning at CMakeLists.txt:256 (find_package):",
-      "By not providing \"FindOpenJPEG.cmake\" in CMAKE_MODULE_PATH this project has",
-      "asked CMake to find a package configuration file provided by \"OpenJPEG\",",
-      "but CMake did not find one.",
-      "Could not find a package configuration file provided by \"OpenJPEG\" with any",
-      "of the following names:",
-      "OpenJPEGConfig.cmake",
-      "openjpeg-config.cmake",
-      "Add the installation prefix of \"OpenJPEG\" to CMAKE_PREFIX_PATH or set",
-      "\"OpenJPEG_DIR\" to a directory containing one of the above files.  If",
-      "\"OpenJPEG\" provides a separate development package or SDK, be sure it has",
-      "been installed.",
-      "-- Could NOT find openjpeg2.",
-      "CMake Error at CMakeLists.txt:260 (message):",
-      "Install libopenjpeg2 before trying to build poppler.  You can also decide",
-      "to use the internal unmaintained JPX decoder or none at all.",
-      "Possible options are: -DENABLE_LIBOPENJPEG=openjpeg2,",
-      "-DENABLE_LIBOPENJPEG=none, -DENABLE_LIBOPENJPEG=unmaintained,",
-      "-- Configuring incomplete, errors occurred!",
-      "$ CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out PROGRAM=pdfimages SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/runner_instrument_target.sh"
-    ]
+    "apt_package_hints": [
+      "libcairo2-dev",
+      "libopenjp2-7-dev"
+    ],
+    "error_lines": [
+      "missing native build dependencies for poppler: libcairo2-dev libopenjp2-7-dev"
+    ],
+    "failed_step": "dependency_preflight"
   },
-  "generated_at_utc": "2026-06-17T12:16:49+00:00",
+  "generated_at_utc": "2026-06-17T12:27:24+00:00",
   "inputs": {
     "afl_cc": "/usr/bin/clang-15",
     "afl_cxx": "/usr/bin/clang++-15",
@@ -190,6 +78,7 @@
     "refresh_discovery": true,
     "run_preinstall": false,
     "runtime_cc": "/usr/bin/clang-15",
+    "skip_dependency_preflight": false,
     "skip_fuzzer_build": false,
     "skip_fuzzer_fetch": false,
     "skip_patches": true,

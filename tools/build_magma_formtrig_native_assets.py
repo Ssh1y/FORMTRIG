@@ -11,6 +11,7 @@ can then turn those files into validation assets.
 from __future__ import annotations
 
 import argparse
+import glob
 import json
 import os
 import re
@@ -25,6 +26,35 @@ from typing import Any
 
 DEFAULT_MAGMA_ROOT = Path("experiments/magma_workspace/magma")
 DEFAULT_OUT_ROOT = Path("artifacts/formtrig_native_readiness/magma_native_builds")
+
+
+OPENJPEG_CONFIG_GLOBS = [
+    "/usr/lib/*/openjpeg-*/OpenJPEGConfig.cmake",
+    "/usr/lib/*/openjpeg-*/openjpeg-config.cmake",
+    "/usr/local/lib/*/openjpeg-*/OpenJPEGConfig.cmake",
+    "/usr/local/lib/openjpeg-*/OpenJPEGConfig.cmake",
+    "/usr/share/openjpeg-*/OpenJPEGConfig.cmake",
+]
+
+
+TARGET_DEPENDENCY_REQUIREMENTS = {
+    "poppler": [
+        {
+            "id": "poppler_cairo_pkg_config",
+            "kind": "pkg_config",
+            "name": "cairo",
+            "apt_package_hints": ["libcairo2-dev"],
+            "reason": "Poppler build enables Cairo support through pkg-config.",
+        },
+        {
+            "id": "poppler_openjpeg_cmake_config",
+            "kind": "path_glob",
+            "patterns": OPENJPEG_CONFIG_GLOBS,
+            "apt_package_hints": ["libopenjp2-7-dev"],
+            "reason": "Poppler build enables the OpenJPEG JPX decoder.",
+        },
+    ],
+}
 
 
 CANARY_HEADER = r"""#ifndef CANARY_H_
@@ -154,6 +184,73 @@ def repo_has_magma_log(repo: Path) -> bool:
                 except OSError:
                     continue
     return False
+
+
+def pkg_config_exists(package: str) -> bool:
+    if shutil.which("pkg-config") is None:
+        return False
+    proc = subprocess.run(
+        ["pkg-config", "--exists", package],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+    return proc.returncode == 0
+
+
+def first_glob_match(patterns: list[str]) -> str:
+    for pattern in patterns:
+        matches = sorted(glob.glob(pattern))
+        if matches:
+            return matches[0]
+    return ""
+
+
+def dependency_preflight_for_target(
+    target: str,
+    *,
+    pkg_exists=pkg_config_exists,
+    glob_match=first_glob_match,
+) -> dict[str, Any]:
+    requirements = TARGET_DEPENDENCY_REQUIREMENTS.get(target, [])
+    checks: list[dict[str, Any]] = []
+    apt_hints: set[str] = set()
+    missing = False
+    for requirement in requirements:
+        kind = requirement["kind"]
+        if kind == "pkg_config":
+            ok = bool(pkg_exists(requirement["name"]))
+            value = requirement["name"] if ok else ""
+        elif kind == "path_glob":
+            value = str(glob_match(requirement["patterns"]))
+            ok = bool(value)
+        else:
+            ok = True
+            value = ""
+        row = {
+            "id": requirement["id"],
+            "kind": kind,
+            "status": "ok" if ok else "missing",
+            "value": value,
+            "reason": requirement["reason"],
+            "apt_package_hints": requirement.get("apt_package_hints", []),
+        }
+        checks.append(row)
+        if not ok:
+            missing = True
+            apt_hints.update(requirement.get("apt_package_hints", []))
+    if not checks:
+        status = "not_required"
+    elif missing:
+        status = "missing"
+    else:
+        status = "ok"
+    return {
+        "status": status,
+        "target": target,
+        "checks": checks,
+        "apt_package_hints": sorted(apt_hints),
+    }
 
 
 def default_out_dir(target_id: str, target: str, program: str) -> Path:
@@ -331,6 +428,35 @@ if grep -q 'AFLGO_CONFIGURE_NATIVE' "$TARGET/build.sh"; then
   export AFLGO_CONFIGURE_LIBS="${{AFLGO_CONFIGURE_LIBS:-}}"
 fi
 
+if [ "$(basename "$TARGET")" = "poppler" ]; then
+  if [ -z "${{FORMTRIG_OPENJPEG_DIR:-}}" ]; then
+    for cfg in /usr/lib/*/openjpeg-*/OpenJPEGConfig.cmake \
+               /usr/lib/*/openjpeg-*/openjpeg-config.cmake \
+               /usr/local/lib/*/openjpeg-*/OpenJPEGConfig.cmake \
+               /usr/local/lib/openjpeg-*/OpenJPEGConfig.cmake \
+               /usr/share/openjpeg-*/OpenJPEGConfig.cmake; do
+      if [ -f "$cfg" ]; then
+        export FORMTRIG_OPENJPEG_DIR="$(dirname "$cfg")"
+        break
+      fi
+    done
+  fi
+  if [ -n "${{FORMTRIG_OPENJPEG_DIR:-}}" ]; then
+    python3 - "$TARGET/build.sh" "$FORMTRIG_OPENJPEG_DIR" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+build_sh = Path(sys.argv[1])
+openjpeg_dir = sys.argv[2]
+text = build_sh.read_text(encoding="utf-8")
+patched = re.sub(r"-DOpenJPEG_DIR=[^ \\\n]+", f"-DOpenJPEG_DIR={{openjpeg_dir}}", text)
+if patched != text:
+    build_sh.write_text(patched, encoding="utf-8")
+PY
+  fi
+fi
+
 export OUT="$OUT/afl"
 export LDFLAGS="$LDFLAGS -L$OUT"
 
@@ -416,6 +542,11 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
     executable = target_cwd / args.program
     args_template = args.args_template or parse_program_args(target / "configrc", args.program)
     target_cmd = f"{shlex.quote(str(executable))} {args_template}".strip()
+    dependency_preflight = (
+        {"status": "skipped", "target": args.target, "checks": [], "apt_package_hints": []}
+        if args.skip_dependency_preflight
+        else dependency_preflight_for_target(args.target)
+    )
 
     common_env = {
         "FUZZER": str(fuzzer),
@@ -591,6 +722,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
             "pass_cxx": args.pass_cxx,
             "llvm_config": args.llvm_config,
             "runtime_cc": args.runtime_cc,
+            "skip_dependency_preflight": args.skip_dependency_preflight,
         },
         "paths": {
             "out_dir": str(out_dir),
@@ -612,6 +744,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
             "target_cmd": target_cmd,
             "program_args": args_template,
         },
+        "dependency_preflight": dependency_preflight,
         "steps": steps,
         "post_build_steps": refresh_commands,
     }
@@ -655,6 +788,32 @@ def execute_plan(plan: dict[str, Any], *, cwd: Path) -> dict[str, Any]:
     out.mkdir(parents=True, exist_ok=True)
     shared.mkdir(parents=True, exist_ok=True)
     executed_steps: list[dict[str, Any]] = []
+    preflight = plan.get("dependency_preflight") or {}
+    if preflight.get("status") == "missing":
+        apt_hints = preflight.get("apt_package_hints") or []
+        plan["executed_steps"] = [
+            {
+                "name": "dependency_preflight",
+                "selected": True,
+                "status": "failed",
+                "exit_code": 2,
+                "log": "",
+                "failure_summary": {
+                    "apt_package_hints": apt_hints,
+                    "error_lines": [
+                        "missing native build dependencies for "
+                        f"{plan.get('target', '')}: {' '.join(apt_hints)}"
+                    ],
+                },
+            }
+        ]
+        plan["failure_summary"] = {
+            "failed_step": "dependency_preflight",
+            "apt_package_hints": apt_hints,
+            "error_lines": plan["executed_steps"][0]["failure_summary"]["error_lines"],
+        }
+        plan["status"] = "failed"
+        return plan
     failed = False
     for row in plan["steps"]:
         result = run_step(row, cwd=cwd, logs=logs)
@@ -700,9 +859,32 @@ def write_markdown(path: Path, plan: dict[str, Any]) -> None:
         f"Expected site map: `{plan['paths']['site_map']}`",
         f"Expected executable: `{plan['paths']['executable']}`",
         "",
-        "## Selected Steps",
+        "## Dependency Preflight",
         "",
     ]
+    preflight = plan.get("dependency_preflight") or {}
+    lines.append(f"- `status`: `{preflight.get('status', 'unknown')}`")
+    if preflight.get("checks"):
+        for check in preflight["checks"]:
+            line = f"- `{check['id']}`: `{check['status']}`"
+            if check.get("value"):
+                line += f" value=`{check['value']}`"
+            if check.get("apt_package_hints") and check["status"] == "missing":
+                line += " apt=`" + " ".join(check["apt_package_hints"]) + "`"
+            lines.append(line)
+    if preflight.get("apt_package_hints"):
+        lines.append(
+            "- install hint: `sudo apt-get install -y "
+            + " ".join(preflight["apt_package_hints"])
+            + "`"
+        )
+    lines.extend(
+        [
+            "",
+            "## Selected Steps",
+            "",
+        ]
+    )
     for row in selected:
         lines.append(f"- `{row['name']}`: `{row['shell']}`")
     if not selected:
@@ -783,6 +965,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--force-fuzzer-build", action="store_true")
     parser.add_argument("--force-target-fetch", action="store_true")
     parser.add_argument("--force-patches", action="store_true")
+    parser.add_argument(
+        "--skip-dependency-preflight",
+        action="store_true",
+        help="Do not fail --execute early when known target build dependencies are missing.",
+    )
     parser.add_argument("--refresh-discovery", action="store_true")
     parser.add_argument("--execute", action="store_true", help="Run selected steps; default is dry-run planning")
     return parser.parse_args(argv)
