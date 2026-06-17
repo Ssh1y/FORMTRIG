@@ -1,8 +1,8 @@
 {
   "dependency_preflight": {
     "apt_package_hints": [
-      "libcairo2-dev",
-      "libopenjp2-7-dev"
+      "liblcms2-dev",
+      "libtiff-dev"
     ],
     "checks": [
       {
@@ -12,8 +12,8 @@
         "id": "poppler_cairo_pkg_config",
         "kind": "pkg_config",
         "reason": "Poppler build enables Cairo support through pkg-config.",
-        "status": "missing",
-        "value": ""
+        "status": "ok",
+        "value": "cairo"
       },
       {
         "apt_package_hints": [
@@ -22,6 +22,26 @@
         "id": "poppler_openjpeg_cmake_config",
         "kind": "path_glob",
         "reason": "Poppler build enables the OpenJPEG JPX decoder.",
+        "status": "ok",
+        "value": "/usr/lib/x86_64-linux-gnu/openjpeg-2.1/OpenJPEGConfig.cmake"
+      },
+      {
+        "apt_package_hints": [
+          "libtiff-dev"
+        ],
+        "id": "poppler_tiff_pkg_config",
+        "kind": "pkg_config",
+        "reason": "Poppler's selected utility build compiles TIFF writer support.",
+        "status": "missing",
+        "value": ""
+      },
+      {
+        "apt_package_hints": [
+          "liblcms2-dev"
+        ],
+        "id": "poppler_lcms_pkg_config",
+        "kind": "pkg_config",
+        "reason": "Poppler's selected utility build links Little CMS support.",
         "status": "missing",
         "value": ""
       }
@@ -34,11 +54,11 @@
       "exit_code": 2,
       "failure_summary": {
         "apt_package_hints": [
-          "libcairo2-dev",
-          "libopenjp2-7-dev"
+          "liblcms2-dev",
+          "libtiff-dev"
         ],
         "error_lines": [
-          "missing native build dependencies for poppler: libcairo2-dev libopenjp2-7-dev"
+          "missing native build dependencies for poppler: liblcms2-dev libtiff-dev"
         ]
       },
       "log": "",
@@ -56,15 +76,16 @@
   },
   "failure_summary": {
     "apt_package_hints": [
-      "libcairo2-dev",
-      "libopenjp2-7-dev"
+      "liblcms2-dev",
+      "libtiff-dev"
     ],
     "error_lines": [
-      "missing native build dependencies for poppler: libcairo2-dev libopenjp2-7-dev"
+      "missing native build dependencies for poppler: liblcms2-dev libtiff-dev"
     ],
     "failed_step": "dependency_preflight"
   },
-  "generated_at_utc": "2026-06-17T12:27:24+00:00",
+  "generated_at_utc": "2026-06-17T17:49:44+00:00",
+  "host_compatibility_patches": [],
   "inputs": {
     "afl_cc": "/usr/bin/clang-15",
     "afl_cxx": "/usr/bin/clang++-15",
@@ -79,8 +100,8 @@
     "run_preinstall": false,
     "runtime_cc": "/usr/bin/clang-15",
     "skip_dependency_preflight": false,
-    "skip_fuzzer_build": false,
-    "skip_fuzzer_fetch": false,
+    "skip_fuzzer_build": true,
+    "skip_fuzzer_fetch": true,
     "skip_patches": true,
     "skip_target_fetch": true
   },

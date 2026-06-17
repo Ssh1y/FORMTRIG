@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-17T16:02:04+00:00",
+  "generated_at_utc": "2026-06-17T17:59:42+00:00",
   "schema": "formtrig_magma_binding_validation_assets_template_v1",
   "source_worklist": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
   "targets": {
@@ -67,7 +67,7 @@
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL011.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_OPENSSL_PKCS7_DECODE_BINARY -",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl/pkcs7_decode -",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL011",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL011.native_draft_magma_canary.validation.json"
     },
@@ -85,7 +85,7 @@
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_OPENSSL_ASN1_BINARY @@",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1 @@",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL015",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_draft_magma_canary.validation.json"
     },
@@ -102,7 +102,7 @@
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_TIF012.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_LIBTIFF_TIFF_READ_RGBA_FUZZER_BINARY @@",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl/tiff_read_rgba_fuzzer @@",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_TIF012",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/TIF012.native_draft_magma_canary.validation.json"
     }

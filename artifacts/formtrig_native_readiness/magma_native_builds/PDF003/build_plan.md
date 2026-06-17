@@ -4,7 +4,7 @@ This is a build/readiness artifact, not endpoint performance evidence.
 A successful build should be followed by native asset discovery and a
 BindingSpec validation sweep before any long-run benefit claim.
 
-Generated: `2026-06-17T12:27:24+00:00`
+Generated: `2026-06-17T17:49:44+00:00`
 Mode: `execute`
 Target: `PDF003` / `pdfimages`
 Instrumentation entry: `runner`
@@ -14,9 +14,11 @@ Expected executable: `/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/mag
 ## Dependency Preflight
 
 - `status`: `missing`
-- `poppler_cairo_pkg_config`: `missing` apt=`libcairo2-dev`
-- `poppler_openjpeg_cmake_config`: `missing` apt=`libopenjp2-7-dev`
-- install hint: `sudo apt-get install -y libcairo2-dev libopenjp2-7-dev`
+- `poppler_cairo_pkg_config`: `ok` value=`cairo`
+- `poppler_openjpeg_cmake_config`: `ok` value=`/usr/lib/x86_64-linux-gnu/openjpeg-2.1/OpenJPEGConfig.cmake`
+- `poppler_tiff_pkg_config`: `missing` apt=`libtiff-dev`
+- `poppler_lcms_pkg_config`: `missing` apt=`liblcms2-dev`
+- install hint: `sudo apt-get install -y liblcms2-dev libtiff-dev`
 
 ## Selected Steps
 
@@ -37,6 +39,6 @@ Expected executable: `/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/mag
 ## Failure Summary
 
 - `failed_step`: `dependency_preflight`
-- `apt_package_hints`: `libcairo2-dev libopenjp2-7-dev`
+- `apt_package_hints`: `liblcms2-dev libtiff-dev`
 - recent error lines:
-  - `missing native build dependencies for poppler: libcairo2-dev libopenjp2-7-dev`
+  - `missing native build dependencies for poppler: liblcms2-dev libtiff-dev`

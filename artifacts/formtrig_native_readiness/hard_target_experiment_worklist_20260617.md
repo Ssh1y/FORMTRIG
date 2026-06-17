@@ -2,7 +2,7 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-17T17:35:04+00:00`
+Generated: `2026-06-17T17:52:32+00:00`
 Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `7`; low-priority skipped: `93`.
 
 ## Budget Order
@@ -52,16 +52,16 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Blocking issue:
 - BindingSpec candidate is not native-site-map validated
 - no comparison package exists yet
-- native build dependencies missing: libcairo2-dev libopenjp2-7-dev
-- poppler_cairo_pkg_config apt=libcairo2-dev
-- poppler_openjpeg_cmake_config apt=libopenjp2-7-dev
+- native build dependencies missing: liblcms2-dev libtiff-dev
+- poppler_tiff_pkg_config apt=libtiff-dev
+- poppler_lcms_pkg_config apt=liblcms2-dev
 - Mechanism evidence required after benefit:
 - native site-map validation
 - lift audit pass
 - binding-signal diagnosis pass
 - seed readiness with reached non-trigger seeds
 - Post-unblock commands or steps:
-- sudo apt-get install -y libcairo2-dev libopenjp2-7-dev
+- sudo apt-get install -y liblcms2-dev libtiff-dev
 - scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4
 - scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail
 - Evidence paths:

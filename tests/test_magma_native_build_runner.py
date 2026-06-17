@@ -189,6 +189,8 @@ chmod +x "$OUT/afl/$PROGRAM"
                     [
                         "/usr/bin/ld: cannot find -ljpeg: No such file or directory",
                         "/usr/bin/ld: cannot find -llzma: No such file or directory",
+                        "/usr/bin/ld: cannot find -ltiff: No such file or directory",
+                        "/usr/bin/ld: cannot find -llcms2: No such file or directory",
                         "/usr/bin/ld: cannot find /usr/local/lib/clang/11.0.0/lib/linux/libclang_rt.ubsan_standalone-x86_64.a",
                         "clang: error: linker command failed with exit code 1",
                     ]
@@ -198,9 +200,11 @@ chmod +x "$OUT/afl/$PROGRAM"
 
             summary = runner.summarize_failure_log(log)
 
-            self.assertEqual(summary["missing_link_libraries"], ["jpeg", "lzma"])
+            self.assertEqual(summary["missing_link_libraries"], ["jpeg", "lcms2", "lzma", "tiff"])
             self.assertIn("libjpeg-dev", summary["apt_package_hints"])
+            self.assertIn("liblcms2-dev", summary["apt_package_hints"])
             self.assertIn("liblzma-dev", summary["apt_package_hints"])
+            self.assertIn("libtiff-dev", summary["apt_package_hints"])
             self.assertIn("libclang-rt-11-dev", summary["apt_package_hints"])
             self.assertIn("clang: error: linker command failed with exit code 1", summary["error_lines"])
             self.assertIn("clang: error: linker command failed with exit code 1", summary["tail_lines"])
@@ -217,10 +221,31 @@ chmod +x "$OUT/afl/$PROGRAM"
         self.assertEqual(summary["status"], "missing")
         self.assertIn("libcairo2-dev", summary["apt_package_hints"])
         self.assertIn("libopenjp2-7-dev", summary["apt_package_hints"])
+        self.assertIn("libtiff-dev", summary["apt_package_hints"])
+        self.assertIn("liblcms2-dev", summary["apt_package_hints"])
         self.assertEqual(
             [row["status"] for row in summary["checks"]],
-            ["missing", "missing"],
+            ["missing", "missing", "missing", "missing"],
         )
+
+    def test_poppler_openjpeg_patch_preserves_or_repairs_shell_quote(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+
+        fixed = runner.patch_poppler_openjpeg_dir_text(
+            '    EXTRA="$EXTRA -DOpenJPEG_DIR=/old/path"\n',
+            "/usr/lib/x86_64-linux-gnu/openjpeg-2.1",
+        )
+        repaired = runner.patch_poppler_openjpeg_dir_text(
+            '    EXTRA="$EXTRA -DOpenJPEG_DIR=/old/path\n',
+            "/usr/lib/x86_64-linux-gnu/openjpeg-2.1",
+        )
+
+        expected = (
+            '    EXTRA="$EXTRA '
+            '-DOpenJPEG_DIR=/usr/lib/x86_64-linux-gnu/openjpeg-2.1"\n'
+        )
+        self.assertEqual(fixed, expected)
+        self.assertEqual(repaired, expected)
 
     def test_dependency_preflight_reports_php_build_tools(self):
         runner = load_tool("build_magma_formtrig_native_assets")

@@ -33,6 +33,23 @@ DEFAULT_SEARCH_ROOTS = [
     Path("experiments/magma_workspace"),
 ]
 
+DEFAULT_MAX_FILES = 500000
+
+SKIPPED_SCAN_DIRS = {
+    ".git",
+    ".synced",
+    "__pycache__",
+    ".batch_results",
+    ".state",
+    "crashes",
+    "default",
+    "hangs",
+    "plot_data",
+    "queue",
+    "raw",
+    "formtrig_stats_monitor",
+}
+
 
 def read_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as handle:
@@ -127,7 +144,7 @@ def walk_files(roots: list[Path], *, max_files: int) -> list[Path]:
                 dirnames[:] = [
                     dirname
                     for dirname in dirnames
-                    if dirname not in {".git", "__pycache__", "crashes", "hangs", ".synced"}
+                    if dirname not in SKIPPED_SCAN_DIRS
                 ]
                 for filename in filenames:
                     candidates.append(Path(dirpath) / filename)
@@ -354,6 +371,12 @@ def category_for_runner(category: str) -> str:
     return "generic"
 
 
+def runner_category_for(draft_category: str, manifest_category: str) -> str:
+    if draft_category:
+        return category_for_runner(draft_category)
+    return manifest_category or "generic"
+
+
 def build_discovery(
     *,
     drafts_path: Path,
@@ -375,6 +398,7 @@ def build_discovery(
     for draft in drafts.get("drafts", []):
         target_id = str(draft.get("target_id") or "")
         program = str(draft.get("program") or "")
+        draft_category = str(draft.get("category") or "")
         spec = Path(str(draft.get("binding_spec") or ""))
         manifest_template = Path(str(draft.get("manifest_template") or ""))
         manifest = manifest_values(manifest_template)
@@ -414,8 +438,8 @@ def build_discovery(
             "site_map": best_site["path"] if best_site else f"TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_{target_id}.tsv",
             "target_cwd": stable_path(best_exe.parent) if best_exe else f"TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_{target_id}",
             "target_cmd": target_command(best_exe, args_template) if best_exe else manifest.get("target_cmd", ""),
-            "category": str(draft.get("category") or "generic"),
-            "runner_category": manifest.get("category", "") or category_for_runner(str(draft.get("category") or "")),
+            "category": draft_category or "generic",
+            "runner_category": runner_category_for(draft_category, manifest.get("category", "")),
             "duration_s": 600,
             "seed_preflight_max": 32,
             "seed_preflight_timeout": 5,
@@ -500,7 +524,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--drafts", type=Path, default=DEFAULT_DRAFTS)
     parser.add_argument("--rnt-status", type=Path, default=DEFAULT_RNT_STATUS)
     parser.add_argument("--search-root", type=Path, action="append", default=[])
-    parser.add_argument("--max-files", type=int, default=200000)
+    parser.add_argument("--max-files", type=int, default=DEFAULT_MAX_FILES)
     parser.add_argument("--out-assets", type=Path, default=DEFAULT_ASSETS)
     parser.add_argument("--out-json", type=Path, default=DEFAULT_REPORT_JSON)
     parser.add_argument("--out-md", type=Path, default=DEFAULT_REPORT_MD)

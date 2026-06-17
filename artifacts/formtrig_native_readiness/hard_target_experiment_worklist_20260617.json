@@ -8,7 +8,7 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-17T17:35:04+00:00",
+  "generated_at_utc": "2026-06-17T17:52:32+00:00",
   "inputs": {
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -948,9 +948,9 @@
       "blocking_issue": [
         "BindingSpec candidate is not native-site-map validated",
         "no comparison package exists yet",
-        "native build dependencies missing: libcairo2-dev libopenjp2-7-dev",
-        "poppler_cairo_pkg_config apt=libcairo2-dev",
-        "poppler_openjpeg_cmake_config apt=libopenjp2-7-dev"
+        "native build dependencies missing: liblcms2-dev libtiff-dev",
+        "poppler_tiff_pkg_config apt=libtiff-dev",
+        "poppler_lcms_pkg_config apt=liblcms2-dev"
       ],
       "category": "binary-state-null+compound-sequence-lifecycle",
       "claim_boundary": "Validation is a gate, not an efficacy result.",
@@ -970,7 +970,7 @@
         "seed readiness with reached non-trigger seeds"
       ],
       "post_unblock_commands": [
-        "sudo apt-get install -y libcairo2-dev libopenjp2-7-dev",
+        "sudo apt-get install -y liblcms2-dev libtiff-dev",
         "scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4",
         "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail"
       ],

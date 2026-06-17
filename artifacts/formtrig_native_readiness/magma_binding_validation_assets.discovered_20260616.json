@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-17T15:30:50+00:00",
+  "generated_at_utc": "2026-06-17T17:59:34+00:00",
   "schema": "formtrig_magma_binding_validation_assets_discovered_v1",
   "source_discovery": "artifacts/formtrig_native_readiness/magma_native_asset_discovery_20260616.json",
   "targets": {
@@ -57,19 +57,16 @@
     "SSL011": {
       "binding_spec": "artifacts/binding_specs/SSL011.native_draft_magma_canary.yml",
       "category": "binary-state-null",
-      "discovery_blockers": [
-        "no site_map.tsv matched the BindingSpec source selectors",
-        "no executable found for program pkcs7_decode"
-      ],
-      "discovery_status": "blocked",
+      "discovery_blockers": [],
+      "discovery_status": "runnable_candidate",
       "duration_s": 600,
       "runner_category": "binary-null",
       "seed_dir": "artifacts/rnt_corpus/SSL011/seeds",
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL011.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_OPENSSL_PKCS7_DECODE_BINARY -",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL011",
+      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/formtrig_native/formtrig_sites.tsv",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl/pkcs7_decode -",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL011.native_draft_magma_canary.validation.json"
     },
     "SSL015": {
@@ -77,8 +74,7 @@
       "category": "binary-state-null",
       "discovery_blockers": [
         "formal RNT seed corpus is not ready: excluded",
-        "no site_map.tsv matched the BindingSpec source selectors",
-        "no executable found for program asn1"
+        "no site_map.tsv matched the BindingSpec source selectors"
       ],
       "discovery_status": "blocked",
       "duration_s": 600,
@@ -87,26 +83,23 @@
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_OPENSSL_ASN1_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL015",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1 @@",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_draft_magma_canary.validation.json"
     },
     "TIF012": {
       "binding_spec": "artifacts/binding_specs/TIF012.native_draft_magma_canary.yml",
       "category": "binary-state-null",
-      "discovery_blockers": [
-        "no site_map.tsv matched the BindingSpec source selectors",
-        "no executable found for program tiff_read_rgba_fuzzer"
-      ],
-      "discovery_status": "blocked",
+      "discovery_blockers": [],
+      "discovery_status": "runnable_candidate",
       "duration_s": 600,
       "runner_category": "binary-null",
       "seed_dir": "artifacts/rnt_corpus/TIF012/seeds",
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_TIF012.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_LIBTIFF_TIFF_READ_RGBA_FUZZER_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_TIF012",
+      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/formtrig_native/formtrig_sites.tsv",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl/tiff_read_rgba_fuzzer @@",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/TIF012.native_draft_magma_canary.validation.json"
     }
   }

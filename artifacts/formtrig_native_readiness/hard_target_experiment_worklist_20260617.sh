@@ -6,8 +6,8 @@ set -euo pipefail
 
 # P1 PDF003 validate_binding_spec_then_short_screen
 # benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
-# blocked: BindingSpec candidate is not native-site-map validated; no comparison package exists yet; native build dependencies missing: libcairo2-dev libopenjp2-7-dev; poppler_cairo_pkg_config apt=libcairo2-dev; poppler_openjpeg_cmake_config apt=libopenjp2-7-dev
-# post-unblock: sudo apt-get install -y libcairo2-dev libopenjp2-7-dev
+# blocked: BindingSpec candidate is not native-site-map validated; no comparison package exists yet; native build dependencies missing: liblcms2-dev libtiff-dev; poppler_tiff_pkg_config apt=libtiff-dev; poppler_lcms_pkg_config apt=liblcms2-dev
+# post-unblock: sudo apt-get install -y liblcms2-dev libtiff-dev
 # post-unblock: scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4
 # post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail
 

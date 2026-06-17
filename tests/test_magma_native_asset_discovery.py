@@ -434,6 +434,106 @@ class MagmaNativeAssetDiscoveryTest(unittest.TestCase):
             self.assertEqual(target["site_map"], str(site_map))
             self.assertEqual(target["target_cmd"], f"{executable} @@")
 
+    def test_draft_category_takes_precedence_over_stale_manifest_category(self):
+        discovery = load_tool("discover_magma_native_assets")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = root / "PHP009.yml"
+            manifest = root / "PHP009.manifest.template"
+            seed_dir = root / "rnt" / "PHP009" / "seeds"
+            build_dir = root / "native-build"
+            site_map = build_dir / "formtrig_sites.tsv"
+            target_dir = build_dir / "out"
+            executable = target_dir / "exif"
+
+            seed_dir.mkdir(parents=True)
+            target_dir.mkdir(parents=True)
+            executable.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            os.chmod(executable, 0o755)
+            site_map.write_text(
+                "101\tcmp\texif_process_IFD_in_TIFF\t7\ticmp\text/exif/exif.c\t123\t5\n",
+                encoding="utf-8",
+            )
+            spec.write_text(
+                "\n".join(
+                    [
+                        "tc_id: PHP009",
+                        "conditions:",
+                        "  - id: margin",
+                        "    observe_at:",
+                        "      kind: cmp",
+                        "      function: exif_process_IFD_in_TIFF",
+                        "      file: ext/exif/exif.c",
+                        "      line: 123",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            manifest.write_text(
+                "\n".join(
+                    [
+                        "target_id: PHP009",
+                        "category: lifecycle",
+                        f"seed_dir: {seed_dir}",
+                        f"binding_spec: {spec}",
+                        "site_map: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv",
+                        "target_cwd: TODO_FORMTRIG_NATIVE_TARGET_CWD",
+                        "target_cmd: TODO_FORMTRIG_MAGMA_PHP_EXIF_BINARY @@",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            drafts = root / "drafts.json"
+            drafts.write_text(
+                json.dumps(
+                    {
+                        "drafts": [
+                            {
+                                "target_id": "PHP009",
+                                "project": "php",
+                                "program": "exif",
+                                "category": "numeric-margin",
+                                "binding_spec": str(spec),
+                                "manifest_template": str(manifest),
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            rnt_status = root / "rnt_status.json"
+            rnt_status.write_text(
+                json.dumps(
+                    {
+                        "records": [
+                            {
+                                "target_id": "PHP009",
+                                "program": "exif",
+                                "status": "formal_ready",
+                                "seed_dir_exists": "true",
+                                "seed_dir": str(seed_dir),
+                                "seed_files": "3",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            _report, assets = discovery.build_discovery(
+                drafts_path=drafts,
+                rnt_status_path=rnt_status,
+                search_roots=[root],
+                max_files=100,
+            )
+
+            self.assertEqual(assets["targets"]["PHP009"]["category"], "numeric-margin")
+            self.assertEqual(assets["targets"]["PHP009"]["runner_category"], "numeric")
+
     def test_keeps_todo_assets_when_rnt_site_map_or_executable_is_missing(self):
         discovery = load_tool("discover_magma_native_assets")
         with tempfile.TemporaryDirectory() as tmp:

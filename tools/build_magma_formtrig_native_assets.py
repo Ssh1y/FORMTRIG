@@ -53,6 +53,20 @@ TARGET_DEPENDENCY_REQUIREMENTS = {
             "apt_package_hints": ["libopenjp2-7-dev"],
             "reason": "Poppler build enables the OpenJPEG JPX decoder.",
         },
+        {
+            "id": "poppler_tiff_pkg_config",
+            "kind": "pkg_config",
+            "name": "libtiff-4",
+            "apt_package_hints": ["libtiff-dev"],
+            "reason": "Poppler's selected utility build compiles TIFF writer support.",
+        },
+        {
+            "id": "poppler_lcms_pkg_config",
+            "kind": "pkg_config",
+            "name": "lcms2",
+            "apt_package_hints": ["liblcms2-dev"],
+            "reason": "Poppler's selected utility build links Little CMS support.",
+        },
     ],
     "php": [
         {
@@ -223,6 +237,44 @@ if [ -f "$TARGET/src/pkcs7_decode.c" ]; then
         $LDFLAGS libcrypto.a $LIBS -ldl -pthread
 fi
 """
+
+
+POPPLER_OPENJPEG_PATCH_PY = r"""import re
+import sys
+from pathlib import Path
+
+
+def patch_poppler_openjpeg_dir(text, openjpeg_dir):
+    pattern = re.compile(
+        r'(?m)^(?P<prefix>\s*EXTRA="\$EXTRA\s+-DOpenJPEG_DIR=)'
+        r'(?P<value>[^"\n]*)(?P<quote>"?)$'
+    )
+
+    def replace(match):
+        return f"{match.group('prefix')}{openjpeg_dir}\""
+
+    return pattern.sub(replace, text)
+
+
+build_sh = Path(sys.argv[1])
+openjpeg_dir = sys.argv[2]
+text = build_sh.read_text(encoding="utf-8")
+patched = patch_poppler_openjpeg_dir(text, openjpeg_dir)
+if patched != text:
+    build_sh.write_text(patched, encoding="utf-8")
+"""
+
+
+def patch_poppler_openjpeg_dir_text(text: str, openjpeg_dir: str) -> str:
+    pattern = re.compile(
+        r'(?m)^(?P<prefix>\s*EXTRA="\$EXTRA\s+-DOpenJPEG_DIR=)'
+        r'(?P<value>[^"\n]*)(?P<quote>"?)$'
+    )
+
+    def replace(match: re.Match[str]) -> str:
+        return f"{match.group('prefix')}{openjpeg_dir}\""
+
+    return pattern.sub(replace, text)
 
 
 def shell_join(parts: list[str]) -> str:
@@ -401,6 +453,7 @@ def runner_instrument_script_text() -> str:
     canary = CANARY_HEADER.rstrip("\n")
     openssl_pkcs7_decode = OPENSSL_PKCS7_DECODE_FUZZER.rstrip("\n")
     openssl_pkcs7_build = OPENSSL_PKCS7_BUILD_FRAGMENT.rstrip("\n")
+    poppler_openjpeg_patch = POPPLER_OPENJPEG_PATCH_PY.rstrip("\n")
     return f"""#!/usr/bin/env bash
 set -euo pipefail
 
@@ -566,8 +619,8 @@ def expected_icu_operator_return():
     if header.exists():
         text = header.read_text(encoding="utf-8", errors="ignore")
         match = re.search(
-            r"virtual\s+(UBool|bool)\s+operator==\s*"
-            r"\(\s*const\s+BreakIterator\s*&[^)]*\)\s*const",
+            r"virtual\\s+(UBool|bool)\\s+operator==\\s*"
+            r"\\(\\s*const\\s+BreakIterator\\s*&[^)]*\\)\\s*const",
             text,
         )
         if match:
@@ -632,16 +685,7 @@ if [ "$(basename "$TARGET")" = "poppler" ]; then
   fi
   if [ -n "${{FORMTRIG_OPENJPEG_DIR:-}}" ]; then
     python3 - "$TARGET/build.sh" "$FORMTRIG_OPENJPEG_DIR" <<'PY'
-import re
-import sys
-from pathlib import Path
-
-build_sh = Path(sys.argv[1])
-openjpeg_dir = sys.argv[2]
-text = build_sh.read_text(encoding="utf-8")
-patched = re.sub(r"-DOpenJPEG_DIR=[^ \\\n]+", f"-DOpenJPEG_DIR={{openjpeg_dir}}", text)
-if patched != text:
-    build_sh.write_text(patched, encoding="utf-8")
+{poppler_openjpeg_patch}
 PY
   fi
 fi
@@ -685,7 +729,9 @@ LINK_LIBRARY_PACKAGE_HINTS = {
     "c++": ["libc++-dev"],
     "c++abi": ["libc++abi-dev"],
     "jpeg": ["libjpeg-dev"],
+    "lcms2": ["liblcms2-dev"],
     "lzma": ["liblzma-dev"],
+    "tiff": ["libtiff-dev"],
 }
 
 
