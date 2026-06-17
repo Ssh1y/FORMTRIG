@@ -931,3 +931,44 @@ no higher-priority regression
 ```text
 docs/formtrig_native_handoff_20260615.md
 ```
+
+---
+
+## 8. 2026-06-17 证据边界
+
+当前结果还不能宣称“已经充分体现 SOTA 工具的痛点”。
+
+已能支撑的说法是：
+
+```text
+TIF012:
+  FORMTRIG B5 在 7200s x3 matched run 中显著加速 first _T。
+  这是一条强 endpoint/TTE 证据，但还只是单 target。
+
+LIBARCHIVE_2936:
+  FORMTRIG 有速度和 hook attribution 收益。
+  但 faithful baseline 也能早触发，所以它不能作为主 SOTA-pain 证据。
+
+PDF003:
+  更适合作为 hard binary/lifecycle TC 的下一条验证线。
+  当前 blocker 是 native Poppler build 依赖，不是算法证据。
+```
+
+下一步主线不是修改论文定位，而是改善实验设计：
+
+```text
+1. 解锁 PDF003/SSL/PHP 等 hard Magma target 的 native site-map/executable。
+2. 先做 BindingSpec validation 和 non-trigger guidance gate。
+3. 再跑 same-budget faithful baselines: AFL++ vanilla, CmpLog, local Redqueen/operand。
+4. 只有当 baseline 出现低成功率、长 R2T tail 或高方差，而 FORMTRIG 改善 first _T / success rate / cost 时，才作为主 SOTA-pain 结果。
+```
+
+中间信号的角色保持不变：
+
+```text
+D_F / BindingSpec / dominance frontier / typed mutation
+  = 解释收益和归因的机制证据
+
+first _T / total _T / TTE / success rate / cost
+  = 和 SOTA 比较的性能证据
+```

@@ -277,7 +277,11 @@ prepare_args=(
   --cxx-compiler "$FUZZER/repo/afl-clang-fast++"
   --runtime-cc "${{FORMTRIG_RUNTIME_CC:-clang}}"
   --instrument-level "${{FORMTRIG_INSTRUMENT_LEVEL:-balanced}}"
+  --runtime-link-mode never
   --skip-pass-regex '(^|/)(magma/magma/src|magma/src)/'
+  --skip-pass-regex '(^|/)(magma/magma/formtrig/runtime|magma/formtrig/runtime)/'
+  --skip-pass-regex '(^|/)CMakeFiles/(CMakeScratch|CMakeTmp)/'
+  --skip-pass-regex '(^|/)freetype2/src/tools/'
   --env AFL_QUIET=1
   --force
 )
@@ -316,6 +320,16 @@ case "${{FORMTRIG_MAGMA_CXX_STDLIB:-libc++}}" in
     exit 2
     ;;
 esac
+
+if grep -q 'AFLGO_CONFIGURE_NATIVE' "$TARGET/build.sh"; then
+  export AFLGO_CONFIGURE_NATIVE="${{AFLGO_CONFIGURE_NATIVE:-1}}"
+  export AFLGO_CONFIGURE_CC="${{AFLGO_CONFIGURE_CC:-${{FORMTRIG_AFL_CC:-clang}}}}"
+  export AFLGO_CONFIGURE_CXX="${{AFLGO_CONFIGURE_CXX:-${{FORMTRIG_AFL_CXX:-clang++}}}}"
+  export AFLGO_CONFIGURE_CFLAGS="${{AFLGO_CONFIGURE_CFLAGS:-}}"
+  export AFLGO_CONFIGURE_CXXFLAGS="${{AFLGO_CONFIGURE_CXXFLAGS:-}}"
+  export AFLGO_CONFIGURE_LDFLAGS="${{AFLGO_CONFIGURE_LDFLAGS:-}}"
+  export AFLGO_CONFIGURE_LIBS="${{AFLGO_CONFIGURE_LIBS:-}}"
+fi
 
 export OUT="$OUT/afl"
 export LDFLAGS="$LDFLAGS -L$OUT"
