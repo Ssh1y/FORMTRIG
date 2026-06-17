@@ -40,6 +40,7 @@
       "recommended_design_actions": [
         "treat PDF003 as a hard R2T target rather than a positive FORMTRIG endpoint result",
         "repair the no-hot-range and dominated-frontier handoff before promoting FORMTRIG on PDF003",
+        "continue the R2T handoff repair because semantic frontier admission now moves but saved FORMTRIG-only progress is still zero",
         "rerun matched repetitions after the R2T repair"
       ]
     },
@@ -51,7 +52,9 @@
       "formtrig_has_no_accepted_non_trigger_progress",
       "typed_mutation_did_not_execute_before_fallback_repair",
       "fallback_repair_enables_typed_stage_in_120s_smoke",
-      "dominance_acceptance_remains_blocked"
+      "dominance_acceptance_remains_blocked",
+      "semantic_frontier_repair_accepts_calibration_transitions",
+      "saved_formtrig_progress_still_zero_after_semantic_repair"
     ],
     "verdict": "negative_formtrig_r2t_gap_with_sota_pain"
   },
@@ -103,6 +106,23 @@
     "typed_skips": 0,
     "typed_stage_reason": "fallback_no_hot_range"
   },
+  "followup_semantic_escape_smoke": {
+    "accepted_non_trigger_progress": 0,
+    "budget": 180,
+    "diagnosis": "no_new_non_dominated_progress",
+    "execs_done": 1361,
+    "frontier_updates": 3,
+    "limiting_reason": "dominance_rejected",
+    "purpose": "verify bounded BindingSpec semantic-state admission is not collapsed by coarse D_F dominance; not endpoint evidence",
+    "reached": 683,
+    "root_aligned_state_transition": 2,
+    "saved_non_trigger_progress": 0,
+    "spec_lifted": 206,
+    "terminal_count": 0,
+    "typed_execs": 128,
+    "typed_finds": 5,
+    "typed_skips": 0
+  },
   "evidence_paths": [
     "evidence/baseline_summary.tsv",
     "evidence/baseline_summary.json",
@@ -119,6 +139,12 @@
     "evidence/post_fallback_120s_formtrig_summary.json",
     "evidence/post_fallback_120s_formtrig_diagnosis.json",
     "evidence/post_fallback_120s_binding_signal_diagnosis.json",
-    "evidence/post_fallback_120s_typed_events.tsv"
+    "evidence/post_fallback_120s_typed_events.tsv",
+    "evidence/post_semantic_escape_180s_batch_summary.csv",
+    "evidence/post_semantic_escape_180s_fuzzer_stats.txt",
+    "evidence/post_semantic_escape_180s_formtrig_summary.json",
+    "evidence/post_semantic_escape_180s_formtrig_diagnosis.json",
+    "evidence/post_semantic_escape_180s_binding_signal_diagnosis.json",
+    "evidence/post_semantic_escape_180s_formtrig_progress.jsonl"
   ]
 }

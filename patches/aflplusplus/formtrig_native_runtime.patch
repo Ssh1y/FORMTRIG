@@ -2030,6 +2030,178 @@ index 48fd33e..dce7cba 100644
 +
 +}
 +
++static u8 formtrig_component_is_lifted_state(
++    const formtrig_progress_component_t *component) {
++
++  if (!formtrig_component_actionable(component)) { return 0; }
++  if (!(component->flags & FORMTRIG_COMPONENT_LIFTED)) { return 0; }
++  if (!(component->flags & FORMTRIG_COMPONENT_SPEC_LIFTED)) { return 0; }
++
++  switch (component->role) {
++
++    case FORMTRIG_ROLE_ROOT_OBSERVE:
++    case FORMTRIG_ROLE_GUARD:
++    case FORMTRIG_ROLE_PRODUCER:
++    case FORMTRIG_ROLE_DESIRED_PRODUCER:
++    case FORMTRIG_ROLE_OPPOSITE_PRODUCER:
++    case FORMTRIG_ROLE_USE:
++    case FORMTRIG_ROLE_LIFECYCLE_EVENT:
++    case FORMTRIG_ROLE_SAME_OBJECT:
++      return 1;
++    default:
++      return 0;
++
++  }
++
++}
++
++static u8 formtrig_lifted_state_differs(
++    const formtrig_queue_meta_t *candidate,
++    const formtrig_queue_meta_t *older) {
++
++  u32 count = formtrig_meta_component_count(candidate);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_progress_component_t *candidate_component =
++        &candidate->components[i];
++    if (!formtrig_component_is_lifted_state(candidate_component)) { continue; }
++
++    const formtrig_progress_component_t *older_component =
++        formtrig_find_component(older, candidate_component);
++    if (!older_component ||
++        !formtrig_component_is_lifted_state(older_component)) {
++
++      return 1;
++
++    }
++
++    if (fabs(candidate_component->value - older_component->value) > 1.0e-9) {
++
++      return 1;
++
++    }
++
++  }
++
++  return 0;
++
++}
++
++static const formtrig_atom_signal_t *formtrig_find_atom_signal(
++    const formtrig_queue_meta_t *m, u32 atom_id) {
++
++  if (!m || !atom_id) { return NULL; }
++  u32 count = formtrig_meta_atom_signal_count(m);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_atom_signal_t *signal = &m->atom_signals[i];
++    if (signal->atom_id == atom_id) { return signal; }
++
++  }
++
++  return NULL;
++
++}
++
++static u8 formtrig_atom_signal_state_differs(
++    const formtrig_queue_meta_t *candidate,
++    const formtrig_queue_meta_t *older) {
++
++  u32 count = formtrig_meta_atom_signal_count(candidate);
++  for (u32 i = 0; i < count; i++) {
++
++    const formtrig_atom_signal_t *candidate_signal = &candidate->atom_signals[i];
++    if (!candidate_signal->atom_id ||
++        !(candidate_signal->flags & FORMTRIG_ATOM_SIGNAL_OBSERVED)) {
++
++      continue;
++
++    }
++
++    const formtrig_atom_signal_t *older_signal =
++        formtrig_find_atom_signal(older, candidate_signal->atom_id);
++    if (!older_signal ||
++        !(older_signal->flags & FORMTRIG_ATOM_SIGNAL_OBSERVED)) {
++
++      return 1;
++
++    }
++
++    if (candidate_signal->role_bits != older_signal->role_bits ||
++        candidate_signal->lifecycle_prefix != older_signal->lifecycle_prefix ||
++        candidate_signal->root_value_bucket != older_signal->root_value_bucket ||
++        candidate_signal->object_id_bucket != older_signal->object_id_bucket ||
++        candidate_signal->guard_bits != older_signal->guard_bits ||
++        candidate_signal->producer_bits != older_signal->producer_bits ||
++        candidate_signal->use_bits != older_signal->use_bits) {
++
++      return 1;
++
++    }
++
++  }
++
++  return 0;
++
++}
++
++static u8 formtrig_equal_or_better_df(const formtrig_queue_meta_t *candidate,
++                                      const formtrig_queue_meta_t *older) {
++
++  double candidate_df = formtrig_meta_df(candidate);
++  double older_df = formtrig_meta_df(older);
++  if (!formtrig_finite(candidate_df) || !formtrig_finite(older_df)) {
++
++    return 0;
++
++  }
++
++  return candidate_df <= older_df + 1.0e-9;
++
++}
++
++static u8 formtrig_within_semantic_df_slack(
++    const formtrig_queue_meta_t *candidate,
++    const formtrig_queue_meta_t *older) {
++
++  double candidate_df = formtrig_meta_df(candidate);
++  double older_df = formtrig_meta_df(older);
++  if (!formtrig_finite(candidate_df) || !formtrig_finite(older_df)) {
++
++    return 0;
++
++  }
++
++  double slack = (double)formtrig_env_u64("FORMTRIG_SEMANTIC_DF_SLACK", 2);
++  if (slack < 0.0) { slack = 0.0; }
++  return candidate_df <= older_df + slack + 1.0e-9;
++
++}
++
++static u8 formtrig_semantic_alternative_state(
++    const formtrig_queue_meta_t *candidate,
++    const formtrig_queue_meta_t *older) {
++
++  if (!candidate || !older || !candidate->lifted) { return 0; }
++  if (!(candidate->observed_source_flags & FORMTRIG_SOURCE_SPEC_LIFTED) &&
++      !(candidate->source_flags & FORMTRIG_SOURCE_SPEC_LIFTED)) {
++
++    return 0;
++
++  }
++
++  if (formtrig_equal_or_better_df(candidate, older)) {
++
++    return formtrig_lifted_state_differs(candidate, older) ||
++           formtrig_atom_signal_state_differs(candidate, older);
++
++  }
++
++  if (!formtrig_within_semantic_df_slack(candidate, older)) { return 0; }
++  return formtrig_atom_signal_state_differs(candidate, older);
++
++}
++
 +static u8 formtrig_vector_covers(const formtrig_queue_meta_t *older,
 +                                 const formtrig_queue_meta_t *candidate) {
 +
@@ -2055,6 +2227,13 @@ index 48fd33e..dce7cba 100644
 +      return 0;
 +
 +    }
++
++  }
++
++  if (saw_candidate_component &&
++      formtrig_semantic_alternative_state(candidate, older)) {
++
++    return 0;
 +
 +  }
 +

@@ -64,6 +64,26 @@ This confirms the first repair step:
 
 It does not yet confirm R2T success. The remaining blocker is dominance/acceptance: 161 candidates were still rejected as `dominated_by_existing_frontier`, and accepted non-trigger progress remained zero.
 
+## Semantic Frontier Repair Smoke
+
+The next repair changed frontier admission so a BindingSpec-generated semantic state transition is not collapsed solely because a coarse lifted `D_F=1` frontier entry already exists. The main frontier still prefers non-regressing candidates, but a bounded semantic escape can keep a different atom role/producer/use state for follow-up mutation.
+
+This follow-up smoke was also short (`180s`) and is not endpoint evidence:
+
+| run | budget | execs | reached | `_T` | typed execs | typed finds | frontier updates | semantic transition accepts | saved non-trigger | diagnosis |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| FORMTRIG semantic escape smoke | 180 | 1361 | 683 | 0 | 128 | 5 | 3 | 2 | 0 | `no_new_non_dominated_progress` |
+
+This confirms a second repair step:
+- before semantic repair: changed lifted states were still rejected as `dominated_by_existing_frontier`
+- after semantic repair: two `root_aligned_state_transition` candidates entered the calibration frontier, and `formtrig_frontier_updates` increased to 3
+
+It still does not confirm R2T success. In this 180s run, the semantic transitions came from calibration/frontier maintenance and no FORMTRIG-only non-trigger seed was saved:
+- `saved_non_trigger_progress=0`
+- `queued_progress=0`
+- `formtrig_triggered_execs=0`
+- `limiting_reason=dominance_rejected`
+
 ## Interpretation
 
 This run is useful because it separates two questions:
@@ -84,3 +104,4 @@ The next engineering action is not to weaken the paper claim. It is to repair th
 - `evidence/formtrig_binding_signal_diagnosis.json`
 - `evidence/formtrig_final.stats`
 - `evidence/post_fallback_120s_*`
+- `evidence/post_semantic_escape_180s_*`
