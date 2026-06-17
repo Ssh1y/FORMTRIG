@@ -58,6 +58,8 @@ outputs:
   OUT/run_plan.jsonl
   OUT/formtrig/
   OUT/baselines/
+  OUT/schedule_audit.json
+  OUT/schedule_audit.md
   OUT/live_status.json
   OUT/live_status.md
   OUT/formtrig_signal_path.json
@@ -408,6 +410,7 @@ require_path "$inventory"
 require_path "$repo_root/scripts/run_formtrig_manifest_batch.sh"
 require_path "$repo_root/scripts/run_magma_baselines.sh"
 require_path "$repo_root/scripts/formtrig_experiment_gate.sh"
+require_path "$repo_root/tools/audit_magma_matched_schedule.py"
 require_path "$repo_root/tools/live_magma_matched_status.py"
 require_path "$repo_root/tools/analyze_formtrig_signal_path.py"
 require_path "$repo_root/tools/analyze_baseline_guidance_gap.py"
@@ -439,6 +442,12 @@ if [[ "${#baseline_afl_args[@]}" -eq 0 ]]; then
 fi
 
 write_metadata
+python3 "$repo_root/tools/audit_magma_matched_schedule.py" \
+  --run-root "$out_dir" \
+  --format md \
+  --out-json "$out_dir/schedule_audit.json" \
+  --out-md "$out_dir/schedule_audit.md" \
+  > "$out_dir/logs/schedule_audit.log" 2>&1 || true
 
 FORMTRIG_CMD=(
   "$repo_root/scripts/run_formtrig_manifest_batch.sh"

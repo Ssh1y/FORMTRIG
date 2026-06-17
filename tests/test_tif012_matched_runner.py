@@ -78,6 +78,9 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             self.assertEqual(metadata["baseline_count"], 3)
             self.assertEqual(metadata["baseline_run_count"], 6)
             self.assertEqual(metadata["baseline_batches"], 1)
+            schedule = json.loads((out_dir / "schedule_audit.json").read_text(encoding="utf-8"))
+            self.assertEqual(schedule["verdict"], "single_batch_baseline_schedule")
+            self.assertTrue((out_dir / "schedule_audit.md").exists())
             plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
             self.assertIn("run_formtrig_manifest_batch.sh", plan)
             self.assertIn("run_magma_baselines.sh", plan)
@@ -146,6 +149,9 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             self.assertEqual(metadata["baseline_count"], 3)
             self.assertEqual(metadata["baseline_run_count"], 6)
             self.assertEqual(metadata["baseline_batches"], 1)
+            schedule = json.loads((out_dir / "schedule_audit.json").read_text(encoding="utf-8"))
+            self.assertEqual(schedule["verdict"], "single_batch_baseline_schedule")
+            self.assertTrue((out_dir / "schedule_audit.md").exists())
 
             manifest_list = out_dir / "formtrig_manifest_list.txt"
             self.assertEqual(

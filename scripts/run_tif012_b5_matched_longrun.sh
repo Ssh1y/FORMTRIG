@@ -49,6 +49,8 @@ outputs:
   OUT/run_plan.jsonl
   OUT/formtrig/
   OUT/baselines/
+  OUT/schedule_audit.json
+  OUT/schedule_audit.md
   OUT/formtrig_gate/gate_summary.csv
   OUT/comparison/comparison.json
 EOF
@@ -302,6 +304,7 @@ require_path "$inventory"
 require_path "$repo_root/scripts/run_formtrig_manifest_batch.sh"
 require_path "$repo_root/scripts/run_magma_baselines.sh"
 require_path "$repo_root/scripts/formtrig_experiment_gate.sh"
+require_path "$repo_root/tools/audit_magma_matched_schedule.py"
 require_path "$repo_root/tools/compare_formtrig_baselines.py"
 if [[ "$mode" == "execute" ]]; then
   require_path "$magma_dir/tools/captain/build.sh"
@@ -320,6 +323,13 @@ else
 fi
 
 write_metadata
+mkdir -p "$out_dir/logs"
+python3 "$repo_root/tools/audit_magma_matched_schedule.py" \
+  --run-root "$out_dir" \
+  --format md \
+  --out-json "$out_dir/schedule_audit.json" \
+  --out-md "$out_dir/schedule_audit.md" \
+  > "$out_dir/logs/schedule_audit.log" 2>&1 || true
 
 FORMTRIG_CMD=(
   "$repo_root/scripts/run_formtrig_manifest_batch.sh"

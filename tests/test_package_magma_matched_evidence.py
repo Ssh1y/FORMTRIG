@@ -27,6 +27,11 @@ class PackageMagmaMatchedEvidenceTest(unittest.TestCase):
                 encoding="utf-8",
             )
             (run_root / "formtrig_signal_path.md").write_text("# path\n", encoding="utf-8")
+            (run_root / "schedule_audit.json").write_text(
+                '{"verdict":"single_batch_baseline_schedule"}\n',
+                encoding="utf-8",
+            )
+            (run_root / "schedule_audit.md").write_text("# schedule\n", encoding="utf-8")
 
             (baseline_dir / "runs" / "aflplusplus_vanilla_60s_rep1").mkdir(parents=True)
             (baseline_dir / "summary.json").write_text('{"records":[]}\n', encoding="utf-8")
@@ -126,11 +131,14 @@ class PackageMagmaMatchedEvidenceTest(unittest.TestCase):
             self.assertTrue(
                 (evidence / "formtrig_signal_path" / "formtrig_signal_path.md").exists()
             )
+            self.assertTrue((evidence / "schedule_audit" / "schedule_audit.json").exists())
+            self.assertTrue((evidence / "schedule_audit" / "schedule_audit.md").exists())
             index = (evidence / "EVIDENCE.md").read_text(encoding="utf-8")
             self.assertIn("hard_endpoint_gap_candidate", index)
             self.assertIn("FORMTRIG reaches _T", index)
             self.assertIn("live_status/", index)
             self.assertIn("formtrig_signal_path/", index)
+            self.assertIn("schedule_audit/", index)
 
 
 if __name__ == "__main__":

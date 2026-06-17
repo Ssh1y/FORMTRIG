@@ -113,6 +113,17 @@ def copy_signal_path(
         copy_if_exists(run_root / name, out / name, copied, missing)
 
 
+def copy_schedule_audit(
+    run_root: Path,
+    evidence_dir: Path,
+    copied: list[str],
+    missing: list[str],
+) -> None:
+    out = evidence_dir / "schedule_audit"
+    for name in ("schedule_audit.json", "schedule_audit.md"):
+        copy_if_exists(run_root / name, out / name, copied, missing)
+
+
 def comparison_summary(comparison_dir: Path) -> dict[str, Any]:
     path = comparison_dir / "comparison.json"
     if not path.exists():
@@ -189,6 +200,7 @@ def write_index(
             "- `guidance_gap/`: baseline no-guidance analysis and per-run table.",
             "- `live_status/`: non-final live snapshot of FORMTRIG and baseline `_R/_T` state.",
             "- `formtrig_signal_path/`: strict path audit for calibrated frontier, typed-stage attribution, saved non-`_T`, and saved `_T` progress.",
+            "- `schedule_audit/`: baseline run-count, concurrency, and batch scheduling audit.",
             "",
             "## Packaging Status",
             "",
@@ -233,6 +245,7 @@ def main() -> int:
     copy_guidance_gap(args.guidance_dir, evidence_dir, copied, missing)
     copy_live_status(args.run_root, evidence_dir, copied, missing)
     copy_signal_path(args.run_root, evidence_dir, copied, missing)
+    copy_schedule_audit(args.run_root, evidence_dir, copied, missing)
     write_index(
         evidence_dir / "EVIDENCE.md",
         summary=comparison_summary(args.comparison_dir),
