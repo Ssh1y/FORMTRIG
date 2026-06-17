@@ -161,7 +161,12 @@ def binding_validation_terminal_only_record(record: dict[str, Any]) -> bool:
         benefit = {}
     checks = record.get("checks") if isinstance(record.get("checks"), dict) else {}
     return (
-        status in {"terminal_only", "terminal_only_no_pretrigger_guidance"}
+        status
+        in {
+            "terminal_only",
+            "terminal_only_no_pretrigger_guidance",
+            "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
+        }
         or diagnosis in {"terminal_only", "triggered_only"}
         or (
             boolish(benefit.get("terminal_triggered"))
@@ -178,6 +183,19 @@ def binding_validation_terminal_only_record(record: dict[str, Any]) -> bool:
 
 def binding_validation_terminal_only(target_id: str) -> bool:
     return any(binding_validation_terminal_only_record(record) for record in binding_validation_records(target_id))
+
+
+def binding_validation_terminal_only_blockers(target_id: str) -> list[str]:
+    blockers: list[str] = []
+    for record in binding_validation_records(target_id):
+        if not binding_validation_terminal_only_record(record):
+            continue
+        record_blockers = record.get("blockers")
+        if isinstance(record_blockers, list):
+            blockers.extend(str(value) for value in record_blockers if str(value))
+        elif record_blockers:
+            blockers.append(str(record_blockers))
+    return blockers
 
 
 def comparison_targets(comparison_root: Path | None) -> Counter[str]:
@@ -405,7 +423,8 @@ def build_magma_rows(
         disposition = str(dispositions.get(target_id, {}).get("disposition") or "")
         specs = binding_specs_for(target_id, binding_spec_dir)
         comparison_count = comparisons[target_id]
-        terminal_only_validation = binding_validation_terminal_only(target_id)
+        terminal_only_blockers = binding_validation_terminal_only_blockers(target_id)
+        terminal_only_validation = bool(terminal_only_blockers) or binding_validation_terminal_only(target_id)
         specs_validated = binding_spec_validated(target_id)
         status, blockers = status_for(
             "magma",
@@ -419,6 +438,8 @@ def build_magma_rows(
             has_commit=True,
             terminal_only_validation=terminal_only_validation,
         )
+        if terminal_only_blockers:
+            blockers = terminal_only_blockers
         score = SOURCE_BASE_SCORE["magma"] + score_categories(primary, secondary)
         if boolish(record.get("ambiguous")):
             score += 4
@@ -508,7 +529,8 @@ def build_cve_rows(
         secondary = ""
         disposition = str(dispositions.get(target_id, {}).get("disposition") or "")
         specs = binding_specs_for(target_id, binding_spec_dir)
-        terminal_only_validation = binding_validation_terminal_only(target_id)
+        terminal_only_blockers = binding_validation_terminal_only_blockers(target_id)
+        terminal_only_validation = bool(terminal_only_blockers) or binding_validation_terminal_only(target_id)
         specs_validated = binding_spec_validated(target_id)
         comparison_count = comparisons[target_id]
         has_external_input = bool(split_links(record.get("external_input_links")))
@@ -525,6 +547,8 @@ def build_cve_rows(
             has_commit=has_commit,
             terminal_only_validation=terminal_only_validation,
         )
+        if terminal_only_blockers:
+            blockers = terminal_only_blockers
         score = SOURCE_BASE_SCORE["real_cve"] + score_categories(primary, secondary)
         if has_external_input:
             score += 12

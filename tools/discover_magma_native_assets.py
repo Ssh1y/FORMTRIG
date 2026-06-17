@@ -265,6 +265,25 @@ def target_command(executable: Path, args_template: str) -> str:
     return f"{binary} {args_template}"
 
 
+def magma_native_build_root(path: Path) -> Path | None:
+    parts = path.resolve().parts
+    try:
+        index = parts.index("magma_native_builds")
+    except ValueError:
+        return None
+    if index + 1 >= len(parts):
+        return None
+    return Path(*parts[: index + 2])
+
+
+def same_native_build(path_a: Path | str, path_b: Path | str | None) -> bool:
+    if path_b is None:
+        return False
+    root_a = magma_native_build_root(Path(path_a))
+    root_b = magma_native_build_root(Path(path_b))
+    return bool(root_a and root_b and root_a == root_b)
+
+
 def shell_join(args: list[str]) -> str:
     return " ".join(shlex.quote(str(arg)) for arg in args)
 
@@ -362,10 +381,21 @@ def build_discovery(
         args_template = args_template_from_target_cmd(manifest.get("target_cmd", ""))
         selectors = binding_selectors(spec)
         site_scores = [score_site_map(path, selectors) for path in maps]
-        site_scores = sorted(site_scores, key=lambda row: (row["score"], row["matched_selectors"]), reverse=True)
         best_site = site_scores[0] if site_scores and site_scores[0]["matched_selectors"] > 0 else None
         exe_candidates = executables.get(program, [])
         best_exe = exe_candidates[0] if exe_candidates else None
+        for site_score in site_scores:
+            site_score["same_build_as_executable"] = same_native_build(site_score["path"], best_exe)
+        site_scores = sorted(
+            site_scores,
+            key=lambda row: (
+                row["matched_selectors"],
+                row.get("same_build_as_executable", False),
+                row["score"],
+            ),
+            reverse=True,
+        )
+        best_site = site_scores[0] if site_scores and site_scores[0]["matched_selectors"] > 0 else None
         rnt = rnt_rows.get(target_id, {})
         rnt_ready = formal_rnt_ready(rnt, program=program)
         seed_dir = str(rnt.get("seed_dir") or rnt_seed_todo(target_id, program))

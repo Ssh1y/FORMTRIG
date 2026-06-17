@@ -522,6 +522,62 @@ class MagmaBindingValidationWorkflowTest(unittest.TestCase):
             self.assertEqual(record["blockers"], [])
             self.assertEqual(record["next_action"], "run the benefit-first short endpoint screen against faithful AFL++ family baselines")
 
+    def test_summarizer_distinguishes_terminal_only_with_variable_semantic_roles(self):
+        summarizer = load_tool("summarize_binding_candidate_sweep")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            summary = root / "summary.jsonl"
+            summary.write_text(
+                json.dumps(
+                    {
+                        "index": 1,
+                        "score": 122200,
+                        "candidate": "SSL011.yml",
+                        "out_dir": "out",
+                        "exit_code": 0,
+                        "diagnosis": "triggered",
+                        "experiment_ready": False,
+                        "pretrigger_lift_guidance_ready": False,
+                        "has_non_trigger_progress": False,
+                        "non_trigger_progress_events": 0,
+                        "saved_non_trigger_progress_events": 0,
+                        "saved_triggered_progress_events": 228,
+                        "execs_done": 15438,
+                        "reached_execs": 2026,
+                        "triggered_execs": 2026,
+                        "binding_signal_status": "pass",
+                        "binding_signal_diagnosis": "triggered",
+                        "candidate_events": 228,
+                        "accepted_non_trigger_progress_events": 0,
+                        "non_trigger_candidate_lift_delta": False,
+                        "lift_delta_only_on_triggered_candidates": False,
+                        "semantic_candidate_variable_roles": 1,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            row = summarizer.best_row(summarizer.read_jsonl(summary))
+            record = summarizer.build_record(
+                row=row,
+                target_id="SSL011",
+                binding_spec="SSL011.yml",
+                site_map="site_map.tsv",
+                summary_jsonl=summary,
+            )
+
+            self.assertEqual(
+                record["status"],
+                "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
+            )
+            self.assertFalse(record["ready_for_short_gate"])
+            self.assertIn("terminal signal appeared without non-trigger guidance", record["blockers"])
+            self.assertIn(
+                "semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed",
+                record["blockers"],
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

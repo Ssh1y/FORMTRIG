@@ -5,7 +5,7 @@
       "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml,LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
       "binding_spec_validated": true,
       "blockers": "",
-      "comparison_count": 5,
+      "comparison_count": 6,
       "existing_disposition": "candidate_extend_longruns",
       "lane": "real_cve_replacement",
       "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
@@ -15,7 +15,7 @@
       "raw": {
         "bug_type": "NULL Pointer Dereference",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 5,
+        "comparison_count": 6,
         "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
         "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
         "pull_links": "",
@@ -31,6 +31,32 @@
     },
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
+      "binding_spec": "TIF012.native_draft_magma_canary.yml",
+      "binding_spec_validated": true,
+      "blockers": "",
+      "comparison_count": 4,
+      "existing_disposition": "candidate_extend_longruns",
+      "lane": "short_triage_ready",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
+      "primary_category": "binary-state-null",
+      "project": "libtiff",
+      "rank": 2,
+      "raw": {
+        "canary_expression": "MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))",
+        "comparison_count": 4,
+        "patch_path": "experiments/magma_workspace/magma/targets/libtiff/patches/bugs/TIF012.patch",
+        "program": "tiff_read_rgba_fuzzer"
+      },
+      "score": 109,
+      "secondary_category": "compound-sequence-lifecycle",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "short_gate_triaged",
+      "suggested_short_triage": "positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets",
+      "target_id": "TIF012"
+    },
+    {
+      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "PDF003.native_draft_magma_canary.yml",
       "binding_spec_validated": false,
       "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
@@ -40,7 +66,7 @@
       "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
       "primary_category": "binary-state-null",
       "project": "poppler",
-      "rank": 2,
+      "rank": 3,
       "raw": {
         "canary_expression": "MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))",
         "comparison_count": 0,
@@ -54,32 +80,6 @@
       "status": "needs_binding_validation",
       "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
       "target_id": "PDF003"
-    },
-    {
-      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "SSL011.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "binary-state-null",
-      "project": "openssl",
-      "rank": 3,
-      "raw": {
-        "canary_expression": "MAGMA_AND(data_body == NULL, in_bio == NULL)",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/openssl/patches/bugs/SSL011.patch",
-        "program": "asn1"
-      },
-      "score": 90,
-      "secondary_category": "compound-sequence-lifecycle",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
-      "target_id": "SSL011"
     },
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
@@ -108,32 +108,6 @@
       "target_id": "SSL015"
     },
     {
-      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "TIF012.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "binary-state-null",
-      "project": "libtiff",
-      "rank": 5,
-      "raw": {
-        "canary_expression": "MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/libtiff/patches/bugs/TIF012.patch",
-        "program": "tiff_read_rgba_fuzzer"
-      },
-      "score": 90,
-      "secondary_category": "compound-sequence-lifecycle",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
-      "target_id": "TIF012"
-    },
-    {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "PDF016.native_draft_magma_canary.yml",
       "binding_spec_validated": false,
@@ -144,7 +118,7 @@
       "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
       "primary_category": "compound-sequence-lifecycle",
       "project": "poppler",
-      "rank": 6,
+      "rank": 5,
       "raw": {
         "canary_expression": "MAGMA_OR(num <=0, gen < 0)",
         "comparison_count": 0,
@@ -170,7 +144,7 @@
       "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
       "primary_category": "compound-sequence-lifecycle",
       "project": "php",
-      "rank": 7,
+      "rank": 6,
       "raw": {
         "canary_expression": "MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)",
         "comparison_count": 0,
@@ -184,6 +158,35 @@
       "status": "needs_binding_validation",
       "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
       "target_id": "PHP009"
+    },
+    {
+      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
+      "binding_spec": "LIBXML2_1107.native_b2_alloc_fail_candidate.yml",
+      "binding_spec_validated": false,
+      "blockers": "no external PoC/input link recorded; no vulnerable/fix commit link recorded; BindingSpec candidate is not native-site-map validated",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "binding_validation_first",
+      "next_action": "validate BindingSpec against native site map and dynamic binding signal before short gate",
+      "primary_category": "binary-state-null",
+      "project": "libxml2",
+      "rank": 7,
+      "raw": {
+        "bug_type": "NULL Pointer Dereference",
+        "commit_links": "",
+        "comparison_count": 0,
+        "external_input_links": "",
+        "issue_url": "https://gitlab.gnome.org/GNOME/libxml2/-/work_items/1107",
+        "pull_links": "",
+        "title": "NULL pointer dereference in \"xmlRegNewParserCtxt\" on \"xmlStrdup\" failure (#1107) \u00b7 Issues \u00b7 GNOME / libxml2 \u00b7 GitLab"
+      },
+      "score": 74,
+      "secondary_category": "",
+      "source": "real_cve",
+      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
+      "status": "needs_binding_validation",
+      "suggested_short_triage": "build FORMTRIG-instrumented target/site map, compile the BindingSpec against native site ids, then run seed-readiness and binding-signal diagnosis",
+      "target_id": "LIBXML2_1107"
     },
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
@@ -3766,17 +3769,43 @@
       "target_id": "PNG006"
     },
     {
+      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
+      "binding_spec": "SSL011.native_draft_magma_canary.yml",
+      "binding_spec_validated": false,
+      "blockers": "pre-trigger lift guidance is not ready; terminal signal appeared without non-trigger guidance; semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "primary_category": "binary-state-null",
+      "project": "openssl",
+      "rank": 145,
+      "raw": {
+        "canary_expression": "MAGMA_AND(data_body == NULL, in_bio == NULL)",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/openssl/patches/bugs/SSL011.patch",
+        "program": "asn1"
+      },
+      "score": 0,
+      "secondary_category": "compound-sequence-lifecycle",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "do_not_promote",
+      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
+      "target_id": "SSL011"
+    },
+    {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "PNG007.native_b2_candidate.yml,PNG007.native_b2_plte_delete_candidate.yml,PNG007.native_b2_plte_multi_delete_candidate.yml,PNG007.native_b3_current_root46.yml,PNG007.native_b3_current_root49.yml,PNG007.native_b3_current_root58.yml,PNG007.native_b3_current_root70.yml",
       "binding_spec_validated": false,
-      "blockers": "validated BindingSpec produced terminal-only evidence without pre-trigger lift guidance",
+      "blockers": "pretrigger_lift_guidance_ready is false for every current-site candidate; saved_non_trigger_progress_events is 0 for every current-site candidate; non_trigger_candidate_lift_delta is false while lift_delta_only_on_triggered_candidates is true; no same-budget AFL++ family baseline screen has been run for this current-site candidate set",
       "comparison_count": 0,
       "existing_disposition": "",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "primary_category": "binary-state-null",
       "project": "libpng",
-      "rank": 145,
+      "rank": 146,
       "raw": {
         "canary_expression": "png_ptr->palette == NULL",
         "comparison_count": 0,
@@ -3790,35 +3819,6 @@
       "status": "do_not_promote",
       "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
       "target_id": "PNG007"
-    },
-    {
-      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "LIBXML2_1107.native_b2_alloc_fail_candidate.yml",
-      "binding_spec_validated": false,
-      "blockers": "existing comparison/admissibility evidence demotes this target",
-      "comparison_count": 0,
-      "existing_disposition": "demote_harness_artifact",
-      "lane": "control_or_negative",
-      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
-      "primary_category": "binary-state-null",
-      "project": "libxml2",
-      "rank": 146,
-      "raw": {
-        "bug_type": "NULL Pointer Dereference",
-        "commit_links": "",
-        "comparison_count": 0,
-        "external_input_links": "",
-        "issue_url": "https://gitlab.gnome.org/GNOME/libxml2/-/work_items/1107",
-        "pull_links": "",
-        "title": "NULL pointer dereference in \"xmlRegNewParserCtxt\" on \"xmlStrdup\" failure (#1107) \u00b7 Issues \u00b7 GNOME / libxml2 \u00b7 GitLab"
-      },
-      "score": -21,
-      "secondary_category": "",
-      "source": "real_cve",
-      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
-      "status": "do_not_promote",
-      "suggested_short_triage": "build FORMTRIG-instrumented target/site map, compile the BindingSpec against native site ids, then run seed-readiness and binding-signal diagnosis",
-      "target_id": "LIBXML2_1107"
     },
     {
       "benefit_hypothesis": "current evidence does not support a main hard-target benefit claim",
@@ -3860,7 +3860,7 @@
       "target_id": "LIBCOAP_CVE_2023_35862"
     }
   ],
-  "generated_at_utc": "2026-06-16T16:56:39+00:00",
+  "generated_at_utc": "2026-06-17T13:53:01+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -3870,14 +3870,14 @@
   },
   "limit": 30,
   "row_count": 147,
-  "selected_count": 143,
+  "selected_count": 147,
   "top_targets": [
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml,LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
       "binding_spec_validated": true,
       "blockers": "",
-      "comparison_count": 5,
+      "comparison_count": 6,
       "existing_disposition": "candidate_extend_longruns",
       "lane": "real_cve_replacement",
       "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
@@ -3887,7 +3887,7 @@
       "raw": {
         "bug_type": "NULL Pointer Dereference",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 5,
+        "comparison_count": 6,
         "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
         "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
         "pull_links": "",
@@ -3903,6 +3903,32 @@
     },
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
+      "binding_spec": "TIF012.native_draft_magma_canary.yml",
+      "binding_spec_validated": true,
+      "blockers": "",
+      "comparison_count": 4,
+      "existing_disposition": "candidate_extend_longruns",
+      "lane": "short_triage_ready",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
+      "primary_category": "binary-state-null",
+      "project": "libtiff",
+      "rank": 2,
+      "raw": {
+        "canary_expression": "MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))",
+        "comparison_count": 4,
+        "patch_path": "experiments/magma_workspace/magma/targets/libtiff/patches/bugs/TIF012.patch",
+        "program": "tiff_read_rgba_fuzzer"
+      },
+      "score": 109,
+      "secondary_category": "compound-sequence-lifecycle",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "short_gate_triaged",
+      "suggested_short_triage": "positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets",
+      "target_id": "TIF012"
+    },
+    {
+      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "PDF003.native_draft_magma_canary.yml",
       "binding_spec_validated": false,
       "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
@@ -3912,7 +3938,7 @@
       "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
       "primary_category": "binary-state-null",
       "project": "poppler",
-      "rank": 2,
+      "rank": 3,
       "raw": {
         "canary_expression": "MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))",
         "comparison_count": 0,
@@ -3926,32 +3952,6 @@
       "status": "needs_binding_validation",
       "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
       "target_id": "PDF003"
-    },
-    {
-      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "SSL011.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "binary-state-null",
-      "project": "openssl",
-      "rank": 3,
-      "raw": {
-        "canary_expression": "MAGMA_AND(data_body == NULL, in_bio == NULL)",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/openssl/patches/bugs/SSL011.patch",
-        "program": "asn1"
-      },
-      "score": 90,
-      "secondary_category": "compound-sequence-lifecycle",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
-      "target_id": "SSL011"
     },
     {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
@@ -3980,32 +3980,6 @@
       "target_id": "SSL015"
     },
     {
-      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "TIF012.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "binary-state-null",
-      "project": "libtiff",
-      "rank": 5,
-      "raw": {
-        "canary_expression": "MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/libtiff/patches/bugs/TIF012.patch",
-        "program": "tiff_read_rgba_fuzzer"
-      },
-      "score": 90,
-      "secondary_category": "compound-sequence-lifecycle",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
-      "target_id": "TIF012"
-    },
-    {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
       "binding_spec": "PDF016.native_draft_magma_canary.yml",
       "binding_spec_validated": false,
@@ -4016,7 +3990,7 @@
       "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
       "primary_category": "compound-sequence-lifecycle",
       "project": "poppler",
-      "rank": 6,
+      "rank": 5,
       "raw": {
         "canary_expression": "MAGMA_OR(num <=0, gen < 0)",
         "comparison_count": 0,
@@ -4042,7 +4016,7 @@
       "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
       "primary_category": "compound-sequence-lifecycle",
       "project": "php",
-      "rank": 7,
+      "rank": 6,
       "raw": {
         "canary_expression": "MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)",
         "comparison_count": 0,
@@ -4056,6 +4030,35 @@
       "status": "needs_binding_validation",
       "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
       "target_id": "PHP009"
+    },
+    {
+      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
+      "binding_spec": "LIBXML2_1107.native_b2_alloc_fail_candidate.yml",
+      "binding_spec_validated": false,
+      "blockers": "no external PoC/input link recorded; no vulnerable/fix commit link recorded; BindingSpec candidate is not native-site-map validated",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "binding_validation_first",
+      "next_action": "validate BindingSpec against native site map and dynamic binding signal before short gate",
+      "primary_category": "binary-state-null",
+      "project": "libxml2",
+      "rank": 7,
+      "raw": {
+        "bug_type": "NULL Pointer Dereference",
+        "commit_links": "",
+        "comparison_count": 0,
+        "external_input_links": "",
+        "issue_url": "https://gitlab.gnome.org/GNOME/libxml2/-/work_items/1107",
+        "pull_links": "",
+        "title": "NULL pointer dereference in \"xmlRegNewParserCtxt\" on \"xmlStrdup\" failure (#1107) \u00b7 Issues \u00b7 GNOME / libxml2 \u00b7 GitLab"
+      },
+      "score": 74,
+      "secondary_category": "",
+      "source": "real_cve",
+      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
+      "status": "needs_binding_validation",
+      "suggested_short_triage": "build FORMTRIG-instrumented target/site map, compile the BindingSpec against native site ids, then run seed-readiness and binding-signal diagnosis",
+      "target_id": "LIBXML2_1107"
     },
     {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",

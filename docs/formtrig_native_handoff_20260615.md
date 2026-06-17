@@ -64,6 +64,15 @@ triggered exec，`saved_non_trigger_progress=0`，spec `D_F` 候选值恒为 `[3
 SSL011 现在是更好的 hard-target/spec-repair 候选，但当前 spec 还不能作为 endpoint
 或 SOTA-pain 证据。
 
+后续复查发现该版 SSL011 root 误绑到同函数内的 `SSL015` canary line 436，而真正
+的 `SSL011` canary 是 `pk7_doit.c:514`。root 已修到 line 514 的 Magma macro cmp
+集合；20s validation 中 root role 已经出现 `[1,0]` 变化，但结果仍是
+terminal-only：`saved_non_trigger_progress=0`，spec scalar `D_F` 候选值恒为 `[2]`。
+因此 SSL011 的当前剩余问题不是 native build 或 root site-map，而是 semantic role
+变化没有转成 accepted non-trigger frontier progress。下一步应修 D_F 聚合、
+dominance frontier 接受或 typed hook，不应把 SSL011 作为主 endpoint/SOTA-pain
+证据。
+
 ## 当前架构原则
 
 FORMTRIG 当前应保持这个架构：

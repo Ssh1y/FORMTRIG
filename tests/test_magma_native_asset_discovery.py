@@ -219,6 +219,112 @@ class MagmaNativeAssetDiscoveryTest(unittest.TestCase):
             self.assertEqual(target["discovery_blockers"], [])
             self.assertEqual(assets["source_discovery"], str(root / "discovery.json"))
 
+    def test_prefers_site_map_from_same_native_build_as_executable(self):
+        discovery = load_tool("discover_magma_native_assets")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = root / "SSL011.native_draft.yml"
+            manifest = root / "SSL011.manifest.template"
+            seed_dir = root / "rnt" / "SSL011" / "seeds"
+            builds = root / "artifacts" / "formtrig_native_readiness" / "magma_native_builds"
+            stale_site_map = builds / "SSL011" / "out" / "formtrig_native" / "formtrig_sites.tsv"
+            selected_site_map = builds / "SSL011_pkcs7_decode" / "out" / "formtrig_native" / "formtrig_sites.tsv"
+            target_dir = builds / "SSL011_pkcs7_decode" / "out" / "afl"
+            executable = target_dir / "pkcs7_decode"
+
+            seed_dir.mkdir(parents=True)
+            stale_site_map.parent.mkdir(parents=True)
+            selected_site_map.parent.mkdir(parents=True)
+            target_dir.mkdir(parents=True)
+            executable.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            os.chmod(executable, 0o755)
+            row = "688326304\tcmp\tPKCS7_dataDecode\t295\ticmp\tcrypto/pkcs7/pk7_doit.c\t514\t9\n"
+            stale_site_map.write_text(row, encoding="utf-8")
+            selected_site_map.write_text(row, encoding="utf-8")
+            spec.write_text(
+                "\n".join(
+                    [
+                        "tc_id: SSL011",
+                        "conditions:",
+                        "  - id: ssl011_canary",
+                        "    observe_at:",
+                        "      kind: cmp",
+                        "      function: PKCS7_dataDecode",
+                        "      file: crypto/pkcs7/pk7_doit.c",
+                        "      line: 514",
+                        "      column: 9",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            manifest.write_text(
+                "\n".join(
+                    [
+                        "target_id: SSL011",
+                        "category: binary-null",
+                        f"seed_dir: {seed_dir}",
+                        f"binding_spec: {spec}",
+                        "site_map: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL011.tsv",
+                        "target_cwd: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL011",
+                        "target_cmd: TODO_FORMTRIG_MAGMA_OPENSSL_PKCS7_DECODE_BINARY -",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            drafts = root / "drafts.json"
+            drafts.write_text(
+                json.dumps(
+                    {
+                        "drafts": [
+                            {
+                                "target_id": "SSL011",
+                                "project": "openssl",
+                                "program": "pkcs7_decode",
+                                "category": "binary-state-null",
+                                "binding_spec": str(spec),
+                                "manifest_template": str(manifest),
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            rnt_status = root / "rnt_status.json"
+            rnt_status.write_text(
+                json.dumps(
+                    {
+                        "records": [
+                            {
+                                "target_id": "SSL011",
+                                "program": "pkcs7_decode",
+                                "status": "formal_ready",
+                                "seed_dir_exists": "true",
+                                "seed_dir": str(seed_dir),
+                                "seed_files": "1",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            report, assets = discovery.build_discovery(
+                drafts_path=drafts,
+                rnt_status_path=rnt_status,
+                search_roots=[builds],
+                max_files=100,
+                source_discovery_path=root / "discovery.json",
+            )
+
+            self.assertEqual(report["runnable_candidate_count"], 1)
+            target = assets["targets"]["SSL011"]
+            self.assertEqual(target["site_map"], str(selected_site_map))
+            self.assertTrue(report["targets"][0]["best_site_map"]["same_build_as_executable"])
+
     def test_blocks_formal_rnt_from_different_program(self):
         discovery = load_tool("discover_magma_native_assets")
         with tempfile.TemporaryDirectory() as tmp:

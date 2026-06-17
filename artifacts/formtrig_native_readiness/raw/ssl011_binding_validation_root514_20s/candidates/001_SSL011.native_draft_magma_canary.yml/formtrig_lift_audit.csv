@@ -1,0 +1,2 @@
+atom_id,category,binding_tier,lift_allowed,roles,event_count,location_only_count,collapsed,reason
+1,binary-state-null,B2,true,0x00000025,8,0,0,ok

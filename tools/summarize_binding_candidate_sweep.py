@@ -53,9 +53,12 @@ def status_for(row: dict[str, Any]) -> str:
     experiment_ready = boolish(row.get("experiment_ready"))
     binding_signal_pass = str(row.get("binding_signal_status") or "") == "pass"
     terminal_triggered = number(row.get("triggered_execs")) > 0
+    semantic_variable_roles = number(row.get("semantic_candidate_variable_roles")) > 0
     if exit_code == 0 and experiment_ready and pretrigger and binding_signal_pass:
         return "native_binding_validated"
     if terminal_triggered and not pretrigger:
+        if semantic_variable_roles:
+            return "terminal_only_variable_semantic_roles_no_pretrigger_guidance"
         return "terminal_only_no_pretrigger_guidance"
     if exit_code != 0:
         return "validation_failed"
@@ -159,8 +162,15 @@ def blockers_for(status: str, row: dict[str, Any]) -> list[str]:
         )
     if not boolish(row.get("pretrigger_lift_guidance_ready")):
         blockers.append("pre-trigger lift guidance is not ready")
-    if status == "terminal_only_no_pretrigger_guidance":
+    if status in {
+        "terminal_only_no_pretrigger_guidance",
+        "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
+    }:
         blockers.append("terminal signal appeared without non-trigger guidance")
+    if status == "terminal_only_variable_semantic_roles_no_pretrigger_guidance":
+        blockers.append(
+            "semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed"
+        )
     return blockers
 
 
@@ -177,7 +187,10 @@ def limitations_for(status: str, row: dict[str, Any]) -> list[str]:
 def next_action_for(status: str) -> str:
     if status == "native_binding_validated":
         return "run the benefit-first short endpoint screen against faithful AFL++ family baselines"
-    if status == "terminal_only_no_pretrigger_guidance":
+    if status in {
+        "terminal_only_no_pretrigger_guidance",
+        "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
+    }:
         return "keep as negative/control evidence or revise the BindingSpec to expose non-trigger guidance"
     return "repair BindingSpec/native assets and rerun the candidate sweep"
 

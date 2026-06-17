@@ -21,6 +21,10 @@ class TerminalOnlyValidationTest(unittest.TestCase):
             "status": "terminal_only_no_pretrigger_guidance",
             "ready_for_short_gate": False,
             "native_site_map_validated": True,
+            "blockers": [
+                "pre-trigger lift guidance is not ready",
+                "terminal signal appeared without non-trigger guidance",
+            ],
             "checks": {
                 "binding_spec_compile_pass": True,
                 "lift_audit_pass": True,
@@ -36,6 +40,13 @@ class TerminalOnlyValidationTest(unittest.TestCase):
         planner.binding_validation_records = lambda target_id: [record]
 
         self.assertTrue(planner.binding_validation_terminal_only("PNG007"))
+        self.assertEqual(
+            planner.binding_validation_terminal_only_blockers("PNG007"),
+            [
+                "pre-trigger lift guidance is not ready",
+                "terminal signal appeared without non-trigger guidance",
+            ],
+        )
         self.assertFalse(planner.binding_spec_validated("PNG007"))
         self.assertEqual(
             planner.lane_for(

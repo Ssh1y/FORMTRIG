@@ -13,20 +13,115 @@ atoms:
     kind: 'binary-state-null'
     root: 'data_body'
 bindings:
-  - id: 'magma_canary_root_01'
+  - id: 'ssl011_canary_root_01_cmp_295'
     atom: 1
     role: 'root_observe'
-    expr: 'Magma canary source selector for MAGMA_AND(data_body == NULL, in_bio == NULL)'
+    expr: 'SSL011 canary cmp for MAGMA_AND(data_body == NULL, in_bio == NULL)'
     observe_at:
-      site_id: 1315756502
+      site_id: 688326304
       kind: 'cmp'
       function: 'PKCS7_dataDecode'
-      inst_no: 91
+      inst_no: 295
       file: 'crypto/pkcs7/pk7_doit.c'
-      line: 436
-      column: 5
+      line: 514
+      column: 9
     component: 'root_state'
     priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'ssl011_canary_root_02_cmp_298'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL011 canary cmp for MAGMA_AND(data_body == NULL, in_bio == NULL)'
+    observe_at:
+      site_id: 906435351
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 298
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 514
+      column: 9
+    component: 'root_state'
+    priority: 11
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'ssl011_canary_root_03_cmp_307'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL011 canary cmp for MAGMA_AND(data_body == NULL, in_bio == NULL)'
+    observe_at:
+      site_id: 392213596
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 307
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 514
+      column: 9
+    component: 'root_state'
+    priority: 12
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'ssl011_canary_root_04_cmp_313'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL011 canary cmp for MAGMA_AND(data_body == NULL, in_bio == NULL)'
+    observe_at:
+      site_id: 2472388089
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 313
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 514
+      column: 9
+    component: 'root_state'
+    priority: 13
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'ssl011_canary_root_05_cmp_315'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL011 canary cmp for MAGMA_AND(data_body == NULL, in_bio == NULL)'
+    observe_at:
+      site_id: 2505943327
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 315
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 514
+      column: 9
+    component: 'root_state'
+    priority: 14
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'ssl011_canary_root_06_cmp_320'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL011 canary cmp for MAGMA_AND(data_body == NULL, in_bio == NULL)'
+    observe_at:
+      site_id: 577061595
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 320
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 514
+      column: 9
+    component: 'root_state'
+    priority: 15
     direction: 'higher'
     value_mode: 'outcome'
     value: 1.0
