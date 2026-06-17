@@ -11,12 +11,12 @@ Promoted hard-target candidates: `1`.
 
 ## Target Queue
 
-| target | disposition | priority | baseline triggers | FORMTRIG `_T` | fastest baseline `_T` | speedup | next action |
-| --- | --- | ---: | --- | ---: | ---: | ---: | --- |
-| LIBARCHIVE_2936 | `needs_harder_experiment_design` | 12 | aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand | 1.358 | 24.45 | 6.963181148748158 | improve experiment design before spending more main budget: use a higher-fidelity/raw-format harness or farther RNT seeds, add no-hook and generic-hook FORMTRIG ablations, and move hard-gap budget to targets where strong baselines have low success or long R2T tails |
-| TIF012 | `candidate_extend_longruns` | 15 |  | 0.034 |  | 6176.470588235294 | extend to longer matched-budget runs to test whether the replicated FORMTRIG TTE speedup persists |
-| LIBCOAP_CVE_2023_35862 | `demote_to_control_or_negative` | 90 | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | None | 1060.0 | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
-| PNG006 | `demote_to_control_or_negative` | 90 | aflplusplus_cmplog | None | 120.0 | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
+| target | disposition | priority | SOTA pain | baseline triggers | FORMTRIG `_T` | fastest baseline `_T` | speedup | next action |
+| --- | --- | ---: | --- | --- | ---: | ---: | ---: | --- |
+| LIBARCHIVE_2936 | `needs_harder_experiment_design` | 12 | `not_visible_near_seed_or_harness_shaped` | aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand | 1.358 | 9.456 | 6.963181148748158 | improve experiment design before spending more main budget: use a higher-fidelity/raw-format harness or farther RNT seeds, add no-hook and generic-hook FORMTRIG ablations, and move hard-gap budget to targets where strong baselines have low success or long R2T tails |
+| TIF012 | `candidate_extend_longruns` | 15 | `visible_hard_speedup_or_reliability` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | 0.034 | 210.0 | 6176.470588235294 | extend to longer matched-budget runs to test whether the replicated FORMTRIG TTE speedup persists |
+| LIBCOAP_CVE_2023_35862 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_visible_no_formtrig_advantage` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | None |  | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
+| PNG006 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_visible_no_formtrig_advantage` | aflplusplus_cmplog | None |  | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
 
 ## Package Evidence
 

@@ -27,6 +27,8 @@ CSV_FIELDS = [
     "best_formtrig_trigger_time_s",
     "tte_speedup_over_fastest_baseline",
     "main_claim_strength",
+    "sota_pain_class",
+    "sota_pain_evidence",
     "max_budget_s",
     "formtrig_terminal",
     "strict_pretrigger_guidance",
@@ -45,6 +47,7 @@ PACKAGE_FIELDS = [
     "matched_baselines",
     "successful_baselines",
     "fastest_baseline_trigger_time_s",
+    "fastest_baseline_family_median_trigger_time_s",
     "best_formtrig_trigger_time_s",
     "tte_speedup_over_fastest_baseline",
     "main_claim_strength",
@@ -105,6 +108,150 @@ def bool_value(value: Any) -> bool:
 
 def join_values(values: list[Any]) -> str:
     return "; ".join(str(value) for value in values if value not in (None, ""))
+
+
+HARD_SOTA_STRENGTHS = {
+    "hard_endpoint_gap_candidate": "visible_endpoint_gap",
+    "hard_speedup_or_reliability_candidate": "visible_hard_speedup_or_reliability",
+    "hard_speedup_variance_candidate": "visible_hard_speedup_variance",
+}
+
+WEAK_SOTA_STRENGTHS = {
+    "weak_near_seed_or_harness_shaped_speedup": "not_visible_near_seed_or_harness_shaped",
+    "moderate_speedup_needs_harder_design": "weak_or_moderate_needs_harder_design",
+}
+
+
+def metric_text(value: Any, suffix: str = "") -> str:
+    parsed = numeric(value)
+    if parsed is None:
+        return ""
+    return f"{parsed:g}{suffix}"
+
+
+def package_metric_evidence(row: dict[str, Any]) -> str:
+    parts: list[str] = []
+    strength = str(row.get("main_claim_strength") or "")
+    if strength:
+        parts.append(f"strength={strength}")
+    if value := metric_text(row.get("best_formtrig_trigger_time_s"), "s"):
+        parts.append(f"FORMTRIG first_T={value}")
+    if value := metric_text(row.get("fastest_baseline_trigger_time_s"), "s"):
+        parts.append(f"baseline fastest_T={value}")
+    if value := metric_text(row.get("fastest_baseline_family_median_trigger_time_s"), "s"):
+        parts.append(f"baseline family_median_T={value}")
+    if value := metric_text(row.get("tte_speedup_over_fastest_baseline"), "x"):
+        parts.append(f"speedup={value}")
+    baselines = list(row.get("successful_baselines") or [])
+    if baselines:
+        parts.append("baseline_visible=" + ",".join(str(name) for name in baselines))
+    return "; ".join(parts)
+
+
+def sota_pain_readout(
+    items: list[dict[str, Any]],
+    *,
+    has_baseline_trigger: bool,
+    has_speedup_candidate: bool,
+    has_endpoint_candidate: bool,
+    has_replicated_endpoint: bool,
+    has_terminal_candidate: bool,
+    has_mechanism_only: bool,
+) -> tuple[str, str]:
+    hard_items = [
+        row
+        for row in items
+        if str(row.get("main_claim_strength") or "") in HARD_SOTA_STRENGTHS
+    ]
+    if hard_items:
+        best = sorted(hard_items, key=package_rank)[0]
+        strength = str(best.get("main_claim_strength") or "")
+        if strength == "hard_endpoint_gap_candidate":
+            detail = "matched baselines do not trigger while FORMTRIG reaches _T"
+        elif strength == "hard_speedup_or_reliability_candidate":
+            detail = "at least one strong baseline family is unstable or has low success under the matched budget"
+        else:
+            detail = "baseline families trigger, but their matched-budget R2T tail is long enough for a hard speedup claim"
+        return HARD_SOTA_STRENGTHS[strength], join_values(
+            [detail, package_metric_evidence(best)]
+        )
+
+    if has_replicated_endpoint or (
+        has_endpoint_candidate and has_terminal_candidate and not has_baseline_trigger
+    ):
+        endpoint_items = [
+            row
+            for row in items
+            if row.get("verdict")
+            in {
+                "positive_endpoint_matched_comparison",
+                "positive_endpoint_but_under_replicated",
+            }
+        ]
+        best = sorted(endpoint_items or items, key=package_rank)[0]
+        return (
+            "visible_endpoint_gap_candidate",
+            join_values(
+                [
+                    "FORMTRIG reaches _T while matched baselines have no successful trigger in the selected package",
+                    package_metric_evidence(best),
+                ]
+            ),
+        )
+
+    weak_items = [
+        row
+        for row in items
+        if str(row.get("main_claim_strength") or "") in WEAK_SOTA_STRENGTHS
+    ]
+    if weak_items:
+        best = sorted(weak_items, key=package_rank)[0]
+        strength = str(best.get("main_claim_strength") or "")
+        if strength == "weak_near_seed_or_harness_shaped_speedup":
+            detail = "all required baseline families trigger too early, so the current harness/seed does not expose a hard SOTA gap"
+        else:
+            detail = "FORMTRIG speedup exists, but the baseline R2T is still too short or too under-designed for a main SOTA-gap claim"
+        return WEAK_SOTA_STRENGTHS[strength], join_values(
+            [detail, package_metric_evidence(best)]
+        )
+
+    if has_baseline_trigger and not has_speedup_candidate and not has_endpoint_candidate:
+        return (
+            "not_visible_baseline_visible_no_formtrig_advantage",
+            "matched faithful baselines trigger and current evidence has no FORMTRIG first_T/TTE advantage",
+        )
+    if has_speedup_candidate:
+        speedup_items = [
+            row
+            for row in items
+            if row.get("verdict")
+            in {"positive_speedup_matched_comparison", "speedup_but_under_replicated"}
+            or (
+                numeric(row.get("tte_speedup_over_fastest_baseline")) is not None
+                and float(row.get("tte_speedup_over_fastest_baseline") or 0.0) > 1.0
+            )
+        ]
+        best = sorted(speedup_items or items, key=package_rank)[0]
+        return (
+            "partial_speedup_needs_strength_gate",
+            join_values(
+                [
+                    "FORMTRIG is faster, but this package lacks a hard/weak experiment-strength gate",
+                    package_metric_evidence(best),
+                ]
+            ),
+        )
+    if has_terminal_candidate:
+        return (
+            "incomplete_endpoint_candidate_needs_baselines",
+            "FORMTRIG terminal success is present, but matched required baselines or repetitions are incomplete",
+        )
+    if has_mechanism_only:
+        return (
+            "mechanism_only_no_sota_pain_yet",
+            "lifted non-trigger guidance exists, but endpoint/TTE evidence against baselines is still missing",
+        )
+    return "not_assessed", "collect matched FORMTRIG and faithful baseline evidence"
 
 
 def unique(values: list[str]) -> list[str]:
@@ -212,6 +359,12 @@ def package_row(path: Path) -> dict[str, Any]:
         if float(group.get("success_rate") or 0.0) > 0.0
         if (value := numeric(group.get("median_trigger_time_s"))) is not None
     ]
+    fastest_baseline_tte = numeric(analysis.get("fastest_baseline_trigger_time_s"))
+    fastest_baseline_family_median_tte = numeric(
+        analysis.get("fastest_baseline_family_median_trigger_time_s")
+    )
+    if fastest_baseline_family_median_tte is None and trigger_times:
+        fastest_baseline_family_median_tte = min(trigger_times)
     formtrig_runs = payload.get("formtrig_runs") or []
     arms = payload.get("arms") or []
     formtrig_terminal = any(
@@ -303,7 +456,8 @@ def package_row(path: Path) -> dict[str, Any]:
         "verdict": verdict,
         "matched_baselines": int_value(analysis.get("matched_baseline_count")),
         "successful_baselines": successful,
-        "fastest_baseline_trigger_time_s": min(trigger_times) if trigger_times else None,
+        "fastest_baseline_trigger_time_s": fastest_baseline_tte,
+        "fastest_baseline_family_median_trigger_time_s": fastest_baseline_family_median_tte,
         "best_formtrig_trigger_time_s": numeric(analysis.get("best_formtrig_trigger_time_s")),
         "tte_speedup_over_fastest_baseline": numeric(
             analysis.get("tte_speedup_over_fastest_baseline")
@@ -340,6 +494,8 @@ def parse_manual_target(value: str) -> dict[str, Any]:
         "best_verdict": disposition,
         "baseline_triggers": "",
         "fastest_baseline_trigger_time_s": "",
+        "sota_pain_class": "manual",
+        "sota_pain_evidence": reason,
         "formtrig_terminal": "",
         "strict_pretrigger_guidance": "",
         "observed_benefits": "",
@@ -501,7 +657,20 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 for claim in row.get("blocked_claims", [])
             ]
         )
-        if has_replicated_endpoint:
+        if has_replicated_speedup:
+            metric_items = [
+                row for row in items
+                if row.get("verdict") == "positive_speedup_matched_comparison"
+            ]
+        elif has_speedup_candidate:
+            metric_items = [
+                row for row in items
+                if row.get("verdict")
+                in {"positive_speedup_matched_comparison", "speedup_but_under_replicated"}
+                or numeric(row.get("tte_speedup_over_fastest_baseline")) is not None
+                and float(row.get("tte_speedup_over_fastest_baseline") or 0.0) > 1.0
+            ]
+        elif has_replicated_endpoint:
             metric_items = [
                 row for row in items
                 if row.get("verdict") == "positive_endpoint_matched_comparison"
@@ -520,23 +689,19 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 and row.get("matched_baselines")
                 and not row.get("successful_baselines")
             ]
-        elif has_replicated_speedup:
-            metric_items = [
-                row for row in items
-                if row.get("verdict") == "positive_speedup_matched_comparison"
-            ]
-        elif has_speedup_candidate:
-            metric_items = [
-                row for row in items
-                if row.get("verdict")
-                in {"positive_speedup_matched_comparison", "speedup_but_under_replicated"}
-                or numeric(row.get("tte_speedup_over_fastest_baseline")) is not None
-                and float(row.get("tte_speedup_over_fastest_baseline") or 0.0) > 1.0
-            ]
         else:
             metric_items = items
 
         successful = unique([baseline for row in metric_items for baseline in row.get("successful_baselines", [])])
+        sota_pain_class, sota_pain_evidence = sota_pain_readout(
+            items,
+            has_baseline_trigger=has_baseline_trigger,
+            has_speedup_candidate=has_speedup_candidate,
+            has_endpoint_candidate=has_endpoint_candidate,
+            has_replicated_endpoint=has_replicated_endpoint,
+            has_terminal_candidate=has_terminal_candidate,
+            has_mechanism_only=has_mechanism_only,
+        )
         has_any_terminal = any(row.get("formtrig_terminal") for row in items)
         has_any_strict = any(row.get("strict_pretrigger_guidance") for row in items)
         if has_any_strict:
@@ -626,6 +791,8 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                     "tte_speedup_over_fastest_baseline", ""
                 ),
                 "main_claim_strength": best.get("main_claim_strength", ""),
+                "sota_pain_class": sota_pain_class,
+                "sota_pain_evidence": sota_pain_evidence,
                 "max_budget_s": best.get("max_budget_s", ""),
                 "formtrig_terminal": has_any_terminal,
                 "strict_pretrigger_guidance": has_any_strict,
@@ -725,16 +892,17 @@ def write_markdown(path: Path, targets: list[dict[str, Any]], packages: list[dic
         "",
         "## Target Queue",
         "",
-        "| target | disposition | priority | baseline triggers | FORMTRIG `_T` | fastest baseline `_T` | speedup | next action |",
-        "| --- | --- | ---: | --- | ---: | ---: | ---: | --- |",
+        "| target | disposition | priority | SOTA pain | baseline triggers | FORMTRIG `_T` | fastest baseline `_T` | speedup | next action |",
+        "| --- | --- | ---: | --- | --- | ---: | ---: | ---: | --- |",
     ]
     for row in targets:
         lines.append(
-            "| {target_id} | `{disposition}` | {priority} | {baseline_triggers} | "
+            "| {target_id} | `{disposition}` | {priority} | `{sota_pain}` | {baseline_triggers} | "
             "{formtrig_t} | {fastest} | {speedup} | {next_action} |".format(
                 target_id=row.get("target_id", ""),
                 disposition=row.get("disposition", ""),
                 priority=row.get("priority", ""),
+                sota_pain=row.get("sota_pain_class", ""),
                 baseline_triggers=row.get("baseline_triggers", ""),
                 formtrig_t=row.get("best_formtrig_trigger_time_s", ""),
                 fastest=row.get("fastest_baseline_trigger_time_s", ""),

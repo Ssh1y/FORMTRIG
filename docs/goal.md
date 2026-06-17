@@ -938,6 +938,34 @@ docs/formtrig_native_handoff_20260615.md
 
 当前结果还不能宣称“已经充分体现 SOTA 工具的痛点”。
 
+这个判断现在由 `artifacts/formtrig_native_readiness/hard_target_triage_20260617.*`
+里的 `sota_pain_class` 显式给出，而不是靠人工解释：
+
+```text
+TIF012:
+  sota_pain_class = visible_hard_speedup_or_reliability
+  FORMTRIG first_T = 0.034s
+  fastest successful baseline run = 210s
+  fastest baseline-family median = 1410s
+  speedup over fastest successful baseline run = 6176.47x
+
+LIBARCHIVE_2936:
+  sota_pain_class = not_visible_near_seed_or_harness_shaped
+  FORMTRIG 有 speedup，但三类 baseline 都早触发。
+
+LIBCOAP_CVE_2023_35862:
+  sota_pain_class = not_visible_baseline_visible_no_formtrig_advantage
+
+PNG006:
+  sota_pain_class = not_visible_baseline_visible_no_formtrig_advantage
+```
+
+因此当前只有 TIF012 能算“已经看见 SOTA 痛点”的单 target 证据：
+baseline 不是完全做不到，但 R2T 时间、成功率和长尾明显不稳定；FORMTRIG 把同一
+TC-rooted trigger knowledge 转成了稳定早期 `_T`。LIBARCHIVE_2936 说明 FORMTRIG
+有真实 CVE speedup 和 attribution 收益，但当前 harness/seed 过近，不能承担主
+SOTA-gap 结论。
+
 已能支撑的说法是：
 
 ```text

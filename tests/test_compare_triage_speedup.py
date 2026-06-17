@@ -419,7 +419,72 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertEqual(row["package_status"], "needs_harder_experiment_design")
         self.assertEqual(row["main_claim_strength"], "weak_near_seed_or_harness_shaped_speedup")
         self.assertEqual(target["disposition"], "needs_harder_experiment_design")
+        self.assertEqual(
+            target["sota_pain_class"], "not_visible_near_seed_or_harness_shaped"
+        )
+        self.assertIn("does not expose a hard SOTA gap", target["sota_pain_evidence"])
         self.assertIn("higher-fidelity", target["next_action"])
+
+    def test_triage_marks_long_tail_baselines_as_visible_sota_pain(self):
+        packages = [
+            {
+                "comparison_id": "old_endpoint",
+                "target_id": "TIF012",
+                "package_status": "promote_or_extend_longruns",
+                "verdict": "positive_endpoint_matched_comparison",
+                "matched_baselines": 9,
+                "successful_baselines": [],
+                "fastest_baseline_trigger_time_s": None,
+                "best_formtrig_trigger_time_s": 0.035,
+                "tte_speedup_over_fastest_baseline": None,
+                "main_claim_strength": "",
+                "max_budget_s": 120,
+                "formtrig_terminal": True,
+                "strict_pretrigger_guidance": True,
+                "observed_benefits": [
+                    "FORMTRIG reaches terminal success where matched baselines do not trigger"
+                ],
+                "blocked_claims": [],
+                "source_path": "old.json",
+            },
+            {
+                "comparison_id": "long_tail_speedup",
+                "target_id": "TIF012",
+                "package_status": "promote_or_extend_longruns",
+                "verdict": "positive_speedup_matched_comparison",
+                "matched_baselines": 9,
+                "successful_baselines": [
+                    "aflplusplus_vanilla",
+                    "aflplusplus_cmplog",
+                    "redqueen_operand",
+                ],
+                "fastest_baseline_trigger_time_s": 210.0,
+                "fastest_baseline_family_median_trigger_time_s": 1410.0,
+                "best_formtrig_trigger_time_s": 0.034,
+                "tte_speedup_over_fastest_baseline": 6176.47,
+                "main_claim_strength": "hard_speedup_or_reliability_candidate",
+                "max_budget_s": 7200,
+                "formtrig_terminal": True,
+                "strict_pretrigger_guidance": True,
+                "observed_benefits": ["FORMTRIG speedup against long-tail baselines"],
+                "blocked_claims": [],
+                "source_path": "long.json",
+            },
+        ]
+
+        row = target_rows(packages, [])[0]
+
+        self.assertEqual(row["best_package"], "long_tail_speedup")
+        self.assertEqual(
+            row["baseline_triggers"],
+            "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand",
+        )
+        self.assertEqual(row["fastest_baseline_trigger_time_s"], 210.0)
+        self.assertEqual(
+            row["sota_pain_class"], "visible_hard_speedup_or_reliability"
+        )
+        self.assertIn("unstable or has low success", row["sota_pain_evidence"])
+        self.assertIn("baseline family_median_T=1410s", row["sota_pain_evidence"])
 
     def test_triage_prefers_replicated_endpoint_package_over_stale_negative(self):
         packages = [

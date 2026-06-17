@@ -56,6 +56,29 @@ primary benefit -> endpoint observation -> mechanism benefit -> design attributi
 first `_T` speedup/stability 证据；LIBARCHIVE_2936 是真实 CVE speedup 和 hook
 attribution 证据，但 faithful baselines 也早触发，所以不能做主 SOTA-gap 证据。
 
+`artifacts/formtrig_native_readiness/hard_target_triage_20260617.{json,csv,md}`
+现在显式输出 `sota_pain_class`，避免只靠中间信号或口头解释判断。当前分类是：
+
+```text
+TIF012:
+  visible_hard_speedup_or_reliability
+  FORMTRIG first_T = 0.034s
+  fastest successful baseline run = 210s
+  fastest baseline-family median = 1410s
+  speedup over fastest successful baseline run = 6176.47x
+
+LIBARCHIVE_2936:
+  not_visible_near_seed_or_harness_shaped
+  all required baseline families trigger early under the current replay harness
+
+LIBCOAP_CVE_2023_35862 and PNG006:
+  not_visible_baseline_visible_no_formtrig_advantage
+```
+
+因此当前真正能体现“强 baseline 仍有 R2T 长尾/稳定性问题”的是 TIF012 这一条
+Magma evidence。LIBARCHIVE_2936 只能作为真实 CVE speedup/attribution/control，
+PNG006 和 LIBCOAP 当前不能作为 SOTA-pain 主证据。
+
 SSL011 已从错误的 OpenSSL `asn1` runner 修正为 `pkcs7_decode` runner。新的 runner
 实际调用 `PKCS7_dataDecode`，已有 FORMTRIG-native executable、source site-map、formal
 RNT seed 和 runnable validation worklist。当前 60s BindingSpec validation 是负结果：
