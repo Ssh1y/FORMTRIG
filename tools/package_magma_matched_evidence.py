@@ -91,6 +91,17 @@ def copy_guidance_gap(
         copy_if_exists(guidance_dir / name, out / name, copied, missing)
 
 
+def copy_live_status(
+    run_root: Path,
+    evidence_dir: Path,
+    copied: list[str],
+    missing: list[str],
+) -> None:
+    out = evidence_dir / "live_status"
+    for name in ("live_status.json", "live_status.md"):
+        copy_if_exists(run_root / name, out / name, copied, missing)
+
+
 def comparison_summary(comparison_dir: Path) -> dict[str, Any]:
     path = comparison_dir / "comparison.json"
     if not path.exists():
@@ -165,6 +176,7 @@ def write_index(
             "- `baselines/`: baseline summaries and per-run monitor/run records.",
             "- `formtrig/`: FORMTRIG batch summary, gate summary, and per-rep stats.",
             "- `guidance_gap/`: baseline no-guidance analysis and per-run table.",
+            "- `live_status/`: non-final live snapshot of FORMTRIG and baseline `_R/_T` state.",
             "",
             "## Packaging Status",
             "",
@@ -207,6 +219,7 @@ def main() -> int:
     copy_baseline_evidence(args.baseline_dir, evidence_dir, copied, missing)
     copy_formtrig_evidence(args.formtrig_dir, args.gate_dir, evidence_dir, copied, missing)
     copy_guidance_gap(args.guidance_dir, evidence_dir, copied, missing)
+    copy_live_status(args.run_root, evidence_dir, copied, missing)
     write_index(
         evidence_dir / "EVIDENCE.md",
         summary=comparison_summary(args.comparison_dir),
