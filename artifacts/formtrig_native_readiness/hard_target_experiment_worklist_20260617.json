@@ -8,16 +8,18 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-17T15:12:40+00:00",
+  "generated_at_utc": "2026-06-17T17:35:04+00:00",
   "inputs": {
+    "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
+    "manifest_root": "artifacts/formtrig_native_readiness/manifests",
     "native_build_root": "artifacts/formtrig_native_readiness/magma_native_builds",
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
     "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260617.json"
   },
   "runnable_now_count": 0,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
-  "skipped_control_count": 6,
+  "skipped_control_count": 7,
   "skipped_controls": [
     {
       "existing_disposition": "candidate_extend_longruns",
@@ -26,7 +28,7 @@
       "rank": 1,
       "reason": "sota_pain_triage_not_main_budget",
       "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
-      "sota_pain_evidence": "a faithful baseline reaches _T within the acceptable-time threshold, so this is speedup/control evidence rather than hard SOTA-pain evidence; strength=not_hard_pain_baseline_fast_enough; FORMTRIG first_T=1.358s; baseline fastest_T=9.456s; baseline family_median_T=32.517s; speedup=6.96318x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=false; fastest_baseline_T=9.456s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
       "status": "short_gate_triaged",
       "target_id": "LIBARCHIVE_2936"
     },
@@ -37,9 +39,20 @@
       "rank": 2,
       "reason": "sota_pain_triage_not_main_budget",
       "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
-      "sota_pain_evidence": "a faithful baseline reaches _T within the acceptable-time threshold, so this is speedup/control evidence rather than hard SOTA-pain evidence; strength=not_hard_pain_baseline_fast_enough; FORMTRIG first_T=0.034s; baseline fastest_T=210s; baseline family_median_T=1410s; speedup=6176.47x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=210s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
       "status": "short_gate_triaged",
       "target_id": "TIF012"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "binding_validation_first",
+      "next_action": "run validated matched short endpoint screen against faithful AFL++ family baselines",
+      "rank": 6,
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=120s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "status": "binding_validation_passed",
+      "target_id": "PHP009"
     },
     {
       "existing_disposition": "demote_to_control_or_negative",
@@ -1069,54 +1082,6 @@
       "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
       "blocked_claims": [],
       "blocking_issue": [
-        "BindingSpec candidate is not native-site-map validated",
-        "no comparison package exists yet",
-        "native build dependencies missing: bison re2c",
-        "php_bison apt=bison",
-        "php_re2c apt=re2c"
-      ],
-      "category": "compound-sequence-lifecycle",
-      "claim_boundary": "Validation is a gate, not an efficacy result.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json",
-        "artifacts/formtrig_native_readiness/magma_native_builds/PHP009/build_plan.json"
-      ],
-      "lane": "binding_validation_first",
-      "mechanism_evidence_required": [
-        "native site-map validation",
-        "lift audit pass",
-        "binding-signal diagnosis pass",
-        "seed readiness with reached non-trigger seeds"
-      ],
-      "post_unblock_commands": [
-        "sudo apt-get install -y bison re2c",
-        "scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "binding audit pass/fail",
-        "accepted non-trigger progress count",
-        "short-screen first _T/TTE after validation"
-      ],
-      "priority": "P1",
-      "project": "php",
-      "rank": 6,
-      "repetitions": 1,
-      "runnable_now": false,
-      "sota_pain_class": "",
-      "sota_pain_evidence": "",
-      "source": "magma",
-      "target_id": "PHP009"
-    },
-    {
-      "action": "validate_binding_spec_then_short_screen",
-      "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
-      "blocked_claims": [],
-      "blocking_issue": [
         "no external PoC/input link recorded",
         "no vulnerable/fix commit link recorded",
         "BindingSpec candidate is not native-site-map validated"
@@ -1814,6 +1779,50 @@
       "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "SSL012"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "binary-state-null+equality/magic",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id SSL017 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL017.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P3",
+      "project": "openssl",
+      "rank": 23,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "SSL017"
     }
   ]
 }

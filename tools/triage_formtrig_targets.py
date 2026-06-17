@@ -29,6 +29,8 @@ CSV_FIELDS = [
     "main_claim_strength",
     "sota_pain_class",
     "sota_pain_evidence",
+    "baseline_guidance_gap_status",
+    "baseline_guidance_gap_evidence",
     "max_budget_s",
     "formtrig_terminal",
     "strict_pretrigger_guidance",
@@ -63,6 +65,19 @@ PACKAGE_FIELDS = [
 
 ACCEPTABLE_BASELINE_FASTEST_TTE_S = 600.0
 
+GUIDANCE_GAP_FIELDS = [
+    "target_id",
+    "analysis_id",
+    "status",
+    "interpretation",
+    "fastest_successful_baseline_trigger_time_s",
+    "pretrigger_binary_flat_measured",
+    "pretrigger_binary_flat_pass",
+    "endpoint_cost_pass",
+    "reasons",
+    "source_path",
+]
+
 
 def read_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as handle:
@@ -83,6 +98,20 @@ def comparison_paths(inputs: list[str]) -> list[Path]:
                 paths.append(path / "comparison.json")
             else:
                 paths.extend(sorted(path.glob("*/comparison.json")))
+        else:
+            paths.append(path)
+    return sorted(dict.fromkeys(paths))
+
+
+def baseline_guidance_gap_paths(inputs: list[str]) -> list[Path]:
+    paths: list[Path] = []
+    for raw in inputs:
+        path = Path(raw)
+        if path.is_dir():
+            if (path / "baseline_guidance_gap.json").exists():
+                paths.append(path / "baseline_guidance_gap.json")
+            else:
+                paths.extend(sorted(path.glob("*/baseline_guidance_gap.json")))
         else:
             paths.append(path)
     return sorted(dict.fromkeys(paths))
@@ -110,6 +139,74 @@ def bool_value(value: Any) -> bool:
 
 def join_values(values: list[Any]) -> str:
     return "; ".join(str(value) for value in values if value not in (None, ""))
+
+
+def baseline_guidance_gap_row(path: Path) -> dict[str, Any]:
+    payload = read_json(path)
+    analysis = payload.get("analysis") if isinstance(payload.get("analysis"), dict) else {}
+    return {
+        "target_id": str(payload.get("target_id") or ""),
+        "analysis_id": str(payload.get("analysis_id") or path.parent.name),
+        "status": str(analysis.get("status") or ""),
+        "interpretation": str(analysis.get("interpretation") or ""),
+        "fastest_successful_baseline_trigger_time_s": numeric(
+            analysis.get("fastest_successful_baseline_trigger_time_s")
+        ),
+        "pretrigger_binary_flat_measured": bool_value(
+            analysis.get("pretrigger_binary_flat_measured")
+        ),
+        "pretrigger_binary_flat_pass": bool_value(
+            analysis.get("pretrigger_binary_flat_pass")
+        ),
+        "endpoint_cost_pass": bool_value(analysis.get("endpoint_cost_pass")),
+        "reasons": list(analysis.get("reasons") or []),
+        "source_path": str(path),
+    }
+
+
+def baseline_guidance_gap_map(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    by_target: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        if row.get("target_id"):
+            by_target.setdefault(str(row["target_id"]), []).append(row)
+    return {
+        target_id: sorted(items, key=baseline_guidance_gap_rank)[0]
+        for target_id, items in by_target.items()
+    }
+
+
+def baseline_guidance_gap_rank(row: dict[str, Any]) -> tuple[int, float, str]:
+    status_order = {
+        "measured_pass": 0,
+        "fail_fast_baseline": 1,
+        "fail_endpoint_cost_not_hard": 2,
+        "under_replicated": 3,
+        "not_measured": 4,
+        "incomplete_required_baselines": 5,
+        "fail_not_flat": 6,
+    }
+    fastest = numeric(row.get("fastest_successful_baseline_trigger_time_s"))
+    return (
+        status_order.get(str(row.get("status") or ""), 99),
+        fastest if fastest is not None else float("inf"),
+        str(row.get("source_path") or ""),
+    )
+
+
+def baseline_guidance_gap_evidence(row: dict[str, Any] | None) -> str:
+    if not row:
+        return ""
+    parts = [
+        f"baseline_guidance_gap.status={row.get('status')}",
+        f"pre_T_binary_flat={str(row.get('pretrigger_binary_flat_pass')).lower()}",
+    ]
+    fastest = numeric(row.get("fastest_successful_baseline_trigger_time_s"))
+    if fastest is not None:
+        parts.append(f"fastest_baseline_T={fastest:g}s")
+    interpretation = str(row.get("interpretation") or "")
+    if interpretation:
+        parts.append(interpretation)
+    return "; ".join(parts)
 
 
 HARD_SOTA_STRENGTHS = {
@@ -529,13 +626,21 @@ def parse_manual_target(value: str) -> dict[str, Any]:
     }
 
 
-def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def target_rows(
+    packages: list[dict[str, Any]],
+    manual_rows: list[dict[str, Any]],
+    guidance_gaps: dict[str, dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
+    guidance_gaps = guidance_gaps or {}
     grouped: dict[str, list[dict[str, Any]]] = {}
     for row in packages:
         grouped.setdefault(str(row.get("target_id")), []).append(row)
 
     rows: list[dict[str, Any]] = []
     for target_id, items in sorted(grouped.items()):
+        guidance_gap = guidance_gaps.get(target_id)
+        guidance_status = str(guidance_gap.get("status") or "") if guidance_gap else ""
+        guidance_evidence = baseline_guidance_gap_evidence(guidance_gap)
         has_baseline_trigger = any(row.get("successful_baselines") for row in items)
         has_speedup_candidate = any(
             row.get("verdict")
@@ -599,7 +704,15 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             for row in items
         )
 
-        if has_acceptable_baseline_cost:
+        if guidance_status == "fail_fast_baseline":
+            disposition = "demote_to_control_or_negative"
+            priority = 90
+            next_action = (
+                "do not spend main long-run budget here; baseline guidance-gap "
+                "analysis shows a faithful baseline reaches _T within the "
+                "acceptable threshold"
+            )
+        elif has_acceptable_baseline_cost:
             disposition = "demote_to_control_or_negative"
             priority = 90
             next_action = (
@@ -738,6 +851,16 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             has_terminal_candidate=has_terminal_candidate,
             has_mechanism_only=has_mechanism_only,
         )
+        if guidance_gap:
+            if guidance_status == "measured_pass":
+                if sota_pain_class in {"not_assessed", "partial_speedup_needs_strength_gate"}:
+                    sota_pain_class = "visible_baseline_guidance_gap"
+                sota_pain_evidence = join_values([sota_pain_evidence, guidance_evidence])
+            elif guidance_status == "fail_fast_baseline":
+                sota_pain_class = "not_visible_baseline_time_cost_acceptable"
+                sota_pain_evidence = guidance_evidence
+            elif guidance_status:
+                sota_pain_evidence = join_values([sota_pain_evidence, guidance_evidence])
         has_any_terminal = any(row.get("formtrig_terminal") for row in items)
         has_any_strict = any(row.get("strict_pretrigger_guidance") for row in items)
         if has_any_strict:
@@ -807,6 +930,14 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 ["matched faithful baselines trigger in the current package set; not a hard SOTA-gap target"]
                 + blocked
             )
+        if guidance_status and guidance_status != "measured_pass":
+            blocked = unique(
+                [
+                    "baseline guidance-gap gate is not measured_pass: "
+                    + guidance_status
+                ]
+                + blocked
+            )
         trigger_times = [
             value
             for row in metric_items
@@ -829,13 +960,18 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
                 "main_claim_strength": best.get("main_claim_strength", ""),
                 "sota_pain_class": sota_pain_class,
                 "sota_pain_evidence": sota_pain_evidence,
+                "baseline_guidance_gap_status": guidance_status,
+                "baseline_guidance_gap_evidence": guidance_evidence,
                 "max_budget_s": best.get("max_budget_s", ""),
                 "formtrig_terminal": has_any_terminal,
                 "strict_pretrigger_guidance": has_any_strict,
                 "observed_benefits": join_values(observed),
                 "blocked_claims": join_values(blocked),
                 "next_action": next_action,
-                "sources": join_values(sources),
+                "sources": join_values(
+                    sources
+                    + ([str(guidance_gap.get("source_path"))] if guidance_gap else [])
+                ),
             }
         )
 
@@ -950,6 +1086,28 @@ def write_markdown(path: Path, targets: list[dict[str, Any]], packages: list[dic
     lines.extend(
         [
             "",
+            "## Baseline Guidance-Gap Gate",
+            "",
+            "| target | status | evidence |",
+            "| --- | --- | --- |",
+        ]
+    )
+    for row in targets:
+        if not row.get("baseline_guidance_gap_status"):
+            continue
+        lines.append(
+            "| {target_id} | `{status}` | {evidence} |".format(
+                target_id=row.get("target_id", ""),
+                status=row.get("baseline_guidance_gap_status", ""),
+                evidence=row.get("baseline_guidance_gap_evidence", ""),
+            )
+        )
+    if not any(row.get("baseline_guidance_gap_status") for row in targets):
+        lines.append("| none |  |  |")
+
+    lines.extend(
+        [
+            "",
             "## Package Evidence",
             "",
             "| comparison | target | status | verdict | successful baselines | benefits | blocked claims |",
@@ -988,6 +1146,15 @@ def parse_args() -> argparse.Namespace:
         default=[],
         help="TARGET|DISPOSITION|REASON|NEXT_ACTION|SOURCE",
     )
+    parser.add_argument(
+        "--baseline-guidance-gap",
+        action="append",
+        default=[],
+        help=(
+            "baseline_guidance_gap.json, a gap dir, or root containing "
+            "*/baseline_guidance_gap.json"
+        ),
+    )
     parser.add_argument("--out-json", required=True)
     parser.add_argument("--out-csv", required=True)
     parser.add_argument("--out-packages-csv")
@@ -999,10 +1166,20 @@ def main() -> int:
     args = parse_args()
     comparison_inputs = args.comparison or ["artifacts/formtrig_native_readiness/comparisons"]
     packages = [package_row(path) for path in comparison_paths(comparison_inputs)]
+    gap_inputs = args.baseline_guidance_gap or [
+        "artifacts/formtrig_native_readiness/baseline_guidance_gap"
+    ]
+    guidance_gap_rows = [
+        baseline_guidance_gap_row(path)
+        for path in baseline_guidance_gap_paths(gap_inputs)
+        if path.exists()
+    ]
     manuals = [parse_manual_target(value) for value in args.manual_target]
-    targets = target_rows(packages, manuals)
+    targets = target_rows(packages, manuals, baseline_guidance_gap_map(guidance_gap_rows))
     payload = {
         "generated_at_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+        "baseline_guidance_gap_count": len(guidance_gap_rows),
+        "baseline_guidance_gaps": guidance_gap_rows,
         "package_count": len(packages),
         "packages": packages,
         "target_count": len(targets),

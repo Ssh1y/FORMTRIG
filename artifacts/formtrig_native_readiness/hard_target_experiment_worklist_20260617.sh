@@ -23,13 +23,6 @@ set -euo pipefail
 # post-unblock: scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4
 # post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail
 
-# P1 PHP009 validate_binding_spec_then_short_screen
-# benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
-# blocked: BindingSpec candidate is not native-site-map validated; no comparison package exists yet; native build dependencies missing: bison re2c; php_bison apt=bison; php_re2c apt=re2c
-# post-unblock: sudo apt-get install -y bison re2c
-# post-unblock: scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4
-# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.list --duration 600 --jobs 4 --continue-on-fail
-
 # P1 LIBXML2_1107 validate_binding_spec_then_short_screen
 # benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
 # blocked: no external PoC/input link recorded; no vulnerable/fix commit link recorded; BindingSpec candidate is not native-site-map validated
@@ -125,3 +118,9 @@ set -euo pipefail
 # blocked: no BindingSpec candidate exists yet; no comparison package exists yet
 # post-unblock: scripts/run_magma_baselines.sh --target-id SSL012 --durations 600 --jobs 4
 # post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL012.list --duration 600 --jobs 4 --continue-on-fail
+
+# P3 SSL017 draft_binding_spec_then_short_screen
+# benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+# blocked: no BindingSpec candidate exists yet; no comparison package exists yet
+# post-unblock: scripts/run_magma_baselines.sh --target-id SSL017 --durations 600 --jobs 4
+# post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL017.list --duration 600 --jobs 4 --continue-on-fail

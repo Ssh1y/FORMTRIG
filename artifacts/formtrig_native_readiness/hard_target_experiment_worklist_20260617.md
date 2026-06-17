@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-17T15:12:40+00:00`
-Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `6`; low-priority skipped: `93`.
+Generated: `2026-06-17T17:35:04+00:00`
+Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `7`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -18,7 +18,6 @@ Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `
 | P1 | 3 | PDF003 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 4 | SSL015 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 5 | PDF016 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
-| P1 | 6 | PHP009 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 7 | LIBXML2_1107 | real_cve |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 8 | GPAC_3403 | real_cve |  | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P2 | 9 | SQL013 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -35,6 +34,7 @@ Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `
 | P2 | 20 | XML010 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P3 | 21 | SSL008 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P3 | 22 | SSL012 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
+| P3 | 23 | SSL017 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 
 ## Runnable Now
 
@@ -111,32 +111,6 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Evidence paths:
 - artifacts/magma_canary_inventory.json
 - artifacts/formtrig_native_readiness/magma_native_builds/PDF016/build_plan.json
-
-### P1 PHP009 - validate_binding_spec_then_short_screen
-
-- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
-- SOTA pain: `not recorded`
-- SOTA pain evidence: not recorded
-- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
-- Claim boundary: Validation is a gate, not an efficacy result.
-- Blocking issue:
-- BindingSpec candidate is not native-site-map validated
-- no comparison package exists yet
-- native build dependencies missing: bison re2c
-- php_bison apt=bison
-- php_re2c apt=re2c
-- Mechanism evidence required after benefit:
-- native site-map validation
-- lift audit pass
-- binding-signal diagnosis pass
-- seed readiness with reached non-trigger seeds
-- Post-unblock commands or steps:
-- sudo apt-get install -y bison re2c
-- scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/magma_canary_inventory.json
-- artifacts/formtrig_native_readiness/magma_native_builds/PHP009/build_plan.json
 
 ### P1 LIBXML2_1107 - validate_binding_spec_then_short_screen
 
@@ -474,12 +448,34 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Evidence paths:
 - artifacts/magma_canary_inventory.json
 
+### P3 SSL017 - draft_binding_spec_then_short_screen
+
+- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+- SOTA pain: `not recorded`
+- SOTA pain evidence: not recorded
+- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
+- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
+- Blocking issue:
+- no BindingSpec candidate exists yet
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- BindingSpec compiles against native site ids
+- D_F_spec_lifted is non-constant before _T
+- saved non-trigger progress is replay-stable
+- typed mutation, if used, is BindingSpec-provenance tagged
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id SSL017 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL017.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
 ## Skipped Controls
 
 | rank | target | lane | disposition/status | SOTA pain | reason |
 | ---: | --- | --- | --- | --- | --- |
 | 1 | LIBARCHIVE_2936 | real_cve_replacement | candidate_extend_longruns | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
 | 2 | TIF012 | short_triage_ready | candidate_extend_longruns | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
+| 6 | PHP009 | binding_validation_first | binding_validation_passed | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
 | 144 | PNG006 | control_or_negative | demote_to_control_or_negative | not_visible_baseline_visible_no_formtrig_advantage | sota_pain_triage_not_main_budget |
 | 145 | SSL011 | control_or_negative | do_not_promote |  | control_or_negative_not_main_budget |
 | 146 | PNG007 | control_or_negative | do_not_promote |  | control_or_negative_not_main_budget |

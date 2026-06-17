@@ -544,6 +544,46 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertIn("unstable or has low success", row["sota_pain_evidence"])
         self.assertIn("baseline fastest_T=1900s", row["sota_pain_evidence"])
 
+    def test_guidance_gap_fail_fast_overrides_hard_speedup_candidate(self):
+        packages = [
+            {
+                "comparison_id": "hard_speedup",
+                "target_id": "SYNTH_HARD",
+                "package_status": "promote_or_extend_longruns",
+                "verdict": "positive_speedup_matched_comparison",
+                "matched_baselines": 9,
+                "successful_baselines": ["aflplusplus_vanilla"],
+                "fastest_baseline_trigger_time_s": 1900.0,
+                "best_formtrig_trigger_time_s": 0.5,
+                "tte_speedup_over_fastest_baseline": 3800.0,
+                "main_claim_strength": "hard_speedup_or_reliability_candidate",
+                "max_budget_s": 7200,
+                "formtrig_terminal": True,
+                "strict_pretrigger_guidance": True,
+                "observed_benefits": ["FORMTRIG speedup against high-cost baselines"],
+                "blocked_claims": [],
+                "source_path": "hard.json",
+            },
+        ]
+        guidance = {
+            "SYNTH_HARD": {
+                "target_id": "SYNTH_HARD",
+                "status": "fail_fast_baseline",
+                "interpretation": "a faithful baseline reaches _T within the acceptable threshold",
+                "fastest_successful_baseline_trigger_time_s": 120.0,
+                "pretrigger_binary_flat_pass": True,
+                "source_path": "gap.json",
+            }
+        }
+
+        row = target_rows(packages, [], guidance)[0]
+
+        self.assertEqual(row["disposition"], "demote_to_control_or_negative")
+        self.assertEqual(row["sota_pain_class"], "not_visible_baseline_time_cost_acceptable")
+        self.assertEqual(row["baseline_guidance_gap_status"], "fail_fast_baseline")
+        self.assertIn("fastest_baseline_T=120s", row["baseline_guidance_gap_evidence"])
+        self.assertIn("baseline guidance-gap gate is not measured_pass", row["blocked_claims"])
+
     def test_triage_prefers_replicated_endpoint_package_over_stale_negative(self):
         packages = [
             {
