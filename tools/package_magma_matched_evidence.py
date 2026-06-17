@@ -102,6 +102,17 @@ def copy_live_status(
         copy_if_exists(run_root / name, out / name, copied, missing)
 
 
+def copy_signal_path(
+    run_root: Path,
+    evidence_dir: Path,
+    copied: list[str],
+    missing: list[str],
+) -> None:
+    out = evidence_dir / "formtrig_signal_path"
+    for name in ("formtrig_signal_path.json", "formtrig_signal_path.md"):
+        copy_if_exists(run_root / name, out / name, copied, missing)
+
+
 def comparison_summary(comparison_dir: Path) -> dict[str, Any]:
     path = comparison_dir / "comparison.json"
     if not path.exists():
@@ -177,6 +188,7 @@ def write_index(
             "- `formtrig/`: FORMTRIG batch summary, gate summary, and per-rep stats.",
             "- `guidance_gap/`: baseline no-guidance analysis and per-run table.",
             "- `live_status/`: non-final live snapshot of FORMTRIG and baseline `_R/_T` state.",
+            "- `formtrig_signal_path/`: strict path audit for calibrated frontier, saved non-`_T`, and saved `_T` progress.",
             "",
             "## Packaging Status",
             "",
@@ -220,6 +232,7 @@ def main() -> int:
     copy_formtrig_evidence(args.formtrig_dir, args.gate_dir, evidence_dir, copied, missing)
     copy_guidance_gap(args.guidance_dir, evidence_dir, copied, missing)
     copy_live_status(args.run_root, evidence_dir, copied, missing)
+    copy_signal_path(args.run_root, evidence_dir, copied, missing)
     write_index(
         evidence_dir / "EVIDENCE.md",
         summary=comparison_summary(args.comparison_dir),

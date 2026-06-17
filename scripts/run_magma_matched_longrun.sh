@@ -58,6 +58,8 @@ outputs:
   OUT/baselines/
   OUT/live_status.json
   OUT/live_status.md
+  OUT/formtrig_signal_path.json
+  OUT/formtrig_signal_path.md
   OUT/formtrig_gate/gate_summary.csv
   OUT/baseline_guidance_gap/baseline_guidance_gap.json
   OUT/comparison/comparison.json
@@ -385,6 +387,7 @@ require_path "$repo_root/scripts/run_formtrig_manifest_batch.sh"
 require_path "$repo_root/scripts/run_magma_baselines.sh"
 require_path "$repo_root/scripts/formtrig_experiment_gate.sh"
 require_path "$repo_root/tools/live_magma_matched_status.py"
+require_path "$repo_root/tools/analyze_formtrig_signal_path.py"
 require_path "$repo_root/tools/analyze_baseline_guidance_gap.py"
 require_path "$repo_root/tools/compare_formtrig_baselines.py"
 require_path "$repo_root/tools/package_magma_matched_evidence.py"
@@ -459,6 +462,17 @@ LIVE_STATUS_CMD=(
 )
 run_step "live_status" "$out_dir/logs/live_status.log" 1 "${LIVE_STATUS_CMD[@]}" || true
 
+SIGNAL_PATH_CMD=(
+  python3 "$repo_root/tools/analyze_formtrig_signal_path.py"
+  --target-id "$target_id"
+  --formtrig-dir "$formtrig_out"
+  --run-root "$out_dir"
+  --format "md"
+  --out-json "$out_dir/formtrig_signal_path.json"
+  --out-md "$out_dir/formtrig_signal_path.md"
+)
+run_step "formtrig_signal_path" "$out_dir/logs/formtrig_signal_path.log" 1 "${SIGNAL_PATH_CMD[@]}" || true
+
 GATE_CMD=(
   "$repo_root/scripts/formtrig_experiment_gate.sh"
   --suite "${target_id}_matched_${duration}s_${reps}rep"
@@ -516,6 +530,7 @@ echo "  plan=$plan_sh"
 echo "  formtrig=$formtrig_out"
 echo "  baselines=$baseline_out"
 echo "  live_status=$out_dir/live_status.md"
+echo "  formtrig_signal_path=$out_dir/formtrig_signal_path.md"
 echo "  gate=$gate_out/gate_summary.csv"
 echo "  guidance_gap=$guidance_out/baseline_guidance_gap.json"
 echo "  comparison=$comparison_out/comparison.json"

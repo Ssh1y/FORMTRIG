@@ -22,6 +22,11 @@ class PackageMagmaMatchedEvidenceTest(unittest.TestCase):
             run_root.mkdir(parents=True)
             (run_root / "live_status.json").write_text('{"target_id":"PDF003"}\n', encoding="utf-8")
             (run_root / "live_status.md").write_text("# live\n", encoding="utf-8")
+            (run_root / "formtrig_signal_path.json").write_text(
+                '{"verdict":"terminal_after_calibrated_frontier_only"}\n',
+                encoding="utf-8",
+            )
+            (run_root / "formtrig_signal_path.md").write_text("# path\n", encoding="utf-8")
 
             (baseline_dir / "runs" / "aflplusplus_vanilla_60s_rep1").mkdir(parents=True)
             (baseline_dir / "summary.json").write_text('{"records":[]}\n', encoding="utf-8")
@@ -115,10 +120,17 @@ class PackageMagmaMatchedEvidenceTest(unittest.TestCase):
             self.assertTrue((evidence / "guidance_gap" / "baseline_guidance_gap.json").exists())
             self.assertTrue((evidence / "live_status" / "live_status.json").exists())
             self.assertTrue((evidence / "live_status" / "live_status.md").exists())
+            self.assertTrue(
+                (evidence / "formtrig_signal_path" / "formtrig_signal_path.json").exists()
+            )
+            self.assertTrue(
+                (evidence / "formtrig_signal_path" / "formtrig_signal_path.md").exists()
+            )
             index = (evidence / "EVIDENCE.md").read_text(encoding="utf-8")
             self.assertIn("hard_endpoint_gap_candidate", index)
             self.assertIn("FORMTRIG reaches _T", index)
             self.assertIn("live_status/", index)
+            self.assertIn("formtrig_signal_path/", index)
 
 
 if __name__ == "__main__":
