@@ -1,0 +1,150 @@
+{
+  "analysis": {
+    "acceptable_trigger_threshold_s": 600.0,
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 600,
+        "max_trigger_time_s": 300.0,
+        "median_trigger_time_s": 300.0,
+        "min_trigger_time_s": 300.0,
+        "missing": 0,
+        "pretrigger_binary_flat_all_measured": true,
+        "pretrigger_binary_flat_all_runs": true,
+        "pretrigger_binary_flat_measured_runs": 1,
+        "pretrigger_binary_flat_pass_runs": 1,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1,
+        "trigger_time_range_s": null,
+        "trigger_times_s": [
+          300.0
+        ]
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 600,
+        "max_trigger_time_s": 270.0,
+        "median_trigger_time_s": 270.0,
+        "min_trigger_time_s": 270.0,
+        "missing": 0,
+        "pretrigger_binary_flat_all_measured": true,
+        "pretrigger_binary_flat_all_runs": true,
+        "pretrigger_binary_flat_measured_runs": 1,
+        "pretrigger_binary_flat_pass_runs": 1,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1,
+        "trigger_time_range_s": null,
+        "trigger_times_s": [
+          270.0
+        ]
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget": 600,
+        "max_trigger_time_s": 120.0,
+        "median_trigger_time_s": 120.0,
+        "min_trigger_time_s": 120.0,
+        "missing": 0,
+        "pretrigger_binary_flat_all_measured": true,
+        "pretrigger_binary_flat_all_runs": true,
+        "pretrigger_binary_flat_measured_runs": 1,
+        "pretrigger_binary_flat_pass_runs": 1,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1,
+        "trigger_time_range_s": null,
+        "trigger_times_s": [
+          120.0
+        ]
+      }
+    ],
+    "considered_baseline_count": 3,
+    "endpoint_cost_pass": false,
+    "fastest_successful_baseline_trigger_time_s": 120.0,
+    "hard_trigger_threshold_s": 1800.0,
+    "interpretation": "a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+    "min_reps": 3,
+    "missing_required_baselines": [],
+    "pretrigger_binary_flat_measured": true,
+    "pretrigger_binary_flat_pass": true,
+    "reasons": [
+      "low_replication",
+      "pretrigger_binary_oracle_flat_before_T",
+      "fast_successful_baseline_within_acceptable_threshold",
+      "baseline_endpoint_cost_not_sufficient_for_hard_pain"
+    ],
+    "required_baselines": [
+      "aflplusplus_vanilla",
+      "aflplusplus_cmplog",
+      "redqueen_operand"
+    ],
+    "status": "fail_fast_baseline",
+    "variance_trigger_threshold_s": 1800.0
+  },
+  "analysis_id": "php009_validated_short_600s_1rep_20260617",
+  "baseline_rows": [
+    {
+      "baseline": "aflplusplus_cmplog",
+      "budget": 600,
+      "first_reach_count": 6559,
+      "first_reach_time_s": 90.0,
+      "first_trigger_time_s": 300.0,
+      "latest_reached": 396559,
+      "latest_triggered": 9,
+      "pretrigger_binary_flat": true,
+      "pretrigger_binary_reason": "first_reach_snapshot_has_R_without_T",
+      "reach_to_trigger_gap_s": 210.0,
+      "rep": 1,
+      "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/runs/aflplusplus_cmplog_600s/run_record.json",
+      "source_label": "php009_600s",
+      "success": true,
+      "summary_path": "artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/summary.json",
+      "target_id": "PHP009",
+      "terminal_count": 9,
+      "trigger_time_s": 300.0
+    },
+    {
+      "baseline": "aflplusplus_vanilla",
+      "budget": 600,
+      "first_reach_count": 7241,
+      "first_reach_time_s": 90.0,
+      "first_trigger_time_s": 270.0,
+      "latest_reached": 85024,
+      "latest_triggered": 43,
+      "pretrigger_binary_flat": true,
+      "pretrigger_binary_reason": "first_reach_snapshot_has_R_without_T",
+      "reach_to_trigger_gap_s": 180.0,
+      "rep": 1,
+      "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/runs/aflplusplus_vanilla_600s/run_record.json",
+      "source_label": "php009_600s",
+      "success": true,
+      "summary_path": "artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/summary.json",
+      "target_id": "PHP009",
+      "terminal_count": 43,
+      "trigger_time_s": 270.0
+    },
+    {
+      "baseline": "redqueen_operand",
+      "budget": 600,
+      "first_reach_count": 145645,
+      "first_reach_time_s": 90.0,
+      "first_trigger_time_s": 120.0,
+      "latest_reached": 280521,
+      "latest_triggered": 20,
+      "pretrigger_binary_flat": true,
+      "pretrigger_binary_reason": "first_reach_snapshot_has_R_without_T",
+      "reach_to_trigger_gap_s": 30.0,
+      "rep": 1,
+      "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/runs/redqueen_operand_600s/run_record.json",
+      "source_label": "php009_600s",
+      "success": true,
+      "summary_path": "artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/summary.json",
+      "target_id": "PHP009",
+      "terminal_count": 20,
+      "trigger_time_s": 120.0
+    }
+  ],
+  "target_id": "PHP009"
+}

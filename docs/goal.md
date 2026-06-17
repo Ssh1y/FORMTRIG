@@ -37,6 +37,40 @@ baseline no-guidance proof gate
 
 只有同时满足这三条，才能写成“二值 TC 对 SOTA baseline 缺少指导，baseline 主要靠随机撞见 `_T`，FORMTRIG 解决了一部分 R2T 指导问题”。如果 baseline 在 210s、几十秒甚至更早稳定触发，即使 FORMTRIG 更快，也只能写 speedup/control/attribution，不能写 hard SOTA-gap。
 
+这个 gate 现在由 `tools/analyze_baseline_guidance_gap.py` 生成可审计结果。它读取
+baseline `summary.json` / `run_record.json`，分开记录：
+
+```text
+1. pre-trigger binary flatness:
+   Magma monitor 是否显示 first _T 前已经有 R-not-T 区域，
+   此时 binary TC oracle 对所有 reached non-trigger executions 都只是同一个 false 值。
+2. endpoint cost:
+   faithful baselines 是否 late / missing / high-variance，
+   且没有任何强 baseline 在 acceptable threshold 600s 内触发。
+3. final status:
+   measured_pass 才能进入 hard SOTA-pain 候选；
+   fail_fast_baseline / not_measured / under_replicated 都不能写主结论。
+```
+
+当前三个已分析包都没有通过 hard SOTA-pain gate：
+
+```text
+PHP009 600s x1:
+  status = fail_fast_baseline
+  pre-trigger binary flatness = pass
+  fastest baseline _T = 120s
+
+TIF012 B5 7200s x3:
+  status = fail_fast_baseline
+  pre-trigger binary flatness = pass
+  fastest baseline _T = 210s
+
+LIBARCHIVE_2936 7200s x3:
+  status = fail_fast_baseline
+  pre-trigger binary flatness = not_measured by Magma monitor
+  fastest baseline terminal crash = 9.456s
+```
+
 PHP009 600s x1 matched short-screen 已完成，结论也按这个 gate 处理：
 
 ```text

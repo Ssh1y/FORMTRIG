@@ -74,6 +74,33 @@ baseline 分别在 210s 和 9.456s 触发，所以不能作为主 SOTA-gap 证�
 如果 baseline 在几十秒、210s 或 300s 这种可接受成本内触发，目标必须降为
 speedup/control/design evidence，不能写成 hard SOTA-pain。
 
+`tools/analyze_baseline_guidance_gap.py` 现在把这条判据落成独立 artifact。它读取
+baseline `summary.json` 和 `run_record.json`，输出
+`baseline_guidance_gap.{json,md}` 与逐 run TSV。当前已经生成：
+
+```text
+artifacts/formtrig_native_readiness/baseline_guidance_gap/php009_validated_short_600s_1rep_20260617
+  status = fail_fast_baseline
+  pre-trigger binary flatness = pass
+  fastest baseline _T = 120s
+
+artifacts/formtrig_native_readiness/baseline_guidance_gap/tif012_b5_matched_7200s_3rep_20260617
+  status = fail_fast_baseline
+  pre-trigger binary flatness = pass
+  fastest baseline _T = 210s
+
+artifacts/formtrig_native_readiness/baseline_guidance_gap/libarchive_2936_matched_7200s_3rep_20260617
+  status = fail_fast_baseline
+  pre-trigger binary flatness = not measured by Magma monitor
+  fastest baseline terminal crash = 9.456s
+```
+
+这三个包都没有通过 hard SOTA-pain gate。注意：PHP009 和 TIF012 的 `_T` 前
+binary oracle 确实是 flat 的，但 endpoint 成本不够硬；LIBARCHIVE_2936 没有
+Magma monitor flatness 证据，且 baseline 更早触发。因此下一步要找的不是“又一个
+speedup target”，而是 `baseline_guidance_gap.status=measured_pass` 的 target：
+flat pre-`_T` signal 加上 late/missing/high-variance baseline endpoint。
+
 `artifacts/formtrig_native_readiness/hard_target_triage_20260617.{json,csv,md}`
 现在显式输出 `sota_pain_class`，避免只靠中间信号或口头解释判断。当前分类是：
 
