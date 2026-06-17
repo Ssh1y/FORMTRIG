@@ -966,6 +966,27 @@ TC-rooted trigger knowledge 转成了稳定早期 `_T`。LIBARCHIVE_2936 说明 
 有真实 CVE speedup 和 attribution 收益，但当前 harness/seed 过近，不能承担主
 SOTA-gap 结论。
 
+同一个判断已经进入执行队列：
+
+```text
+artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260617.*
+
+LIBARCHIVE_2936:
+  action = improve_experiment_design
+  reason = not_visible_near_seed_or_harness_shaped
+
+TIF012:
+  action = expand_cross_target_hard_evidence
+  reason = visible_hard_speedup_or_reliability, and the current 2h x3 matched
+           long-run is already complete for this single target
+
+PNG006 / LIBCOAP_CVE_2023_35862:
+  skipped from main budget by sota_pain_triage_not_main_budget
+```
+
+也就是说，现在不是只在文档里承认“看不出来”，而是实验 planner 会直接阻止这些
+target 继续进入主长测预算。
+
 已能支撑的说法是：
 
 ```text

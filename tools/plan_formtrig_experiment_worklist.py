@@ -25,6 +25,8 @@ TASK_FIELDS = [
     "source",
     "project",
     "lane",
+    "sota_pain_class",
+    "sota_pain_evidence",
     "action",
     "duration_s",
     "repetitions",
@@ -74,6 +76,15 @@ WEAK_MAIN_CLAIM_STRENGTHS = {
     "moderate_speedup_needs_harder_design",
 }
 
+SOTA_PAIN_SKIP_CLASSES = {
+    "not_visible_baseline_visible_no_formtrig_advantage",
+}
+
+SOTA_PAIN_DESIGN_CLASSES = {
+    "not_visible_near_seed_or_harness_shaped",
+    "weak_or_moderate_needs_harder_design",
+}
+
 BASELINE_FAMILY = "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 
 
@@ -120,6 +131,44 @@ def comparison_map(root: Path) -> dict[str, list[dict[str, Any]]]:
         payload["_comparison_path"] = str(path)
         by_target.setdefault(target_id, []).append(payload)
     return by_target
+
+
+def triage_map(path: Path | None) -> dict[str, dict[str, Any]]:
+    if path is None or not path.exists():
+        return {}
+    try:
+        payload = read_json(path)
+    except (OSError, json.JSONDecodeError):
+        return {}
+    rows = payload.get("targets")
+    if not isinstance(rows, list):
+        return {}
+    return {
+        str(row.get("target_id")): row
+        for row in rows
+        if isinstance(row, dict) and row.get("target_id")
+    }
+
+
+def sota_pain_class(triage: dict[str, Any] | None) -> str:
+    if not triage:
+        return ""
+    return str(triage.get("sota_pain_class") or "")
+
+
+def sota_pain_evidence(triage: dict[str, Any] | None) -> str:
+    if not triage:
+        return ""
+    return str(triage.get("sota_pain_evidence") or "")
+
+
+def attach_sota_pain(
+    task: dict[str, Any],
+    triage: dict[str, Any] | None,
+) -> dict[str, Any]:
+    task["sota_pain_class"] = sota_pain_class(triage)
+    task["sota_pain_evidence"] = sota_pain_evidence(triage)
+    return task
 
 
 def int_value(value: Any, default: int = 0) -> int:
@@ -273,6 +322,17 @@ def is_demoted_control(row: dict[str, Any]) -> bool:
 def is_non_main_budget(row: dict[str, Any]) -> bool:
     lane = str(row.get("lane") or "")
     return is_demoted_control(row) or lane in NON_MAIN_BUDGET_LANES
+
+
+def target_id_for(row: dict[str, Any]) -> str:
+    return str(row.get("target_id") or "")
+
+
+def is_sota_pain_skip(
+    row: dict[str, Any],
+    target_triage: dict[str, dict[str, Any]],
+) -> bool:
+    return sota_pain_class(target_triage.get(target_id_for(row))) in SOTA_PAIN_SKIP_CLASSES
 
 
 def priority_for(row: dict[str, Any]) -> str:
@@ -858,6 +918,7 @@ def short_triage_task(
 def task_for_row(
     row: dict[str, Any],
     comparisons: dict[str, list[dict[str, Any]]],
+    target_triage: dict[str, dict[str, Any]],
     *,
     short_duration_s: int,
     longrun_duration_s: int,
@@ -866,34 +927,83 @@ def task_for_row(
     longrun_reps: int,
 ) -> dict[str, Any]:
     target_id = str(row.get("target_id") or "")
+    triage = target_triage.get(target_id)
     target_comparisons = comparisons.get(target_id, [])
     weak_comparison = weak_design_comparison(target_comparisons)
     comparison = weak_comparison or strongest_comparison(target_comparisons)
     disposition = str(row.get("existing_disposition") or "")
     lane = str(row.get("lane") or "")
+    if sota_pain_class(triage) in SOTA_PAIN_DESIGN_CLASSES:
+        return attach_sota_pain(improve_experiment_design_task(row, comparison), triage)
     if weak_comparison or comparison_main_claim_strength(comparison) in WEAK_MAIN_CLAIM_STRENGTHS:
-        return improve_experiment_design_task(row, comparison)
+        return attach_sota_pain(improve_experiment_design_task(row, comparison), triage)
     if comparison_promotes_longrun(comparison) and comparison_longrun_complete(
         comparison,
         duration_s=longrun_duration_s,
         reps=longrun_reps,
     ):
-        return expand_hard_evidence_task(row, comparison)
+        return attach_sota_pain(expand_hard_evidence_task(row, comparison), triage)
     if comparison_promotes_longrun(comparison):
-        return longrun_task(row, comparison, duration_s=longrun_duration_s, reps=longrun_reps, jobs=jobs)
+        return attach_sota_pain(
+            longrun_task(
+                row,
+                comparison,
+                duration_s=longrun_duration_s,
+                reps=longrun_reps,
+                jobs=jobs,
+            ),
+            triage,
+        )
     if disposition == "candidate_extend_longruns":
-        return longrun_task(row, comparison, duration_s=longrun_duration_s, reps=longrun_reps, jobs=jobs)
+        return attach_sota_pain(
+            longrun_task(
+                row,
+                comparison,
+                duration_s=longrun_duration_s,
+                reps=longrun_reps,
+                jobs=jobs,
+            ),
+            triage,
+        )
     if lane == "binding_spec_first":
-        return binding_spec_first_task(row, comparison, short_duration_s=short_duration_s, jobs=jobs, reps=reps)
+        return attach_sota_pain(
+            binding_spec_first_task(
+                row,
+                comparison,
+                short_duration_s=short_duration_s,
+                jobs=jobs,
+                reps=reps,
+            ),
+            triage,
+        )
     if lane == "binding_validation_first":
-        return validation_first_task(row, comparison, short_duration_s=short_duration_s, jobs=jobs, reps=reps)
-    return short_triage_task(row, comparison, short_duration_s=short_duration_s, jobs=jobs, reps=reps)
+        return attach_sota_pain(
+            validation_first_task(
+                row,
+                comparison,
+                short_duration_s=short_duration_s,
+                jobs=jobs,
+                reps=reps,
+            ),
+            triage,
+        )
+    return attach_sota_pain(
+        short_triage_task(
+            row,
+            comparison,
+            short_duration_s=short_duration_s,
+            jobs=jobs,
+            reps=reps,
+        ),
+        triage,
+    )
 
 
 def build_worklist(
     queue_path: Path,
     comparison_root: Path,
     *,
+    triage_path: Path | None = None,
     limit: int,
     use_all_targets: bool,
     short_duration_s: int,
@@ -906,6 +1016,7 @@ def build_worklist(
     rows = queue_rows(queue, use_all_targets=use_all_targets)
     all_rows = queue_rows(queue, use_all_targets=True)
     comparisons = comparison_map(comparison_root)
+    target_triage = triage_map(triage_path)
     tasks: list[dict[str, Any]] = []
     skipped_controls: list[dict[str, Any]] = [
         {
@@ -914,11 +1025,21 @@ def build_worklist(
             "lane": row.get("lane"),
             "status": row.get("status"),
             "existing_disposition": row.get("existing_disposition"),
-            "reason": "control_or_negative_not_main_budget",
+            "reason": (
+                "sota_pain_triage_not_main_budget"
+                if is_sota_pain_skip(row, target_triage)
+                else "control_or_negative_not_main_budget"
+            ),
+            "sota_pain_class": sota_pain_class(
+                target_triage.get(target_id_for(row))
+            ),
+            "sota_pain_evidence": sota_pain_evidence(
+                target_triage.get(target_id_for(row))
+            ),
             "next_action": row.get("next_action"),
         }
         for row in all_rows
-        if is_demoted_control(row)
+        if is_demoted_control(row) or is_sota_pain_skip(row, target_triage)
     ]
     skipped_low_priority: list[dict[str, Any]] = [
         {
@@ -934,12 +1055,13 @@ def build_worklist(
         if is_non_main_budget(row) and not is_demoted_control(row)
     ]
     for row in rows:
-        if is_non_main_budget(row):
+        if is_non_main_budget(row) or is_sota_pain_skip(row, target_triage):
             continue
         tasks.append(
             task_for_row(
                 row,
                 comparisons,
+                target_triage,
                 short_duration_s=short_duration_s,
                 longrun_duration_s=longrun_duration_s,
                 jobs=jobs,
@@ -957,6 +1079,7 @@ def build_worklist(
         "inputs": {
             "queue": str(queue_path),
             "comparison_root": str(comparison_root),
+            "triage": str(triage_path) if triage_path else "",
         },
         "defaults": {
             "short_duration_s": short_duration_s,
@@ -1030,16 +1153,17 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         "",
         "## Task Summary",
         "",
-        "| priority | rank | target | source | action | runnable | benefit to prove |",
-        "| --- | ---: | --- | --- | --- | --- | --- |",
+        "| priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |",
+        "| --- | ---: | --- | --- | --- | --- | --- | --- |",
     ]
     for task in tasks:
         lines.append(
-            "| {priority} | {rank} | {target_id} | {source} | {action} | {runnable} | {benefit} |".format(
+            "| {priority} | {rank} | {target_id} | {source} | {sota_pain} | {action} | {runnable} | {benefit} |".format(
                 priority=md_escape(task.get("priority")),
                 rank=task.get("rank", ""),
                 target_id=md_escape(task.get("target_id")),
                 source=md_escape(task.get("source")),
+                sota_pain=md_escape(task.get("sota_pain_class")),
                 action=md_escape(task.get("action")),
                 runnable="yes" if task.get("runnable_now") else "blocked",
                 benefit=md_escape(task.get("benefit_to_prove")),
@@ -1054,6 +1178,8 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
                     f"### {task['priority']} {task['target_id']}",
                     "",
                     f"- Benefit: {task['benefit_to_prove']}",
+                    f"- SOTA pain: `{task.get('sota_pain_class') or 'not recorded'}`",
+                    f"- SOTA pain evidence: {task.get('sota_pain_evidence') or 'not recorded'}",
                     f"- Command: `{task.get('command')}`",
                     "",
                 ]
@@ -1069,6 +1195,8 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
                 f"### {task['priority']} {task['target_id']} - {task['action']}",
                 "",
                 f"- Benefit to prove: {task['benefit_to_prove']}",
+                f"- SOTA pain: `{task.get('sota_pain_class') or 'not recorded'}`",
+                f"- SOTA pain evidence: {task.get('sota_pain_evidence') or 'not recorded'}",
                 f"- Endpoint metrics: {', '.join(task.get('primary_endpoint_metrics') or [])}",
                 f"- Claim boundary: {task.get('claim_boundary')}",
                 "- Blocking issue:",
@@ -1090,18 +1218,19 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
             [
                 "## Skipped Controls",
                 "",
-                "| rank | target | lane | disposition/status | reason |",
-                "| ---: | --- | --- | --- | --- |",
+                "| rank | target | lane | disposition/status | SOTA pain | reason |",
+                "| ---: | --- | --- | --- | --- | --- |",
             ]
         )
         for row in payload["skipped_controls"]:
             disposition = row.get("existing_disposition") or row.get("status") or ""
             lines.append(
-                "| {rank} | {target_id} | {lane} | {disp} | {reason} |".format(
+                "| {rank} | {target_id} | {lane} | {disp} | {sota_pain} | {reason} |".format(
                     rank=row.get("rank", ""),
                     target_id=md_escape(row.get("target_id")),
                     lane=md_escape(row.get("lane")),
                     disp=md_escape(disposition),
+                    sota_pain=md_escape(row.get("sota_pain_class")),
                     reason=md_escape(row.get("reason")),
                 )
             )
@@ -1149,6 +1278,12 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("artifacts/formtrig_native_readiness/comparisons"),
     )
+    parser.add_argument(
+        "--triage",
+        type=Path,
+        default=Path("artifacts/formtrig_native_readiness/hard_target_triage_20260617.json"),
+        help="target-level hard-pain triage JSON; missing files are ignored",
+    )
     parser.add_argument("--out-json", required=True, type=Path)
     parser.add_argument("--out-md", required=True, type=Path)
     parser.add_argument("--out-csv", required=True, type=Path)
@@ -1168,6 +1303,7 @@ def main() -> int:
     payload = build_worklist(
         args.queue,
         args.comparison_root,
+        triage_path=args.triage,
         limit=args.limit,
         use_all_targets=args.use_all_targets,
         short_duration_s=args.short_duration,

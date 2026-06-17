@@ -79,6 +79,16 @@ LIBCOAP_CVE_2023_35862 and PNG006:
 Magma evidence。LIBARCHIVE_2936 只能作为真实 CVE speedup/attribution/control，
 PNG006 和 LIBCOAP 当前不能作为 SOTA-pain 主证据。
 
+`artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260617.*`
+现在也读取这个 triage artifact。主执行队列会把：
+
+- `not_visible_baseline_visible_no_formtrig_advantage` 目标跳过主预算；
+- `not_visible_near_seed_or_harness_shaped` 目标路由到 `improve_experiment_design`；
+- `visible_hard_speedup_or_reliability` 目标保留为 hard evidence，但若 2h x3
+  matched long-run 已完成，则转向跨目标扩展。
+
+这避免了 triage 已经判定“看不出 SOTA pain”的目标继续消耗长测预算。
+
 SSL011 已从错误的 OpenSSL `asn1` runner 修正为 `pkcs7_decode` runner。新的 runner
 实际调用 `PKCS7_dataDecode`，已有 FORMTRIG-native executable、source site-map、formal
 RNT seed 和 runnable validation worklist。当前 60s BindingSpec validation 是负结果：

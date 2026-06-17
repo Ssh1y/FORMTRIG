@@ -1,6 +1,6 @@
 {
   "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
-  "blocked_count": 30,
+  "blocked_count": 20,
   "defaults": {
     "jobs": 4,
     "longrun_duration_s": 7200,
@@ -8,10 +8,11 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-17T13:53:01+00:00",
+  "generated_at_utc": "2026-06-17T14:29:33+00:00",
   "inputs": {
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
-    "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json"
+    "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
+    "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260617.json"
   },
   "runnable_now_count": 0,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
@@ -22,7 +23,9 @@
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 144,
-      "reason": "control_or_negative_not_main_budget",
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_visible_no_formtrig_advantage",
+      "sota_pain_evidence": "matched faithful baselines trigger and current evidence has no FORMTRIG first_T/TTE advantage",
       "status": "do_not_promote",
       "target_id": "PNG006"
     },
@@ -32,6 +35,8 @@
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 145,
       "reason": "control_or_negative_not_main_budget",
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "status": "do_not_promote",
       "target_id": "SSL011"
     },
@@ -41,6 +46,8 @@
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 146,
       "reason": "control_or_negative_not_main_budget",
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "status": "do_not_promote",
       "target_id": "PNG007"
     },
@@ -49,7 +56,9 @@
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 147,
-      "reason": "control_or_negative_not_main_budget",
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_visible_no_formtrig_advantage",
+      "sota_pain_evidence": "matched faithful baselines trigger and current evidence has no FORMTRIG first_T/TTE advantage",
       "status": "do_not_promote",
       "target_id": "LIBCOAP_CVE_2023_35862"
     }
@@ -894,7 +903,7 @@
     }
   ],
   "skipped_low_priority_count": 93,
-  "task_count": 30,
+  "task_count": 20,
   "tasks": [
     {
       "action": "improve_experiment_design",
@@ -941,6 +950,8 @@
       "rank": 1,
       "repetitions": "",
       "runnable_now": false,
+      "sota_pain_class": "not_visible_near_seed_or_harness_shaped",
+      "sota_pain_evidence": "all required baseline families trigger too early, so the current harness/seed does not expose a hard SOTA gap; strength=weak_near_seed_or_harness_shaped_speedup; FORMTRIG first_T=1.358s; baseline fastest_T=9.456s; baseline family_median_T=32.517s; speedup=6.96318x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
       "source": "real_cve",
       "target_id": "LIBARCHIVE_2936"
     },
@@ -982,6 +993,8 @@
       "rank": 2,
       "repetitions": "",
       "runnable_now": false,
+      "sota_pain_class": "visible_hard_speedup_or_reliability",
+      "sota_pain_evidence": "at least one strong baseline family is unstable or has low success under the matched budget; strength=hard_speedup_or_reliability_candidate; FORMTRIG first_T=0.034s; baseline fastest_T=210s; baseline family_median_T=1410s; speedup=6176.47x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
       "source": "magma",
       "target_id": "TIF012"
     },
@@ -1023,6 +1036,8 @@
       "rank": 3,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "PDF003"
     },
@@ -1064,6 +1079,8 @@
       "rank": 4,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "SSL015"
     },
@@ -1105,6 +1122,8 @@
       "rank": 5,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "PDF016"
     },
@@ -1146,6 +1165,8 @@
       "rank": 6,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "PHP009"
     },
@@ -1187,6 +1208,8 @@
       "rank": 7,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "real_cve",
       "target_id": "LIBXML2_1107"
     },
@@ -1229,6 +1252,8 @@
       "rank": 8,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "real_cve",
       "target_id": "GPAC_3403"
     },
@@ -1271,6 +1296,8 @@
       "rank": 9,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "SQL013"
     },
@@ -1313,6 +1340,8 @@
       "rank": 10,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "SSL009"
     },
@@ -1355,6 +1384,8 @@
       "rank": 11,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "PHP003"
     },
@@ -1397,6 +1428,8 @@
       "rank": 12,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "PHP010"
     },
@@ -1439,6 +1472,8 @@
       "rank": 13,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "PHP011"
     },
@@ -1481,6 +1516,8 @@
       "rank": 14,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "SQL015"
     },
@@ -1523,6 +1560,8 @@
       "rank": 15,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "SSL005"
     },
@@ -1565,6 +1604,8 @@
       "rank": 16,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "TIF011"
     },
@@ -1607,6 +1648,8 @@
       "rank": 17,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "TIF014"
     },
@@ -1649,6 +1692,8 @@
       "rank": 18,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "XML003"
     },
@@ -1691,6 +1736,8 @@
       "rank": 19,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "XML004"
     },
@@ -1733,428 +1780,10 @@
       "rank": 20,
       "repetitions": 1,
       "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "XML010"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "binary-state-null+equality/magic",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id SSL008 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL008.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "openssl",
-      "rank": 21,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "SSL008"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "binary-state-null+equality/magic",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id SSL012 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL012.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "openssl",
-      "rank": 22,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "SSL012"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "binary-state-null+equality/magic",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id SSL017 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL017.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "openssl",
-      "rank": 23,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "SSL017"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "binary-state-null",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id PDF010 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF010.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "poppler",
-      "rank": 24,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "PDF010"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "binary-state-null",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id SSL002 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL002.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "openssl",
-      "rank": 25,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "SSL002"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "binary-state-null+numeric-margin",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id LUA002 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/LUA002.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "lua",
-      "rank": 26,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "LUA002"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "binary-state-null+numeric-margin",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id PHP001 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP001.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "php",
-      "rank": 27,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "PHP001"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "binary-state-null+numeric-margin",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id TIF009 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/TIF009.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "libtiff",
-      "rank": 28,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "TIF009"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "compound-sequence-lifecycle",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id LUA003 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/LUA003.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "lua",
-      "rank": 29,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "LUA003"
-    },
-    {
-      "action": "draft_binding_spec_then_short_screen",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet",
-        "no comparison package exists yet"
-      ],
-      "category": "compound-sequence-lifecycle",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "binding_spec_first",
-      "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
-      ],
-      "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id PDF013 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF013.list --duration 600 --jobs 4 --continue-on-fail"
-      ],
-      "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
-      ],
-      "priority": "P3",
-      "project": "poppler",
-      "rank": 30,
-      "repetitions": 1,
-      "runnable_now": false,
-      "source": "magma",
-      "target_id": "PDF013"
     }
   ]
 }

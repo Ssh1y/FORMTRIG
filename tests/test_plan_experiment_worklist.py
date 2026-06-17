@@ -201,6 +201,160 @@ class ExperimentWorklistTest(unittest.TestCase):
                 any("higher-fidelity" in step for step in task["post_unblock_commands"])
             )
 
+    def test_target_level_triage_can_skip_stale_main_queue_entry(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            triage_path = root / "triage.json"
+            comparison_root = root / "comparisons"
+            comparison_root.mkdir()
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 1,
+                                "target_id": "PNG006",
+                                "source": "magma",
+                                "project": "libpng",
+                                "primary_category": "binary-state-null",
+                                "secondary_category": "compound-sequence-lifecycle",
+                                "lane": "binding_validation_first",
+                                "status": "needs_binding_validation",
+                                "existing_disposition": "candidate_extend_longruns",
+                                "blockers": "",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            triage_path.write_text(
+                json.dumps(
+                    {
+                        "targets": [
+                            {
+                                "target_id": "PNG006",
+                                "sota_pain_class": "not_visible_baseline_visible_no_formtrig_advantage",
+                                "sota_pain_evidence": "matched faithful baselines trigger",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                triage_path=triage_path,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            self.assertEqual(payload["task_count"], 0)
+            self.assertEqual(payload["skipped_control_count"], 1)
+            skipped = payload["skipped_controls"][0]
+            self.assertEqual(skipped["target_id"], "PNG006")
+            self.assertEqual(skipped["reason"], "sota_pain_triage_not_main_budget")
+            self.assertEqual(
+                skipped["sota_pain_class"],
+                "not_visible_baseline_visible_no_formtrig_advantage",
+            )
+
+    def test_target_level_near_seed_triage_routes_to_design_work(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            triage_path = root / "triage.json"
+            comparison_root = root / "comparisons"
+            comparison_dir = comparison_root / "libarchive"
+            comparison_dir.mkdir(parents=True)
+            (comparison_dir / "comparison.json").write_text(
+                json.dumps(
+                    {
+                        "target_id": "LIBARCHIVE_2936",
+                        "analysis": {
+                            "verdict": "positive_speedup_matched_comparison",
+                            "matched_baseline_count": 9,
+                        },
+                        "benefit_readout": {
+                            "primary_benefits": ["FORMTRIG is faster by first _T"],
+                            "design_evidence": ["strict_pretrigger_guidance"],
+                            "blocked_claims": [],
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 1,
+                                "target_id": "LIBARCHIVE_2936",
+                                "source": "real_cve",
+                                "project": "libarchive",
+                                "primary_category": "binary-state-null",
+                                "secondary_category": "",
+                                "lane": "real_cve_replacement",
+                                "status": "short_gate_triaged",
+                                "existing_disposition": "candidate_extend_longruns",
+                                "blockers": "",
+                                "source_evidence": "cve.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            triage_path.write_text(
+                json.dumps(
+                    {
+                        "targets": [
+                            {
+                                "target_id": "LIBARCHIVE_2936",
+                                "sota_pain_class": "not_visible_near_seed_or_harness_shaped",
+                                "sota_pain_evidence": "all required baseline families trigger early",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                triage_path=triage_path,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "improve_experiment_design")
+            self.assertEqual(task["sota_pain_class"], "not_visible_near_seed_or_harness_shaped")
+            self.assertIn("baseline families trigger early", task["sota_pain_evidence"])
+
     def test_completed_longrun_routes_to_cross_target_expansion(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:
