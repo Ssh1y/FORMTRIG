@@ -5,3 +5,4 @@ baseline	aflpp_family_600s_1rep	PDF003	600	577	1	false	0				112842	195.40	110824
 baseline	aflpp_family_600s_1rep	PDF003	600	577	1	false	0				101717	176.15	42444						false		evidence/baseline_summary.tsv
 formtrig	pdf003_fallback_smoke_120s	PDF003	120	120	1	false	0				907	7.50	417	0	0	164	0	0	false	pass	evidence/post_fallback_120s_batch_summary.csv
 formtrig	pdf003_semantic_escape_smoke_180s	PDF003	180	180	1	false	0				1361	7.55	683	0	0	206	0	0	false	pass	evidence/post_semantic_escape_180s_batch_summary.csv
+formtrig	pdf003_pdf_image_hook_smoke_30s	PDF003	30	31	1	true	89	0.287	typed_queue_ftgtype	79	214	6.90	176	0	0	33	0	0	false	pass	evidence/post_pdf_image_hook_30s_batch_summary.csv

@@ -193,3 +193,26 @@ bindings:
     value: 1.0
     confidence: 0.75
     observe_window: 'any'
+  - id: 'pdf003_pdf_image_colorspace_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'PDF image XObject color-space dictionaries can change component count and secondary color-space state'
+    site_id: 738567632
+    observe_at:
+      kind: 'cmp'
+      function: 'GfxImageColorMap::getGray'
+      file: 'poppler/GfxState.cc'
+      line: 5807
+      inst_no: 16
+      opcode: 'icmp'
+      column: 9
+    component: 'input_influence'
+    priority: 45
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+    range_start: 0
+    range_len: 4096
+    mutation_hook: 'scripts/formtrig_hooks/pdf_device_n_colorspace_hook.py'

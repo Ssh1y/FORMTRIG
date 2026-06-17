@@ -1,0 +1,61 @@
+start_time        : 1781730186
+last_update       : 1781730218
+run_time          : 31
+fuzzer_pid        : 2344960
+cycles_done       : 0
+cycles_wo_finds   : 0
+time_wo_finds     : 3
+execs_done        : 214
+execs_per_sec     : 6.85
+execs_ps_last_min : 0.00
+corpus_count      : 27
+corpus_favored    : 11
+corpus_found      : 15
+corpus_imported   : 0
+corpus_variable   : 0
+max_depth         : 2
+cur_item          : 10
+pending_favs      : 11
+pending_total     : 26
+stability         : 100.00%
+bitmap_cvg        : 13.15%
+saved_crashes     : 0
+saved_hangs       : 0
+last_find         : 1781730215
+last_crash        : 0
+last_hang         : 0
+execs_since_crash : 214
+exec_timeout      : 5000
+slowest_exec_ms   : 0
+peak_rss_mb       : 139
+cpu_affinity      : -1
+edges_found       : 11333
+total_edges       : 86192
+var_byte_count    : 0
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 12617
+testcache_count   : 16
+testcache_evict   : 0
+afl_banner        : /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages
+afl_version       : ++4.08c
+target_mode       : shmem_testcase default
+command_line      : /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz -i /home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF003/seeds -o /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_pdf_image_hook_trigger_30s_formtrig/PDF003/out -V 30 -t 5000 -- /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages @@ /tmp/out
+formtrig_seen_execs      : 176
+formtrig_reached_execs   : 176
+formtrig_triggered_execs : 89
+formtrig_queued_progress : 10
+formtrig_frontier_count  : 3
+formtrig_frontier_updates: 3
+formtrig_typed_execs     : 24
+formtrig_typed_finds     : 0
+formtrig_typed_skips     : 0
+formtrig_stability_checks: 21
+formtrig_stability_failures: 0
+formtrig_progress_log_events: 33
+formtrig_saved_progress_log_seen: 10
+formtrig_saved_triggered_log_seen: 10
+formtrig_saved_non_trigger_log_seen: 0
+formtrig_progress_log_dropped: 0
+formtrig_best_df         : 1
+formtrig_best_dt         : 1.0000000000000001e+300

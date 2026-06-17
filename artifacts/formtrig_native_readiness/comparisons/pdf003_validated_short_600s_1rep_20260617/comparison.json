@@ -26,22 +26,23 @@
         "success_rate": 0.0
       }
     ],
-    "best_formtrig_trigger_time_s": null,
+    "best_formtrig_trigger_time_s": 0.287,
     "experiment_strength": {
       "baseline_guidance_gap": {
+        "status": "short_screen_pain_observed_with_formtrig_typed_r2t_smoke",
         "required_evidence": [
           "matched faithful baselines repeatedly reach the Magma _R site",
           "matched faithful baselines do not trigger the Magma _T oracle within the short screen",
-          "FORMTRIG must still demonstrate R2T conversion under the same target"
-        ],
-        "status": "short_screen_pain_observed"
+          "FORMTRIG typed mutation must trigger _T under the same native target",
+          "long-run and repetitions are still required before paper-level endpoint claims"
+        ]
       },
-      "main_claim_strength": "baseline_binary_tc_pain_observed_short_screen",
+      "main_claim_strength": "format_aware_typed_r2t_smoke_not_matched_longrun",
       "recommended_design_actions": [
-        "treat PDF003 as a hard R2T target rather than a positive FORMTRIG endpoint result",
-        "repair the no-hot-range and dominated-frontier handoff before promoting FORMTRIG on PDF003",
-        "continue the R2T handoff repair because semantic frontier admission now moves but saved FORMTRIG-only progress is still zero",
-        "rerun matched repetitions after the R2T repair"
+        "run matched repetitions with the PDF image typed hook enabled before making endpoint speedup claims",
+        "separate format-aware typed mutation benefit from strict pre-trigger frontier guidance in the paper tables",
+        "keep improving non-trigger save/frontier handoff because this smoke reaches _T directly and still saves no non-trigger progress",
+        "audit whether comparable grammar/format-aware baselines should be included for a fair PDF-specific comparison"
       ]
     },
     "matched_baseline_count": 3,
@@ -54,21 +55,26 @@
       "fallback_repair_enables_typed_stage_in_120s_smoke",
       "dominance_acceptance_remains_blocked",
       "semantic_frontier_repair_accepts_calibration_transitions",
-      "saved_formtrig_progress_still_zero_after_semantic_repair"
+      "saved_formtrig_progress_still_zero_after_semantic_repair",
+      "pdf_image_typed_hook_generates_valid_multicomponent_image_pdf",
+      "post_pdf_image_hook_smoke_triggers_from_ftgtype_queue_entry",
+      "post_pdf_image_hook_smoke_has_zero_non_trigger_progress",
+      "post_pdf_image_hook_smoke_is_endpoint_r2t_not_strict_pretrigger_guidance"
     ],
-    "verdict": "negative_formtrig_r2t_gap_with_sota_pain"
+    "verdict": "positive_format_typed_r2t_smoke_with_sota_pain_not_longrun"
   },
   "benefit_readout": {
     "blocked_claims": [
-      "FORMTRIG does not currently solve PDF003 R2T within the 600s short screen",
-      "no endpoint speedup or success-rate benefit is supported by this PDF003 run",
-      "no strict pre-trigger guidance benefit is supported because accepted non-trigger progress is zero"
+      "the 30s typed-hook smoke is not a matched long-run endpoint comparison",
+      "the current PDF003 evidence does not prove strict pre-trigger frontier guidance because saved_non_trigger_progress remains zero",
+      "generality over Magma and real CVEs still requires replicated targets and faithful baselines under the same budgets"
     ],
     "primary_benefits": [
-      "the matched SOTA baselines expose a binary-TC pain point on PDF003: heavy _R traffic and zero _T",
-      "FORMTRIG instrumentation exposes the failure mode instead of leaving it as a black-box miss"
+      "matched SOTA baselines expose a binary-TC pain point on PDF003 in the 600s short screen: heavy _R traffic and zero _T",
+      "FORMTRIG BindingSpec instrumentation exposes structured intermediate state on the same target instead of leaving the miss as black-box random failure",
+      "after adding a BindingSpec-provenance PDF image typed hook, FORMTRIG reaches _T from an ftgtype queue entry in the 30s smoke"
     ],
-    "summary": "PDF003 is useful hard-target evidence, but current FORMTRIG does not yet convert lifted signal into R2T progress."
+    "summary": "PDF003 now shows a positive FORMTRIG format-aware typed R2T smoke on top of the earlier SOTA-pain short screen, but it is not yet a matched long-run or strict pre-trigger guidance claim."
   },
   "formtrig_runs": [
     {
@@ -145,6 +151,37 @@
     "evidence/post_semantic_escape_180s_formtrig_summary.json",
     "evidence/post_semantic_escape_180s_formtrig_diagnosis.json",
     "evidence/post_semantic_escape_180s_binding_signal_diagnosis.json",
-    "evidence/post_semantic_escape_180s_formtrig_progress.jsonl"
-  ]
+    "evidence/post_semantic_escape_180s_formtrig_progress.jsonl",
+    "evidence/post_pdf_image_hook_30s_batch_summary.csv",
+    "evidence/post_pdf_image_hook_30s_fuzzer_stats.txt",
+    "evidence/post_pdf_image_hook_30s_formtrig_summary.json",
+    "evidence/post_pdf_image_hook_30s_formtrig_diagnosis.json",
+    "evidence/post_pdf_image_hook_30s_mutation_hook.json",
+    "evidence/post_pdf_image_hook_30s_formtrig_progress.jsonl"
+  ],
+  "post_pdf_image_hook_smoke": {
+    "purpose": "verify BindingSpec-provenance PDF image typed mutation can convert PDF003 R2T; not a matched long-run endpoint result",
+    "budget": 30,
+    "run_time": 31,
+    "execs_done": 214,
+    "reached": 176,
+    "terminal_count": 89,
+    "first_trigger_time_s_from_queue_name": 0.287,
+    "first_trigger_queue_execs": 79,
+    "first_saved_trigger_execs_from_progress": 86,
+    "first_trigger_source": "id:000012,src:000010,time:287,execs:79,op:ftgtype,pos:0,+cov",
+    "typed_execs": 24,
+    "typed_finds": 0,
+    "saved_triggered_progress": 10,
+    "saved_non_trigger_progress": 0,
+    "queued_progress": 10,
+    "spec_lifted": 33,
+    "d_f_spec_lifted_min": 1,
+    "d_f_spec_lifted_max": 3,
+    "diagnosis": "triggered",
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "triggered",
+    "mutation_hook_sha256": "07897f851c26f96885096d76f34ffbc68c3c0b36d7074a54fd85e0ecf141afc7",
+    "interpretation": "positive endpoint R2T smoke for FORMTRIG typed mutation; no strict non-trigger guidance benefit because saved_non_trigger_progress is zero"
+  }
 }
