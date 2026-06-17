@@ -7,6 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.compare_formtrig_baselines import (
+    apply_baseline_guidance_gap,
     benefit_readout,
     classify_evidence,
     load_formtrig_rows,
@@ -86,6 +87,78 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertIn("matched_budget_endpoint_success", readout["design_evidence"])
         self.assertIn("baseline_guidance_gap_required", readout["design_evidence"])
         self.assertTrue(
+            any("baseline no-guidance proof" in claim for claim in readout["blocked_claims"])
+        )
+
+    def test_measured_guidance_gap_unblocks_hard_endpoint_readout(self):
+        formtrig_rows = [
+            {
+                "budget": 600,
+                "strict_pretrigger_guidance": False,
+                "terminal_count": 502,
+                "trigger_time_s": 0.29,
+            }
+            for _ in range(3)
+        ]
+        baseline_rows = []
+        for baseline in (
+            "aflplusplus_vanilla",
+            "aflplusplus_cmplog",
+            "redqueen_operand",
+        ):
+            for rep in range(3):
+                baseline_rows.append(
+                    {
+                        "source_label": "matched",
+                        "baseline": baseline,
+                        "budget": 600,
+                        "rep": rep + 1,
+                        "success": False,
+                        "terminal_count": 0,
+                    }
+                )
+
+        analysis = classify_evidence(
+            formtrig_rows,
+            baseline_rows,
+            tolerance=0,
+            min_reps=3,
+            required_baselines=[
+                "aflplusplus_vanilla",
+                "aflplusplus_cmplog",
+                "redqueen_operand",
+            ],
+        )
+        apply_baseline_guidance_gap(
+            analysis,
+            {
+                "analysis_id": "synthetic_gap",
+                "target_id": "PDF003",
+                "analysis": {
+                    "status": "measured_pass",
+                    "interpretation": "baseline evidence supports a hard binary-TC no-guidance candidate",
+                    "pretrigger_binary_flat_measured": True,
+                    "pretrigger_binary_flat_pass": True,
+                    "endpoint_cost_pass": True,
+                    "reasons": [
+                        "pretrigger_binary_oracle_flat_before_T",
+                        "baseline_endpoint_cost_late_missing_or_high_variance",
+                    ],
+                    "baseline_groups": [],
+                },
+            },
+            Path("gap.json"),
+            target_id="PDF003",
+        )
+
+        gap = analysis["experiment_strength"]["baseline_guidance_gap"]
+        self.assertEqual(gap["status"], "measured_pass")
+        self.assertTrue(gap["pretrigger_binary_flat_pass"])
+        self.assertIn("baseline_guidance_gap_measured_pass", analysis["reasons"])
+
+        readout = benefit_readout(formtrig_rows, analysis)
+        self.assertIn("baseline_guidance_gap_measured", readout["design_evidence"])
+        self.assertFalse(
             any("baseline no-guidance proof" in claim for claim in readout["blocked_claims"])
         )
 

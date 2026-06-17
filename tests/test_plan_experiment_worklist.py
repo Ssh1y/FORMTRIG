@@ -560,6 +560,31 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertIn("--afl-arg -t --afl-arg 5000", command)
             self.assertIn("scripts/run_formtrig_manifest_batch.sh", command)
 
+    def test_validated_short_screen_prefers_replicated_manifest_list(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest_root = root / "manifests"
+            manifest_root.mkdir()
+            single = manifest_root / "PDF003.list"
+            repeated = manifest_root / "PDF003.current_3rep.list"
+            single.write_text("single.manifest\n", encoding="utf-8")
+            repeated.write_text(
+                "rep1.manifest\nrep2.manifest\nrep3.manifest\n",
+                encoding="utf-8",
+            )
+
+            command, _followups = planner.validated_short_screen_command(
+                "PDF003",
+                600,
+                3,
+                3,
+                manifest_root,
+            )
+
+            self.assertIn(str(repeated), command)
+            self.assertNotIn(str(single), command)
+
     def test_completed_longrun_routes_to_cross_target_expansion(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

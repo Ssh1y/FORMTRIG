@@ -632,7 +632,11 @@ def formtrig_manifest_batch_command(
     return shell_join(args)
 
 
-def preferred_manifest_list(target_id: str, manifest_root: Path) -> str:
+def preferred_manifest_list(target_id: str, manifest_root: Path, reps: int = 1) -> str:
+    if reps > 1:
+        repeated = manifest_root / f"{target_id}.current_{reps}rep.list"
+        if repeated.exists():
+            return str(repeated)
     current = manifest_root / f"{target_id}.current_1rep.list"
     if current.exists():
         return str(current)
@@ -649,7 +653,7 @@ def validated_short_screen_command(
     tag = f"{target_id.lower()}_validated_short_{duration_s}s_{reps}rep"
     baseline_out = f"artifacts/formtrig_native_readiness/raw/{tag}_baselines"
     formtrig_out = f"artifacts/formtrig_native_readiness/raw/{tag}_formtrig"
-    manifest_list = preferred_manifest_list(target_id, manifest_root)
+    manifest_list = preferred_manifest_list(target_id, manifest_root, reps)
     baseline_afl_args = afl_args_for_manifest_list(manifest_list)
     commands = [
         magma_baseline_command(
@@ -735,6 +739,101 @@ def tif012_magma_longrun_steps(duration_s: int, reps: int, jobs: int) -> list[st
     ]
 
 
+def magma_matched_longrun_steps(
+    target_id: str,
+    duration_s: int,
+    reps: int,
+    jobs: int,
+    manifest_root: Path,
+) -> list[str]:
+    manifest_list = preferred_manifest_list(target_id, manifest_root, reps)
+    utc_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_tag = f"{target_id.lower()}_matched_{duration_s}s_{reps}rep_{utc_stamp}"
+    formtrig_out = f"artifacts/formtrig_native_readiness/raw/{run_tag}_formtrig"
+    baseline_out = f"artifacts/formtrig_native_readiness/raw/{run_tag}_baselines"
+    gate_out = f"{formtrig_out}/gate"
+    guidance_out = f"artifacts/formtrig_native_readiness/baseline_guidance_gap/{run_tag}"
+    comparison_out = f"artifacts/formtrig_native_readiness/comparisons/{run_tag}"
+    gate_args = [
+        "scripts/formtrig_experiment_gate.sh",
+        "--suite",
+        f"{target_id}_{duration_s}s_{reps}rep",
+        "--out",
+        gate_out,
+        "--min-runtime",
+        str(duration_s),
+    ]
+    for index in range(1, reps + 1):
+        gate_args.extend(
+            [
+                "--run",
+                f"rep{index}={formtrig_out}/{index:03d}_{target_id}/out",
+            ]
+        )
+    baseline_label = f"aflpp_family_{duration_s}s_{reps}rep"
+    return [
+        magma_baseline_command(
+            target_id,
+            duration_s,
+            jobs,
+            reps,
+            out_dir=baseline_out,
+            afl_args=afl_args_for_manifest_list(manifest_list),
+        ),
+        formtrig_manifest_batch_command(
+            manifest_list,
+            duration_s,
+            jobs,
+            out_root=formtrig_out,
+        ),
+        shell_join(gate_args),
+        shell_join(
+            [
+                "python3",
+                "tools/analyze_baseline_guidance_gap.py",
+                "--analysis-id",
+                f"{run_tag}_baseline_guidance_gap",
+                "--target-id",
+                target_id,
+                "--baseline-summary",
+                f"{baseline_label}={baseline_out}/summary.json",
+                "--out-dir",
+                guidance_out,
+                "--required-baselines",
+                BASELINE_FAMILY,
+                "--min-reps",
+                str(reps),
+                "--acceptable-trigger-s",
+                "600",
+                "--hard-trigger-s",
+                "1800",
+            ]
+        ),
+        shell_join(
+            [
+                "python3",
+                "tools/compare_formtrig_baselines.py",
+                "--comparison-id",
+                run_tag,
+                "--target-id",
+                target_id,
+                "--formtrig-gate",
+                f"typed_hook_{duration_s}s_{reps}rep={gate_out}/gate_summary.csv",
+                "--baseline-summary",
+                f"{baseline_label}={baseline_out}/summary.json",
+                "--baseline-guidance-gap",
+                guidance_out,
+                "--out-dir",
+                comparison_out,
+                "--min-reps",
+                str(reps),
+                "--required-baselines",
+                BASELINE_FAMILY,
+            ]
+        ),
+    ]
+
+
 def longrun_task(
     row: dict[str, Any],
     comparison: dict[str, Any] | None,
@@ -742,6 +841,7 @@ def longrun_task(
     duration_s: int,
     reps: int,
     jobs: int,
+    manifest_root: Path,
 ) -> dict[str, Any]:
     summary = comparison_summary(comparison)
     target_id = str(row.get("target_id") or "")
@@ -792,6 +892,19 @@ def longrun_task(
                 "use the recorded TIF012 b5 manifest list and regenerate the comparison package after both arms finish",
             ]
             post_unblock_commands = tif012_magma_longrun_steps(duration_s, reps, jobs)
+    elif str(row.get("source") or "") == "magma":
+        manifest_list = Path(preferred_manifest_list(target_id, manifest_root, reps))
+        if manifest_list.exists():
+            steps = magma_matched_longrun_steps(
+                target_id,
+                duration_s,
+                reps,
+                jobs,
+                manifest_root,
+            )
+            command = " && ".join(steps)
+            blocking_issue = []
+            post_unblock_commands = []
     if verdict == "positive_endpoint_matched_comparison":
         benefit_to_prove = (
             "Confirm that the current matched-budget endpoint benefit "
@@ -838,6 +951,7 @@ def longrun_task(
         "runnable_now": bool(command),
         "post_unblock_commands": post_unblock_commands,
         "comparison_verdict": summary["verdict"],
+        "main_claim_strength": summary["main_claim_strength"],
         "current_primary_benefits": summary["primary_benefits"],
         "blocked_claims": summary["blocked_claims"],
         "evidence_paths": evidence_paths(row, comparison),
@@ -1272,6 +1386,7 @@ def task_for_row(
                 duration_s=longrun_duration_s,
                 reps=longrun_reps,
                 jobs=jobs,
+                manifest_root=manifest_root,
             ),
             triage,
         )
@@ -1283,6 +1398,7 @@ def task_for_row(
                 duration_s=longrun_duration_s,
                 reps=longrun_reps,
                 jobs=jobs,
+                manifest_root=manifest_root,
             ),
             triage,
         )

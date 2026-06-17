@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "source": "binding_spec",
+  "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/pdf_device_n_colorspace_hook.py",
+  "sha256": "07897f851c26f96885096d76f34ffbc68c3c0b36d7074a54fd85e0ecf141afc7"
+}

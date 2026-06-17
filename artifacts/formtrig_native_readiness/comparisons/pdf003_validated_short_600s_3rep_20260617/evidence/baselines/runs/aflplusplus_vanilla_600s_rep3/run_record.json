@@ -1,0 +1,75 @@
+{
+  "baseline": "aflplusplus_vanilla",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/afl-fuzz"
+    ],
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "information_budget": "coverage feedback only; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "budget": 600,
+  "command_line": [
+    "magma/captain",
+    "aflplusplus_plain",
+    "poppler",
+    "pdfimages",
+    "@@",
+    "/tmp/out"
+  ],
+  "config_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_3rep_baselines/runs/aflplusplus_vanilla_600s_rep3/run_config.json",
+  "first_crash": null,
+  "fuzzer_stats": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_3rep_baselines/magma/aflplusplus_vanilla_600s_rep3/findings/default/fuzzer_stats",
+  "last_crash_time_s": null,
+  "magma_monitor": {
+    "bug_id": "PDF003",
+    "first_reach": {
+      "bug_id": "PDF003",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_3rep_baselines/magma/aflplusplus_vanilla_600s_rep3/monitor/90",
+      "kind": "poll",
+      "reached": 8883,
+      "time_s": 90,
+      "triggered": 0
+    },
+    "first_trigger": null,
+    "latest": {
+      "bug_id": "PDF003",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_3rep_baselines/magma/aflplusplus_vanilla_600s_rep3/monitor/final",
+      "kind": "final",
+      "reached": 104348,
+      "time_s": null,
+      "triggered": 0
+    },
+    "monitor_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_validated_short_600s_3rep_baselines/magma/aflplusplus_vanilla_600s_rep3/monitor",
+    "reached": 104348,
+    "snapshot_count": 19,
+    "triggered": 0
+  },
+  "run_id": "PDF003:aflplusplus_vanilla:rep3",
+  "seed_set_id": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF003/seeds",
+  "stats": {
+    "corpus_count": 1878,
+    "execs_done": 117215,
+    "execs_per_sec": "203.10",
+    "magma_reached": 104348,
+    "magma_triggered": 0,
+    "run_time": 577,
+    "saved_crashes": 0,
+    "saved_hangs": 11
+  },
+  "success": false,
+  "target_id": "PDF003",
+  "tc_category": "binary-state-null",
+  "timeout": false,
+  "trigger_execs": null,
+  "trigger_time_kind": null,
+  "trigger_time_s": null
+}

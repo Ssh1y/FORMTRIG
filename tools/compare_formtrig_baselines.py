@@ -76,6 +76,63 @@ def write_json(path: Path, data: Any) -> None:
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def baseline_guidance_gap_json(path: Path) -> Path:
+    if path.is_dir():
+        candidate = path / "baseline_guidance_gap.json"
+        if candidate.exists():
+            return candidate
+    return path
+
+
+def apply_baseline_guidance_gap(
+    analysis: dict[str, Any],
+    gap_payload: dict[str, Any],
+    source_path: Path,
+    target_id: str | None = None,
+) -> dict[str, Any]:
+    """Attach measured baseline no-guidance evidence to a comparison analysis."""
+
+    payload_target = gap_payload.get("target_id")
+    if target_id and payload_target and payload_target != target_id:
+        raise SystemExit(
+            f"baseline guidance-gap target mismatch: expected {target_id}, got {payload_target}"
+        )
+
+    strength = analysis.get("experiment_strength")
+    if not isinstance(strength, dict):
+        return analysis
+    existing_gap = strength.get("baseline_guidance_gap")
+    if not isinstance(existing_gap, dict):
+        return analysis
+
+    measured = gap_payload.get("analysis", {})
+    if not isinstance(measured, dict):
+        return analysis
+
+    merged = {
+        **existing_gap,
+        "analysis_id": gap_payload.get("analysis_id"),
+        "source_path": str(source_path),
+        "status": measured.get("status", existing_gap.get("status")),
+        "interpretation": measured.get("interpretation"),
+        "reasons": measured.get("reasons", []),
+        "pretrigger_binary_flat_measured": measured.get("pretrigger_binary_flat_measured"),
+        "pretrigger_binary_flat_pass": measured.get("pretrigger_binary_flat_pass"),
+        "endpoint_cost_pass": measured.get("endpoint_cost_pass"),
+        "fastest_successful_baseline_trigger_time_s": measured.get(
+            "fastest_successful_baseline_trigger_time_s"
+        ),
+        "baseline_groups": measured.get("baseline_groups", []),
+    }
+    strength["baseline_guidance_gap"] = merged
+    if merged.get("status") == "measured_pass":
+        if "baseline_guidance_gap_measured_pass" not in strength.setdefault("reasons", []):
+            strength["reasons"].append("baseline_guidance_gap_measured_pass")
+        if "baseline_guidance_gap_measured_pass" not in analysis.setdefault("reasons", []):
+            analysis["reasons"].append("baseline_guidance_gap_measured_pass")
+    return analysis
+
+
 def parse_bool(value: Any) -> bool:
     if isinstance(value, bool):
         return value
@@ -777,6 +834,12 @@ def benefit_readout(
                 "baseline no-guidance proof is not measured: hard SOTA-pain claims require flat/binary pre-_T baseline TC signal and late, missing, or high-variance baseline _T"
             )
             design_evidence.append("baseline_guidance_gap_required")
+        elif (
+            isinstance(gap, dict)
+            and gap.get("required_for_hard_sota_pain")
+            and gap.get("status") == "measured_pass"
+        ):
+            design_evidence.append("baseline_guidance_gap_measured")
         if main_strength == "not_hard_pain_baseline_fast_enough":
             blocked_claims.append(
                 "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
@@ -936,6 +999,10 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         )
         for item in gap.get("required_evidence", []):
             lines.append(f"  - required evidence: {item}")
+        if gap.get("source_path"):
+            lines.append(f"  - source: `{gap.get('source_path')}`")
+        if gap.get("interpretation"):
+            lines.append(f"  - interpretation: {gap.get('interpretation')}")
     lines.extend(
         [
             "",
@@ -1013,6 +1080,10 @@ def parse_args() -> argparse.Namespace:
         default=[],
         help="LABEL=path/to/summary.json; repeatable",
     )
+    parser.add_argument(
+        "--baseline-guidance-gap",
+        help="path/to/baseline_guidance_gap.json or a directory containing it",
+    )
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--budget-tolerance-sec", type=int, default=5)
     parser.add_argument("--min-reps", type=int, default=3)
@@ -1039,6 +1110,16 @@ def main() -> int:
         args.min_reps,
         split_list(args.required_baselines),
     )
+    if args.baseline_guidance_gap:
+        gap_path = baseline_guidance_gap_json(Path(args.baseline_guidance_gap))
+        if not gap_path.exists():
+            raise SystemExit(f"baseline guidance-gap JSON does not exist: {gap_path}")
+        apply_baseline_guidance_gap(
+            analysis,
+            read_json(gap_path),
+            gap_path,
+            target_id=args.target_id,
+        )
     payload = {
         "analysis": analysis,
         "baseline_rows": baseline_rows,
