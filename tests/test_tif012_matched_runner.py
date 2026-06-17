@@ -9,6 +9,74 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 class Tif012MatchedRunnerTest(unittest.TestCase):
+    def test_generic_magma_runner_dry_run_emits_parallel_matched_flow(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            out_dir = root / "pdf003"
+            manifest = root / "PDF003.manifest"
+            manifest.write_text(
+                "\n".join(
+                    [
+                        "target_id: PDF003",
+                        "category: binary-null",
+                        "afl_args: -t 5000",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            manifest_list = root / "PDF003.current_2rep.list"
+            manifest_list.write_text(f"{manifest}\n{manifest}\n", encoding="utf-8")
+
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_magma_matched_longrun.sh"),
+                    "--target-id",
+                    "PDF003",
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "60",
+                    "--reps",
+                    "2",
+                    "--jobs",
+                    "2",
+                    "--out",
+                    str(out_dir),
+                    "--manifest-list",
+                    str(manifest_list),
+                    "--no-build-baselines",
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual(
+                [record["step"] for record in records],
+                [
+                    "formtrig_batch",
+                    "magma_baselines",
+                    "formtrig_gate",
+                    "baseline_guidance_gap",
+                    "comparison",
+                ],
+            )
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertTrue(metadata["parallel_arms"])
+            plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
+            self.assertIn("run_formtrig_manifest_batch.sh", plan)
+            self.assertIn("run_magma_baselines.sh", plan)
+            self.assertIn("analyze_baseline_guidance_gap.py", plan)
+            self.assertIn("compare_formtrig_baselines.py", plan)
+            self.assertIn("--afl-arg -t --afl-arg 5000", plan)
+            self.assertIn("001_PDF003/out", plan)
+            self.assertIn("002_PDF003/out", plan)
+
     def test_dry_run_emits_complete_matched_flow(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "tif012"

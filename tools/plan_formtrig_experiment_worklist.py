@@ -895,14 +895,31 @@ def longrun_task(
     elif str(row.get("source") or "") == "magma":
         manifest_list = Path(preferred_manifest_list(target_id, manifest_root, reps))
         if manifest_list.exists():
-            steps = magma_matched_longrun_steps(
+            utc_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+            run_tag = f"{target_id.lower()}_matched_{duration_s}s_{reps}rep_{utc_stamp}"
+            runner_args = [
+                "scripts/run_magma_matched_longrun.sh",
+                "--target-id",
                 target_id,
-                duration_s,
-                reps,
-                jobs,
-                manifest_root,
-            )
-            command = " && ".join(steps)
+                "--duration",
+                str(duration_s),
+                "--reps",
+                str(reps),
+                "--jobs",
+                str(jobs),
+                "--manifest-list",
+                str(manifest_list),
+                "--out",
+                f"artifacts/formtrig_native_readiness/raw/{run_tag}",
+                "--guidance-out",
+                f"artifacts/formtrig_native_readiness/baseline_guidance_gap/{run_tag}",
+                "--comparison-out",
+                f"artifacts/formtrig_native_readiness/comparisons/{run_tag}",
+                "--continue-on-fail",
+            ]
+            for afl_arg in afl_args_for_manifest_list(str(manifest_list)):
+                runner_args.extend(["--baseline-afl-arg", afl_arg])
+            command = shell_join(runner_args)
             blocking_issue = []
             post_unblock_commands = []
     if verdict == "positive_endpoint_matched_comparison":
