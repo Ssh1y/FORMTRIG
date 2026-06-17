@@ -2,7 +2,7 @@
 
 - target: `LIBARCHIVE_2936`
 - verdict: `positive_speedup_matched_comparison`
-- main claim strength: `weak_near_seed_or_harness_shaped_speedup`
+- main claim strength: `not_hard_pain_baseline_fast_enough`
 - matched baselines: `9`
 
 ## Benefit Readout
@@ -23,7 +23,7 @@ Mechanism benefits:
 - binary or sparse trigger feedback was lifted into accepted non-trigger search progress
 
 Blocked or not-yet-supported statements:
-- current experiment is too near-trigger or harness-shaped to serve as main SOTA-gap evidence
+- a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence
 
 Design evidence used for attribution:
 - `strict_pretrigger_guidance`
@@ -32,23 +32,21 @@ Design evidence used for attribution:
 
 ## Experiment Strength
 
-- main claim strength: `weak_near_seed_or_harness_shaped_speedup`
+- main claim strength: `not_hard_pain_baseline_fast_enough`
 - reasons:
-  - `all_required_baseline_families_trigger_in_replicated_runs`
-  - `baseline_family_median_trigger_time_is_under_60s`
+  - `baseline_fastest_trigger_time_is_under_acceptable_threshold`
 - required design actions:
-  - do not spend main hard-evidence budget on this harness shape alone
-  - rerun with a higher-fidelity/raw-format harness or a farther RNT seed
-  - add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution
-  - prioritize targets where at least one strong baseline family has low success rate or long median R2T
+  - treat as speedup/control evidence, not hard SOTA-pain evidence
+  - move main budget to targets where no faithful baseline triggers within the acceptable-time threshold
+  - if retained, report only FORMTRIG TTE speedup and mechanism attribution
 
 ## FORMTRIG Runs
 
 | label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |
 | --- | ---: | ---: | --- | ---: | ---: | ---: |
-| formtrig | 7207 | 10 | true | 161406 | 39964 | 4127 |
-| formtrig | 7200 | 23 | true | 113983 | 30850 | 4108 |
-| formtrig | 7203 | 46 | true | 138053 | 32418 | 4118 |
+| b4_7200s_3rep | 7207 | 10 | true | 161406 | 39964 | 4127 |
+| b4_7200s_3rep | 7200 | 23 | true | 113983 | 30850 | 4108 |
+| b4_7200s_3rep | 7203 | 46 | true | 138053 | 32418 | 4118 |
 
 ## Matched Baseline Groups
 
@@ -64,12 +62,10 @@ Design evidence used for attribution:
 - `formtrig_terminal_oracle_present`
 - `matched_baseline_also_triggers`
 - `formtrig_faster_than_successful_baselines`
-- `weak_near_seed_or_harness_shaped_speedup`
+- `not_hard_pain_baseline_fast_enough`
 
 ## Required Next Steps
 
-- treat this as a speedup claim and complete repetitions/longer runs before final performance claims
-- do not spend main hard-evidence budget on this harness shape alone
-- rerun with a higher-fidelity/raw-format harness or a farther RNT seed
-- add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution
-- prioritize targets where at least one strong baseline family has low success rate or long median R2T
+- treat as speedup/control evidence, not hard SOTA-pain evidence
+- move main budget to targets where no faithful baseline triggers within the acceptable-time threshold
+- if retained, report only FORMTRIG TTE speedup and mechanism attribution

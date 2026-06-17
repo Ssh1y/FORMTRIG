@@ -85,12 +85,12 @@ matched 7200s x3 with the same -t 5000+ terminal oracle:
   FORMTRIG vs fastest successful baseline-family median:
     23.94x faster by first _T wall-clock
   experiment strength gate:
-    weak_near_seed_or_harness_shaped_speedup
+    not_hard_pain_baseline_fast_enough
 ```
 
-因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下复现了 first `_T` speedup。但完整 2h x3 结果也证明：这个目标的当前 harness/RNT 设计太近，不能体现 SOTA 工具的痛点。三个 baseline family 全部 3/3 触发，且最快 baseline-family median 低于 60s；这说明该 replay harness 和 seed 对 baseline 也足够友好。它现在只能作为真实 CVE speedup + attribution 工程证据，不能作为主结果里的 hard SOTA-gap 证据。
+因此 LIBARCHIVE_2936 的口径已经从“pre-trigger guidance only”推进到“pre-trigger guidance 被 typed mutation 转成 endpoint success”，并且在同预算、同 timeout/oracle 下复现了 first `_T` speedup。但完整 2h x3 结果也证明：这个目标的当前 harness/RNT 设计不能体现 SOTA 工具的痛点。三个 baseline family 全部 3/3 触发，最快 baseline run 只有 9.456s；这说明该 replay harness 和 seed 对 baseline 也足够友好。它现在只能作为真实 CVE speedup + attribution 工程证据，不能作为主结果里的 hard SOTA-gap 证据。
 
-这不是改论文口径来退缩，而是实验设计 gate 的结果：`tools/compare_formtrig_baselines.py` 现在输出 `experiment_strength.main_claim_strength=weak_near_seed_or_harness_shaped_speedup`；triage/worklist 会把 LIBARCHIVE_2936 路由到 `improve_experiment_design`，要求更高保真/raw-format harness、更远 RNT seeds、no-hook/generic-hook ablation，或把 hard-gap 预算转向 baseline 低成功率/长尾明显的 Magma/真实 CVE 目标。
+这不是改论文口径来退缩，而是实验设计 gate 的结果：`tools/compare_formtrig_baselines.py` 现在输出 `experiment_strength.main_claim_strength=not_hard_pain_baseline_fast_enough`；triage/worklist 会把 LIBARCHIVE_2936 降为 speedup/control evidence，要求更高保真/raw-format harness、更远 RNT seeds、no-hook/generic-hook ablation，或把 hard-gap 预算转向 baseline 在可接受时间内无法稳定触发的 Magma/真实 CVE 目标。
 
 LIBARCHIVE_2936 现在也有了第一版 external typed-hook ablation smoke：
 
@@ -145,7 +145,7 @@ FORMTRIG vs fastest successful baseline-family median:
   41470.59x faster by first _T wall-clock upper bound
 ```
 
-TIF012 因此也不是“baseline 做不到”的 hard-gap 目标：vanilla 是 3/3 成功，Redqueen/operand 也有快速成功的 rep。它的价值是更严格的 speedup/stability 证据：在二值 `_T` 反馈下，强 baseline 的 R2T 表现有长尾和高方差；FORMTRIG 把同一个 repaired typed trigger knowledge 转成了稳定的早期 terminal evidence。注意这个 run 的 strict pre-trigger gate 是 mixed：3 个 FORMTRIG rep 都 endpoint 成功，但只有 1/3 满足 `strict_pretrigger_guidance=true`；因此论文主收益应写 endpoint TTE/stability，机制解释可以引用 typed mutation 和 spec-lifted evidence，但不能把三 rep 都包装成连续非触发 `D_F` 梯度成功。
+TIF012 因此也不是“baseline 做不到”或“baseline 时间成本不可接受”的 hard-gap 目标：vanilla 是 3/3 成功，Redqueen/operand 也有一个 210s 成功 rep。它的价值是严格的 speedup/control 证据：FORMTRIG 把同一个 repaired typed trigger knowledge 转成了稳定的早期 terminal evidence，但 faithful baseline 已经在可接受时间内触发，所以当前 harness/seed 设计不能证明随机撞见 TC 触发的概率小到构成 SOTA 痛点。注意这个 run 的 strict pre-trigger gate 是 mixed：3 个 FORMTRIG rep 都 endpoint 成功，但只有 1/3 满足 `strict_pretrigger_guidance=true`；因此论文主收益应写 endpoint TTE speedup 和 typed-repair attribution，不能写成连续非触发 `D_F` 梯度成功，也不能写成 hard SOTA-pain 证据。
 
 ---
 
@@ -938,33 +938,41 @@ docs/formtrig_native_handoff_20260615.md
 
 当前结果还不能宣称“已经充分体现 SOTA 工具的痛点”。
 
+这里的“痛点”按当前验收口径指：faithful baseline 只能靠随机性撞见 TC 触发，且随机撞见的时间成本不可接受。单纯证明 FORMTRIG 更快还不够；如果任一强 baseline 在可接受时间内已经触发，例如 210s，那么该 target 只能支持 speedup/control/attribution，不支持 hard SOTA-pain 主结论。
+
 这个判断现在由 `artifacts/formtrig_native_readiness/hard_target_triage_20260617.*`
 里的 `sota_pain_class` 显式给出，而不是靠人工解释：
 
 ```text
 TIF012:
-  sota_pain_class = visible_hard_speedup_or_reliability
+  sota_pain_class = not_visible_baseline_time_cost_acceptable
+  main_claim_strength = not_hard_pain_baseline_fast_enough
   FORMTRIG first_T = 0.034s
   fastest successful baseline run = 210s
   fastest baseline-family median = 1410s
   speedup over fastest successful baseline run = 6176.47x
+  interpretation = strong speedup/control evidence, not hard-pain evidence
 
 LIBARCHIVE_2936:
-  sota_pain_class = not_visible_near_seed_or_harness_shaped
-  FORMTRIG 有 speedup，但三类 baseline 都早触发。
+  sota_pain_class = not_visible_baseline_time_cost_acceptable
+  main_claim_strength = not_hard_pain_baseline_fast_enough
+  FORMTRIG first_T = 1.358s
+  fastest successful baseline run = 9.456s
+  interpretation = real-CVE speedup/attribution evidence, not hard-pain evidence
 
 LIBCOAP_CVE_2023_35862:
   sota_pain_class = not_visible_baseline_visible_no_formtrig_advantage
 
 PNG006:
   sota_pain_class = not_visible_baseline_visible_no_formtrig_advantage
+
+promoted hard-target candidates:
+  0
 ```
 
-因此当前只有 TIF012 能算“已经看见 SOTA 痛点”的单 target 证据：
-baseline 不是完全做不到，但 R2T 时间、成功率和长尾明显不稳定；FORMTRIG 把同一
-TC-rooted trigger knowledge 转成了稳定早期 `_T`。LIBARCHIVE_2936 说明 FORMTRIG
-有真实 CVE speedup 和 attribution 收益，但当前 harness/seed 过近，不能承担主
-SOTA-gap 结论。
+因此当前没有任何 target 可以作为主 SOTA-pain 证据。TIF012 和 LIBARCHIVE_2936
+仍有价值：它们证明 FORMTRIG 能把 typed trigger knowledge 转成极早 `_T`，也能
+支持 attribution 和工具可用性；但它们不能证明“baseline 随机撞见 TC 的成本不可接受”。
 
 同一个判断已经进入执行队列：
 
@@ -972,16 +980,18 @@ SOTA-gap 结论。
 artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260617.*
 
 LIBARCHIVE_2936:
-  action = improve_experiment_design
-  reason = not_visible_near_seed_or_harness_shaped
+  skipped from main budget
+  reason = sota_pain_triage_not_main_budget / baseline time cost acceptable
 
 TIF012:
-  action = expand_cross_target_hard_evidence
-  reason = visible_hard_speedup_or_reliability, and the current 2h x3 matched
-           long-run is already complete for this single target
+  skipped from main budget
+  reason = sota_pain_triage_not_main_budget / baseline time cost acceptable
 
 PNG006 / LIBCOAP_CVE_2023_35862:
   skipped from main budget by sota_pain_triage_not_main_budget
+
+next main-budget candidates:
+  PDF003, SSL015, PDF016, PHP009, LIBXML2_1107, GPAC_3403
 ```
 
 也就是说，现在不是只在文档里承认“看不出来”，而是实验 planner 会直接阻止这些
@@ -992,11 +1002,12 @@ target 继续进入主长测预算。
 ```text
 TIF012:
   FORMTRIG B5 在 7200s x3 matched run 中显著加速 first _T。
-  这是一条强 endpoint/TTE 证据，但还只是单 target。
+  这是一条强 endpoint/TTE speedup 证据，但因为最快 baseline run 是 210s，
+  不是 hard SOTA-pain 证据。
 
 LIBARCHIVE_2936:
   FORMTRIG 有速度和 hook attribution 收益。
-  但 faithful baseline 也能早触发，所以它不能作为主 SOTA-pain 证据。
+  但 faithful baseline 9.456s 就能触发，所以它不能作为主 SOTA-pain 证据。
 
 PDF003:
   更适合作为 hard binary/lifecycle TC 的下一条验证线。
@@ -1031,6 +1042,8 @@ SSL011:
    hook 或 seed-distance 设计，不能直接进入主比较。
 3. 再跑 same-budget faithful baselines: AFL++ vanilla, CmpLog, local Redqueen/operand。
 4. 只有当 baseline 出现低成功率、长 R2T tail 或高方差，而 FORMTRIG 改善 first _T / success rate / cost 时，才作为主 SOTA-pain 结果。
+   如果最快 baseline 已经在 600s 内触发，该 target 默认降为 speedup/control；
+   只有无 baseline 成功，或最快成功明显超过 hard-pain 阈值，才进入主 hard-pain 叙事。
 ```
 
 中间信号的角色保持不变：

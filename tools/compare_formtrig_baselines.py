@@ -44,6 +44,8 @@ TSV_FIELDS = [
 
 EARLY_BASELINE_FAMILY_MEDIAN_TTE_S = 60.0
 MODERATE_BASELINE_FAMILY_MEDIAN_TTE_S = 300.0
+ACCEPTABLE_BASELINE_FASTEST_TTE_S = 600.0
+HARD_BASELINE_FASTEST_TTE_S = 1800.0
 
 
 def read_json(path: Path) -> Any:
@@ -357,6 +359,7 @@ def main_claim_strength(
     speedup_observed: bool,
     required_baselines: list[str],
     min_reps: int,
+    best_baseline_tte: float | int | None,
     best_baseline_family_median_tte: float | int | None,
 ) -> dict[str, Any]:
     """Separate performance benefit from main-claim experiment hardness.
@@ -392,48 +395,78 @@ def main_claim_strength(
             "promote to replicated long-run or cross-target confirmation if harness fidelity passes"
         )
     elif speedup_observed:
-        if all_required_successful:
-            reasons.append("all_required_baseline_families_trigger_in_replicated_runs")
-            if (
-                best_baseline_family_median_tte is not None
-                and float(best_baseline_family_median_tte)
-                <= EARLY_BASELINE_FAMILY_MEDIAN_TTE_S
-            ):
-                strength = "weak_near_seed_or_harness_shaped_speedup"
-                reasons.append("baseline_family_median_trigger_time_is_under_60s")
-                next_steps.extend(
-                    [
-                        "do not spend main hard-evidence budget on this harness shape alone",
-                        "rerun with a higher-fidelity/raw-format harness or a farther RNT seed",
-                        "add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution",
-                        "prioritize targets where at least one strong baseline family has low success rate or long median R2T",
-                    ]
-                )
-            elif (
-                best_baseline_family_median_tte is not None
-                and float(best_baseline_family_median_tte)
-                <= MODERATE_BASELINE_FAMILY_MEDIAN_TTE_S
-            ):
-                strength = "moderate_speedup_needs_harder_design"
-                reasons.append("baseline_family_median_trigger_time_is_under_300s")
-                next_steps.extend(
-                    [
-                        "keep as secondary speedup evidence",
-                        "add ablations and a harder target/harness before using as main SOTA-gap evidence",
-                    ]
-                )
-            else:
-                strength = "hard_speedup_variance_candidate"
-                reasons.append("baseline_successful_but_not_early_across_families")
-                next_steps.append(
-                    "use as candidate hard speedup evidence after harness fidelity and ablation checks"
-                )
-        else:
-            strength = "hard_speedup_or_reliability_candidate"
-            reasons.append("some_required_baseline_families_fail_or_are_unstable")
-            next_steps.append(
-                "quantify success-rate and TTE-tail improvement with additional repetitions"
+        baseline_cost_gate_applied = False
+        if (
+            best_baseline_tte is not None
+            and float(best_baseline_tte) <= ACCEPTABLE_BASELINE_FASTEST_TTE_S
+        ):
+            strength = "not_hard_pain_baseline_fast_enough"
+            baseline_cost_gate_applied = True
+            reasons.append("baseline_fastest_trigger_time_is_under_acceptable_threshold")
+            next_steps.extend(
+                [
+                    "treat as speedup/control evidence, not hard SOTA-pain evidence",
+                    "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+                    "if retained, report only FORMTRIG TTE speedup and mechanism attribution",
+                ]
             )
+        elif (
+            best_baseline_tte is not None
+            and float(best_baseline_tte) <= HARD_BASELINE_FASTEST_TTE_S
+        ):
+            strength = "moderate_speedup_needs_unacceptable_baseline_cost"
+            baseline_cost_gate_applied = True
+            reasons.append("baseline_fastest_trigger_time_is_under_hard_pain_threshold")
+            next_steps.extend(
+                [
+                    "do not use as hard SOTA-pain evidence unless a stricter harness or farther seeds push faithful baselines beyond the hard-pain threshold",
+                    "keep as secondary speedup evidence",
+                ]
+            )
+        if all_required_successful:
+            if not baseline_cost_gate_applied:
+                reasons.append("all_required_baseline_families_trigger_in_replicated_runs")
+                if (
+                    best_baseline_family_median_tte is not None
+                    and float(best_baseline_family_median_tte)
+                    <= EARLY_BASELINE_FAMILY_MEDIAN_TTE_S
+                ):
+                    strength = "weak_near_seed_or_harness_shaped_speedup"
+                    reasons.append("baseline_family_median_trigger_time_is_under_60s")
+                    next_steps.extend(
+                        [
+                            "do not spend main hard-evidence budget on this harness shape alone",
+                            "rerun with a higher-fidelity/raw-format harness or a farther RNT seed",
+                            "add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution",
+                            "prioritize targets where at least one strong baseline family has low success rate or long median R2T",
+                        ]
+                    )
+                elif (
+                    best_baseline_family_median_tte is not None
+                    and float(best_baseline_family_median_tte)
+                    <= MODERATE_BASELINE_FAMILY_MEDIAN_TTE_S
+                ):
+                    strength = "moderate_speedup_needs_harder_design"
+                    reasons.append("baseline_family_median_trigger_time_is_under_300s")
+                    next_steps.extend(
+                        [
+                            "keep as secondary speedup evidence",
+                            "add ablations and a harder target/harness before using as main SOTA-gap evidence",
+                        ]
+                    )
+                else:
+                    strength = "hard_speedup_variance_candidate"
+                    reasons.append("baseline_successful_but_not_early_across_families")
+                    next_steps.append(
+                        "use as candidate hard speedup evidence after harness fidelity and ablation checks"
+                    )
+        else:
+            if not baseline_cost_gate_applied:
+                strength = "hard_speedup_or_reliability_candidate"
+                reasons.append("some_required_baseline_families_fail_or_are_unstable")
+                next_steps.append(
+                    "quantify success-rate and TTE-tail improvement with additional repetitions"
+                )
     else:
         strength = "not_supporting_main_claim"
         reasons.append("no_endpoint_or_speedup_advantage_for_formtrig")
@@ -441,6 +474,8 @@ def main_claim_strength(
 
     return {
         "best_baseline_family_median_trigger_time_s": best_baseline_family_median_tte,
+        "acceptable_baseline_fastest_trigger_threshold_s": ACCEPTABLE_BASELINE_FASTEST_TTE_S,
+        "hard_baseline_fastest_trigger_threshold_s": HARD_BASELINE_FASTEST_TTE_S,
         "early_baseline_family_median_threshold_s": EARLY_BASELINE_FAMILY_MEDIAN_TTE_S,
         "main_claim_strength": strength,
         "reasons": reasons,
@@ -575,9 +610,22 @@ def classify_evidence(
         speedup_observed="formtrig_faster_than_successful_baselines" in reasons,
         required_baselines=required_baselines,
         min_reps=min_reps,
+        best_baseline_tte=best_baseline_tte,
         best_baseline_family_median_tte=best_baseline_family_median_tte,
     )
     if strength["main_claim_strength"] in {
+        "not_hard_pain_baseline_fast_enough",
+        "moderate_speedup_needs_unacceptable_baseline_cost",
+    }:
+        next_steps = [
+            step
+            for step in next_steps
+            if step
+            != "treat this as a speedup claim and complete repetitions/longer runs before final performance claims"
+        ]
+    if strength["main_claim_strength"] in {
+        "not_hard_pain_baseline_fast_enough",
+        "moderate_speedup_needs_unacceptable_baseline_cost",
         "weak_near_seed_or_harness_shaped_speedup",
         "moderate_speedup_needs_harder_design",
     }:
@@ -700,7 +748,17 @@ def benefit_readout(
     strength = analysis.get("experiment_strength")
     if isinstance(strength, dict):
         main_strength = strength.get("main_claim_strength")
-        if main_strength == "weak_near_seed_or_harness_shaped_speedup":
+        if main_strength == "not_hard_pain_baseline_fast_enough":
+            blocked_claims.append(
+                "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
+            )
+            design_evidence.append("experiment_strength_gate")
+        elif main_strength == "moderate_speedup_needs_unacceptable_baseline_cost":
+            blocked_claims.append(
+                "matched faithful baseline time is not yet high enough to show unacceptable SOTA R2T cost"
+            )
+            design_evidence.append("experiment_strength_gate")
+        elif main_strength == "weak_near_seed_or_harness_shaped_speedup":
             blocked_claims.append(
                 "current experiment is too near-trigger or harness-shaped to serve as main SOTA-gap evidence"
             )

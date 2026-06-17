@@ -2,7 +2,7 @@
 
 - target: `TIF012`
 - verdict: `positive_speedup_matched_comparison`
-- main claim strength: `hard_speedup_or_reliability_candidate`
+- main claim strength: `not_hard_pain_baseline_fast_enough`
 - matched baselines: `9`
 
 ## Benefit Readout
@@ -23,27 +23,30 @@ Mechanism benefits:
 - binary or sparse trigger feedback was lifted into accepted non-trigger search progress
 
 Blocked or not-yet-supported statements:
-- none
+- a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence
 
 Design evidence used for attribution:
 - `strict_pretrigger_guidance`
 - `formtrig_terminal_oracle_success`
+- `experiment_strength_gate`
 
 ## Experiment Strength
 
-- main claim strength: `hard_speedup_or_reliability_candidate`
+- main claim strength: `not_hard_pain_baseline_fast_enough`
 - reasons:
-  - `some_required_baseline_families_fail_or_are_unstable`
+  - `baseline_fastest_trigger_time_is_under_acceptable_threshold`
 - required design actions:
-  - quantify success-rate and TTE-tail improvement with additional repetitions
+  - treat as speedup/control evidence, not hard SOTA-pain evidence
+  - move main budget to targets where no faithful baseline triggers within the acceptable-time threshold
+  - if retained, report only FORMTRIG TTE speedup and mechanism attribution
 
 ## FORMTRIG Runs
 
 | label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |
 | --- | ---: | ---: | --- | ---: | ---: | ---: |
-| formtrig | 7200 | 1379546 | false | 2749423 | 1647188 | 165507 |
-| formtrig | 7200 | 1234445 | true | 3993820 | 1893870 | 149750 |
-| formtrig | 7200 | 2045147 | false | 3947580 | 2518098 | 239540 |
+| b5_7200s_3rep | 7200 | 1379546 | false | 2749423 | 1647188 | 165507 |
+| b5_7200s_3rep | 7200 | 1234445 | true | 3993820 | 1893870 | 149750 |
+| b5_7200s_3rep | 7200 | 2045147 | false | 3947580 | 2518098 | 239540 |
 
 ## Matched Baseline Groups
 
@@ -59,7 +62,10 @@ Design evidence used for attribution:
 - `formtrig_terminal_oracle_present`
 - `matched_baseline_also_triggers`
 - `formtrig_faster_than_successful_baselines`
+- `not_hard_pain_baseline_fast_enough`
 
 ## Required Next Steps
 
-- treat this as a speedup claim and complete repetitions/longer runs before final performance claims
+- treat as speedup/control evidence, not hard SOTA-pain evidence
+- move main budget to targets where no faithful baseline triggers within the acceptable-time threshold
+- if retained, report only FORMTRIG TTE speedup and mechanism attribution

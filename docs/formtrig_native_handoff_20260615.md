@@ -52,40 +52,47 @@ primary benefit -> endpoint observation -> mechanism benefit -> design attributi
 
 ### 2026-06-17 hard-target evidence update
 
-当前结果仍然不能宣称“已经充分体现 SOTA 工具的痛点”。TIF012 是强 single-target
-first `_T` speedup/stability 证据；LIBARCHIVE_2936 是真实 CVE speedup 和 hook
-attribution 证据，但 faithful baselines 也早触发，所以不能做主 SOTA-gap 证据。
+当前结果仍然不能宣称“已经充分体现 SOTA 工具的痛点”。这里的痛点按当前验收口径指：
+faithful baseline 只能靠随机性撞见 TC 触发，且随机撞见的时间成本不可接受。TIF012
+和 LIBARCHIVE_2936 都有 FORMTRIG first `_T` speedup/attribution 价值，但最快
+baseline 分别在 210s 和 9.456s 触发，所以不能作为主 SOTA-gap 证据。
 
 `artifacts/formtrig_native_readiness/hard_target_triage_20260617.{json,csv,md}`
 现在显式输出 `sota_pain_class`，避免只靠中间信号或口头解释判断。当前分类是：
 
 ```text
 TIF012:
-  visible_hard_speedup_or_reliability
+  not_visible_baseline_time_cost_acceptable
+  main_claim_strength = not_hard_pain_baseline_fast_enough
   FORMTRIG first_T = 0.034s
   fastest successful baseline run = 210s
   fastest baseline-family median = 1410s
   speedup over fastest successful baseline run = 6176.47x
 
 LIBARCHIVE_2936:
-  not_visible_near_seed_or_harness_shaped
-  all required baseline families trigger early under the current replay harness
+  not_visible_baseline_time_cost_acceptable
+  main_claim_strength = not_hard_pain_baseline_fast_enough
+  fastest successful baseline run = 9.456s
 
 LIBCOAP_CVE_2023_35862 and PNG006:
   not_visible_baseline_visible_no_formtrig_advantage
+
+promoted hard-target candidates:
+  0
 ```
 
-因此当前真正能体现“强 baseline 仍有 R2T 长尾/稳定性问题”的是 TIF012 这一条
-Magma evidence。LIBARCHIVE_2936 只能作为真实 CVE speedup/attribution/control，
-PNG006 和 LIBCOAP 当前不能作为 SOTA-pain 主证据。
+因此当前没有任何 target 可作为主 SOTA-pain evidence。TIF012 和 LIBARCHIVE_2936
+只能作为 speedup/control/attribution evidence；PNG006 和 LIBCOAP 当前不能作为
+SOTA-pain 主证据。
 
 `artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260617.*`
 现在也读取这个 triage artifact。主执行队列会把：
 
 - `not_visible_baseline_visible_no_formtrig_advantage` 目标跳过主预算；
-- `not_visible_near_seed_or_harness_shaped` 目标路由到 `improve_experiment_design`；
-- `visible_hard_speedup_or_reliability` 目标保留为 hard evidence，但若 2h x3
-  matched long-run 已完成，则转向跨目标扩展。
+- `not_visible_baseline_time_cost_acceptable` 目标跳过主预算；
+- `weak_or_moderate_baseline_time_cost` 或 near-seed/harness-shaped 目标只作为设计改进候选；
+- 下一批主预算候选从 PDF003、SSL015、PDF016、PHP009、LIBXML2_1107、
+  GPAC_3403 等 target 的 native validation / short screen 开始。
 
 这避免了 triage 已经判定“看不出 SOTA pain”的目标继续消耗长测预算。
 

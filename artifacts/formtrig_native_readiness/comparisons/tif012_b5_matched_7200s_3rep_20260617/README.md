@@ -17,9 +17,9 @@ The comparison verdict is:
 positive_speedup_matched_comparison
 ```
 
-This is a speedup result, not a baseline-impossibility result. Matched
-baselines also reach `_T`, but their time-to-first `_T` is much later or
-higher-variance.
+This is a speedup/control result, not hard SOTA-pain evidence. Matched
+baselines also reach `_T`, and one faithful baseline run reaches `_T` within
+the acceptable-time threshold.
 
 ## First `_T`
 
@@ -42,18 +42,19 @@ individual baseline run. Against the fastest successful baseline-family median
 
 ## Interpretation
 
-This supports the claim that the R2T problem remains visible for strong AFL++
-family baselines on this target: terminal evidence appears late or with high
-variance under binary `_T` feedback. FORMTRIG solves part of that problem on
-TIF012 by converting the repaired typed trigger knowledge into stable early
-terminal inputs.
+This supports a strong TTE speedup claim for this target: FORMTRIG converts
+the repaired typed trigger knowledge into stable early terminal inputs. It does
+not support the harder claim that baseline random TC hits are too expensive
+under this harness/seed design, because the fastest faithful baseline run
+reaches `_T` at 210s.
 
 Limits:
 
-- TIF012 is not a proof that baselines cannot solve the target.
+- TIF012 is not proof that baselines cannot solve the target, nor proof of
+  unacceptable baseline time cost under the current harness/seed design.
 - This is one Magma target, not a generality claim across CVEs or all SOTA tools.
 - `redqueen_operand` is the local AFL++ Redqueen/CmpLog operand path, not a
   claim about the original Redqueen artifact without a separate equivalence map.
 - FORMTRIG's strict pre-trigger gate is mixed in this run: only one rep has
   `strict_pretrigger_guidance=true`; the primary supported benefit is endpoint
-  TTE speedup and stability.
+  TTE speedup and typed-repair attribution.

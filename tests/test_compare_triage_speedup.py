@@ -164,7 +164,7 @@ class SpeedupClassificationTest(unittest.TestCase):
             any("faster" in benefit for benefit in readout["primary_benefits"])
         )
 
-    def test_near_seed_all_successful_baselines_are_weak_main_claim_evidence(self):
+    def test_fast_successful_baseline_is_not_hard_pain_evidence(self):
         formtrig_rows = [
             {
                 "budget": 7200,
@@ -219,20 +219,27 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertEqual(analysis["verdict"], "positive_speedup_matched_comparison")
         self.assertEqual(
             analysis["experiment_strength"]["main_claim_strength"],
-            "weak_near_seed_or_harness_shaped_speedup",
+            "not_hard_pain_baseline_fast_enough",
         )
         self.assertIn(
-            "baseline_family_median_trigger_time_is_under_60s",
+            "baseline_fastest_trigger_time_is_under_acceptable_threshold",
             analysis["experiment_strength"]["reasons"],
         )
         self.assertTrue(
-            any("no-hook" in step for step in analysis["experiment_strength"]["recommended_design_actions"])
+            any("speedup/control" in step for step in analysis["experiment_strength"]["recommended_design_actions"])
+        )
+        self.assertIn("not_hard_pain_baseline_fast_enough", analysis["reasons"])
+        self.assertTrue(
+            any("move main budget" in step for step in analysis["next_steps"])
+        )
+        self.assertFalse(
+            any("complete repetitions/longer runs" in step for step in analysis["next_steps"])
         )
 
         readout = benefit_readout(formtrig_rows, analysis)
         self.assertIn("experiment_strength_gate", readout["design_evidence"])
         self.assertTrue(
-            any("too near-trigger" in claim for claim in readout["blocked_claims"])
+            any("acceptable-time threshold" in claim for claim in readout["blocked_claims"])
         )
 
     def test_unstable_or_long_tail_baselines_remain_hard_speedup_candidate(self):
@@ -252,7 +259,7 @@ class SpeedupClassificationTest(unittest.TestCase):
                 "rep": 1,
                 "success": True,
                 "terminal_count": 1,
-                "trigger_time_s": 930.0,
+                "trigger_time_s": 1930.0,
             },
             {
                 "source_label": "matched",
@@ -261,7 +268,7 @@ class SpeedupClassificationTest(unittest.TestCase):
                 "rep": 2,
                 "success": True,
                 "terminal_count": 1,
-                "trigger_time_s": 1410.0,
+                "trigger_time_s": 2410.0,
             },
             {
                 "source_label": "matched",
@@ -270,7 +277,7 @@ class SpeedupClassificationTest(unittest.TestCase):
                 "rep": 3,
                 "success": True,
                 "terminal_count": 1,
-                "trigger_time_s": 1560.0,
+                "trigger_time_s": 2560.0,
             },
             {
                 "source_label": "matched",
@@ -425,7 +432,7 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertIn("does not expose a hard SOTA gap", target["sota_pain_evidence"])
         self.assertIn("higher-fidelity", target["next_action"])
 
-    def test_triage_marks_long_tail_baselines_as_visible_sota_pain(self):
+    def test_triage_rejects_speedup_when_baseline_time_cost_is_acceptable(self):
         packages = [
             {
                 "comparison_id": "old_endpoint",
@@ -481,10 +488,43 @@ class SpeedupClassificationTest(unittest.TestCase):
         )
         self.assertEqual(row["fastest_baseline_trigger_time_s"], 210.0)
         self.assertEqual(
-            row["sota_pain_class"], "visible_hard_speedup_or_reliability"
+            row["sota_pain_class"], "not_visible_baseline_time_cost_acceptable"
         )
-        self.assertIn("unstable or has low success", row["sota_pain_evidence"])
+        self.assertIn("acceptable-time threshold", row["sota_pain_evidence"])
         self.assertIn("baseline family_median_T=1410s", row["sota_pain_evidence"])
+
+    def test_triage_marks_unacceptable_baseline_cost_as_visible_sota_pain(self):
+        packages = [
+            {
+                "comparison_id": "hard_speedup",
+                "target_id": "SYNTH_HARD",
+                "package_status": "promote_or_extend_longruns",
+                "verdict": "positive_speedup_matched_comparison",
+                "matched_baselines": 9,
+                "successful_baselines": [
+                    "aflplusplus_vanilla",
+                    "aflplusplus_cmplog",
+                    "redqueen_operand",
+                ],
+                "fastest_baseline_trigger_time_s": 1900.0,
+                "fastest_baseline_family_median_trigger_time_s": 3600.0,
+                "best_formtrig_trigger_time_s": 0.5,
+                "tte_speedup_over_fastest_baseline": 3800.0,
+                "main_claim_strength": "hard_speedup_or_reliability_candidate",
+                "max_budget_s": 7200,
+                "formtrig_terminal": True,
+                "strict_pretrigger_guidance": True,
+                "observed_benefits": ["FORMTRIG speedup against high-cost baselines"],
+                "blocked_claims": [],
+                "source_path": "hard.json",
+            },
+        ]
+
+        row = target_rows(packages, [])[0]
+
+        self.assertEqual(row["sota_pain_class"], "visible_hard_speedup_or_reliability")
+        self.assertIn("unstable or has low success", row["sota_pain_evidence"])
+        self.assertIn("baseline fastest_T=1900s", row["sota_pain_evidence"])
 
     def test_triage_prefers_replicated_endpoint_package_over_stale_negative(self):
         packages = [

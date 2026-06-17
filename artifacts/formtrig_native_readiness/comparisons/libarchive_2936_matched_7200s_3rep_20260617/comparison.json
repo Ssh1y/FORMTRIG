@@ -37,18 +37,18 @@
     ],
     "best_formtrig_trigger_time_s": 1.358,
     "experiment_strength": {
+      "acceptable_baseline_fastest_trigger_threshold_s": 600.0,
       "best_baseline_family_median_trigger_time_s": 32.517,
       "early_baseline_family_median_threshold_s": 60.0,
-      "main_claim_strength": "weak_near_seed_or_harness_shaped_speedup",
+      "hard_baseline_fastest_trigger_threshold_s": 1800.0,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
       "reasons": [
-        "all_required_baseline_families_trigger_in_replicated_runs",
-        "baseline_family_median_trigger_time_is_under_60s"
+        "baseline_fastest_trigger_time_is_under_acceptable_threshold"
       ],
       "recommended_design_actions": [
-        "do not spend main hard-evidence budget on this harness shape alone",
-        "rerun with a higher-fidelity/raw-format harness or a farther RNT seed",
-        "add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution",
-        "prioritize targets where at least one strong baseline family has low success rate or long median R2T"
+        "treat as speedup/control evidence, not hard SOTA-pain evidence",
+        "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+        "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
       ]
     },
     "fastest_baseline_family_median_trigger_time_s": 32.517,
@@ -56,18 +56,16 @@
     "matched_baseline_count": 9,
     "missing_required_baselines": [],
     "next_steps": [
-      "treat this as a speedup claim and complete repetitions/longer runs before final performance claims",
-      "do not spend main hard-evidence budget on this harness shape alone",
-      "rerun with a higher-fidelity/raw-format harness or a farther RNT seed",
-      "add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution",
-      "prioritize targets where at least one strong baseline family has low success rate or long median R2T"
+      "treat as speedup/control evidence, not hard SOTA-pain evidence",
+      "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+      "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
     ],
     "reasons": [
       "formtrig_strict_pretrigger_guidance_present",
       "formtrig_terminal_oracle_present",
       "matched_baseline_also_triggers",
       "formtrig_faster_than_successful_baselines",
-      "weak_near_seed_or_harness_shaped_speedup"
+      "not_hard_pain_baseline_fast_enough"
     ],
     "tte_speedup_over_fastest_baseline": 6.963181148748158,
     "tte_speedup_over_fastest_baseline_family_median": 23.94477172312224,
@@ -329,7 +327,7 @@
   ],
   "benefit_readout": {
     "blocked_claims": [
-      "current experiment is too near-trigger or harness-shaped to serve as main SOTA-gap evidence"
+      "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
     ],
     "design_evidence": [
       "strict_pretrigger_guidance",
@@ -379,8 +377,8 @@
       "rep": null,
       "run_time": 7207,
       "saved_non_trigger": 5,
-      "source_label": "formtrig",
-      "source_path": "artifacts/formtrig_native_readiness/raw/libarchive_2936_matched_7200s_3rep_20260617T070307Z/formtrig_gate/gate_summary.csv",
+      "source_label": "b4_7200s_3rep",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/formtrig_gate_summary.csv",
       "spec_lifted": 4127,
       "strict_pretrigger_guidance": true,
       "success": true,
@@ -407,8 +405,8 @@
       "rep": null,
       "run_time": 7200,
       "saved_non_trigger": 5,
-      "source_label": "formtrig",
-      "source_path": "artifacts/formtrig_native_readiness/raw/libarchive_2936_matched_7200s_3rep_20260617T070307Z/formtrig_gate/gate_summary.csv",
+      "source_label": "b4_7200s_3rep",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/formtrig_gate_summary.csv",
       "spec_lifted": 4108,
       "strict_pretrigger_guidance": true,
       "success": true,
@@ -435,8 +433,8 @@
       "rep": null,
       "run_time": 7203,
       "saved_non_trigger": 6,
-      "source_label": "formtrig",
-      "source_path": "artifacts/formtrig_native_readiness/raw/libarchive_2936_matched_7200s_3rep_20260617T070307Z/formtrig_gate/gate_summary.csv",
+      "source_label": "b4_7200s_3rep",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/formtrig_gate_summary.csv",
       "spec_lifted": 4118,
       "strict_pretrigger_guidance": true,
       "success": true,

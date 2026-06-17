@@ -77,11 +77,13 @@ WEAK_MAIN_CLAIM_STRENGTHS = {
 }
 
 SOTA_PAIN_SKIP_CLASSES = {
+    "not_visible_baseline_time_cost_acceptable",
     "not_visible_baseline_visible_no_formtrig_advantage",
 }
 
 SOTA_PAIN_DESIGN_CLASSES = {
     "not_visible_near_seed_or_harness_shaped",
+    "weak_or_moderate_baseline_time_cost",
     "weak_or_moderate_needs_harder_design",
 }
 

@@ -8,7 +8,7 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-17T14:29:33+00:00",
+  "generated_at_utc": "2026-06-17T14:51:31+00:00",
   "inputs": {
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
@@ -16,8 +16,30 @@
   },
   "runnable_now_count": 0,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
-  "skipped_control_count": 4,
+  "skipped_control_count": 6,
   "skipped_controls": [
+    {
+      "existing_disposition": "candidate_extend_longruns",
+      "lane": "real_cve_replacement",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
+      "rank": 1,
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "a faithful baseline reaches _T within the acceptable-time threshold, so this is speedup/control evidence rather than hard SOTA-pain evidence; strength=not_hard_pain_baseline_fast_enough; FORMTRIG first_T=1.358s; baseline fastest_T=9.456s; baseline family_median_T=32.517s; speedup=6.96318x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "status": "short_gate_triaged",
+      "target_id": "LIBARCHIVE_2936"
+    },
+    {
+      "existing_disposition": "candidate_extend_longruns",
+      "lane": "short_triage_ready",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
+      "rank": 2,
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "a faithful baseline reaches _T within the acceptable-time threshold, so this is speedup/control evidence rather than hard SOTA-pain evidence; strength=not_hard_pain_baseline_fast_enough; FORMTRIG first_T=0.034s; baseline fastest_T=210s; baseline family_median_T=1410s; speedup=6176.47x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "status": "short_gate_triaged",
+      "target_id": "TIF012"
+    },
     {
       "existing_disposition": "demote_to_control_or_negative",
       "lane": "control_or_negative",
@@ -906,99 +928,6 @@
   "task_count": 20,
   "tasks": [
     {
-      "action": "improve_experiment_design",
-      "benefit_to_prove": "Make the experiment hard enough to expose SOTA R2T pain: current speedup is real, but matched baselines trigger too early for this package to serve as main binary-TC gap evidence.",
-      "blocked_claims": [
-        "current experiment is too near-trigger or harness-shaped to serve as main SOTA-gap evidence"
-      ],
-      "blocking_issue": [
-        "main_claim_strength=weak_near_seed_or_harness_shaped_speedup",
-        "current comparison is not hard enough for SOTA-gap evidence"
-      ],
-      "category": "binary-state-null",
-      "claim_boundary": "Keep the current speedup as secondary engineering evidence only; do not promote it as main hard-gap evidence until the experiment is made harder.",
-      "command": "",
-      "comparison_verdict": "positive_speedup_matched_comparison",
-      "current_primary_benefits": [
-        "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
-        "FORMTRIG observed first-`_T` is 6.96x faster than the fastest matched successful baseline run"
-      ],
-      "duration_s": "",
-      "evidence_paths": [
-        "artifacts/cve_bench_candidate_audit.json",
-        "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/comparison.json"
-      ],
-      "lane": "real_cve_replacement",
-      "mechanism_evidence_required": [
-        "strict_pretrigger_guidance",
-        "formtrig_terminal_oracle_success",
-        "experiment_strength_gate"
-      ],
-      "post_unblock_commands": [
-        "do not spend main hard-evidence budget on this harness shape alone",
-        "rerun with a higher-fidelity/raw-format harness or a farther RNT seed",
-        "add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution",
-        "prioritize targets where at least one strong baseline family has low success rate or long median R2T"
-      ],
-      "primary_endpoint_metrics": [
-        "baseline success-rate gap under matched budget",
-        "baseline R2T tail or median above early-trigger threshold",
-        "FORMTRIG TTE and exec-count advantage after no-hook/generic-hook ablations"
-      ],
-      "priority": "P0",
-      "project": "libarchive",
-      "rank": 1,
-      "repetitions": "",
-      "runnable_now": false,
-      "sota_pain_class": "not_visible_near_seed_or_harness_shaped",
-      "sota_pain_evidence": "all required baseline families trigger too early, so the current harness/seed does not expose a hard SOTA gap; strength=weak_near_seed_or_harness_shaped_speedup; FORMTRIG first_T=1.358s; baseline fastest_T=9.456s; baseline family_median_T=32.517s; speedup=6.96318x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
-      "source": "real_cve",
-      "target_id": "LIBARCHIVE_2936"
-    },
-    {
-      "action": "expand_cross_target_hard_evidence",
-      "benefit_to_prove": "The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign.",
-      "blocked_claims": [],
-      "blocking_issue": [],
-      "category": "binary-state-null+compound-sequence-lifecycle",
-      "claim_boundary": "Use this target as one hard-speedup data point; broad claims still require additional Magma and real-CVE targets.",
-      "command": "",
-      "comparison_verdict": "positive_speedup_matched_comparison",
-      "current_primary_benefits": [
-        "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
-        "FORMTRIG observed first-`_T` is 6176.47x faster than the fastest matched successful baseline run"
-      ],
-      "duration_s": "",
-      "evidence_paths": [
-        "artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260617/comparison.json",
-        "artifacts/magma_canary_inventory.json"
-      ],
-      "lane": "short_triage_ready",
-      "mechanism_evidence_required": [
-        "strict_pretrigger_guidance",
-        "formtrig_terminal_oracle_success"
-      ],
-      "post_unblock_commands": [
-        "run the next hard Magma/real-CVE target with matched baselines",
-        "prioritize targets where strong baselines have low success or long R2T tails",
-        "add ablations for any target-specific typed hook before main-claim use"
-      ],
-      "primary_endpoint_metrics": [
-        "replicated matched-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "baseline R2T tail and success-rate variance across targets"
-      ],
-      "priority": "P0",
-      "project": "libtiff",
-      "rank": 2,
-      "repetitions": "",
-      "runnable_now": false,
-      "sota_pain_class": "visible_hard_speedup_or_reliability",
-      "sota_pain_evidence": "at least one strong baseline family is unstable or has low success under the matched budget; strength=hard_speedup_or_reliability_candidate; FORMTRIG first_T=0.034s; baseline fastest_T=210s; baseline family_median_T=1410s; speedup=6176.47x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
-      "source": "magma",
-      "target_id": "TIF012"
-    },
-    {
       "action": "validate_binding_spec_then_short_screen",
       "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
       "blocked_claims": [],
@@ -1784,6 +1713,94 @@
       "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "XML010"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "binary-state-null+equality/magic",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id SSL008 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL008.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P3",
+      "project": "openssl",
+      "rank": 21,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "SSL008"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "binary-state-null+equality/magic",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id SSL012 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL012.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P3",
+      "project": "openssl",
+      "rank": 22,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "SSL012"
     }
   ]
 }

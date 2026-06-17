@@ -37,14 +37,18 @@
     ],
     "best_formtrig_trigger_time_s": 0.034,
     "experiment_strength": {
+      "acceptable_baseline_fastest_trigger_threshold_s": 600.0,
       "best_baseline_family_median_trigger_time_s": 1410.0,
       "early_baseline_family_median_threshold_s": 60.0,
-      "main_claim_strength": "hard_speedup_or_reliability_candidate",
+      "hard_baseline_fastest_trigger_threshold_s": 1800.0,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
       "reasons": [
-        "some_required_baseline_families_fail_or_are_unstable"
+        "baseline_fastest_trigger_time_is_under_acceptable_threshold"
       ],
       "recommended_design_actions": [
-        "quantify success-rate and TTE-tail improvement with additional repetitions"
+        "treat as speedup/control evidence, not hard SOTA-pain evidence",
+        "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+        "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
       ]
     },
     "fastest_baseline_family_median_trigger_time_s": 1410.0,
@@ -52,13 +56,16 @@
     "matched_baseline_count": 9,
     "missing_required_baselines": [],
     "next_steps": [
-      "treat this as a speedup claim and complete repetitions/longer runs before final performance claims"
+      "treat as speedup/control evidence, not hard SOTA-pain evidence",
+      "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+      "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
     ],
     "reasons": [
       "formtrig_strict_pretrigger_guidance_present",
       "formtrig_terminal_oracle_present",
       "matched_baseline_also_triggers",
-      "formtrig_faster_than_successful_baselines"
+      "formtrig_faster_than_successful_baselines",
+      "not_hard_pain_baseline_fast_enough"
     ],
     "tte_speedup_over_fastest_baseline": 6176.470588235294,
     "tte_speedup_over_fastest_baseline_family_median": 41470.58823529411,
@@ -319,10 +326,13 @@
     }
   ],
   "benefit_readout": {
-    "blocked_claims": [],
+    "blocked_claims": [
+      "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
+    ],
     "design_evidence": [
       "strict_pretrigger_guidance",
-      "formtrig_terminal_oracle_success"
+      "formtrig_terminal_oracle_success",
+      "experiment_strength_gate"
     ],
     "endpoint_observations": [
       "FORMTRIG terminal oracle success is observed",
@@ -604,7 +614,7 @@
       "rep": null,
       "run_time": 7200,
       "saved_non_trigger": 8,
-      "source_label": "formtrig",
+      "source_label": "b5_7200s_3rep",
       "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260617/formtrig_gate_summary.csv",
       "spec_lifted": 165507,
       "strict_pretrigger_guidance": false,
@@ -869,7 +879,7 @@
       "rep": null,
       "run_time": 7200,
       "saved_non_trigger": 15,
-      "source_label": "formtrig",
+      "source_label": "b5_7200s_3rep",
       "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260617/formtrig_gate_summary.csv",
       "spec_lifted": 149750,
       "strict_pretrigger_guidance": true,
@@ -1134,7 +1144,7 @@
       "rep": null,
       "run_time": 7200,
       "saved_non_trigger": 12,
-      "source_label": "formtrig",
+      "source_label": "b5_7200s_3rep",
       "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260617/formtrig_gate_summary.csv",
       "spec_lifted": 239540,
       "strict_pretrigger_guidance": false,

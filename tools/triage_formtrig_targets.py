@@ -61,6 +61,8 @@ PACKAGE_FIELDS = [
     "source_path",
 ]
 
+ACCEPTABLE_BASELINE_FASTEST_TTE_S = 600.0
+
 
 def read_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as handle:
@@ -117,6 +119,8 @@ HARD_SOTA_STRENGTHS = {
 }
 
 WEAK_SOTA_STRENGTHS = {
+    "not_hard_pain_baseline_fast_enough": "not_visible_baseline_time_cost_acceptable",
+    "moderate_speedup_needs_unacceptable_baseline_cost": "weak_or_moderate_baseline_time_cost",
     "weak_near_seed_or_harness_shaped_speedup": "not_visible_near_seed_or_harness_shaped",
     "moderate_speedup_needs_harder_design": "weak_or_moderate_needs_harder_design",
 }
@@ -166,6 +170,20 @@ def sota_pain_readout(
     if hard_items:
         best = sorted(hard_items, key=package_rank)[0]
         strength = str(best.get("main_claim_strength") or "")
+        fastest_baseline = numeric(best.get("fastest_baseline_trigger_time_s"))
+        if (
+            fastest_baseline is not None
+            and fastest_baseline <= ACCEPTABLE_BASELINE_FASTEST_TTE_S
+        ):
+            return (
+                "not_visible_baseline_time_cost_acceptable",
+                join_values(
+                    [
+                        "a faithful baseline reaches _T within the acceptable-time threshold, so this is speedup evidence but not hard SOTA-pain evidence",
+                        package_metric_evidence(best),
+                    ]
+                ),
+            )
         if strength == "hard_endpoint_gap_candidate":
             detail = "matched baselines do not trigger while FORMTRIG reaches _T"
         elif strength == "hard_speedup_or_reliability_candidate":
@@ -173,6 +191,26 @@ def sota_pain_readout(
         else:
             detail = "baseline families trigger, but their matched-budget R2T tail is long enough for a hard speedup claim"
         return HARD_SOTA_STRENGTHS[strength], join_values(
+            [detail, package_metric_evidence(best)]
+        )
+
+    weak_items = [
+        row
+        for row in items
+        if str(row.get("main_claim_strength") or "") in WEAK_SOTA_STRENGTHS
+    ]
+    if weak_items:
+        best = sorted(weak_items, key=package_rank)[0]
+        strength = str(best.get("main_claim_strength") or "")
+        if strength == "not_hard_pain_baseline_fast_enough":
+            detail = "a faithful baseline reaches _T within the acceptable-time threshold, so this is speedup/control evidence rather than hard SOTA-pain evidence"
+        elif strength == "moderate_speedup_needs_unacceptable_baseline_cost":
+            detail = "FORMTRIG speedup exists, but baseline time cost is not yet high enough to support hard SOTA-pain"
+        elif strength == "weak_near_seed_or_harness_shaped_speedup":
+            detail = "all required baseline families trigger too early, so the current harness/seed does not expose a hard SOTA gap"
+        else:
+            detail = "FORMTRIG speedup exists, but the baseline R2T is still too short or too under-designed for a main SOTA-gap claim"
+        return WEAK_SOTA_STRENGTHS[strength], join_values(
             [detail, package_metric_evidence(best)]
         )
 
@@ -197,22 +235,6 @@ def sota_pain_readout(
                     package_metric_evidence(best),
                 ]
             ),
-        )
-
-    weak_items = [
-        row
-        for row in items
-        if str(row.get("main_claim_strength") or "") in WEAK_SOTA_STRENGTHS
-    ]
-    if weak_items:
-        best = sorted(weak_items, key=package_rank)[0]
-        strength = str(best.get("main_claim_strength") or "")
-        if strength == "weak_near_seed_or_harness_shaped_speedup":
-            detail = "all required baseline families trigger too early, so the current harness/seed does not expose a hard SOTA gap"
-        else:
-            detail = "FORMTRIG speedup exists, but the baseline R2T is still too short or too under-designed for a main SOTA-gap claim"
-        return WEAK_SOTA_STRENGTHS[strength], join_values(
-            [detail, package_metric_evidence(best)]
         )
 
     if has_baseline_trigger and not has_speedup_candidate and not has_endpoint_candidate:
@@ -414,6 +436,8 @@ def package_row(path: Path) -> dict[str, Any]:
     max_budget = max(budgets) if budgets else None
 
     weak_main_claim = main_claim_strength in {
+        "not_hard_pain_baseline_fast_enough",
+        "moderate_speedup_needs_unacceptable_baseline_cost",
         "weak_near_seed_or_harness_shaped_speedup",
         "moderate_speedup_needs_harder_design",
     }
@@ -570,8 +594,20 @@ def target_rows(packages: list[dict[str, Any]], manual_rows: list[dict[str, Any]
             row.get("package_status") == "needs_harder_experiment_design"
             for row in items
         )
+        has_acceptable_baseline_cost = any(
+            row.get("main_claim_strength") == "not_hard_pain_baseline_fast_enough"
+            for row in items
+        )
 
-        if has_weak_main_claim:
+        if has_acceptable_baseline_cost:
+            disposition = "demote_to_control_or_negative"
+            priority = 90
+            next_action = (
+                "do not spend main long-run budget here; report only as "
+                "speedup/control evidence unless a new, harder harness/seed design "
+                "makes faithful baseline trigger probability small"
+            )
+        elif has_weak_main_claim:
             disposition = "needs_harder_experiment_design"
             priority = 12
             next_action = (

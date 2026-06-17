@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-17T14:29:33+00:00`
-Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `4`; low-priority skipped: `93`.
+Generated: `2026-06-17T14:51:31+00:00`
+Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `6`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -15,8 +15,6 @@ Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `
 
 | priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
-| P0 | 1 | LIBARCHIVE_2936 | real_cve | not_visible_near_seed_or_harness_shaped | improve_experiment_design | blocked | Make the experiment hard enough to expose SOTA R2T pain: current speedup is real, but matched baselines trigger too early for this package to serve as main binary-TC gap evidence. |
-| P0 | 2 | TIF012 | magma | visible_hard_speedup_or_reliability | expand_cross_target_hard_evidence | blocked | The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign. |
 | P1 | 3 | PDF003 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 4 | SSL015 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 5 | PDF016 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
@@ -35,61 +33,14 @@ Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `
 | P2 | 18 | XML003 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P2 | 19 | XML004 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P2 | 20 | XML010 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
+| P3 | 21 | SSL008 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
+| P3 | 22 | SSL012 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 
 ## Runnable Now
 
 No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 
 ## Gated Tasks
-
-### P0 LIBARCHIVE_2936 - improve_experiment_design
-
-- Benefit to prove: Make the experiment hard enough to expose SOTA R2T pain: current speedup is real, but matched baselines trigger too early for this package to serve as main binary-TC gap evidence.
-- SOTA pain: `not_visible_near_seed_or_harness_shaped`
-- SOTA pain evidence: all required baseline families trigger too early, so the current harness/seed does not expose a hard SOTA gap; strength=weak_near_seed_or_harness_shaped_speedup; FORMTRIG first_T=1.358s; baseline fastest_T=9.456s; baseline family_median_T=32.517s; speedup=6.96318x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand
-- Endpoint metrics: baseline success-rate gap under matched budget, baseline R2T tail or median above early-trigger threshold, FORMTRIG TTE and exec-count advantage after no-hook/generic-hook ablations
-- Claim boundary: Keep the current speedup as secondary engineering evidence only; do not promote it as main hard-gap evidence until the experiment is made harder.
-- Blocking issue:
-- main_claim_strength=weak_near_seed_or_harness_shaped_speedup
-- current comparison is not hard enough for SOTA-gap evidence
-- Mechanism evidence required after benefit:
-- strict_pretrigger_guidance
-- formtrig_terminal_oracle_success
-- experiment_strength_gate
-- Current primary benefits:
-- FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run
-- FORMTRIG observed first-`_T` is 6.96x faster than the fastest matched successful baseline run
-- Post-unblock commands or steps:
-- do not spend main hard-evidence budget on this harness shape alone
-- rerun with a higher-fidelity/raw-format harness or a farther RNT seed
-- add no-hook and generic-hook FORMTRIG ablations to measure target-specific hook contribution
-- prioritize targets where at least one strong baseline family has low success rate or long median R2T
-- Evidence paths:
-- artifacts/cve_bench_candidate_audit.json
-- artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/comparison.json
-
-### P0 TIF012 - expand_cross_target_hard_evidence
-
-- Benefit to prove: The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign.
-- SOTA pain: `visible_hard_speedup_or_reliability`
-- SOTA pain evidence: at least one strong baseline family is unstable or has low success under the matched budget; strength=hard_speedup_or_reliability_candidate; FORMTRIG first_T=0.034s; baseline fastest_T=210s; baseline family_median_T=1410s; speedup=6176.47x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand
-- Endpoint metrics: replicated matched-budget terminal success rate, first _T / terminal-crash wall-clock time, baseline R2T tail and success-rate variance across targets
-- Claim boundary: Use this target as one hard-speedup data point; broad claims still require additional Magma and real-CVE targets.
-- Blocking issue:
-- none recorded
-- Mechanism evidence required after benefit:
-- strict_pretrigger_guidance
-- formtrig_terminal_oracle_success
-- Current primary benefits:
-- FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run
-- FORMTRIG observed first-`_T` is 6176.47x faster than the fastest matched successful baseline run
-- Post-unblock commands or steps:
-- run the next hard Magma/real-CVE target with matched baselines
-- prioritize targets where strong baselines have low success or long R2T tails
-- add ablations for any target-specific typed hook before main-claim use
-- Evidence paths:
-- artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260617/comparison.json
-- artifacts/magma_canary_inventory.json
 
 ### P1 PDF003 - validate_binding_spec_then_short_screen
 
@@ -469,10 +420,54 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Evidence paths:
 - artifacts/magma_canary_inventory.json
 
+### P3 SSL008 - draft_binding_spec_then_short_screen
+
+- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+- SOTA pain: `not recorded`
+- SOTA pain evidence: not recorded
+- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
+- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
+- Blocking issue:
+- no BindingSpec candidate exists yet
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- BindingSpec compiles against native site ids
+- D_F_spec_lifted is non-constant before _T
+- saved non-trigger progress is replay-stable
+- typed mutation, if used, is BindingSpec-provenance tagged
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id SSL008 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL008.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
+### P3 SSL012 - draft_binding_spec_then_short_screen
+
+- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
+- SOTA pain: `not recorded`
+- SOTA pain evidence: not recorded
+- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
+- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
+- Blocking issue:
+- no BindingSpec candidate exists yet
+- no comparison package exists yet
+- Mechanism evidence required after benefit:
+- BindingSpec compiles against native site ids
+- D_F_spec_lifted is non-constant before _T
+- saved non-trigger progress is replay-stable
+- typed mutation, if used, is BindingSpec-provenance tagged
+- Post-unblock commands or steps:
+- scripts/run_magma_baselines.sh --target-id SSL012 --durations 600 --jobs 4
+- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL012.list --duration 600 --jobs 4 --continue-on-fail
+- Evidence paths:
+- artifacts/magma_canary_inventory.json
+
 ## Skipped Controls
 
 | rank | target | lane | disposition/status | SOTA pain | reason |
 | ---: | --- | --- | --- | --- | --- |
+| 1 | LIBARCHIVE_2936 | real_cve_replacement | candidate_extend_longruns | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
+| 2 | TIF012 | short_triage_ready | candidate_extend_longruns | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
 | 144 | PNG006 | control_or_negative | demote_to_control_or_negative | not_visible_baseline_visible_no_formtrig_advantage | sota_pain_triage_not_main_budget |
 | 145 | SSL011 | control_or_negative | do_not_promote |  | control_or_negative_not_main_budget |
 | 146 | PNG007 | control_or_negative | do_not_promote |  | control_or_negative_not_main_budget |

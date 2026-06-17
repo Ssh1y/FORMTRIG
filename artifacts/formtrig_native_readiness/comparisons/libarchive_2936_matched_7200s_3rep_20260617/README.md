@@ -22,17 +22,17 @@ Interpretation:
 This is real speedup and attribution evidence, not main SOTA-gap evidence. The
 same reached-not-trigger corpus, timeout oracle, and replay harness let every
 required baseline family trigger in all three repetitions, and the fastest
-baseline-family median is below 60 seconds. The comparison package therefore
+faithful baseline run reaches `_T` at 9.456 seconds. The comparison package therefore
 marks `experiment_strength.main_claim_strength` as
-`weak_near_seed_or_harness_shaped_speedup`.
+`not_hard_pain_baseline_fast_enough`.
 
 The harness passed the static admissibility audit: it is a generic
 `libarchive_write_replay` byte grammar and does not hard-code `_compare_path_table`
 or a NULL-parent crash. However, the replay grammar and current RNT seed are too
-near the trigger to expose the SOTA pain point cleanly. Main-budget evidence must
-come from a higher-fidelity/raw-format harness, farther RNT seeds, no-hook and
-generic-hook ablations, or harder Magma/real-CVE targets where strong baselines
-have low success rates or long R2T tails.
+easy for faithful baselines to expose the SOTA pain point cleanly. Main-budget
+evidence must come from a higher-fidelity/raw-format harness, farther RNT seeds,
+no-hook and generic-hook ablations, or harder Magma/real-CVE targets where
+strong baselines do not trigger within an acceptable time budget.
 
 Files:
 
