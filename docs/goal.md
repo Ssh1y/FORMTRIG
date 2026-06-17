@@ -37,6 +37,42 @@ baseline no-guidance proof gate
 
 只有同时满足这三条，才能写成“二值 TC 对 SOTA baseline 缺少指导，baseline 主要靠随机撞见 `_T`，FORMTRIG 解决了一部分 R2T 指导问题”。如果 baseline 在 210s、几十秒甚至更早稳定触发，即使 FORMTRIG 更快，也只能写 speedup/control/attribution，不能写 hard SOTA-gap。
 
+PHP009 600s x1 matched short-screen 已完成，结论也按这个 gate 处理：
+
+```text
+FORMTRIG:
+  strict pre-trigger guidance = true
+  first _T = 87.04s exact progress/queue time
+  first _T monitor upper bound = 120s
+  total _T = 37120
+  accepted_non_trigger = 4
+  saved_non_trigger = 4
+  spec_lifted = 12362
+
+AFL++ vanilla:
+  first _T monitor upper bound = 270s
+  total _T = 43
+
+AFL++ CmpLog:
+  first _T monitor upper bound = 300s
+  total _T = 9
+
+local RedQueen/operand path:
+  first _T monitor upper bound = 120s
+  total _T = 20
+
+comparison verdict:
+  positive_speedup_matched_comparison
+  main_claim_strength = not_hard_pain_baseline_fast_enough
+```
+
+因此 PHP009 能说明 FORMTRIG 的 TC-rooted lift 在 numeric-margin TC 上产生了真实
+指导，并把 first `_T` 推到比三条 baseline 的 monitor 上界更早；但它不能证明
+SOTA baseline 对二值 TC 没有指导、只能随机撞，因为 fastest baseline 120s 触发
+仍在可接受成本内。它保留为 speedup/control/attribution evidence，主 SOTA-pain
+证明要继续找 baseline `_T` late/missing/high-variance 且 pre-`_T` 信号 flat/binary
+的硬目标。
+
 当前 LIBARCHIVE_2936 的 60s signal-repair 结果给出了这个口径的最小正例：
 
 ```text

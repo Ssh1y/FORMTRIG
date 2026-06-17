@@ -45,10 +45,12 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
         )
 
         self.assertIn("FORMTRIG_CANARY_TARGET_CFLAGS", script)
+        self.assertIn("patch_target_canary_include_flags", script)
         self.assertIn('export CFLAGS="${CFLAGS:-} -I$MAGMA/formtrig/include"', script)
         self.assertIn('export CXXFLAGS="${CXXFLAGS:-} -I$MAGMA/formtrig/include"', script)
         self.assertIn("changed = False", script)
         self.assertIn("if changed:", script)
+        self.assertIn("patch_target_build_helpers\npatch_target_canary_include_flags", script)
 
     def test_runner_patches_php_icu_bool_host_compatibility(self):
         script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
@@ -57,9 +59,15 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
 
         self.assertIn("patch_php_host_compatibility", script)
         self.assertIn("FORMTRIG_PHP_ICU_BOOL_HOST_COMPAT", script)
+        self.assertIn("FORMTRIG_PHP_ICU_EXPECTED_RETURN", script)
+        self.assertIn("expected_icu_operator_return", script)
+        self.assertIn("virtual UBool operator==", script)
         self.assertIn("virtual bool operator==", script)
-        self.assertIn("bool CodePointBreakIterator::operator==", script)
-        self.assertIn("patched PHP ICU bool operator==", script)
+        self.assertIn("synchronized PHP ICU", script)
+        self.assertIn("FORMTRIG_PHP_DEDUP_FUZZING_ENGINE", script)
+        self.assertIn('PHP_TARGET_FUZZING_ENGINE="${PHP_LIB_FUZZING_ENGINE:--Wall}"', script)
+        self.assertIn("legacy_future", script)
+        self.assertNotIn("from __future__ import annotations\n\nimport sys\nfrom pathlib import Path\n\n\nrepo =", script)
 
 
 if __name__ == "__main__":

@@ -112,7 +112,8 @@ chmod +x "$OUT/afl/$PROGRAM"
             self.assertIn("freetype2/src/tools", script_text)
             self.assertIn("AFLGO_CONFIGURE_NATIVE", script_text)
             self.assertIn("AFLGO_CONFIGURE_CC", script_text)
-            self.assertIn("FORMTRIG host-compat: patched PHP ICU bool operator==", script_text)
+            self.assertIn("FORMTRIG host-compat: synchronized PHP ICU", script_text)
+            self.assertIn("expected_icu_operator_return", script_text)
             self.assertIn("pkcs7_decode.c", script_text)
             self.assertIn("PKCS7_dataDecode", script_text)
             self.assertIn("OPENSSL_NO_FUZZ_LIBFUZZER", script_text)
@@ -128,7 +129,7 @@ chmod +x "$OUT/afl/$PROGRAM"
 
         patches = runner.host_compatibility_patches_for_target("php")
 
-        self.assertEqual([row["id"] for row in patches], ["php_icu_breakiterator_operator_bool"])
+        self.assertEqual([row["id"] for row in patches], ["php_icu_breakiterator_operator_return"])
         self.assertIn("codepointiterator_internal.h", patches[0]["files"][0])
         self.assertEqual(runner.host_compatibility_patches_for_target("libpng"), [])
 

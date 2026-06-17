@@ -1,0 +1,26 @@
+{
+  "status": "pass",
+  "diagnosis": "constant_scalar_d_f_variable_components",
+  "runtime_records": 31,
+  "reached_records": 31,
+  "triggered_records": 0,
+  "rnt_records": 31,
+  "spec_lifted_records": 31,
+  "rnt_spec_lifted_records": 31,
+  "spec_d_f_samples": 31,
+  "spec_d_f_unique": 1,
+  "spec_d_f_constant": true,
+  "spec_d_f_min": 3,
+  "spec_d_f_max": 3,
+  "component_keys": 2,
+  "spec_component_keys": 2,
+  "actionable_component_keys": 1,
+  "constant_components": 1,
+  "variable_components": 1,
+  "constant_actionable_components": 0,
+  "variable_actionable_components": 1,
+  "components": [
+    {"kind":5,"atom_id":1,"role":2,"source_id":17549741749363212030,"samples":31,"spec_lifted_samples":31,"actionable_samples":0,"flags_or":86,"flags_and":86,"max_confidence":0.69999999999999996,"unique_values":1,"constant":true,"min":0,"max":0,"values":[0]},
+    {"kind":3,"atom_id":1,"role":1,"source_id":6009984400083657459,"samples":31,"spec_lifted_samples":31,"actionable_samples":31,"flags_or":85,"flags_and":85,"max_confidence":0.80000000000000004,"unique_values":4,"constant":false,"min":63,"max":225,"values":[167, 225, 92, 63]}
+  ]
+}

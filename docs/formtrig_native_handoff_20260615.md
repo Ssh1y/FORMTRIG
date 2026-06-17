@@ -71,7 +71,7 @@ baseline 分别在 210s 和 9.456s 触发，所以不能作为主 SOTA-gap 证�
    并且有 replay-stable、TC-rooted、accepted/saved 的 `D_F` progress。
 ```
 
-如果 baseline 在几十秒或 210s 这种可接受成本内触发，目标必须降为
+如果 baseline 在几十秒、210s 或 300s 这种可接受成本内触发，目标必须降为
 speedup/control/design evidence，不能写成 hard SOTA-pain。
 
 `artifacts/formtrig_native_readiness/hard_target_triage_20260617.{json,csv,md}`
@@ -91,6 +91,14 @@ LIBARCHIVE_2936:
   main_claim_strength = not_hard_pain_baseline_fast_enough
   fastest successful baseline run = 9.456s
 
+PHP009:
+  not_visible_baseline_time_cost_acceptable
+  main_claim_strength = not_hard_pain_baseline_fast_enough
+  FORMTRIG first_T = 87.04s exact progress time / 120s monitor upper bound
+  fastest successful baseline run = 120s
+  fastest baseline-family median = 120s
+  speedup over fastest successful baseline run = 1.38x by exact progress time
+
 LIBCOAP_CVE_2023_35862 and PNG006:
   not_visible_baseline_visible_no_formtrig_advantage
 
@@ -98,9 +106,9 @@ promoted hard-target candidates:
   0
 ```
 
-因此当前没有任何 target 可作为主 SOTA-pain evidence。TIF012 和 LIBARCHIVE_2936
-只能作为 speedup/control/attribution evidence；PNG006 和 LIBCOAP 当前不能作为
-SOTA-pain 主证据。
+因此当前没有任何 target 可作为主 SOTA-pain evidence。TIF012、LIBARCHIVE_2936
+和 PHP009 只能作为 speedup/control/attribution evidence；PNG006 和 LIBCOAP 当前
+不能作为 SOTA-pain 主证据。
 
 `artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260617.*`
 现在也读取这个 triage artifact。主执行队列会把：
@@ -142,13 +150,35 @@ saved_non_trigger_progress = 2
 binding_signal = pass / triggered
 ```
 
-这只是 mechanism/readiness evidence，不是 endpoint efficacy。当前
-`tools/plan_formtrig_experiment_worklist.py` 会读取
-`artifacts/formtrig_native_readiness/binding_validation`，并把 PHP009 路由到
-`run_validated_matched_short_screen`。下一步是 600s matched FORMTRIG vs faithful
-AFL++ family baselines；只有 baseline-visible binary TC flatness 加上
-late/missing/high-variance `_T` 成立时，PHP009 才能升级为 hard SOTA-pain
-候选。如果 baselines 很早触发，必须降为 speedup/control/design evidence。
+这只是 mechanism/readiness evidence，不是 endpoint efficacy。600s matched short
+screen 已经完成：FORMTRIG gate pass，strict pre-trigger guidance 为 true，
+`accepted_non_trigger=4`，`saved_non_trigger=4`，`spec_lifted=12362`，
+`heuristic_lifted=0`，`manual_lifted=0`，`terminal _T=37120`。first `_T`
+按 progress/queue 精确时间是 87.04s，按 monitor 采样上界是 120s。
+
+同预算 faithful baselines 也全部触发：
+
+```text
+AFL++ vanilla:
+  first _T monitor upper bound = 270s
+  total _T = 43
+
+AFL++ CmpLog:
+  first _T monitor upper bound = 300s
+  total _T = 9
+
+local RedQueen/operand path:
+  first _T monitor upper bound = 120s
+  total _T = 20
+```
+
+因此 PHP009 当前结论是：FORMTRIG 在这个 numeric-margin TC 上有真实的
+TC-rooted lift 指导，并且 first `_T` 精确时间快于三条 baseline；但最快 baseline
+也在 120s 内触发，comparison package 标记为
+`main_claim_strength=not_hard_pain_baseline_fast_enough`。它不能证明“二值 TC
+对 SOTA 没有指导、baseline 纯靠随机性”，只能作为 positive speedup/control
+和机制归因证据。要把这类主张写进论文，必须另选 baseline `_T` late/missing/
+high-variance 且 baseline-visible pre-`_T` signal flat/binary 的硬目标。
 
 SSL011 已从错误的 OpenSSL `asn1` runner 修正为 `pkcs7_decode` runner。新的 runner
 实际调用 `PKCS7_dataDecode`，已有 FORMTRIG-native executable、source site-map、formal

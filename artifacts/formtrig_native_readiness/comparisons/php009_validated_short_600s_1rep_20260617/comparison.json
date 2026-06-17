@@ -1,0 +1,350 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 600,
+        "median_terminal_count": 9,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": 300,
+        "min_trigger_time_s": 300.0,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 600,
+        "median_terminal_count": 43,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": 270,
+        "min_trigger_time_s": 270.0,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget": 600,
+        "median_terminal_count": 20,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": 120,
+        "min_trigger_time_s": 120.0,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1
+      }
+    ],
+    "best_formtrig_trigger_time_s": 87.04,
+    "experiment_strength": {
+      "acceptable_baseline_fastest_trigger_threshold_s": 600.0,
+      "baseline_guidance_gap": {
+        "required_evidence": [
+          "baseline-visible TC signal is flat or binary before _T",
+          "accepted non-trigger improvement under the baseline-visible signal is absent",
+          "matched repeated endpoint runs are late, missing, or high-variance"
+        ],
+        "required_for_hard_sota_pain": false,
+        "status": "not_required_for_current_strength"
+      },
+      "best_baseline_family_median_trigger_time_s": 120.0,
+      "early_baseline_family_median_threshold_s": 60.0,
+      "hard_baseline_fastest_trigger_threshold_s": 1800.0,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
+      "reasons": [
+        "baseline_fastest_trigger_time_is_under_acceptable_threshold"
+      ],
+      "recommended_design_actions": [
+        "treat as speedup/control evidence, not hard SOTA-pain evidence",
+        "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+        "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
+      ]
+    },
+    "fastest_baseline_family_median_trigger_time_s": 120.0,
+    "fastest_baseline_trigger_time_s": 120.0,
+    "matched_baseline_count": 3,
+    "missing_required_baselines": [],
+    "next_steps": [
+      "treat as speedup/control evidence, not hard SOTA-pain evidence",
+      "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+      "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
+    ],
+    "reasons": [
+      "formtrig_strict_pretrigger_guidance_present",
+      "formtrig_terminal_oracle_present",
+      "matched_baseline_also_triggers",
+      "formtrig_faster_than_successful_baselines",
+      "not_hard_pain_baseline_fast_enough"
+    ],
+    "tte_speedup_over_fastest_baseline": 1.3786764705882353,
+    "tte_speedup_over_fastest_baseline_family_median": 1.3786764705882353,
+    "verdict": "positive_speedup_matched_comparison"
+  },
+  "baseline_rows": [
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_cmplog",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 177556,
+      "execs_per_sec": "297.49",
+      "heuristic_lifted": null,
+      "magma_triggered": 9,
+      "manual_lifted": null,
+      "reached": 396559,
+      "rep": 1,
+      "run_time": 596,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/runs/aflplusplus_cmplog_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": true,
+      "target_id": "PHP009",
+      "terminal_count": 9,
+      "trigger_execs": null,
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 300
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_vanilla",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 169034,
+      "execs_per_sec": "283.21",
+      "heuristic_lifted": null,
+      "magma_triggered": 43,
+      "manual_lifted": null,
+      "reached": 85024,
+      "rep": 1,
+      "run_time": 596,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/runs/aflplusplus_vanilla_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": true,
+      "target_id": "PHP009",
+      "terminal_count": 43,
+      "trigger_execs": null,
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 270
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "redqueen_operand",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 175503,
+      "execs_per_sec": "294.03",
+      "heuristic_lifted": null,
+      "magma_triggered": 20,
+      "manual_lifted": null,
+      "reached": 280521,
+      "rep": 1,
+      "run_time": 596,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines/runs/redqueen_operand_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": true,
+      "target_id": "PHP009",
+      "terminal_count": 20,
+      "trigger_execs": null,
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 120
+    }
+  ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance",
+      "formtrig_terminal_oracle_success",
+      "experiment_strength_gate"
+    ],
+    "endpoint_observations": [
+      "FORMTRIG terminal oracle success is observed",
+      "FORMTRIG first `_T` upper bound is recorded at 87.04s",
+      "fastest matched successful baseline-run first `_T` upper bound is 120s",
+      "fastest matched successful baseline-family median first `_T` upper bound is 120s"
+    ],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "observed_benefits": [
+      "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
+      "FORMTRIG observed first-`_T` is 1.38x faster than the fastest matched successful baseline run",
+      "FORMTRIG terminal oracle success is observed",
+      "FORMTRIG first `_T` upper bound is recorded at 87.04s",
+      "fastest matched successful baseline-run first `_T` upper bound is 120s",
+      "fastest matched successful baseline-family median first `_T` upper bound is 120s",
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "primary_benefits": [
+      "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
+      "FORMTRIG observed first-`_T` is 1.38x faster than the fastest matched successful baseline run"
+    ],
+    "summary": "current package supports a matched-budget speedup benefit"
+  },
+  "comparison_id": "php009_validated_short_600s_1rep_20260617",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 4,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "triggered",
+      "binding_signal_status": "pass",
+      "budget": 600,
+      "execs_done": 243121,
+      "execs_per_sec": "405.18",
+      "first_formtrig_trigger_event": {
+        "actionable_components": 2,
+        "atom_signal_values": [
+          {
+            "atom_id": 1,
+            "event_bits": 1074266112,
+            "flags": 3,
+            "guard_bits": 1,
+            "lifecycle_prefix": 0,
+            "object_id_bucket": 0,
+            "producer_bits": 0,
+            "role_bits": 3,
+            "root_value_bucket": 0,
+            "use_bits": 0
+          }
+        ],
+        "atom_signals": 1,
+        "aux": 0,
+        "component_values": [
+          {
+            "atom_id": 1,
+            "confidence": 0.7,
+            "context_hash": "f38d352376a2fefe",
+            "flags": 86,
+            "kind": 5,
+            "priority": 20,
+            "role": 2,
+            "source_id": 17549741749363212030,
+            "value": 0
+          },
+          {
+            "atom_id": 1,
+            "confidence": 0.8,
+            "context_hash": "5367c0f838a022f3",
+            "flags": 85,
+            "kind": 3,
+            "priority": 10,
+            "role": 1,
+            "source_id": 6009984400083657459,
+            "value": 0
+          },
+          {
+            "atom_id": 0,
+            "confidence": 1,
+            "context_hash": "315851fbbd238c29",
+            "flags": 13,
+            "kind": 1,
+            "priority": 10,
+            "role": 0,
+            "source_id": 3555682047460871209,
+            "value": 0
+          },
+          {
+            "atom_id": 0,
+            "confidence": 1,
+            "context_hash": "2a7614fbb9be3462",
+            "flags": 85,
+            "kind": 2,
+            "priority": 10,
+            "role": 0,
+            "source_id": 3059656068230427746,
+            "value": 0
+          },
+          {
+            "atom_id": 0,
+            "confidence": 0.9,
+            "context_hash": "3d1100fbcc00d5c6",
+            "flags": 85,
+            "kind": 3,
+            "priority": 20,
+            "role": 0,
+            "source_id": 4400299392377083334,
+            "value": 0
+          }
+        ],
+        "components": 5,
+        "d_f": 0,
+        "d_f_heuristic_lifted": -1,
+        "d_f_lifted": 0,
+        "d_f_manual_lifted": -1,
+        "d_f_spec_lifted": 0,
+        "d_t": 0,
+        "event": "saved_progress",
+        "execs_done": 36996,
+        "first_actionable": {
+          "atom_id": 1,
+          "confidence": 0.8,
+          "context_hash": "5367c0f838a022f3",
+          "flags": 85,
+          "kind": 3,
+          "priority": 10,
+          "role": 1,
+          "source_id": 6009984400083657459,
+          "value": 0
+        },
+        "frontier_count": 1,
+        "frontier_updates": 7,
+        "hot_ranges": 0,
+        "lifted": 1,
+        "observed_source_flags": 2,
+        "queue_id": 249,
+        "queued_items": 250,
+        "reached": 1,
+        "reason": "triggered",
+        "seen": 1,
+        "source_flags": 2,
+        "stable": 1,
+        "target_hit_count": 1,
+        "trace_signature": "d232c1a36cd7943b",
+        "triggered": 1
+      },
+      "first_formtrig_trigger_execs": 36989,
+      "first_formtrig_trigger_kind": "formtrig_progress_queue_filename_exact",
+      "first_formtrig_trigger_queue_id": 249,
+      "first_formtrig_trigger_queue_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_formtrig/001_PHP009/out/default/queue/id:000249,src:000193,time:87040,execs:36989,op:havoc,rep:1,+cov",
+      "first_formtrig_trigger_time_s": 87.04,
+      "gate_reasons": "ok",
+      "gate_status": "pass",
+      "heuristic_lifted": 0,
+      "manual_lifted": 0,
+      "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_formtrig/001_PHP009/out/default",
+      "reached": 54959,
+      "rep": null,
+      "run_time": 600,
+      "saved_non_trigger": 4,
+      "source_label": "php009_formtrig_600s",
+      "source_path": "artifacts/formtrig_native_readiness/gates/php009_validated_short_600s_1rep_20260617/gate_summary.csv",
+      "spec_lifted": 12362,
+      "strict_pretrigger_guidance": true,
+      "success": true,
+      "target_id": "PHP009",
+      "terminal_count": 37120,
+      "trigger_execs": 36989,
+      "trigger_time_kind": "formtrig_progress_queue_filename_exact",
+      "trigger_time_s": 87.04
+    }
+  ],
+  "target_id": "PHP009"
+}

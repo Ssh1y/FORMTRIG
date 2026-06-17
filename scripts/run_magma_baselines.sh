@@ -264,9 +264,9 @@ path.write_text(text, encoding="utf-8")
 PY
 }
 
-patch_php_host_compatibility() {
+patch_target_canary_include_flags() {
   local build_sh="$magma_dir/targets/$magma_target/build.sh"
-  if [[ "$magma_target" != "php" ]] || [[ ! -f "$build_sh" ]]; then
+  if [[ ! -f "$build_sh" ]]; then
     return
   fi
 
@@ -279,53 +279,139 @@ from pathlib import Path
 
 path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
-marker = "FORMTRIG_PHP_ICU_BOOL_HOST_COMPAT"
+marker = "FORMTRIG_CANARY_TARGET_CFLAGS"
 if marker in text:
     raise SystemExit(0)
 needle = 'cd "$TARGET/repo"\n'
 if needle not in text:
-    raise SystemExit("could not locate target repo cd in PHP build.sh")
+    raise SystemExit(0)
+insert = '''if [ -d "$MAGMA/formtrig/include" ]; then
+    export CFLAGS="${CFLAGS:-} -I$MAGMA/formtrig/include"
+    export CXXFLAGS="${CXXFLAGS:-} -I$MAGMA/formtrig/include"
+fi
+# FORMTRIG_CANARY_TARGET_CFLAGS
+
+'''
+path.write_text(text.replace(needle, insert + needle, 1), encoding="utf-8")
+PY
+}
+
+patch_php_host_compatibility() {
+  local build_sh="$magma_dir/targets/$magma_target/build.sh"
+  if [[ "$magma_target" != "php" ]] || [[ ! -f "$build_sh" ]]; then
+    return
+  fi
+
+  python3 - "$build_sh" <<'PY'
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+marker = "FORMTRIG_PHP_ICU_BOOL_HOST_COMPAT"
+legacy_future = "from __future__ import annotations\n\nimport sys\nfrom pathlib import Path\n"
+dedup_marker = "FORMTRIG_PHP_DEDUP_FUZZING_ENGINE"
+dedup_old = '    PHP_TARGET_FUZZING_ENGINE="${PHP_LIB_FUZZING_ENGINE:--Wall $PHP_TARGET_LIBS}"'
+dedup_new = '    PHP_TARGET_FUZZING_ENGINE="${PHP_LIB_FUZZING_ENGINE:--Wall}"\n    # ' + dedup_marker
 insert = r'''
 # FORMTRIG_PHP_ICU_BOOL_HOST_COMPAT
 if [ "$(basename "$TARGET")" = "php" ]; then
     python3 - "$TARGET/repo" <<'FORMTRIG_PHP_ICU'
-from __future__ import annotations
-
+import re
 import sys
 from pathlib import Path
 
 
 repo = Path(sys.argv[1])
-replacements = {
-    "ext/intl/breakiterator/codepointiterator_internal.h": [
-        (
+
+
+def expected_icu_operator_return():
+    header = Path("/usr/include/unicode/brkiter.h")
+    if header.exists():
+        text = header.read_text(encoding="utf-8", errors="ignore")
+        match = re.search(
+            r"virtual\s+(UBool|bool)\s+operator==\s*"
+            r"\(\s*const\s+BreakIterator\s*&[^)]*\)\s*const",
+            text,
+        )
+        if match:
+            return match.group(1)
+    return "bool"
+
+
+expected = expected_icu_operator_return()
+# FORMTRIG_PHP_ICU_EXPECTED_RETURN
+replacements = [
+    (
+        "ext/intl/breakiterator/codepointiterator_internal.h",
+        [
             "virtual UBool operator==(const BreakIterator& that) const;",
             "virtual bool operator==(const BreakIterator& that) const;",
-        ),
-    ],
-    "ext/intl/breakiterator/codepointiterator_internal.cpp": [
-        (
+        ],
+        "virtual {} operator==(const BreakIterator& that) const;".format(expected),
+    ),
+    (
+        "ext/intl/breakiterator/codepointiterator_internal.cpp",
+        [
             "UBool CodePointBreakIterator::operator==(const BreakIterator& that) const",
             "bool CodePointBreakIterator::operator==(const BreakIterator& that) const",
-        ),
-    ],
-}
-for relpath, pairs in replacements.items():
+        ],
+        "{} CodePointBreakIterator::operator==(const BreakIterator& that) const".format(expected),
+    ),
+]
+changed = []
+for relpath, candidates, desired in replacements:
     source = repo / relpath
     if not source.exists():
         continue
     text = source.read_text(encoding="utf-8")
     updated = text
-    for old, new in pairs:
-        updated = updated.replace(old, new)
+    for old in candidates:
+        updated = updated.replace(old, desired)
+    if desired not in updated:
+        raise SystemExit("expected ICU operator signature not found: {}".format(source))
     if updated != text:
         source.write_text(updated, encoding="utf-8")
-        print(f"FORMTRIG host-compat: patched PHP ICU bool operator== in {source}", file=sys.stderr)
+        changed.append(str(source))
+if changed:
+    print(
+        "FORMTRIG host-compat: synchronized PHP ICU {} operator== in {}".format(
+            expected, ", ".join(changed)
+        ),
+        file=sys.stderr,
+    )
 FORMTRIG_PHP_ICU
 fi
 
 '''
-path.write_text(text.replace(needle, needle + insert, 1), encoding="utf-8")
+if marker in text:
+    updated = text.replace(legacy_future, "import sys\nfrom pathlib import Path\n")
+    if dedup_marker not in updated and dedup_old in updated:
+        updated = updated.replace(dedup_old, dedup_new, 1)
+    if "FORMTRIG_PHP_ICU_EXPECTED_RETURN" not in updated:
+        pattern = (
+            r"\n?# FORMTRIG_PHP_ICU_BOOL_HOST_COMPAT\n"
+            r"if \[ \"\$\(basename \"\$TARGET\"\)\" = \"php\" \]; then\n"
+            r"    python3 - \"\$TARGET/repo\" <<'FORMTRIG_PHP_ICU'\n"
+            r".*?\nFORMTRIG_PHP_ICU\nfi\n\n"
+        )
+        updated, count = re.subn(pattern, lambda _match: "\n" + insert, updated, count=1, flags=re.S)
+        if count != 1:
+            raise SystemExit("could not refresh existing PHP ICU host-compat block")
+    if updated != text:
+        path.write_text(updated, encoding="utf-8")
+    raise SystemExit(0)
+needle = 'cd "$TARGET/repo"\n'
+if needle not in text:
+    raise SystemExit("could not locate target repo cd in PHP build.sh")
+updated = text.replace(needle, needle + insert, 1)
+if dedup_marker not in updated and dedup_old in updated:
+    updated = updated.replace(dedup_old, dedup_new, 1)
+path.write_text(updated, encoding="utf-8")
 PY
 }
 
@@ -614,6 +700,7 @@ fi
 
 prepare_clean_target_context
 patch_target_build_helpers
+patch_target_canary_include_flags
 patch_php_host_compatibility
 trap restore_target_context EXIT
 

@@ -364,8 +364,8 @@ def host_compatibility_patches_for_target(target: str) -> list[dict[str, Any]]:
         return []
     return [
         {
-            "id": "php_icu_breakiterator_operator_bool",
-            "reason": "Old PHP ext/intl declares BreakIterator::operator== with UBool, but modern ICU headers use bool.",
+            "id": "php_icu_breakiterator_operator_return",
+            "reason": "Old PHP ext/intl must match the host ICU BreakIterator::operator== return type.",
             "files": [
                 "ext/intl/breakiterator/codepointiterator_internal.h",
                 "ext/intl/breakiterator/codepointiterator_internal.cpp",
@@ -554,35 +554,66 @@ fi
 
 if [ "$(basename "$TARGET")" = "php" ]; then
   python3 - "$TARGET/repo" <<'PY'
+import re
 import sys
 from pathlib import Path
 
 repo = Path(sys.argv[1])
+
+
+def expected_icu_operator_return():
+    header = Path("/usr/include/unicode/brkiter.h")
+    if header.exists():
+        text = header.read_text(encoding="utf-8", errors="ignore")
+        match = re.search(
+            r"virtual\s+(UBool|bool)\s+operator==\s*"
+            r"\(\s*const\s+BreakIterator\s*&[^)]*\)\s*const",
+            text,
+        )
+        if match:
+            return match.group(1)
+    return "bool"
+
+
+expected = expected_icu_operator_return()
 replacements = [
     (
         "ext/intl/breakiterator/codepointiterator_internal.h",
-        "virtual UBool operator==(const BreakIterator& that) const;",
-        "virtual bool operator==(const BreakIterator& that) const;",
+        [
+            "virtual UBool operator==(const BreakIterator& that) const;",
+            "virtual bool operator==(const BreakIterator& that) const;",
+        ],
+        "virtual {{}} operator==(const BreakIterator& that) const;".format(expected),
     ),
     (
         "ext/intl/breakiterator/codepointiterator_internal.cpp",
-        "UBool CodePointBreakIterator::operator==(const BreakIterator& that) const",
-        "bool CodePointBreakIterator::operator==(const BreakIterator& that) const",
+        [
+            "UBool CodePointBreakIterator::operator==(const BreakIterator& that) const",
+            "bool CodePointBreakIterator::operator==(const BreakIterator& that) const",
+        ],
+        "{{}} CodePointBreakIterator::operator==(const BreakIterator& that) const".format(expected),
     ),
 ]
 changed = []
-for rel, old, new in replacements:
+for rel, candidates, desired in replacements:
     path = repo / rel
     if not path.exists():
         continue
     text = path.read_text(encoding="utf-8")
-    if old in text:
-        path.write_text(text.replace(old, new), encoding="utf-8")
+    updated = text
+    for old in candidates:
+        updated = updated.replace(old, desired)
+    if desired not in updated:
+        raise SystemExit("expected ICU operator signature not found: {{}}".format(path))
+    if updated != text:
+        path.write_text(updated, encoding="utf-8")
         changed.append(rel)
-    elif new not in text:
-        raise SystemExit(f"expected ICU operator signature not found: {{path}}")
 if changed:
-    print("FORMTRIG host-compat: patched PHP ICU bool operator== in " + ", ".join(changed))
+    print(
+        "FORMTRIG host-compat: synchronized PHP ICU {{}} operator== in {{}}".format(
+            expected, ", ".join(changed)
+        )
+    )
 PY
 fi
 
