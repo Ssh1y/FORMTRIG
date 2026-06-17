@@ -8,9 +8,10 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-17T14:51:31+00:00",
+  "generated_at_utc": "2026-06-17T15:12:40+00:00",
   "inputs": {
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
+    "native_build_root": "artifacts/formtrig_native_readiness/magma_native_builds",
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
     "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260617.json"
   },
@@ -933,7 +934,10 @@
       "blocked_claims": [],
       "blocking_issue": [
         "BindingSpec candidate is not native-site-map validated",
-        "no comparison package exists yet"
+        "no comparison package exists yet",
+        "native build dependencies missing: libcairo2-dev libopenjp2-7-dev",
+        "poppler_cairo_pkg_config apt=libcairo2-dev",
+        "poppler_openjpeg_cmake_config apt=libopenjp2-7-dev"
       ],
       "category": "binary-state-null+compound-sequence-lifecycle",
       "claim_boundary": "Validation is a gate, not an efficacy result.",
@@ -942,7 +946,8 @@
       "current_primary_benefits": [],
       "duration_s": 600,
       "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json"
       ],
       "lane": "binding_validation_first",
       "mechanism_evidence_required": [
@@ -952,6 +957,7 @@
         "seed readiness with reached non-trigger seeds"
       ],
       "post_unblock_commands": [
+        "sudo apt-get install -y libcairo2-dev libopenjp2-7-dev",
         "scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4",
         "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail"
       ],
@@ -985,7 +991,8 @@
       "current_primary_benefits": [],
       "duration_s": 600,
       "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/SSL015/build_plan.json"
       ],
       "lane": "binding_validation_first",
       "mechanism_evidence_required": [
@@ -1028,7 +1035,8 @@
       "current_primary_benefits": [],
       "duration_s": 600,
       "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/PDF016/build_plan.json"
       ],
       "lane": "binding_validation_first",
       "mechanism_evidence_required": [
@@ -1062,7 +1070,10 @@
       "blocked_claims": [],
       "blocking_issue": [
         "BindingSpec candidate is not native-site-map validated",
-        "no comparison package exists yet"
+        "no comparison package exists yet",
+        "native build dependencies missing: bison re2c",
+        "php_bison apt=bison",
+        "php_re2c apt=re2c"
       ],
       "category": "compound-sequence-lifecycle",
       "claim_boundary": "Validation is a gate, not an efficacy result.",
@@ -1071,7 +1082,8 @@
       "current_primary_benefits": [],
       "duration_s": 600,
       "evidence_paths": [
-        "artifacts/magma_canary_inventory.json"
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/PHP009/build_plan.json"
       ],
       "lane": "binding_validation_first",
       "mechanism_evidence_required": [
@@ -1081,6 +1093,7 @@
         "seed readiness with reached non-trigger seeds"
       ],
       "post_unblock_commands": [
+        "sudo apt-get install -y bison re2c",
         "scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4",
         "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.list --duration 600 --jobs 4 --continue-on-fail"
       ],

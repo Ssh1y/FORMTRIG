@@ -88,6 +88,7 @@ SOTA_PAIN_DESIGN_CLASSES = {
 }
 
 BASELINE_FAMILY = "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
+DEFAULT_NATIVE_BUILD_ROOT = Path("artifacts/formtrig_native_readiness/magma_native_builds")
 
 
 def read_json(path: Path) -> Any:
@@ -150,6 +151,23 @@ def triage_map(path: Path | None) -> dict[str, dict[str, Any]]:
         for row in rows
         if isinstance(row, dict) and row.get("target_id")
     }
+
+
+def native_build_plan_map(root: Path | None) -> dict[str, dict[str, Any]]:
+    if root is None or not root.exists():
+        return {}
+    plans: dict[str, dict[str, Any]] = {}
+    for path in sorted(root.glob("*/build_plan.json")):
+        try:
+            payload = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        target_id = str(payload.get("target_id") or path.parent.name)
+        if not target_id:
+            continue
+        payload["_build_plan_path"] = str(path)
+        plans[target_id] = payload
+    return plans
 
 
 def sota_pain_class(triage: dict[str, Any] | None) -> str:
@@ -377,6 +395,59 @@ def evidence_paths(row: dict[str, Any], comparison: dict[str, Any] | None) -> li
                 base = Path(str(comparison["_comparison_path"])).parent
                 paths.append(str(base / str(value)))
     return sorted(dict.fromkeys(paths))
+
+
+def add_unique(values: list[str], additions: list[str]) -> list[str]:
+    seen = set(values)
+    for value in additions:
+        if value and value not in seen:
+            values.append(value)
+            seen.add(value)
+    return values
+
+
+def apply_native_build_plan_blockers(
+    task: dict[str, Any],
+    build_plan: dict[str, Any] | None,
+) -> dict[str, Any]:
+    if not build_plan:
+        return task
+    if build_plan.get("_build_plan_path"):
+        task["evidence_paths"] = add_unique(
+            list(task.get("evidence_paths") or []),
+            [str(build_plan["_build_plan_path"])],
+        )
+
+    preflight = (
+        build_plan.get("dependency_preflight")
+        if isinstance(build_plan.get("dependency_preflight"), dict)
+        else {}
+    )
+    if preflight.get("status") != "missing":
+        return task
+
+    apt_hints = [str(item) for item in preflight.get("apt_package_hints") or [] if str(item)]
+    blockers = [
+        "native build dependencies missing: " + " ".join(apt_hints)
+        if apt_hints
+        else "native build dependencies missing"
+    ]
+    for check in preflight.get("checks") or []:
+        if not isinstance(check, dict) or check.get("status") != "missing":
+            continue
+        detail = str(check.get("id") or check.get("kind") or "dependency")
+        hints = " ".join(str(item) for item in check.get("apt_package_hints") or [])
+        if hints:
+            detail = f"{detail} apt={hints}"
+        blockers.append(detail)
+    task["blocking_issue"] = add_unique(list(task.get("blocking_issue") or []), blockers)
+    if apt_hints:
+        task["post_unblock_commands"] = add_unique(
+            [f"sudo apt-get install -y {' '.join(apt_hints)}"],
+            list(task.get("post_unblock_commands") or []),
+        )
+    task["runnable_now"] = False
+    return task
 
 
 def comparison_summary(comparison: dict[str, Any] | None) -> dict[str, Any]:
@@ -1006,6 +1077,7 @@ def build_worklist(
     comparison_root: Path,
     *,
     triage_path: Path | None = None,
+    native_build_root: Path | None = None,
     limit: int,
     use_all_targets: bool,
     short_duration_s: int,
@@ -1019,6 +1091,7 @@ def build_worklist(
     all_rows = queue_rows(queue, use_all_targets=True)
     comparisons = comparison_map(comparison_root)
     target_triage = triage_map(triage_path)
+    build_plans = native_build_plan_map(native_build_root)
     tasks: list[dict[str, Any]] = []
     skipped_controls: list[dict[str, Any]] = [
         {
@@ -1059,16 +1132,20 @@ def build_worklist(
     for row in rows:
         if is_non_main_budget(row) or is_sota_pain_skip(row, target_triage):
             continue
+        task = task_for_row(
+            row,
+            comparisons,
+            target_triage,
+            short_duration_s=short_duration_s,
+            longrun_duration_s=longrun_duration_s,
+            jobs=jobs,
+            reps=reps,
+            longrun_reps=longrun_reps,
+        )
         tasks.append(
-            task_for_row(
-                row,
-                comparisons,
-                target_triage,
-                short_duration_s=short_duration_s,
-                longrun_duration_s=longrun_duration_s,
-                jobs=jobs,
-                reps=reps,
-                longrun_reps=longrun_reps,
+            apply_native_build_plan_blockers(
+                task,
+                build_plans.get(target_id_for(row)),
             )
         )
         if len(tasks) >= limit:
@@ -1082,6 +1159,7 @@ def build_worklist(
             "queue": str(queue_path),
             "comparison_root": str(comparison_root),
             "triage": str(triage_path) if triage_path else "",
+            "native_build_root": str(native_build_root) if native_build_root else "",
         },
         "defaults": {
             "short_duration_s": short_duration_s,
@@ -1286,6 +1364,12 @@ def parse_args() -> argparse.Namespace:
         default=Path("artifacts/formtrig_native_readiness/hard_target_triage_20260617.json"),
         help="target-level hard-pain triage JSON; missing files are ignored",
     )
+    parser.add_argument(
+        "--native-build-root",
+        type=Path,
+        default=DEFAULT_NATIVE_BUILD_ROOT,
+        help="FORMTRIG-native Magma build-plan root; dependency blockers are surfaced when present",
+    )
     parser.add_argument("--out-json", required=True, type=Path)
     parser.add_argument("--out-md", required=True, type=Path)
     parser.add_argument("--out-csv", required=True, type=Path)
@@ -1306,6 +1390,7 @@ def main() -> int:
         args.queue,
         args.comparison_root,
         triage_path=args.triage,
+        native_build_root=args.native_build_root,
         limit=args.limit,
         use_all_targets=args.use_all_targets,
         short_duration_s=args.short_duration,

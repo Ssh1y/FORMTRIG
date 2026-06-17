@@ -108,6 +108,7 @@ chmod +x "$OUT/afl/$PROGRAM"
             self.assertIn("--runtime-link-mode never", script_text)
             self.assertIn("magma/magma/formtrig/runtime", script_text)
             self.assertIn("CMakeFiles/(CMakeScratch|CMakeTmp)", script_text)
+            self.assertIn(r"conftest\.(c|cc|cpp|cxx)", script_text)
             self.assertIn("freetype2/src/tools", script_text)
             self.assertIn("AFLGO_CONFIGURE_NATIVE", script_text)
             self.assertIn("AFLGO_CONFIGURE_CC", script_text)
@@ -208,6 +209,24 @@ chmod +x "$OUT/afl/$PROGRAM"
         self.assertEqual(
             [row["status"] for row in summary["checks"]],
             ["missing", "missing"],
+        )
+
+    def test_dependency_preflight_reports_php_build_tools(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+
+        summary = runner.dependency_preflight_for_target(
+            "php",
+            pkg_exists=lambda name: name == "icu-uc",
+            cmd_exists=lambda _name: False,
+        )
+
+        self.assertEqual(summary["status"], "missing")
+        self.assertIn("bison", summary["apt_package_hints"])
+        self.assertIn("re2c", summary["apt_package_hints"])
+        self.assertNotIn("libicu-dev", summary["apt_package_hints"])
+        self.assertEqual(
+            [row["status"] for row in summary["checks"]],
+            ["missing", "missing", "ok"],
         )
 
     def test_openssl_programs_default_to_stdin_args(self):

@@ -355,6 +355,84 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertEqual(task["sota_pain_class"], "not_visible_near_seed_or_harness_shaped")
             self.assertIn("baseline families trigger early", task["sota_pain_evidence"])
 
+    def test_native_build_dependency_preflight_is_surfaced_in_worklist(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            comparison_root.mkdir()
+            build_root = root / "magma_native_builds"
+            php_plan = build_root / "PHP009" / "build_plan.json"
+            php_plan.parent.mkdir(parents=True)
+            php_plan.write_text(
+                json.dumps(
+                    {
+                        "target_id": "PHP009",
+                        "dependency_preflight": {
+                            "status": "missing",
+                            "apt_package_hints": ["bison", "re2c"],
+                            "checks": [
+                                {
+                                    "id": "php_bison",
+                                    "status": "missing",
+                                    "apt_package_hints": ["bison"],
+                                },
+                                {
+                                    "id": "php_re2c",
+                                    "status": "missing",
+                                    "apt_package_hints": ["re2c"],
+                                },
+                            ],
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 6,
+                                "target_id": "PHP009",
+                                "source": "magma",
+                                "project": "php",
+                                "primary_category": "compound-sequence-lifecycle",
+                                "secondary_category": "",
+                                "lane": "binding_validation_first",
+                                "status": "needs_binding_validation",
+                                "existing_disposition": "",
+                                "blockers": "BindingSpec candidate is not native-site-map validated",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                native_build_root=build_root,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertIn("native build dependencies missing: bison re2c", task["blocking_issue"])
+            self.assertIn("php_bison apt=bison", task["blocking_issue"])
+            self.assertIn("sudo apt-get install -y bison re2c", task["post_unblock_commands"])
+            self.assertIn(str(php_plan), task["evidence_paths"])
+
     def test_completed_longrun_routes_to_cross_target_expansion(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

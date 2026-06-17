@@ -1013,6 +1013,12 @@ PDF003:
   更适合作为 hard binary/lifecycle TC 的下一条验证线。
   当前 blocker 是 native Poppler build 依赖，不是算法证据。
 
+PHP009:
+  是 hard binary/lifecycle TC 的下一条验证线之一。
+  native build runner 现在会在编译前检查 PHP build dependencies。
+  当前 blocker 是缺少 bison/re2c，不是算法证据：
+    sudo apt-get install -y bison re2c
+
 SSL011:
   OpenSSL native build 已从错误的 asn1 runner 收敛到 pkcs7_decode runner。
   pkcs7_decode 覆盖 PKCS7_dataDecode workflow，已有 native executable、

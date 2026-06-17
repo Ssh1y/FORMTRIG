@@ -54,6 +54,29 @@ TARGET_DEPENDENCY_REQUIREMENTS = {
             "reason": "Poppler build enables the OpenJPEG JPX decoder.",
         },
     ],
+    "php": [
+        {
+            "id": "php_bison",
+            "kind": "command",
+            "name": "bison",
+            "apt_package_hints": ["bison"],
+            "reason": "PHP buildconf/configure requires bison to generate parsers.",
+        },
+        {
+            "id": "php_re2c",
+            "kind": "command",
+            "name": "re2c",
+            "apt_package_hints": ["re2c"],
+            "reason": "PHP builds generated scanners from source during native target builds.",
+        },
+        {
+            "id": "php_icu_pkg_config",
+            "kind": "pkg_config",
+            "name": "icu-uc",
+            "apt_package_hints": ["libicu-dev"],
+            "reason": "The selected Magma PHP build enables intl support.",
+        },
+    ],
 }
 
 
@@ -273,6 +296,10 @@ def pkg_config_exists(package: str) -> bool:
     return proc.returncode == 0
 
 
+def command_exists(command: str) -> bool:
+    return shutil.which(command) is not None
+
+
 def first_glob_match(patterns: list[str]) -> str:
     for pattern in patterns:
         matches = sorted(glob.glob(pattern))
@@ -285,6 +312,7 @@ def dependency_preflight_for_target(
     target: str,
     *,
     pkg_exists=pkg_config_exists,
+    cmd_exists=command_exists,
     glob_match=first_glob_match,
 ) -> dict[str, Any]:
     requirements = TARGET_DEPENDENCY_REQUIREMENTS.get(target, [])
@@ -295,6 +323,9 @@ def dependency_preflight_for_target(
         kind = requirement["kind"]
         if kind == "pkg_config":
             ok = bool(pkg_exists(requirement["name"]))
+            value = requirement["name"] if ok else ""
+        elif kind == "command":
+            ok = bool(cmd_exists(requirement["name"]))
             value = requirement["name"] if ok else ""
         elif kind == "path_glob":
             value = str(glob_match(requirement["patterns"]))
@@ -455,6 +486,7 @@ prepare_args=(
   --skip-pass-regex '(^|/)(magma/magma/src|magma/src)/'
   --skip-pass-regex '(^|/)(magma/magma/formtrig/runtime|magma/formtrig/runtime)/'
   --skip-pass-regex '(^|/)CMakeFiles/(CMakeScratch|CMakeTmp)/'
+  --skip-pass-regex '(^|/)conftest\\.(c|cc|cpp|cxx)$'
   --skip-pass-regex '(^|/)freetype2/src/tools/'
   --env AFL_QUIET=1
   --force

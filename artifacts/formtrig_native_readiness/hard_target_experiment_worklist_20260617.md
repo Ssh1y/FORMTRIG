@@ -2,7 +2,7 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-17T14:51:31+00:00`
+Generated: `2026-06-17T15:12:40+00:00`
 Tasks: `20`; runnable now: `0`; blocked/gated: `20`; demoted controls skipped: `6`; low-priority skipped: `93`.
 
 ## Budget Order
@@ -52,16 +52,21 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Blocking issue:
 - BindingSpec candidate is not native-site-map validated
 - no comparison package exists yet
+- native build dependencies missing: libcairo2-dev libopenjp2-7-dev
+- poppler_cairo_pkg_config apt=libcairo2-dev
+- poppler_openjpeg_cmake_config apt=libopenjp2-7-dev
 - Mechanism evidence required after benefit:
 - native site-map validation
 - lift audit pass
 - binding-signal diagnosis pass
 - seed readiness with reached non-trigger seeds
 - Post-unblock commands or steps:
+- sudo apt-get install -y libcairo2-dev libopenjp2-7-dev
 - scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4
 - scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail
 - Evidence paths:
 - artifacts/magma_canary_inventory.json
+- artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json
 
 ### P1 SSL015 - validate_binding_spec_then_short_screen
 
@@ -83,6 +88,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL015.list --duration 600 --jobs 4 --continue-on-fail
 - Evidence paths:
 - artifacts/magma_canary_inventory.json
+- artifacts/formtrig_native_readiness/magma_native_builds/SSL015/build_plan.json
 
 ### P1 PDF016 - validate_binding_spec_then_short_screen
 
@@ -104,6 +110,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail
 - Evidence paths:
 - artifacts/magma_canary_inventory.json
+- artifacts/formtrig_native_readiness/magma_native_builds/PDF016/build_plan.json
 
 ### P1 PHP009 - validate_binding_spec_then_short_screen
 
@@ -115,16 +122,21 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Blocking issue:
 - BindingSpec candidate is not native-site-map validated
 - no comparison package exists yet
+- native build dependencies missing: bison re2c
+- php_bison apt=bison
+- php_re2c apt=re2c
 - Mechanism evidence required after benefit:
 - native site-map validation
 - lift audit pass
 - binding-signal diagnosis pass
 - seed readiness with reached non-trigger seeds
 - Post-unblock commands or steps:
+- sudo apt-get install -y bison re2c
 - scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4
 - scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.list --duration 600 --jobs 4 --continue-on-fail
 - Evidence paths:
 - artifacts/magma_canary_inventory.json
+- artifacts/formtrig_native_readiness/magma_native_builds/PHP009/build_plan.json
 
 ### P1 LIBXML2_1107 - validate_binding_spec_then_short_screen
 

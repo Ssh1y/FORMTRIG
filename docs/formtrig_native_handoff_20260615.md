@@ -96,6 +96,20 @@ SOTA-pain 主证据。
 
 这避免了 triage 已经判定“看不出 SOTA pain”的目标继续消耗长测预算。
 
+PHP009 native build 现在有更清晰的 dependency gate。FORMTRIG native build runner
+会跳过 autoconf `conftest.{c,cc,cpp,cxx}` 的 pass instrumentation，避免 configure
+probe 因未链接 FORMTRIG runtime 而失败，也避免这些 probe 污染 site-map。当前
+PHP009 已通过该工程 blocker，剩余 blocker 是系统缺少 PHP build tools：
+`bison` 和 `re2c`。下一步安装命令是：
+
+```bash
+sudo apt-get install -y bison re2c
+```
+
+安装后重跑 `artifacts/formtrig_native_readiness/magma_native_builds/PHP009/build_plan.*`
+记录的 clang-15/libstdc++ native build 命令，再进入 native asset discovery 和
+BindingSpec validation；这仍然是 readiness evidence，不是 endpoint efficacy。
+
 SSL011 已从错误的 OpenSSL `asn1` runner 修正为 `pkcs7_decode` runner。新的 runner
 实际调用 `PKCS7_dataDecode`，已有 FORMTRIG-native executable、source site-map、formal
 RNT seed 和 runnable validation worklist。当前 60s BindingSpec validation 是负结果：

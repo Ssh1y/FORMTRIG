@@ -1,4 +1,62 @@
 {
+  "dependency_preflight": {
+    "apt_package_hints": [
+      "bison",
+      "re2c"
+    ],
+    "checks": [
+      {
+        "apt_package_hints": [
+          "bison"
+        ],
+        "id": "php_bison",
+        "kind": "command",
+        "reason": "PHP buildconf/configure requires bison to generate parsers.",
+        "status": "missing",
+        "value": ""
+      },
+      {
+        "apt_package_hints": [
+          "re2c"
+        ],
+        "id": "php_re2c",
+        "kind": "command",
+        "reason": "PHP builds generated scanners from source during native target builds.",
+        "status": "missing",
+        "value": ""
+      },
+      {
+        "apt_package_hints": [
+          "libicu-dev"
+        ],
+        "id": "php_icu_pkg_config",
+        "kind": "pkg_config",
+        "reason": "The selected Magma PHP build enables intl support.",
+        "status": "ok",
+        "value": "icu-uc"
+      }
+    ],
+    "status": "missing",
+    "target": "php"
+  },
+  "executed_steps": [
+    {
+      "exit_code": 2,
+      "failure_summary": {
+        "apt_package_hints": [
+          "bison",
+          "re2c"
+        ],
+        "error_lines": [
+          "missing native build dependencies for php: bison re2c"
+        ]
+      },
+      "log": "",
+      "name": "dependency_preflight",
+      "selected": true,
+      "status": "failed"
+    }
+  ],
   "expected_validation_asset": {
     "program_args": "@@",
     "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv",
@@ -6,19 +64,37 @@
     "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl",
     "target_id": "PHP009"
   },
-  "generated_at_utc": "2026-06-16T17:53:12+00:00",
+  "failure_summary": {
+    "apt_package_hints": [
+      "bison",
+      "re2c"
+    ],
+    "error_lines": [
+      "missing native build dependencies for php: bison re2c"
+    ],
+    "failed_step": "dependency_preflight"
+  },
+  "generated_at_utc": "2026-06-17T15:08:47+00:00",
   "inputs": {
+    "afl_cc": "/usr/bin/clang-15",
+    "afl_cxx": "/usr/bin/clang++-15",
+    "cxx_stdlib": "libstdc++",
     "fuzzer": "formtrig_native",
+    "instrument_entry": "runner",
     "instrument_level": "balanced",
+    "llvm_config": "/usr/bin/llvm-config-15",
     "magma_root": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma",
+    "pass_cxx": "/usr/bin/clang++-15",
     "refresh_discovery": false,
     "run_preinstall": false,
+    "runtime_cc": "/usr/bin/clang-15",
+    "skip_dependency_preflight": false,
     "skip_fuzzer_build": false,
-    "skip_fuzzer_fetch": false,
+    "skip_fuzzer_fetch": true,
     "skip_patches": false,
-    "skip_target_fetch": false
+    "skip_target_fetch": true
   },
-  "mode": "dry-run",
+  "mode": "execute",
   "paths": {
     "executable": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif",
     "fuzzer": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
@@ -26,6 +102,7 @@
     "magma": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
     "out": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out",
     "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009",
+    "runner_instrument": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/runner_instrument_target.sh",
     "shared": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/shared",
     "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv",
     "target": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php",
@@ -34,7 +111,7 @@
   "post_build_steps": [],
   "program": "exif",
   "schema": "formtrig_magma_native_build_plan_v1",
-  "status": "planned",
+  "status": "failed",
   "steps": [
     {
       "command": [
@@ -63,8 +140,8 @@
         "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
       },
       "name": "fuzzer_build",
-      "reason": "AFL++/driver artifacts missing or forced",
-      "selected": true,
+      "reason": "AFL++/driver artifacts already present",
+      "selected": false,
       "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out PROGRAM=exif SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh"
     },
     {
@@ -89,8 +166,8 @@
         "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
       },
       "name": "target_fetch",
-      "reason": "target repo missing or forced",
-      "selected": true,
+      "reason": "target repo already present",
+      "selected": false,
       "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/fetch.sh"
     },
     {
@@ -102,19 +179,26 @@
         "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
       },
       "name": "apply_patches",
-      "reason": "target repo lacks MAGMA_LOG markers or patches forced",
-      "selected": true,
+      "reason": "target repo already has MAGMA_LOG markers",
+      "selected": false,
       "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh"
     },
     {
       "command": [
         "bash",
-        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/instrument.sh"
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/runner_instrument_target.sh"
       ],
       "env": {
         "CFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
         "CXXFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "FORMTRIG_AFL_CC": "/usr/bin/clang-15",
+        "FORMTRIG_AFL_CXX": "/usr/bin/clang++-15",
         "FORMTRIG_INSTRUMENT_LEVEL": "balanced",
+        "FORMTRIG_LLVM_CONFIG": "/usr/bin/llvm-config-15",
+        "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
+        "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
+        "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
         "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
         "LD": "/usr/bin/ld",
         "LDFLAGS": "-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out",
@@ -126,9 +210,9 @@
         "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
       },
       "name": "instrument_target",
-      "reason": "build FORMTRIG-native target executable and site map",
+      "reason": "build FORMTRIG-native target executable and site map via runner",
       "selected": true,
-      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_INSTRUMENT_LEVEL=balanced FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out PROGRAM=exif SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/instrument.sh"
+      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out PROGRAM=exif SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/runner_instrument_target.sh"
     }
   ],
   "target": "php",
