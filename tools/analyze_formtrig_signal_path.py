@@ -57,17 +57,24 @@ def compact_event(event: dict[str, Any]) -> dict[str, Any]:
         "reason": event.get("reason"),
         "execs_done": event.get("execs_done"),
         "queue_id": event.get("queue_id"),
+        "queued_items": event.get("queued_items"),
+        "frontier_count": event.get("frontier_count"),
         "triggered": bool(event.get("triggered")),
+        "lifted": bool(event.get("lifted")),
         "stable": event.get("stable"),
         "d_t": event.get("d_t"),
         "d_f": event.get("d_f"),
+        "d_f_lifted": event.get("d_f_lifted"),
         "d_f_spec_lifted": event.get("d_f_spec_lifted"),
         "components": event.get("components"),
         "actionable_components": event.get("actionable_components"),
         "atom_signals": event.get("atom_signals"),
         "role_bits": event.get("role_bits"),
+        "hot_ranges": event.get("hot_ranges"),
+        "target_hit_count": event.get("target_hit_count"),
         "source_flags": event.get("source_flags"),
         "observed_source_flags": event.get("observed_source_flags"),
+        "aux": event.get("aux"),
         "first_actionable": {
             "kind": first_actionable.get("kind"),
             "role": first_actionable.get("role"),
@@ -89,6 +96,15 @@ def add_unique(values: list[Any], value: Any, limit: int = 16) -> None:
         values.append(value)
 
 
+def is_lifted_nontrigger(event: dict[str, Any]) -> bool:
+    if bool(event.get("triggered")):
+        return False
+    if bool(event.get("lifted")):
+        return True
+    spec_df = numeric(event.get("d_f_spec_lifted"))
+    return spec_df is not None and spec_df >= 0
+
+
 def summarize_progress(progress_path: Path) -> dict[str, Any]:
     event_counts: Counter[str] = Counter()
     reason_counts: Counter[str] = Counter()
@@ -99,11 +115,20 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
     first_calibrated_non_trigger: dict[str, Any] | None = None
     first_saved_non_trigger: dict[str, Any] | None = None
     first_saved_trigger: dict[str, Any] | None = None
+    first_typed_stage_start: dict[str, Any] | None = None
+    first_typed_stage_end: dict[str, Any] | None = None
+    first_typed_stage_start_before_trigger: dict[str, Any] | None = None
+    first_typed_lifted_nontrigger_before_trigger: dict[str, Any] | None = None
     latest_event: dict[str, Any] | None = None
     saved_non_trigger = 0
     saved_trigger = 0
     calibrated_non_trigger = 0
     nontrigger_before_first_saved_trigger = 0
+    typed_stage_starts = 0
+    typed_stage_ends = 0
+    typed_stage_nontrigger_starts = 0
+    typed_stage_starts_before_trigger = 0
+    typed_lifted_nontrigger_starts_before_trigger = 0
 
     if not progress_path.exists():
         return {
@@ -128,6 +153,26 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
         observed_source_flag_counts[str(event.get("observed_source_flags"))] += 1
 
         triggered = bool(event.get("triggered"))
+        if event_name == "typed_stage_start":
+            typed_stage_starts += 1
+            compact = compact_event(event)
+            if first_typed_stage_start is None:
+                first_typed_stage_start = compact
+            if not triggered:
+                typed_stage_nontrigger_starts += 1
+            if first_saved_trigger is None:
+                typed_stage_starts_before_trigger += 1
+                if first_typed_stage_start_before_trigger is None:
+                    first_typed_stage_start_before_trigger = compact
+                if is_lifted_nontrigger(event):
+                    typed_lifted_nontrigger_starts_before_trigger += 1
+                    if first_typed_lifted_nontrigger_before_trigger is None:
+                        first_typed_lifted_nontrigger_before_trigger = compact
+        elif event_name == "typed_stage_end":
+            typed_stage_ends += 1
+            if first_typed_stage_end is None:
+                first_typed_stage_end = compact_event(event)
+
         if not triggered and first_saved_trigger is None:
             nontrigger_before_first_saved_trigger += 1
             add_unique(preterminal_nontrigger_df, event.get("d_f"))
@@ -146,6 +191,14 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
             if first_saved_non_trigger is None:
                 first_saved_non_trigger = compact_event(event)
 
+    first_saved_trigger_after_typed_stage = (
+        first_saved_trigger is not None
+        and first_typed_stage_start_before_trigger is not None
+    )
+    typed_lifted_nontrigger_before_saved_trigger = (
+        first_saved_trigger is not None
+        and first_typed_lifted_nontrigger_before_trigger is not None
+    )
     strict_pretrigger = first_saved_non_trigger is not None and (
         first_saved_trigger is None
         or int_value(first_saved_non_trigger.get("execs_done"), 10**18)
@@ -172,13 +225,24 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
         "calibrated_non_trigger_events": calibrated_non_trigger,
         "saved_non_trigger_events": saved_non_trigger,
         "saved_trigger_events": saved_trigger,
+        "typed_stage_start_events": typed_stage_starts,
+        "typed_stage_end_events": typed_stage_ends,
+        "typed_stage_nontrigger_start_events": typed_stage_nontrigger_starts,
+        "typed_stage_starts_before_first_saved_trigger": typed_stage_starts_before_trigger,
+        "typed_lifted_nontrigger_starts_before_first_saved_trigger": typed_lifted_nontrigger_starts_before_trigger,
         "strict_pretrigger_guidance_seen": strict_pretrigger,
+        "first_saved_trigger_after_typed_stage": first_saved_trigger_after_typed_stage,
+        "typed_lifted_nontrigger_before_first_saved_trigger": typed_lifted_nontrigger_before_saved_trigger,
         "nontrigger_events_before_first_saved_trigger": nontrigger_before_first_saved_trigger,
         "preterminal_nontrigger_d_f_values": preterminal_nontrigger_df,
         "preterminal_nontrigger_d_f_spec_lifted_values": preterminal_nontrigger_spec_df,
         "first_calibrated_non_trigger": first_calibrated_non_trigger,
         "first_saved_non_trigger": first_saved_non_trigger,
         "first_saved_trigger": first_saved_trigger,
+        "first_typed_stage_start": first_typed_stage_start,
+        "first_typed_stage_end": first_typed_stage_end,
+        "first_typed_stage_start_before_first_saved_trigger": first_typed_stage_start_before_trigger,
+        "first_typed_lifted_nontrigger_before_first_saved_trigger": first_typed_lifted_nontrigger_before_trigger,
         "latest_event": latest_event,
     }
 
@@ -225,6 +289,16 @@ def summarize(formtrig_dir: Path, target_id: str, run_root: Path | None = None) 
         for row in runs
         if int_value(row["progress_path"].get("calibrated_non_trigger_events")) > 0
     ]
+    typed_before_terminal_runs = [
+        row
+        for row in runs
+        if row["progress_path"].get("first_saved_trigger_after_typed_stage")
+    ]
+    typed_lifted_before_terminal_runs = [
+        row
+        for row in runs
+        if row["progress_path"].get("typed_lifted_nontrigger_before_first_saved_trigger")
+    ]
     if strict_runs:
         verdict = "strict_pretrigger_guidance_observed"
     elif terminal_runs and calibrated_runs:
@@ -244,10 +318,21 @@ def summarize(formtrig_dir: Path, target_id: str, run_root: Path | None = None) 
         "strict_pretrigger_guidance_runs": len(strict_runs),
         "terminal_runs": len(terminal_runs),
         "calibrated_frontier_runs": len(calibrated_runs),
+        "typed_stage_before_terminal_runs": len(typed_before_terminal_runs),
+        "typed_lifted_nontrigger_before_terminal_runs": len(typed_lifted_before_terminal_runs),
         "verdict": verdict,
+        "typed_attribution": (
+            "terminal_after_typed_lifted_nontrigger_stage"
+            if typed_lifted_before_terminal_runs
+            else "terminal_after_typed_stage"
+            if typed_before_terminal_runs
+            else "no_typed_preterminal_attribution"
+        ),
         "claim_boundary": (
             "calibrated_frontier is reported for diagnosis only; strict gate "
-            "still requires saved non-trigger progress before terminal _T"
+            "still requires saved non-trigger progress before terminal _T; "
+            "typed-stage attribution explains mutation activity but does not "
+            "upgrade the strict gate"
         ),
         "runs": runs,
     }
@@ -265,17 +350,18 @@ def to_markdown(payload: dict[str, Any]) -> str:
         "",
         f"- analysis: `{payload['analysis_time_utc']}`",
         f"- verdict: `{payload['verdict']}`",
+        f"- typed attribution: `{payload['typed_attribution']}`",
         f"- claim boundary: {payload['claim_boundary']}",
         "",
-        "| run | time | execs | calibrated non-T | saved non-T | saved T | first non-T exec | first T exec | typed finds | status |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| run | time | execs | calibrated non-T | saved non-T | saved T | first non-T exec | first T exec | typed starts | typed before T | typed lifted non-T before T | typed finds | status |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: | --- |",
     ]
     for row in payload["runs"]:
         progress = row["progress_path"]
         first_nt = progress.get("first_saved_non_trigger") or {}
         first_t = progress.get("first_saved_trigger") or {}
         lines.append(
-            "| {run} | {time} | {execs} | {cal_nt} | {saved_nt} | {saved_t} | {first_nt} | {first_t} | {typed_finds} | {status} |".format(
+            "| {run} | {time} | {execs} | {cal_nt} | {saved_nt} | {saved_t} | {first_nt} | {first_t} | {typed_starts} | {typed_before_t} | {typed_lift_before_t} | {typed_finds} | {status} |".format(
                 run=row["run"],
                 time=cell(row.get("run_time_s")),
                 execs=cell(row.get("execs_done")),
@@ -284,6 +370,13 @@ def to_markdown(payload: dict[str, Any]) -> str:
                 saved_t=progress.get("saved_trigger_events", 0),
                 first_nt=cell(first_nt.get("execs_done")),
                 first_t=cell(first_t.get("execs_done")),
+                typed_starts=progress.get("typed_stage_start_events", 0),
+                typed_before_t="yes"
+                if progress.get("first_saved_trigger_after_typed_stage")
+                else "no",
+                typed_lift_before_t="yes"
+                if progress.get("typed_lifted_nontrigger_before_first_saved_trigger")
+                else "no",
                 typed_finds=row.get("typed_finds", 0),
                 status=progress.get("status", ""),
             )
@@ -294,6 +387,11 @@ def to_markdown(payload: dict[str, Any]) -> str:
         lines.append(f"### {row['run']}")
         for label, key in (
             ("first calibrated non-T", "first_calibrated_non_trigger"),
+            ("first typed stage", "first_typed_stage_start"),
+            (
+                "first typed lifted non-T before T",
+                "first_typed_lifted_nontrigger_before_first_saved_trigger",
+            ),
             ("first saved non-T", "first_saved_non_trigger"),
             ("first saved T", "first_saved_trigger"),
         ):

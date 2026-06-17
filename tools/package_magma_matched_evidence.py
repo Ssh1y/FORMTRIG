@@ -188,7 +188,7 @@ def write_index(
             "- `formtrig/`: FORMTRIG batch summary, gate summary, and per-rep stats.",
             "- `guidance_gap/`: baseline no-guidance analysis and per-run table.",
             "- `live_status/`: non-final live snapshot of FORMTRIG and baseline `_R/_T` state.",
-            "- `formtrig_signal_path/`: strict path audit for calibrated frontier, saved non-`_T`, and saved `_T` progress.",
+            "- `formtrig_signal_path/`: strict path audit for calibrated frontier, typed-stage attribution, saved non-`_T`, and saved `_T` progress.",
             "",
             "## Packaging Status",
             "",

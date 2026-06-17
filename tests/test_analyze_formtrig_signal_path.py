@@ -128,6 +128,81 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
         self.assertTrue(run["strict_pretrigger_guidance_seen"])
         self.assertEqual(run["first_saved_non_trigger"]["execs_done"], 5)
 
+    def test_typed_lifted_stage_before_trigger_is_attribution_not_strict_gate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.write_run(
+                root,
+                "001_TGT",
+                [
+                    {
+                        "event": "calibrated_frontier",
+                        "reason": "initial_frontier_seed",
+                        "triggered": False,
+                        "execs_done": 5,
+                        "d_f": 2,
+                        "d_f_spec_lifted": 2,
+                        "lifted": True,
+                        "source_flags": 2,
+                    },
+                    {
+                        "event": "typed_stage_start",
+                        "reason": "planned",
+                        "triggered": False,
+                        "lifted": True,
+                        "execs_done": 7,
+                        "queue_id": 3,
+                        "d_t": 1,
+                        "d_f": 1,
+                        "d_f_spec_lifted": 1,
+                        "source_flags": 2,
+                        "first_actionable": {
+                            "kind": 6,
+                            "role": 4,
+                            "priority": 30,
+                            "value": 1,
+                        },
+                    },
+                    {
+                        "event": "typed_stage_end",
+                        "reason": "completed",
+                        "triggered": False,
+                        "lifted": True,
+                        "execs_done": 8,
+                        "queue_id": 3,
+                        "d_f": 1,
+                        "d_f_spec_lifted": 1,
+                    },
+                    {
+                        "event": "saved_progress",
+                        "reason": "triggered",
+                        "triggered": True,
+                        "execs_done": 9,
+                        "d_f": 0,
+                        "d_f_spec_lifted": 0,
+                        "source_flags": 2,
+                    },
+                ],
+            )
+
+            payload = self.run_tool(root)
+
+        self.assertEqual(payload["verdict"], "terminal_after_calibrated_frontier_only")
+        self.assertEqual(payload["typed_attribution"], "terminal_after_typed_lifted_nontrigger_stage")
+        self.assertEqual(payload["typed_stage_before_terminal_runs"], 1)
+        self.assertEqual(payload["typed_lifted_nontrigger_before_terminal_runs"], 1)
+        run = payload["runs"][0]["progress_path"]
+        self.assertFalse(run["strict_pretrigger_guidance_seen"])
+        self.assertTrue(run["first_saved_trigger_after_typed_stage"])
+        self.assertTrue(run["typed_lifted_nontrigger_before_first_saved_trigger"])
+        self.assertEqual(run["typed_stage_start_events"], 1)
+        self.assertEqual(run["typed_stage_end_events"], 1)
+        self.assertEqual(run["first_typed_stage_start"]["execs_done"], 7)
+        self.assertEqual(
+            run["first_typed_lifted_nontrigger_before_first_saved_trigger"]["queue_id"],
+            3,
+        )
+
     def test_writes_markdown(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -152,6 +227,7 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
 
         self.assertIn("FORMTRIG Signal Path: TGT", text)
         self.assertIn("claim boundary", text)
+        self.assertIn("typed attribution", text)
 
 
 if __name__ == "__main__":
