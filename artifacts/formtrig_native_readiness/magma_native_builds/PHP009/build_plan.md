@@ -4,7 +4,7 @@ This is a build/readiness artifact, not endpoint performance evidence.
 A successful build should be followed by native asset discovery and a
 BindingSpec validation sweep before any long-run benefit claim.
 
-Generated: `2026-06-17T15:08:47+00:00`
+Generated: `2026-06-17T15:27:39+00:00`
 Mode: `execute`
 Target: `PHP009` / `exif`
 Instrumentation entry: `runner`
@@ -13,11 +13,15 @@ Expected executable: `/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/mag
 
 ## Dependency Preflight
 
-- `status`: `missing`
-- `php_bison`: `missing` apt=`bison`
-- `php_re2c`: `missing` apt=`re2c`
+- `status`: `ok`
+- `php_bison`: `ok` value=`bison`
+- `php_re2c`: `ok` value=`re2c`
 - `php_icu_pkg_config`: `ok` value=`icu-uc`
-- install hint: `sudo apt-get install -y bison re2c`
+
+## Host Compatibility Patches
+
+- `php_icu_breakiterator_operator_bool`: Old PHP ext/intl declares BreakIterator::operator== with UBool, but modern ICU headers use bool.
+  files: `ext/intl/breakiterator/codepointiterator_internal.h`, `ext/intl/breakiterator/codepointiterator_internal.cpp`
 
 ## Selected Steps
 
@@ -31,11 +35,9 @@ Expected executable: `/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/mag
 
 ## Execution
 
-- `dependency_preflight`: `failed`
-
-## Failure Summary
-
-- `failed_step`: `dependency_preflight`
-- `apt_package_hints`: `bison re2c`
-- recent error lines:
-  - `missing native build dependencies for php: bison re2c`
+- `fuzzer_fetch`: `skipped`
+- `fuzzer_build`: `skipped`
+- `target_preinstall`: `skipped`
+- `target_fetch`: `skipped`
+- `apply_patches`: `skipped`
+- `instrument_target`: `ok` log=`/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/logs/instrument_target.log`

@@ -1,11 +1,13 @@
 {
-  "generated_at_utc": "2026-06-17T13:58:32+00:00",
+  "generated_at_utc": "2026-06-17T15:30:50+00:00",
   "inputs": {
     "drafts": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
-    "max_files": 50000,
+    "max_files": 200000,
     "rnt_status": "artifacts/rnt_corpus_status.json",
     "search_roots": [
-      "artifacts/formtrig_native_readiness/magma_native_builds"
+      "artifacts/formtrig_native_readiness/magma_native_builds/PHP009",
+      "artifacts/formtrig_native_readiness",
+      "experiments/magma_workspace"
     ]
   },
   "program_names": [
@@ -16,10 +18,10 @@
     "pkcs7_decode",
     "tiff_read_rgba_fuzzer"
   ],
-  "runnable_candidate_count": 2,
-  "scanned_file_count": 100,
+  "runnable_candidate_count": 1,
+  "scanned_file_count": 199963,
   "schema": "formtrig_magma_native_asset_discovery_v1",
-  "site_map_count": 4,
+  "site_map_count": 2,
   "targets": [
     {
       "best_site_map": null,
@@ -37,23 +39,17 @@
       "target_id": "PDF003"
     },
     {
-      "best_site_map": {
-        "matched_selectors": 8,
-        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/formtrig_native/formtrig_sites.tsv",
-        "row_count": 126891,
-        "same_build_as_executable": true,
-        "score": 8999,
-        "selector_count": 8
-      },
-      "blockers": [],
-      "executable_candidates": [
-        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl/pkcs7_decode"
+      "best_site_map": null,
+      "blockers": [
+        "no site_map.tsv matched the BindingSpec source selectors",
+        "no executable found for program pkcs7_decode"
       ],
+      "executable_candidates": [],
       "program": "pkcs7_decode",
       "rnt_program": "pkcs7_decode",
       "rnt_seed_files": 1,
       "rnt_status": "formal_ready",
-      "runnable_candidate": true,
+      "runnable_candidate": false,
       "selector_count": 8,
       "target_id": "SSL011"
     },
@@ -61,12 +57,10 @@
       "best_site_map": null,
       "blockers": [
         "formal RNT seed corpus is not ready: excluded",
-        "no site_map.tsv matched the BindingSpec source selectors"
+        "no site_map.tsv matched the BindingSpec source selectors",
+        "no executable found for program asn1"
       ],
-      "executable_candidates": [
-        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1",
-        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011_pkcs7_decode/out/afl/asn1"
-      ],
+      "executable_candidates": [],
       "program": "asn1",
       "rnt_program": "asn1",
       "rnt_seed_files": 0,
@@ -76,23 +70,17 @@
       "target_id": "SSL015"
     },
     {
-      "best_site_map": {
-        "matched_selectors": 26,
-        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/formtrig_native/formtrig_sites.tsv",
-        "row_count": 26373,
-        "same_build_as_executable": true,
-        "score": 26999,
-        "selector_count": 26
-      },
-      "blockers": [],
-      "executable_candidates": [
-        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/afl/tiff_read_rgba_fuzzer"
+      "best_site_map": null,
+      "blockers": [
+        "no site_map.tsv matched the BindingSpec source selectors",
+        "no executable found for program tiff_read_rgba_fuzzer"
       ],
+      "executable_candidates": [],
       "program": "tiff_read_rgba_fuzzer",
       "rnt_program": "tiff_read_rgba_fuzzer",
       "rnt_seed_files": 20,
       "rnt_status": "formal_ready",
-      "runnable_candidate": true,
+      "runnable_candidate": false,
       "selector_count": 26,
       "target_id": "TIF012"
     },
@@ -112,17 +100,23 @@
       "target_id": "PDF016"
     },
     {
-      "best_site_map": null,
-      "blockers": [
-        "no site_map.tsv matched the BindingSpec source selectors",
-        "no executable found for program exif"
+      "best_site_map": {
+        "matched_selectors": 1,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv",
+        "row_count": 200000,
+        "same_build_as_executable": true,
+        "score": 1999,
+        "selector_count": 1
+      },
+      "blockers": [],
+      "executable_candidates": [
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif"
       ],
-      "executable_candidates": [],
       "program": "exif",
       "rnt_program": "exif",
       "rnt_seed_files": 31,
       "rnt_status": "formal_ready",
-      "runnable_candidate": false,
+      "runnable_candidate": true,
       "selector_count": 1,
       "target_id": "PHP009"
     }

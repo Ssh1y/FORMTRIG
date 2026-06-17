@@ -1,9 +1,6 @@
 {
   "dependency_preflight": {
-    "apt_package_hints": [
-      "bison",
-      "re2c"
-    ],
+    "apt_package_hints": [],
     "checks": [
       {
         "apt_package_hints": [
@@ -12,8 +9,8 @@
         "id": "php_bison",
         "kind": "command",
         "reason": "PHP buildconf/configure requires bison to generate parsers.",
-        "status": "missing",
-        "value": ""
+        "status": "ok",
+        "value": "bison"
       },
       {
         "apt_package_hints": [
@@ -22,8 +19,8 @@
         "id": "php_re2c",
         "kind": "command",
         "reason": "PHP builds generated scanners from source during native target builds.",
-        "status": "missing",
-        "value": ""
+        "status": "ok",
+        "value": "re2c"
       },
       {
         "apt_package_hints": [
@@ -36,25 +33,128 @@
         "value": "icu-uc"
       }
     ],
-    "status": "missing",
+    "status": "ok",
     "target": "php"
   },
   "executed_steps": [
     {
-      "exit_code": 2,
-      "failure_summary": {
-        "apt_package_hints": [
-          "bison",
-          "re2c"
-        ],
-        "error_lines": [
-          "missing native build dependencies for php: bison re2c"
-        ]
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh"
+      ],
+      "env": {
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native"
       },
+      "exit_code": null,
       "log": "",
-      "name": "dependency_preflight",
+      "name": "fuzzer_fetch",
+      "reason": "fuzzer repo already present",
+      "selected": false,
+      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/fetch.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh"
+      ],
+      "env": {
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out",
+        "PROGRAM": "exif",
+        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/shared",
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "fuzzer_build",
+      "reason": "AFL++/driver artifacts already present",
+      "selected": false,
+      "shell": "FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out PROGRAM=exif SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/build.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/preinstall.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "target_preinstall",
+      "reason": "explicit --run-preinstall requested",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/preinstall.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/fetch.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "target_fetch",
+      "reason": "target repo already present",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/fetch.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh"
+      ],
+      "env": {
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
+      },
+      "exit_code": null,
+      "log": "",
+      "name": "apply_patches",
+      "reason": "target repo already has MAGMA_LOG markers",
+      "selected": false,
+      "shell": "TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/apply_patches.sh",
+      "status": "skipped"
+    },
+    {
+      "command": [
+        "bash",
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/runner_instrument_target.sh"
+      ],
+      "env": {
+        "CFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "CXXFLAGS": "-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0",
+        "FORMTRIG_AFL_CC": "/usr/bin/clang-15",
+        "FORMTRIG_AFL_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_INSTRUMENT_LEVEL": "balanced",
+        "FORMTRIG_LLVM_CONFIG": "/usr/bin/llvm-config-15",
+        "FORMTRIG_MAGMA_CXX_STDLIB": "libstdc++",
+        "FORMTRIG_PASS_CXX": "/usr/bin/clang++-15",
+        "FORMTRIG_RUNTIME_CC": "/usr/bin/clang-15",
+        "FORMTRIG_SOURCE_DIR": "/home/cwh/FORMTRIG/formtrig",
+        "FUZZER": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native",
+        "LD": "/usr/bin/ld",
+        "LDFLAGS": "-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out",
+        "LIBS": "-l:magma.o -lrt",
+        "MAGMA": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma",
+        "OUT": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out",
+        "PROGRAM": "exif",
+        "SHARED": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/shared",
+        "TARGET": "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php"
+      },
+      "exit_code": 0,
+      "log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/logs/instrument_target.log",
+      "name": "instrument_target",
+      "reason": "build FORMTRIG-native target executable and site map via runner",
       "selected": true,
-      "status": "failed"
+      "shell": "CFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' CXXFLAGS='-include /home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma/src/canary.h -DMAGMA_ENABLE_CANARIES -g -O0' FORMTRIG_AFL_CC=/usr/bin/clang-15 FORMTRIG_AFL_CXX=/usr/bin/clang++-15 FORMTRIG_INSTRUMENT_LEVEL=balanced FORMTRIG_LLVM_CONFIG=/usr/bin/llvm-config-15 FORMTRIG_MAGMA_CXX_STDLIB=libstdc++ FORMTRIG_PASS_CXX=/usr/bin/clang++-15 FORMTRIG_RUNTIME_CC=/usr/bin/clang-15 FORMTRIG_SOURCE_DIR=/home/cwh/FORMTRIG/formtrig FUZZER=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native LD=/usr/bin/ld LDFLAGS='-g -L/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out' LIBS='-l:magma.o -lrt' MAGMA=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/magma OUT=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out PROGRAM=exif SHARED=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/shared TARGET=/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php bash /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/runner_instrument_target.sh",
+      "status": "ok"
     }
   ],
   "expected_validation_asset": {
@@ -64,17 +164,17 @@
     "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl",
     "target_id": "PHP009"
   },
-  "failure_summary": {
-    "apt_package_hints": [
-      "bison",
-      "re2c"
-    ],
-    "error_lines": [
-      "missing native build dependencies for php: bison re2c"
-    ],
-    "failed_step": "dependency_preflight"
-  },
-  "generated_at_utc": "2026-06-17T15:08:47+00:00",
+  "generated_at_utc": "2026-06-17T15:27:39+00:00",
+  "host_compatibility_patches": [
+    {
+      "files": [
+        "ext/intl/breakiterator/codepointiterator_internal.h",
+        "ext/intl/breakiterator/codepointiterator_internal.cpp"
+      ],
+      "id": "php_icu_breakiterator_operator_bool",
+      "reason": "Old PHP ext/intl declares BreakIterator::operator== with UBool, but modern ICU headers use bool."
+    }
+  ],
   "inputs": {
     "afl_cc": "/usr/bin/clang-15",
     "afl_cxx": "/usr/bin/clang++-15",
@@ -90,9 +190,9 @@
     "runtime_cc": "/usr/bin/clang-15",
     "skip_dependency_preflight": false,
     "skip_fuzzer_build": false,
-    "skip_fuzzer_fetch": true,
+    "skip_fuzzer_fetch": false,
     "skip_patches": false,
-    "skip_target_fetch": true
+    "skip_target_fetch": false
   },
   "mode": "execute",
   "paths": {
@@ -111,7 +211,7 @@
   "post_build_steps": [],
   "program": "exif",
   "schema": "formtrig_magma_native_build_plan_v1",
-  "status": "failed",
+  "status": "executed",
   "steps": [
     {
       "command": [

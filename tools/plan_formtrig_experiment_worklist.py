@@ -89,6 +89,8 @@ SOTA_PAIN_DESIGN_CLASSES = {
 
 BASELINE_FAMILY = "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 DEFAULT_NATIVE_BUILD_ROOT = Path("artifacts/formtrig_native_readiness/magma_native_builds")
+DEFAULT_BINDING_VALIDATION_ROOT = Path("artifacts/formtrig_native_readiness/binding_validation")
+DEFAULT_MANIFEST_ROOT = Path("artifacts/formtrig_native_readiness/manifests")
 
 
 def read_json(path: Path) -> Any:
@@ -168,6 +170,47 @@ def native_build_plan_map(root: Path | None) -> dict[str, dict[str, Any]]:
         payload["_build_plan_path"] = str(path)
         plans[target_id] = payload
     return plans
+
+
+def binding_validation_paths(root: Path | None) -> list[Path]:
+    if root is None or not root.exists():
+        return []
+    if root.is_file() and root.name.endswith(".validation.json"):
+        return [root]
+    return sorted(root.glob("*.validation.json"))
+
+
+def binding_validation_ready(payload: dict[str, Any] | None) -> bool:
+    if not payload:
+        return False
+    if payload.get("ready_for_short_gate") is True:
+        return True
+    return str(payload.get("status") or "") == "native_binding_validated"
+
+
+def binding_validation_score(payload: dict[str, Any]) -> tuple[int, str, str]:
+    return (
+        int(binding_validation_ready(payload)),
+        str(payload.get("generated_at_utc") or ""),
+        str(payload.get("_binding_validation_path") or ""),
+    )
+
+
+def binding_validation_map(root: Path | None) -> dict[str, dict[str, Any]]:
+    validations: dict[str, dict[str, Any]] = {}
+    for path in binding_validation_paths(root):
+        try:
+            payload = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        target_id = str(payload.get("target_id") or "")
+        if not target_id:
+            continue
+        payload["_binding_validation_path"] = str(path)
+        current = validations.get(target_id)
+        if current is None or binding_validation_score(payload) >= binding_validation_score(current):
+            validations[target_id] = payload
+    return validations
 
 
 def sota_pain_class(triage: dict[str, Any] | None) -> str:
@@ -397,6 +440,20 @@ def evidence_paths(row: dict[str, Any], comparison: dict[str, Any] | None) -> li
     return sorted(dict.fromkeys(paths))
 
 
+def evidence_paths_with_validation(
+    row: dict[str, Any],
+    comparison: dict[str, Any] | None,
+    validation: dict[str, Any] | None,
+) -> list[str]:
+    paths = evidence_paths(row, comparison)
+    if validation and validation.get("_binding_validation_path"):
+        paths.append(str(validation["_binding_validation_path"]))
+    source = validation.get("source") if isinstance(validation, dict) else {}
+    if isinstance(source, dict) and source.get("summary_jsonl"):
+        paths.append(str(source["summary_jsonl"]))
+    return sorted(dict.fromkeys(paths))
+
+
 def add_unique(values: list[str], additions: list[str]) -> list[str]:
     seen = set(values)
     for value in additions:
@@ -528,6 +585,46 @@ def formtrig_manifest_batch_command(
     if out_root:
         args.extend(["--out-root", out_root])
     return shell_join(args)
+
+
+def preferred_manifest_list(target_id: str, manifest_root: Path) -> str:
+    current = manifest_root / f"{target_id}.current_1rep.list"
+    if current.exists():
+        return str(current)
+    return str(manifest_root / f"{target_id}.list")
+
+
+def validated_short_screen_command(
+    target_id: str,
+    duration_s: int,
+    jobs: int,
+    reps: int,
+    manifest_root: Path,
+) -> tuple[str, list[str]]:
+    tag = f"{target_id.lower()}_validated_short_{duration_s}s_{reps}rep"
+    baseline_out = f"artifacts/formtrig_native_readiness/raw/{tag}_baselines"
+    formtrig_out = f"artifacts/formtrig_native_readiness/raw/{tag}_formtrig"
+    manifest_list = preferred_manifest_list(target_id, manifest_root)
+    commands = [
+        magma_baseline_command(
+            target_id,
+            duration_s,
+            jobs,
+            reps,
+            out_dir=baseline_out,
+        ),
+        formtrig_manifest_batch_command(
+            manifest_list,
+            duration_s,
+            jobs,
+            out_root=formtrig_out,
+        ),
+    ]
+    followups = [
+        "after both arms finish, build a comparison package with tools/compare_formtrig_baselines.py",
+        "classify the target as hard-gap evidence only if faithful baselines show flat binary TC guidance and late/missing/high-variance _T",
+    ]
+    return " && ".join(commands), followups
 
 
 def tif012_magma_longrun_steps(duration_s: int, reps: int, jobs: int) -> list[str]:
@@ -937,6 +1034,107 @@ def validation_first_task(
     }
 
 
+def validated_short_screen_task(
+    row: dict[str, Any],
+    comparison: dict[str, Any] | None,
+    validation: dict[str, Any],
+    *,
+    short_duration_s: int,
+    jobs: int,
+    reps: int,
+    manifest_root: Path,
+) -> dict[str, Any]:
+    target_id = str(row.get("target_id") or "")
+    source = str(row.get("source") or "")
+    command = ""
+    followups: list[str] = []
+    blocking_issue: list[str] = []
+    if source == "magma":
+        manifest_list = Path(preferred_manifest_list(target_id, manifest_root))
+        if manifest_list.exists():
+            command, followups = validated_short_screen_command(
+                target_id,
+                short_duration_s,
+                jobs,
+                reps,
+                manifest_root,
+            )
+        else:
+            blocking_issue = [
+                "validated BindingSpec but short-screen manifest list is missing: "
+                + str(manifest_list)
+            ]
+            followups = [
+                "create a FORMTRIG manifest/list from the validated BindingSpec record",
+                magma_baseline_command(target_id, short_duration_s, jobs, reps),
+            ]
+    else:
+        blocking_issue = ["no generic validated short-screen runner is known for this real-CVE target"]
+        followups = ["create a matched FORMTRIG/baseline runner from the validation record"]
+
+    benefit = (
+        validation.get("benefit_readout")
+        if isinstance(validation.get("benefit_readout"), dict)
+        else {}
+    )
+    signal = (
+        validation.get("binding_signal")
+        if isinstance(validation.get("binding_signal"), dict)
+        else {}
+    )
+    mechanism_evidence = [
+        "validated native BindingSpec with replay-stable pre-trigger D_F progress",
+        "accepted non-trigger progress before terminal _T",
+        "same seed corpus and Magma _T oracle as faithful AFL++ baselines",
+        "binary-TC guidance-gap classification before any main-claim promotion",
+    ]
+    if benefit.get("non_trigger_progress_events") is not None:
+        mechanism_evidence.append(
+            f"validation non-trigger progress events={benefit.get('non_trigger_progress_events')}"
+        )
+    if signal.get("candidate_events") is not None:
+        mechanism_evidence.append(f"validation candidate events={signal.get('candidate_events')}")
+
+    return {
+        "priority": priority_for(row),
+        "rank": int(row.get("rank") or 0),
+        "target_id": target_id,
+        "source": source,
+        "project": str(row.get("project") or ""),
+        "category": category_text(row),
+        "lane": str(row.get("lane") or ""),
+        "action": "run_validated_matched_short_screen",
+        "duration_s": short_duration_s,
+        "repetitions": reps,
+        "runnable_now": bool(command),
+        "benefit_to_prove": (
+            "Now that BindingSpec guidance is validated, test endpoint benefit "
+            "against faithful AFL++ family baselines under the same budget. "
+            "Promote only if baseline binary TC remains flat before _T and "
+            "FORMTRIG improves terminal success, TTE, or execution cost."
+        ),
+        "primary_endpoint_metrics": [
+            "same-budget terminal success rate",
+            "first _T / terminal-crash wall-clock time",
+            "first _T / terminal-crash execution count",
+            "baseline-visible binary TC flatness before _T",
+            "baseline R2T late/missing/high-variance evidence across repetitions",
+        ],
+        "mechanism_evidence_required": mechanism_evidence,
+        "blocking_issue": blocking_issue,
+        "claim_boundary": (
+            "A passing short screen is still promotion evidence, not final 2h evidence; "
+            "if baselines trigger early with acceptable time cost, demote to control/design work."
+        ),
+        "command": command,
+        "post_unblock_commands": followups,
+        "comparison_verdict": comparison_summary(comparison)["verdict"],
+        "current_primary_benefits": comparison_summary(comparison)["primary_benefits"],
+        "blocked_claims": comparison_summary(comparison)["blocked_claims"],
+        "evidence_paths": evidence_paths_with_validation(row, comparison, validation),
+    }
+
+
 def short_triage_task(
     row: dict[str, Any],
     comparison: dict[str, Any] | None,
@@ -992,15 +1190,18 @@ def task_for_row(
     row: dict[str, Any],
     comparisons: dict[str, list[dict[str, Any]]],
     target_triage: dict[str, dict[str, Any]],
+    binding_validations: dict[str, dict[str, Any]],
     *,
     short_duration_s: int,
     longrun_duration_s: int,
     jobs: int,
     reps: int,
     longrun_reps: int,
+    manifest_root: Path,
 ) -> dict[str, Any]:
     target_id = str(row.get("target_id") or "")
     triage = target_triage.get(target_id)
+    validation = binding_validations.get(target_id)
     target_comparisons = comparisons.get(target_id, [])
     weak_comparison = weak_design_comparison(target_comparisons)
     comparison = weak_comparison or strongest_comparison(target_comparisons)
@@ -1050,6 +1251,19 @@ def task_for_row(
             triage,
         )
     if lane == "binding_validation_first":
+        if binding_validation_ready(validation):
+            return attach_sota_pain(
+                validated_short_screen_task(
+                    row,
+                    comparison,
+                    validation,
+                    short_duration_s=short_duration_s,
+                    jobs=jobs,
+                    reps=reps,
+                    manifest_root=manifest_root,
+                ),
+                triage,
+            )
         return attach_sota_pain(
             validation_first_task(
                 row,
@@ -1078,6 +1292,8 @@ def build_worklist(
     *,
     triage_path: Path | None = None,
     native_build_root: Path | None = None,
+    binding_validation_root: Path | None = None,
+    manifest_root: Path = DEFAULT_MANIFEST_ROOT,
     limit: int,
     use_all_targets: bool,
     short_duration_s: int,
@@ -1092,6 +1308,7 @@ def build_worklist(
     comparisons = comparison_map(comparison_root)
     target_triage = triage_map(triage_path)
     build_plans = native_build_plan_map(native_build_root)
+    binding_validations = binding_validation_map(binding_validation_root)
     tasks: list[dict[str, Any]] = []
     skipped_controls: list[dict[str, Any]] = [
         {
@@ -1136,11 +1353,13 @@ def build_worklist(
             row,
             comparisons,
             target_triage,
+            binding_validations,
             short_duration_s=short_duration_s,
             longrun_duration_s=longrun_duration_s,
             jobs=jobs,
             reps=reps,
             longrun_reps=longrun_reps,
+            manifest_root=manifest_root,
         )
         tasks.append(
             apply_native_build_plan_blockers(
@@ -1160,6 +1379,8 @@ def build_worklist(
             "comparison_root": str(comparison_root),
             "triage": str(triage_path) if triage_path else "",
             "native_build_root": str(native_build_root) if native_build_root else "",
+            "binding_validation_root": str(binding_validation_root) if binding_validation_root else "",
+            "manifest_root": str(manifest_root),
         },
         "defaults": {
             "short_duration_s": short_duration_s,
@@ -1370,6 +1591,18 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_NATIVE_BUILD_ROOT,
         help="FORMTRIG-native Magma build-plan root; dependency blockers are surfaced when present",
     )
+    parser.add_argument(
+        "--binding-validation-root",
+        type=Path,
+        default=DEFAULT_BINDING_VALIDATION_ROOT,
+        help="BindingSpec validation JSON root; ready records unblock matched short screens",
+    )
+    parser.add_argument(
+        "--manifest-root",
+        type=Path,
+        default=DEFAULT_MANIFEST_ROOT,
+        help="FORMTRIG manifest-list root used by validated short-screen tasks",
+    )
     parser.add_argument("--out-json", required=True, type=Path)
     parser.add_argument("--out-md", required=True, type=Path)
     parser.add_argument("--out-csv", required=True, type=Path)
@@ -1391,6 +1624,8 @@ def main() -> int:
         args.comparison_root,
         triage_path=args.triage,
         native_build_root=args.native_build_root,
+        binding_validation_root=args.binding_validation_root,
+        manifest_root=args.manifest_root,
         limit=args.limit,
         use_all_targets=args.use_all_targets,
         short_duration_s=args.short_duration,

@@ -4,29 +4,50 @@ target:
   binary: 'exif'
   command: '@@'
 tc:
-  category: 'compound-sequence-lifecycle'
+  category: 'numeric-margin'
   expression: 'MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)'
-  composition: 'all_of'
+  composition: 'any_of'
 atoms:
   - id: 1
-    expr: 'MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)'
-    kind: 'compound-sequence-lifecycle'
-    root: 'maker_note->offset'
+    expr: 'maker_note->offset == value_len - 1'
+    kind: 'numeric-margin'
+    root: 'maker_note->offset - (value_len - 1)'
 bindings:
-  - id: 'magma_canary_root_01'
+  - id: 'maker_note_offset_eq_last_root'
     atom: 1
     role: 'root_observe'
-    expr: 'Magma canary source selector for MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)'
+    expr: 'numeric boundary inside the PHP009 Magma canary'
     observe_at:
       kind: 'cmp'
+      site_id: 425862215
       function: 'exif_process_IFD_in_MAKERNOTE'
       file: 'ext/exif/exif.c'
-      line: 3162
-      column: 8
-    component: 'lifecycle_prefix'
+      line: 3193
+      inst_no: 142
+      column: 3
+    component: 'root_state'
     priority: 10
+    direction: 'lower'
+    value_mode: 'distance'
+    value: 0.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'maker_note_bounds_guard'
+    atom: 1
+    role: 'guard'
+    expr: 'pre-canary guard admits maker_note->offset < value_len'
+    observe_at:
+      kind: 'cmp'
+      site_id: 2253931138
+      function: 'exif_process_IFD_in_MAKERNOTE'
+      file: 'ext/exif/exif.c'
+      line: 3188
+      inst_no: 105
+      column: 25
+    component: 'guard_progress'
+    priority: 20
     direction: 'higher'
-    value_mode: 'hit'
+    value_mode: 'outcome'
     value: 1.0
-    confidence: 0.55
+    confidence: 0.7
     observe_window: 'any'

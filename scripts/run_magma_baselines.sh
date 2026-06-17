@@ -264,6 +264,71 @@ path.write_text(text, encoding="utf-8")
 PY
 }
 
+patch_php_host_compatibility() {
+  local build_sh="$magma_dir/targets/$magma_target/build.sh"
+  if [[ "$magma_target" != "php" ]] || [[ ! -f "$build_sh" ]]; then
+    return
+  fi
+
+  python3 - "$build_sh" <<'PY'
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+marker = "FORMTRIG_PHP_ICU_BOOL_HOST_COMPAT"
+if marker in text:
+    raise SystemExit(0)
+needle = 'cd "$TARGET/repo"\n'
+if needle not in text:
+    raise SystemExit("could not locate target repo cd in PHP build.sh")
+insert = r'''
+# FORMTRIG_PHP_ICU_BOOL_HOST_COMPAT
+if [ "$(basename "$TARGET")" = "php" ]; then
+    python3 - "$TARGET/repo" <<'FORMTRIG_PHP_ICU'
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+
+repo = Path(sys.argv[1])
+replacements = {
+    "ext/intl/breakiterator/codepointiterator_internal.h": [
+        (
+            "virtual UBool operator==(const BreakIterator& that) const;",
+            "virtual bool operator==(const BreakIterator& that) const;",
+        ),
+    ],
+    "ext/intl/breakiterator/codepointiterator_internal.cpp": [
+        (
+            "UBool CodePointBreakIterator::operator==(const BreakIterator& that) const",
+            "bool CodePointBreakIterator::operator==(const BreakIterator& that) const",
+        ),
+    ],
+}
+for relpath, pairs in replacements.items():
+    source = repo / relpath
+    if not source.exists():
+        continue
+    text = source.read_text(encoding="utf-8")
+    updated = text
+    for old, new in pairs:
+        updated = updated.replace(old, new)
+    if updated != text:
+        source.write_text(updated, encoding="utf-8")
+        print(f"FORMTRIG host-compat: patched PHP ICU bool operator== in {source}", file=sys.stderr)
+FORMTRIG_PHP_ICU
+fi
+
+'''
+path.write_text(text.replace(needle, needle + insert, 1), encoding="utf-8")
+PY
+}
+
 restore_target_context() {
   if [[ -n "${target_repo_backup:-}" && -d "$target_repo_backup/repo" ]]; then
     if [[ -e "$target_repo_path" ]]; then
@@ -549,6 +614,7 @@ fi
 
 prepare_clean_target_context
 patch_target_build_helpers
+patch_php_host_compatibility
 trap restore_target_context EXIT
 
 if [[ "$run_build" == "1" ]]; then

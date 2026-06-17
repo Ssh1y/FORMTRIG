@@ -19,6 +19,24 @@ Design second
 
 正式结果表必须先回答“FORMTRIG 带来了什么收益”。只有当收益成立后，才展开解释“这个收益如何由 lift 机制产生”。如果同预算 faithful baseline 比 FORMTRIG 更快或相近触发，目标应被降为 control/native-readiness 或 negative evidence，不能靠中间信号强行包装成性能优势；如果 baseline 也触发但 FORMTRIG 的 first `_T`/TTE/exec 明显更早，那么口径必须是 speedup benefit，而不是“baseline 做不到”。
 
+主 SOTA-pain 证据还必须额外证明二值 TC 对 baseline 没有可用指导，而不是只证明 FORMTRIG 有中间信号。判定条件固定为：
+
+```text
+baseline no-guidance proof gate
+  1. baseline-visible TC signal 在 `_T` 前是常量/二值平台：
+       reached-but-not-`_T` seeds 的 unique values 很少，最好为 1；
+       entropy 接近 0；
+       accepted non-trigger improvement 为 0。
+  2. baseline endpoint 行为表现为随机命中成本：
+       多 repetition 下 `_T` late / missing / high-variance；
+       最快强 baseline 不能落在可接受时间阈值内。
+  3. FORMTRIG 同时满足收益和机制：
+       same-budget terminal/TTE/exec 优势成立；
+       `_T` 前有 replay-stable、TC-rooted、accepted/saved 的 `D_F` progress。
+```
+
+只有同时满足这三条，才能写成“二值 TC 对 SOTA baseline 缺少指导，baseline 主要靠随机撞见 `_T`，FORMTRIG 解决了一部分 R2T 指导问题”。如果 baseline 在 210s、几十秒甚至更早稳定触发，即使 FORMTRIG 更快，也只能写 speedup/control/attribution，不能写 hard SOTA-gap。
+
 当前 LIBARCHIVE_2936 的 60s signal-repair 结果给出了这个口径的最小正例：
 
 ```text
@@ -1014,10 +1032,25 @@ PDF003:
   当前 blocker 是 native Poppler build 依赖，不是算法证据。
 
 PHP009:
-  是 hard binary/lifecycle TC 的下一条验证线之一。
-  native build runner 现在会在编译前检查 PHP build dependencies。
-  当前 blocker 是缺少 bison/re2c，不是算法证据：
-    sudo apt-get install -y bison re2c
+  已从旧的 lifecycle 初稿修正为 numeric-margin BindingSpec root：
+    maker_note->offset == value_len - 1
+  native build 已用 clang-15/libstdc++ 执行成功，生成 exif executable 和
+  source-matching site-map。
+  60s BindingSpec validation 通过：
+    status = native_binding_validated
+    ready_for_short_gate = true
+    execs = 20280
+    reached = 3995
+    triggered = 17
+    accepted_non_trigger_progress = 2
+    saved_non_trigger_progress = 2
+    binding_signal = pass / triggered
+  这说明 PHP009 已有 pre-trigger lifted guidance readiness，但仍不是
+  endpoint efficacy。当前 benefit-first worklist 已把 PHP009 提升为
+  run_validated_matched_short_screen，下一步是 600s matched FORMTRIG vs
+  faithful AFL++ family baseline。只有 baseline binary TC flatness 和
+  late/missing/high-variance `_T` 同时成立时，才能把它升级成 hard SOTA-pain
+  证据；如果 baselines 很早触发，则降为 speedup/control/design evidence。
 
 SSL011:
   OpenSSL native build 已从错误的 asn1 runner 收敛到 pkcs7_decode runner。

@@ -50,6 +50,17 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
         self.assertIn("changed = False", script)
         self.assertIn("if changed:", script)
 
+    def test_runner_patches_php_icu_bool_host_compatibility(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("patch_php_host_compatibility", script)
+        self.assertIn("FORMTRIG_PHP_ICU_BOOL_HOST_COMPAT", script)
+        self.assertIn("virtual bool operator==", script)
+        self.assertIn("bool CodePointBreakIterator::operator==", script)
+        self.assertIn("patched PHP ICU bool operator==", script)
+
 
 if __name__ == "__main__":
     unittest.main()

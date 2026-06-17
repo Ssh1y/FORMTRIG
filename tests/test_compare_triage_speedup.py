@@ -66,6 +66,15 @@ class SpeedupClassificationTest(unittest.TestCase):
             analysis["reasons"],
         )
         self.assertIn("formtrig_strict_pretrigger_guidance_missing", analysis["reasons"])
+        self.assertTrue(
+            analysis["experiment_strength"]["baseline_guidance_gap"][
+                "required_for_hard_sota_pain"
+            ]
+        )
+        self.assertEqual(
+            analysis["experiment_strength"]["baseline_guidance_gap"]["status"],
+            "not_measured",
+        )
 
         readout = benefit_readout(formtrig_rows, analysis)
         self.assertTrue(
@@ -75,6 +84,10 @@ class SpeedupClassificationTest(unittest.TestCase):
             )
         )
         self.assertIn("matched_budget_endpoint_success", readout["design_evidence"])
+        self.assertIn("baseline_guidance_gap_required", readout["design_evidence"])
+        self.assertTrue(
+            any("baseline no-guidance proof" in claim for claim in readout["blocked_claims"])
+        )
 
     def test_formtrig_rows_use_exact_progress_queue_trigger_time(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -224,6 +237,11 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertIn(
             "baseline_fastest_trigger_time_is_under_acceptable_threshold",
             analysis["experiment_strength"]["reasons"],
+        )
+        self.assertFalse(
+            analysis["experiment_strength"]["baseline_guidance_gap"][
+                "required_for_hard_sota_pain"
+            ]
         )
         self.assertTrue(
             any("speedup/control" in step for step in analysis["experiment_strength"]["recommended_design_actions"])

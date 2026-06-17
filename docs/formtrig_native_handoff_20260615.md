@@ -57,6 +57,23 @@ faithful baseline 只能靠随机性撞见 TC 触发，且随机撞见的时间�
 和 LIBARCHIVE_2936 都有 FORMTRIG first `_T` speedup/attribution 价值，但最快
 baseline 分别在 210s 和 9.456s 触发，所以不能作为主 SOTA-gap 证据。
 
+后续要证明“二值 TC 对 SOTA 没有指导作用”，必须同时满足三条：
+
+```text
+1. baseline-visible TC signal 在 `_T` 前是 flat/binary：
+   reached-but-not-`_T` seeds 的 unique values 很少，entropy 接近 0，
+   accepted non-trigger improvement 为 0。
+2. baseline endpoint 表现为随机命中成本：
+   repeated runs 里 `_T` late / missing / high-variance，
+   且最快强 baseline 不在可接受时间阈值内。
+3. FORMTRIG 有 endpoint benefit 和 `_T` 前机制证据：
+   same-budget terminal/TTE/exec 优势成立，
+   并且有 replay-stable、TC-rooted、accepted/saved 的 `D_F` progress。
+```
+
+如果 baseline 在几十秒或 210s 这种可接受成本内触发，目标必须降为
+speedup/control/design evidence，不能写成 hard SOTA-pain。
+
 `artifacts/formtrig_native_readiness/hard_target_triage_20260617.{json,csv,md}`
 现在显式输出 `sota_pain_class`，避免只靠中间信号或口头解释判断。当前分类是：
 
@@ -99,16 +116,39 @@ SOTA-pain 主证据。
 PHP009 native build 现在有更清晰的 dependency gate。FORMTRIG native build runner
 会跳过 autoconf `conftest.{c,cc,cpp,cxx}` 的 pass instrumentation，避免 configure
 probe 因未链接 FORMTRIG runtime 而失败，也避免这些 probe 污染 site-map。当前
-PHP009 已通过该工程 blocker，剩余 blocker 是系统缺少 PHP build tools：
-`bison` 和 `re2c`。下一步安装命令是：
+PHP009 已经在安装 PHP build tools 后执行 native build 成功，并通过后续
+native asset discovery：
 
-```bash
-sudo apt-get install -y bison re2c
+```text
+executable:
+  artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif
+site-map:
+  artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv
+BindingSpec:
+  artifacts/binding_specs/PHP009.native_draft_magma_canary.yml
 ```
 
-安装后重跑 `artifacts/formtrig_native_readiness/magma_native_builds/PHP009/build_plan.*`
-记录的 clang-15/libstdc++ native build 命令，再进入 native asset discovery 和
-BindingSpec validation；这仍然是 readiness evidence，不是 endpoint efficacy。
+源码审计后 PHP009 不再按旧的 `compound-sequence-lifecycle` 初稿处理，而是按
+numeric-margin root 处理：`maker_note->offset == value_len - 1`。60s
+BindingSpec validation 已通过，记录为 `native_binding_validated` 和
+`ready_for_short_gate=true`。关键数值：
+
+```text
+execs = 20280
+reached = 3995
+triggered = 17
+accepted_non_trigger_progress = 2
+saved_non_trigger_progress = 2
+binding_signal = pass / triggered
+```
+
+这只是 mechanism/readiness evidence，不是 endpoint efficacy。当前
+`tools/plan_formtrig_experiment_worklist.py` 会读取
+`artifacts/formtrig_native_readiness/binding_validation`，并把 PHP009 路由到
+`run_validated_matched_short_screen`。下一步是 600s matched FORMTRIG vs faithful
+AFL++ family baselines；只有 baseline-visible binary TC flatness 加上
+late/missing/high-variance `_T` 成立时，PHP009 才能升级为 hard SOTA-pain
+候选。如果 baselines 很早触发，必须降为 speedup/control/design evidence。
 
 SSL011 已从错误的 OpenSSL `asn1` runner 修正为 `pkcs7_decode` runner。新的 runner
 实际调用 `PKCS7_dataDecode`，已有 FORMTRIG-native executable、source site-map、formal

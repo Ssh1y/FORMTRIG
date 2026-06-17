@@ -359,6 +359,21 @@ def dependency_preflight_for_target(
     }
 
 
+def host_compatibility_patches_for_target(target: str) -> list[dict[str, Any]]:
+    if target != "php":
+        return []
+    return [
+        {
+            "id": "php_icu_breakiterator_operator_bool",
+            "reason": "Old PHP ext/intl declares BreakIterator::operator== with UBool, but modern ICU headers use bool.",
+            "files": [
+                "ext/intl/breakiterator/codepointiterator_internal.h",
+                "ext/intl/breakiterator/codepointiterator_internal.cpp",
+            ],
+        }
+    ]
+
+
 def default_out_dir(target_id: str, target: str, program: str) -> Path:
     name = target_id or f"{target}_{program}"
     return DEFAULT_OUT_ROOT / name
@@ -537,6 +552,40 @@ if grep -q 'AFLGO_CONFIGURE_NATIVE' "$TARGET/build.sh"; then
   export AFLGO_CONFIGURE_LIBS="${{AFLGO_CONFIGURE_LIBS:-}}"
 fi
 
+if [ "$(basename "$TARGET")" = "php" ]; then
+  python3 - "$TARGET/repo" <<'PY'
+import sys
+from pathlib import Path
+
+repo = Path(sys.argv[1])
+replacements = [
+    (
+        "ext/intl/breakiterator/codepointiterator_internal.h",
+        "virtual UBool operator==(const BreakIterator& that) const;",
+        "virtual bool operator==(const BreakIterator& that) const;",
+    ),
+    (
+        "ext/intl/breakiterator/codepointiterator_internal.cpp",
+        "UBool CodePointBreakIterator::operator==(const BreakIterator& that) const",
+        "bool CodePointBreakIterator::operator==(const BreakIterator& that) const",
+    ),
+]
+changed = []
+for rel, old, new in replacements:
+    path = repo / rel
+    if not path.exists():
+        continue
+    text = path.read_text(encoding="utf-8")
+    if old in text:
+        path.write_text(text.replace(old, new), encoding="utf-8")
+        changed.append(rel)
+    elif new not in text:
+        raise SystemExit(f"expected ICU operator signature not found: {{path}}")
+if changed:
+    print("FORMTRIG host-compat: patched PHP ICU bool operator== in " + ", ".join(changed))
+PY
+fi
+
 if [ "$(basename "$TARGET")" = "poppler" ]; then
   if [ -z "${{FORMTRIG_OPENJPEG_DIR:-}}" ]; then
     for cfg in /usr/lib/*/openjpeg-*/OpenJPEGConfig.cmake \
@@ -677,6 +726,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
         if args.skip_dependency_preflight
         else dependency_preflight_for_target(args.target)
     )
+    host_compatibility_patches = host_compatibility_patches_for_target(args.target)
 
     common_env = {
         "FUZZER": str(fuzzer),
@@ -875,6 +925,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
             "program_args": args_template,
         },
         "dependency_preflight": dependency_preflight,
+        "host_compatibility_patches": host_compatibility_patches,
         "steps": steps,
         "post_build_steps": refresh_commands,
     }
@@ -1008,6 +1059,13 @@ def write_markdown(path: Path, plan: dict[str, Any]) -> None:
             + " ".join(preflight["apt_package_hints"])
             + "`"
         )
+    patches = plan.get("host_compatibility_patches") or []
+    if patches:
+        lines.extend(["", "## Host Compatibility Patches", ""])
+        for patch in patches:
+            lines.append(f"- `{patch['id']}`: {patch['reason']}")
+            if patch.get("files"):
+                lines.append("  files: `" + "`, `".join(patch["files"]) + "`")
     lines.extend(
         [
             "",

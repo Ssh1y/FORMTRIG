@@ -433,6 +433,99 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertIn("sudo apt-get install -y bison re2c", task["post_unblock_commands"])
             self.assertIn(str(php_plan), task["evidence_paths"])
 
+    def test_ready_binding_validation_routes_to_matched_short_screen(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            validation_root = root / "binding_validation"
+            manifest_root = root / "manifests"
+            comparison_root.mkdir()
+            validation_root.mkdir()
+            manifest_root.mkdir()
+            manifest_list = manifest_root / "PHP009.current_1rep.list"
+            manifest_list.write_text(
+                "artifacts/formtrig_native_readiness/manifests/PHP009.native_draft_magma_canary.600s.manifest\n",
+                encoding="utf-8",
+            )
+            validation_path = validation_root / "PHP009.native_draft_magma_canary.60s.validation.json"
+            validation_path.write_text(
+                json.dumps(
+                    {
+                        "target_id": "PHP009",
+                        "status": "native_binding_validated",
+                        "ready_for_short_gate": True,
+                        "generated_at_utc": "2026-06-17T15:36:16+00:00",
+                        "benefit_readout": {
+                            "pretrigger_lift_guidance_ready": True,
+                            "non_trigger_progress_events": 2,
+                            "terminal_triggered": True,
+                        },
+                        "binding_signal": {
+                            "status": "pass",
+                            "candidate_events": 3233,
+                        },
+                        "source": {
+                            "summary_jsonl": "artifacts/formtrig_native_readiness/raw/php009_binding_validation_60s/summary.jsonl"
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 6,
+                                "target_id": "PHP009",
+                                "source": "magma",
+                                "project": "php",
+                                "primary_category": "numeric-margin",
+                                "secondary_category": "",
+                                "lane": "binding_validation_first",
+                                "status": "needs_binding_validation",
+                                "existing_disposition": "",
+                                "blockers": "BindingSpec candidate is not native-site-map validated",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                binding_validation_root=validation_root,
+                manifest_root=manifest_root,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "run_validated_matched_short_screen")
+            self.assertTrue(task["runnable_now"])
+            self.assertEqual(task["blocking_issue"], [])
+            self.assertIn("scripts/run_magma_baselines.sh --target-id PHP009", task["command"])
+            self.assertIn("scripts/run_formtrig_manifest_batch.sh --manifest-list", task["command"])
+            self.assertIn(str(manifest_list), task["command"])
+            self.assertIn("baseline-visible binary TC flatness before _T", task["primary_endpoint_metrics"])
+            self.assertIn(str(validation_path), task["evidence_paths"])
+            self.assertIn(
+                "artifacts/formtrig_native_readiness/raw/php009_binding_validation_60s/summary.jsonl",
+                task["evidence_paths"],
+            )
+
     def test_completed_longrun_routes_to_cross_target_expansion(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

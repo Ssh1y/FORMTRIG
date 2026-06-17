@@ -1,0 +1,64 @@
+{
+  "benefit_readout": {
+    "execs_done": 20280,
+    "has_non_trigger_progress": true,
+    "non_trigger_progress_events": 2,
+    "pretrigger_lift_guidance_ready": true,
+    "saved_non_trigger_progress_events": 2,
+    "saved_triggered_progress_events": 2,
+    "score": 771200,
+    "terminal_triggered": true
+  },
+  "binding_signal": {
+    "accepted_non_trigger_progress_events": 2,
+    "candidate_events": 3233,
+    "diagnosis": "triggered",
+    "semantic_candidate_variable_roles": 1,
+    "status": "pass"
+  },
+  "binding_spec": "/home/cwh/FORMTRIG/artifacts/binding_specs/PHP009.native_draft_magma_canary.yml",
+  "blockers": [],
+  "checks": {
+    "binding_spec_compile_pass": true,
+    "dynamic_binding_signal_pass": true,
+    "lift_audit_pass": true,
+    "lift_delta_only_on_triggered": false,
+    "native_site_map_validated": true,
+    "non_trigger_candidate_lift_delta": true,
+    "pretrigger_lift_guidance_ready": true,
+    "runtime_event_map_pass": true,
+    "terminal_triggered": true,
+    "tool_compile_pass": true
+  },
+  "dynamic_seed_readiness": {
+    "atom_signals": null,
+    "components": null,
+    "diagnosis": "triggered",
+    "reached": 3995,
+    "role_signals": null,
+    "seed_count": null,
+    "spec_lifted": null,
+    "status": "pass",
+    "triggered": 17
+  },
+  "generated_at_utc": "2026-06-17T15:36:16+00:00",
+  "native_site_map": {
+    "native_runtime_evidence": true,
+    "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv"
+  },
+  "native_site_map_validated": true,
+  "next_action": "run the benefit-first short endpoint screen against faithful AFL++ family baselines",
+  "ready_for_short_gate": true,
+  "remaining_limitations": [
+    "candidate sweep is a validation gate, not a matched baseline comparison",
+    "short-gate and long-run endpoint evidence are still required before efficacy claims"
+  ],
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "source": {
+    "candidate_index": 1,
+    "candidate_out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_binding_validation_60s/candidates/001_PHP009.native_draft_magma_canary.yml",
+    "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_binding_validation_60s/summary.jsonl"
+  },
+  "status": "native_binding_validated",
+  "target_id": "PHP009"
+}

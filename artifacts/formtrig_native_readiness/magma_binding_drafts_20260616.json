@@ -67,7 +67,7 @@
     },
     {
       "binding_spec": "artifacts/binding_specs/PHP009.native_draft_magma_canary.yml",
-      "category": "compound-sequence-lifecycle",
+      "category": "numeric-margin",
       "location_count": 1,
       "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/PHP009.manifest.template",
       "next_step": "compile against a FORMTRIG-native site_map.tsv, then run seed readiness and binding-signal diagnosis before endpoint screening",

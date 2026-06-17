@@ -1,0 +1,1468 @@
+{
+  "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
+  "blocked_count": 11,
+  "defaults": {
+    "jobs": 4,
+    "longrun_duration_s": 7200,
+    "longrun_repetitions": 3,
+    "repetitions": 1,
+    "short_duration_s": 600
+  },
+  "generated_at_utc": "2026-06-17T16:02:51+00:00",
+  "inputs": {
+    "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
+    "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
+    "manifest_root": "artifacts/formtrig_native_readiness/manifests",
+    "native_build_root": "artifacts/formtrig_native_readiness/magma_native_builds",
+    "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
+    "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260617.json"
+  },
+  "runnable_now_count": 1,
+  "schema": "formtrig_benefit_first_experiment_worklist_v1",
+  "skipped_control_count": 6,
+  "skipped_controls": [
+    {
+      "existing_disposition": "candidate_extend_longruns",
+      "lane": "real_cve_replacement",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
+      "rank": 1,
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "a faithful baseline reaches _T within the acceptable-time threshold, so this is speedup/control evidence rather than hard SOTA-pain evidence; strength=not_hard_pain_baseline_fast_enough; FORMTRIG first_T=1.358s; baseline fastest_T=9.456s; baseline family_median_T=32.517s; speedup=6.96318x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "status": "short_gate_triaged",
+      "target_id": "LIBARCHIVE_2936"
+    },
+    {
+      "existing_disposition": "candidate_extend_longruns",
+      "lane": "short_triage_ready",
+      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
+      "rank": 2,
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "a faithful baseline reaches _T within the acceptable-time threshold, so this is speedup/control evidence rather than hard SOTA-pain evidence; strength=not_hard_pain_baseline_fast_enough; FORMTRIG first_T=0.034s; baseline fastest_T=210s; baseline family_median_T=1410s; speedup=6176.47x; baseline_visible=aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "status": "short_gate_triaged",
+      "target_id": "TIF012"
+    },
+    {
+      "existing_disposition": "demote_to_control_or_negative",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "rank": 144,
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_visible_no_formtrig_advantage",
+      "sota_pain_evidence": "matched faithful baselines trigger and current evidence has no FORMTRIG first_T/TTE advantage",
+      "status": "do_not_promote",
+      "target_id": "PNG006"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "rank": 145,
+      "reason": "control_or_negative_not_main_budget",
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "status": "do_not_promote",
+      "target_id": "SSL011"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "rank": 146,
+      "reason": "control_or_negative_not_main_budget",
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "status": "do_not_promote",
+      "target_id": "PNG007"
+    },
+    {
+      "existing_disposition": "demote_to_control_or_negative",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "rank": 147,
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_visible_no_formtrig_advantage",
+      "sota_pain_evidence": "matched faithful baselines trigger and current evidence has no FORMTRIG first_T/TTE advantage",
+      "status": "do_not_promote",
+      "target_id": "LIBCOAP_CVE_2023_35862"
+    }
+  ],
+  "skipped_low_priority": [
+    {
+      "existing_disposition": "",
+      "lane": "real_cve_control_or_audit",
+      "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
+      "rank": 51,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_dt_degeneracy_audit",
+      "target_id": "GPAC_3398"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "real_cve_control_or_audit",
+      "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
+      "rank": 52,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_dt_degeneracy_audit",
+      "target_id": "LIBARCHIVE_2935"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "real_cve_control_or_audit",
+      "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
+      "rank": 53,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_dt_degeneracy_audit",
+      "target_id": "LIBARCHIVE_2937"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "real_cve_control_or_audit",
+      "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
+      "rank": 54,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_dt_degeneracy_audit",
+      "target_id": "LIBARCHIVE_2938"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "real_cve_control_or_audit",
+      "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
+      "rank": 55,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_dt_degeneracy_audit",
+      "target_id": "LIBARCHIVE_2925"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 56,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF022"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 57,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML017"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 58,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF005"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 59,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF020"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 60,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP008"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 61,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PNG002"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 62,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PNG004"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 63,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND006"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 64,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND010"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 65,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL003"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 66,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL004"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 67,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL006"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 68,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL010"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 69,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL012"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 70,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL014"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 71,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL016"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 72,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL020"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 73,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL014"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 74,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF001"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 75,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF004"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 76,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF005"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 77,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF006"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 78,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML007"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 79,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML008"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 80,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML012"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 81,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML015"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 82,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP004"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 83,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PNG001"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 84,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND015"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 85,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND023"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 86,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL005"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 87,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL007"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 88,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL008"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 89,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL018"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 90,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL001"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 91,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL016"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 92,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF003"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 93,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML013"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 94,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "LUA001"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 95,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "LUA004"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 96,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF002"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 97,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF007"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 98,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF008"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 99,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF009"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 100,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF011"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 101,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF012"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 102,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF014"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 103,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF017"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 104,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PDF021"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 105,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP002"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 106,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP005"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 107,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP006"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 108,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP007"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 109,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP013"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 110,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP014"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 111,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PHP016"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 112,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PNG003"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 113,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "PNG005"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 114,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND002"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 115,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND005"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 116,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND012"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 117,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND013"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 118,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND016"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 119,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND017"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 120,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND020"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 121,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SND025"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 122,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL002"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 123,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL011"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 124,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SQL019"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 125,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL003"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 126,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL004"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 127,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL006"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 128,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL007"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 129,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL010"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 130,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL013"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 131,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL018"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 132,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "SSL020"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 133,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF002"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 134,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF007"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 135,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF008"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 136,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF010"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 137,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "TIF013"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 138,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML001"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 139,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML005"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 140,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML006"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 141,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML009"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 142,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML014"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "control_or_low_priority",
+      "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
+      "rank": 143,
+      "reason": "low_priority_or_audit_not_main_budget",
+      "status": "needs_short_discovery",
+      "target_id": "XML016"
+    }
+  ],
+  "skipped_low_priority_count": 93,
+  "task_count": 12,
+  "tasks": [
+    {
+      "action": "validate_binding_spec_then_short_screen",
+      "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "BindingSpec candidate is not native-site-map validated",
+        "no comparison package exists yet",
+        "native build dependencies missing: libcairo2-dev libopenjp2-7-dev",
+        "poppler_cairo_pkg_config apt=libcairo2-dev",
+        "poppler_openjpeg_cmake_config apt=libopenjp2-7-dev"
+      ],
+      "category": "binary-state-null+compound-sequence-lifecycle",
+      "claim_boundary": "Validation is a gate, not an efficacy result.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json"
+      ],
+      "lane": "binding_validation_first",
+      "mechanism_evidence_required": [
+        "native site-map validation",
+        "lift audit pass",
+        "binding-signal diagnosis pass",
+        "seed readiness with reached non-trigger seeds"
+      ],
+      "post_unblock_commands": [
+        "sudo apt-get install -y libcairo2-dev libopenjp2-7-dev",
+        "scripts/run_magma_baselines.sh --target-id PDF003 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "binding audit pass/fail",
+        "accepted non-trigger progress count",
+        "short-screen first _T/TTE after validation"
+      ],
+      "priority": "P1",
+      "project": "poppler",
+      "rank": 3,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "PDF003"
+    },
+    {
+      "action": "validate_binding_spec_then_short_screen",
+      "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "BindingSpec candidate is not native-site-map validated",
+        "no comparison package exists yet"
+      ],
+      "category": "binary-state-null+compound-sequence-lifecycle",
+      "claim_boundary": "Validation is a gate, not an efficacy result.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/SSL015/build_plan.json"
+      ],
+      "lane": "binding_validation_first",
+      "mechanism_evidence_required": [
+        "native site-map validation",
+        "lift audit pass",
+        "binding-signal diagnosis pass",
+        "seed readiness with reached non-trigger seeds"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id SSL015 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL015.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "binding audit pass/fail",
+        "accepted non-trigger progress count",
+        "short-screen first _T/TTE after validation"
+      ],
+      "priority": "P1",
+      "project": "openssl",
+      "rank": 4,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "SSL015"
+    },
+    {
+      "action": "validate_binding_spec_then_short_screen",
+      "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "BindingSpec candidate is not native-site-map validated",
+        "no comparison package exists yet"
+      ],
+      "category": "compound-sequence-lifecycle",
+      "claim_boundary": "Validation is a gate, not an efficacy result.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/PDF016/build_plan.json"
+      ],
+      "lane": "binding_validation_first",
+      "mechanism_evidence_required": [
+        "native site-map validation",
+        "lift audit pass",
+        "binding-signal diagnosis pass",
+        "seed readiness with reached non-trigger seeds"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "binding audit pass/fail",
+        "accepted non-trigger progress count",
+        "short-screen first _T/TTE after validation"
+      ],
+      "priority": "P1",
+      "project": "poppler",
+      "rank": 5,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "PDF016"
+    },
+    {
+      "action": "run_validated_matched_short_screen",
+      "benefit_to_prove": "Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.",
+      "blocked_claims": [],
+      "blocking_issue": [],
+      "category": "numeric-margin",
+      "claim_boundary": "A passing short screen is still promotion evidence, not final 2h evidence; if baselines trigger early with acceptable time cost, demote to control/design work.",
+      "command": "scripts/run_magma_baselines.sh --target-id PHP009 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_baselines && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP009.current_1rep.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/php009_validated_short_600s_1rep_formtrig",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_binding_validation_60s/summary.jsonl",
+        "artifacts/formtrig_native_readiness/binding_validation/PHP009.native_draft_magma_canary.60s.validation.json",
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/PHP009/build_plan.json"
+      ],
+      "lane": "binding_validation_first",
+      "mechanism_evidence_required": [
+        "validated native BindingSpec with replay-stable pre-trigger D_F progress",
+        "accepted non-trigger progress before terminal _T",
+        "same seed corpus and Magma _T oracle as faithful AFL++ baselines",
+        "binary-TC guidance-gap classification before any main-claim promotion",
+        "validation non-trigger progress events=2",
+        "validation candidate events=3233"
+      ],
+      "post_unblock_commands": [
+        "after both arms finish, build a comparison package with tools/compare_formtrig_baselines.py",
+        "classify the target as hard-gap evidence only if faithful baselines show flat binary TC guidance and late/missing/high-variance _T"
+      ],
+      "primary_endpoint_metrics": [
+        "same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible binary TC flatness before _T",
+        "baseline R2T late/missing/high-variance evidence across repetitions"
+      ],
+      "priority": "P1",
+      "project": "php",
+      "rank": 6,
+      "repetitions": 1,
+      "runnable_now": true,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "PHP009"
+    },
+    {
+      "action": "validate_binding_spec_then_short_screen",
+      "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no external PoC/input link recorded",
+        "no vulnerable/fix commit link recorded",
+        "BindingSpec candidate is not native-site-map validated"
+      ],
+      "category": "binary-state-null",
+      "claim_boundary": "Validation is a gate, not an efficacy result.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/cve_bench_candidate_audit.json"
+      ],
+      "lane": "binding_validation_first",
+      "mechanism_evidence_required": [
+        "native site-map validation",
+        "lift audit pass",
+        "binding-signal diagnosis pass",
+        "seed readiness with reached non-trigger seeds"
+      ],
+      "post_unblock_commands": [
+        "run short FORMTRIG gate and same-budget AFL++ family baselines"
+      ],
+      "primary_endpoint_metrics": [
+        "binding audit pass/fail",
+        "accepted non-trigger progress count",
+        "short-screen first _T/TTE after validation"
+      ],
+      "priority": "P1",
+      "project": "libxml2",
+      "rank": 7,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "real_cve",
+      "target_id": "LIBXML2_1107"
+    },
+    {
+      "action": "validate_replay_then_draft_binding_spec",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet"
+      ],
+      "category": "compound-sequence-lifecycle",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/cve_bench_candidate_audit.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "validate vulnerable build and PoC replay",
+        "write harness admissibility note",
+        "draft BindingSpec and run binding-signal sweep"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P1",
+      "project": "gpac",
+      "rank": 8,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "real_cve",
+      "target_id": "GPAC_3403"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "compound-sequence-lifecycle",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id SQL013 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SQL013.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P2",
+      "project": "sqlite3",
+      "rank": 9,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "SQL013"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "compound-sequence-lifecycle",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id SSL009 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL009.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P2",
+      "project": "openssl",
+      "rank": 10,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "SSL009"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "compound-sequence-lifecycle+numeric-margin",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P2",
+      "project": "php",
+      "rank": 11,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "PHP003"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "compound-sequence-lifecycle+numeric-margin",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id PHP010 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP010.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P2",
+      "project": "php",
+      "rank": 12,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "PHP010"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "compound-sequence-lifecycle+numeric-margin",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id PHP011 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP011.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P2",
+      "project": "php",
+      "rank": 13,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "PHP011"
+    },
+    {
+      "action": "draft_binding_spec_then_short_screen",
+      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
+      "blocked_claims": [],
+      "blocking_issue": [
+        "no BindingSpec candidate exists yet",
+        "no comparison package exists yet"
+      ],
+      "category": "compound-sequence-lifecycle+numeric-margin",
+      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
+      "command": "",
+      "comparison_verdict": "",
+      "current_primary_benefits": [],
+      "duration_s": 600,
+      "evidence_paths": [
+        "artifacts/magma_canary_inventory.json"
+      ],
+      "lane": "binding_spec_first",
+      "mechanism_evidence_required": [
+        "BindingSpec compiles against native site ids",
+        "D_F_spec_lifted is non-constant before _T",
+        "saved non-trigger progress is replay-stable",
+        "typed mutation, if used, is BindingSpec-provenance tagged"
+      ],
+      "post_unblock_commands": [
+        "scripts/run_magma_baselines.sh --target-id SQL015 --durations 600 --jobs 4",
+        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SQL015.list --duration 600 --jobs 4 --continue-on-fail"
+      ],
+      "primary_endpoint_metrics": [
+        "10m same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible vs FORMTRIG-only endpoint behavior"
+      ],
+      "priority": "P2",
+      "project": "sqlite3",
+      "rank": 14,
+      "repetitions": 1,
+      "runnable_now": false,
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "source": "magma",
+      "target_id": "SQL015"
+    }
+  ]
+}

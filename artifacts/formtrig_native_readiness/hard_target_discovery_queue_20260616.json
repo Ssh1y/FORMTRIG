@@ -134,15 +134,15 @@
       "target_id": "PDF016"
     },
     {
-      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "benefit_hypothesis": "validated numeric-margin root can test whether lifted offset/length guidance yields endpoint benefit beyond binary Magma _T feedback",
       "binding_spec": "PHP009.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
+      "binding_spec_validated": true,
+      "blockers": "no comparison package exists yet",
       "comparison_count": 0,
       "existing_disposition": "",
       "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "compound-sequence-lifecycle",
+      "next_action": "run validated matched short endpoint screen against faithful AFL++ family baselines",
+      "primary_category": "numeric-margin",
       "project": "php",
       "rank": 6,
       "raw": {
@@ -155,8 +155,8 @@
       "secondary_category": "",
       "source": "magma",
       "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
+      "status": "binding_validation_passed",
+      "suggested_short_triage": "run 600s matched FORMTRIG/baseline screen; promote only if baseline binary feedback is flat and _T remains late, missing, or high-variance",
       "target_id": "PHP009"
     },
     {
@@ -4006,15 +4006,15 @@
       "target_id": "PDF016"
     },
     {
-      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "benefit_hypothesis": "validated numeric-margin root can test whether lifted offset/length guidance yields endpoint benefit beyond binary Magma _T feedback",
       "binding_spec": "PHP009.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
+      "binding_spec_validated": true,
+      "blockers": "no comparison package exists yet",
       "comparison_count": 0,
       "existing_disposition": "",
       "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "compound-sequence-lifecycle",
+      "next_action": "run validated matched short endpoint screen against faithful AFL++ family baselines",
+      "primary_category": "numeric-margin",
       "project": "php",
       "rank": 6,
       "raw": {
@@ -4027,8 +4027,8 @@
       "secondary_category": "",
       "source": "magma",
       "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
+      "status": "binding_validation_passed",
+      "suggested_short_triage": "run 600s matched FORMTRIG/baseline screen; promote only if baseline binary feedback is flat and _T remains late, missing, or high-variance",
       "target_id": "PHP009"
     },
     {

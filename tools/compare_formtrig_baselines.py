@@ -46,6 +46,24 @@ EARLY_BASELINE_FAMILY_MEDIAN_TTE_S = 60.0
 MODERATE_BASELINE_FAMILY_MEDIAN_TTE_S = 300.0
 ACCEPTABLE_BASELINE_FASTEST_TTE_S = 600.0
 HARD_BASELINE_FASTEST_TTE_S = 1800.0
+HARD_SOTA_STRENGTHS = {
+    "hard_endpoint_gap_candidate",
+    "hard_speedup_or_reliability_candidate",
+    "hard_speedup_variance_candidate",
+}
+
+
+def baseline_guidance_gap_requirement(main_strength: str) -> dict[str, Any]:
+    required = main_strength in HARD_SOTA_STRENGTHS
+    return {
+        "required_for_hard_sota_pain": required,
+        "status": "not_measured" if required else "not_required_for_current_strength",
+        "required_evidence": [
+            "baseline-visible TC signal is flat or binary before _T",
+            "accepted non-trigger improvement under the baseline-visible signal is absent",
+            "matched repeated endpoint runs are late, missing, or high-variance",
+        ],
+    }
 
 
 def read_json(path: Path) -> Any:
@@ -478,6 +496,7 @@ def main_claim_strength(
         "hard_baseline_fastest_trigger_threshold_s": HARD_BASELINE_FASTEST_TTE_S,
         "early_baseline_family_median_threshold_s": EARLY_BASELINE_FAMILY_MEDIAN_TTE_S,
         "main_claim_strength": strength,
+        "baseline_guidance_gap": baseline_guidance_gap_requirement(strength),
         "reasons": reasons,
         "recommended_design_actions": next_steps,
     }
@@ -748,6 +767,16 @@ def benefit_readout(
     strength = analysis.get("experiment_strength")
     if isinstance(strength, dict):
         main_strength = strength.get("main_claim_strength")
+        gap = strength.get("baseline_guidance_gap")
+        if (
+            isinstance(gap, dict)
+            and gap.get("required_for_hard_sota_pain")
+            and gap.get("status") != "measured_pass"
+        ):
+            blocked_claims.append(
+                "baseline no-guidance proof is not measured: hard SOTA-pain claims require flat/binary pre-_T baseline TC signal and late, missing, or high-variance baseline _T"
+            )
+            design_evidence.append("baseline_guidance_gap_required")
         if main_strength == "not_hard_pain_baseline_fast_enough":
             blocked_claims.append(
                 "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
@@ -896,6 +925,17 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         lines.append(f"  - {action}")
     if not strength.get("recommended_design_actions"):
         lines.append("  - none")
+    gap = strength.get("baseline_guidance_gap") if isinstance(strength, dict) else {}
+    if isinstance(gap, dict):
+        lines.extend(
+            [
+                "- baseline no-guidance proof:",
+                f"  - required for hard SOTA-pain: `{cell(gap.get('required_for_hard_sota_pain'))}`",
+                f"  - status: `{cell(gap.get('status'))}`",
+            ]
+        )
+        for item in gap.get("required_evidence", []):
+            lines.append(f"  - required evidence: {item}")
     lines.extend(
         [
             "",
