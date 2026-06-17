@@ -59,6 +59,7 @@ outputs:
   OUT/formtrig_gate/gate_summary.csv
   OUT/baseline_guidance_gap/baseline_guidance_gap.json
   OUT/comparison/comparison.json
+  OUT/comparison/evidence/
 EOF
 }
 
@@ -383,6 +384,7 @@ require_path "$repo_root/scripts/run_magma_baselines.sh"
 require_path "$repo_root/scripts/formtrig_experiment_gate.sh"
 require_path "$repo_root/tools/analyze_baseline_guidance_gap.py"
 require_path "$repo_root/tools/compare_formtrig_baselines.py"
+require_path "$repo_root/tools/package_magma_matched_evidence.py"
 if [[ "$mode" == "execute" ]]; then
   require_path "$magma_dir/tools/captain/build.sh"
   require_path "$magma_dir/tools/captain/start.sh"
@@ -481,6 +483,20 @@ COMPARE_CMD=(
 )
 run_step "comparison" "$out_dir/logs/comparison.log" 0 "${COMPARE_CMD[@]}"
 
+EVIDENCE_CMD=(
+  python3 "$repo_root/tools/package_magma_matched_evidence.py"
+  --target-id "$target_id"
+  --duration "$duration"
+  --reps "$reps"
+  --run-root "$out_dir"
+  --comparison-dir "$comparison_out"
+  --baseline-dir "$baseline_out"
+  --formtrig-dir "$formtrig_out"
+  --gate-dir "$gate_out"
+  --guidance-dir "$guidance_out"
+)
+run_step "evidence_bundle" "$out_dir/logs/evidence_bundle.log" 1 "${EVIDENCE_CMD[@]}" || true
+
 echo "Magma matched long-run flow complete"
 echo "  out=$out_dir"
 echo "  plan=$plan_sh"
@@ -489,3 +505,4 @@ echo "  baselines=$baseline_out"
 echo "  gate=$gate_out/gate_summary.csv"
 echo "  guidance_gap=$guidance_out/baseline_guidance_gap.json"
 echo "  comparison=$comparison_out/comparison.json"
+echo "  evidence=$comparison_out/evidence"

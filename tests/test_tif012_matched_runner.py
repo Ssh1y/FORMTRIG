@@ -64,6 +64,7 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
                     "formtrig_gate",
                     "baseline_guidance_gap",
                     "comparison",
+                    "evidence_bundle",
                 ],
             )
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
@@ -73,6 +74,7 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             self.assertIn("run_magma_baselines.sh", plan)
             self.assertIn("analyze_baseline_guidance_gap.py", plan)
             self.assertIn("compare_formtrig_baselines.py", plan)
+            self.assertIn("package_magma_matched_evidence.py", plan)
             self.assertIn("--afl-arg -t --afl-arg 5000", plan)
             self.assertIn("001_PDF003/out", plan)
             self.assertIn("002_PDF003/out", plan)
