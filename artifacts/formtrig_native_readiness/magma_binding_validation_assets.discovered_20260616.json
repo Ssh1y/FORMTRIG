@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-16T18:54:49+00:00",
+  "generated_at_utc": "2026-06-17T12:37:05+00:00",
   "schema": "formtrig_magma_binding_validation_assets_discovered_v1",
   "source_discovery": "artifacts/formtrig_native_readiness/magma_native_asset_discovery_20260616.json",
   "targets": {
@@ -61,9 +61,7 @@
       "binding_spec": "artifacts/binding_specs/SSL011.native_draft_magma_canary.yml",
       "category": "binary-state-null",
       "discovery_blockers": [
-        "formal RNT seed corpus is not ready: excluded",
-        "no site_map.tsv matched the BindingSpec source selectors",
-        "no executable found for program asn1"
+        "formal RNT seed corpus is not ready: excluded"
       ],
       "discovery_status": "blocked",
       "duration_s": 600,
@@ -71,9 +69,9 @@
       "seed_dir": "TODO_FORMAL_RNT_SEED_DIR_FOR_SSL011",
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL011.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_OPENSSL_ASN1_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL011",
+      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/formtrig_native/formtrig_sites.tsv",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1 @@",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL011.native_draft_magma_canary.validation.json"
     },
     "SSL015": {
@@ -81,8 +79,7 @@
       "category": "binary-state-null",
       "discovery_blockers": [
         "formal RNT seed corpus is not ready: excluded",
-        "no site_map.tsv matched the BindingSpec source selectors",
-        "no executable found for program asn1"
+        "no site_map.tsv matched the BindingSpec source selectors"
       ],
       "discovery_status": "blocked",
       "duration_s": 600,
@@ -91,8 +88,8 @@
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_OPENSSL_ASN1_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL015",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1 @@",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_draft_magma_canary.validation.json"
     },
     "TIF012": {

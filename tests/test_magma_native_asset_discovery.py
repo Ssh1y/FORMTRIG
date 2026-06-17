@@ -68,6 +68,44 @@ class MagmaNativeAssetDiscoveryTest(unittest.TestCase):
             )
         )
 
+    def test_selector_match_accepts_magma_macro_line_drift_with_exact_function(self):
+        discovery = load_tool("discover_magma_native_assets")
+
+        self.assertTrue(
+            discovery.selector_matches_row(
+                {
+                    "kind": "cmp",
+                    "function": "PKCS7_dataDecode",
+                    "file": "crypto/pkcs7/pk7_doit.c",
+                    "line": "440",
+                },
+                {
+                    "kind": "cmp",
+                    "function": "PKCS7_dataDecode",
+                    "file": "crypto/pkcs7/pk7_doit.c",
+                    "line": "436",
+                    "column": "5",
+                },
+            )
+        )
+        self.assertFalse(
+            discovery.selector_matches_row(
+                {
+                    "kind": "cmp",
+                    "function": "PKCS7_dataDecode",
+                    "file": "crypto/pkcs7/pk7_doit.c",
+                    "line": "440",
+                },
+                {
+                    "kind": "cmp",
+                    "function": "PKCS7_dataInit",
+                    "file": "crypto/pkcs7/pk7_doit.c",
+                    "line": "436",
+                    "column": "5",
+                },
+            )
+        )
+
     def test_discovers_runnable_assets_when_all_native_inputs_match(self):
         discovery = load_tool("discover_magma_native_assets")
         with tempfile.TemporaryDirectory() as tmp:

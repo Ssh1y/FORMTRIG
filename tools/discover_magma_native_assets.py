@@ -217,7 +217,7 @@ def source_file_matches(selector_file: str, row_file: str) -> bool:
     return selector == row or selector.endswith(f"/{row}") or row.endswith(f"/{selector}")
 
 
-def source_line_matches(selector_line: str, row_line: str, *, tolerance: int = 3) -> bool:
+def source_line_matches(selector_line: str, row_line: str, *, tolerance: int = 8) -> bool:
     if not selector_line:
         return True
     try:

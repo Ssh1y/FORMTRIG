@@ -952,6 +952,11 @@ LIBARCHIVE_2936:
 PDF003:
   更适合作为 hard binary/lifecycle TC 的下一条验证线。
   当前 blocker 是 native Poppler build 依赖，不是算法证据。
+
+SSL011:
+  OpenSSL native build 已产出 asn1 executable 和 source-matching site-map。
+  当前 blocker 从 native asset 缺失收敛为 harness/RNT mismatch：
+  asn1 runner 不覆盖 PKCS7_dataDecode workflow，因此没有 formal RNT seeds。
 ```
 
 下一步主线不是修改论文定位，而是改善实验设计：

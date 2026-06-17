@@ -11,12 +11,12 @@ set -euo pipefail
 
 # SSL011 run_binding_candidate_sweep_then_summarize_validation
 # benefit: Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.
-# blocked: formal RNT seed corpus is not ready: excluded (No strict RNT seed is available under asn1: SSL011 is logged in PKCS7_dataDecode, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform PKCS7 dataDecode workflows.); site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL011.tsv; target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL011; target_cmd is missing or still contains TODO
+# blocked: formal RNT seed corpus is not ready: excluded (No strict RNT seed is available under asn1: SSL011 is logged in PKCS7_dataDecode, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform PKCS7 dataDecode workflows.)
 # next: provide site_map, target_cwd, and target_cmd in a validation assets JSON
 
 # SSL015 run_binding_candidate_sweep_then_summarize_validation
 # benefit: Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.
-# blocked: formal RNT seed corpus is not ready: excluded (No strict RNT seed is available under asn1: SSL015 is logged in PKCS7 data init/decode/final/verify workflows, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform those PKCS7 workflows.); site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv; target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL015; target_cmd is missing or still contains TODO
+# blocked: formal RNT seed corpus is not ready: excluded (No strict RNT seed is available under asn1: SSL015 is logged in PKCS7 data init/decode/final/verify workflows, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform those PKCS7 workflows.); site_map is missing or unresolved: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv
 # next: provide site_map, target_cwd, and target_cmd in a validation assets JSON
 
 # TIF012 run_binding_candidate_sweep_then_summarize_validation
