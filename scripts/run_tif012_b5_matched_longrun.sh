@@ -93,6 +93,10 @@ quote_cmd() {
   done
 }
 
+count_list() {
+  printf '%s\n' "$1" | tr ', ' '\n' | awk 'NF { count++ } END { print count + 0 }'
+}
+
 record_plan() {
   local step="$1"
   local command="$2"
@@ -135,9 +139,16 @@ run_step() {
 }
 
 write_metadata() {
+  local baseline_count baseline_run_count baseline_batches
+  baseline_count="$(count_list "$baselines")"
+  baseline_run_count=$((baseline_count * reps))
+  baseline_batches=$(((baseline_run_count + baseline_jobs - 1) / baseline_jobs))
   cat > "$out_dir/run_metadata.json" <<EOF
 {
   "baselines": "$baselines",
+  "baseline_count": $baseline_count,
+  "baseline_run_count": $baseline_run_count,
+  "baseline_batches": $baseline_batches,
   "duration_s": $duration,
   "formtrig_jobs": $jobs,
   "baseline_jobs": $baseline_jobs,

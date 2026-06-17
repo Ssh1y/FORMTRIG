@@ -75,6 +75,9 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             self.assertTrue(metadata["parallel_arms"])
             self.assertEqual(metadata["formtrig_jobs"], 2)
             self.assertEqual(metadata["baseline_jobs"], 6)
+            self.assertEqual(metadata["baseline_count"], 3)
+            self.assertEqual(metadata["baseline_run_count"], 6)
+            self.assertEqual(metadata["baseline_batches"], 1)
             plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
             self.assertIn("run_formtrig_manifest_batch.sh", plan)
             self.assertIn("run_magma_baselines.sh", plan)
@@ -140,6 +143,9 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["formtrig_jobs"], 2)
             self.assertEqual(metadata["baseline_jobs"], 6)
+            self.assertEqual(metadata["baseline_count"], 3)
+            self.assertEqual(metadata["baseline_run_count"], 6)
+            self.assertEqual(metadata["baseline_batches"], 1)
 
             manifest_list = out_dir / "formtrig_manifest_list.txt"
             self.assertEqual(
