@@ -1,5 +1,5 @@
 {
-  "baseline_guidance_gap_count": 6,
+  "baseline_guidance_gap_count": 7,
   "baseline_guidance_gaps": [
     {
       "analysis_id": "libarchive_2936_matched_7200s_3rep_20260617",
@@ -46,6 +46,22 @@
       "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_validated_short_600s_3rep_20260617/baseline_guidance_gap.json",
       "status": "measured_pass",
       "target_id": "PDF003"
+    },
+    {
+      "analysis_id": "pdf016_validated_short_600s_1rep_baseline_guidance_gap",
+      "endpoint_cost_pass": false,
+      "fastest_successful_baseline_trigger_time_s": 90.0,
+      "interpretation": "a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "pretrigger_binary_flat_measured": true,
+      "pretrigger_binary_flat_pass": true,
+      "reasons": [
+        "pretrigger_binary_oracle_flat_before_T",
+        "fast_successful_baseline_within_acceptable_threshold",
+        "baseline_endpoint_cost_not_sufficient_for_hard_pain"
+      ],
+      "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf016_validated_short_600s_1rep/baseline_guidance_gap.json",
+      "status": "fail_fast_baseline",
+      "target_id": "PDF016"
     },
     {
       "analysis_id": "php009_validated_short_600s_1rep_20260617",
@@ -97,8 +113,8 @@
       "target_id": "TIF012"
     }
   ],
-  "generated_at_utc": "2026-06-18T04:26:40+00:00",
-  "package_count": 20,
+  "generated_at_utc": "2026-06-18T08:00:03+00:00",
+  "package_count": 21,
   "packages": [
     {
       "best_formtrig_trigger_time_s": null,
@@ -498,6 +514,42 @@
       "verdict": "positive_endpoint_matched_comparison"
     },
     {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no FORMTRIG terminal success is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage"
+      ],
+      "comparison_id": "pdf016_validated_short_600s_1rep_20260618",
+      "fastest_baseline_family_median_trigger_time_s": 90.0,
+      "fastest_baseline_trigger_time_s": 90.0,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "not_supporting_main_claim",
+      "matched_baselines": 3,
+      "max_budget_s": 602.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "repair BindingSpec/mutation design or move budget to a harder target",
+        "do not claim SOTA advantage on this target without harder targets or stronger statistics",
+        "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+      ],
+      "observed_benefits": [
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "control_or_negative",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/pdf016_validated_short_600s_1rep_20260618/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_cmplog",
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "PDF016",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "baseline_also_triggers_not_sota_advantage"
+    },
+    {
       "best_formtrig_trigger_time_s": 87.04,
       "blocked_claims": [
         "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
@@ -814,7 +866,7 @@
       "verdict": "baseline_also_triggers_not_sota_advantage"
     }
   ],
-  "target_count": 6,
+  "target_count": 7,
   "targets": [
     {
       "baseline_guidance_gap_evidence": "baseline_guidance_gap.status=measured_pass; pre_T_binary_flat=true; fastest_baseline_T=4530s; baseline evidence supports a hard binary-TC no-guidance candidate",
@@ -883,6 +935,29 @@
       "sources": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_asan_terminal_30m_vs_asan_baselines_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libcoap_35862_pretrigger_30m_vs_non_asan_baselines_20260616/comparison.json",
       "strict_pretrigger_guidance": true,
       "target_id": "LIBCOAP_CVE_2023_35862",
+      "tte_speedup_over_fastest_baseline": null
+    },
+    {
+      "baseline_guidance_gap_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=90s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "baseline_guidance_gap_status": "fail_fast_baseline",
+      "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "best_formtrig_trigger_time_s": null,
+      "best_package": "pdf016_validated_short_600s_1rep_20260618",
+      "best_verdict": "baseline_also_triggers_not_sota_advantage",
+      "blocked_claims": "baseline guidance-gap gate is not measured_pass: fail_fast_baseline; matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; no FORMTRIG terminal success is established; FORMTRIG first `_T`/TTE is not recorded for this run; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+      "disposition": "demote_to_control_or_negative",
+      "fastest_baseline_trigger_time_s": 90.0,
+      "formtrig_terminal": false,
+      "main_claim_strength": "not_supporting_main_claim",
+      "max_budget_s": 602.0,
+      "next_action": "do not spend main long-run budget here; baseline guidance-gap analysis shows a faithful baseline reaches _T within the acceptable threshold",
+      "observed_benefits": "binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+      "priority": 90,
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=90s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "sources": "artifacts/formtrig_native_readiness/comparisons/pdf016_validated_short_600s_1rep_20260618/comparison.json; artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf016_validated_short_600s_1rep/baseline_guidance_gap.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "PDF016",
       "tte_speedup_over_fastest_baseline": null
     },
     {

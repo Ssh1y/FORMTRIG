@@ -17,10 +17,6 @@ set -euo pipefail
 # post-unblock: scripts/run_magma_baselines.sh --target-id SSL015 --durations 600 --jobs 4
 # post-unblock: scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/SSL015.list --duration 600 --jobs 4 --continue-on-fail
 
-# P1 PDF016 run_validated_matched_short_screen
-# benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
-scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines --afl-arg -t --afl-arg 5000 && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_formtrig
-
 # P1 LIBXML2_1107 validate_binding_spec_then_short_screen
 # benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
 # blocked: no external PoC/input link recorded; no vulnerable/fix commit link recorded; BindingSpec candidate is not native-site-map validated

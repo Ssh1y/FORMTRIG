@@ -1,0 +1,81 @@
+{
+  "baseline": "aflplusplus_vanilla",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/afl-fuzz"
+    ],
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "information_budget": "coverage feedback only; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "budget": 600,
+  "command_line": [
+    "magma/captain",
+    "aflplusplus_plain",
+    "poppler",
+    "pdf_fuzzer",
+    "@@"
+  ],
+  "config_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/runs/aflplusplus_vanilla_600s/run_config.json",
+  "first_crash": null,
+  "fuzzer_stats": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/magma/aflplusplus_vanilla_600s/findings/default/fuzzer_stats",
+  "last_crash_time_s": null,
+  "magma_monitor": {
+    "bug_id": "PDF016",
+    "first_reach": {
+      "bug_id": "PDF016",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/magma/aflplusplus_vanilla_600s/monitor/60",
+      "kind": "poll",
+      "reached": 1,
+      "time_s": 60,
+      "triggered": 0
+    },
+    "first_trigger": {
+      "bug_id": "PDF016",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/magma/aflplusplus_vanilla_600s/monitor/120",
+      "kind": "poll",
+      "reached": 144917,
+      "time_s": 120,
+      "triggered": 43
+    },
+    "latest": {
+      "bug_id": "PDF016",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/magma/aflplusplus_vanilla_600s/monitor/final",
+      "kind": "final",
+      "reached": 1169034,
+      "time_s": null,
+      "triggered": 178
+    },
+    "monitor_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/magma/aflplusplus_vanilla_600s/monitor",
+    "reached": 1169034,
+    "snapshot_count": 20,
+    "triggered": 178
+  },
+  "run_id": "PDF016:aflplusplus_vanilla:rep1",
+  "seed_set_id": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF016/seeds",
+  "stats": {
+    "corpus_count": 1474,
+    "execs_done": 56429,
+    "execs_per_sec": "98.35",
+    "magma_reached": 1169034,
+    "magma_triggered": 178,
+    "run_time": 573,
+    "saved_crashes": 0,
+    "saved_hangs": 0
+  },
+  "success": true,
+  "target_id": "PDF016",
+  "tc_category": "compound-sequence-lifecycle",
+  "timeout": false,
+  "trigger_execs": null,
+  "trigger_time_kind": "magma_monitor_upper_bound",
+  "trigger_time_s": 120
+}

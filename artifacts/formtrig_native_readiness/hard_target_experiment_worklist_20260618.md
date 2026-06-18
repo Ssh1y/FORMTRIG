@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-18T05:25:39+00:00`
-Tasks: `27`; runnable now: `1`; blocked/gated: `26`; demoted controls skipped: `7`; low-priority skipped: `93`.
+Generated: `2026-06-18T08:00:11+00:00`
+Tasks: `26`; runnable now: `0`; blocked/gated: `26`; demoted controls skipped: `8`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -17,7 +17,6 @@ Tasks: `27`; runnable now: `1`; blocked/gated: `26`; demoted controls skipped: `
 | --- | ---: | --- | --- | --- | --- | --- | --- |
 | P0 | 3 | PDF003 | magma | visible_hard_speedup_or_reliability | expand_cross_target_hard_evidence | blocked | The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign. |
 | P1 | 4 | SSL015 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
-| P1 | 5 | PDF016 | magma |  | run_validated_matched_short_screen | yes | Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost. |
 | P1 | 7 | LIBXML2_1107 | real_cve |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 8 | GPAC_3403 | real_cve |  | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P2 | 9 | SQL013 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -45,12 +44,7 @@ Tasks: `27`; runnable now: `1`; blocked/gated: `26`; demoted controls skipped: `
 
 ## Runnable Now
 
-### P1 PDF016
-
-- Benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
-- SOTA pain: `not recorded`
-- SOTA pain evidence: not recorded
-- Command: `scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines --afl-arg -t --afl-arg 5000 && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_formtrig`
+No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 
 ## Gated Tasks
 
@@ -610,6 +604,7 @@ Tasks: `27`; runnable now: `1`; blocked/gated: `26`; demoted controls skipped: `
 | ---: | --- | --- | --- | --- | --- |
 | 1 | LIBARCHIVE_2936 | real_cve_replacement | candidate_extend_longruns | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
 | 2 | TIF012 | short_triage_ready | candidate_extend_longruns | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
+| 5 | PDF016 | binding_validation_first | needs_binding_validation | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
 | 6 | PHP009 | binding_validation_first | binding_validation_passed | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
 | 144 | PNG006 | control_or_negative | demote_to_control_or_negative | not_visible_baseline_visible_no_formtrig_advantage | sota_pain_triage_not_main_budget |
 | 145 | SSL011 | control_or_negative | do_not_promote |  | control_or_negative_not_main_budget |

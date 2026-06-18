@@ -1,0 +1,310 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 600,
+        "median_terminal_count": 137,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": 150,
+        "min_trigger_time_s": 150.0,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 600,
+        "median_terminal_count": 178,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": 120,
+        "min_trigger_time_s": 120.0,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget": 600,
+        "median_terminal_count": 122,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": 90,
+        "min_trigger_time_s": 90.0,
+        "reps": 1,
+        "success_rate": 1.0,
+        "successes": 1
+      }
+    ],
+    "best_formtrig_trigger_time_s": null,
+    "experiment_strength": {
+      "acceptable_baseline_fastest_trigger_threshold_s": 600.0,
+      "baseline_guidance_gap": {
+        "analysis_id": "pdf016_validated_short_600s_1rep_baseline_guidance_gap",
+        "baseline_groups": [
+          {
+            "aggregate_empirical_trigger_rate_per_reach": 0.00010482581316520395,
+            "baseline": "aflplusplus_cmplog",
+            "budget": 600,
+            "max_trigger_time_s": 150.0,
+            "median_post_reach_observation_time_s": 90.0,
+            "median_trigger_time_s": 150.0,
+            "min_trigger_time_s": 150.0,
+            "missing": 0,
+            "pretrigger_binary_flat_all_measured": true,
+            "pretrigger_binary_flat_all_runs": true,
+            "pretrigger_binary_flat_measured_runs": 1,
+            "pretrigger_binary_flat_pass_runs": 1,
+            "reps": 1,
+            "success_rate": 1.0,
+            "successes": 1,
+            "total_post_reach_observation_time_s": 90.0,
+            "total_reached": 1306930,
+            "total_reached_without_trigger": 1306793,
+            "total_triggered": 137,
+            "trigger_time_range_s": null,
+            "trigger_times_s": [
+              150.0
+            ],
+            "zero_trigger_rule_of_three_95_upper_bound_per_reach": null,
+            "zero_trigger_runs": 0
+          },
+          {
+            "aggregate_empirical_trigger_rate_per_reach": 0.00015226246627557453,
+            "baseline": "aflplusplus_vanilla",
+            "budget": 600,
+            "max_trigger_time_s": 120.0,
+            "median_post_reach_observation_time_s": 60.0,
+            "median_trigger_time_s": 120.0,
+            "min_trigger_time_s": 120.0,
+            "missing": 0,
+            "pretrigger_binary_flat_all_measured": true,
+            "pretrigger_binary_flat_all_runs": true,
+            "pretrigger_binary_flat_measured_runs": 1,
+            "pretrigger_binary_flat_pass_runs": 1,
+            "reps": 1,
+            "success_rate": 1.0,
+            "successes": 1,
+            "total_post_reach_observation_time_s": 60.0,
+            "total_reached": 1169034,
+            "total_reached_without_trigger": 1168856,
+            "total_triggered": 178,
+            "trigger_time_range_s": null,
+            "trigger_times_s": [
+              120.0
+            ],
+            "zero_trigger_rule_of_three_95_upper_bound_per_reach": null,
+            "zero_trigger_runs": 0
+          },
+          {
+            "aggregate_empirical_trigger_rate_per_reach": 5.107647865359053e-05,
+            "baseline": "redqueen_operand",
+            "budget": 600,
+            "max_trigger_time_s": 90.0,
+            "median_post_reach_observation_time_s": 30.0,
+            "median_trigger_time_s": 90.0,
+            "min_trigger_time_s": 90.0,
+            "missing": 0,
+            "pretrigger_binary_flat_all_measured": true,
+            "pretrigger_binary_flat_all_runs": true,
+            "pretrigger_binary_flat_measured_runs": 1,
+            "pretrigger_binary_flat_pass_runs": 1,
+            "reps": 1,
+            "success_rate": 1.0,
+            "successes": 1,
+            "total_post_reach_observation_time_s": 30.0,
+            "total_reached": 2388575,
+            "total_reached_without_trigger": 2388453,
+            "total_triggered": 122,
+            "trigger_time_range_s": null,
+            "trigger_times_s": [
+              90.0
+            ],
+            "zero_trigger_rule_of_three_95_upper_bound_per_reach": null,
+            "zero_trigger_runs": 0
+          }
+        ],
+        "endpoint_cost_pass": false,
+        "fastest_successful_baseline_trigger_time_s": 90.0,
+        "interpretation": "a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+        "pretrigger_binary_flat_measured": true,
+        "pretrigger_binary_flat_pass": true,
+        "reasons": [
+          "pretrigger_binary_oracle_flat_before_T",
+          "fast_successful_baseline_within_acceptable_threshold",
+          "baseline_endpoint_cost_not_sufficient_for_hard_pain"
+        ],
+        "required_evidence": [
+          "baseline-visible TC signal is flat or binary before _T",
+          "accepted non-trigger improvement under the baseline-visible signal is absent",
+          "matched repeated endpoint runs are late, missing, or high-variance"
+        ],
+        "required_for_hard_sota_pain": false,
+        "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf016_validated_short_600s_1rep/baseline_guidance_gap.json",
+        "status": "fail_fast_baseline"
+      },
+      "best_baseline_family_median_trigger_time_s": 90.0,
+      "early_baseline_family_median_threshold_s": 60.0,
+      "hard_baseline_fastest_trigger_threshold_s": 1800.0,
+      "main_claim_strength": "not_supporting_main_claim",
+      "reasons": [
+        "no_endpoint_or_speedup_advantage_for_formtrig"
+      ],
+      "recommended_design_actions": [
+        "repair BindingSpec/mutation design or move budget to a harder target"
+      ]
+    },
+    "fastest_baseline_family_median_trigger_time_s": 90.0,
+    "fastest_baseline_trigger_time_s": 90.0,
+    "matched_baseline_count": 3,
+    "missing_required_baselines": [],
+    "next_steps": [
+      "do not claim SOTA advantage on this target without harder targets or stronger statistics",
+      "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+    ],
+    "reasons": [
+      "formtrig_strict_pretrigger_guidance_present",
+      "formtrig_terminal_oracle_missing",
+      "matched_baseline_also_triggers"
+    ],
+    "tte_speedup_over_fastest_baseline": null,
+    "tte_speedup_over_fastest_baseline_family_median": null,
+    "verdict": "baseline_also_triggers_not_sota_advantage"
+  },
+  "baseline_rows": [
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_cmplog",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 172964,
+      "execs_per_sec": "301.40",
+      "heuristic_lifted": null,
+      "magma_triggered": 137,
+      "manual_lifted": null,
+      "reached": 1306930,
+      "rep": 1,
+      "run_time": 573,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/runs/aflplusplus_cmplog_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": true,
+      "target_id": "PDF016",
+      "terminal_count": 137,
+      "trigger_execs": null,
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 150
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_vanilla",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 56429,
+      "execs_per_sec": "98.35",
+      "heuristic_lifted": null,
+      "magma_triggered": 178,
+      "manual_lifted": null,
+      "reached": 1169034,
+      "rep": 1,
+      "run_time": 573,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/runs/aflplusplus_vanilla_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": true,
+      "target_id": "PDF016",
+      "terminal_count": 178,
+      "trigger_execs": null,
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 120
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "redqueen_operand",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 174862,
+      "execs_per_sec": "304.72",
+      "heuristic_lifted": null,
+      "magma_triggered": 122,
+      "manual_lifted": null,
+      "reached": 2388575,
+      "rep": 1,
+      "run_time": 573,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines/runs/redqueen_operand_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": true,
+      "target_id": "PDF016",
+      "terminal_count": 122,
+      "trigger_execs": null,
+      "trigger_time_kind": "magma_monitor_upper_bound",
+      "trigger_time_s": 90
+    }
+  ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "no FORMTRIG terminal success is established",
+      "FORMTRIG first `_T`/TTE is not recorded for this run",
+      "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance"
+    ],
+    "endpoint_observations": [],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "observed_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "primary_benefits": [],
+    "summary": "mechanism benefit is present, but performance advantage is not established on this target"
+  },
+  "comparison_id": "pdf016_validated_short_600s_1rep_20260618",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 2,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 602,
+      "execs_done": 1702,
+      "execs_per_sec": "2.83",
+      "gate_reasons": "ok",
+      "gate_status": "pass",
+      "heuristic_lifted": 0,
+      "manual_lifted": 0,
+      "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_formtrig/001_PDF016/out/default",
+      "reached": 1661,
+      "rep": null,
+      "run_time": 602,
+      "saved_non_trigger": 2,
+      "source_label": "b4_600s_1rep",
+      "source_path": "artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_formtrig/gate/gate_summary.csv",
+      "spec_lifted": 414,
+      "strict_pretrigger_guidance": true,
+      "success": false,
+      "target_id": "PDF016",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "target_id": "PDF016"
+}

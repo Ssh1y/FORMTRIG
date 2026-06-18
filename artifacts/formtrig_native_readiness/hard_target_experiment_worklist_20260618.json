@@ -8,9 +8,9 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-18T05:25:39+00:00",
+  "generated_at_utc": "2026-06-18T08:00:11+00:00",
   "inputs": {
-    "active_runs": "",
+    "active_runs": "artifacts/formtrig_native_readiness/worklists/active_matched_runs_20260618.json",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
     "manifest_root": "artifacts/formtrig_native_readiness/manifests",
@@ -18,9 +18,9 @@
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
     "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260618.json"
   },
-  "runnable_now_count": 1,
+  "runnable_now_count": 0,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
-  "skipped_control_count": 7,
+  "skipped_control_count": 8,
   "skipped_controls": [
     {
       "existing_disposition": "candidate_extend_longruns",
@@ -43,6 +43,17 @@
       "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=210s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
       "status": "short_gate_triaged",
       "target_id": "TIF012"
+    },
+    {
+      "existing_disposition": "",
+      "lane": "binding_validation_first",
+      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
+      "rank": 5,
+      "reason": "sota_pain_triage_not_main_budget",
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=90s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "status": "needs_binding_validation",
+      "target_id": "PDF016"
     },
     {
       "existing_disposition": "",
@@ -940,7 +951,7 @@
     }
   ],
   "skipped_low_priority_count": 93,
-  "task_count": 27,
+  "task_count": 26,
   "tasks": [
     {
       "action": "expand_cross_target_hard_evidence",
@@ -1031,53 +1042,6 @@
       "sota_pain_evidence": "",
       "source": "magma",
       "target_id": "SSL015"
-    },
-    {
-      "action": "run_validated_matched_short_screen",
-      "benefit_to_prove": "Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.",
-      "blocked_claims": [],
-      "blocking_issue": [],
-      "category": "compound-sequence-lifecycle",
-      "claim_boundary": "A passing short screen is still promotion evidence, not final 2h evidence; if baselines trigger early with acceptable time cost, demote to control/design work.",
-      "command": "scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines --afl-arg -t --afl-arg 5000 && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_formtrig",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/formtrig_native_readiness/binding_validation/PDF016.native_b4_parser_gen_distance_candidate.r2.validation.json",
-        "artifacts/formtrig_native_readiness/raw/pdf016_b4_binding_validation_600s_t5000_r2/summary.jsonl",
-        "artifacts/magma_canary_inventory.json",
-        "artifacts/formtrig_native_readiness/magma_native_builds/PDF016/build_plan.json"
-      ],
-      "lane": "binding_validation_first",
-      "mechanism_evidence_required": [
-        "validated native BindingSpec with replay-stable pre-trigger D_F progress",
-        "accepted non-trigger progress before terminal _T",
-        "same seed corpus and Magma _T oracle as faithful AFL++ baselines",
-        "binary-TC guidance-gap classification before any main-claim promotion",
-        "validation non-trigger progress events=4",
-        "validation candidate events=2188"
-      ],
-      "post_unblock_commands": [
-        "after both arms finish, build a comparison package with tools/compare_formtrig_baselines.py",
-        "classify the target as hard-gap evidence only if faithful baselines show flat binary TC guidance and late/missing/high-variance _T"
-      ],
-      "primary_endpoint_metrics": [
-        "same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible binary TC flatness before _T",
-        "baseline R2T late/missing/high-variance evidence across repetitions"
-      ],
-      "priority": "P1",
-      "project": "poppler",
-      "rank": 5,
-      "repetitions": 1,
-      "runnable_now": true,
-      "sota_pain_class": "",
-      "sota_pain_evidence": "",
-      "source": "magma",
-      "target_id": "PDF016"
     },
     {
       "action": "validate_binding_spec_then_short_screen",

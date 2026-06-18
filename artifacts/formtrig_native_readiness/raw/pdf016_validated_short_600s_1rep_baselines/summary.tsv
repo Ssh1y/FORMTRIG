@@ -1,0 +1,4 @@
+target_id	baseline	budget	rep	success	trigger_time_s	trigger_time_kind	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	magma_reached	magma_triggered	magma_first_reach_time_s	magma_first_trigger_time_s	magma_snapshot_count
+PDF016	aflplusplus_cmplog	600	1	true	150	magma_monitor_upper_bound	573	172964	301.40	1665	0	0	1306930	137	60	150	20
+PDF016	aflplusplus_vanilla	600	1	true	120	magma_monitor_upper_bound	573	56429	98.35	1474	0	0	1169034	178	60	120	20
+PDF016	redqueen_operand	600	1	true	90	magma_monitor_upper_bound	573	174862	304.72	1901	0	0	2388575	122	60	90	20

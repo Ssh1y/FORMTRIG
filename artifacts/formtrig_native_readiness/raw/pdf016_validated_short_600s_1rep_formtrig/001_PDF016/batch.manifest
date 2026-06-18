@@ -1,0 +1,19 @@
+# FORMTRIG native short-screen manifest for the validated PDF016 B4 BindingSpec.
+target_id: PDF016
+category: lifecycle
+seed_dir: /home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF016/seeds
+out_dir: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_formtrig_b4_validated_600s
+binding_spec: /home/cwh/FORMTRIG/artifacts/binding_specs/PDF016.native_b4_parser_gen_distance_candidate.yml
+site_map: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv
+duration: 600
+afl_args: -t 5000
+seed_preflight: require
+seed_preflight_max: 32
+seed_preflight_timeout: 5
+target_site_ids: 3624284787
+target_cwd: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl
+target_cmd: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl/pdf_fuzzer @@
+
+duration: 600
+
+out_dir: /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_formtrig/001_PDF016/out
