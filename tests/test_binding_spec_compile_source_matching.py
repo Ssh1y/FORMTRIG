@@ -26,6 +26,24 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
         )
         return tool
 
+    def build_lift_audit_tool(self, root: Path) -> Path:
+        tool = root / "formtrig_lift_spec_audit"
+        subprocess.run(
+            [
+                "cc",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-I",
+                str(REPO_ROOT / "formtrig" / "include"),
+                str(REPO_ROOT / "formtrig" / "tools" / "formtrig_lift_spec_audit.c"),
+                "-o",
+                str(tool),
+            ],
+            check=True,
+        )
+        return tool
+
     def write_spec(self, path: Path, *, line: int) -> None:
         path.write_text(
             "\n".join(
@@ -167,6 +185,71 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
 
             self.assertEqual(proc.returncode, 0, proc.stderr)
             self.assertIn("role_component 7 1856372469", proc.stdout)
+
+    def test_gpac3403_lifecycle_spec_compiles_without_role_collapse(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            compile_tool = self.build_tool(root)
+            audit_tool = self.build_lift_audit_tool(root)
+            site_map = root / "gpac_sites.tsv"
+            lift_spec = root / "gpac.lift"
+            site_map.write_text(
+                "\n".join(
+                    [
+                        "101\tbinary\tMedia_GetSample\t1\tcall\tmedia.c\t633\t24",
+                        "102\tbranch\tcat_isomedia_file\t1\tbr\tfileimport.c\t3138\t12",
+                        "103\tbranch\tgf_isom_sample_del\t1\tbr\tisom_read.c\t112\t36",
+                        "104\tbranch\tgf_bs_new_cbk_buffer\t1\tbr\tbitstream.c\t296\t6",
+                        "105\tbranch\tmdia_box_del\t1\tbr\tbox_code_base.c\t3310\t25",
+                        "106\tcmp\tgf_bs_del\t1\ticmp\tbitstream.c\t372\t6",
+                        "107\tbinary\tgf_bs_new_cbk_buffer\t2\tassign\tbitstream.c\t304\t19",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            compile_proc = subprocess.run(
+                [
+                    str(compile_tool),
+                    "--site-map",
+                    str(site_map),
+                    "--out",
+                    str(lift_spec),
+                    str(
+                        REPO_ROOT
+                        / "artifacts"
+                        / "binding_specs"
+                        / "GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml"
+                    ),
+                ],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(compile_proc.returncode, 0, compile_proc.stderr)
+
+            lift_text = lift_spec.read_text(encoding="utf-8")
+            self.assertIn("role_component 11 107 same_object", lift_text)
+            self.assertIn(
+                "same_object_relation 1 lifecycle_event use "
+                "GF_ISOSample.data==GF_BitStream.original",
+                lift_text,
+            )
+
+            audit_proc = subprocess.run(
+                [str(audit_tool), "--category", "lifecycle", str(lift_spec)],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(audit_proc.returncode, 0, audit_proc.stderr)
+            self.assertIn(
+                "1,compound-sequence-lifecycle,B4,true,0x000001e9,9,0,0,ok",
+                audit_proc.stdout,
+            )
 
 
 if __name__ == "__main__":

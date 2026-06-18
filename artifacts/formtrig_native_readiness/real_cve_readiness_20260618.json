@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-18T18:11:07+00:00",
+  "generated_at_utc": "2026-06-18T18:48:31+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -11,11 +11,11 @@
     {
       "atom_ready": true,
       "binary_dt_gap": true,
-      "binding_spec_present": false,
+      "binding_spec_present": true,
       "binding_spec_ready": false,
       "binding_spec_validated": false,
       "binding_validation_status": "",
-      "blockers": "no executable BindingSpec candidate",
+      "blockers": "BindingSpec candidate is not native-site-map validated",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
       "comparison_count": 0,
@@ -28,10 +28,12 @@
       "harness_admissibility_status": "",
       "harness_source_ready": false,
       "native_dt_values": "1",
-      "next_action": "draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal",
+      "next_action": "build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility",
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
-        "binding_specs": [],
+        "binding_specs": [
+          "GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml"
+        ],
         "binding_validation_records": [],
         "comparison_records": [],
         "harness_admissibility_records": [],
@@ -45,10 +47,10 @@
         "validation_log": "artifacts/cve_validation_logs/GPAC_3403.validation.log"
       },
       "poc_ready": true,
-      "priority": 20,
+      "priority": 15,
       "project": "gpac",
       "rank": 1,
-      "readiness": "ready_for_binding_spec",
+      "readiness": "needs_binding_validation",
       "rnt_ready": true,
       "seed_count": 1,
       "source_locations": "src/utils/bitstream.c:372#gf_bs_del",

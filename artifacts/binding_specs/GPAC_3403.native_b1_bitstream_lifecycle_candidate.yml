@@ -1,0 +1,177 @@
+tc_id: 'GPAC_3403'
+target:
+  project: 'gpac'
+  binary: 'MP4Box'
+  command: 'MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null'
+tc:
+  category: 'compound-sequence-lifecycle'
+  expression: 'MP4Box concatenation reaches cleanup where a dynamic GF_BitStream frees the same sample buffer already released by gf_isom_sample_del'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'GF_BitStream->original aliases GF_ISOSample->data after the sample buffer has been released'
+    kind: 'compound-sequence-lifecycle'
+    root: 'GF_ISOSample->data / GF_BitStream->original'
+bindings:
+  - id: 'gpac_sample_buffer_alloc_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'Media_GetSample allocates the sample data buffer that later becomes the object in the double free'
+    observe_at:
+      kind: 'binary'
+      function: 'Media_GetSample'
+      file: 'media.c'
+      line: 633
+      column: 24
+    component: 'producer_use'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'gpac_sample_fetch_lifecycle_event'
+    atom: 1
+    role: 'lifecycle_event'
+    expr: 'cat_isomedia_file obtains the source sample with gf_isom_get_sample before append/cat processing'
+    observe_at:
+      kind: 'branch'
+      function: 'cat_isomedia_file'
+      file: 'fileimport.c'
+      line: 3138
+      column: 12
+    component: 'lifecycle_prefix'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'gpac_sample_release_lifecycle_event'
+    atom: 1
+    role: 'lifecycle_event'
+    expr: 'gf_isom_sample_del releases GF_ISOSample->data while later cleanup can still own an alias'
+    observe_at:
+      kind: 'branch'
+      function: 'gf_isom_sample_del'
+      file: 'isom_read.c'
+      line: 112
+      column: 36
+    component: 'lifecycle_prefix'
+    priority: 25
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+  - id: 'gpac_bitstream_external_buffer_alias_event'
+    atom: 1
+    role: 'lifecycle_event'
+    expr: 'gf_bs_new_cbk_buffer stores an externally supplied buffer in GF_BitStream->original while using WRITE_DYN ownership semantics'
+    observe_at:
+      kind: 'branch'
+      function: 'gf_bs_new_cbk_buffer'
+      file: 'bitstream.c'
+      line: 296
+      column: 6
+    component: 'lifecycle_prefix'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+  - id: 'gpac_mdia_cleanup_use'
+    atom: 1
+    role: 'use'
+    expr: 'mdia_box_del deletes nalu_out_bs during movie cleanup, routing the aliased buffer to gf_bs_del'
+    observe_at:
+      kind: 'branch'
+      function: 'mdia_box_del'
+      file: 'box_code_base.c'
+      line: 3310
+      column: 25
+    component: 'producer_use'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+  - id: 'gpac_bitstream_original_free_root'
+    atom: 1
+    role: 'root_observe'
+    expr: 'gf_bs_del frees bs->original when bsmode is GF_BITSTREAM_WRITE_DYN'
+    observe_at:
+      kind: 'cmp'
+      function: 'gf_bs_del'
+      file: 'bitstream.c'
+      line: 372
+      column: 6
+    component: 'root_state'
+    priority: 50
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'gpac_sample_bitstream_same_object'
+    atom: 1
+    role: 'same_object'
+    expr: 'gf_bs_new_cbk_buffer assigns the externally supplied sample buffer into GF_BitStream->original, establishing the alias that later reaches cleanup'
+    observe_at:
+      kind: 'binary'
+      function: 'gf_bs_new_cbk_buffer'
+      file: 'bitstream.c'
+      line: 304
+      column: 19
+    component: 'object_identity'
+    priority: 60
+    direction: 'higher'
+    value_mode: 'a'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+    relation_from: 'lifecycle_event'
+    relation_to: 'use'
+    object_expr: 'GF_ISOSample.data==GF_BitStream.original'
+  - id: 'gpac_mp4_moov_structure_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'MP4 moov/trak/mdia box structure controls track/sample cleanup and dynamic bitstream ownership paths'
+    observe_at:
+      kind: 'branch'
+      function: 'cat_isomedia_file'
+      file: 'fileimport.c'
+      line: 3138
+      column: 12
+    component: 'input_influence'
+    priority: 70
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+    range_start: 28
+    range_len: 580
+    mutation_hook: 'scripts/formtrig_hooks/mp4_box_structure_hook.py'
+  - id: 'gpac_mp4_mdat_payload_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'MP4 mdat sample payload bytes influence HEVC sample parsing and the sample buffer lifecycle'
+    observe_at:
+      kind: 'binary'
+      function: 'Media_GetSample'
+      file: 'media.c'
+      line: 633
+      column: 24
+    component: 'input_influence'
+    priority: 80
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+    range_start: 608
+    range_len: 1052
+    mutation_hook: 'scripts/formtrig_hooks/mp4_box_structure_hook.py'
