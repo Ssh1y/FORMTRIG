@@ -148,10 +148,38 @@ def comparison_summary(comparison_dir: Path) -> dict[str, Any]:
     }
 
 
+def signal_path_summary(run_root: Path) -> dict[str, Any]:
+    path = run_root / "formtrig_signal_path.json"
+    if not path.exists():
+        return {}
+    payload = read_json(path)
+    capability = (
+        payload.get("guidance_capability")
+        if isinstance(payload.get("guidance_capability"), dict)
+        else {}
+    )
+    return {
+        "actionable_typed_nontrigger_runs": capability.get(
+            "actionable_typed_nontrigger_runs"
+        ),
+        "interpretation": capability.get("interpretation"),
+        "mutable_typed_find_runs": capability.get("mutable_typed_find_runs"),
+        "run_count": payload.get("run_count"),
+        "sortable_lifted_df_runs": capability.get("sortable_lifted_df_runs"),
+        "stable_frontier_runs": capability.get("stable_frontier_runs"),
+        "strict_saved_pretrigger_runs": capability.get("strict_saved_pretrigger_runs"),
+        "total_typed_execs": capability.get("total_typed_execs"),
+        "total_typed_finds": capability.get("total_typed_finds"),
+        "typed_attribution": payload.get("typed_attribution"),
+        "verdict": payload.get("verdict"),
+    }
+
+
 def write_index(
     path: Path,
     *,
     summary: dict[str, Any],
+    signal_summary: dict[str, Any],
     target_id: str,
     duration: int,
     reps: int,
@@ -184,6 +212,24 @@ def write_index(
         lines.extend(f"- {benefit}" for benefit in benefits)
     else:
         lines.append("- none recorded")
+    lines.extend(["", "## FORMTRIG Guidance Capability", ""])
+    if signal_summary:
+        run_count = signal_summary.get("run_count")
+        lines.extend(
+            [
+                f"- signal-path verdict: `{signal_summary.get('verdict') or 'unknown'}`",
+                f"- typed attribution: `{signal_summary.get('typed_attribution') or 'unknown'}`",
+                f"- stable frontier runs: `{signal_summary.get('stable_frontier_runs')}/{run_count}`",
+                f"- sortable lifted `D_F` runs: `{signal_summary.get('sortable_lifted_df_runs')}/{run_count}`",
+                f"- actionable typed non-`_T` runs: `{signal_summary.get('actionable_typed_nontrigger_runs')}/{run_count}`",
+                f"- mutable typed-find runs: `{signal_summary.get('mutable_typed_find_runs')}/{run_count}`",
+                f"- total typed finds: `{signal_summary.get('total_typed_finds')}` / typed execs `{signal_summary.get('total_typed_execs')}`",
+                f"- strict saved pre-trigger runs: `{signal_summary.get('strict_saved_pretrigger_runs')}/{run_count}`",
+                f"- interpretation: {signal_summary.get('interpretation') or 'see formtrig_signal_path/'}",
+            ]
+        )
+    else:
+        lines.append("- unavailable; see missing optional files below")
     lines.extend(["", "## Claim Boundary", ""])
     blocked = summary.get("blocked_claims") or []
     if blocked:
@@ -249,6 +295,7 @@ def main() -> int:
     write_index(
         evidence_dir / "EVIDENCE.md",
         summary=comparison_summary(args.comparison_dir),
+        signal_summary=signal_path_summary(args.run_root),
         target_id=args.target_id,
         duration=args.duration,
         reps=args.reps,

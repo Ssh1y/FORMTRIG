@@ -23,7 +23,24 @@ class PackageMagmaMatchedEvidenceTest(unittest.TestCase):
             (run_root / "live_status.json").write_text('{"target_id":"PDF003"}\n', encoding="utf-8")
             (run_root / "live_status.md").write_text("# live\n", encoding="utf-8")
             (run_root / "formtrig_signal_path.json").write_text(
-                '{"verdict":"terminal_after_calibrated_frontier_only"}\n',
+                json.dumps(
+                    {
+                        "guidance_capability": {
+                            "actionable_typed_nontrigger_runs": 1,
+                            "interpretation": "stable/sortable/actionable/mutable",
+                            "mutable_typed_find_runs": 1,
+                            "sortable_lifted_df_runs": 1,
+                            "stable_frontier_runs": 1,
+                            "strict_saved_pretrigger_runs": 0,
+                            "total_typed_execs": 10,
+                            "total_typed_finds": 3,
+                        },
+                        "run_count": 1,
+                        "typed_attribution": "terminal_after_typed_lifted_nontrigger_stage",
+                        "verdict": "terminal_after_calibrated_frontier_only",
+                    }
+                )
+                + "\n",
                 encoding="utf-8",
             )
             (run_root / "formtrig_signal_path.md").write_text("# path\n", encoding="utf-8")
@@ -139,6 +156,11 @@ class PackageMagmaMatchedEvidenceTest(unittest.TestCase):
             self.assertIn("live_status/", index)
             self.assertIn("formtrig_signal_path/", index)
             self.assertIn("schedule_audit/", index)
+            self.assertIn("FORMTRIG Guidance Capability", index)
+            self.assertIn("stable frontier runs: `1/1`", index)
+            self.assertIn("sortable lifted `D_F` runs: `1/1`", index)
+            self.assertIn("total typed finds: `3` / typed execs `10`", index)
+            self.assertIn("strict saved pre-trigger runs: `0/1`", index)
 
 
 if __name__ == "__main__":
