@@ -135,7 +135,7 @@ def monitor_record(monitor_dir: Path, target_id: str) -> dict[str, Any] | None:
     }
 
 
-def run_row(run_dir: Path, target_id: str) -> dict[str, Any] | None:
+def run_row(run_dir: Path, target_id: str, source_root: Path | None = None) -> dict[str, Any] | None:
     match = BASELINE_RE.match(run_dir.name)
     if not match:
         return None
@@ -172,38 +172,59 @@ def run_row(run_dir: Path, target_id: str) -> dict[str, Any] | None:
         "saved_crashes": numeric(stats.get("saved_crashes")),
         "saved_hangs": numeric(stats.get("saved_hangs")),
         "success": triggered > 0,
+        "source_root": str(source_root) if source_root else None,
         "target_id": target_id,
         "trigger_time_kind": "magma_monitor_upper_bound" if triggered > 0 else None,
         "trigger_time_s": trigger_time if triggered > 0 else None,
     }
 
 
-def summarize(run_root: Path, target_id: str) -> dict[str, Any]:
+def rows_for_root(run_root: Path, target_id: str) -> list[dict[str, Any]]:
     root = run_root / "magma" if (run_root / "magma").is_dir() else run_root
-    rows = [
+    return [
         row
         for run_dir in sorted(root.iterdir() if root.is_dir() else [])
         if run_dir.is_dir()
-        for row in [run_row(run_dir, target_id)]
+        for row in [run_row(run_dir, target_id, run_root)]
         if row is not None
     ]
+
+
+def summarize(run_roots: list[Path], target_id: str) -> dict[str, Any]:
+    rows = [row for run_root in run_roots for row in rows_for_root(run_root, target_id)]
     rows.sort(
         key=lambda row: (
             str(row.get("target_id")),
             str(row.get("baseline")),
             int(row.get("budget") or 0),
             int(row.get("rep") or 0),
+            str(row.get("source_root") or ""),
         )
     )
+    seen: dict[tuple[str, int, int], int] = {}
+    for row in rows:
+        key = (
+            str(row.get("baseline")),
+            int(row.get("budget") or 0),
+            int(row.get("rep") or 0),
+        )
+        seen[key] = seen.get(key, 0) + 1
+    duplicate_runs = [
+        {"baseline": baseline, "budget": budget, "rep": rep, "count": count}
+        for (baseline, budget, rep), count in sorted(seen.items())
+        if count > 1
+    ]
     return {
         "analysis_time_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "claim_boundary": (
             "live_snapshot_only; use the normal baseline summary after all runs finish "
             "for final comparison claims"
         ),
+        "duplicate_runs": duplicate_runs,
         "groups": group_rows(rows),
         "records": rows,
-        "run_root": str(run_root),
+        "run_root": str(run_roots[0]) if run_roots else "",
+        "run_roots": [str(run_root) for run_root in run_roots],
         "target_id": target_id,
     }
 
@@ -211,7 +232,7 @@ def summarize(run_root: Path, target_id: str) -> dict[str, Any]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target-id", required=True)
-    parser.add_argument("--run-root", required=True, type=Path)
+    parser.add_argument("--run-root", required=True, action="append", type=Path)
     parser.add_argument("--out-json", required=True)
     parser.add_argument("--out-tsv", required=True)
     return parser.parse_args()

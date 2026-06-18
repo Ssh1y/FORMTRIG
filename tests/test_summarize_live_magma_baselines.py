@@ -96,6 +96,52 @@ class SummarizeLiveMagmaBaselinesTest(unittest.TestCase):
             0.03,
         )
 
+    def test_live_summary_accepts_multiple_roots(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            baseline_root = root / "baselines"
+            shard_root = root / "rep3_shard"
+            run1 = baseline_root / "magma" / "aflplusplus_vanilla_60s_rep1"
+            run3 = shard_root / "magma" / "aflplusplus_vanilla_60s_rep3"
+            for run_dir, reached in ((run1, 10), (run3, 30)):
+                default_dir = run_dir / "findings" / "default"
+                default_dir.mkdir(parents=True)
+                (default_dir / "fuzzer_stats").write_text(
+                    "run_time : 60\nexecs_done : 1234\nexecs_per_sec : 20\n",
+                    encoding="utf-8",
+                )
+                self.write_monitor(run_dir / "monitor" / "60", "TGT", reached, 0)
+
+            summary_json = root / "summary.json"
+            summary_tsv = root / "summary.tsv"
+            subprocess.run(
+                [
+                    "python3",
+                    str(REPO_ROOT / "tools" / "summarize_live_magma_baselines.py"),
+                    "--target-id",
+                    "TGT",
+                    "--run-root",
+                    str(baseline_root),
+                    "--run-root",
+                    str(shard_root),
+                    "--out-json",
+                    str(summary_json),
+                    "--out-tsv",
+                    str(summary_tsv),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            payload = json.loads(summary_json.read_text(encoding="utf-8"))
+
+        self.assertEqual(payload["run_roots"], [str(baseline_root), str(shard_root)])
+        self.assertEqual(len(payload["records"]), 2)
+        self.assertEqual([record["rep"] for record in payload["records"]], [1, 3])
+        self.assertEqual(payload["records"][0]["source_root"], str(baseline_root))
+        self.assertEqual(payload["records"][1]["source_root"], str(shard_root))
+        self.assertEqual(payload["duplicate_runs"], [])
+
 
 if __name__ == "__main__":
     unittest.main()
