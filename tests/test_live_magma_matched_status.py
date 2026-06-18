@@ -113,6 +113,13 @@ class LiveMagmaMatchedStatusTest(unittest.TestCase):
         self.assertEqual(payload["baselines"]["run_count"], 1)
         self.assertEqual(payload["baselines"]["groups"][0]["total_reached"], 123)
         self.assertEqual(payload["baselines"]["groups"][0]["total_triggered"], 0)
+        self.assertEqual(payload["baselines"]["groups"][0]["zero_trigger_runs"], 1)
+        self.assertAlmostEqual(
+            payload["baselines"]["groups"][0][
+                "zero_trigger_rule_of_three_95_upper_bound_per_reach"
+            ],
+            3.0 / 123.0,
+        )
         self.assertEqual(payload["schedule"]["verdict"], "multi_batch_baseline_schedule")
         self.assertEqual(payload["schedule"]["baseline_run_count"], 3)
         self.assertEqual(payload["schedule"]["observed_baseline_runs"], 1)
@@ -146,6 +153,7 @@ class LiveMagmaMatchedStatusTest(unittest.TestCase):
         self.assertIn("live_snapshot_only", text)
         self.assertIn("## Schedule", text)
         self.assertIn("missing_schedule_audit", text)
+        self.assertIn("zero-T 95% ub", text)
 
 
 if __name__ == "__main__":

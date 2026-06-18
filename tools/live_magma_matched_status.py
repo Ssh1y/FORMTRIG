@@ -246,6 +246,17 @@ def group_baselines(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "empirical_trigger_rate_per_reach": (
                     total_triggered / total_reached if total_reached > 0 else None
                 ),
+                "zero_trigger_runs": sum(
+                    1
+                    for row in selected
+                    if int_value(row.get("reached")) > 0
+                    and int_value(row.get("triggered")) == 0
+                ),
+                "zero_trigger_rule_of_three_95_upper_bound_per_reach": (
+                    3.0 / total_reached
+                    if total_reached > 0 and total_triggered == 0
+                    else None
+                ),
             }
         )
     return groups
@@ -396,13 +407,13 @@ def to_markdown(payload: dict[str, Any]) -> str:
             "",
             "## Baselines",
             "",
-            "| baseline | runs | triggered runs | total R | total T | R without T | empirical T/R |",
-            "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+            "| baseline | runs | triggered runs | total R | total T | R without T | empirical T/R | zero-T 95% ub |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
         ]
     )
     for group in payload["baselines"]["groups"]:
         lines.append(
-            "| {baseline} | {runs} | {triggered_runs} | {total_r} | {total_t} | {without_t} | {rate} |".format(
+            "| {baseline} | {runs} | {triggered_runs} | {total_r} | {total_t} | {without_t} | {rate} | {upper_bound} |".format(
                 baseline=group["baseline"],
                 runs=group["runs"],
                 triggered_runs=group["triggered_runs"],
@@ -410,8 +421,21 @@ def to_markdown(payload: dict[str, Any]) -> str:
                 total_t=group["total_triggered"],
                 without_t=group["total_reached_without_trigger"],
                 rate=rate(group.get("empirical_trigger_rate_per_reach")),
+                upper_bound=rate(
+                    group.get("zero_trigger_rule_of_three_95_upper_bound_per_reach")
+                ),
             )
         )
+    lines.extend(
+        [
+            "",
+            (
+                "The zero-T upper bound is a descriptive rule-of-three proxy for "
+                "matched live runs with reached executions but no trigger events; "
+                "it is not a proof that baseline mutations are independent."
+            ),
+        ]
+    )
     lines.extend(["", "## Baseline Runs", ""])
     lines.extend(
         [
