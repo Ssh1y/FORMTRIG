@@ -1002,6 +1002,42 @@ insufficient_binding
 
 而不是让 heuristic 或 terminal-only trigger 被解释成 pre-trigger lift。
 
+PHP003 当前也不能强行声称。2026-06-18 B3/B4 repair 诊断已落盘：
+
+```text
+artifacts/formtrig_native_readiness/php003_repair_b3_b4_diagnosis_20260618.md
+artifacts/formtrig_native_readiness/php003_repair_b3_b4_diagnosis_20260618.json
+```
+
+关键结果：
+
+```text
+B3 local thumbnail candidates: 3/3 not_ready, constant_lift_signal
+B4 thumbnail-length hook: enabled
+B4 typed_execs / typed_finds: 120 / 7
+B4 spec_lifted_events / role_signal_events: 1210 / 1210
+B4 d_f_spec_lifted_min/max: 0 / 0
+B4 accepted_non_trigger / saved_non_trigger / terminal _T: 0 / 0 / 0
+B4 queue files with IFD1 JPEGInterchangeFormatLength < 4: 6
+```
+
+Interpretation:
+
+```text
+Current PHP003 lift degree = observation lift only, effective guidance lift ~= 0.
+```
+
+The B4 queue evidence proves the repair hook can satisfy the
+`Thumbnail.size < 4` half. The remaining blocker is harness/API lifecycle:
+`fuzzer-exif.c` calls `exif_read_data` with one argument, so `read_thumbnail`
+defaults to false and `ImageInfo->Thumbnail.data` is not populated. PHP003's
+terminal condition is `MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)`.
+
+Do not spend matched endpoint baseline budget on PHP003 under the current
+`php-fuzz-exif` runner. Add/select an EXIF harness that calls `exif_thumbnail`
+or `exif_read_data(..., read_thumbnail=true)`, rebuild native FORMTRIG, then
+rerun BindingSpec validation.
+
 ### 5. SQL013 不能硬做
 
 除非能绑定 planner internal root 或可信 lifecycle/same-object events。LLM 可以离线生成候选 BindingSpec，但必须经过 deterministic static/dynamic gate。

@@ -1303,6 +1303,23 @@ PHP003:
   重新生成的 20260618 benefit-first worklist 已把 PHP003 保持在
   `repair_guidance_to_terminal`，并把 comparison + validation summary 一起作为
   evidence；不能再把该 TC 当作 ready matched-short target 调度。
+  2026-06-18 B3/B4 repair 继续收敛了负例原因：
+    artifacts/formtrig_native_readiness/php003_repair_b3_b4_diagnosis_20260618.md
+    B3 local thumbnail site candidates = 3/3 not_ready / constant_lift_signal
+    B4 thumbnail-length hook = enabled, typed_execs 120, typed_finds 7
+    B4 spec_lifted_events = 1210, role_signal_events = 1210
+    B4 d_f_spec_lifted_min/max = 0/0, constant = true
+    B4 accepted_non_trigger = 0, saved_non_trigger = 0, terminal _T = 0
+    B4 queue files with IFD1 JPEGInterchangeFormatLength < 4 = 6
+  这说明当前 PHP003 的 lift 程度只是 observation lift，不是有效 R2T guidance。
+  Hook 已经能把 size 半边打到 `<4`，但 current php-fuzz-exif runner 用一个参数
+  调 `exif_read_data`，`read_thumbnail=false`，thumbnail extraction/build 会跳过，
+  因而 `ImageInfo->Thumbnail.data` 不被填充。PHP003 的 canary 是
+  `MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)`，所以 data 半边不满足时
+  再跑更久也不会自然闭合 `_T`。下一步必须换/补 harness 到 `exif_thumbnail` 或
+  `exif_read_data(..., read_thumbnail=true)`，重建 native FORMTRIG 后再做
+  BindingSpec validation；当前 runner 下 PHP003 只能作为 harness-lifecycle
+  negative/control，不能作为主正例。
 
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance

@@ -1,0 +1,140 @@
+{
+  "target_id": "PHP003",
+  "generated_at_utc": "2026-06-18T14:27:16Z",
+  "scope": "B3/B4 PHP003 guidance-to-terminal repair diagnosis",
+  "verdict": "harness_lifecycle_blocker_after_observation_lift",
+  "claim_boundary": {
+    "can_claim": [
+      "FORMTRIG currently observes lifted PHP003-side state, but the active B3/B4 repair candidates do not provide effective R-to-T guidance.",
+      "The B4 target-specific hook can create queued inputs with IFD1 JPEGInterchangeFormatLength < 4.",
+      "The current php-fuzz-exif runner leaves the data half of MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4) unsatisfied under exif_read_data's default read_thumbnail=false path."
+    ],
+    "cannot_claim": [
+      "PHP003 is not yet a positive FORMTRIG endpoint result.",
+      "The current B3/B4 PHP003 repair does not demonstrate acceleration to terminal _T.",
+      "The PHP003 B4 hook is a target-specific repair probe, not generic algorithm evidence."
+    ]
+  },
+  "b2_validated_short_600s_r2_context": {
+    "artifact": "artifacts/formtrig_native_readiness/signal_path/php003_validated_short_600s_1rep_r2/formtrig_signal_path.json",
+    "verdict": "strict_pretrigger_guidance_observed",
+    "saved_non_trigger_frontier_events": 6,
+    "saved_trigger_events": 0,
+    "terminal_runs": 0,
+    "latest_saved_queue_id": 466,
+    "latest_saved_exec": 119606,
+    "blocker": "saved_frontier_blocked_on_producer",
+    "constant_zero_producer_roles": [
+      "desired_producer"
+    ],
+    "typed_find_rate": 0.0012476606363069245,
+    "decision": "downgraded to needs_terminal_repair by validation gate"
+  },
+  "b3_local_thumbnail_site_sweep_20s": {
+    "artifact": "artifacts/formtrig_native_readiness/raw/php003_binding_repair_b3_sweep_20s_20260618/summary.tsv",
+    "candidates": 3,
+    "statuses": [
+      "not_ready"
+    ],
+    "diagnoses": [
+      "constant_lift_signal"
+    ],
+    "accepted_non_trigger_progress_events": 0,
+    "saved_non_trigger_progress_events": 0,
+    "saved_triggered_progress_events": 0,
+    "terminal_triggered_execs": 0,
+    "decision": "moving the BindingSpec into exif_scan_thumbnail local sites alone did not produce useful lift variation"
+  },
+  "b4_thumbnail_length_hook_20s": {
+    "artifact": "artifacts/formtrig_native_readiness/raw/php003_binding_repair_b4_hook_20s_20260618/summary.tsv",
+    "binding_spec": "artifacts/binding_specs/php003_repair_candidates/PHP003.native_b4_thumbnail_length_hook_candidate.yml",
+    "mutation_hook": {
+      "enabled": true,
+      "source": "binding_spec",
+      "path": "scripts/formtrig_hooks/php_exif_thumbnail_length_hook.py",
+      "sha256": "50936e199cb44b1700f83a7428629151d11709081161327e5599b11025579d71"
+    },
+    "summary": {
+      "status": "not_ready",
+      "diagnosis": "constant_lift_signal",
+      "execs_done": 4805,
+      "formtrig_reached_execs": 1565,
+      "corpus_count": 157,
+      "progress_events": 1210,
+      "spec_lifted_events": 1210,
+      "role_signal_events": 1210,
+      "actionable_component_events": 1210,
+      "formtrig_typed_execs": 120,
+      "formtrig_typed_finds": 7,
+      "d_f_spec_lifted_min": 0,
+      "d_f_spec_lifted_max": 0,
+      "d_f_spec_lifted_constant": true,
+      "accepted_progress_events": 0,
+      "accepted_non_trigger_progress_events": 0,
+      "saved_non_trigger_progress_events": 0,
+      "saved_triggered_progress_events": 0,
+      "terminal_triggered_execs": 0,
+      "formtrig_queued_progress": 0
+    },
+    "queue_probe": {
+      "queue_files_with_ifd1_thumbnail_length_lt_4": 6,
+      "examples": [
+        {
+          "queue_file": "id:000005,src:000002,time:31,execs:41,op:ftgtype,pos:0,+cov",
+          "thumbnail_length": 1,
+          "thumbnail_offset": 134,
+          "absolute_thumbnail_offset": 214,
+          "thumbnail_prefix_hex": "ffd8ffe0"
+        },
+        {
+          "queue_file": "id:000009,src:000002,time:1664,execs:118,op:ftgtype,pos:85,+cov",
+          "thumbnail_length": 0,
+          "thumbnail_offset": 134,
+          "absolute_thumbnail_offset": 214,
+          "thumbnail_prefix_hex": "ffd8ffe0"
+        },
+        {
+          "queue_file": "id:000011,src:000002,time:3695,execs:190,op:ftgtype,pos:170",
+          "thumbnail_length": 2,
+          "thumbnail_offset": 134,
+          "absolute_thumbnail_offset": 214,
+          "thumbnail_prefix_hex": "ffd8ffe0"
+        }
+      ],
+      "interpretation": "the size half of the PHP003 predicate is reachable by the repair hook, yet terminal _T remains zero"
+    }
+  },
+  "mutated_seed_probe_5s": {
+    "artifact": "artifacts/formtrig_native_readiness/raw/php003_hook_mutated_seed_probe_5s_20260618/summary.tsv",
+    "status": "not_ready",
+    "diagnosis": "constant_lift_signal",
+    "execs_done": 448,
+    "formtrig_reached_execs": 172,
+    "formtrig_typed_execs": 112,
+    "formtrig_typed_finds": 6,
+    "d_f_spec_lifted_min": 0,
+    "d_f_spec_lifted_max": 0,
+    "d_f_spec_lifted_constant": true,
+    "terminal_triggered_execs": 0
+  },
+  "harness_lifecycle_evidence": {
+    "magma_patch": "experiments/magma_workspace/magma/targets/php/patches/bugs/PHP003.patch",
+    "canary_expression": "MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)",
+    "existing_runner_audit": "artifacts/rnt_collection_logs/php_exif_thumbnail_runner_mismatch.log",
+    "runner_summary": "fuzzer-exif.c creates a memory stream and calls fuzzer_call_php_func_zval(\"exif_read_data\", 1, &stream_zv)",
+    "php_api_summary": "exif_read_data defaults read_thumbnail=false; thumbnail extraction/build returns early when ImageInfo->read_thumbnail is false",
+    "source_observations": [
+      "exif_read_data parses read_thumbnail as the fourth optional argument and defaults it to false",
+      "exif_thumbnail calls exif_read_from_file/exif_read_from_stream with read_thumbnail=1",
+      "exif_thumbnail_extract returns before setting Thumbnail.data when read_thumbnail is false",
+      "exif_scan_thumbnail's PHP003 canary requires both Thumbnail.data and Thumbnail.size < 4"
+    ],
+    "interpretation": "under the current exif runner, mutating the IFD1 length can satisfy size < 4, but the harness path does not load thumbnail bytes into Thumbnail.data"
+  },
+  "next_actions": [
+    "Do not spend endpoint baseline budget on PHP003 under the current php-fuzz-exif runner.",
+    "Add or select an EXIF harness path that calls exif_thumbnail or exif_read_data(..., read_thumbnail=true), then rebuild native FORMTRIG and rerun BindingSpec validation.",
+    "If the current runner must remain fixed, classify PHP003 as a harness-lifecycle negative/control rather than a positive FORMTRIG result.",
+    "Keep B4 hook/spec only as a diagnosis probe unless the harness is repaired and the same signal becomes non-constant with accepted non-trigger progress."
+  ]
+}

@@ -1,0 +1,95 @@
+tc_id: 'PHP003'
+target:
+  project: 'php'
+  binary: 'exif'
+  command: '@@'
+tc:
+  category: 'binary-state-null'
+  expression: 'MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'data != NULL && ImageInfo->Thumbnail.size < 4'
+    kind: 'binary-state-null'
+    root: 'ImageInfo->Thumbnail.data and ImageInfo->Thumbnail.size'
+bindings:
+  - id: 'php003_b3_thumbnail_entry_guard_b'
+    atom: 1
+    role: 'guard'
+    expr: 'thumbnail scan entered the local data/size guard'
+    observe_at:
+      kind: 'cmp'
+      site_id: 2181302257
+      function: 'exif_scan_thumbnail'
+      file: 'ext/exif/exif.c'
+      line: 3986
+      inst_no: 54
+      opcode: 'icmp'
+      column: 2
+    component: 'guard_progress'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.65
+    observe_window: 'any'
+  - id: 'php003_b3_thumbnail_size_root_b'
+    atom: 1
+    role: 'root_observe'
+    expr: 'local thumbnail data/size guard distance'
+    observe_at:
+      kind: 'cmp'
+      site_id: 1812341734
+      function: 'exif_scan_thumbnail'
+      file: 'ext/exif/exif.c'
+      line: 3986
+      inst_no: 60
+      opcode: 'icmp'
+      column: 2
+    component: 'root_state'
+    priority: 20
+    direction: 'lower'
+    value_mode: 'distance'
+    value: 0.0
+    confidence: 0.70
+    observe_window: 'any'
+  - id: 'php003_b3_thumbnail_memcmp_producer_b'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'thumbnail bytes reach the local JPEG magic memcmp'
+    observe_at:
+      kind: 'cmp'
+      site_id: 4262168298
+      function: 'exif_scan_thumbnail'
+      file: 'ext/exif/exif.c'
+      line: 3988
+      inst_no: 86
+      opcode: 'icmp'
+      column: 7
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.60
+    observe_window: 'any'
+  - id: 'php003_b3_thumbnail_magic_use_b'
+    atom: 1
+    role: 'use'
+    expr: 'local thumbnail parser consumes JPEG marker bytes after the PHP003 guard'
+    observe_at:
+      kind: 'cmp'
+      site_id: 4128094441
+      function: 'exif_scan_thumbnail'
+      file: 'ext/exif/exif.c'
+      line: 3993
+      inst_no: 98
+      opcode: 'icmp'
+      column: 8
+    component: 'producer_use'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.60
+    observe_window: 'any'
