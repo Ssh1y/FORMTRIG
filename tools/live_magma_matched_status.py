@@ -251,6 +251,44 @@ def group_baselines(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return groups
 
 
+def read_json_dict(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def schedule_status(
+    run_root: Path,
+    metadata: dict[str, Any],
+    baselines: list[dict[str, Any]],
+) -> dict[str, Any]:
+    audit = read_json_dict(run_root / "schedule_audit.json")
+    expected = int_value(audit.get("baseline_run_count") or metadata.get("baseline_run_count"))
+    observed = len(baselines)
+    missing = max(0, expected - observed) if expected > 0 else None
+    return {
+        "audit_present": bool(audit),
+        "verdict": audit.get("verdict") or "missing_schedule_audit",
+        "baseline_run_count": expected,
+        "observed_baseline_runs": observed,
+        "missing_baseline_runs": missing,
+        "baseline_jobs": int_value(audit.get("baseline_jobs") or metadata.get("baseline_jobs")),
+        "baseline_batches": int_value(
+            audit.get("baseline_batches") or metadata.get("baseline_batches")
+        ),
+        "formtrig_jobs": int_value(audit.get("formtrig_jobs") or metadata.get("formtrig_jobs")),
+        "recommended_baseline_jobs_for_one_batch": (
+            audit.get("recommended_baseline_jobs_for_one_batch")
+            or metadata.get("baseline_run_count")
+        ),
+        "ideal_baseline_wall_s": audit.get("ideal_baseline_wall_s"),
+    }
+
+
 def summarize(run_root: Path, target_id: str) -> dict[str, Any]:
     formtrig = formtrig_runs(run_root, target_id)
     baselines = baseline_runs(run_root, target_id)
@@ -286,6 +324,7 @@ def summarize(run_root: Path, target_id: str) -> dict[str, Any]:
             "run_count": len(baselines),
             "triggered_runs": sum(1 for row in baselines if int_value(row.get("triggered")) > 0),
         },
+        "schedule": schedule_status(run_root, metadata, baselines),
         "status_boundary": (
             "live_snapshot_only; final claims require formtrig_gate, "
             "baseline_guidance_gap, comparison, and evidence packaging"
@@ -313,6 +352,24 @@ def to_markdown(payload: dict[str, Any]) -> str:
         f"- snapshot: `{payload['snapshot_time_utc']}`",
         f"- run root: `{payload['run_root']}`",
         f"- boundary: {payload['status_boundary']}",
+        "",
+        "## Schedule",
+        "",
+        "| verdict | expected baseline runs | observed baseline runs | missing | baseline jobs | batches | one-batch jobs |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        (
+            "| {verdict} | {expected} | {observed} | {missing} | {jobs} | {batches} | {one_batch} |".format(
+                verdict=payload["schedule"].get("verdict", ""),
+                expected=cell(payload["schedule"].get("baseline_run_count")),
+                observed=cell(payload["schedule"].get("observed_baseline_runs")),
+                missing=cell(payload["schedule"].get("missing_baseline_runs")),
+                jobs=cell(payload["schedule"].get("baseline_jobs")),
+                batches=cell(payload["schedule"].get("baseline_batches")),
+                one_batch=cell(
+                    payload["schedule"].get("recommended_baseline_jobs_for_one_batch")
+                ),
+            )
+        ),
         "",
         "## FORMTRIG",
         "",

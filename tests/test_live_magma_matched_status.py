@@ -74,6 +74,21 @@ class LiveMagmaMatchedStatusTest(unittest.TestCase):
                 "TGT_R,TGT_T\n123,0\n",
                 encoding="utf-8",
             )
+            (run_root / "schedule_audit.json").write_text(
+                json.dumps(
+                    {
+                        "verdict": "multi_batch_baseline_schedule",
+                        "baseline_run_count": 3,
+                        "baseline_jobs": 1,
+                        "baseline_batches": 3,
+                        "formtrig_jobs": 1,
+                        "recommended_baseline_jobs_for_one_batch": 3,
+                        "ideal_baseline_wall_s": 180,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
 
             output = subprocess.check_output(
                 [
@@ -98,6 +113,11 @@ class LiveMagmaMatchedStatusTest(unittest.TestCase):
         self.assertEqual(payload["baselines"]["run_count"], 1)
         self.assertEqual(payload["baselines"]["groups"][0]["total_reached"], 123)
         self.assertEqual(payload["baselines"]["groups"][0]["total_triggered"], 0)
+        self.assertEqual(payload["schedule"]["verdict"], "multi_batch_baseline_schedule")
+        self.assertEqual(payload["schedule"]["baseline_run_count"], 3)
+        self.assertEqual(payload["schedule"]["observed_baseline_runs"], 1)
+        self.assertEqual(payload["schedule"]["missing_baseline_runs"], 2)
+        self.assertEqual(payload["schedule"]["baseline_batches"], 3)
 
     def test_writes_markdown_snapshot(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -124,6 +144,8 @@ class LiveMagmaMatchedStatusTest(unittest.TestCase):
 
         self.assertIn("Live Matched Status: TGT", text)
         self.assertIn("live_snapshot_only", text)
+        self.assertIn("## Schedule", text)
+        self.assertIn("missing_schedule_audit", text)
 
 
 if __name__ == "__main__":
