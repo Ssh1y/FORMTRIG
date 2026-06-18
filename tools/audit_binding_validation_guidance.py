@@ -23,6 +23,8 @@ CSV_FIELDS = [
     "disposition",
     "tc_rooted_static_status",
     "strict_pretrigger_guidance",
+    "dynamic_role_coverage_complete",
+    "missing_bound_role_samples",
     "soft_pretrigger_signal",
     "terminal_triggered",
     "ready_for_short_gate",
@@ -81,6 +83,46 @@ def source_path(payload: dict[str, Any], path: Path) -> str:
     return str(source.get("summary_jsonl") or source.get("candidate_out_dir") or path)
 
 
+def missing_bound_role_samples(payload: dict[str, Any]) -> list[str]:
+    """Return bound semantic roles that were never sampled dynamically."""
+
+    signal = nested_dict(payload, "binding_signal")
+    checks = nested_dict(payload, "checks")
+    missing: list[str] = []
+    seen: set[str] = set()
+
+    for atom in signal.get("atoms") or []:
+        if not isinstance(atom, dict):
+            continue
+        atom_id = str(atom.get("atom_id") or "?")
+        for role_record in atom.get("roles") or []:
+            if not isinstance(role_record, dict):
+                continue
+            role = str(role_record.get("role") or "")
+            if not role or not boolish(role_record.get("bound")):
+                continue
+            if intish(role_record.get("samples")) > 0:
+                continue
+            label = f"atom {atom_id}:{role}"
+            if label not in seen:
+                seen.add(label)
+                missing.append(label)
+
+    if (
+        checks.get("same_object_role_observed") is False
+        or (
+            "same_object_samples" in signal
+            and intish(signal.get("same_object_samples")) == 0
+        )
+    ):
+        label = "same_object"
+        if label not in seen:
+            seen.add(label)
+            missing.append(label)
+
+    return missing
+
+
 def audit_record(path: Path) -> dict[str, Any]:
     payload = read_json(path)
     benefit = nested_dict(payload, "benefit_readout")
@@ -103,17 +145,22 @@ def audit_record(path: Path) -> dict[str, Any]:
     pretrigger_ready = boolish(benefit.get("pretrigger_lift_guidance_ready")) or boolish(
         checks.get("pretrigger_lift_guidance_ready")
     )
+    missing_roles = missing_bound_role_samples(payload)
+    role_coverage_complete = not missing_roles
     runtime_strict = (
         accepted_non_trigger > 0
         or saved_non_trigger > 0
         or non_trigger_progress > 0
         or boolish(benefit.get("has_non_trigger_progress"))
     )
-    strict = runtime_strict and not static_not_rooted
+    strict = runtime_strict and not static_not_rooted and role_coverage_complete
     soft = (pretrigger_ready or non_trigger_delta or strict) and not static_not_rooted
     if static_not_rooted:
         disposition = "static_binding_not_tc_rooted"
         next_action = "repair the BindingSpec semantic roles before using dynamic progress as guidance evidence"
+    elif runtime_strict and missing_roles:
+        disposition = "partial_mechanism_missing_role_coverage"
+        next_action = "repair or reseed unobserved bound roles before promoting this as complete R-to-T guidance evidence"
     elif strict and terminal:
         disposition = "mechanism_and_endpoint_candidate"
         next_action = "run matched baselines and baseline-guidance-gap analysis; promote only if baselines are late, missing, or high variance"
@@ -137,6 +184,8 @@ def audit_record(path: Path) -> dict[str, Any]:
         "disposition": disposition,
         "tc_rooted_static_status": tc_rooted_static_status,
         "strict_pretrigger_guidance": strict,
+        "dynamic_role_coverage_complete": role_coverage_complete,
+        "missing_bound_role_samples": ",".join(missing_roles),
         "soft_pretrigger_signal": soft,
         "terminal_triggered": terminal,
         "ready_for_short_gate": ready,
@@ -156,6 +205,7 @@ def record_rank(record: dict[str, Any]) -> tuple[int, int, int, int, int, str]:
     disposition_score = {
         "mechanism_and_endpoint_candidate": 6,
         "mechanism_only_needs_endpoint": 5,
+        "partial_mechanism_missing_role_coverage": 4,
         "soft_signal_needs_frontier_evidence": 4,
         "native_binding_validated_no_guidance_readout": 3,
         "terminal_only_control": 2,
@@ -215,17 +265,19 @@ def write_md(path: Path, payload: dict[str, Any]) -> None:
             "",
             "## Target Triage",
             "",
-            "| target | disposition | TC-rooted static | strict pre-trigger | terminal | accepted non-trigger | next action |",
-            "|---|---|---|---:|---:|---:|---|",
+            "| target | disposition | TC-rooted static | strict pre-trigger | role coverage | missing roles | terminal | accepted non-trigger | next action |",
+            "|---|---|---|---:|---:|---|---:|---:|---|",
         ]
     )
     for row in sorted(rows, key=lambda item: (-record_rank(item)[0], str(item.get("target_id")))):
         lines.append(
-            "| {target} | `{disp}` | `{tc_rooted}` | {strict} | {terminal} | {accepted} | {action} |".format(
+            "| {target} | `{disp}` | `{tc_rooted}` | {strict} | {coverage} | {missing} | {terminal} | {accepted} | {action} |".format(
                 target=row.get("target_id", ""),
                 disp=row.get("disposition", ""),
                 tc_rooted=row.get("tc_rooted_static_status", "unknown"),
                 strict=str(row.get("strict_pretrigger_guidance")).lower(),
+                coverage=str(row.get("dynamic_role_coverage_complete")).lower(),
+                missing=row.get("missing_bound_role_samples", ""),
                 terminal=str(row.get("terminal_triggered")).lower(),
                 accepted=row.get("accepted_non_trigger_progress_events", 0),
                 action=row.get("next_action", ""),
@@ -238,6 +290,7 @@ def write_md(path: Path, payload: dict[str, Any]) -> None:
             "",
             "- `terminal_only_control` means `_T` appeared without accepted non-trigger guidance; it must not be used as R-to-T guidance evidence.",
             "- `soft_signal_needs_frontier_evidence` means lifted signal moved before `_T`, but the current artifact lacks accepted/saved non-trigger frontier progress.",
+            "- `partial_mechanism_missing_role_coverage` means accepted pre-trigger progress exists, but at least one bound semantic role was never sampled dynamically.",
             "- `static_binding_not_tc_rooted` means dynamic movement exists only after the BindingSpec failed the static TC-rooted role gate.",
             "- `mechanism_*` targets are candidates for matched baseline experiments, not final efficacy claims by themselves.",
             "",

@@ -252,6 +252,45 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
                 audit_proc.stdout,
             )
 
+            b2_lift_spec = root / "gpac_b2.lift"
+            b2_compile_proc = subprocess.run(
+                [
+                    str(compile_tool),
+                    "--site-map",
+                    str(site_map),
+                    "--out",
+                    str(b2_lift_spec),
+                    str(
+                        REPO_ROOT
+                        / "artifacts"
+                        / "binding_specs"
+                        / "GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml"
+                    ),
+                ],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b2_compile_proc.returncode, 0, b2_compile_proc.stderr)
+
+            b2_lift_text = b2_lift_spec.read_text(encoding="utf-8")
+            self.assertIn("role_component 8 3232240958 same_object", b2_lift_text)
+            self.assertNotIn("role_component 8 3232240958 lifecycle_event", b2_lift_text)
+
+            b2_audit_proc = subprocess.run(
+                [str(audit_tool), "--category", "lifecycle", str(b2_lift_spec)],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b2_audit_proc.returncode, 0, b2_audit_proc.stderr)
+            self.assertIn(
+                "1,compound-sequence-lifecycle,B4,true,0x000001e9,8,0,0,ok",
+                b2_audit_proc.stdout,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,310 @@
+{
+  "benefit_readout": {
+    "afl_saved_crashes": 0,
+    "corpus_count": 221,
+    "d_f_spec_lifted_max": 4,
+    "d_f_spec_lifted_min": 2,
+    "execs_done": 6927,
+    "formtrig_frontier_updates": 3,
+    "formtrig_queued_progress": 2,
+    "formtrig_reached_execs": 6748,
+    "formtrig_seen_execs": 6750,
+    "formtrig_triggered_execs": 0,
+    "has_non_trigger_progress": true,
+    "non_trigger_progress_events": 2,
+    "pretrigger_lift_guidance_ready": true,
+    "saved_non_trigger_progress_events": 2,
+    "saved_triggered_progress_events": 0,
+    "terminal_triggered": false
+  },
+  "binding_signal": {
+    "accepted_non_trigger_progress_events": 2,
+    "accepted_progress_events": 2,
+    "atoms": [
+      {
+        "atom_id": 1,
+        "bound_roles": [
+          "root_observe",
+          "desired_producer",
+          "use",
+          "lifecycle_event",
+          "same_object",
+          "input_influence"
+        ],
+        "candidate_sampled_roles": [
+          "root_observe",
+          "desired_producer",
+          "use",
+          "lifecycle_event",
+          "input_influence"
+        ],
+        "candidate_variable_roles": [],
+        "category": "compound-sequence-lifecycle",
+        "diagnosis": "constant_lift_signal",
+        "lift_allowed": true,
+        "roles": [
+          {
+            "bound": true,
+            "calibration_samples": 1,
+            "candidate_samples": 4093,
+            "candidate_unique_values": 1,
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 86,
+            "max_confidence": 0.9,
+            "role": "root_observe",
+            "samples": 4096,
+            "unique_values": 1,
+            "values": [
+              1
+            ]
+          },
+          {
+            "bound": true,
+            "calibration_samples": 1,
+            "candidate_samples": 560,
+            "candidate_unique_values": 1,
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 86,
+            "max_confidence": 0.8,
+            "role": "desired_producer",
+            "samples": 563,
+            "unique_values": 1,
+            "values": [
+              1
+            ]
+          },
+          {
+            "bound": true,
+            "calibration_samples": 1,
+            "candidate_samples": 4093,
+            "candidate_unique_values": 1,
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 86,
+            "max_confidence": 0.85,
+            "role": "use",
+            "samples": 4096,
+            "unique_values": 1,
+            "values": [
+              1
+            ]
+          },
+          {
+            "bound": true,
+            "calibration_samples": 2,
+            "candidate_samples": 1127,
+            "candidate_unique_values": 1,
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 86,
+            "max_confidence": 0.85,
+            "role": "lifecycle_event",
+            "samples": 1133,
+            "unique_values": 1,
+            "values": [
+              1
+            ]
+          },
+          {
+            "bound": true,
+            "calibration_samples": 0,
+            "candidate_samples": 0,
+            "candidate_unique_values": 0,
+            "candidate_values": [],
+            "flags_or": 0,
+            "max_confidence": 0,
+            "role": "same_object",
+            "samples": 0,
+            "unique_values": 0,
+            "values": []
+          },
+          {
+            "bound": true,
+            "calibration_samples": 2,
+            "candidate_samples": 1127,
+            "candidate_unique_values": 1,
+            "candidate_values": [
+              1
+            ],
+            "flags_or": 118,
+            "max_confidence": 0.75,
+            "role": "input_influence",
+            "samples": 1133,
+            "unique_values": 1,
+            "values": [
+              1
+            ]
+          }
+        ],
+        "sampled_roles": [
+          "root_observe",
+          "desired_producer",
+          "use",
+          "lifecycle_event",
+          "input_influence"
+        ],
+        "variable_roles": []
+      }
+    ],
+    "candidate_events": 4093,
+    "diagnosis": "role_signal_progress_observed",
+    "missing_bound_role_samples": [
+      "atom 1:same_object",
+      "same_object"
+    ],
+    "same_object_samples": 0,
+    "same_object_values": [],
+    "sampled_roles": [
+      "desired_producer",
+      "input_influence",
+      "lifecycle_event",
+      "root_observe",
+      "use"
+    ],
+    "semantic_candidate_variable_roles": 0,
+    "spec_d_f_candidate_min": 2,
+    "spec_d_f_candidate_values": [
+      4,
+      2,
+      3
+    ],
+    "spec_d_f_non_trigger_candidate_min": 2,
+    "status": "pass"
+  },
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml",
+  "blockers": [
+    "same_object role is bound and statically mapped but has zero runtime samples in the 60s B2 campaign"
+  ],
+  "checks": {
+    "binding_spec_compile_pass": true,
+    "dynamic_binding_signal_pass": true,
+    "dynamic_role_coverage_complete": false,
+    "harness_admissibility_pass": true,
+    "lift_audit_pass": true,
+    "lift_delta_only_on_triggered": false,
+    "native_site_map_validated": true,
+    "non_trigger_candidate_lift_delta": true,
+    "pretrigger_lift_guidance_ready": true,
+    "producer_constant_zero": false,
+    "runtime_event_map_pass": true,
+    "same_object_role_observed": false,
+    "tc_rooted_static_pass": true,
+    "terminal_triggered": false,
+    "tool_compile_pass": true,
+    "typed_mutation_hook_enabled": true
+  },
+  "dynamic_seed_readiness": {
+    "atom_signals": true,
+    "components": true,
+    "diagnosis": "ready_single_rnt_seed",
+    "reached": 1,
+    "role_signals": true,
+    "seed_count": 1,
+    "signal_entropy_status": "fail",
+    "spec_d_f_unique": 1,
+    "spec_lifted": 1,
+    "status": "pass",
+    "triggered": 0
+  },
+  "generated_at_utc": "2026-06-18T20:10:01+00:00",
+  "lift_audit": {
+    "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b2_same_object_validation_60s_20260618/formtrig_lift_audit.csv",
+    "rows": [
+      {
+        "atom_id": "1",
+        "binding_tier": "B4",
+        "category": "compound-sequence-lifecycle",
+        "collapsed": "0",
+        "event_count": "8",
+        "lift_allowed": "true",
+        "location_only_count": "0",
+        "reason": "ok",
+        "roles": "0x000001e9"
+      }
+    ]
+  },
+  "mutation_hook": {
+    "enabled": true,
+    "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/mp4_box_structure_hook.py",
+    "sha256": "2238d1be6586e8569d50c9e9146ee603f3199f39efc76b3be27f853a87bff4c0",
+    "source": "binding_spec",
+    "typed_execs": 109,
+    "typed_finds": 14
+  },
+  "native_site_map": {
+    "committed": false,
+    "native_runtime_evidence": true,
+    "path": "/tmp/formtrig_gpac3403_native_env/site_map.tsv",
+    "row_count": 272013,
+    "sha256": "9a8dc6bf3c3283a7299f5d279480da518b3e749fc765c097bd23949f858b4ed7"
+  },
+  "native_site_map_validated": true,
+  "next_action": "reseed or add typed MP4 mutation targeting the gf_bs_new_cbk_buffer external-buffer alias path before promoting GPAC_3403 as same-object lifecycle evidence; keep matched endpoint runs as short-gate only until this role is observed",
+  "producer_signal": {
+    "constant_zero_roles": [],
+    "producer_role_values": {
+      "desired_producer": [
+        1
+      ]
+    },
+    "producer_roles_observed": [
+      "desired_producer"
+    ]
+  },
+  "ready_for_short_gate": false,
+  "remaining_limitations": [
+    "No terminal _T was observed in this 60s validation run.",
+    "B2 repairs the static semantic-role collapse seen in the first same_object repair attempt, but the alias branch still stayed unobserved dynamically.",
+    "Current accepted non-trigger progress is from root/use/lifecycle/producer/input_influence roles, not from same_object guidance.",
+    "The raw 60s run directory is local evidence and is not committed because it contains AFL queue artifacts."
+  ],
+  "runtime_event_map": {
+    "exact_bindings": 8,
+    "lift_allowed": 8,
+    "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b2_same_object_validation_60s_20260618/formtrig_runtime_event_map.csv",
+    "rows": 8,
+    "semantic_role_collapse": 0
+  },
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "source": {
+    "binding_signal_json": {
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b2_same_object_validation_60s_20260618/default/formtrig_binding_signal_diagnosis.json",
+      "sha256": "3e6a0110c5f4d77ecb6d8914a89d9015d89ac8d69b04f4a0707f0c19cf7fa046"
+    },
+    "command": "FORMTRIG_STATS_MONITOR_POLL=10 scripts/run_formtrig_aflpp_campaign.sh --in artifacts/rnt_corpus/GPAC_3403/seeds --out artifacts/formtrig_native_readiness/raw/gpac3403_b2_same_object_validation_60s_20260618 --target-bug GPAC_3403 --category lifecycle --binding-spec artifacts/binding_specs/GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml --site-map /tmp/formtrig_gpac3403_native_env/site_map.tsv --duration 60 --seed-preflight require --seed-preflight-max 8 --seed-preflight-timeout 3 --aflpp-dir experiments/aflplusplus/AFLplusplus -- /tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+    "diagnosis_json": {
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b2_same_object_validation_60s_20260618/default/formtrig_diagnosis.json",
+      "sha256": "7cff0c18fa54102d211dd1f9326046c40e776674c348bb7fc585465a3653d30e"
+    },
+    "duration_s": 60,
+    "run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b2_same_object_validation_60s_20260618",
+    "runtime_event_map": {
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b2_same_object_validation_60s_20260618/formtrig_runtime_event_map.csv",
+      "sha256": "e4a0952d4fa9c5f898273e15ce2da4976949b9a1a1463ce096e30c04d8f05cb2"
+    },
+    "summary_json": {
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b2_same_object_validation_60s_20260618/default/formtrig_summary.json",
+      "sha256": "2fb19222c886b3cf435c88ece31158e1e35fc16d2a5ffcdd031f19568e6e1a87"
+    }
+  },
+  "status": "partial_mechanism_missing_role_coverage",
+  "target_id": "GPAC_3403",
+  "tc_rooted_static": {
+    "blockers": [],
+    "checks": {
+      "exact_runtime_mapping_pass": true,
+      "negative_role_rejection_pass": true,
+      "semantic_role_coverage_pass": true,
+      "static_root_binding_pass": true
+    },
+    "limitations": [],
+    "source_path": "artifacts/formtrig_native_readiness/binding_static_audit/GPAC_3403.native_b2_bitstream_lifecycle_candidate.tc_rooted.json",
+    "status": "pass"
+  }
+}

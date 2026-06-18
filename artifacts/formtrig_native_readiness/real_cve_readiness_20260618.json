@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-18T19:46:43+00:00",
+  "generated_at_utc": "2026-06-18T20:11:19+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -14,7 +14,7 @@
       "binding_spec_present": true,
       "binding_spec_ready": true,
       "binding_spec_validated": true,
-      "binding_validation_status": "native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
+      "binding_validation_status": "native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; partial_mechanism_missing_role_coverage@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
       "blockers": "",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
@@ -32,10 +32,12 @@
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [
-          "GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml"
+          "GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml",
+          "GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml"
         ],
         "binding_validation_records": [
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json",
+          "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json",
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json"
         ],
         "comparison_records": [

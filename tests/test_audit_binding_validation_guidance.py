@@ -93,6 +93,7 @@ class AuditBindingValidationGuidanceTest(unittest.TestCase):
                 "mechanism_and_endpoint_candidate",
             )
             self.assertTrue(by_target["TIF012"]["strict_pretrigger_guidance"])
+            self.assertTrue(by_target["TIF012"]["dynamic_role_coverage_complete"])
             self.assertEqual(
                 by_target["SSL015"]["disposition"],
                 "terminal_only_control",
@@ -147,6 +148,70 @@ class AuditBindingValidationGuidanceTest(unittest.TestCase):
             self.assertEqual(
                 row["next_action"],
                 "repair the BindingSpec semantic roles before using dynamic progress as guidance evidence",
+            )
+
+    def test_missing_bound_same_object_role_demotes_strict_guidance(self):
+        tool = load_tool("audit_binding_validation_guidance")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "gpac.validation.json").write_text(
+                json.dumps(
+                    {
+                        "target_id": "GPAC_3403",
+                        "status": "native_binding_validated",
+                        "ready_for_short_gate": True,
+                        "benefit_readout": {
+                            "terminal_triggered": False,
+                            "pretrigger_lift_guidance_ready": True,
+                            "saved_non_trigger_progress_events": 2,
+                            "non_trigger_progress_events": 2,
+                        },
+                        "binding_signal": {
+                            "accepted_non_trigger_progress_events": 2,
+                            "candidate_events": 4093,
+                            "same_object_samples": 0,
+                            "atoms": [
+                                {
+                                    "atom_id": 1,
+                                    "roles": [
+                                        {
+                                            "role": "root_observe",
+                                            "bound": True,
+                                            "samples": 4096,
+                                        },
+                                        {
+                                            "role": "same_object",
+                                            "bound": True,
+                                            "samples": 0,
+                                        },
+                                    ],
+                                }
+                            ],
+                        },
+                        "checks": {
+                            "non_trigger_candidate_lift_delta": True,
+                            "same_object_role_observed": False,
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            audit = tool.build_audit([str(root)])
+            row = audit["targets"][0]
+
+            self.assertEqual(
+                row["disposition"],
+                "partial_mechanism_missing_role_coverage",
+            )
+            self.assertFalse(row["strict_pretrigger_guidance"])
+            self.assertFalse(row["dynamic_role_coverage_complete"])
+            self.assertIn("atom 1:same_object", row["missing_bound_role_samples"])
+            self.assertIn("same_object", row["missing_bound_role_samples"])
+            self.assertEqual(
+                row["next_action"],
+                "repair or reseed unobserved bound roles before promoting this as complete R-to-T guidance evidence",
             )
 
 

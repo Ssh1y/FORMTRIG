@@ -24,7 +24,7 @@ or terminal validation.
 - Source locations: src/utils/bitstream.c:372#gf_bs_del
 - Native D_T values in RNT metadata: `1`
 - Terminal validation signal: SUMMARY: AddressSanitizer: double-free (/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box+0x194f48a) (BuildId: da5c3e139317cf0e2b8580968246bc6803e86243) in free
-- Binding validation status: native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json
+- Binding validation status: native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; partial_mechanism_missing_role_coverage@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json
 - Short-gate comparison packages: 1
 - Current speedup package: none
 - Current benefit: short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 2 accepted / 2 saved non-trigger progress events; ASAN AFL++ family valid baseline reps 8 with 0 endpoint successes
