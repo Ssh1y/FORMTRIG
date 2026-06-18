@@ -262,6 +262,65 @@ class LiveMagmaMatchedStatusTest(unittest.TestCase):
             [str(rep1_root), str(rep3_root)],
         )
 
+    def test_repeated_baseline_dirs_prefer_later_duplicate_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run_root = root / "run"
+            (run_root / "formtrig").mkdir(parents=True)
+            original_root = root / "baselines"
+            shard_root = root / "rep3_shard"
+            for baseline_root, reached, run_time in (
+                (original_root, 10, 60),
+                (shard_root, 300, 3600),
+            ):
+                run_dir = baseline_root / "magma" / "aflplusplus_vanilla_60s_rep3"
+                (run_dir / "findings" / "default").mkdir(parents=True)
+                (run_dir / "findings" / "default" / "fuzzer_stats").write_text(
+                    f"run_time : {run_time}\nexecs_done : 3000\nexecs_per_sec : 100\n",
+                    encoding="utf-8",
+                )
+                (run_dir / "monitor").mkdir()
+                (run_dir / "monitor" / "60").write_text(
+                    f"TGT_R,TGT_T\n{reached},0\n",
+                    encoding="utf-8",
+                )
+
+            output = subprocess.check_output(
+                [
+                    "python3",
+                    str(REPO_ROOT / "tools" / "live_magma_matched_status.py"),
+                    "--target-id",
+                    "TGT",
+                    "--run-root",
+                    str(run_root),
+                    "--baseline-dir",
+                    str(original_root),
+                    "--baseline-dir",
+                    str(shard_root),
+                    "--format",
+                    "json",
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+            )
+            payload = json.loads(output)
+
+        self.assertEqual(payload["baselines"]["raw_run_count"], 2)
+        self.assertEqual(payload["baselines"]["run_count"], 1)
+        self.assertEqual(payload["baselines"]["groups"][0]["total_reached"], 300)
+        self.assertEqual(payload["baselines"]["runs"][0]["source_root"], str(shard_root))
+        self.assertEqual(payload["baselines"]["duplicate_run_names"], ["aflplusplus_vanilla_60s_rep3"])
+        self.assertEqual(len(payload["baselines"]["duplicate_runs"]), 1)
+        self.assertEqual(payload["baselines"]["duplicate_runs"][0]["policy"], "prefer-later")
+        self.assertEqual(
+            payload["baselines"]["duplicate_runs"][0]["discarded_source_root"],
+            str(original_root),
+        )
+        self.assertEqual(
+            payload["baselines"]["duplicate_runs"][0]["kept_source_root"],
+            str(shard_root),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -241,6 +241,60 @@ def duplicate_run_names(rows: list[dict[str, Any]]) -> list[str]:
     return sorted(duplicates)
 
 
+def resolve_duplicate_baseline_runs(
+    rows: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Keep the later source-root copy of a duplicate run name.
+
+    Live recovery runs may combine an original baseline root with a sharded
+    repair root.  The final merge command uses source order to prefer the shard
+    for duplicate run names, so the live snapshot must use the same rule.
+    """
+    selected: dict[str, dict[str, Any]] = {}
+    duplicate_details: dict[str, dict[str, Any]] = {}
+    order: list[str] = []
+    for index, row in enumerate(rows):
+        name = str(row.get("run") or "")
+        if not name:
+            continue
+        source_root = str(row.get("source_root") or "")
+        if name not in selected:
+            selected[name] = row
+            order.append(name)
+            continue
+        previous = selected[name]
+        details = duplicate_details.setdefault(
+            name,
+            {
+                "run": name,
+                "policy": "prefer-later",
+                "sources": [
+                    {
+                        "source_root": str(previous.get("source_root") or ""),
+                        "run_time_s": previous.get("run_time_s"),
+                        "reached": previous.get("reached"),
+                        "triggered": previous.get("triggered"),
+                    }
+                ],
+            },
+        )
+        details["sources"].append(
+            {
+                "source_root": source_root,
+                "run_time_s": row.get("run_time_s"),
+                "reached": row.get("reached"),
+                "triggered": row.get("triggered"),
+            }
+        )
+        details["kept_source_root"] = source_root
+        details["discarded_source_root"] = str(previous.get("source_root") or "")
+        details["kept_index"] = index
+        selected[name] = row
+    resolved = [selected[name] for name in order if name in selected]
+    duplicates = [duplicate_details[name] for name in sorted(duplicate_details)]
+    return resolved, duplicates
+
+
 def group_baselines(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     groups: list[dict[str, Any]] = []
     for baseline in sorted({str(row["baseline"]) for row in rows}):
@@ -326,6 +380,8 @@ def summarize(
         for baseline_root in baseline_roots
         for row in baseline_runs(baseline_root, target_id)
     ]
+    raw_baselines = baselines
+    baselines, duplicate_runs = resolve_duplicate_baseline_runs(raw_baselines)
     metadata_path = run_root / "run_metadata.json"
     metadata = {}
     if metadata_path.exists():
@@ -358,8 +414,10 @@ def summarize(
             "runs": baselines,
             "groups": group_baselines(baselines),
             "run_count": len(baselines),
+            "raw_run_count": len(raw_baselines),
             "triggered_runs": sum(1 for row in baselines if int_value(row.get("triggered")) > 0),
-            "duplicate_runs": duplicate_run_names(baselines),
+            "duplicate_run_names": duplicate_run_names(raw_baselines),
+            "duplicate_runs": duplicate_runs,
         },
         "schedule": schedule_status(run_root, metadata, baselines),
         "status_boundary": (
@@ -409,11 +467,39 @@ def to_markdown(payload: dict[str, Any]) -> str:
             )
         ),
         "",
-        "## FORMTRIG",
-        "",
-        "| run | time | execs | reached | triggered execs | saved T | saved non-T | frontier | typed finds | status |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
+    duplicate_runs = payload["baselines"].get("duplicate_runs") or []
+    if duplicate_runs:
+        lines.extend(
+            [
+                "## Duplicate Baseline Runs",
+                "",
+                (
+                    "Duplicate live run names were resolved with `prefer-later`, "
+                    "matching the final shard merge policy."
+                ),
+                "",
+                "| run | kept source | discarded source |",
+                "| --- | --- | --- |",
+            ]
+        )
+        for duplicate in duplicate_runs:
+            lines.append(
+                "| {run} | {kept} | {discarded} |".format(
+                    run=cell(duplicate.get("run")),
+                    kept=cell(duplicate.get("kept_source_root")),
+                    discarded=cell(duplicate.get("discarded_source_root")),
+                )
+            )
+        lines.append("")
+    lines.extend(
+        [
+            "## FORMTRIG",
+            "",
+            "| run | time | execs | reached | triggered execs | saved T | saved non-T | frontier | typed finds | status |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        ]
+    )
     for row in payload["formtrig"]["runs"]:
         lines.append(
             "| {run} | {time} | {execs} | {reached} | {triggered} | {saved_t} | {saved_nt} | {frontier} | {typed_finds} | {status} |".format(
