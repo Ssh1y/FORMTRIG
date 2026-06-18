@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-18T04:26:40+00:00`
-Tasks: `27`; runnable now: `0`; blocked/gated: `27`; demoted controls skipped: `7`; low-priority skipped: `93`.
+Generated: `2026-06-18T05:25:39+00:00`
+Tasks: `27`; runnable now: `1`; blocked/gated: `26`; demoted controls skipped: `7`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -17,7 +17,7 @@ Tasks: `27`; runnable now: `0`; blocked/gated: `27`; demoted controls skipped: `
 | --- | ---: | --- | --- | --- | --- | --- | --- |
 | P0 | 3 | PDF003 | magma | visible_hard_speedup_or_reliability | expand_cross_target_hard_evidence | blocked | The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign. |
 | P1 | 4 | SSL015 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
-| P1 | 5 | PDF016 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
+| P1 | 5 | PDF016 | magma |  | run_validated_matched_short_screen | yes | Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost. |
 | P1 | 7 | LIBXML2_1107 | real_cve |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 8 | GPAC_3403 | real_cve |  | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P2 | 9 | SQL013 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -45,7 +45,12 @@ Tasks: `27`; runnable now: `0`; blocked/gated: `27`; demoted controls skipped: `
 
 ## Runnable Now
 
-No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
+### P1 PDF016
+
+- Benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
+- SOTA pain: `not recorded`
+- SOTA pain evidence: not recorded
+- Command: `scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines --afl-arg -t --afl-arg 5000 && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_formtrig`
 
 ## Gated Tasks
 
@@ -94,31 +99,6 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Evidence paths:
 - artifacts/magma_canary_inventory.json
 - artifacts/formtrig_native_readiness/magma_native_builds/SSL015/build_plan.json
-
-### P1 PDF016 - validate_binding_spec_then_short_screen
-
-- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
-- SOTA pain: `not recorded`
-- SOTA pain evidence: not recorded
-- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
-- Claim boundary: Validation is a gate, not an efficacy result.
-- Blocking issue:
-- pre-trigger lift guidance is not ready
-- terminal signal appeared without non-trigger guidance
-- semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed
-- Mechanism evidence required after benefit:
-- native site-map validation
-- lift audit pass
-- binding-signal diagnosis pass
-- seed readiness with reached non-trigger seeds
-- Post-unblock commands or steps:
-- scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4
-- scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail
-- Evidence paths:
-- artifacts/formtrig_native_readiness/binding_validation/PDF016.native_b3_parser_ref_candidate.validation.json
-- artifacts/formtrig_native_readiness/raw/pdf016_b3_binding_validation_600s_t5000/summary.jsonl
-- artifacts/magma_canary_inventory.json
-- artifacts/formtrig_native_readiness/magma_native_builds/PDF016/build_plan.json
 
 ### P1 LIBXML2_1107 - validate_binding_spec_then_short_screen
 

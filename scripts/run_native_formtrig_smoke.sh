@@ -185,6 +185,8 @@ role_component 7 201 root_observe 3 1 10 higher outcome 1.0 1.0
 role_component 8 202 use 6 1 20 higher hit 1.0 1.0
 role_component 8 203 opposite_producer 6 1 30 higher absent 1.0 1.0
 role_component 8 204 desired_producer 6 1 40 higher hit 1.0 1.0
+role_component 7 301 root_observe 3 2 10 lower distance 0.0 1.0
+role_component 8 302 use 6 2 20 higher hit 1.0 1.0
 SPEC
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Wno-unused-parameter -Werror -DFORMTRIG_USE_AFL_MAP_FALLBACK=1 \

@@ -1822,13 +1822,34 @@ static int component_value_satisfies_goal(
   return 0;
 }
 
-static int satisfied_spec_role_for_atom(uint32_t atom_id, uint32_t role) {
+static double unsatisfied_component_role_cost(
+    const formtrig_progress_component_t *component) {
+  if (!component) return 1.0;
+  if (component_value_satisfies_goal(component)) return 0.0;
+
+  if (component->flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER) {
+    if (component->value > 1.0) return component->value;
+    return 1.0;
+  }
+  return 1.0;
+}
+
+static double spec_role_missing_cost_for_atom(uint32_t atom_id,
+                                              uint32_t role) {
+  double best_unsatisfied = FORMTRIG_INF;
+  int observed = 0;
+
   for (uint32_t i = 0; i < g_state.component_count; i++) {
     const formtrig_progress_component_t *component = &g_state.components[i];
     if (!component_matches_role(component, atom_id, role)) continue;
-    if (component_value_satisfies_goal(component)) return 1;
+    observed = 1;
+    double cost = unsatisfied_component_role_cost(component);
+    if (cost == 0.0) return 0.0;
+    best_unsatisfied = min_double(best_unsatisfied, cost);
   }
-  return 0;
+
+  if (!observed || !finite_lift(best_unsatisfied)) return 1.0;
+  return best_unsatisfied;
 }
 
 static double spec_role_graph_distance(void) {
@@ -1838,14 +1859,14 @@ static double spec_role_graph_distance(void) {
     const formtrig_atom_signal_t *signal = &g_state.atom_signals[i];
     uint32_t expected = expected_spec_role_bits_for_atom(signal->atom_id);
     uint32_t required = 0;
-    uint32_t missing = 0;
+    double missing_cost = 0.0;
 
     for (uint32_t role = FORMTRIG_ROLE_ROOT_OBSERVE;
          role <= FORMTRIG_ROLE_SAME_OBJECT; role++) {
       if (!(expected & role_bit(role))) continue;
       if (!role_counts_for_spec_df(role)) continue;
       required++;
-      if (!satisfied_spec_role_for_atom(signal->atom_id, role)) missing++;
+      missing_cost += spec_role_missing_cost_for_atom(signal->atom_id, role);
     }
 
     if (required < 2) continue;
@@ -1853,10 +1874,11 @@ static double spec_role_graph_distance(void) {
 
     /*
      * Keep zero reserved for terminal TC satisfaction. For non-trigger
-     * scheduling, a fully satisfied role graph is distance 1; each missing
-     * BindingSpec role adds one step.
+     * scheduling, a fully satisfied role graph is distance 1. Missing binary
+     * roles add one step, while unsatisfied lower-is-better roles retain their
+     * numeric distance so OR-style canaries do not collapse to a boolean.
      */
-    best = min_double(best, (double)missing + 1.0);
+    best = min_double(best, missing_cost + 1.0);
   }
 
   return best;

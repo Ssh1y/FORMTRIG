@@ -1,0 +1,118 @@
+tc_id: 'PDF016'
+target:
+  project: 'poppler'
+  binary: 'pdf_fuzzer'
+  command: '@@'
+tc:
+  category: 'compound-sequence-lifecycle'
+  expression: 'Parser::getObj accepts an indirect reference whose object number is <= 0 or generation is < 0'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'MAGMA_OR(num <=0, gen < 0)'
+    kind: 'compound-sequence-lifecycle'
+    root: 'Parser::getObj indirect reference gen arm distance'
+bindings:
+  - id: 'pdf016_lifecycle_int_prefix_176'
+    atom: 1
+    role: 'lifecycle_event'
+    expr: 'Parser enters the integer-object path before testing an indirect reference'
+    site_id: 1594884436
+    observe_at:
+      kind: 'branch'
+      function: 'Parser::getObj'
+      file: 'poppler/Parser.cc'
+      line: 176
+      inst_no: 338
+      opcode: 'br'
+      column: 16
+    component: 'lifecycle_prefix'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.65
+    observe_window: 'any'
+  - id: 'pdf016_use_indirect_ref_cmd_179'
+    atom: 1
+    role: 'use'
+    expr: 'Parser observes the second integer and R command that form the indirect reference'
+    site_id: 1460516389
+    observe_at:
+      kind: 'branch'
+      function: 'Parser::getObj'
+      file: 'poppler/Parser.cc'
+      line: 179
+      inst_no: 346
+      opcode: 'br'
+      column: 26
+    component: 'producer_use'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.70
+    observe_window: 'any'
+  - id: 'pdf016_use_indirect_ref_body_179'
+    atom: 1
+    role: 'use'
+    expr: 'Parser takes the indirect-reference body after matching int int R'
+    site_id: 1477294008
+    observe_at:
+      kind: 'branch'
+      function: 'Parser::getObj'
+      file: 'poppler/Parser.cc'
+      line: 179
+      inst_no: 349
+      opcode: 'br'
+      column: 13
+    component: 'producer_use'
+    priority: 21
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.70
+    observe_window: 'any'
+  - id: 'pdf016_root_gen_arm_distance_190'
+    atom: 1
+    role: 'root_observe'
+    expr: 'The variable PDF016 root arm whose distance reaches zero on the triggering indirect reference'
+    site_id: 3624284787
+    observe_at:
+      kind: 'cmp'
+      function: 'Parser::getObj'
+      file: 'poppler/Parser.cc'
+      line: 190
+      inst_no: 379
+      opcode: 'icmp'
+      column: 13
+    component: 'root_state'
+    priority: 30
+    direction: 'lower'
+    value_mode: 'distance'
+    value: 0.0
+    confidence: 0.75
+    observe_window: 'any'
+  - id: 'pdf016_same_parser_ref_object_190'
+    atom: 1
+    role: 'same_object'
+    expr: 'The lifecycle prefix and terminal use belong to the same Parser::getObj indirect-reference parse'
+    site_id: 3825763310
+    observe_at:
+      kind: 'cmp'
+      function: 'Parser::getObj'
+      file: 'poppler/Parser.cc'
+      line: 190
+      inst_no: 361
+      opcode: 'icmp'
+      column: 13
+    component: 'object_identity'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'a'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+    relation_from: 'lifecycle_event'
+    relation_to: 'use'
+    object_expr: 'Parser::getObj indirect-reference parse'

@@ -1,6 +1,6 @@
 {
   "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
-  "blocked_count": 27,
+  "blocked_count": 26,
   "defaults": {
     "jobs": 4,
     "longrun_duration_s": 7200,
@@ -8,7 +8,7 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-18T04:26:40+00:00",
+  "generated_at_utc": "2026-06-18T05:25:39+00:00",
   "inputs": {
     "active_runs": "",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
@@ -18,7 +18,7 @@
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
     "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260618.json"
   },
-  "runnable_now_count": 0,
+  "runnable_now_count": 1,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
   "skipped_control_count": 7,
   "skipped_controls": [
@@ -1033,47 +1033,47 @@
       "target_id": "SSL015"
     },
     {
-      "action": "validate_binding_spec_then_short_screen",
-      "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
+      "action": "run_validated_matched_short_screen",
+      "benefit_to_prove": "Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.",
       "blocked_claims": [],
-      "blocking_issue": [
-        "pre-trigger lift guidance is not ready",
-        "terminal signal appeared without non-trigger guidance",
-        "semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed"
-      ],
+      "blocking_issue": [],
       "category": "compound-sequence-lifecycle",
-      "claim_boundary": "Validation is a gate, not an efficacy result.",
-      "command": "",
+      "claim_boundary": "A passing short screen is still promotion evidence, not final 2h evidence; if baselines trigger early with acceptable time cost, demote to control/design work.",
+      "command": "scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_baselines --afl-arg -t --afl-arg 5000 && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/pdf016_validated_short_600s_1rep_formtrig",
       "comparison_verdict": "",
       "current_primary_benefits": [],
       "duration_s": 600,
       "evidence_paths": [
-        "artifacts/formtrig_native_readiness/binding_validation/PDF016.native_b3_parser_ref_candidate.validation.json",
-        "artifacts/formtrig_native_readiness/raw/pdf016_b3_binding_validation_600s_t5000/summary.jsonl",
+        "artifacts/formtrig_native_readiness/binding_validation/PDF016.native_b4_parser_gen_distance_candidate.r2.validation.json",
+        "artifacts/formtrig_native_readiness/raw/pdf016_b4_binding_validation_600s_t5000_r2/summary.jsonl",
         "artifacts/magma_canary_inventory.json",
         "artifacts/formtrig_native_readiness/magma_native_builds/PDF016/build_plan.json"
       ],
       "lane": "binding_validation_first",
       "mechanism_evidence_required": [
-        "native site-map validation",
-        "lift audit pass",
-        "binding-signal diagnosis pass",
-        "seed readiness with reached non-trigger seeds"
+        "validated native BindingSpec with replay-stable pre-trigger D_F progress",
+        "accepted non-trigger progress before terminal _T",
+        "same seed corpus and Magma _T oracle as faithful AFL++ baselines",
+        "binary-TC guidance-gap classification before any main-claim promotion",
+        "validation non-trigger progress events=4",
+        "validation candidate events=2188"
       ],
       "post_unblock_commands": [
-        "scripts/run_magma_baselines.sh --target-id PDF016 --durations 600 --jobs 4",
-        "scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PDF016.list --duration 600 --jobs 4 --continue-on-fail"
+        "after both arms finish, build a comparison package with tools/compare_formtrig_baselines.py",
+        "classify the target as hard-gap evidence only if faithful baselines show flat binary TC guidance and late/missing/high-variance _T"
       ],
       "primary_endpoint_metrics": [
-        "binding audit pass/fail",
-        "accepted non-trigger progress count",
-        "short-screen first _T/TTE after validation"
+        "same-budget terminal success rate",
+        "first _T / terminal-crash wall-clock time",
+        "first _T / terminal-crash execution count",
+        "baseline-visible binary TC flatness before _T",
+        "baseline R2T late/missing/high-variance evidence across repetitions"
       ],
       "priority": "P1",
       "project": "poppler",
       "rank": 5,
       "repetitions": 1,
-      "runnable_now": false,
+      "runnable_now": true,
       "sota_pain_class": "",
       "sota_pain_evidence": "",
       "source": "magma",

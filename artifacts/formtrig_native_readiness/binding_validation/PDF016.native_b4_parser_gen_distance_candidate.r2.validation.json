@@ -1,0 +1,64 @@
+{
+  "benefit_readout": {
+    "execs_done": 5684,
+    "has_non_trigger_progress": true,
+    "non_trigger_progress_events": 4,
+    "pretrigger_lift_guidance_ready": true,
+    "saved_non_trigger_progress_events": 4,
+    "saved_triggered_progress_events": 1,
+    "score": 771200,
+    "terminal_triggered": true
+  },
+  "binding_signal": {
+    "accepted_non_trigger_progress_events": 4,
+    "candidate_events": 2188,
+    "diagnosis": "triggered",
+    "semantic_candidate_variable_roles": 1,
+    "status": "pass"
+  },
+  "binding_spec": "artifacts/binding_specs/PDF016.native_b4_parser_gen_distance_candidate.yml",
+  "blockers": [],
+  "checks": {
+    "binding_spec_compile_pass": true,
+    "dynamic_binding_signal_pass": true,
+    "lift_audit_pass": true,
+    "lift_delta_only_on_triggered": false,
+    "native_site_map_validated": true,
+    "non_trigger_candidate_lift_delta": true,
+    "pretrigger_lift_guidance_ready": true,
+    "runtime_event_map_pass": true,
+    "terminal_triggered": true,
+    "tool_compile_pass": true
+  },
+  "dynamic_seed_readiness": {
+    "atom_signals": null,
+    "components": null,
+    "diagnosis": "triggered",
+    "reached": 5475,
+    "role_signals": null,
+    "seed_count": null,
+    "spec_lifted": null,
+    "status": "pass",
+    "triggered": 8
+  },
+  "generated_at_utc": "2026-06-18T05:19:18+00:00",
+  "native_site_map": {
+    "native_runtime_evidence": true,
+    "path": "artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv"
+  },
+  "native_site_map_validated": true,
+  "next_action": "run the benefit-first short endpoint screen against faithful AFL++ family baselines",
+  "ready_for_short_gate": true,
+  "remaining_limitations": [
+    "candidate sweep is a validation gate, not a matched baseline comparison",
+    "short-gate and long-run endpoint evidence are still required before efficacy claims"
+  ],
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "source": {
+    "candidate_index": 1,
+    "candidate_out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_b4_binding_validation_600s_t5000_r2/candidates/001_PDF016.native_b4_parser_gen_distance_candidate.yml",
+    "summary_jsonl": "artifacts/formtrig_native_readiness/raw/pdf016_b4_binding_validation_600s_t5000_r2/summary.jsonl"
+  },
+  "status": "native_binding_validated",
+  "target_id": "PDF016"
+}

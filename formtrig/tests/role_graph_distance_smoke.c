@@ -35,6 +35,23 @@ static int run_case(unsigned char *area, uint8_t root_outcome,
   return 0;
 }
 
+static int run_distance_case(unsigned char *area, uint64_t root_distance,
+                             double expected_df) {
+  formtrig_reset();
+  formtrig_target_hit("site");
+  __formtrig_log_cmp(301u, 41u, root_distance, 0u,
+                     root_distance == 0u ? 1u : 0u);
+  __formtrig_log_branch(302u, 1u);
+  formtrig_finalize();
+
+  formtrig_shm_record_t *rec = current_record(area);
+  if (!record_header_ok(rec)) return 10;
+  if ((rec->source_flags & FORMTRIG_SOURCE_SPEC_LIFTED) == 0) return 11;
+  if (rec->d_f_spec_lifted != expected_df) return 12;
+  if (rec->d_f != expected_df) return 13;
+  return 0;
+}
+
 int main(void) {
   unsigned char *area =
       (unsigned char *)calloc(1, FORMTRIG_SHM_OFFSET + FORMTRIG_SHM_SIZE);
@@ -52,6 +69,9 @@ int main(void) {
 
   rc = run_case(area, 1u, 1u, 1u, 2.0);
   if (rc) return rc + 60;
+
+  rc = run_distance_case(area, 3u, 3.0);
+  if (rc) return rc + 80;
 
   free(area);
   return 0;
