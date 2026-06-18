@@ -2,7 +2,7 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-18T02:42:12+00:00`
+Generated: `2026-06-18T02:47:28+00:00`
 Tasks: `12`; runnable now: `0`; blocked/gated: `12`; demoted controls skipped: `7`; low-priority skipped: `93`.
 
 ## Budget Order
@@ -52,7 +52,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Current primary benefits:
 - FORMTRIG reaches terminal success where matched baselines do not trigger in this budget
 - Post-unblock commands or steps:
-- python3 tools/merge_magma_baseline_roots.py --out artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --source artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines --source artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z --skip-incomplete-runs --duplicate-policy prefer-later
+- python3 tools/merge_magma_baseline_roots.py --out artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --source artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines --source artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z --duplicate-policy prefer-later
 - scripts/finalize_magma_matched_run.sh --run-root artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z --baseline-dir artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --guidance-out artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z --comparison-out artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z
 - Evidence paths:
 - artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z

@@ -884,6 +884,8 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertEqual(task["active_run_root"], run_root)
             self.assertEqual(task["command"], "")
             self.assertNotIn("run_magma_matched_longrun.sh", " ".join(task["post_unblock_commands"]))
+            self.assertNotIn("--skip-incomplete-runs", " ".join(task["post_unblock_commands"]))
+            self.assertIn("--duplicate-policy prefer-later", " ".join(task["post_unblock_commands"]))
             self.assertIn(run_root, task["evidence_paths"])
             self.assertIn(guidance_out, task["evidence_paths"])
             self.assertTrue(

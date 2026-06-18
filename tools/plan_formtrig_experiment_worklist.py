@@ -962,7 +962,7 @@ def longrun_task(
                 "python3 tools/merge_magma_baseline_roots.py "
                 f"--out {run_root}/merged_baselines "
                 + " ".join(f"--source {root}" for root in baseline_roots)
-                + " --skip-incomplete-runs --duplicate-policy prefer-later"
+                + " --duplicate-policy prefer-later"
             )
         if run_root and guidance_out and comparison_out:
             baseline_dir = (

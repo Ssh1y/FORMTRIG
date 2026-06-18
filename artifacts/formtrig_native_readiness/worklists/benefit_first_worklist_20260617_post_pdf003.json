@@ -8,7 +8,7 @@
     "repetitions": 3,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-18T02:42:12+00:00",
+  "generated_at_utc": "2026-06-18T02:47:28+00:00",
   "inputs": {
     "active_runs": "artifacts/formtrig_native_readiness/worklists/active_matched_runs_20260618.json",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
@@ -981,7 +981,7 @@
         "baseline_guidance_gap_measured"
       ],
       "post_unblock_commands": [
-        "python3 tools/merge_magma_baseline_roots.py --out artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --source artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines --source artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z --skip-incomplete-runs --duplicate-policy prefer-later",
+        "python3 tools/merge_magma_baseline_roots.py --out artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --source artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines --source artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z --duplicate-policy prefer-later",
         "scripts/finalize_magma_matched_run.sh --run-root artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z --baseline-dir artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --guidance-out artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z --comparison-out artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z"
       ],
       "primary_endpoint_metrics": [

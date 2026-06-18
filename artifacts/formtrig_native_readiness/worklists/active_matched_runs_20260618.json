@@ -15,6 +15,7 @@
         "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines",
         "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z"
       ],
+      "operator_note": "The original matched-run parent was stopped after baseline rep2 completed to avoid wasting CPU on a duplicate rep3 and to prevent a later non-merged finalize from overwriting the sharded evidence package. The final baseline rep3 source is the shard root.",
       "claim_boundary": "live snapshot only until all baseline run_record.json files exist and finalize_magma_matched_run.sh produces the final guidance/comparison package"
     }
   ]
