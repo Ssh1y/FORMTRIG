@@ -2,7 +2,7 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-18T17:08:18+00:00`
+Generated: `2026-06-18T17:22:33+00:00`
 Tasks: `24`; runnable now: `1`; blocked/gated: `23`; demoted controls skipped: `9`; low-priority skipped: `93`.
 
 ## Budget Order
@@ -47,7 +47,7 @@ Tasks: `24`; runnable now: `1`; blocked/gated: `23`; demoted controls skipped: `
 - Benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
 - SOTA pain: `not recorded`
 - SOTA pain evidence: not recorded
-- Command: `scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines --program exif_thumbnail --args-template @@ && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.current_1rep.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig`
+- Command: `scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines --program exif_thumbnail --args-template @@ && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.current_1rep.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_formtrig`
 
 ## Gated Tasks
 

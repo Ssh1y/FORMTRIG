@@ -13,7 +13,7 @@ set -euo pipefail
 
 # P1 PHP003 run_validated_matched_short_screen
 # benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
-scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines --program exif_thumbnail --args-template @@ && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.current_1rep.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig
+scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines --program exif_thumbnail --args-template @@ && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.current_1rep.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_formtrig
 
 # P0 LIBXML2_1107 validate_binding_spec_then_short_screen
 # benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.

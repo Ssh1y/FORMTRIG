@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 import shlex
 from datetime import datetime, timezone
 from pathlib import Path
@@ -827,14 +828,38 @@ def preferred_manifest_list(target_id: str, manifest_root: Path, reps: int = 1) 
     return str(manifest_root / f"{target_id}.list")
 
 
+def safe_slug(value: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", value).strip("_.-").lower()
+
+
+def validation_tag_suffix(target_id: str, validation: dict[str, Any] | None) -> str:
+    if not validation:
+        return ""
+    path = str(validation.get("_binding_validation_path") or "")
+    if not path:
+        return ""
+    stem = Path(path).stem
+    if stem.endswith(".validation"):
+        stem = stem[: -len(".validation")]
+    target_prefix = target_id.lower() + "."
+    if stem.lower().startswith(target_prefix):
+        stem = stem[len(target_prefix) :]
+    return safe_slug(stem)
+
+
 def validated_short_screen_command(
     target_id: str,
     duration_s: int,
     jobs: int,
     reps: int,
     manifest_root: Path,
+    tag_suffix: str = "",
 ) -> tuple[str, list[str]]:
-    tag = f"{target_id.lower()}_validated_short_{duration_s}s_{reps}rep"
+    tag_parts = [target_id.lower()]
+    if tag_suffix:
+        tag_parts.append(tag_suffix)
+    tag_parts.extend(["validated_short", f"{duration_s}s", f"{reps}rep"])
+    tag = "_".join(tag_parts)
     baseline_out = f"artifacts/formtrig_native_readiness/raw/{tag}_baselines"
     formtrig_out = f"artifacts/formtrig_native_readiness/raw/{tag}_formtrig"
     manifest_list = preferred_manifest_list(target_id, manifest_root, reps)
@@ -1568,6 +1593,7 @@ def validated_short_screen_task(
                 jobs,
                 reps,
                 manifest_root,
+                tag_suffix=validation_tag_suffix(target_id, validation),
             )
         else:
             blocking_issue = [
