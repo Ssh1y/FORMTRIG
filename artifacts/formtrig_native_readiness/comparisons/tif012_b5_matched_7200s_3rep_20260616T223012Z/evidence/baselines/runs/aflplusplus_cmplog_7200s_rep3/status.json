@@ -1,0 +1,31 @@
+{
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/instrumentation/README.cmplog.md",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ CmpLog instrumentation plus matching cmplog binary",
+    "information_budget": "AFL++ CmpLog operand map and normal AFL++ feedback; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "comparison operand logging and comparison-guided mutation from AFL++",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "faithful AFL++ CmpLog baseline for visible scalar/string comparison feedback"
+  },
+  "existing_fuzzer_out": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z/baselines/magma/aflplusplus_cmplog_7200s_rep3/findings",
+  "magma_monitor_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z/baselines/magma/aflplusplus_cmplog_7200s_rep3/monitor",
+  "resolved_cmd": [
+    "magma/captain",
+    "aflplusplus",
+    "libtiff",
+    "tiff_read_rgba_fuzzer",
+    "@@"
+  ],
+  "returncode": null,
+  "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z/baselines/runs/aflplusplus_cmplog_7200s_rep3/run_record.json",
+  "status": "harvested"
+}

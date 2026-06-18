@@ -1,10 +1,10 @@
 source_label	target_id	baseline	budget	rep	success	trigger_time_s	terminal_count	first_reach_time_s	first_reach_count	first_trigger_time_s	latest_reached	latest_triggered	reached_without_trigger_count	post_reach_observation_time_s	zero_trigger_reached_snapshots	empirical_trigger_rate_per_reach	rule_of_three_trigger_rate_95_upper_bound	pretrigger_binary_flat	pretrigger_binary_reason	reach_to_trigger_gap_s	live_snapshot	run_record
 combined_live	PDF003	aflplusplus_cmplog	7200	1	false	NA	0	90.0	796	NA	548533	0	548533	7085.0	239	0.0	5.469133124169375e-06	true	first_reach_snapshot_has_R_without_T	NA	true	NA
-combined_live	PDF003	aflplusplus_cmplog	7200	2	false	NA	0	90.0	4898	NA	475229	0	475229	5040.0	169	0.0	6.312746065581015e-06	true	first_reach_snapshot_has_R_without_T	NA	true	NA
-combined_live	PDF003	aflplusplus_cmplog	7200	3	false	NA	0	90.0	557	NA	101245	0	101245	1620.0	54	0.0	2.963109289347622e-05	true	first_reach_snapshot_has_R_without_T	NA	true	NA
+combined_live	PDF003	aflplusplus_cmplog	7200	2	false	NA	0	90.0	4898	NA	494058	0	494058	5280.0	177	0.0	6.0721615680750035e-06	true	first_reach_snapshot_has_R_without_T	NA	true	NA
+combined_live	PDF003	aflplusplus_cmplog	7200	3	false	NA	0	90.0	557	NA	130746	0	130746	1830.0	61	0.0	2.2945252627231425e-05	true	first_reach_snapshot_has_R_without_T	NA	true	NA
 combined_live	PDF003	aflplusplus_vanilla	7200	1	false	NA	0	90.0	8659	NA	253025	0	253025	7085.0	239	0.0	1.1856535915423377e-05	true	first_reach_snapshot_has_R_without_T	NA	true	NA
-combined_live	PDF003	aflplusplus_vanilla	7200	2	false	NA	0	90.0	558	NA	19982	0	19982	5040.0	169	0.0	0.0001501351216094485	true	first_reach_snapshot_has_R_without_T	NA	true	NA
-combined_live	PDF003	aflplusplus_vanilla	7200	3	false	NA	0	90.0	5973	NA	169635	0	169635	1620.0	55	0.0	1.7685029622424618e-05	true	first_reach_snapshot_has_R_without_T	NA	true	NA
+combined_live	PDF003	aflplusplus_vanilla	7200	2	false	NA	0	90.0	558	NA	20460	0	20460	5280.0	177	0.0	0.0001466275659824047	true	first_reach_snapshot_has_R_without_T	NA	true	NA
+combined_live	PDF003	aflplusplus_vanilla	7200	3	false	NA	0	90.0	5973	NA	170385	0	170385	1830.0	62	0.0	1.7607183730962233e-05	true	first_reach_snapshot_has_R_without_T	NA	true	NA
 combined_live	PDF003	redqueen_operand	7200	1	false	NA	0	90.0	7383	NA	654054	0	654054	7086.0	234	0.0	4.586777238576631e-06	true	first_reach_snapshot_has_R_without_T	NA	true	NA
 combined_live	PDF003	redqueen_operand	7200	2	true	4530.0	18	90.0	559	4530.0	212464	18	212446	4440.0	148	8.472023495745161e-05	NA	true	first_reach_snapshot_has_R_without_T	4440.0	true	NA
-combined_live	PDF003	redqueen_operand	7200	3	false	NA	0	90.0	557	NA	107254	0	107254	1620.0	54	0.0	2.7970984765136964e-05	true	first_reach_snapshot_has_R_without_T	NA	true	NA
+combined_live	PDF003	redqueen_operand	7200	3	false	NA	0	90.0	557	NA	126000	0	126000	1830.0	61	0.0	2.380952380952381e-05	true	first_reach_snapshot_has_R_without_T	NA	true	NA

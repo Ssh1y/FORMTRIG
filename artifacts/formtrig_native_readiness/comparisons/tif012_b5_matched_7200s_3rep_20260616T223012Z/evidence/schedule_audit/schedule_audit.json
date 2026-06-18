@@ -1,0 +1,26 @@
+{
+  "analysis_time_utc": "2026-06-18T02:22:36Z",
+  "baseline_batches": 3,
+  "baseline_count": 3,
+  "baseline_jobs": 4,
+  "baseline_run_count": 9,
+  "baselines": [
+    "aflplusplus_vanilla",
+    "aflplusplus_cmplog",
+    "redqueen_operand"
+  ],
+  "claim_boundary": "schedule audit only explains expected wall-clock shape; endpoint and guidance claims still require gate, guidance-gap, comparison, and evidence",
+  "duration_values_s": [
+    7200
+  ],
+  "formtrig_jobs": 4,
+  "ideal_baseline_wall_s": 16200,
+  "longest_duration_s": 7200,
+  "mode": "execute",
+  "recommended_baseline_jobs_for_one_batch": 9,
+  "reps": 3,
+  "run_root": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z",
+  "target_id": "TIF012",
+  "total_baseline_budget_s": 64800,
+  "verdict": "multi_batch_baseline_schedule"
+}

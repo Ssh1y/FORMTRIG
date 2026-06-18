@@ -1,0 +1,46 @@
+{
+  "afl_arg": [],
+  "afl_fuzz": "",
+  "baseline": "redqueen_operand",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "budget_sec": 7200,
+  "cmplog_binary": "",
+  "env": [],
+  "existing_fuzzer_out": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z/baselines/magma/redqueen_operand_7200s_rep2/findings",
+  "magma_bug_id": "TIF012",
+  "magma_monitor_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z/baselines/magma/redqueen_operand_7200s_rep2/monitor",
+  "memory_limit": "none",
+  "mode": "harvest",
+  "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z/baselines/runs/redqueen_operand_7200s_rep2",
+  "rep": 2,
+  "seed_corpus": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/TIF012/seeds",
+  "standard_event_schema": {
+    "baseline": "baseline identifier",
+    "details": "event-specific object",
+    "event": "run_start|tool_resolution|fuzzer_start|fuzzer_exit|run_complete|run_error",
+    "rep": "integer repetition id",
+    "target_id": "target identifier",
+    "time_utc": "ISO-8601 UTC timestamp"
+  },
+  "target_cmd": "magma/captain aflplusplus libtiff tiff_read_rgba_fuzzer @@",
+  "target_id": "TIF012",
+  "tc_category": "binary-state-null",
+  "timeout_grace_sec": 5
+}

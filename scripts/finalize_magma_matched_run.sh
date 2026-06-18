@@ -169,6 +169,22 @@ generated_gate_run_path() {
   fi
 }
 
+has_formtrig_gate_inputs() {
+  local rep run_path
+  for rep in $(seq 1 "$reps"); do
+    run_path="$(generated_gate_run_path "$rep")"
+    if [[ -f "$run_path/fuzzer_stats" || -f "$run_path/default/fuzzer_stats" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+has_formtrig_signal_inputs() {
+  find "$formtrig_out" -path "*/out/default/formtrig_progress.jsonl" -type f -print -quit 2>/dev/null |
+    grep -q .
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --run-root)
@@ -305,7 +321,21 @@ LIVE_STATUS_CMD=(
   --out-json "$run_root/live_status.json"
   --out-md "$run_root/live_status.md"
 )
-run_step "live_status" "$logs_dir/finalize_live_status.log" 1 "${LIVE_STATUS_CMD[@]}" || true
+if [[ "$mode" == "dry-run" ]] || has_formtrig_gate_inputs; then
+  run_step "live_status" "$logs_dir/finalize_live_status.log" 1 "${LIVE_STATUS_CMD[@]}" || true
+elif [[ -f "$run_root/live_status.json" ]]; then
+  {
+    echo "skipped live_status: no per-run fuzzer_stats inputs found under $formtrig_out"
+    echo "preserved existing live status: $run_root/live_status.json"
+  } > "$logs_dir/finalize_live_status.log"
+  record_plan "live_status" "preserve existing $run_root/live_status.json (missing per-run fuzzer_stats)" "$logs_dir/finalize_live_status.log"
+else
+  {
+    echo "skipped live_status: no per-run fuzzer_stats inputs found under $formtrig_out"
+    echo "no existing live status was present to preserve"
+  } > "$logs_dir/finalize_live_status.log"
+  record_plan "live_status" "skip missing per-run fuzzer_stats" "$logs_dir/finalize_live_status.log"
+fi
 
 SIGNAL_PATH_CMD=(
   python3 "$repo_root/tools/analyze_formtrig_signal_path.py"
@@ -316,7 +346,21 @@ SIGNAL_PATH_CMD=(
   --out-json "$run_root/formtrig_signal_path.json"
   --out-md "$run_root/formtrig_signal_path.md"
 )
-run_step "formtrig_signal_path" "$logs_dir/finalize_formtrig_signal_path.log" 1 "${SIGNAL_PATH_CMD[@]}" || true
+if [[ "$mode" == "dry-run" ]] || has_formtrig_signal_inputs; then
+  run_step "formtrig_signal_path" "$logs_dir/finalize_formtrig_signal_path.log" 1 "${SIGNAL_PATH_CMD[@]}" || true
+elif [[ -f "$run_root/formtrig_signal_path.json" ]]; then
+  {
+    echo "skipped formtrig_signal_path: no per-run formtrig_progress.jsonl inputs found under $formtrig_out"
+    echo "preserved existing signal path: $run_root/formtrig_signal_path.json"
+  } > "$logs_dir/finalize_formtrig_signal_path.log"
+  record_plan "formtrig_signal_path" "preserve existing $run_root/formtrig_signal_path.json (missing per-run formtrig_progress.jsonl)" "$logs_dir/finalize_formtrig_signal_path.log"
+else
+  {
+    echo "skipped formtrig_signal_path: no per-run formtrig_progress.jsonl inputs found under $formtrig_out"
+    echo "no existing signal path was present to preserve"
+  } > "$logs_dir/finalize_formtrig_signal_path.log"
+  record_plan "formtrig_signal_path" "skip missing per-run formtrig_progress.jsonl" "$logs_dir/finalize_formtrig_signal_path.log"
+fi
 
 GATE_CMD=(
   "$repo_root/scripts/formtrig_experiment_gate.sh"
@@ -327,7 +371,15 @@ GATE_CMD=(
 for rep in $(seq 1 "$reps"); do
   GATE_CMD+=(--run "rep${rep}=$(generated_gate_run_path "$rep")")
 done
-run_step "formtrig_gate" "$logs_dir/finalize_formtrig_gate.log" 1 "${GATE_CMD[@]}" || true
+if [[ "$mode" == "dry-run" || ! -f "$gate_out/gate_summary.csv" ]] || has_formtrig_gate_inputs; then
+  run_step "formtrig_gate" "$logs_dir/finalize_formtrig_gate.log" 1 "${GATE_CMD[@]}" || true
+else
+  {
+    echo "skipped formtrig_gate: no per-run fuzzer_stats inputs found under $formtrig_out"
+    echo "preserved existing gate summary: $gate_out/gate_summary.csv"
+  } > "$logs_dir/finalize_formtrig_gate.log"
+  record_plan "formtrig_gate" "preserve existing $gate_out/gate_summary.csv (missing per-run fuzzer_stats)" "$logs_dir/finalize_formtrig_gate.log"
+fi
 
 GUIDANCE_CMD=(
   python3 "$repo_root/tools/analyze_baseline_guidance_gap.py"

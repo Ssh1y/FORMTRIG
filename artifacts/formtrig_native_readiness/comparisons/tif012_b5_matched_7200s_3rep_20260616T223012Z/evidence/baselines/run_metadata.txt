@@ -1,0 +1,14 @@
+target_id=TIF012
+magma_target=libtiff
+program=tiff_read_rgba_fuzzer
+args_template=@@
+tc_category=binary-state-null
+out_dir=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_b5_matched_7200s_3rep_20260616T223012Z/baselines
+magma_dir=/home/cwh/FORMTRIG/experiments/magma_workspace/magma
+seed_dir=/home/cwh/FORMTRIG/artifacts/rnt_corpus/TIF012/seeds
+inventory=/home/cwh/FORMTRIG/artifacts/magma_canary_inventory.json
+baselines=aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+durations=7200
+reps=3
+jobs=4
+poll=30
