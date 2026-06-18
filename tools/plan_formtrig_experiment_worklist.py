@@ -251,6 +251,43 @@ def binding_validation_ready(payload: dict[str, Any] | None) -> bool:
     return str(payload.get("status") or "") == "native_binding_validated"
 
 
+def nested_dict(payload: dict[str, Any] | None, key: str) -> dict[str, Any]:
+    if not payload:
+        return {}
+    value = payload.get(key)
+    return value if isinstance(value, dict) else {}
+
+
+def binding_validation_strict_pretrigger_guidance(payload: dict[str, Any] | None) -> bool:
+    benefit = nested_dict(payload, "benefit_readout")
+    signal = nested_dict(payload, "binding_signal")
+    return (
+        bool_value(benefit.get("has_non_trigger_progress"))
+        or int_value(benefit.get("non_trigger_progress_events")) > 0
+        or int_value(benefit.get("saved_non_trigger_progress_events")) > 0
+        or int_value(signal.get("accepted_non_trigger_progress_events")) > 0
+    )
+
+
+def binding_validation_soft_pretrigger_signal(payload: dict[str, Any] | None) -> bool:
+    benefit = nested_dict(payload, "benefit_readout")
+    checks = nested_dict(payload, "checks")
+    return (
+        binding_validation_strict_pretrigger_guidance(payload)
+        or bool_value(benefit.get("pretrigger_lift_guidance_ready"))
+        or bool_value(checks.get("pretrigger_lift_guidance_ready"))
+        or bool_value(checks.get("non_trigger_candidate_lift_delta"))
+    )
+
+
+def binding_validation_terminal_triggered(payload: dict[str, Any] | None) -> bool:
+    benefit = nested_dict(payload, "benefit_readout")
+    checks = nested_dict(payload, "checks")
+    return bool_value(benefit.get("terminal_triggered")) or bool_value(
+        checks.get("terminal_triggered")
+    )
+
+
 def binding_validation_blockers(
     row: dict[str, Any],
     validation: dict[str, Any] | None,
@@ -270,6 +307,17 @@ def binding_validation_blockers(
     checks = validation.get("checks") if isinstance(validation.get("checks"), dict) else {}
     if not checks.get("native_site_map_validated"):
         return ["BindingSpec candidate is not native-site-map validated"]
+    if binding_validation_ready(validation) and not binding_validation_strict_pretrigger_guidance(validation):
+        out = ["validated BindingSpec lacks accepted non-trigger frontier progress"]
+        if binding_validation_soft_pretrigger_signal(validation):
+            out.append(
+                "only soft pre-trigger lifted signal is present; collect accepted/saved non-trigger progress before endpoint spending"
+            )
+        if binding_validation_terminal_triggered(validation):
+            out.append(
+                "terminal signal appeared without accepted non-trigger guidance, so this is control evidence"
+            )
+        return out
     if status:
         return [f"binding validation is not ready for short gate: {status}"]
     return ["binding validation is not ready for short gate"]
@@ -326,6 +374,12 @@ def int_value(value: Any, default: int = 0) -> int:
         return int(value)
     except (TypeError, ValueError):
         return default
+
+
+def bool_value(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() in {"1", "true", "yes", "y"}
 
 
 def comparison_verdict(comparison: dict[str, Any] | None) -> str:
@@ -1612,7 +1666,7 @@ def task_for_row(
             triage,
         )
     if lane == "binding_validation_first":
-        if binding_validation_ready(validation):
+        if binding_validation_ready(validation) and binding_validation_strict_pretrigger_guidance(validation):
             return attach_sota_pain(
                 validated_short_screen_task(
                     row,

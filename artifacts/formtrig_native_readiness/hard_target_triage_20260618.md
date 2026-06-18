@@ -14,22 +14,18 @@ Promoted hard-target candidates: `1`.
 | target | disposition | priority | SOTA pain | baseline triggers | FORMTRIG `_T` | fastest baseline `_T` | speedup | next action |
 | --- | --- | ---: | --- | --- | ---: | ---: | ---: | --- |
 | PDF003 | `candidate_extend_longruns` | 15 | `visible_hard_speedup_or_reliability` | aflplusplus_vanilla,redqueen_operand | 0.31 | 4530.0 | 14612.903225806453 | extend to longer matched-budget runs to test whether the replicated FORMTRIG TTE speedup persists |
-| LIBARCHIVE_2936 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_time_cost_acceptable` | aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand | 1.358 | 9.456 | 6.963181148748158 | do not spend main long-run budget here; baseline guidance-gap analysis shows a faithful baseline reaches _T within the acceptable threshold |
+| LIBARCHIVE_2936 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_time_cost_acceptable` | aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand | 1.358 | 9.456 | 6.963181148748158 | do not spend main long-run budget here; report only as speedup/control evidence unless a new, harder harness/seed design makes faithful baseline trigger probability small |
 | LIBCOAP_CVE_2023_35862 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_visible_no_formtrig_advantage` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | None |  | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
-| PDF016 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_time_cost_acceptable` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | None | 90.0 | None | do not spend main long-run budget here; baseline guidance-gap analysis shows a faithful baseline reaches _T within the acceptable threshold |
-| PHP009 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_time_cost_acceptable` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | 87.04 | 120.0 | 1.3786764705882353 | do not spend main long-run budget here; baseline guidance-gap analysis shows a faithful baseline reaches _T within the acceptable threshold |
+| PDF016 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_visible_no_formtrig_advantage` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | None | 90.0 | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
+| PHP009 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_time_cost_acceptable` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | 87.04 | 120.0 | 1.3786764705882353 | do not spend main long-run budget here; report only as speedup/control evidence unless a new, harder harness/seed design makes faithful baseline trigger probability small |
 | PNG006 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_visible_no_formtrig_advantage` | aflplusplus_cmplog | None |  | None | do not spend main long-run budget here; use as control/evidence plumbing and search harder targets |
-| TIF012 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_time_cost_acceptable` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | 0.034 | 210.0 | 6176.470588235294 | do not spend main long-run budget here; baseline guidance-gap analysis shows a faithful baseline reaches _T within the acceptable threshold |
+| TIF012 | `demote_to_control_or_negative` | 90 | `not_visible_baseline_time_cost_acceptable` | aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand | 0.034 | 210.0 | 6176.470588235294 | do not spend main long-run budget here; report only as speedup/control evidence unless a new, harder harness/seed design makes faithful baseline trigger probability small |
 
 ## Baseline Guidance-Gap Gate
 
 | target | status | evidence |
 | --- | --- | --- |
-| PDF003 | `measured_pass` | baseline_guidance_gap.status=measured_pass; pre_T_binary_flat=true; fastest_baseline_T=4530s; baseline evidence supports a hard binary-TC no-guidance candidate |
-| LIBARCHIVE_2936 | `fail_fast_baseline` | baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=false; fastest_baseline_T=9.456s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence |
-| PDF016 | `fail_fast_baseline` | baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=90s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence |
-| PHP009 | `fail_fast_baseline` | baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=120s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence |
-| TIF012 | `fail_fast_baseline` | baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=210s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence |
+| PDF003 | `measured_pass` | baseline_guidance_gap.status=measured_pass; pre_T_binary_flat=true; baseline evidence supports a hard binary-TC no-guidance candidate |
 
 ## Package Evidence
 

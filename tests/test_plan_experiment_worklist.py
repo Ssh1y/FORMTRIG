@@ -526,6 +526,93 @@ class ExperimentWorklistTest(unittest.TestCase):
                 task["evidence_paths"],
             )
 
+    def test_ready_binding_validation_without_strict_guidance_stays_gated(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            validation_root = root / "binding_validation"
+            comparison_root.mkdir()
+            validation_root.mkdir()
+            validation_path = validation_root / "PDF003.native_draft_magma_canary.validation.json"
+            validation_path.write_text(
+                json.dumps(
+                    {
+                        "target_id": "PDF003",
+                        "status": "native_binding_validated",
+                        "ready_for_short_gate": True,
+                        "generated_at_utc": "2026-06-18T08:00:00+00:00",
+                        "benefit_readout": {
+                            "pretrigger_lift_guidance_ready": True,
+                            "non_trigger_progress_events": 0,
+                            "saved_non_trigger_progress_events": 0,
+                            "terminal_triggered": False,
+                        },
+                        "binding_signal": {
+                            "status": "pass",
+                            "accepted_non_trigger_progress_events": 0,
+                            "candidate_events": 569,
+                        },
+                        "checks": {
+                            "native_site_map_validated": True,
+                            "non_trigger_candidate_lift_delta": True,
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 3,
+                                "target_id": "PDF003",
+                                "source": "magma",
+                                "project": "poppler",
+                                "primary_category": "binary-state-null",
+                                "secondary_category": "",
+                                "lane": "binding_validation_first",
+                                "status": "needs_binding_validation",
+                                "existing_disposition": "",
+                                "blockers": "",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                binding_validation_root=validation_root,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "validate_binding_spec_then_short_screen")
+            self.assertFalse(task["runnable_now"])
+            self.assertIn(
+                "validated BindingSpec lacks accepted non-trigger frontier progress",
+                task["blocking_issue"],
+            )
+            self.assertIn(
+                "only soft pre-trigger lifted signal is present",
+                "; ".join(task["blocking_issue"]),
+            )
+            self.assertIn(str(validation_path), task["evidence_paths"])
+
     def test_terminal_only_validation_reports_real_blockers(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:
