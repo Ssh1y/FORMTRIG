@@ -1,0 +1,89 @@
+{
+  "ablation_id": "gpac3403_mp4_hook_ablation_60s_20260618",
+  "target_id": "GPAC_3403",
+  "budget_s": 60,
+  "analysis": {
+    "verdict": "mp4_hook_improves_typed_mutation_yield_without_endpoint_claim",
+    "primary_label": "mp4_hook",
+    "primary_reps": 1,
+    "control_reps": {
+      "no_external_hook": 1
+    },
+    "reasons": [
+      "both_arms_have_strict_pretrigger_guidance",
+      "mp4_hook_more_typed_finds",
+      "mp4_hook_larger_corpus",
+      "no_terminal_trigger_in_either_arm",
+      "low_replication"
+    ],
+    "observed_benefits": [
+      "MP4 hook increases typed finds from 8 to 14 in the same 60s budget.",
+      "MP4 hook increases final corpus count from 180 to 207.",
+      "Both arms preserve non-trigger lifted D_F progress, so the lifted guidance is not dependent on the external hook."
+    ],
+    "blocked_claims": [
+      "No endpoint or TTE speedup is established because neither arm reached _T.",
+      "This is a one-repetition 60s smoke ablation.",
+      "The no-hook arm disables the external MP4 hook, but FORMTRIG's internal typed range stage still runs.",
+      "Matched AFL++/CmpLog/Redqueen baselines are still required for SOTA-pain claims."
+    ]
+  },
+  "runs": [
+    {
+      "label": "mp4_hook",
+      "run": "gpac3403_binding_validation_60s_20260618",
+      "source_path": "artifacts/formtrig_native_readiness/raw/gpac3403_binding_validation_60s_20260618",
+      "hook_enabled": true,
+      "hook_source": "binding_spec",
+      "hook_path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/mp4_box_structure_hook.py",
+      "hook_sha256": "2238d1be6586e8569d50c9e9146ee603f3199f39efc76b3be27f853a87bff4c0",
+      "execs_done": 7257,
+      "corpus_count": 207,
+      "terminal_count": 0,
+      "reached": 7204,
+      "strict_pretrigger_guidance": true,
+      "binding_signal_status": "pass",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "accepted_non_trigger": 2,
+      "saved_non_trigger": 2,
+      "d_f_spec_lifted_min": 2,
+      "d_f_spec_lifted_max": 4,
+      "d_f_candidate_values": [
+        4,
+        2,
+        3
+      ],
+      "typed_execs": 109,
+      "typed_finds": 14,
+      "typed_skips": 0
+    },
+    {
+      "label": "no_external_hook",
+      "run": "gpac3403_nohook_validation_60s_20260618",
+      "source_path": "artifacts/formtrig_native_readiness/raw/gpac3403_nohook_validation_60s_20260618",
+      "hook_enabled": false,
+      "hook_source": "disabled_ablation",
+      "hook_path": null,
+      "hook_sha256": null,
+      "execs_done": 7544,
+      "corpus_count": 180,
+      "terminal_count": 0,
+      "reached": 7503,
+      "strict_pretrigger_guidance": true,
+      "binding_signal_status": "pass",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "accepted_non_trigger": 2,
+      "saved_non_trigger": 2,
+      "d_f_spec_lifted_min": 2,
+      "d_f_spec_lifted_max": 4,
+      "d_f_candidate_values": [
+        4,
+        2,
+        3
+      ],
+      "typed_execs": 109,
+      "typed_finds": 8,
+      "typed_skips": 0
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "target_id": "GPAC_3403",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml",
+  "status": "native_binding_validated",
+  "ready_for_short_gate": true,
+  "native_site_map_validated": true,
+  "generated_at_utc": "2026-06-18T19:07:36+00:00",
+  "checks": {
+    "tool_compile_pass": true,
+    "binding_spec_compile_pass": true,
+    "lift_audit_pass": true,
+    "native_site_map_validated": true,
+    "runtime_event_map_pass": true,
+    "harness_admissibility_pass": true,
+    "dynamic_binding_signal_pass": true,
+    "pretrigger_lift_guidance_ready": true,
+    "non_trigger_candidate_lift_delta": true,
+    "lift_delta_only_on_triggered": false,
+    "terminal_triggered": false,
+    "producer_constant_zero": false,
+    "typed_mutation_hook_enabled": true,
+    "tc_rooted_static_pass": true,
+    "same_object_role_observed": false
+  },
+  "tc_rooted_static": {
+    "status": "pass",
+    "source_path": "artifacts/formtrig_native_readiness/binding_static_audit/GPAC_3403.native_b1_bitstream_lifecycle_candidate.tc_rooted.json"
+  },
+  "native_site_map": {
+    "path": "/tmp/formtrig_gpac3403_native_env/site_map.tsv",
+    "native_runtime_evidence": true,
+    "committed": false,
+    "row_count": 272013,
+    "sha256": "9a8dc6bf3c3283a7299f5d279480da518b3e749fc765c097bd23949f858b4ed7"
+  },
+  "dynamic_seed_readiness": {
+    "status": "pass",
+    "diagnosis": "ready_single_rnt_seed",
+    "seed_count": 1,
+    "reached": 1,
+    "triggered": 0,
+    "spec_lifted": 1,
+    "components": true,
+    "atom_signals": true,
+    "role_signals": true
+  },
+  "binding_signal": {
+    "status": "pass",
+    "diagnosis": "role_signal_progress_observed",
+    "candidate_events": 4093,
+    "accepted_non_trigger_progress_events": 2,
+    "semantic_candidate_variable_roles": 0,
+    "spec_d_f_candidate_values": [
+      4,
+      2,
+      3
+    ],
+    "spec_d_f_candidate_min": 2,
+    "spec_d_f_non_trigger_candidate_min": 2,
+    "same_object_samples": 0
+  },
+  "producer_signal": {
+    "constant_zero_roles": [],
+    "producer_roles_observed": [
+      "desired_producer"
+    ],
+    "producer_role_values": {
+      "desired_producer": [
+        1
+      ]
+    }
+  },
+  "mutation_hook": {
+    "enabled": true,
+    "source": "binding_spec",
+    "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/mp4_box_structure_hook.py",
+    "sha256": "2238d1be6586e8569d50c9e9146ee603f3199f39efc76b3be27f853a87bff4c0",
+    "typed_execs": 109,
+    "typed_finds": 14,
+    "typed_queue_examples": 14
+  },
+  "benefit_readout": {
+    "terminal_triggered": false,
+    "pretrigger_lift_guidance_ready": true,
+    "has_non_trigger_progress": true,
+    "non_trigger_progress_events": 2,
+    "saved_non_trigger_progress_events": 2,
+    "saved_triggered_progress_events": 0,
+    "execs_done": 7257,
+    "formtrig_seen_execs": 7206,
+    "formtrig_reached_execs": 7204,
+    "formtrig_triggered_execs": 0,
+    "formtrig_queued_progress": 2,
+    "formtrig_frontier_updates": 3,
+    "corpus_count": 207,
+    "afl_saved_crashes": 0,
+    "d_f_spec_lifted_min": 2,
+    "d_f_spec_lifted_max": 4
+  },
+  "source": {
+    "run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_binding_validation_60s_20260618",
+    "duration_s": 60,
+    "command": "scripts/run_formtrig_aflpp_campaign.sh --in artifacts/rnt_corpus/GPAC_3403/seeds --out artifacts/formtrig_native_readiness/raw/gpac3403_binding_validation_60s_20260618 --target-bug GPAC_3403 --category lifecycle --binding-spec artifacts/binding_specs/GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml --site-map /tmp/formtrig_gpac3403_native_env/site_map.tsv --duration 60 --seed-preflight require -- /tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+    "diagnosis_json": {
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_binding_validation_60s_20260618/default/formtrig_diagnosis.json",
+      "sha256": "85c618fe39f4679baa90108b0dc48b23dca3ecdf9451a6689de6990e4768ea23"
+    },
+    "binding_signal_json": {
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_binding_validation_60s_20260618/default/formtrig_binding_signal_diagnosis.json",
+      "sha256": "139145d8f95e3c74ca045e24978afadb2688b9b3998f9b43fbab91d2a26100ec"
+    },
+    "summary_json": {
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_binding_validation_60s_20260618/default/formtrig_summary.json",
+      "sha256": "6c1d091777fcda61cbc5938a955fca93bc59626883eecc11c8adc876a4c9d3b4"
+    },
+    "runtime_event_map": {
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_binding_validation_60s_20260618/formtrig_runtime_event_map.csv",
+      "sha256": "22e76519bb69fa64ffff09d2f57b8d4bb20b5f1a0301427065b86100cb865df6"
+    }
+  },
+  "blockers": [],
+  "remaining_limitations": [
+    "No terminal _T was observed in this 60s validation run.",
+    "No matched AFL++/CmpLog/Redqueen baseline comparison has been run for this GPAC_3403 setup yet.",
+    "The same_object BindingSpec role was bound in the native site-map but produced zero runtime samples; current dynamic guidance is from root/use/lifecycle/producer/input_influence roles.",
+    "The raw 60s run directory is local evidence and is not committed because it contains AFL queue artifacts."
+  ],
+  "next_action": "run matched AFL++ vanilla/CmpLog/Redqueen short baselines and repair same_object runtime observability for GPAC_3403"
+}
