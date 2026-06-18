@@ -1,0 +1,60 @@
+{
+  "schema": "formtrig_comparison_v1",
+  "target_id": "GPAC_3403",
+  "comparison_type": "asan_baseline_prescreen",
+  "claim_status": "short_gate_only_not_longrun",
+  "source_record": "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/baseline_prescreen.json",
+  "duration_s": 60,
+  "seed_corpus": "artifacts/rnt_corpus/GPAC_3403/seeds",
+  "formtrig": {
+    "validation_record": "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json",
+    "terminal_triggered": false,
+    "pretrigger_lift_guidance_ready": true,
+    "accepted_non_trigger_progress_events": 2,
+    "saved_non_trigger_progress_events": 2,
+    "typed_execs": 109,
+    "typed_finds": 14,
+    "corpus_count": 207
+  },
+  "baselines": {
+    "endpoint_oracle": "ASAN crash",
+    "validity_rule": "returncode in (0,124), run_time >= 50, execs_done > 0",
+    "runs_tsv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/evidence/baselines/baseline_runs.tsv",
+    "summary": [
+      {
+        "baseline": "aflplusplus_vanilla",
+        "valid_reps": 3,
+        "endpoint_successes": 0,
+        "median_execs_done": 1467,
+        "median_corpus_count": 58
+      },
+      {
+        "baseline": "aflplusplus_cmplog",
+        "valid_reps": 3,
+        "endpoint_successes": 0,
+        "median_execs_done": 1406,
+        "median_corpus_count": 56
+      },
+      {
+        "baseline": "redqueen_operand",
+        "valid_reps": 2,
+        "invalid_reps": 1,
+        "endpoint_successes": 0,
+        "median_execs_done": 1000.5,
+        "median_corpus_count": 32.0
+      }
+    ]
+  },
+  "interpretation": {
+    "supports": [
+      "GPAC_3403 is ready for a longer matched endpoint campaign.",
+      "The current FORMTRIG BindingSpec produces pre-trigger lifted guidance where valid 60s ASAN AFL++ family baselines did not find the endpoint crash."
+    ],
+    "does_not_support": [
+      "long-run SOTA-pain proof",
+      "FORMTRIG endpoint speedup on GPAC_3403",
+      "Redqueen rep2 target-level no-crash conclusion"
+    ],
+    "next_action": "Run matched 10m/2h FORMTRIG and ASAN AFL++-family campaigns, and repair same_object runtime observability."
+  }
+}

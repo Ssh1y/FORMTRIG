@@ -1,0 +1,108 @@
+{
+  "schema": "formtrig_baseline_prescreen_v1",
+  "target_id": "GPAC_3403",
+  "target_class": "real_cve_compound_sequence_lifecycle",
+  "generated_at_utc": "2026-06-18T19:39:12Z",
+  "scope": "60s ASAN endpoint baseline pre-screen from the GPAC_3403 RNT seed corpus; not a long-run SOTA-pain proof",
+  "source_commit": {
+    "project": "gpac",
+    "commit": "3ab9394473dfcdc830a4fb44a138db5276ae4bdb"
+  },
+  "baseline_builds": {
+    "aflplusplus_plain_asan": {
+      "binary": "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+      "sha256": "fb3437d513755c24b6bee983a34cbbacb95b3848bfba46e8b352a3801c48775f",
+      "build_log": "/tmp/formtrig_gpac3403_plain_asan_build.log",
+      "build_log_sha256": "e27584cc0f239a663abe71058e64e6d77a244415a972b58417acf6e73a6e3793"
+    },
+    "aflplusplus_cmplog_asan": {
+      "binary": "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+      "sha256": "e4e02af748a4ccef1985de6a878c664b2d65c068db856e9b74c9805c63b19d6e",
+      "build_log": "/tmp/formtrig_gpac3403_cmplog_asan_build.log",
+      "build_log_sha256": "dc4deb578f5a7a5300513b41658d62599e499a9c7154463576bb5cd412ec10e0"
+    }
+  },
+  "poc_sanity": {
+    "command": "ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:symbolize=1 UBSAN_OPTIONS=halt_on_error=1:abort_on_error=1:print_stacktrace=1 timeout 20s /tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box -cat benchmarks/cve_pocs/gpac/GPAC_3403.poc benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+    "exit_code": 134,
+    "asan_signal": "AddressSanitizer attempting double-free in MP4Box",
+    "stderr": "/tmp/gpac3403_plain_asan_poc.stderr",
+    "stderr_sha256": "c70f2d262d863b7c4b7f36ee3201f959914221d5fcb153054aa518f73e611d29"
+  },
+  "seed_corpus": {
+    "path": "artifacts/rnt_corpus/GPAC_3403/seeds",
+    "seed_count": 1,
+    "seed": "id:000000,sha256:f7f909fb41fbf344",
+    "seed_size_bytes": 1660
+  },
+  "formtrig_reference": {
+    "validation_record": "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json",
+    "duration_s": 60,
+    "terminal_triggered": false,
+    "pretrigger_lift_guidance_ready": true,
+    "accepted_non_trigger_progress_events": 2,
+    "saved_non_trigger_progress_events": 2,
+    "spec_d_f_candidate_values": [
+      4,
+      2,
+      3
+    ],
+    "typed_execs": 109,
+    "typed_finds": 14,
+    "execs_done": 7257,
+    "corpus_count": 207,
+    "same_object_role_observed": false
+  },
+  "baseline_validity_rule": "A run is valid if afl-fuzz returncode is 0 or 124, run_time >= 50, and execs_done > 0.",
+  "baseline_runs_tsv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/evidence/baselines/baseline_runs.tsv",
+  "baseline_summary": [
+    {
+      "baseline": "aflplusplus_vanilla",
+      "valid_reps": 3,
+      "invalid_reps": 0,
+      "endpoint_successes": 0,
+      "endpoint_success_rate": 0.0,
+      "median_execs_done": 1467,
+      "median_corpus_count": 58,
+      "max_corpus_count": 67
+    },
+    {
+      "baseline": "aflplusplus_cmplog",
+      "valid_reps": 3,
+      "invalid_reps": 0,
+      "endpoint_successes": 0,
+      "endpoint_success_rate": 0.0,
+      "median_execs_done": 1406,
+      "median_corpus_count": 56,
+      "max_corpus_count": 63
+    },
+    {
+      "baseline": "redqueen_operand",
+      "valid_reps": 2,
+      "invalid_reps": 1,
+      "endpoint_successes": 0,
+      "endpoint_success_rate": 0.0,
+      "median_execs_done": 1000.5,
+      "median_corpus_count": 32.0,
+      "max_corpus_count": 63
+    }
+  ],
+  "invalid_runs": [
+    {
+      "baseline": "redqueen_operand",
+      "rep": 2,
+      "returncode": 1,
+      "run_time": 2,
+      "execs_done": 0,
+      "failure_class": "cmplog_forkserver_startup_crash",
+      "interpretation": "infrastructure failure; excluded from target endpoint conclusions"
+    }
+  ],
+  "findings": [
+    "The ASAN-enabled AFL++ plain binary reproduces the GPAC_3403 double-free on the known POC.",
+    "No valid 60s AFL++ family baseline run found an ASAN endpoint crash from the GPAC_3403 RNT seed corpus.",
+    "FORMTRIG's existing 60s native run did not reach terminal _T, but it did produce accepted and saved non-trigger lifted-guidance progress.",
+    "This package supports a short-gate follow-up for GPAC_3403; it is not sufficient to claim long-run SOTA pain or endpoint speedup."
+  ],
+  "next_action": "Run matched 10m/2h FORMTRIG and AFL++-family ASAN endpoint campaigns, and repair GPAC_3403 same_object runtime observability before promoting this target to main evidence."
+}

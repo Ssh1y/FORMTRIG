@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-18T19:15:36+00:00",
+  "generated_at_utc": "2026-06-18T19:46:43+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -18,9 +18,9 @@
       "blockers": "",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
-      "comparison_count": 0,
+      "comparison_count": 1,
       "core_evidence_allowed": true,
-      "current_benefit": "",
+      "current_benefit": "short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 2 accepted / 2 saved non-trigger progress events; ASAN AFL++ family valid baseline reps 8 with 0 endpoint successes",
       "current_speedup_package": "",
       "discovery_lane": "binding_spec_first",
       "discovery_rank": 4,
@@ -28,7 +28,7 @@
       "harness_admissibility_status": "",
       "harness_source_ready": false,
       "native_dt_values": "1",
-      "next_action": "run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines",
+      "next_action": "extend latest short-gate package to matched 10m/2h endpoint runs and repair any BindingSpec roles that stayed unobserved",
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [
@@ -38,7 +38,9 @@
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json",
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json"
         ],
-        "comparison_records": [],
+        "comparison_records": [
+          "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json"
+        ],
         "harness_admissibility_records": [],
         "harness_sources": [],
         "poc": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
@@ -50,10 +52,10 @@
         "validation_log": "artifacts/cve_validation_logs/GPAC_3403.validation.log"
       },
       "poc_ready": true,
-      "priority": 10,
+      "priority": 12,
       "project": "gpac",
       "rank": 1,
-      "readiness": "ready_for_formtrig_short_gate",
+      "readiness": "short_gate_triaged",
       "rnt_ready": true,
       "seed_count": 1,
       "source_locations": "src/utils/bitstream.c:372#gf_bs_del",

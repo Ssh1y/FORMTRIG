@@ -122,9 +122,9 @@
   "blockers": [],
   "remaining_limitations": [
     "No terminal _T was observed in this 60s validation run.",
-    "No matched AFL++/CmpLog/Redqueen baseline comparison has been run for this GPAC_3403 setup yet.",
+    "A matched 60s ASAN AFL++-family baseline pre-screen is recorded at artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json, but this is not a long-run SOTA-pain proof.",
     "The same_object BindingSpec role was bound in the native site-map but produced zero runtime samples; current dynamic guidance is from root/use/lifecycle/producer/input_influence roles.",
     "The raw 60s run directory is local evidence and is not committed because it contains AFL queue artifacts."
   ],
-  "next_action": "run matched AFL++ vanilla/CmpLog/Redqueen short baselines and repair same_object runtime observability for GPAC_3403"
+  "next_action": "extend GPAC_3403 to matched 10m/2h FORMTRIG and ASAN AFL++-family campaigns, and repair same_object runtime observability"
 }

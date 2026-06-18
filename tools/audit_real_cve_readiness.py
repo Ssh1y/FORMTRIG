@@ -257,6 +257,19 @@ def speedup_comparison(records: list[dict[str, Any]]) -> dict[str, Any] | None:
     return positives[0]
 
 
+def short_gate_comparison(records: list[dict[str, Any]]) -> dict[str, Any] | None:
+    candidates = [
+        record
+        for record in records
+        if str(record.get("claim_status") or "") == "short_gate_only_not_longrun"
+        or str(record.get("comparison_type") or "").endswith("baseline_prescreen")
+    ]
+    if not candidates:
+        return None
+    candidates.sort(key=lambda record: str(record.get("_path") or ""))
+    return candidates[0]
+
+
 def speedup_benefit(record: dict[str, Any] | None) -> str:
     if not record:
         return ""
@@ -285,6 +298,37 @@ def speedup_benefit(record: dict[str, Any] | None) -> str:
             f"baseline {confirmation.get('fastest_successful_baseline_trigger_time_s')}s "
             f"/ exec {confirmation.get('fastest_successful_baseline_trigger_execs')}"
         )
+    return "; ".join(parts)
+
+
+def short_gate_benefit(record: dict[str, Any] | None) -> str:
+    if not record:
+        return ""
+    formtrig = record.get("formtrig") if isinstance(record.get("formtrig"), dict) else {}
+    baselines = record.get("baselines") if isinstance(record.get("baselines"), dict) else {}
+    summary = baselines.get("summary") if isinstance(baselines.get("summary"), list) else []
+    valid_reps = 0
+    endpoint_successes = 0
+    for item in summary:
+        if not isinstance(item, dict):
+            continue
+        valid_reps += intish(item.get("valid_reps"))
+        endpoint_successes += intish(item.get("endpoint_successes"))
+    parts = []
+    if formtrig.get("pretrigger_lift_guidance_ready") is True:
+        progress = intish(formtrig.get("accepted_non_trigger_progress_events"))
+        saved = intish(formtrig.get("saved_non_trigger_progress_events"))
+        parts.append(
+            "short-gate pre-screen: FORMTRIG pre-trigger lifted guidance"
+            f" with {progress} accepted / {saved} saved non-trigger progress events"
+        )
+    if valid_reps:
+        parts.append(
+            f"ASAN AFL++ family valid baseline reps {valid_reps} with "
+            f"{endpoint_successes} endpoint successes"
+        )
+    if not parts:
+        parts.append("short-gate pre-screen comparison recorded; not a long-run proof")
     return "; ".join(parts)
 
 
@@ -442,6 +486,7 @@ def audit_target(
     comparisons = comparison_records(target_id, comparison_root)
     comparison_count = len(comparisons)
     best_speedup = speedup_comparison(comparisons)
+    best_short_gate = short_gate_comparison(comparisons)
     has_10m_speedup = bool(
         best_speedup and isinstance(best_speedup.get("longrun_10m_confirmation"), dict)
     )
@@ -499,6 +544,13 @@ def audit_target(
                 "Redqueen-path runs for the speedup package"
             )
             priority = 8
+        elif best_short_gate:
+            readiness = "short_gate_triaged"
+            next_action = (
+                "extend latest short-gate package to matched 10m/2h endpoint "
+                "runs and repair any BindingSpec roles that stayed unobserved"
+            )
+            priority = 12
         elif comparison_count:
             readiness = "short_gate_triaged"
             next_action = (
@@ -559,7 +611,7 @@ def audit_target(
         "native_dt_values": ",".join(native_dt_values),
         "source_locations": "; ".join(source_locations),
         "current_speedup_package": best_speedup.get("_path", "") if best_speedup else "",
-        "current_benefit": speedup_benefit(best_speedup),
+        "current_benefit": speedup_benefit(best_speedup) or short_gate_benefit(best_short_gate),
         "harness_admissibility_status": harness_admissibility_status(harness_records),
         "core_evidence_allowed": not harness_rejected if harness_records else True,
         "blockers": "; ".join(blockers),

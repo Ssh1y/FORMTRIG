@@ -1,0 +1,10 @@
+baseline	rep	valid	returncode	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	success	trigger_time_s	notes
+aflplusplus_vanilla	1	true	0	60	515	8.56	1	0	false	NA	valid_60s_asan_endpoint_prescreen
+aflplusplus_vanilla	2	true	0	60	1542	25.68	58	0	false	NA	valid_60s_asan_endpoint_prescreen
+aflplusplus_vanilla	3	true	0	60	1467	24.35	67	0	false	NA	valid_60s_asan_endpoint_prescreen
+aflplusplus_cmplog	1	true	0	60	520	8.65	1	0	false	NA	valid_60s_asan_endpoint_prescreen
+aflplusplus_cmplog	2	true	0	60	1406	23.39	56	0	false	NA	valid_60s_asan_endpoint_prescreen
+aflplusplus_cmplog	3	true	0	60	1482	24.65	63	0	false	NA	valid_60s_asan_endpoint_prescreen
+redqueen_operand	1	true	0	60	519	8.64	1	0	false	NA	valid_60s_asan_endpoint_prescreen
+redqueen_operand	2	false	1	2	0	NA	0	0	false	NA	cmplog_forkserver_startup_crash_not_counted_as_target_outcome
+redqueen_operand	3	true	0	60	1482	24.67	63	0	false	NA	valid_60s_asan_endpoint_prescreen

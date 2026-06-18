@@ -7,6 +7,8 @@ from tools.audit_real_cve_readiness import (
     harness_admissibility_blocker,
     harness_admissibility_records,
     harness_rejects_core_evidence,
+    short_gate_benefit,
+    short_gate_comparison,
 )
 
 
@@ -37,6 +39,34 @@ class RealCveReadinessAuditTest(unittest.TestCase):
         blocker = harness_admissibility_blocker(records)
         self.assertIn("inadmissible_core_evidence", blocker)
         self.assertIn("artificial trigger-control knob", blocker)
+
+    def test_short_gate_benefit_is_reported_without_speedup_claim(self):
+        records = [
+            {
+                "_path": "artifacts/formtrig_native_readiness/comparisons/example/comparison.json",
+                "claim_status": "short_gate_only_not_longrun",
+                "comparison_type": "asan_baseline_prescreen",
+                "formtrig": {
+                    "pretrigger_lift_guidance_ready": True,
+                    "accepted_non_trigger_progress_events": 2,
+                    "saved_non_trigger_progress_events": 2,
+                },
+                "baselines": {
+                    "summary": [
+                        {"baseline": "aflplusplus_vanilla", "valid_reps": 3, "endpoint_successes": 0},
+                        {"baseline": "aflplusplus_cmplog", "valid_reps": 3, "endpoint_successes": 0},
+                    ]
+                },
+            }
+        ]
+
+        record = short_gate_comparison(records)
+
+        self.assertIsNotNone(record)
+        benefit = short_gate_benefit(record)
+        self.assertIn("pre-trigger lifted guidance", benefit)
+        self.assertIn("valid baseline reps 6", benefit)
+        self.assertIn("0 endpoint successes", benefit)
 
 
 if __name__ == "__main__":
