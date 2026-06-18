@@ -1,0 +1,21 @@
+{
+  "generated_at_utc": "2026-06-18T02:34:14Z",
+  "schema": "formtrig_active_matched_runs_v1",
+  "runs": [
+    {
+      "target_id": "PDF003",
+      "duration_s": 7200,
+      "repetitions": 3,
+      "status": "running",
+      "launched_at_utc": "2026-06-17T22:45:00Z",
+      "run_root": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z",
+      "guidance_out": "artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z",
+      "comparison_out": "artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z",
+      "baseline_roots": [
+        "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines",
+        "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z"
+      ],
+      "claim_boundary": "live snapshot only until all baseline run_record.json files exist and finalize_magma_matched_run.sh produces the final guidance/comparison package"
+    }
+  ]
+}

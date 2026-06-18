@@ -70,9 +70,11 @@ def collect_runs(
     sources: list[Path],
     *,
     skip_incomplete_runs: bool = False,
-) -> tuple[dict[str, Path], list[str]]:
+    duplicate_policy: str = "refuse",
+) -> tuple[dict[str, Path], list[str], list[dict[str, str]]]:
     runs: dict[str, Path] = {}
     skipped: list[str] = []
+    duplicates: list[dict[str, str]] = []
     for source in sources:
         runs_dir = source / "runs"
         if not runs_dir.is_dir():
@@ -84,12 +86,25 @@ def collect_runs(
                     continue
                 raise SystemExit(f"baseline run is incomplete, missing run_record.json: {run_dir}")
             if run_dir.name in runs:
-                raise SystemExit(
-                    f"duplicate baseline run directory {run_dir.name}: "
-                    f"{runs[run_dir.name]} and {run_dir}"
-                )
+                if duplicate_policy == "refuse":
+                    raise SystemExit(
+                        f"duplicate baseline run directory {run_dir.name}: "
+                        f"{runs[run_dir.name]} and {run_dir}"
+                    )
+                previous = runs[run_dir.name]
+                decision = {
+                    "run": run_dir.name,
+                    "previous": str(previous),
+                    "duplicate": str(run_dir),
+                    "policy": duplicate_policy,
+                    "kept": str(previous if duplicate_policy == "prefer-earlier" else run_dir),
+                }
+                duplicates.append(decision)
+                if duplicate_policy == "prefer-later":
+                    runs[run_dir.name] = run_dir
+                continue
             runs[run_dir.name] = run_dir
-    return runs, skipped
+    return runs, skipped, duplicates
 
 
 def rebuild_summary(out_dir: Path) -> list[dict[str, Any]]:
@@ -115,6 +130,7 @@ def write_merge_metadata(
     sources: list[Path],
     runs: dict[str, Path],
     skipped_incomplete_runs: list[str],
+    duplicate_runs: list[dict[str, str]],
     copied_files: dict[str, list[str]],
     rows: list[dict[str, Any]],
 ) -> None:
@@ -127,6 +143,7 @@ def write_merge_metadata(
         "created_utc": utc_now(),
         "raw_magma_dirs_copied": False,
         "record_count": len(rows),
+        "duplicate_runs": duplicate_runs,
         "skipped_incomplete_runs": skipped_incomplete_runs,
         "source_metadata": source_metadata,
         "sources": [str(source) for source in sources],
@@ -154,6 +171,14 @@ def write_merge_metadata(
     if skipped_incomplete_runs:
         lines.extend(["", "## Skipped Incomplete Runs", ""])
         lines.extend(f"- `{path}`" for path in skipped_incomplete_runs)
+    if duplicate_runs:
+        lines.extend(["", "## Duplicate Runs", ""])
+        for duplicate in duplicate_runs:
+            lines.append(
+                "- `{run}` policy=`{policy}` kept=`{kept}` previous=`{previous}` duplicate=`{duplicate}`".format(
+                    **duplicate
+                )
+            )
     lines.append("")
     (out_dir / "baseline_merge_metadata.md").write_text("\n".join(lines), encoding="utf-8")
 
@@ -168,6 +193,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="skip source run dirs that do not yet have run_record.json",
     )
+    parser.add_argument(
+        "--duplicate-policy",
+        choices=["refuse", "prefer-earlier", "prefer-later"],
+        default="refuse",
+        help="how to handle duplicate run directory names across shards",
+    )
     return parser.parse_args()
 
 
@@ -181,9 +212,10 @@ def main() -> int:
         shutil.rmtree(out_dir)
     out_dir.mkdir(parents=True)
 
-    runs, skipped_incomplete_runs = collect_runs(
+    runs, skipped_incomplete_runs, duplicate_runs = collect_runs(
         sources,
         skip_incomplete_runs=args.skip_incomplete_runs,
+        duplicate_policy=args.duplicate_policy,
     )
     copied_files: dict[str, list[str]] = {}
     for run_name, source_run in sorted(runs.items()):
@@ -193,7 +225,15 @@ def main() -> int:
     if first_metadata.exists():
         shutil.copy2(first_metadata, out_dir / "run_metadata.txt")
     rows = rebuild_summary(out_dir)
-    write_merge_metadata(out_dir, sources, runs, skipped_incomplete_runs, copied_files, rows)
+    write_merge_metadata(
+        out_dir,
+        sources,
+        runs,
+        skipped_incomplete_runs,
+        duplicate_runs,
+        copied_files,
+        rows,
+    )
     print(f"merged {len(runs)} baseline runs into {out_dir}")
     return 0
 

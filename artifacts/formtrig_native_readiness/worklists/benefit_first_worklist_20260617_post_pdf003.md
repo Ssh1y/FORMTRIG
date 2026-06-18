@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-17T22:36:21+00:00`
-Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `7`; low-priority skipped: `93`.
+Generated: `2026-06-18T02:42:12+00:00`
+Tasks: `12`; runnable now: `0`; blocked/gated: `12`; demoted controls skipped: `7`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -15,7 +15,7 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 
 | priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
-| P0 | 3 | PDF003 | magma |  | extend_matched_longrun | yes | Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not. |
+| P0 | 3 | PDF003 | magma |  | monitor_active_matched_longrun | blocked | Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not. |
 | P1 | 4 | SSL015 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 5 | PDF016 | magma |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P1 | 7 | LIBXML2_1107 | real_cve |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
@@ -30,14 +30,39 @@ Tasks: `12`; runnable now: `1`; blocked/gated: `11`; demoted controls skipped: `
 
 ## Runnable Now
 
-### P0 PDF003
-
-- Benefit: Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not.
-- SOTA pain: `not recorded`
-- SOTA pain evidence: not recorded
-- Command: `scripts/run_magma_matched_longrun.sh --target-id PDF003 --duration 7200 --reps 3 --jobs 3 --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.current_3rep.list --out artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T223621Z --guidance-out artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T223621Z --comparison-out artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T223621Z --continue-on-fail --baseline-afl-arg -t --baseline-afl-arg 5000`
+No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 
 ## Gated Tasks
+
+### P0 PDF003 - monitor_active_matched_longrun
+
+- Benefit to prove: Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not.
+- SOTA pain: `not recorded`
+- SOTA pain evidence: not recorded
+- Endpoint metrics: same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, PRET/TTE under the same seed corpus and oracle
+- Claim boundary: Report as speedup/attribution unless long-run matched baselines stop triggering while FORMTRIG remains successful.
+- Blocking issue:
+- active matched longrun status=running
+- wait for all expected baseline run_record.json files before final claims
+- active run root: artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z
+- Mechanism evidence required after benefit:
+- formtrig_terminal_oracle_success
+- matched_budget_endpoint_success
+- baseline_guidance_gap_measured
+- Current primary benefits:
+- FORMTRIG reaches terminal success where matched baselines do not trigger in this budget
+- Post-unblock commands or steps:
+- python3 tools/merge_magma_baseline_roots.py --out artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --source artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines --source artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z --skip-incomplete-runs --duplicate-policy prefer-later
+- scripts/finalize_magma_matched_run.sh --run-root artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z --baseline-dir artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --guidance-out artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z --comparison-out artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z
+- Evidence paths:
+- artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z
+- artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z
+- artifacts/formtrig_native_readiness/comparisons/pdf003_validated_short_600s_3rep_20260617/comparison.json
+- artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z
+- artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z
+- artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines
+- artifacts/magma_canary_inventory.json
+- artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json
 
 ### P1 SSL015 - validate_binding_spec_then_short_screen
 

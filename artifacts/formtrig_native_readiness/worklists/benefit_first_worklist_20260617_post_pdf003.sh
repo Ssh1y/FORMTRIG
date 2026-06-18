@@ -4,9 +4,11 @@ set -euo pipefail
 # Generated FORMTRIG benefit-first runnable commands.
 # Gated tasks are intentionally emitted as comments.
 
-# P0 PDF003 extend_matched_longrun
+# P0 PDF003 monitor_active_matched_longrun
 # benefit: Confirm that the current matched-budget endpoint benefit persists in 3 matched 7200s repetitions: FORMTRIG reaches _T while faithful baselines do not.
-scripts/run_magma_matched_longrun.sh --target-id PDF003 --duration 7200 --reps 3 --jobs 3 --manifest-list artifacts/formtrig_native_readiness/manifests/PDF003.current_3rep.list --out artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T223621Z --guidance-out artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T223621Z --comparison-out artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T223621Z --continue-on-fail --baseline-afl-arg -t --baseline-afl-arg 5000
+# blocked: active matched longrun status=running; wait for all expected baseline run_record.json files before final claims; active run root: artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z
+# post-unblock: python3 tools/merge_magma_baseline_roots.py --out artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --source artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines --source artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z --skip-incomplete-runs --duplicate-policy prefer-later
+# post-unblock: scripts/finalize_magma_matched_run.sh --run-root artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z --baseline-dir artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines --guidance-out artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z --comparison-out artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z
 
 # P1 SSL015 validate_binding_spec_then_short_screen
 # benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.

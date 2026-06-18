@@ -776,6 +776,120 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertEqual(task["blocking_issue"], [])
             self.assertEqual(task["post_unblock_commands"], [])
 
+    def test_active_matched_longrun_is_monitored_instead_of_relaunched(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            comparison_dir = comparison_root / "pdf003_short"
+            comparison_dir.mkdir(parents=True)
+            active_runs_path = root / "active_runs.json"
+            run_root = "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_live"
+            guidance_out = "artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_live"
+            comparison_out = "artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_live"
+            (comparison_dir / "comparison.json").write_text(
+                json.dumps(
+                    {
+                        "target_id": "PDF003",
+                        "analysis": {
+                            "verdict": "positive_endpoint_matched_comparison",
+                            "matched_baseline_count": 9,
+                            "missing_required_baselines": [],
+                            "baseline_groups": [
+                                {
+                                    "baseline": "aflplusplus_vanilla",
+                                    "budget": 600,
+                                    "reps": 3,
+                                    "success_rate": 0.0,
+                                }
+                            ],
+                        },
+                        "benefit_readout": {
+                            "primary_benefits": [
+                                "FORMTRIG reaches terminal success where matched baselines do not trigger"
+                            ],
+                            "design_evidence": ["matched_budget_endpoint_success"],
+                            "blocked_claims": [],
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 3,
+                                "target_id": "PDF003",
+                                "source": "magma",
+                                "project": "poppler",
+                                "primary_category": "binary-state-null",
+                                "secondary_category": "",
+                                "lane": "binding_validation_first",
+                                "status": "needs_binding_validation",
+                                "existing_disposition": "",
+                                "blockers": "BindingSpec candidate is not native-site-map validated",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            active_runs_path.write_text(
+                json.dumps(
+                    {
+                        "runs": [
+                            {
+                                "target_id": "PDF003",
+                                "duration_s": 7200,
+                                "repetitions": 3,
+                                "status": "running",
+                                "run_root": run_root,
+                                "guidance_out": guidance_out,
+                                "comparison_out": comparison_out,
+                                "baseline_roots": [
+                                    f"{run_root}/baselines",
+                                    "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard",
+                                ],
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                active_runs_path=active_runs_path,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "monitor_active_matched_longrun")
+            self.assertFalse(task["runnable_now"])
+            self.assertEqual(task["active_run_status"], "running")
+            self.assertEqual(task["active_run_root"], run_root)
+            self.assertEqual(task["command"], "")
+            self.assertNotIn("run_magma_matched_longrun.sh", " ".join(task["post_unblock_commands"]))
+            self.assertIn(run_root, task["evidence_paths"])
+            self.assertIn(guidance_out, task["evidence_paths"])
+            self.assertTrue(
+                any("finalize_magma_matched_run.sh" in step for step in task["post_unblock_commands"])
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

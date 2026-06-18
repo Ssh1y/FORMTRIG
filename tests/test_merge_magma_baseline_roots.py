@@ -161,6 +161,59 @@ class MergeMagmaBaselineRootsTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("duplicate baseline run directory", result.stderr)
 
+    def test_can_prefer_later_duplicate_run_names_for_recovery_merge(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            shard1 = root / "shard1"
+            shard2 = root / "shard2"
+            out = root / "merged"
+            shard1.mkdir()
+            shard2.mkdir()
+            self.write_run(
+                shard1,
+                "aflplusplus_vanilla_7200s_rep1",
+                baseline="aflplusplus_vanilla",
+                rep=1,
+                reached=10,
+                triggered=0,
+            )
+            self.write_run(
+                shard2,
+                "aflplusplus_vanilla_7200s_rep1",
+                baseline="aflplusplus_vanilla",
+                rep=1,
+                reached=20,
+                triggered=1,
+            )
+
+            subprocess.run(
+                [
+                    "python3",
+                    str(REPO_ROOT / "tools" / "merge_magma_baseline_roots.py"),
+                    "--out",
+                    str(out),
+                    "--source",
+                    str(shard1),
+                    "--source",
+                    str(shard2),
+                    "--duplicate-policy",
+                    "prefer-later",
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            summary = json.loads((out / "summary.json").read_text(encoding="utf-8"))
+            metadata = json.loads(
+                (out / "baseline_merge_metadata.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(len(summary["records"]), 1)
+        self.assertEqual(summary["records"][0]["magma_reached"], 20)
+        self.assertEqual(summary["records"][0]["magma_triggered"], 1)
+        self.assertEqual(len(metadata["duplicate_runs"]), 1)
+        self.assertEqual(metadata["duplicate_runs"][0]["policy"], "prefer-later")
+
     def test_refuses_incomplete_run_without_record(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

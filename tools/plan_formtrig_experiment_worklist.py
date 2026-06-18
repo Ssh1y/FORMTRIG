@@ -39,6 +39,8 @@ TASK_FIELDS = [
     "command",
     "post_unblock_commands",
     "evidence_paths",
+    "active_run_status",
+    "active_run_root",
 ]
 
 DEMOTE_DISPOSITIONS = {
@@ -153,6 +155,67 @@ def triage_map(path: Path | None) -> dict[str, dict[str, Any]]:
         for row in rows
         if isinstance(row, dict) and row.get("target_id")
     }
+
+
+def active_run_rows(path: Path | None) -> list[dict[str, Any]]:
+    if path is None or not path.exists():
+        return []
+    try:
+        payload = read_json(path)
+    except (OSError, json.JSONDecodeError):
+        return []
+    if isinstance(payload, list):
+        return [row for row in payload if isinstance(row, dict)]
+    rows = payload.get("runs") if isinstance(payload, dict) else None
+    if isinstance(rows, list):
+        return [row for row in rows if isinstance(row, dict)]
+    return []
+
+
+def active_run_score(row: dict[str, Any]) -> tuple[int, str, str]:
+    status = str(row.get("status") or "")
+    status_score = {
+        "running": 3,
+        "in_progress": 3,
+        "collecting": 2,
+        "complete": 1,
+    }.get(status, 0)
+    return (
+        status_score,
+        str(row.get("launched_at_utc") or row.get("generated_at_utc") or ""),
+        str(row.get("run_root") or ""),
+    )
+
+
+def active_run_map(path: Path | None) -> dict[str, dict[str, Any]]:
+    active: dict[str, dict[str, Any]] = {}
+    for row in active_run_rows(path):
+        target_id = str(row.get("target_id") or "")
+        if not target_id:
+            continue
+        current = active.get(target_id)
+        if current is None or active_run_score(row) >= active_run_score(current):
+            active[target_id] = row
+    return active
+
+
+def matching_active_run(
+    active_runs: dict[str, dict[str, Any]],
+    target_id: str,
+    *,
+    duration_s: int,
+    reps: int,
+) -> dict[str, Any] | None:
+    run = active_runs.get(target_id)
+    if not run:
+        return None
+    recorded_duration = int_value(run.get("duration_s"))
+    recorded_reps = int_value(run.get("repetitions") or run.get("reps"))
+    if recorded_duration and recorded_duration != duration_s:
+        return None
+    if recorded_reps and recorded_reps != reps:
+        return None
+    return run
 
 
 def native_build_plan_map(root: Path | None) -> dict[str, dict[str, Any]]:
@@ -437,6 +500,24 @@ def evidence_paths(row: dict[str, Any], comparison: dict[str, Any] | None) -> li
             if value:
                 base = Path(str(comparison["_comparison_path"])).parent
                 paths.append(str(base / str(value)))
+    return sorted(dict.fromkeys(paths))
+
+
+def evidence_paths_with_active_run(
+    row: dict[str, Any],
+    comparison: dict[str, Any] | None,
+    active_run: dict[str, Any] | None,
+) -> list[str]:
+    paths = evidence_paths(row, comparison)
+    if not active_run:
+        return paths
+    for key in ("run_root", "guidance_out", "comparison_out", "live_status"):
+        value = active_run.get(key)
+        if value:
+            paths.append(str(value))
+    for value in active_run.get("baseline_roots") or []:
+        if value:
+            paths.append(str(value))
     return sorted(dict.fromkeys(paths))
 
 
@@ -842,10 +923,17 @@ def longrun_task(
     reps: int,
     jobs: int,
     manifest_root: Path,
+    active_runs: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     summary = comparison_summary(comparison)
     target_id = str(row.get("target_id") or "")
     verdict = comparison_verdict(comparison)
+    active_run = matching_active_run(
+        active_runs or {},
+        target_id,
+        duration_s=duration_s,
+        reps=reps,
+    )
     command = ""
     blocking_issue = [
         "no reusable matched 2h runner is recorded for this real-CVE target",
@@ -856,7 +944,49 @@ def longrun_task(
         "then rebuild the comparison package with tools/compare_formtrig_baselines.py",
     ]
     runner_path = Path("scripts/run_libarchive_2936_matched_longrun.sh")
-    if target_id == "LIBARCHIVE_2936" and runner_path.exists():
+    if active_run:
+        status = str(active_run.get("status") or "running")
+        run_root = str(active_run.get("run_root") or "")
+        guidance_out = str(active_run.get("guidance_out") or "")
+        comparison_out = str(active_run.get("comparison_out") or "")
+        blocking_issue = [
+            f"active matched longrun status={status}",
+            "wait for all expected baseline run_record.json files before final claims",
+        ]
+        if run_root:
+            blocking_issue.append(f"active run root: {run_root}")
+        post_unblock_commands = []
+        baseline_roots = [str(value) for value in active_run.get("baseline_roots") or [] if str(value)]
+        if len(baseline_roots) > 1:
+            post_unblock_commands.append(
+                "python3 tools/merge_magma_baseline_roots.py "
+                f"--out {run_root}/merged_baselines "
+                + " ".join(f"--source {root}" for root in baseline_roots)
+                + " --skip-incomplete-runs --duplicate-policy prefer-later"
+            )
+        if run_root and guidance_out and comparison_out:
+            baseline_dir = (
+                f"{run_root}/merged_baselines"
+                if len(baseline_roots) > 1
+                else (baseline_roots[0] if baseline_roots else f"{run_root}/baselines")
+            )
+            post_unblock_commands.append(
+                shell_join(
+                    [
+                        "scripts/finalize_magma_matched_run.sh",
+                        "--run-root",
+                        run_root,
+                        "--baseline-dir",
+                        baseline_dir,
+                        "--guidance-out",
+                        guidance_out,
+                        "--comparison-out",
+                        comparison_out,
+                    ]
+                )
+            )
+        command = ""
+    elif target_id == "LIBARCHIVE_2936" and runner_path.exists():
         command = shell_join(
             [
                 str(runner_path),
@@ -942,7 +1072,7 @@ def longrun_task(
         "project": str(row.get("project") or ""),
         "category": category_text(row),
         "lane": str(row.get("lane") or ""),
-        "action": "extend_matched_longrun",
+        "action": "monitor_active_matched_longrun" if active_run else "extend_matched_longrun",
         "duration_s": duration_s,
         "repetitions": reps,
         "benefit_to_prove": benefit_to_prove,
@@ -965,13 +1095,15 @@ def longrun_task(
             "triggering while FORMTRIG remains successful."
         ),
         "command": command,
-        "runnable_now": bool(command),
+        "runnable_now": bool(command) and not active_run,
         "post_unblock_commands": post_unblock_commands,
         "comparison_verdict": summary["verdict"],
         "main_claim_strength": summary["main_claim_strength"],
         "current_primary_benefits": summary["primary_benefits"],
         "blocked_claims": summary["blocked_claims"],
-        "evidence_paths": evidence_paths(row, comparison),
+        "evidence_paths": evidence_paths_with_active_run(row, comparison, active_run),
+        "active_run_status": str(active_run.get("status") or "") if active_run else "",
+        "active_run_root": str(active_run.get("run_root") or "") if active_run else "",
     }
 
 
@@ -1369,6 +1501,7 @@ def task_for_row(
     comparisons: dict[str, list[dict[str, Any]]],
     target_triage: dict[str, dict[str, Any]],
     binding_validations: dict[str, dict[str, Any]],
+    active_runs: dict[str, dict[str, Any]],
     *,
     short_duration_s: int,
     longrun_duration_s: int,
@@ -1404,6 +1537,7 @@ def task_for_row(
                 reps=longrun_reps,
                 jobs=jobs,
                 manifest_root=manifest_root,
+                active_runs=active_runs,
             ),
             triage,
         )
@@ -1416,6 +1550,7 @@ def task_for_row(
                 reps=longrun_reps,
                 jobs=jobs,
                 manifest_root=manifest_root,
+                active_runs=active_runs,
             ),
             triage,
         )
@@ -1473,6 +1608,7 @@ def build_worklist(
     triage_path: Path | None = None,
     native_build_root: Path | None = None,
     binding_validation_root: Path | None = None,
+    active_runs_path: Path | None = None,
     manifest_root: Path = DEFAULT_MANIFEST_ROOT,
     limit: int,
     use_all_targets: bool,
@@ -1489,6 +1625,7 @@ def build_worklist(
     target_triage = triage_map(triage_path)
     build_plans = native_build_plan_map(native_build_root)
     binding_validations = binding_validation_map(binding_validation_root)
+    active_runs = active_run_map(active_runs_path)
     tasks: list[dict[str, Any]] = []
     skipped_controls: list[dict[str, Any]] = [
         {
@@ -1534,6 +1671,7 @@ def build_worklist(
             comparisons,
             target_triage,
             binding_validations,
+            active_runs,
             short_duration_s=short_duration_s,
             longrun_duration_s=longrun_duration_s,
             jobs=jobs,
@@ -1560,6 +1698,7 @@ def build_worklist(
             "triage": str(triage_path) if triage_path else "",
             "native_build_root": str(native_build_root) if native_build_root else "",
             "binding_validation_root": str(binding_validation_root) if binding_validation_root else "",
+            "active_runs": str(active_runs_path) if active_runs_path else "",
             "manifest_root": str(manifest_root),
         },
         "defaults": {
@@ -1778,6 +1917,12 @@ def parse_args() -> argparse.Namespace:
         help="BindingSpec validation JSON root; ready records unblock matched short screens",
     )
     parser.add_argument(
+        "--active-runs",
+        type=Path,
+        default=None,
+        help="optional JSON list/map of active matched longruns to monitor instead of relaunching",
+    )
+    parser.add_argument(
         "--manifest-root",
         type=Path,
         default=DEFAULT_MANIFEST_ROOT,
@@ -1805,6 +1950,7 @@ def main() -> int:
         triage_path=args.triage,
         native_build_root=args.native_build_root,
         binding_validation_root=args.binding_validation_root,
+        active_runs_path=args.active_runs,
         manifest_root=args.manifest_root,
         limit=args.limit,
         use_all_targets=args.use_all_targets,
