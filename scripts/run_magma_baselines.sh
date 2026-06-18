@@ -9,6 +9,8 @@ inventory="$repo_root/artifacts/magma_canary_inventory.json"
 out_dir=""
 magma_dir="$repo_root/experiments/magma_workspace/magma"
 seed_dir=""
+program_override=""
+args_template_override=""
 durations="600,1800"
 baselines="aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 poll="30"
@@ -38,6 +40,8 @@ options:
   --magma-dir DIR       Magma checkout/workspace
   --seed-dir DIR        seed directory; defaults to artifacts/rnt_corpus/<ID>/seeds if present,
                         otherwise the inventory initial_seed_corpus
+  --program NAME        override inventory program, e.g. exif_thumbnail
+  --args-template ARGS  override inventory args template, default from inventory
   --durations LIST      comma/space-separated budgets in seconds, default 600,1800
   --baselines LIST      comma/space-separated baseline ids
   --reps N              repetitions per baseline/budget, default 1
@@ -457,6 +461,106 @@ path.write_text(updated, encoding="utf-8")
 PY
 }
 
+patch_php_exif_thumbnail_runner() {
+  local build_sh="$magma_dir/targets/$magma_target/build.sh"
+  if [[ "$magma_target" != "php" ]] || [[ ! -f "$build_sh" ]]; then
+    return
+  fi
+
+  python3 - "$build_sh" <<'PY'
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+marker = "FORMTRIG_PHP_EXIF_THUMBNAIL_RUNNER"
+changed = False
+
+if marker not in text:
+    needle = 'cd "$TARGET/repo"\n'
+    if needle not in text:
+        raise SystemExit("could not locate target repo cd in PHP build.sh")
+    insert = r'''
+# FORMTRIG_PHP_EXIF_THUMBNAIL_RUNNER
+if [ "$(basename "$TARGET")" = "php" ] && [ "${PROGRAM:-}" = "exif_thumbnail" ]; then
+    python3 - "$TARGET/repo" <<'FORMTRIG_PHP_EXIF_THUMBNAIL'
+from pathlib import Path
+import sys
+
+
+repo = Path(sys.argv[1])
+stock = repo / "sapi/fuzzer/fuzzer-exif.c"
+thumb = repo / "sapi/fuzzer/fuzzer-exif_thumbnail.c"
+config = repo / "sapi/fuzzer/config.m4"
+makefile = repo / "sapi/fuzzer/Makefile.frag"
+
+source = stock.read_text(encoding="utf-8")
+call_needle = '\tfuzzer_call_php_func_zval("exif_read_data", 1, &stream_zv);\n'
+call_replacement = (
+    '\tzval args[3];\n'
+    '\n'
+    '\targs[0] = stream_zv;\n'
+    '\tZVAL_NULL(&args[1]);\n'
+    '\tZVAL_NULL(&args[2]);\n'
+    '\n'
+    '\tfuzzer_call_php_func_zval("exif_thumbnail", 3, args);\n'
+)
+if call_needle not in source:
+    raise SystemExit("stock PHP fuzzer-exif.c call site was not found")
+thumb.write_text(source.replace(call_needle, call_replacement, 1), encoding="utf-8")
+
+config_text = config.read_text(encoding="utf-8")
+target_line = "PHP_FUZZER_TARGET([exif_thumbnail], PHP_FUZZER_EXIF_THUMBNAIL_OBJS)"
+if target_line not in config_text:
+    needle = "    PHP_FUZZER_TARGET([exif], PHP_FUZZER_EXIF_OBJS)\n"
+    if needle not in config_text:
+        raise SystemExit("PHP fuzzer config exif target was not found")
+    config.write_text(
+        config_text.replace(needle, needle + "    " + target_line + "\n", 1),
+        encoding="utf-8",
+    )
+
+makefile_text = makefile.read_text(encoding="utf-8")
+makefile_target = "$(SAPI_FUZZER_PATH)/php-fuzz-exif_thumbnail:"
+if makefile_target not in makefile_text:
+    needle = (
+        "$(SAPI_FUZZER_PATH)/php-fuzz-exif: $(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS) "
+        "$(PHP_FUZZER_EXIF_OBJS)\n"
+        "\t$(FUZZER_BUILD) $(PHP_FUZZER_EXIF_OBJS) -o $@\n"
+    )
+    replacement = (
+        needle
+        + "\n"
+        + "$(SAPI_FUZZER_PATH)/php-fuzz-exif_thumbnail: "
+        + "$(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS) $(PHP_FUZZER_EXIF_THUMBNAIL_OBJS)\n"
+        + "\t$(FUZZER_BUILD) $(PHP_FUZZER_EXIF_THUMBNAIL_OBJS) -o $@\n"
+    )
+    if needle not in makefile_text:
+        raise SystemExit("PHP fuzzer Makefile exif rule was not found")
+    makefile.write_text(makefile_text.replace(needle, replacement, 1), encoding="utf-8")
+FORMTRIG_PHP_EXIF_THUMBNAIL
+fi
+
+'''
+    text = text.replace(needle, needle + insert, 1)
+    changed = True
+
+if "php-fuzz-exif_thumbnail" not in text:
+    old = "php-fuzz-json php-fuzz-exif php-fuzz-mbstring php-fuzz-unserialize php-fuzz-parser"
+    new = "php-fuzz-json php-fuzz-exif php-fuzz-exif_thumbnail php-fuzz-mbstring php-fuzz-unserialize php-fuzz-parser"
+    if old not in text:
+        raise SystemExit("PHP build.sh FUZZERS list was not found")
+    text = text.replace(old, new, 1)
+    changed = True
+
+if changed:
+    path.write_text(text, encoding="utf-8")
+PY
+}
+
 restore_target_context() {
   if [[ -n "${target_repo_backup:-}" && -d "$target_repo_backup/repo" ]]; then
     if [[ -e "$target_repo_path" ]]; then
@@ -649,6 +753,14 @@ while [[ $# -gt 0 ]]; do
       seed_dir="${2:-}"
       shift 2
       ;;
+    --program)
+      program_override="${2:-}"
+      shift 2
+      ;;
+    --args-template)
+      args_template_override="${2:-}"
+      shift 2
+      ;;
     --durations)
       durations="${2:-}"
       shift 2
@@ -719,6 +831,12 @@ fi
 magma_target="$(inventory_field project)"
 program="$(inventory_field program)"
 args_template="$(inventory_field args_template)"
+if [[ -n "$program_override" ]]; then
+  program="$program_override"
+fi
+if [[ -n "$args_template_override" ]]; then
+  args_template="$args_template_override"
+fi
 tc_category="$(inventory_field primary_tc_category)"
 inventory_seed_corpus="$(inventory_field initial_seed_corpus)"
 if [[ "$args_template" != *"@@"* ]]; then
@@ -793,6 +911,7 @@ if [[ "$run_build" == "1" ]]; then
   patch_target_build_helpers
   patch_target_canary_include_flags
   patch_php_host_compatibility
+  patch_php_exif_thumbnail_runner
   trap restore_target_context EXIT
 
   declare -A built_fuzzers=()

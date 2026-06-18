@@ -126,6 +126,33 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
         self.assertIn("legacy_future", script)
         self.assertNotIn("from __future__ import annotations\n\nimport sys\nfrom pathlib import Path\n\n\nrepo =", script)
 
+    def test_runner_supports_custom_program_override(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("--program NAME", script)
+        self.assertIn("--args-template ARGS", script)
+        self.assertIn('program_override=""', script)
+        self.assertIn('args_template_override=""', script)
+        self.assertIn('program="$program_override"', script)
+        self.assertIn('args_template="$args_template_override"', script)
+        self.assertIn('PROGRAM="$program"', script)
+
+    def test_runner_derives_php_exif_thumbnail_baseline_harness(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("patch_php_exif_thumbnail_runner", script)
+        self.assertIn("FORMTRIG_PHP_EXIF_THUMBNAIL_RUNNER", script)
+        self.assertIn('PROGRAM:-}" = "exif_thumbnail"', script)
+        self.assertIn('fuzzer-exif_thumbnail.c', script)
+        self.assertIn('fuzzer_call_php_func_zval("exif_thumbnail", 3, args)', script)
+        self.assertIn("PHP_FUZZER_EXIF_THUMBNAIL_OBJS", script)
+        self.assertIn("php-fuzz-exif_thumbnail", script)
+        self.assertIn("patch_php_host_compatibility\n  patch_php_exif_thumbnail_runner", script)
+
 
 if __name__ == "__main__":
     unittest.main()
