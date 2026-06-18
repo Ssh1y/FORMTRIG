@@ -111,6 +111,28 @@ strict pre-trigger guidance（accepted/saved non-trigger = 6/6），但 terminal
 修 BindingSpec/typed mutation 或加预算，让同一个 target 出现 FORMTRIG terminal
 success，才能进入主 endpoint 表。
 
+2026-06-18 继续做了 PHP003 R-to-T repair 诊断：
+
+```text
+artifacts/formtrig_native_readiness/signal_path/php003_validated_short_600s_1rep_r2
+  verdict = strict_pretrigger_guidance_observed
+  terminal_gap.status = saved_frontier_blocked_on_producer
+  saved non-T frontier = 6
+  saved T = 0
+  latest saved queue = 466 / exec 119606 / trace 6ed559e280b60e5d
+  latest missing role = desired_producer
+  latest observed-but-unsatisfied roles = root_observe, use
+  desired_producer candidate values = constant zero
+  typed fallback_no_hot_range stages = 52
+  saved frontier hot-range events = 0
+```
+
+这说明 PHP003 的 FORMTRIG 信号方向是正的，但还没有完成“可变异到
+terminal”的闭环：frontier 从 root-only 推进到 root+guard+use，但 producer 没被
+满足，root/use 的目标值仍未满足，typed mutation 没拿到输入 hot range。下一步应
+优先修 BindingSpec producer/input-influence/hot-range 或 typed mutation 的字段定位，
+而不是重复跑同一 600s matched baseline。
+
 当前要找的是 `baseline_guidance_gap.status=measured_pass` 且 FORMTRIG 也能
 terminal success 的 target：flat pre-`_T` signal 加上 late/missing/high-variance
 baseline endpoint，再加 FORMTRIG first `_T`/success-rate 收益。

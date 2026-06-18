@@ -16,6 +16,27 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+ROLE_NAMES = {
+    1: "root_observe",
+    2: "guard",
+    3: "producer",
+    4: "desired_producer",
+    5: "opposite_producer",
+    6: "use",
+    7: "lifecycle_event",
+    8: "same_object",
+    9: "input_influence",
+    10: "repair_hook",
+}
+PRODUCER_ROLES = {"producer", "desired_producer", "opposite_producer"}
+PRODUCER_BIT_NAMES = {
+    1: "producer",
+    2: "desired_producer",
+    4: "opposite_producer",
+}
+COMPONENT_LOWER_IS_BETTER = 1 << 0
+COMPONENT_HIGHER_IS_BETTER = 1 << 1
+
 
 def numeric(value: Any) -> float | int | None:
     if value is None or value == "":
@@ -48,10 +69,109 @@ def read_stats(path: Path) -> dict[str, str]:
     return stats
 
 
+def read_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8", errors="replace"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def role_bit(role: int) -> int:
+    if role <= 0:
+        return 0
+    return 1 << (role - 1)
+
+
+def role_names_from_bits(bits: Any) -> list[str]:
+    parsed = int_value(bits)
+    return [
+        name
+        for role, name in ROLE_NAMES.items()
+        if parsed & role_bit(role)
+    ]
+
+
+def producer_names_from_bits(bits: Any) -> list[str]:
+    parsed = int_value(bits)
+    return [
+        name
+        for bit, name in PRODUCER_BIT_NAMES.items()
+        if parsed & bit
+    ]
+
+
+def queue_file_for_id(queue_dir: Path | None, queue_id: Any) -> str | None:
+    if queue_dir is None:
+        return None
+    parsed = numeric(queue_id)
+    if parsed is None:
+        return None
+    prefix = f"id:{int(parsed):06d},"
+    for path in sorted(queue_dir.glob(prefix + "*")):
+        if path.is_file():
+            return str(path)
+    return None
+
+
+def decode_atom_signal(signal: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "atom_id": signal.get("atom_id"),
+        "role_bits": signal.get("role_bits"),
+        "roles": role_names_from_bits(signal.get("role_bits")),
+        "event_bits": signal.get("event_bits"),
+        "root_value_bucket": signal.get("root_value_bucket"),
+        "object_id_bucket": signal.get("object_id_bucket"),
+        "guard_bits": signal.get("guard_bits"),
+        "producer_bits": signal.get("producer_bits"),
+        "producer_roles_satisfied": producer_names_from_bits(
+            signal.get("producer_bits")
+        ),
+        "use_bits": signal.get("use_bits"),
+        "flags": signal.get("flags"),
+    }
+
+
+def compact_component(component: dict[str, Any]) -> dict[str, Any]:
+    role = int_value(component.get("role"))
+    flags = int_value(component.get("flags"))
+    value = numeric(component.get("value"))
+    return {
+        "kind": component.get("kind"),
+        "atom_id": component.get("atom_id"),
+        "role": role,
+        "role_name": ROLE_NAMES.get(role, "unknown"),
+        "priority": component.get("priority"),
+        "flags": flags,
+        "source_id": component.get("source_id"),
+        "context_hash": component.get("context_hash"),
+        "value": value,
+        "confidence": component.get("confidence"),
+        "goal_satisfied": component_goal_satisfied(flags, value),
+    }
+
+
+def component_goal_satisfied(flags: int, value: float | int | None) -> bool | None:
+    if value is None:
+        return None
+    if flags & COMPONENT_LOWER_IS_BETTER:
+        return value <= 0
+    if flags & COMPONENT_HIGHER_IS_BETTER:
+        return value > 0
+    return None
+
+
 def compact_event(event: dict[str, Any]) -> dict[str, Any]:
     first_actionable = event.get("first_actionable")
     if not isinstance(first_actionable, dict):
         first_actionable = {}
+    atom_signals = [
+        decode_atom_signal(signal)
+        for signal in event.get("atom_signal_values", []) or []
+        if isinstance(signal, dict)
+    ]
     return {
         "event": event.get("event"),
         "reason": event.get("reason"),
@@ -70,10 +190,12 @@ def compact_event(event: dict[str, Any]) -> dict[str, Any]:
         "actionable_components": event.get("actionable_components"),
         "atom_signals": event.get("atom_signals"),
         "role_bits": event.get("role_bits"),
+        "atom_signal_values": atom_signals,
         "hot_ranges": event.get("hot_ranges"),
         "target_hit_count": event.get("target_hit_count"),
         "source_flags": event.get("source_flags"),
         "observed_source_flags": event.get("observed_source_flags"),
+        "trace_signature": event.get("trace_signature"),
         "aux": event.get("aux"),
         "first_actionable": {
             "kind": first_actionable.get("kind"),
@@ -85,6 +207,26 @@ def compact_event(event: dict[str, Any]) -> dict[str, Any]:
         if first_actionable
         else None,
     }
+
+
+def compact_saved_event(
+    event: dict[str, Any], queue_dir: Path | None = None
+) -> dict[str, Any]:
+    compact = compact_event(event)
+    queue_path = queue_file_for_id(queue_dir, event.get("queue_id"))
+    components = [
+        compact_component(component)
+        for component in event.get("component_values", [])
+        if isinstance(component, dict)
+    ]
+    compact["queue_file"] = queue_path
+    compact["queue_file_size"] = (
+        Path(queue_path).stat().st_size
+        if queue_path and Path(queue_path).exists()
+        else None
+    )
+    compact["component_values"] = components
+    return compact
 
 
 def add_unique(values: list[Any], value: Any, limit: int = 16) -> None:
@@ -114,11 +256,15 @@ def distinct_numeric_count(values: list[Any]) -> int:
     return len(seen)
 
 
-def summarize_progress(progress_path: Path) -> dict[str, Any]:
+def summarize_progress(
+    progress_path: Path, queue_dir: Path | None = None
+) -> dict[str, Any]:
     event_counts: Counter[str] = Counter()
     reason_counts: Counter[str] = Counter()
     source_flag_counts: Counter[str] = Counter()
     observed_source_flag_counts: Counter[str] = Counter()
+    atom_role_observations: dict[str, Counter[str]] = {}
+    producer_satisfaction_observations: dict[str, Counter[str]] = {}
     preterminal_nontrigger_df: list[Any] = []
     preterminal_nontrigger_spec_df: list[Any] = []
     first_calibrated_non_trigger: dict[str, Any] | None = None
@@ -129,6 +275,7 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
     first_typed_stage_start_before_trigger: dict[str, Any] | None = None
     first_typed_lifted_nontrigger_before_trigger: dict[str, Any] | None = None
     latest_event: dict[str, Any] | None = None
+    saved_non_trigger_frontier: list[dict[str, Any]] = []
     saved_non_trigger = 0
     saved_trigger = 0
     calibrated_non_trigger = 0
@@ -162,6 +309,22 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
         observed_source_flag_counts[str(event.get("observed_source_flags"))] += 1
 
         triggered = bool(event.get("triggered"))
+        for signal in event.get("atom_signal_values", []) or []:
+            if not isinstance(signal, dict):
+                continue
+            atom_id = signal.get("atom_id")
+            if atom_id is None:
+                continue
+            atom_key = str(atom_id)
+            roles = role_names_from_bits(signal.get("role_bits"))
+            if roles:
+                atom_role_observations.setdefault(atom_key, Counter()).update(roles)
+            producers = producer_names_from_bits(signal.get("producer_bits"))
+            if producers:
+                producer_satisfaction_observations.setdefault(
+                    atom_key, Counter()
+                ).update(producers)
+
         if event_name == "typed_stage_start":
             typed_stage_starts += 1
             compact = compact_event(event)
@@ -197,6 +360,7 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
                 first_saved_trigger = compact_event(event)
         elif event_name == "saved_progress" and not triggered:
             saved_non_trigger += 1
+            saved_non_trigger_frontier.append(compact_saved_event(event, queue_dir))
             if first_saved_non_trigger is None:
                 first_saved_non_trigger = compact_event(event)
 
@@ -254,6 +418,15 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
         "nontrigger_events_before_first_saved_trigger": nontrigger_before_first_saved_trigger,
         "preterminal_nontrigger_d_f_values": preterminal_nontrigger_df,
         "preterminal_nontrigger_d_f_spec_lifted_values": preterminal_nontrigger_spec_df,
+        "saved_non_trigger_frontier": saved_non_trigger_frontier,
+        "atom_role_observations": {
+            atom_id: dict(counter.most_common())
+            for atom_id, counter in sorted(atom_role_observations.items())
+        },
+        "producer_satisfaction_observations": {
+            atom_id: dict(counter.most_common())
+            for atom_id, counter in sorted(producer_satisfaction_observations.items())
+        },
         "first_calibrated_non_trigger": first_calibrated_non_trigger,
         "first_saved_non_trigger": first_saved_non_trigger,
         "first_saved_trigger": first_saved_trigger,
@@ -265,11 +438,246 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
     }
 
 
+def binding_atoms(binding_signal: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    atoms: dict[str, dict[str, Any]] = {}
+    for atom in binding_signal.get("atoms", []):
+        if not isinstance(atom, dict):
+            continue
+        atom_id = atom.get("atom_id")
+        if atom_id is None:
+            continue
+        key = str(atom_id)
+        roles = []
+        constant_zero_roles = []
+        for role in atom.get("roles", []):
+            if not isinstance(role, dict):
+                continue
+            role_name = str(role.get("role") or "")
+            if not role.get("bound"):
+                continue
+            roles.append(role_name)
+            candidate_values = role.get("candidate_values")
+            if (
+                role_name in PRODUCER_ROLES
+                and isinstance(candidate_values, list)
+                and candidate_values == [0]
+            ):
+                constant_zero_roles.append(role_name)
+        atoms[key] = {
+            "category": atom.get("category"),
+            "bound_roles": list(atom.get("bound_roles") or roles),
+            "candidate_variable_roles": list(
+                atom.get("candidate_variable_roles") or []
+            ),
+            "constant_zero_producer_roles": constant_zero_roles,
+            "diagnosis": atom.get("diagnosis"),
+        }
+    return atoms
+
+
+def latest_atom_signals_by_id(event: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    signals: dict[str, dict[str, Any]] = {}
+    for signal in event.get("atom_signal_values", []):
+        if not isinstance(signal, dict):
+            continue
+        atom_id = signal.get("atom_id")
+        if atom_id is None:
+            continue
+        signals[str(atom_id)] = signal
+    return signals
+
+
+def component_goals_by_atom_role(
+    event: dict[str, Any],
+) -> dict[str, dict[str, list[dict[str, Any]]]]:
+    goals: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    for component in event.get("component_values", []) or []:
+        if not isinstance(component, dict):
+            continue
+        atom_id = component.get("atom_id")
+        role_name = component.get("role_name")
+        if atom_id is None or not role_name:
+            continue
+        if role_name == "unknown":
+            continue
+        goals.setdefault(str(atom_id), {}).setdefault(str(role_name), []).append(
+            {
+                "value": component.get("value"),
+                "flags": component.get("flags"),
+                "goal_satisfied": component.get("goal_satisfied"),
+                "source_id": component.get("source_id"),
+                "context_hash": component.get("context_hash"),
+            }
+        )
+    return goals
+
+
+def role_gap_for_event(
+    event: dict[str, Any], atoms: dict[str, dict[str, Any]]
+) -> dict[str, Any]:
+    gaps: dict[str, Any] = {}
+    signals = latest_atom_signals_by_id(event)
+    component_goals = component_goals_by_atom_role(event)
+    for atom_id, atom in atoms.items():
+        bound_roles = [
+            role
+            for role in atom.get("bound_roles", [])
+        if role in ROLE_NAMES.values()
+        and role not in {"input_influence", "repair_hook"}
+        ]
+        if not bound_roles:
+            continue
+        signal = signals.get(atom_id)
+        observed_roles = set(signal.get("roles", [])) if signal else set()
+        producer_satisfied = (
+            set(signal.get("producer_roles_satisfied", [])) if signal else set()
+        )
+        atom_component_goals = component_goals.get(atom_id, {})
+        producer_roles = [role for role in bound_roles if role in PRODUCER_ROLES]
+        missing_bound_roles = [
+            role for role in bound_roles if role not in observed_roles
+        ]
+        unsatisfied_observed_roles = []
+        role_goal_status: dict[str, dict[str, Any]] = {}
+        for role in bound_roles:
+            goals = atom_component_goals.get(role, [])
+            if not goals:
+                continue
+            satisfied = any(goal.get("goal_satisfied") is True for goal in goals)
+            unknown = all(goal.get("goal_satisfied") is None for goal in goals)
+            role_goal_status[role] = {
+                "observations": goals,
+                "satisfied": satisfied,
+                "unknown": unknown,
+            }
+            if not satisfied and not unknown:
+                unsatisfied_observed_roles.append(role)
+        unsatisfied_producer_roles = [
+            role for role in producer_roles if role not in producer_satisfied
+        ]
+        gaps[atom_id] = {
+            "category": atom.get("category"),
+            "bound_roles": bound_roles,
+            "observed_roles": sorted(observed_roles),
+            "missing_bound_roles": missing_bound_roles,
+            "role_goal_status": role_goal_status,
+            "unsatisfied_observed_roles": unsatisfied_observed_roles,
+            "producer_roles": producer_roles,
+            "producer_roles_satisfied": sorted(producer_satisfied),
+            "unsatisfied_producer_roles": unsatisfied_producer_roles,
+            "constant_zero_producer_roles": atom.get(
+                "constant_zero_producer_roles", []
+            ),
+        }
+    return gaps
+
+
+def summarize_terminal_gap(
+    progress: dict[str, Any], binding_signal: dict[str, Any]
+) -> dict[str, Any]:
+    saved_frontier = progress.get("saved_non_trigger_frontier") or []
+    saved_trigger_events = int_value(progress.get("saved_trigger_events"))
+    reason_counts = progress.get("reason_counts") or {}
+    fallback_no_hot_range_typed_stages = int_value(
+        reason_counts.get("fallback_no_hot_range")
+    )
+    saved_hot_range_events = sum(
+        1 for event in saved_frontier if int_value(event.get("hot_ranges")) > 0
+    )
+    atoms = binding_atoms(binding_signal)
+    latest_saved = saved_frontier[-1] if saved_frontier else None
+    role_progression = []
+    for event in saved_frontier:
+        role_progression.append(
+            {
+                "execs_done": event.get("execs_done"),
+                "queue_id": event.get("queue_id"),
+                "queue_file": event.get("queue_file"),
+                "queue_file_size": event.get("queue_file_size"),
+                "trace_signature": event.get("trace_signature"),
+                "atom_gaps": role_gap_for_event(event, atoms),
+            }
+        )
+
+    latest_atom_gaps = role_gap_for_event(latest_saved or {}, atoms)
+    missing_latest = {
+        atom_id: gap["missing_bound_roles"]
+        for atom_id, gap in latest_atom_gaps.items()
+        if gap.get("missing_bound_roles")
+    }
+    unsatisfied_producers = {
+        atom_id: gap["unsatisfied_producer_roles"]
+        for atom_id, gap in latest_atom_gaps.items()
+        if gap.get("unsatisfied_producer_roles")
+    }
+    unsatisfied_observed_roles = {
+        atom_id: gap["unsatisfied_observed_roles"]
+        for atom_id, gap in latest_atom_gaps.items()
+        if gap.get("unsatisfied_observed_roles")
+    }
+    constant_zero_producers = {
+        atom_id: gap["constant_zero_producer_roles"]
+        for atom_id, gap in latest_atom_gaps.items()
+        if gap.get("constant_zero_producer_roles")
+    }
+
+    blockers: list[str] = []
+    if saved_trigger_events <= 0:
+        blockers.append("no_terminal_T_after_saved_non_trigger_frontier")
+    if missing_latest:
+        blockers.append("missing_bound_roles_at_latest_saved_frontier")
+    if unsatisfied_producers:
+        blockers.append("producer_roles_not_satisfied_at_latest_saved_frontier")
+    if unsatisfied_observed_roles:
+        blockers.append("observed_bound_roles_not_goal_satisfied_at_latest_saved_frontier")
+    if constant_zero_producers:
+        blockers.append("producer_roles_constant_zero_in_candidates")
+    if fallback_no_hot_range_typed_stages and not saved_hot_range_events:
+        blockers.append("typed_mutation_has_no_hot_ranges_for_saved_frontier")
+
+    if saved_trigger_events > 0:
+        status = "terminal_observed"
+    elif not saved_frontier:
+        status = "no_saved_non_trigger_frontier"
+    elif unsatisfied_producers or constant_zero_producers:
+        status = "saved_frontier_blocked_on_producer"
+    elif missing_latest:
+        status = "saved_frontier_missing_bound_roles"
+    else:
+        status = "saved_frontier_no_terminal_gap_unattributed"
+
+    return {
+        "status": status,
+        "saved_non_trigger_frontier_events": len(saved_frontier),
+        "saved_trigger_events": saved_trigger_events,
+        "latest_saved_non_trigger": latest_saved,
+        "latest_atom_gaps": latest_atom_gaps,
+        "missing_bound_roles_at_latest_saved": missing_latest,
+        "unsatisfied_observed_roles_at_latest_saved": unsatisfied_observed_roles,
+        "unsatisfied_producer_roles_at_latest_saved": unsatisfied_producers,
+        "constant_zero_producer_roles": constant_zero_producers,
+        "fallback_no_hot_range_typed_stages": fallback_no_hot_range_typed_stages,
+        "saved_hot_range_events": saved_hot_range_events,
+        "role_progression": role_progression,
+        "blocking_reasons": blockers,
+        "repair_hint": (
+            "inspect BindingSpec producer/desired_producer hooks and typed "
+            "mutation targets for the saved queue frontier before rerunning "
+            "matched baselines"
+            if status.startswith("saved_frontier")
+            else "see status"
+        ),
+    }
+
+
 def summarize_run(run_dir: Path) -> dict[str, Any]:
     out_dir = run_dir / "out"
     default_dir = out_dir / "default"
     stats = read_stats(default_dir / "fuzzer_stats")
-    progress = summarize_progress(default_dir / "formtrig_progress.jsonl")
+    progress = summarize_progress(
+        default_dir / "formtrig_progress.jsonl", default_dir / "queue"
+    )
+    binding_signal = read_json(default_dir / "formtrig_binding_signal_diagnosis.json")
     return {
         "run": run_dir.name,
         "out_dir": str(out_dir),
@@ -282,9 +690,15 @@ def summarize_run(run_dir: Path) -> dict[str, Any]:
         "frontier_updates": int_value(stats.get("formtrig_frontier_updates")),
         "typed_execs": int_value(stats.get("formtrig_typed_execs")),
         "typed_finds": int_value(stats.get("formtrig_typed_finds")),
-        "stats_saved_non_trigger": int_value(stats.get("formtrig_saved_non_trigger_log_seen")),
+        "stats_saved_non_trigger": int_value(
+            stats.get("formtrig_saved_non_trigger_log_seen")
+        ),
         "stats_saved_trigger": int_value(stats.get("formtrig_saved_triggered_log_seen")),
         "progress_path": progress,
+        "binding_signal_path": str(
+            default_dir / "formtrig_binding_signal_diagnosis.json"
+        ),
+        "terminal_gap": summarize_terminal_gap(progress, binding_signal),
     }
 
 
@@ -428,8 +842,8 @@ def to_markdown(payload: dict[str, Any]) -> str:
             f"- strict saved pre-trigger runs: `{capability.get('strict_saved_pretrigger_runs', 0)}/{payload['run_count']}`",
             f"- interpretation: {capability.get('interpretation', 'see per-run capability counts')}",
             "",
-            "## Runs",
-            "",
+        "## Runs",
+        "",
         ]
     )
     lines.extend(
@@ -492,6 +906,72 @@ def to_markdown(payload: dict[str, Any]) -> str:
             + "`"
         )
         lines.append("")
+    lines.extend(["## R-to-T Terminal Gap", ""])
+    for row in payload["runs"]:
+        gap = row.get("terminal_gap", {})
+        lines.append(f"### {row['run']}")
+        lines.append(f"- status: `{gap.get('status', 'unknown')}`")
+        lines.append(
+            f"- saved non-T frontier events: `{gap.get('saved_non_trigger_frontier_events', 0)}`; saved T events: `{gap.get('saved_trigger_events', 0)}`"
+        )
+        lines.append(
+            f"- typed fallback without hot ranges: `{gap.get('fallback_no_hot_range_typed_stages', 0)}`; saved frontier hot-range events: `{gap.get('saved_hot_range_events', 0)}`"
+        )
+        blockers = gap.get("blocking_reasons") or []
+        lines.append("- blocking reasons: `" + ", ".join(blockers) + "`")
+        missing = gap.get("missing_bound_roles_at_latest_saved") or {}
+        unsatisfied = gap.get("unsatisfied_producer_roles_at_latest_saved") or {}
+        unsatisfied_observed = gap.get("unsatisfied_observed_roles_at_latest_saved") or {}
+        if missing:
+            lines.append(f"- missing bound roles at latest saved frontier: `{missing}`")
+        if unsatisfied_observed:
+            lines.append(
+                f"- observed roles not goal-satisfied at latest saved frontier: `{unsatisfied_observed}`"
+            )
+        if unsatisfied:
+            lines.append(f"- unsatisfied producer roles at latest saved frontier: `{unsatisfied}`")
+        latest = gap.get("latest_saved_non_trigger") or {}
+        if latest:
+            lines.append(
+                f"- latest saved non-T: queue `{latest.get('queue_id')}`, exec `{latest.get('execs_done')}`, trace `{latest.get('trace_signature')}`"
+            )
+        lines.append("")
+        progression = gap.get("role_progression") or []
+        if progression:
+            lines.extend(
+                [
+                    "| queue | exec | size | missing bound roles | observed unsatisfied roles | unsatisfied producers |",
+                    "| ---: | ---: | ---: | --- | --- | --- |",
+                ]
+            )
+            for event in progression:
+                atom_gaps = event.get("atom_gaps") or {}
+                missing_roles = {
+                    atom_id: atom_gap.get("missing_bound_roles", [])
+                    for atom_id, atom_gap in atom_gaps.items()
+                    if atom_gap.get("missing_bound_roles")
+                }
+                producer_roles = {
+                    atom_id: atom_gap.get("unsatisfied_producer_roles", [])
+                    for atom_id, atom_gap in atom_gaps.items()
+                    if atom_gap.get("unsatisfied_producer_roles")
+                }
+                observed_roles = {
+                    atom_id: atom_gap.get("unsatisfied_observed_roles", [])
+                    for atom_id, atom_gap in atom_gaps.items()
+                    if atom_gap.get("unsatisfied_observed_roles")
+                }
+                lines.append(
+                    "| {queue} | {execs} | {size} | `{missing}` | `{observed}` | `{producer}` |".format(
+                        queue=cell(event.get("queue_id")),
+                        execs=cell(event.get("execs_done")),
+                        size=cell(event.get("queue_file_size")),
+                        missing=missing_roles,
+                        observed=observed_roles,
+                        producer=producer_roles,
+                    )
+                )
+            lines.append("")
     return "\n".join(lines)
 
 

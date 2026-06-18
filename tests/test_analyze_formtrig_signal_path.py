@@ -9,7 +9,14 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
-    def write_run(self, root: Path, name: str, events: list[dict]) -> Path:
+    def write_run(
+        self,
+        root: Path,
+        name: str,
+        events: list[dict],
+        binding_signal: dict | None = None,
+        queue_files: dict[int, bytes] | None = None,
+    ) -> Path:
         default_dir = root / "formtrig" / name / "out" / "default"
         default_dir.mkdir(parents=True)
         (default_dir / "fuzzer_stats").write_text(
@@ -35,6 +42,16 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
             "\n".join(json.dumps(event) for event in events) + "\n",
             encoding="utf-8",
         )
+        if binding_signal is not None:
+            (default_dir / "formtrig_binding_signal_diagnosis.json").write_text(
+                json.dumps(binding_signal) + "\n",
+                encoding="utf-8",
+            )
+        if queue_files:
+            queue_dir = default_dir / "queue"
+            queue_dir.mkdir()
+            for queue_id, content in queue_files.items():
+                (queue_dir / f"id:{queue_id:06d},src:000000").write_bytes(content)
         return root / "formtrig" / name
 
     def run_tool(self, root: Path) -> dict:
@@ -211,6 +228,99 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
         self.assertEqual(run["first_typed_stage_start"]["execs_done"], 7)
         self.assertEqual(
             run["first_typed_lifted_nontrigger_before_first_saved_trigger"]["queue_id"],
+            3,
+        )
+
+    def test_terminal_gap_reports_unsatisfied_producer_on_saved_frontier(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.write_run(
+                root,
+                "001_TGT",
+                [
+                    {
+                        "event": "saved_progress",
+                        "reason": "root_aligned_state_transition",
+                        "triggered": False,
+                        "execs_done": 17,
+                        "queue_id": 5,
+                        "d_f": 1,
+                        "d_f_spec_lifted": 1,
+                        "lifted": True,
+                        "atom_signal_values": [
+                            {
+                                "atom_id": 1,
+                                "role_bits": 35,
+                                "producer_bits": 0,
+                                "guard_bits": 2,
+                                "use_bits": 1,
+                                "flags": 3,
+                            }
+                        ],
+                    }
+                ],
+                binding_signal={
+                    "atoms": [
+                        {
+                            "atom_id": 1,
+                            "category": "binary-state-null",
+                            "bound_roles": [
+                                "root_observe",
+                                "guard",
+                                "desired_producer",
+                                "use",
+                            ],
+                            "roles": [
+                                {
+                                    "role": "root_observe",
+                                    "bound": True,
+                                    "candidate_values": [1],
+                                },
+                                {
+                                    "role": "guard",
+                                    "bound": True,
+                                    "candidate_values": [1],
+                                },
+                                {
+                                    "role": "desired_producer",
+                                    "bound": True,
+                                    "candidate_values": [0],
+                                },
+                                {
+                                    "role": "use",
+                                    "bound": True,
+                                    "candidate_values": [0, 1],
+                                },
+                            ],
+                        }
+                    ]
+                },
+                queue_files={5: b"abc"},
+            )
+
+            payload = self.run_tool(root)
+
+        gap = payload["runs"][0]["terminal_gap"]
+        self.assertEqual(gap["status"], "saved_frontier_blocked_on_producer")
+        self.assertEqual(gap["saved_non_trigger_frontier_events"], 1)
+        self.assertIn(
+            "no_terminal_T_after_saved_non_trigger_frontier",
+            gap["blocking_reasons"],
+        )
+        self.assertEqual(
+            gap["unsatisfied_producer_roles_at_latest_saved"],
+            {"1": ["desired_producer"]},
+        )
+        self.assertEqual(
+            gap["constant_zero_producer_roles"],
+            {"1": ["desired_producer"]},
+        )
+        self.assertEqual(
+            gap["missing_bound_roles_at_latest_saved"],
+            {"1": ["desired_producer"]},
+        )
+        self.assertEqual(
+            gap["latest_saved_non_trigger"]["queue_file_size"],
             3,
         )
 

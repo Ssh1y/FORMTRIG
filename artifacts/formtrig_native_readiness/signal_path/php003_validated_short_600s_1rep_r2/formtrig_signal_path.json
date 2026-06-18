@@ -1,0 +1,1828 @@
+{
+  "analysis_time_utc": "2026-06-18T13:51:42Z",
+  "calibrated_frontier_runs": 1,
+  "claim_boundary": "calibrated_frontier is reported for diagnosis only; strict gate still requires saved non-trigger progress before terminal _T; typed-stage attribution explains mutation activity but does not upgrade the strict gate",
+  "formtrig_dir": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig",
+  "guidance_capability": {
+    "actionable_typed_nontrigger_runs": 1,
+    "interpretation": "see per-run capability counts",
+    "mutable_typed_find_runs": 1,
+    "sortable_lifted_df_runs": 1,
+    "stable_frontier_runs": 1,
+    "strict_saved_pretrigger_runs": 1,
+    "total_typed_execs": 6412,
+    "total_typed_finds": 8,
+    "typed_find_rate": 0.0012476606363069245
+  },
+  "run_count": 1,
+  "run_root": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig",
+  "runs": [
+    {
+      "binding_signal_path": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/formtrig_binding_signal_diagnosis.json",
+      "execs_done": 205673,
+      "execs_per_sec": 342.78,
+      "frontier_updates": 8,
+      "out_dir": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out",
+      "progress_path": {
+        "actionable_typed_nontrigger_before_first_saved_trigger": true,
+        "atom_role_observations": {
+          "1": {
+            "desired_producer": 2431,
+            "guard": 9,
+            "root_observe": 4203,
+            "use": 2862
+          }
+        },
+        "calibrated_non_trigger_events": 2,
+        "event_counts": {
+          "calibrated_frontier": 2,
+          "frontier_reject": 4089,
+          "saved_progress": 6,
+          "stability_confirmed": 2,
+          "typed_skip": 32,
+          "typed_stage_end": 52,
+          "typed_stage_start": 52
+        },
+        "first_calibrated_non_trigger": {
+          "actionable_components": 1,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 524416,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 0,
+              "producer_roles_satisfied": [],
+              "role_bits": 9,
+              "roles": [
+                "root_observe",
+                "desired_producer"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 0
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 1,
+          "components": 5,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "calibrated_frontier",
+          "execs_done": 12,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 20,
+            "role": 1,
+            "source_id": 11196980626138211219,
+            "value": 1
+          },
+          "frontier_count": 1,
+          "hot_ranges": 0,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 5,
+          "reason": "initial_frontier_seed",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 2,
+          "trace_signature": "ee77fd0a66aff93f",
+          "triggered": false
+        },
+        "first_saved_non_trigger": {
+          "actionable_components": 1,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 524288,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 0,
+              "producer_roles_satisfied": [],
+              "role_bits": 1,
+              "roles": [
+                "root_observe"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 0
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 1,
+          "components": 4,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "saved_progress",
+          "execs_done": 142,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 20,
+            "role": 1,
+            "source_id": 11196980626138211219,
+            "value": 1
+          },
+          "frontier_count": 3,
+          "hot_ranges": 0,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 8,
+          "queued_items": 9,
+          "reason": "root_aligned_state_transition",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "632accdbe626a7c9",
+          "triggered": false
+        },
+        "first_saved_trigger": null,
+        "first_saved_trigger_after_typed_stage": false,
+        "first_typed_lifted_nontrigger_before_first_saved_trigger": {
+          "actionable_components": 1,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 524417,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 0,
+              "producer_roles_satisfied": [],
+              "role_bits": 41,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 1
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 128,
+          "components": 6,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "typed_stage_start",
+          "execs_done": 40,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 20,
+            "role": 1,
+            "source_id": 11196980626138211219,
+            "value": 1
+          },
+          "frontier_count": 2,
+          "hot_ranges": 0,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 4,
+          "queued_items": 5,
+          "reason": "fallback_no_hot_range",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 2,
+          "trace_signature": "9a270613d48edc47",
+          "triggered": false
+        },
+        "first_typed_stage_end": {
+          "actionable_components": 1,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 524417,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 0,
+              "producer_roles_satisfied": [],
+              "role_bits": 41,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 1
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 7,
+          "components": 6,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "typed_stage_end",
+          "execs_done": 213,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 20,
+            "role": 1,
+            "source_id": 11196980626138211219,
+            "value": 1
+          },
+          "frontier_count": 3,
+          "hot_ranges": 0,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 4,
+          "queued_items": 12,
+          "reason": "completed",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 2,
+          "trace_signature": "9a270613d48edc47",
+          "triggered": false
+        },
+        "first_typed_stage_start": {
+          "actionable_components": 1,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 524417,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 0,
+              "producer_roles_satisfied": [],
+              "role_bits": 41,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 1
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 128,
+          "components": 6,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "typed_stage_start",
+          "execs_done": 40,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 20,
+            "role": 1,
+            "source_id": 11196980626138211219,
+            "value": 1
+          },
+          "frontier_count": 2,
+          "hot_ranges": 0,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 4,
+          "queued_items": 5,
+          "reason": "fallback_no_hot_range",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 2,
+          "trace_signature": "9a270613d48edc47",
+          "triggered": false
+        },
+        "first_typed_stage_start_before_first_saved_trigger": {
+          "actionable_components": 1,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 524417,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 0,
+              "producer_roles_satisfied": [],
+              "role_bits": 41,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 1
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 128,
+          "components": 6,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "typed_stage_start",
+          "execs_done": 40,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 20,
+            "role": 1,
+            "source_id": 11196980626138211219,
+            "value": 1
+          },
+          "frontier_count": 2,
+          "hot_ranges": 0,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 4,
+          "queued_items": 5,
+          "reason": "fallback_no_hot_range",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 2,
+          "trace_signature": "9a270613d48edc47",
+          "triggered": false
+        },
+        "latest_event": {
+          "actionable_components": 1,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 524417,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 0,
+              "producer_roles_satisfied": [],
+              "role_bits": 41,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 1
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 0,
+          "components": 6,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "typed_stage_end",
+          "execs_done": 205585,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 20,
+            "role": 1,
+            "source_id": 11196980626138211219,
+            "value": 1
+          },
+          "frontier_count": 8,
+          "hot_ranges": 0,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 471,
+          "queued_items": 561,
+          "reason": "completed",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "0db46e0456483e35",
+          "triggered": false
+        },
+        "missing_progress_log": false,
+        "nontrigger_events_before_first_saved_trigger": 4235,
+        "observed_source_flag_counts": {
+          "0": 32,
+          "2": 4203
+        },
+        "preterminal_nontrigger_d_f_spec_lifted_values": [
+          1,
+          0,
+          -1
+        ],
+        "preterminal_nontrigger_d_f_values": [
+          1
+        ],
+        "producer_satisfaction_observations": {},
+        "reason_counts": {
+          "completed": 52,
+          "dominated_by_existing_frontier": 4089,
+          "fallback_no_hot_range": 52,
+          "initial_frontier_seed": 1,
+          "not_replay_stable": 32,
+          "progress_replay_stable": 2,
+          "root_aligned_state_transition": 7
+        },
+        "saved_non_trigger_events": 6,
+        "saved_non_trigger_frontier": [
+          {
+            "actionable_components": 1,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 524288,
+                "flags": 3,
+                "guard_bits": 0,
+                "object_id_bucket": 0,
+                "producer_bits": 0,
+                "producer_roles_satisfied": [],
+                "role_bits": 1,
+                "roles": [
+                  "root_observe"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 0
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.7,
+                "context_hash": "9b63aa8e29e62393",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 11196980626138211219,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "444b0d4c813d6f1c",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4921041640069361436,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "3b2ded4c7bf31a84",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4264325334942554756,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 0.9,
+                "context_hash": "4169794c83b2ad0c",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4713431854553935116,
+                "value": 1
+              }
+            ],
+            "components": 4,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 142,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 20,
+              "role": 1,
+              "source_id": 11196980626138211219,
+              "value": 1
+            },
+            "frontier_count": 3,
+            "hot_ranges": 0,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000008,src:000004,time:261,execs:135,op:ftgtype,pos:140,+cov",
+            "queue_file_size": 1240,
+            "queue_id": 8,
+            "queued_items": 9,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "632accdbe626a7c9",
+            "triggered": false
+          },
+          {
+            "actionable_components": 1,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 524289,
+                "flags": 3,
+                "guard_bits": 0,
+                "object_id_bucket": 0,
+                "producer_bits": 0,
+                "producer_roles_satisfied": [],
+                "role_bits": 33,
+                "roles": [
+                  "root_observe",
+                  "use"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 1
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.7,
+                "context_hash": "9b63aa8e29e62393",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 11196980626138211219,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.6,
+                "context_hash": "d3f4f67627181f60",
+                "flags": 86,
+                "goal_satisfied": false,
+                "kind": 6,
+                "priority": 30,
+                "role": 6,
+                "role_name": "use",
+                "source_id": 15273103223642660704,
+                "value": 0
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "444b0d4c813d6f1c",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4921041640069361436,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "3b2ded4c7bf31a84",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4264325334942554756,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 0.9,
+                "context_hash": "4169794c83b2ad0c",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4713431854553935116,
+                "value": 1
+              }
+            ],
+            "components": 5,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 221,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 20,
+              "role": 1,
+              "source_id": 11196980626138211219,
+              "value": 1
+            },
+            "frontier_count": 4,
+            "hot_ranges": 0,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000012,src:000004,time:575,execs:214,op:havoc,rep:4,+cov",
+            "queue_file_size": 1259,
+            "queue_id": 12,
+            "queued_items": 13,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "cb70fbabc638c5e0",
+            "triggered": false
+          },
+          {
+            "actionable_components": 2,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 524289,
+                "flags": 3,
+                "guard_bits": 0,
+                "object_id_bucket": 0,
+                "producer_bits": 0,
+                "producer_roles_satisfied": [],
+                "role_bits": 33,
+                "roles": [
+                  "root_observe",
+                  "use"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 2
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.7,
+                "context_hash": "9b63aa8e29e62393",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 11196980626138211219,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.6,
+                "context_hash": "d3f4f67627181f60",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 6,
+                "priority": 30,
+                "role": 6,
+                "role_name": "use",
+                "source_id": 15273103223642660704,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "444b0d4c813d6f1c",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4921041640069361436,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "3b2ded4c7bf31a84",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4264325334942554756,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 0.9,
+                "context_hash": "4169794c83b2ad0c",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4713431854553935116,
+                "value": 1
+              }
+            ],
+            "components": 5,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 3554,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 20,
+              "role": 1,
+              "source_id": 11196980626138211219,
+              "value": 1
+            },
+            "frontier_count": 5,
+            "hot_ranges": 0,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000147,src:000004,time:12213,execs:3547,op:havoc,rep:3,+cov",
+            "queue_file_size": 1240,
+            "queue_id": 147,
+            "queued_items": 148,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "e414d4e71951a0f2",
+            "triggered": false
+          },
+          {
+            "actionable_components": 2,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 524289,
+                "flags": 3,
+                "guard_bits": 2,
+                "object_id_bucket": 0,
+                "producer_bits": 0,
+                "producer_roles_satisfied": [],
+                "role_bits": 3,
+                "roles": [
+                  "root_observe",
+                  "guard"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 0
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.7,
+                "context_hash": "9b63aa8e29e62393",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 11196980626138211219,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.65,
+                "context_hash": "dc389a1074a3cb00",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 5,
+                "priority": 10,
+                "role": 2,
+                "role_name": "guard",
+                "source_id": 15868602682506988288,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "444b0d4c813d6f1c",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4921041640069361436,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "3b2ded4c7bf31a84",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4264325334942554756,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 0.9,
+                "context_hash": "4169794c83b2ad0c",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4713431854553935116,
+                "value": 1
+              }
+            ],
+            "components": 5,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 11959,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 20,
+              "role": 1,
+              "source_id": 11196980626138211219,
+              "value": 1
+            },
+            "frontier_count": 6,
+            "hot_ranges": 0,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000227,src:000000,time:38521,execs:11952,op:havoc,rep:3,+cov",
+            "queue_file_size": 92,
+            "queue_id": 227,
+            "queued_items": 228,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "af7e8c1b8539f1f6",
+            "triggered": false
+          },
+          {
+            "actionable_components": 1,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 524289,
+                "flags": 3,
+                "guard_bits": 1,
+                "object_id_bucket": 0,
+                "producer_bits": 0,
+                "producer_roles_satisfied": [],
+                "role_bits": 3,
+                "roles": [
+                  "root_observe",
+                  "guard"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 0
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.7,
+                "context_hash": "9b63aa8e29e62393",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 11196980626138211219,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.65,
+                "context_hash": "dc389a1074a3cb00",
+                "flags": 86,
+                "goal_satisfied": false,
+                "kind": 5,
+                "priority": 10,
+                "role": 2,
+                "role_name": "guard",
+                "source_id": 15868602682506988288,
+                "value": 0
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "444b0d4c813d6f1c",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4921041640069361436,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "3b2ded4c7bf31a84",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4264325334942554756,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 0.9,
+                "context_hash": "4169794c83b2ad0c",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4713431854553935116,
+                "value": 1
+              }
+            ],
+            "components": 5,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 13198,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 20,
+              "role": 1,
+              "source_id": 11196980626138211219,
+              "value": 1
+            },
+            "frontier_count": 7,
+            "hot_ranges": 0,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000238,src:000000,time:41422,execs:13191,op:havoc,rep:4",
+            "queue_file_size": 91,
+            "queue_id": 238,
+            "queued_items": 239,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "aafaa725665f8489",
+            "triggered": false
+          },
+          {
+            "actionable_components": 2,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 524289,
+                "flags": 3,
+                "guard_bits": 2,
+                "object_id_bucket": 0,
+                "producer_bits": 0,
+                "producer_roles_satisfied": [],
+                "role_bits": 35,
+                "roles": [
+                  "root_observe",
+                  "guard",
+                  "use"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 1
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.7,
+                "context_hash": "9b63aa8e29e62393",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 11196980626138211219,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.6,
+                "context_hash": "d3f4f67627181f60",
+                "flags": 86,
+                "goal_satisfied": false,
+                "kind": 6,
+                "priority": 30,
+                "role": 6,
+                "role_name": "use",
+                "source_id": 15273103223642660704,
+                "value": 0
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.65,
+                "context_hash": "dc389a1074a3cb00",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 5,
+                "priority": 10,
+                "role": 2,
+                "role_name": "guard",
+                "source_id": 15868602682506988288,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "444b0d4c813d6f1c",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4921041640069361436,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "3b2ded4c7bf31a84",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4264325334942554756,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 0.9,
+                "context_hash": "4169794c83b2ad0c",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 3,
+                "priority": 20,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 4713431854553935116,
+                "value": 1
+              }
+            ],
+            "components": 6,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 119606,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 20,
+              "role": 1,
+              "source_id": 11196980626138211219,
+              "value": 1
+            },
+            "frontier_count": 8,
+            "hot_ranges": 0,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000466,src:000340,time:337997,execs:119599,op:havoc,rep:6",
+            "queue_file_size": 1240,
+            "queue_id": 466,
+            "queued_items": 467,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "6ed559e280b60e5d",
+            "triggered": false
+          }
+        ],
+        "saved_trigger_events": 0,
+        "sortable_lifted_df_before_first_saved_trigger": true,
+        "source_flag_counts": {
+          "0": 32,
+          "2": 4203
+        },
+        "stable_frontier_before_first_saved_trigger": true,
+        "status": "strict_pretrigger_guidance_seen",
+        "strict_pretrigger_guidance_seen": true,
+        "typed_lifted_nontrigger_before_first_saved_trigger": false,
+        "typed_lifted_nontrigger_starts_before_first_saved_trigger": 52,
+        "typed_stage_end_events": 52,
+        "typed_stage_nontrigger_start_events": 52,
+        "typed_stage_start_events": 52,
+        "typed_stage_starts_before_first_saved_trigger": 52
+      },
+      "queued_progress": 6,
+      "reached_execs": 121014,
+      "run": "001_PHP003",
+      "run_time_s": 600,
+      "stats_saved_non_trigger": 6,
+      "stats_saved_trigger": 0,
+      "terminal_gap": {
+        "blocking_reasons": [
+          "no_terminal_T_after_saved_non_trigger_frontier",
+          "missing_bound_roles_at_latest_saved_frontier",
+          "producer_roles_not_satisfied_at_latest_saved_frontier",
+          "observed_bound_roles_not_goal_satisfied_at_latest_saved_frontier",
+          "producer_roles_constant_zero_in_candidates",
+          "typed_mutation_has_no_hot_ranges_for_saved_frontier"
+        ],
+        "constant_zero_producer_roles": {
+          "1": [
+            "desired_producer"
+          ]
+        },
+        "fallback_no_hot_range_typed_stages": 52,
+        "latest_atom_gaps": {
+          "1": {
+            "bound_roles": [
+              "root_observe",
+              "guard",
+              "desired_producer",
+              "use"
+            ],
+            "category": "binary-state-null",
+            "constant_zero_producer_roles": [
+              "desired_producer"
+            ],
+            "missing_bound_roles": [
+              "desired_producer"
+            ],
+            "observed_roles": [
+              "guard",
+              "root_observe",
+              "use"
+            ],
+            "producer_roles": [
+              "desired_producer"
+            ],
+            "producer_roles_satisfied": [],
+            "role_goal_status": {
+              "guard": {
+                "observations": [
+                  {
+                    "context_hash": "dc389a1074a3cb00",
+                    "flags": 86,
+                    "goal_satisfied": true,
+                    "source_id": 15868602682506988288,
+                    "value": 1
+                  }
+                ],
+                "satisfied": true,
+                "unknown": false
+              },
+              "root_observe": {
+                "observations": [
+                  {
+                    "context_hash": "9b63aa8e29e62393",
+                    "flags": 85,
+                    "goal_satisfied": false,
+                    "source_id": 11196980626138211219,
+                    "value": 1
+                  }
+                ],
+                "satisfied": false,
+                "unknown": false
+              },
+              "use": {
+                "observations": [
+                  {
+                    "context_hash": "d3f4f67627181f60",
+                    "flags": 86,
+                    "goal_satisfied": false,
+                    "source_id": 15273103223642660704,
+                    "value": 0
+                  }
+                ],
+                "satisfied": false,
+                "unknown": false
+              }
+            },
+            "unsatisfied_observed_roles": [
+              "root_observe",
+              "use"
+            ],
+            "unsatisfied_producer_roles": [
+              "desired_producer"
+            ]
+          }
+        },
+        "latest_saved_non_trigger": {
+          "actionable_components": 2,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 524289,
+              "flags": 3,
+              "guard_bits": 2,
+              "object_id_bucket": 0,
+              "producer_bits": 0,
+              "producer_roles_satisfied": [],
+              "role_bits": 35,
+              "roles": [
+                "root_observe",
+                "guard",
+                "use"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 1
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 1,
+          "component_values": [
+            {
+              "atom_id": 1,
+              "confidence": 0.7,
+              "context_hash": "9b63aa8e29e62393",
+              "flags": 85,
+              "goal_satisfied": false,
+              "kind": 3,
+              "priority": 20,
+              "role": 1,
+              "role_name": "root_observe",
+              "source_id": 11196980626138211219,
+              "value": 1
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.6,
+              "context_hash": "d3f4f67627181f60",
+              "flags": 86,
+              "goal_satisfied": false,
+              "kind": 6,
+              "priority": 30,
+              "role": 6,
+              "role_name": "use",
+              "source_id": 15273103223642660704,
+              "value": 0
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.65,
+              "context_hash": "dc389a1074a3cb00",
+              "flags": 86,
+              "goal_satisfied": true,
+              "kind": 5,
+              "priority": 10,
+              "role": 2,
+              "role_name": "guard",
+              "source_id": 15868602682506988288,
+              "value": 1
+            },
+            {
+              "atom_id": 0,
+              "confidence": 1,
+              "context_hash": "444b0d4c813d6f1c",
+              "flags": 13,
+              "goal_satisfied": false,
+              "kind": 1,
+              "priority": 10,
+              "role": 0,
+              "role_name": "unknown",
+              "source_id": 4921041640069361436,
+              "value": 1
+            },
+            {
+              "atom_id": 0,
+              "confidence": 1,
+              "context_hash": "3b2ded4c7bf31a84",
+              "flags": 85,
+              "goal_satisfied": false,
+              "kind": 2,
+              "priority": 10,
+              "role": 0,
+              "role_name": "unknown",
+              "source_id": 4264325334942554756,
+              "value": 1
+            },
+            {
+              "atom_id": 0,
+              "confidence": 0.9,
+              "context_hash": "4169794c83b2ad0c",
+              "flags": 85,
+              "goal_satisfied": false,
+              "kind": 3,
+              "priority": 20,
+              "role": 0,
+              "role_name": "unknown",
+              "source_id": 4713431854553935116,
+              "value": 1
+            }
+          ],
+          "components": 6,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "saved_progress",
+          "execs_done": 119606,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 20,
+            "role": 1,
+            "source_id": 11196980626138211219,
+            "value": 1
+          },
+          "frontier_count": 8,
+          "hot_ranges": 0,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000466,src:000340,time:337997,execs:119599,op:havoc,rep:6",
+          "queue_file_size": 1240,
+          "queue_id": 466,
+          "queued_items": 467,
+          "reason": "root_aligned_state_transition",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "6ed559e280b60e5d",
+          "triggered": false
+        },
+        "missing_bound_roles_at_latest_saved": {
+          "1": [
+            "desired_producer"
+          ]
+        },
+        "repair_hint": "inspect BindingSpec producer/desired_producer hooks and typed mutation targets for the saved queue frontier before rerunning matched baselines",
+        "role_progression": [
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "guard",
+                  "desired_producer",
+                  "use"
+                ],
+                "category": "binary-state-null",
+                "constant_zero_producer_roles": [
+                  "desired_producer"
+                ],
+                "missing_bound_roles": [
+                  "guard",
+                  "desired_producer",
+                  "use"
+                ],
+                "observed_roles": [
+                  "root_observe"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [],
+                "role_goal_status": {
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "9b63aa8e29e62393",
+                        "flags": 85,
+                        "goal_satisfied": false,
+                        "source_id": 11196980626138211219,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [
+                  "root_observe"
+                ],
+                "unsatisfied_producer_roles": [
+                  "desired_producer"
+                ]
+              }
+            },
+            "execs_done": 142,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000008,src:000004,time:261,execs:135,op:ftgtype,pos:140,+cov",
+            "queue_file_size": 1240,
+            "queue_id": 8,
+            "trace_signature": "632accdbe626a7c9"
+          },
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "guard",
+                  "desired_producer",
+                  "use"
+                ],
+                "category": "binary-state-null",
+                "constant_zero_producer_roles": [
+                  "desired_producer"
+                ],
+                "missing_bound_roles": [
+                  "guard",
+                  "desired_producer"
+                ],
+                "observed_roles": [
+                  "root_observe",
+                  "use"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [],
+                "role_goal_status": {
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "9b63aa8e29e62393",
+                        "flags": 85,
+                        "goal_satisfied": false,
+                        "source_id": 11196980626138211219,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  },
+                  "use": {
+                    "observations": [
+                      {
+                        "context_hash": "d3f4f67627181f60",
+                        "flags": 86,
+                        "goal_satisfied": false,
+                        "source_id": 15273103223642660704,
+                        "value": 0
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [
+                  "root_observe",
+                  "use"
+                ],
+                "unsatisfied_producer_roles": [
+                  "desired_producer"
+                ]
+              }
+            },
+            "execs_done": 221,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000012,src:000004,time:575,execs:214,op:havoc,rep:4,+cov",
+            "queue_file_size": 1259,
+            "queue_id": 12,
+            "trace_signature": "cb70fbabc638c5e0"
+          },
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "guard",
+                  "desired_producer",
+                  "use"
+                ],
+                "category": "binary-state-null",
+                "constant_zero_producer_roles": [
+                  "desired_producer"
+                ],
+                "missing_bound_roles": [
+                  "guard",
+                  "desired_producer"
+                ],
+                "observed_roles": [
+                  "root_observe",
+                  "use"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [],
+                "role_goal_status": {
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "9b63aa8e29e62393",
+                        "flags": 85,
+                        "goal_satisfied": false,
+                        "source_id": 11196980626138211219,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  },
+                  "use": {
+                    "observations": [
+                      {
+                        "context_hash": "d3f4f67627181f60",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 15273103223642660704,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [
+                  "root_observe"
+                ],
+                "unsatisfied_producer_roles": [
+                  "desired_producer"
+                ]
+              }
+            },
+            "execs_done": 3554,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000147,src:000004,time:12213,execs:3547,op:havoc,rep:3,+cov",
+            "queue_file_size": 1240,
+            "queue_id": 147,
+            "trace_signature": "e414d4e71951a0f2"
+          },
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "guard",
+                  "desired_producer",
+                  "use"
+                ],
+                "category": "binary-state-null",
+                "constant_zero_producer_roles": [
+                  "desired_producer"
+                ],
+                "missing_bound_roles": [
+                  "desired_producer",
+                  "use"
+                ],
+                "observed_roles": [
+                  "guard",
+                  "root_observe"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [],
+                "role_goal_status": {
+                  "guard": {
+                    "observations": [
+                      {
+                        "context_hash": "dc389a1074a3cb00",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 15868602682506988288,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "9b63aa8e29e62393",
+                        "flags": 85,
+                        "goal_satisfied": false,
+                        "source_id": 11196980626138211219,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [
+                  "root_observe"
+                ],
+                "unsatisfied_producer_roles": [
+                  "desired_producer"
+                ]
+              }
+            },
+            "execs_done": 11959,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000227,src:000000,time:38521,execs:11952,op:havoc,rep:3,+cov",
+            "queue_file_size": 92,
+            "queue_id": 227,
+            "trace_signature": "af7e8c1b8539f1f6"
+          },
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "guard",
+                  "desired_producer",
+                  "use"
+                ],
+                "category": "binary-state-null",
+                "constant_zero_producer_roles": [
+                  "desired_producer"
+                ],
+                "missing_bound_roles": [
+                  "desired_producer",
+                  "use"
+                ],
+                "observed_roles": [
+                  "guard",
+                  "root_observe"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [],
+                "role_goal_status": {
+                  "guard": {
+                    "observations": [
+                      {
+                        "context_hash": "dc389a1074a3cb00",
+                        "flags": 86,
+                        "goal_satisfied": false,
+                        "source_id": 15868602682506988288,
+                        "value": 0
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  },
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "9b63aa8e29e62393",
+                        "flags": 85,
+                        "goal_satisfied": false,
+                        "source_id": 11196980626138211219,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [
+                  "root_observe",
+                  "guard"
+                ],
+                "unsatisfied_producer_roles": [
+                  "desired_producer"
+                ]
+              }
+            },
+            "execs_done": 13198,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000238,src:000000,time:41422,execs:13191,op:havoc,rep:4",
+            "queue_file_size": 91,
+            "queue_id": 238,
+            "trace_signature": "aafaa725665f8489"
+          },
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "guard",
+                  "desired_producer",
+                  "use"
+                ],
+                "category": "binary-state-null",
+                "constant_zero_producer_roles": [
+                  "desired_producer"
+                ],
+                "missing_bound_roles": [
+                  "desired_producer"
+                ],
+                "observed_roles": [
+                  "guard",
+                  "root_observe",
+                  "use"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [],
+                "role_goal_status": {
+                  "guard": {
+                    "observations": [
+                      {
+                        "context_hash": "dc389a1074a3cb00",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 15868602682506988288,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "9b63aa8e29e62393",
+                        "flags": 85,
+                        "goal_satisfied": false,
+                        "source_id": 11196980626138211219,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  },
+                  "use": {
+                    "observations": [
+                      {
+                        "context_hash": "d3f4f67627181f60",
+                        "flags": 86,
+                        "goal_satisfied": false,
+                        "source_id": 15273103223642660704,
+                        "value": 0
+                      }
+                    ],
+                    "satisfied": false,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [
+                  "root_observe",
+                  "use"
+                ],
+                "unsatisfied_producer_roles": [
+                  "desired_producer"
+                ]
+              }
+            },
+            "execs_done": 119606,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out/default/queue/id:000466,src:000340,time:337997,execs:119599,op:havoc,rep:6",
+            "queue_file_size": 1240,
+            "queue_id": 466,
+            "trace_signature": "6ed559e280b60e5d"
+          }
+        ],
+        "saved_hot_range_events": 0,
+        "saved_non_trigger_frontier_events": 6,
+        "saved_trigger_events": 0,
+        "status": "saved_frontier_blocked_on_producer",
+        "unsatisfied_observed_roles_at_latest_saved": {
+          "1": [
+            "root_observe",
+            "use"
+          ]
+        },
+        "unsatisfied_producer_roles_at_latest_saved": {
+          "1": [
+            "desired_producer"
+          ]
+        }
+      },
+      "triggered_execs": 0,
+      "typed_execs": 6412,
+      "typed_finds": 8
+    }
+  ],
+  "strict_pretrigger_guidance_runs": 1,
+  "target_id": "PHP003",
+  "terminal_runs": 0,
+  "typed_attribution": "no_typed_preterminal_attribution",
+  "typed_lifted_nontrigger_before_terminal_runs": 0,
+  "typed_stage_before_terminal_runs": 0,
+  "verdict": "strict_pretrigger_guidance_observed"
+}

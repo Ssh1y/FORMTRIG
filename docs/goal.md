@@ -1277,6 +1277,22 @@ PHP003:
   guidance；但 endpoint 还没有出现，所以不能写成性能正例或 hard SOTA-pain
   主结果。下一步是修 PHP003 的 typed mutation/BindingSpec 终态转换，或提高预算
   直到 FORMTRIG 出现同 oracle terminal `_T`，再进入 matched endpoint 比较。
+  最新 R-to-T repair 诊断已经落盘：
+    artifacts/formtrig_native_readiness/signal_path/php003_validated_short_600s_1rep_r2
+    verdict = strict_pretrigger_guidance_observed
+    terminal_gap.status = saved_frontier_blocked_on_producer
+    saved non-T frontier = 6
+    saved T = 0
+    latest saved queue = 466 / exec 119606 / trace 6ed559e280b60e5d
+    latest missing role = desired_producer
+    latest observed-but-unsatisfied roles = root_observe, use
+    desired_producer candidate values = constant zero
+    typed fallback_no_hot_range stages = 52
+    saved frontier hot-range events = 0
+  这说明 PHP003 的指导方向是正的，但可变异链条还没闭合：frontier 从
+  root-only 推进到 root+guard+use，但 producer 没满足，root/use 目标值仍未满足，
+  typed mutation 没拿到输入 hot range。下一步优先级不是重复 matched 600s，而是
+  修 producer/input-influence/hot-range 或 typed mutation 的字段定位。
 
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance
