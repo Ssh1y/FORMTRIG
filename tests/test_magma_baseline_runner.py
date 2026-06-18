@@ -84,6 +84,21 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
         self.assertIn('FUZZARGS="${extra_fuzz_args[*]}"', script)
         self.assertIn("fuzz_args=%s", script)
 
+    def test_runner_supports_rep_range_recovery_runs(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("--rep-start N", script)
+        self.assertIn("--rep-end N", script)
+        self.assertIn('rep_start="1"', script)
+        self.assertIn('rep_end=""', script)
+        self.assertIn('rep_end="$reps"', script)
+        self.assertIn("1 <= start <= end <= --reps", script)
+        self.assertIn("printf 'rep_start=%s\\n'", script)
+        self.assertIn("printf 'rep_end=%s\\n'", script)
+        self.assertIn("for ((rep = rep_start; rep <= rep_end; rep++)); do", script)
+
     def test_runner_patches_php_icu_bool_host_compatibility(self):
         script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
             encoding="utf-8"

@@ -13,6 +13,8 @@ durations="600,1800"
 baselines="aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 poll="30"
 reps="1"
+rep_start="1"
+rep_end=""
 jobs="${FORMTRIG_JOBS:-1}"
 run_build=1
 run_sweeps=1
@@ -39,6 +41,8 @@ options:
   --durations LIST      comma/space-separated budgets in seconds, default 600,1800
   --baselines LIST      comma/space-separated baseline ids
   --reps N              repetitions per baseline/budget, default 1
+  --rep-start N         first repetition to run, default 1
+  --rep-end N           last repetition to run, default --reps
   --jobs N              concurrent baseline runs, default FORMTRIG_JOBS or 1
   --poll SEC            Magma monitor poll interval, default 30
   --afl-arg ARG         extra AFL++ argument passed through FUZZARGS; repeatable
@@ -657,6 +661,14 @@ while [[ $# -gt 0 ]]; do
       reps="${2:-}"
       shift 2
       ;;
+    --rep-start)
+      rep_start="${2:-}"
+      shift 2
+      ;;
+    --rep-end)
+      rep_end="${2:-}"
+      shift 2
+      ;;
     --jobs)
       jobs="${2:-}"
       shift 2
@@ -734,6 +746,21 @@ if ! [[ "$reps" =~ ^[0-9]+$ ]] || [[ "$reps" -lt 1 ]]; then
   echo "--reps must be a positive integer: $reps" >&2
   exit 2
 fi
+if [[ -z "$rep_end" ]]; then
+  rep_end="$reps"
+fi
+if ! [[ "$rep_start" =~ ^[0-9]+$ ]] || [[ "$rep_start" -lt 1 ]]; then
+  echo "--rep-start must be a positive integer: $rep_start" >&2
+  exit 2
+fi
+if ! [[ "$rep_end" =~ ^[0-9]+$ ]] || [[ "$rep_end" -lt 1 ]]; then
+  echo "--rep-end must be a positive integer: $rep_end" >&2
+  exit 2
+fi
+if [[ "$rep_start" -gt "$rep_end" ]] || [[ "$rep_end" -gt "$reps" ]]; then
+  echo "--rep-start/--rep-end must satisfy 1 <= start <= end <= --reps: start=$rep_start end=$rep_end reps=$reps" >&2
+  exit 2
+fi
 if ! [[ "$jobs" =~ ^[0-9]+$ ]] || [[ "$jobs" -lt 1 ]]; then
   echo "--jobs must be a positive integer: $jobs" >&2
   exit 2
@@ -752,6 +779,8 @@ fi
   printf 'baselines=%s\n' "$baselines"
   printf 'durations=%s\n' "$durations"
   printf 'reps=%s\n' "$reps"
+  printf 'rep_start=%s\n' "$rep_start"
+  printf 'rep_end=%s\n' "$rep_end"
   printf 'jobs=%s\n' "$jobs"
   printf 'poll=%s\n' "$poll"
   printf 'fuzz_args=%s\n' "${extra_fuzz_args[*]}"
@@ -777,7 +806,7 @@ fi
 
 if [[ "$run_sweeps" == "1" ]]; then
   while IFS= read -r duration; do
-    for ((rep = 1; rep <= reps; rep++)); do
+    for ((rep = rep_start; rep <= rep_end; rep++)); do
       while IFS= read -r baseline; do
         if [[ "$jobs" -gt 1 ]]; then
           wait_for_job_slot "$jobs"
@@ -808,4 +837,6 @@ echo "  program=$program"
 echo "  baselines=$baselines"
 echo "  durations=$durations"
 echo "  reps=$reps"
+echo "  rep_start=$rep_start"
+echo "  rep_end=$rep_end"
 echo "  jobs=$jobs"
