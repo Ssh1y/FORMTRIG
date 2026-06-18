@@ -39,6 +39,7 @@ RUN_FIELDS = [
     "pretrigger_binary_flat",
     "pretrigger_binary_reason",
     "reach_to_trigger_gap_s",
+    "live_snapshot",
     "run_record",
 ]
 
@@ -335,6 +336,7 @@ def run_row(source_label: str, raw: dict[str, Any], summary_path: Path) -> dict[
         "pretrigger_binary_flat": flat,
         "pretrigger_binary_reason": flat_reason,
         "reach_to_trigger_gap_s": gap,
+        "live_snapshot": bool_value(raw.get("live_snapshot")),
         "run_record": str(raw.get("run_record") or ""),
         "summary_path": str(summary_path),
     }
@@ -432,6 +434,7 @@ def target_analysis(
     groups = group_rows(rows)
     required = set(required_baselines)
     considered = [group for group in groups if not required or group["baseline"] in required]
+    considered_rows = [row for row in rows if not required or row["baseline"] in required]
     missing_required = sorted(required - {group["baseline"] for group in groups})
     low_rep_groups = [
         group["baseline"] for group in considered if int_value(group.get("reps")) < min_reps
@@ -452,6 +455,7 @@ def target_analysis(
     ]
     fastest = min(successful_ttes) if successful_ttes else None
     fastest_disqualifies = fastest is not None and fastest <= acceptable_trigger_s
+    has_live_snapshot = any(bool_value(row.get("live_snapshot")) for row in considered_rows)
 
     any_missing = any(int_value(group.get("missing")) > 0 for group in considered)
     any_late_median = any(
@@ -485,6 +489,8 @@ def target_analysis(
         reasons.append("baseline_endpoint_cost_late_missing_or_high_variance")
     else:
         reasons.append("baseline_endpoint_cost_not_sufficient_for_hard_pain")
+    if has_live_snapshot:
+        reasons.append("live_snapshot_only")
 
     if missing_required:
         status = "incomplete_required_baselines"
@@ -496,6 +502,8 @@ def target_analysis(
         status = "not_measured"
     elif not all_flat:
         status = "fail_not_flat"
+    elif has_live_snapshot:
+        status = "live_snapshot_only"
     elif endpoint_cost_pass:
         status = "measured_pass"
     else:
@@ -514,6 +522,7 @@ def target_analysis(
         "pretrigger_binary_flat_pass": all_flat,
         "pretrigger_binary_flat_measured": all_flat_measured,
         "endpoint_cost_pass": endpoint_cost_pass,
+        "live_snapshot_input": has_live_snapshot,
         "status": status,
         "reasons": reasons,
         "interpretation": interpretation_for_status(status),
@@ -529,6 +538,7 @@ def interpretation_for_status(status: str) -> str:
         "not_measured": "baseline pre-_T binary flatness is not measured for all required runs",
         "under_replicated": "baseline no-guidance evidence needs more repetitions",
         "incomplete_required_baselines": "one or more required baseline families are missing",
+        "live_snapshot_only": "live baseline evidence is provisional and cannot support a final hard-pain claim",
     }.get(status, "unknown baseline guidance-gap status")
 
 
@@ -567,6 +577,7 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         f"- pre-trigger binary flatness measured: `{analysis['pretrigger_binary_flat_measured']}`",
         f"- pre-trigger binary flatness pass: `{analysis['pretrigger_binary_flat_pass']}`",
         f"- endpoint cost pass: `{analysis['endpoint_cost_pass']}`",
+        f"- live snapshot input: `{analysis.get('live_snapshot_input', False)}`",
         "",
         "## Reasons",
         "",
