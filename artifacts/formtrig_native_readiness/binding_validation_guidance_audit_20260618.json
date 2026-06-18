@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-06-18T16:21:54+00:00",
-  "record_count": 12,
+  "generated_at_utc": "2026-06-18T17:03:15+00:00",
+  "record_count": 13,
   "records": [
     {
       "accepted_non_trigger_progress_events": 0,
@@ -91,6 +91,24 @@
       "target_id": "PHP003",
       "tc_rooted_static_status": "pass",
       "terminal_triggered": false
+    },
+    {
+      "accepted_non_trigger_progress_events": 1,
+      "candidate_events": 2161,
+      "disposition": "mechanism_and_endpoint_candidate",
+      "execs_done": 5802,
+      "next_action": "run matched baselines and baseline-guidance-gap analysis; promote only if baselines are late, missing, or high variance",
+      "non_trigger_progress_events": 1,
+      "raw_source": "artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_hook_20s_role_df_20260618/summary.jsonl",
+      "ready_for_short_gate": true,
+      "saved_non_trigger_progress_events": 1,
+      "soft_pretrigger_signal": true,
+      "source_path": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.validation.json",
+      "status": "native_binding_validated",
+      "strict_pretrigger_guidance": true,
+      "target_id": "PHP003",
+      "tc_rooted_static_status": "pass",
+      "terminal_triggered": true
     },
     {
       "accepted_non_trigger_progress_events": 2,
@@ -222,7 +240,7 @@
   "schema": "formtrig_binding_validation_guidance_audit_v1",
   "summary": {
     "record_disposition_counts": {
-      "mechanism_and_endpoint_candidate": 2,
+      "mechanism_and_endpoint_candidate": 3,
       "mechanism_only_needs_endpoint": 3,
       "native_binding_validated_no_guidance_readout": 1,
       "soft_signal_needs_frontier_evidence": 1,
@@ -230,8 +248,8 @@
     },
     "strict_pretrigger_target_count": 4,
     "target_disposition_counts": {
-      "mechanism_and_endpoint_candidate": 2,
-      "mechanism_only_needs_endpoint": 2,
+      "mechanism_and_endpoint_candidate": 3,
+      "mechanism_only_needs_endpoint": 1,
       "native_binding_validated_no_guidance_readout": 1,
       "soft_signal_needs_frontier_evidence": 1,
       "terminal_only_control": 3
@@ -295,22 +313,22 @@
       "terminal_triggered": true
     },
     {
-      "accepted_non_trigger_progress_events": 4,
-      "candidate_events": 4090,
-      "disposition": "mechanism_only_needs_endpoint",
-      "execs_done": 26636,
-      "next_action": "run endpoint short screen against faithful AFL++ family baselines",
-      "non_trigger_progress_events": 4,
-      "raw_source": "artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
-      "ready_for_short_gate": false,
-      "saved_non_trigger_progress_events": 4,
+      "accepted_non_trigger_progress_events": 1,
+      "candidate_events": 2161,
+      "disposition": "mechanism_and_endpoint_candidate",
+      "execs_done": 5802,
+      "next_action": "run matched baselines and baseline-guidance-gap analysis; promote only if baselines are late, missing, or high variance",
+      "non_trigger_progress_events": 1,
+      "raw_source": "artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_hook_20s_role_df_20260618/summary.jsonl",
+      "ready_for_short_gate": true,
+      "saved_non_trigger_progress_events": 1,
       "soft_pretrigger_signal": true,
-      "source_path": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json",
-      "status": "needs_terminal_repair",
+      "source_path": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.validation.json",
+      "status": "native_binding_validated",
       "strict_pretrigger_guidance": true,
       "target_id": "PHP003",
       "tc_rooted_static_status": "pass",
-      "terminal_triggered": false
+      "terminal_triggered": true
     },
     {
       "accepted_non_trigger_progress_events": 2,

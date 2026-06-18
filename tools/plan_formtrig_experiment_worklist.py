@@ -746,6 +746,21 @@ def afl_args_for_manifest_list(manifest_list: str) -> list[str]:
     return []
 
 
+def baseline_overrides_for_manifest_list(manifest_list: str) -> dict[str, str]:
+    for manifest in manifest_list_paths(Path(manifest_list)):
+        values = manifest_key_values(manifest)
+        overrides: dict[str, str] = {}
+        program = values.get("baseline_program", "")
+        args_template = values.get("baseline_args_template", "")
+        if program:
+            overrides["program"] = program
+        if args_template:
+            overrides["args_template"] = args_template
+        if overrides:
+            return overrides
+    return {}
+
+
 def magma_baseline_command(
     target_id: str,
     duration_s: int,
@@ -754,6 +769,8 @@ def magma_baseline_command(
     *,
     out_dir: str | None = None,
     afl_args: list[str] | None = None,
+    program: str | None = None,
+    args_template: str | None = None,
 ) -> str:
     args = [
         "scripts/run_magma_baselines.sh",
@@ -766,6 +783,10 @@ def magma_baseline_command(
     ]
     if out_dir:
         args.extend(["--out", out_dir])
+    if program:
+        args.extend(["--program", program])
+    if args_template:
+        args.extend(["--args-template", args_template])
     for arg in afl_args or []:
         args.extend(["--afl-arg", arg])
     if reps > 1:
@@ -818,6 +839,7 @@ def validated_short_screen_command(
     formtrig_out = f"artifacts/formtrig_native_readiness/raw/{tag}_formtrig"
     manifest_list = preferred_manifest_list(target_id, manifest_root, reps)
     baseline_afl_args = afl_args_for_manifest_list(manifest_list)
+    baseline_overrides = baseline_overrides_for_manifest_list(manifest_list)
     commands = [
         magma_baseline_command(
             target_id,
@@ -826,6 +848,8 @@ def validated_short_screen_command(
             reps,
             out_dir=baseline_out,
             afl_args=baseline_afl_args,
+            program=baseline_overrides.get("program"),
+            args_template=baseline_overrides.get("args_template"),
         ),
         formtrig_manifest_batch_command(
             manifest_list,
@@ -914,6 +938,7 @@ def magma_matched_longrun_steps(
     run_tag = f"{target_id.lower()}_matched_{duration_s}s_{reps}rep_{utc_stamp}"
     formtrig_out = f"artifacts/formtrig_native_readiness/raw/{run_tag}_formtrig"
     baseline_out = f"artifacts/formtrig_native_readiness/raw/{run_tag}_baselines"
+    baseline_overrides = baseline_overrides_for_manifest_list(manifest_list)
     gate_out = f"{formtrig_out}/gate"
     guidance_out = f"artifacts/formtrig_native_readiness/baseline_guidance_gap/{run_tag}"
     comparison_out = f"artifacts/formtrig_native_readiness/comparisons/{run_tag}"
@@ -942,6 +967,8 @@ def magma_matched_longrun_steps(
             reps,
             out_dir=baseline_out,
             afl_args=afl_args_for_manifest_list(manifest_list),
+            program=baseline_overrides.get("program"),
+            args_template=baseline_overrides.get("args_template"),
         ),
         formtrig_manifest_batch_command(
             manifest_list,
@@ -1713,6 +1740,24 @@ def task_for_row(
                 manifest_root=manifest_root,
                 active_runs=active_runs,
                 active_runs_path=active_runs_path,
+            ),
+            triage,
+        )
+    if (
+        comparison_verdict(comparison) in GUIDANCE_ONLY_REPAIR_VERDICTS
+        and binding_validation_ready(validation)
+        and binding_validation_strict_pretrigger_guidance(validation)
+        and binding_validation_terminal_triggered(validation)
+    ):
+        return attach_sota_pain(
+            validated_short_screen_task(
+                row,
+                comparison,
+                validation,
+                short_duration_s=short_duration_s,
+                jobs=jobs,
+                reps=reps,
+                manifest_root=manifest_root,
             ),
             triage,
         )

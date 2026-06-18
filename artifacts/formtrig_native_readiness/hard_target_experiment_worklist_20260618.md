@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-18T16:23:12+00:00`
-Tasks: `24`; runnable now: `0`; blocked/gated: `24`; demoted controls skipped: `9`; low-priority skipped: `93`.
+Generated: `2026-06-18T17:08:18+00:00`
+Tasks: `24`; runnable now: `1`; blocked/gated: `23`; demoted controls skipped: `9`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -16,7 +16,7 @@ Tasks: `24`; runnable now: `0`; blocked/gated: `24`; demoted controls skipped: `
 | priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
 | P0 | 1 | PDF003 | magma | visible_hard_speedup_or_reliability | expand_cross_target_hard_evidence | blocked | The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign. |
-| P1 | 2 | PHP003 | magma |  | repair_guidance_to_terminal | blocked | The matched short screen already showed strict pre-trigger FORMTRIG guidance and baseline no-guidance pain, but FORMTRIG did not reach terminal _T. Convert the saved non-trigger frontier into a terminal same-oracle outcome before spending another matched-baseline budget. |
+| P1 | 2 | PHP003 | magma |  | run_validated_matched_short_screen | yes | Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost. |
 | P0 | 3 | LIBXML2_1107 | real_cve |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P0 | 4 | GPAC_3403 | real_cve |  | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 5 | SQL013 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -42,7 +42,12 @@ Tasks: `24`; runnable now: `0`; blocked/gated: `24`; demoted controls skipped: `
 
 ## Runnable Now
 
-No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
+### P1 PHP003
+
+- Benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
+- SOTA pain: `not recorded`
+- SOTA pain evidence: not recorded
+- Command: `scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines --program exif_thumbnail --args-template @@ && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.current_1rep.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig`
 
 ## Gated Tasks
 
@@ -69,32 +74,6 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z/comparison.json
 - artifacts/magma_canary_inventory.json
 - artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json
-
-### P1 PHP003 - repair_guidance_to_terminal
-
-- Benefit to prove: The matched short screen already showed strict pre-trigger FORMTRIG guidance and baseline no-guidance pain, but FORMTRIG did not reach terminal _T. Convert the saved non-trigger frontier into a terminal same-oracle outcome before spending another matched-baseline budget.
-- SOTA pain: `not recorded`
-- SOTA pain evidence: not recorded
-- Endpoint metrics: FORMTRIG terminal success after the saved non-trigger frontier, first _T / execution count after the repair, same Magma/CVE oracle as the matched baseline screen
-- Claim boundary: This is a repair target, not a performance target. Do not rerun the same matched short screen until FORMTRIG terminal success or a revised BindingSpec/typed mutation is available.
-- Blocking issue:
-- no FORMTRIG terminal success is established
-- FORMTRIG first `_T`/TTE is not recorded for this run
-- producer role has no positive candidate signal: desired_producer
-- pre-trigger guidance does not yet close R-to-T; repair BindingSpec producer or input hot-range before endpoint spending
-- Mechanism evidence required after benefit:
-- strict_pretrigger_guidance
-- producer role constant-zero diagnosis
-- Post-unblock commands or steps:
-- replay FORMTRIG saved non-trigger queue entries and inspect which role blocks _T
-- repair BindingSpec or typed mutation so the non-trigger frontier can cross R2T
-- run a FORMTRIG-only terminal gate before repeating faithful baselines
-- Evidence paths:
-- artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json
-- artifacts/formtrig_native_readiness/comparisons/php003_validated_short_600s_1rep_r2/comparison.json
-- artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl
-- artifacts/magma_canary_inventory.json
-- artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/build_plan.json
 
 ### P0 LIBXML2_1107 - validate_binding_spec_then_short_screen
 

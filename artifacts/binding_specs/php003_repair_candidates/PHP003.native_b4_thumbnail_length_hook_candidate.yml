@@ -1,7 +1,7 @@
 tc_id: 'PHP003'
 target:
   project: 'php'
-  binary: 'exif'
+  binary: 'exif_thumbnail'
   command: '@@'
 tc:
   category: 'binary-state-null'
