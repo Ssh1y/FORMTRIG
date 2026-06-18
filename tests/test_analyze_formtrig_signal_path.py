@@ -143,6 +143,7 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
                         "d_f": 2,
                         "d_f_spec_lifted": 2,
                         "lifted": True,
+                        "stable": 1,
                         "source_flags": 2,
                     },
                     {
@@ -191,8 +192,18 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
         self.assertEqual(payload["typed_attribution"], "terminal_after_typed_lifted_nontrigger_stage")
         self.assertEqual(payload["typed_stage_before_terminal_runs"], 1)
         self.assertEqual(payload["typed_lifted_nontrigger_before_terminal_runs"], 1)
+        capability = payload["guidance_capability"]
+        self.assertEqual(capability["stable_frontier_runs"], 1)
+        self.assertEqual(capability["sortable_lifted_df_runs"], 1)
+        self.assertEqual(capability["actionable_typed_nontrigger_runs"], 1)
+        self.assertEqual(capability["mutable_typed_find_runs"], 1)
+        self.assertEqual(capability["total_typed_finds"], 3)
+        self.assertEqual(capability["strict_saved_pretrigger_runs"], 0)
         run = payload["runs"][0]["progress_path"]
         self.assertFalse(run["strict_pretrigger_guidance_seen"])
+        self.assertTrue(run["stable_frontier_before_first_saved_trigger"])
+        self.assertTrue(run["sortable_lifted_df_before_first_saved_trigger"])
+        self.assertTrue(run["actionable_typed_nontrigger_before_first_saved_trigger"])
         self.assertTrue(run["first_saved_trigger_after_typed_stage"])
         self.assertTrue(run["typed_lifted_nontrigger_before_first_saved_trigger"])
         self.assertEqual(run["typed_stage_start_events"], 1)
@@ -228,6 +239,8 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
         self.assertIn("FORMTRIG Signal Path: TGT", text)
         self.assertIn("claim boundary", text)
         self.assertIn("typed attribution", text)
+        self.assertIn("Guidance Capability", text)
+        self.assertIn("stable frontier runs", text)
 
 
 if __name__ == "__main__":

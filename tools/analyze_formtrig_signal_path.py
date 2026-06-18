@@ -105,6 +105,15 @@ def is_lifted_nontrigger(event: dict[str, Any]) -> bool:
     return spec_df is not None and spec_df >= 0
 
 
+def distinct_numeric_count(values: list[Any]) -> int:
+    seen: set[float] = set()
+    for value in values:
+        parsed = numeric(value)
+        if parsed is not None:
+            seen.add(float(parsed))
+    return len(seen)
+
+
 def summarize_progress(progress_path: Path) -> dict[str, Any]:
     event_counts: Counter[str] = Counter()
     reason_counts: Counter[str] = Counter()
@@ -214,6 +223,12 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
         status = "calibrated_frontier_only"
     else:
         status = "no_formtrig_signal"
+    stable_frontier = (
+        first_calibrated_non_trigger is not None
+        and int_value(first_calibrated_non_trigger.get("stable")) > 0
+    )
+    sortable_lifted_df = distinct_numeric_count(preterminal_nontrigger_spec_df) >= 2
+    actionable_typed_nontrigger = first_typed_lifted_nontrigger_before_trigger is not None
 
     return {
         "missing_progress_log": False,
@@ -233,6 +248,9 @@ def summarize_progress(progress_path: Path) -> dict[str, Any]:
         "strict_pretrigger_guidance_seen": strict_pretrigger,
         "first_saved_trigger_after_typed_stage": first_saved_trigger_after_typed_stage,
         "typed_lifted_nontrigger_before_first_saved_trigger": typed_lifted_nontrigger_before_saved_trigger,
+        "stable_frontier_before_first_saved_trigger": stable_frontier,
+        "sortable_lifted_df_before_first_saved_trigger": sortable_lifted_df,
+        "actionable_typed_nontrigger_before_first_saved_trigger": actionable_typed_nontrigger,
         "nontrigger_events_before_first_saved_trigger": nontrigger_before_first_saved_trigger,
         "preterminal_nontrigger_d_f_values": preterminal_nontrigger_df,
         "preterminal_nontrigger_d_f_spec_lifted_values": preterminal_nontrigger_spec_df,
@@ -299,6 +317,27 @@ def summarize(formtrig_dir: Path, target_id: str, run_root: Path | None = None) 
         for row in runs
         if row["progress_path"].get("typed_lifted_nontrigger_before_first_saved_trigger")
     ]
+    stable_frontier_runs = [
+        row
+        for row in runs
+        if row["progress_path"].get("stable_frontier_before_first_saved_trigger")
+    ]
+    sortable_lifted_df_runs = [
+        row
+        for row in runs
+        if row["progress_path"].get("sortable_lifted_df_before_first_saved_trigger")
+    ]
+    actionable_typed_runs = [
+        row
+        for row in runs
+        if row["progress_path"].get("actionable_typed_nontrigger_before_first_saved_trigger")
+    ]
+    mutable_typed_runs = [row for row in runs if int_value(row.get("typed_finds")) > 0]
+    total_typed_execs = sum(int_value(row.get("typed_execs")) for row in runs)
+    total_typed_finds = sum(int_value(row.get("typed_finds")) for row in runs)
+    typed_find_rate = (
+        total_typed_finds / total_typed_execs if total_typed_execs > 0 else None
+    )
     if strict_runs:
         verdict = "strict_pretrigger_guidance_observed"
     elif terminal_runs and calibrated_runs:
@@ -320,6 +359,28 @@ def summarize(formtrig_dir: Path, target_id: str, run_root: Path | None = None) 
         "calibrated_frontier_runs": len(calibrated_runs),
         "typed_stage_before_terminal_runs": len(typed_before_terminal_runs),
         "typed_lifted_nontrigger_before_terminal_runs": len(typed_lifted_before_terminal_runs),
+        "guidance_capability": {
+            "stable_frontier_runs": len(stable_frontier_runs),
+            "sortable_lifted_df_runs": len(sortable_lifted_df_runs),
+            "actionable_typed_nontrigger_runs": len(actionable_typed_runs),
+            "mutable_typed_find_runs": len(mutable_typed_runs),
+            "total_typed_execs": total_typed_execs,
+            "total_typed_finds": total_typed_finds,
+            "typed_find_rate": typed_find_rate,
+            "strict_saved_pretrigger_runs": len(strict_runs),
+            "interpretation": (
+                "FORMTRIG exposed stable/sortable/actionable/mutable intermediate "
+                "signals before terminal _T, but strict saved non-trigger progress "
+                "was not observed"
+                if runs
+                and len(stable_frontier_runs) == len(runs)
+                and len(sortable_lifted_df_runs) == len(runs)
+                and len(actionable_typed_runs) == len(runs)
+                and len(mutable_typed_runs) == len(runs)
+                and not strict_runs
+                else "see per-run capability counts"
+            ),
+        },
         "verdict": verdict,
         "typed_attribution": (
             "terminal_after_typed_lifted_nontrigger_stage"
@@ -353,9 +414,30 @@ def to_markdown(payload: dict[str, Any]) -> str:
         f"- typed attribution: `{payload['typed_attribution']}`",
         f"- claim boundary: {payload['claim_boundary']}",
         "",
+        "## Guidance Capability",
+        "",
+    ]
+    capability = payload.get("guidance_capability", {})
+    lines.extend(
+        [
+            f"- stable frontier runs: `{capability.get('stable_frontier_runs', 0)}/{payload['run_count']}`",
+            f"- sortable lifted D_F runs: `{capability.get('sortable_lifted_df_runs', 0)}/{payload['run_count']}`",
+            f"- actionable typed non-T runs: `{capability.get('actionable_typed_nontrigger_runs', 0)}/{payload['run_count']}`",
+            f"- mutable typed-find runs: `{capability.get('mutable_typed_find_runs', 0)}/{payload['run_count']}`",
+            f"- total typed finds: `{capability.get('total_typed_finds', 0)}` / typed execs `{capability.get('total_typed_execs', 0)}`",
+            f"- strict saved pre-trigger runs: `{capability.get('strict_saved_pretrigger_runs', 0)}/{payload['run_count']}`",
+            f"- interpretation: {capability.get('interpretation', 'see per-run capability counts')}",
+            "",
+            "## Runs",
+            "",
+        ]
+    )
+    lines.extend(
+        [
         "| run | time | execs | calibrated non-T | saved non-T | saved T | first non-T exec | first T exec | typed starts | typed before T | typed lifted non-T before T | typed finds | status |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: | --- |",
-    ]
+        ]
+    )
     for row in payload["runs"]:
         progress = row["progress_path"]
         first_nt = progress.get("first_saved_non_trigger") or {}
