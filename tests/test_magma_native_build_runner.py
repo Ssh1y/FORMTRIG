@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import subprocess
 import tempfile
 from pathlib import Path
 import unittest
@@ -340,6 +341,118 @@ chmod +x "$OUT/afl/$PROGRAM"
             [row["status"] for row in summary["checks"]],
             ["missing", "missing", "ok"],
         )
+
+    def test_php_exif_thumbnail_runner_patch_adds_thumbnail_enabled_program(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+
+        source = (
+            "int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {\n"
+            "\tzval stream_zv;\n"
+            "\tfuzzer_call_php_func_zval(\"exif_read_data\", 1, &stream_zv);\n"
+            "\tzval_ptr_dtor(&stream_zv);\n"
+            "}\n"
+        )
+        config = (
+            "  if test -n \"$enable_exif\" && test \"$enable_exif\" != \"no\"; then\n"
+            "    PHP_FUZZER_TARGET([exif], PHP_FUZZER_EXIF_OBJS)\n"
+            "  fi\n"
+        )
+        build_sh = (
+            'FUZZERS="php-fuzz-json php-fuzz-exif php-fuzz-mbstring '
+            'php-fuzz-unserialize php-fuzz-parser"\n'
+        )
+        makefile = (
+            "$(SAPI_FUZZER_PATH)/php-fuzz-exif: $(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS) "
+            "$(PHP_FUZZER_EXIF_OBJS)\n"
+            "\t$(FUZZER_BUILD) $(PHP_FUZZER_EXIF_OBJS) -o $@\n"
+        )
+
+        patched_runner = runner.php_exif_thumbnail_runner_text(source)
+        patched_config = runner.patch_php_fuzzer_config_for_exif_thumbnail_text(config)
+        patched_build = runner.patch_php_build_for_exif_thumbnail_text(build_sh)
+        patched_makefile = runner.patch_php_fuzzer_makefile_for_exif_thumbnail_text(makefile)
+
+        self.assertIn('fuzzer_call_php_func_zval("exif_thumbnail", 3, args);', patched_runner)
+        self.assertIn("ZVAL_NULL(&args[1]);", patched_runner)
+        self.assertIn("ZVAL_NULL(&args[2]);", patched_runner)
+        self.assertNotIn('"exif_read_data", 1', patched_runner)
+        self.assertIn(
+            "PHP_FUZZER_TARGET([exif_thumbnail], PHP_FUZZER_EXIF_THUMBNAIL_OBJS)",
+            patched_config,
+        )
+        self.assertEqual(
+            runner.patch_php_fuzzer_config_for_exif_thumbnail_text(patched_config),
+            patched_config,
+        )
+        self.assertIn("php-fuzz-exif_thumbnail", patched_build)
+        self.assertEqual(
+            runner.patch_php_build_for_exif_thumbnail_text(patched_build),
+            patched_build,
+        )
+        self.assertIn("php-fuzz-exif_thumbnail:", patched_makefile)
+        self.assertIn("$(PHP_FUZZER_EXIF_THUMBNAIL_OBJS)", patched_makefile)
+        self.assertEqual(
+            runner.patch_php_fuzzer_makefile_for_exif_thumbnail_text(patched_makefile),
+            patched_makefile,
+        )
+
+    def test_php_exif_thumbnail_build_plan_defaults_to_file_argument(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            magma_root = self.make_fake_magma(root)
+            php_target = magma_root / "targets" / "php"
+            poppler_target = magma_root / "targets" / "poppler"
+            php_target.parent.mkdir(parents=True, exist_ok=True)
+            poppler_target.rename(php_target)
+            (php_target / "configrc").write_text("PROGRAMS=(json exif unserialize parser)\n", encoding="utf-8")
+            out_dir = root / "build"
+
+            code = runner.main(
+                [
+                    "--target",
+                    "php",
+                    "--program",
+                    "exif_thumbnail",
+                    "--target-id",
+                    "PHP003",
+                    "--magma-root",
+                    str(magma_root),
+                    "--out-dir",
+                    str(out_dir),
+                    "--skip-dependency-preflight",
+                ]
+            )
+
+            self.assertEqual(code, 0)
+            plan = json.loads((out_dir / "build_plan.json").read_text(encoding="utf-8"))
+            self.assertEqual(plan["expected_validation_asset"]["program_args"], "@@")
+            self.assertTrue(
+                plan["expected_validation_asset"]["target_cmd"].endswith("/exif_thumbnail @@")
+            )
+            script = (out_dir / "runner_instrument_target.sh").read_text(encoding="utf-8")
+            self.assertIn("fuzzer-exif_thumbnail.c", script)
+            self.assertIn("php-fuzz-exif_thumbnail", script)
+            self.assertIn("Makefile.frag", script)
+            self.assertIn('fuzzer_call_php_func_zval("exif_thumbnail", 3, args);', script)
+
+    def test_git_repo_has_head_rejects_parent_worktree(self):
+        runner = load_tool("build_magma_formtrig_native_assets")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            subprocess.run(["git", "init"], cwd=root, check=True, stdout=subprocess.DEVNULL)
+            (root / "README").write_text("root\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README"], cwd=root, check=True, stdout=subprocess.DEVNULL)
+            subprocess.run(
+                ["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "commit", "-m", "init"],
+                cwd=root,
+                check=True,
+                stdout=subprocess.DEVNULL,
+            )
+            nested = root / "targets" / "php" / "repo"
+            nested.mkdir(parents=True)
+
+            self.assertFalse(runner.git_repo_has_head(nested))
 
     def test_openssl_programs_default_to_stdin_args(self):
         runner = load_tool("build_magma_formtrig_native_assets")

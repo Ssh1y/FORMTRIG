@@ -16,6 +16,19 @@ populate ImageInfo->Thumbnail.data under exif_read_data's default path.
 
 Therefore PHP003 is not a positive endpoint result yet.
 
+Update: this verdict applies to the stock `php-fuzz-exif` runner. The repaired
+`exif_thumbnail(stream,width,height)` runner has now been built and short
+screened in:
+
+```text
+artifacts/formtrig_native_readiness/php003_thumbnail_runner_repair_20260618.md
+artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_hook_120s_20260618/summary.tsv
+```
+
+On that runner, the same B4 BindingSpec reaches pre-trigger guidance and
+terminal `_T` in a 120-second smoke. The remaining limitation moves from
+harness/API lifecycle to scalar `D_F_spec_lifted` aggregation.
+
 ## Current Lift Degree
 
 B4 hook run:
@@ -135,8 +148,8 @@ Do not spend matched endpoint baseline budget on PHP003 under the current
 Next valid options:
 
 ```text
-1. Add or select an EXIF harness that calls exif_thumbnail, or calls
-   exif_read_data with read_thumbnail=true.
+1. Build the new PHP003_exif_thumbnail native asset:
+   artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/build_plan.json
 2. Rebuild native FORMTRIG and rerun BindingSpec validation.
 3. Only if accepted non-trigger progress and non-constant D_F appear, move
    PHP003 back toward matched baseline comparison.

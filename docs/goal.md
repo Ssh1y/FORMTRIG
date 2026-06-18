@@ -779,6 +779,129 @@ RNT 种子已经是 palette PNG，PLTE deletion/absence 很容易直接跳到 te
 中间没有稳定、replay-stable、accepted 的 R-not-T 状态。因此 PNG007 当前只能作为
 negative/control/spec-repair target，不能作为 binary-state-null 的正例收益。
 
+## 变量/事件集合如何确定
+
+对 `a == NULL` 这种二值 TC，FORMTRIG 不能也不应该声称求出了“所有影响 `a`
+的变量全集”。在 C/C++ native 目标里，这个全集通常受指针别名、跨函数状态、
+错误路径、生命周期和 harness API 影响，静态上不可可靠求全，动态上也无法在
+实验预算内证明完整。
+
+FORMTRIG 的算法目标是构造并验证一个 **TC-rooted effective guidance subset**：
+
+```text
+不是 complete influence set
+而是 sufficient, observed, mutable, replay-stable guidance set
+```
+
+这个集合由 BindingSpec 和 runtime event map 共同确定，最少要覆盖以下角色：
+
+```text
+root_observe:
+  直接观察 TC root，例如 a 的 null/non-null 状态或 canary 附近的 root use。
+
+desired_producer:
+  可能把 a 推到目标状态的 producer/reset/error path，例如 allocation failure、
+  parser field absence、thumbnail data population、cleanup/reset。
+
+guard:
+  控制 producer/use 是否执行的条件，例如 type/tag/length/count/version check。
+
+use:
+  保证最终消费上下文仍然可达，避免只制造了无关的 NULL。
+
+same_object:
+  当 producer/use 跨事件或跨阶段时，证明它们仍指向同一个语义对象。
+
+input_influence:
+  能被 typed mutation 作用的输入字段或事件，例如 chunk absence、tag value、
+  length/count、offset、object reference、message order。
+```
+
+这些角色写进 BindingSpec 仍然不够。一个集合只有通过动态 gate 后，才能被认为是
+有效 lift：
+
+```text
+1. R-not-T replay 中可以观测到对应 role。
+2. _T 前 D_F_spec_lifted 不是常量。
+3. role value 至少有一个 candidate 维度发生变化。
+4. dominance frontier 接受 accepted/saved non-trigger progress。
+5. typed mutation 能改变 input_influence 或 role-producing field。
+6. replay-stable，且 heuristic/manual lift 未污染。
+```
+
+因此 PHP003 旧 runner 的结论不是“FORMTRIG 不知道怎么 lift `data == NULL`”，
+而是：当前集合只覆盖了 `Thumbnail.size < 4` 的 guard/input influence，缺少让
+`ImageInfo->Thumbnail.data != NULL` 发生的 producer 生命周期；动态 gate 看到
+`D_F_spec_lifted = 0/0` 恒定、`accepted_non_trigger=0`，所以必须判为
+observation lift，而不是 effective R2T guidance。
+
+## 如何证明这个集合是 TC-rooted effective subset
+
+证明分两件事：先证明它 **rooted in TC**，再证明它 **effective for guidance**。
+
+TC-rooted 的证据链：
+
+```text
+static root binding:
+  BindingSpec 的 root/atom 必须来自 TCIR/Magma canary/真实 CVE oracle，
+  并映射到 site_map 中的具体 source location / IR instruction。
+
+semantic role binding:
+  每个 role 都必须能解释为 root 的 producer、guard、use、same-object 或
+  input-influence；不能只因为它在执行路径上或覆盖率相关就纳入。
+
+mapping audit:
+  formtrig_lift_spec_audit / formtrig_binding_map 必须给出 exact mapping、
+  足够 binding tier、无 semantic_role_collapse、无 missing role。
+
+negative-role rejection:
+  对 binary/null，只有 root_observe 而没有 producer/use/influence 不够；
+  对 lifecycle，只有 lifecycle_event 而没有 same_object relation 不够。
+```
+
+effective guidance 的证据链：
+
+```text
+pre-trigger observability:
+  seed readiness / replay 中存在 R=1, T=0, spec_lifted=1。
+
+pre-trigger ordering:
+  _T 前 candidate 的 D_F_spec_lifted 不是常量；
+  non_trigger_candidate_lift_delta=true；
+  lift_delta_only_on_triggered_candidates=false。
+
+frontier causality:
+  dominance frontier 接受 accepted_non_trigger_progress > 0，
+  最好还能保存 saved_non_trigger_progress > 0。
+
+mutation actionability:
+  typed mutation 的 input_influence/hot range 能改变对应 role value 或 D_F，
+  否则诊断为 typed_mutation_no_lift_delta。
+
+replay stability:
+  accepted/saved progress 重放后仍然 R=1,T=0，并保留同一类 lifted role 信号。
+
+ablation / counterfactual:
+  去掉该 BindingSpec、去掉 typed hook、或换成 collapsed/guard-only spec 时，
+  non-trigger frontier progress 和 first _T/TTE 收益应下降或消失。
+```
+
+因此一个可以写进论文主结果的 binary/null lift，不是“变量集合看起来合理”，而是：
+
+```text
+TC root source -> semantic roles -> exact runtime events -> pre-_T nonconstant D_F
+-> accepted non-trigger frontier -> typed mutation can move it -> replay/ablation holds
+```
+
+只要少任何一环，就必须降级为：
+
+```text
+static binding candidate
+observation lift
+terminal-only control
+spec-repair blocker
+```
+
 ## 这类的 lifted progress 可以写成
 
 ```text
@@ -1320,6 +1443,46 @@ PHP003:
   `exif_read_data(..., read_thumbnail=true)`，重建 native FORMTRIG 后再做
   BindingSpec validation；当前 runner 下 PHP003 只能作为 harness-lifecycle
   negative/control，不能作为主正例。
+  同日已把这个修复转成可执行 native asset 入口：
+    artifacts/formtrig_native_readiness/php003_thumbnail_runner_repair_20260618.md
+    artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/build_plan.json
+    program = exif_thumbnail
+    target_cmd = .../PHP003_exif_thumbnail/out/afl/exif_thumbnail @@
+  builder 会派生 `sapi/fuzzer/fuzzer-exif_thumbnail.c`，三参数调用
+  `exif_thumbnail(stream, width, height)`，以确保进入 `exif_scan_thumbnail`。
+  该 build plan 已执行成功，新 site-map 有 `284140` 行，`exif_scan_thumbnail`
+  和 `zif_exif_thumbnail` 都已进入 runtime map。
+
+  新 `exif_thumbnail` runner 上的 B4 BindingSpec 结果：
+    seed readiness:
+      status = pass
+      reached = 5/5
+      triggered = 0/5
+      spec_lifted = 5/5
+      desired_producer = 1
+      spec_d_f_unique = 1
+    20s screen:
+      pretrigger_lift_guidance_ready = true
+      queued_progress = 1
+      accepted_non_trigger_progress = 1
+      saved_non_trigger = 1
+      terminal _T = 0
+      variable role = use
+    120s screen:
+      diagnosis = triggered
+      first _T monitor upper bound = 60s
+      terminal _T = 277
+      queued_progress = 32
+      saved_non_trigger = 1
+      saved_triggered = 31
+      typed_execs / typed_finds = 490 / 45
+
+  这把 PHP003 从旧 runner 的 harness-lifecycle negative 推进到了 repaired-runner
+  endpoint smoke：同一个 B4 BindingSpec 在新 runner 下出现 pre-trigger
+  TC-rooted role-level guidance，并最终触达 `_T`。但它仍不是最终主结果：
+  `D_F_spec_lifted` scalar 仍恒为 `0`，有效变化来自 `use` role 的 `{0,1}`；
+  还需要修 scalar aggregation，并补 faithful baseline 同 runner 对照，才能进入
+  matched endpoint evidence。
 
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance

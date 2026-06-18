@@ -507,6 +507,24 @@ observe_window
 
 BindingSpec 是外部输入。FORMTRIG core 不应该根据 `target_id` 写特殊规则。
 
+二值/null TC 的 lift 口径必须保持保守：FORMTRIG 不声称自动求出完整的
+influence set。对 `a == NULL` 这类 predicate，算法接受的是
+TC-rooted effective guidance subset：`root_observe`、`desired_producer`、
+`guard`、`use`、必要时 `same_object`，以及能被 typed mutation 作用的
+`input_influence`。这些角色必须经过 dynamic binding signal gate：
+R-not-T replay 中可观测、`D_F_spec_lifted` 在 `_T` 前非恒定、至少一个 candidate
+role value 变化、dominance frontier 接受 non-trigger progress、typed mutation
+能推动对应 input field，且 replay-stable、无 heuristic/manual 污染。否则只能写成
+observation lift/spec-repair blocker，不能写成 effective R2T guidance。
+
+审计时按两段证明：TC-rooted 需要 TCIR/canary/CVE oracle 到 BindingSpec root 的
+source mapping、semantic role explanation、exact runtime-event mapping、足够
+binding tier、无 role collapse；effective guidance 需要 R=1/T=0 的 spec-lifted
+replay、pre-`_T` non-constant `D_F_spec_lifted`、`non_trigger_candidate_lift_delta=true`、
+`lift_delta_only_on_triggered_candidates=false`、accepted/saved non-trigger frontier
+progress、typed mutation 能推动 role/input field、以及 replay/ablation 支撑。
+缺任何一环都不能写成主结果里的有效 R2T guidance。
+
 ### Per-atom category
 
 已经修掉全局 category 的问题。现在支持每个 atom 独立 category：
@@ -1037,6 +1055,58 @@ Do not spend matched endpoint baseline budget on PHP003 under the current
 `php-fuzz-exif` runner. Add/select an EXIF harness that calls `exif_thumbnail`
 or `exif_read_data(..., read_thumbnail=true)`, rebuild native FORMTRIG, then
 rerun BindingSpec validation.
+
+2026-06-18 已把该 harness 修复做成 builder 入口：
+
+```text
+tools/build_magma_formtrig_native_assets.py --target php --program exif_thumbnail --target-id PHP003
+artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/build_plan.json
+artifacts/formtrig_native_readiness/php003_thumbnail_runner_repair_20260618.md
+```
+
+这个入口会派生 `sapi/fuzzer/fuzzer-exif_thumbnail.c`，把 stock
+`exif_read_data(stream)` 改成 `exif_thumbnail(stream, width, height)`，并把
+`php-fuzz-exif_thumbnail` 复制为 `$OUT/exif_thumbnail`。注意 width/height 参数
+不是装饰：PHP `exif_thumbnail` 只有在这些输出参数存在时才进入
+`exif_scan_thumbnail`，PHP003 canary 就在这个函数里。
+
+该 build plan 已执行成功：
+
+```text
+status = executed
+binary = artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/out/afl/exif_thumbnail
+site_map_lines = 284140
+```
+
+新 runner 上的 B4 thumbnail-length BindingSpec 已经给出 repaired-runner smoke：
+
+```text
+seed readiness:
+  reached = 5/5
+  triggered = 0/5
+  spec_lifted = 5/5
+  desired_producer = 1
+
+20s screen:
+  pretrigger_lift_guidance_ready = true
+  accepted_non_trigger_progress = 1
+  saved_non_trigger = 1
+  terminal _T = 0
+
+120s screen:
+  first _T monitor upper bound = 60s
+  terminal _T = 277
+  saved_triggered = 31
+  queued_progress = 32
+  typed_execs / typed_finds = 490 / 45
+```
+
+Interpretation: old `exif` runner remains harness-lifecycle negative/control.
+The repaired `exif_thumbnail` runner proves the missing producer lifecycle was
+the blocker and can now reach `_T`. Remaining limitation: scalar
+`D_F_spec_lifted` is still constant `0`; the effective signal is role-level
+(`use` varies `{0,1}`). Before using PHP003 as main evidence, fix scalar
+aggregation and run faithful baselines on the same runner.
 
 ### 5. SQL013 不能硬做
 

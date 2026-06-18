@@ -300,6 +300,17 @@ formtrig_binding_map --category binary-null \
   formtrig.lift > formtrig_runtime_event_map.csv
 ```
 
+For binary/null predicates such as `a == NULL`, a BindingSpec is not a claim
+that FORMTRIG recovered the complete influence set of `a`. It is a claim that
+the campaign has supplied a TC-rooted guidance subset: root observation,
+producer/reset/error-path evidence, guards, use context, same-object relation
+when needed, and input-influence roles that typed mutation can act on. The
+dynamic binding-signal gate must then prove that this subset is observed on
+R-not-T executions, produces non-constant `D_F_spec_lifted` before `_T`, yields
+accepted/saved non-trigger frontier progress, and is not supplied by
+heuristic/manual lift. Otherwise the result is only observation lift or a
+spec-repair blocker.
+
 Low-level specs may include per-atom category metadata:
 
 ```text

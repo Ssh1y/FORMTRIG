@@ -239,6 +239,16 @@ fi
 """
 
 
+PHP_EXIF_THUMBNAIL_CALL = r"""	zval args[3];
+
+	args[0] = stream_zv;
+	ZVAL_NULL(&args[1]);
+	ZVAL_NULL(&args[2]);
+
+	fuzzer_call_php_func_zval("exif_thumbnail", 3, args);
+"""
+
+
 POPPLER_OPENJPEG_PATCH_PY = r"""import re
 import sys
 from pathlib import Path
@@ -363,6 +373,56 @@ def patch_poppler_build_text(text: str, openjpeg_dir: str) -> str:
     )
 
 
+def php_exif_thumbnail_runner_text(exif_fuzzer_text: str) -> str:
+    """Derive a thumbnail-enabled EXIF runner from PHP's stock exif fuzzer."""
+    needle = '\tfuzzer_call_php_func_zval("exif_read_data", 1, &stream_zv);\n'
+    if needle not in exif_fuzzer_text:
+        raise ValueError("stock PHP fuzzer-exif.c call site was not found")
+    return exif_fuzzer_text.replace(needle, PHP_EXIF_THUMBNAIL_CALL, 1)
+
+
+def patch_php_fuzzer_config_for_exif_thumbnail_text(text: str) -> str:
+    marker = "PHP_FUZZER_TARGET([exif_thumbnail], PHP_FUZZER_EXIF_THUMBNAIL_OBJS)"
+    if marker in text:
+        return text
+    needle = "    PHP_FUZZER_TARGET([exif], PHP_FUZZER_EXIF_OBJS)\n"
+    if needle not in text:
+        return text
+    return text.replace(needle, needle + f"    {marker}\n", 1)
+
+
+def patch_php_build_for_exif_thumbnail_text(text: str) -> str:
+    if "php-fuzz-exif_thumbnail" in text:
+        return text
+    return text.replace(
+        "php-fuzz-json php-fuzz-exif php-fuzz-mbstring php-fuzz-unserialize php-fuzz-parser",
+        (
+            "php-fuzz-json php-fuzz-exif php-fuzz-exif_thumbnail "
+            "php-fuzz-mbstring php-fuzz-unserialize php-fuzz-parser"
+        ),
+        1,
+    )
+
+
+def patch_php_fuzzer_makefile_for_exif_thumbnail_text(text: str) -> str:
+    marker = "$(SAPI_FUZZER_PATH)/php-fuzz-exif_thumbnail:"
+    if marker in text:
+        return text
+    needle = (
+        "$(SAPI_FUZZER_PATH)/php-fuzz-exif: $(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS) "
+        "$(PHP_FUZZER_EXIF_OBJS)\n"
+        "\t$(FUZZER_BUILD) $(PHP_FUZZER_EXIF_OBJS) -o $@\n"
+    )
+    replacement = (
+        needle
+        + "\n"
+        + "$(SAPI_FUZZER_PATH)/php-fuzz-exif_thumbnail: "
+        + "$(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS) $(PHP_FUZZER_EXIF_THUMBNAIL_OBJS)\n"
+        + "\t$(FUZZER_BUILD) $(PHP_FUZZER_EXIF_THUMBNAIL_OBJS) -o $@\n"
+    )
+    return text.replace(needle, replacement, 1)
+
+
 def shell_join(parts: list[str]) -> str:
     return " ".join(shlex.quote(str(part)) for part in parts)
 
@@ -420,6 +480,44 @@ def repo_has_magma_log(repo: Path) -> bool:
                 except OSError:
                     continue
     return False
+
+
+def git_repo_has_head(repo: Path) -> bool:
+    if not repo.exists():
+        return False
+    expected = repo.resolve()
+    top = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "--show-toplevel"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        check=False,
+        text=True,
+    )
+    if top.returncode != 0:
+        return False
+    try:
+        if Path(top.stdout.strip()).resolve() != expected:
+            return False
+    except OSError:
+        return False
+    proc = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "--verify", "HEAD"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+    return proc.returncode == 0
+
+
+def target_fetch_command(fetch_sh: Path, target_repo: Path) -> list[str]:
+    return [
+        "bash",
+        "-lc",
+        "{} && git -C {} rev-parse --verify HEAD >/dev/null".format(
+            shlex.quote(str(fetch_sh)),
+            shlex.quote(str(target_repo)),
+        ),
+    ]
 
 
 def pkg_config_exists(package: str) -> bool:
@@ -540,6 +638,7 @@ def runner_instrument_script_text() -> str:
     openssl_pkcs7_decode = OPENSSL_PKCS7_DECODE_FUZZER.rstrip("\n")
     openssl_pkcs7_build = OPENSSL_PKCS7_BUILD_FRAGMENT.rstrip("\n")
     poppler_openjpeg_patch = POPPLER_OPENJPEG_PATCH_PY.rstrip("\n")
+    php_exif_thumbnail_call = PHP_EXIF_THUMBNAIL_CALL.rstrip("\n")
     return f"""#!/usr/bin/env bash
 set -euo pipefail
 
@@ -760,6 +859,67 @@ if changed:
 PY
 fi
 
+if [ "$(basename "$TARGET")" = "php" ] && [ "${{PROGRAM:-}}" = "exif_thumbnail" ]; then
+  python3 - "$TARGET/repo" "$TARGET/build.sh" <<'PY'
+import sys
+from pathlib import Path
+
+repo = Path(sys.argv[1])
+build_sh = Path(sys.argv[2])
+
+stock = repo / "sapi/fuzzer/fuzzer-exif.c"
+thumb = repo / "sapi/fuzzer/fuzzer-exif_thumbnail.c"
+config = repo / "sapi/fuzzer/config.m4"
+makefile = repo / "sapi/fuzzer/Makefile.frag"
+
+source = stock.read_text(encoding="utf-8")
+call_needle = '\tfuzzer_call_php_func_zval("exif_read_data", 1, &stream_zv);\\n'
+call_replacement = '''{php_exif_thumbnail_call}
+'''
+if call_needle not in source:
+    raise SystemExit("stock PHP fuzzer-exif.c call site was not found")
+thumb.write_text(source.replace(call_needle, call_replacement, 1), encoding="utf-8")
+
+config_text = config.read_text(encoding="utf-8")
+target_line = "PHP_FUZZER_TARGET([exif_thumbnail], PHP_FUZZER_EXIF_THUMBNAIL_OBJS)"
+if target_line not in config_text:
+    needle = "    PHP_FUZZER_TARGET([exif], PHP_FUZZER_EXIF_OBJS)\\n"
+    if needle not in config_text:
+        raise SystemExit("PHP fuzzer config exif target was not found")
+    config.write_text(
+        config_text.replace(needle, needle + "    " + target_line + "\\n", 1),
+        encoding="utf-8",
+    )
+
+build_text = build_sh.read_text(encoding="utf-8")
+if "php-fuzz-exif_thumbnail" not in build_text:
+    old = "php-fuzz-json php-fuzz-exif php-fuzz-mbstring php-fuzz-unserialize php-fuzz-parser"
+    new = "php-fuzz-json php-fuzz-exif php-fuzz-exif_thumbnail php-fuzz-mbstring php-fuzz-unserialize php-fuzz-parser"
+    if old not in build_text:
+        raise SystemExit("PHP build.sh FUZZERS list was not found")
+    build_sh.write_text(build_text.replace(old, new, 1), encoding="utf-8")
+
+makefile_text = makefile.read_text(encoding="utf-8")
+makefile_target = "$(SAPI_FUZZER_PATH)/php-fuzz-exif_thumbnail:"
+if makefile_target not in makefile_text:
+    needle = (
+        "$(SAPI_FUZZER_PATH)/php-fuzz-exif: $(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS) "
+        "$(PHP_FUZZER_EXIF_OBJS)\\n"
+        "\\t$(FUZZER_BUILD) $(PHP_FUZZER_EXIF_OBJS) -o $@\\n"
+    )
+    replacement = (
+        needle
+        + "\\n"
+        + "$(SAPI_FUZZER_PATH)/php-fuzz-exif_thumbnail: "
+        + "$(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS) $(PHP_FUZZER_EXIF_THUMBNAIL_OBJS)\\n"
+        + "\\t$(FUZZER_BUILD) $(PHP_FUZZER_EXIF_THUMBNAIL_OBJS) -o $@\\n"
+    )
+    if needle not in makefile_text:
+        raise SystemExit("PHP fuzzer Makefile exif rule was not found")
+    makefile.write_text(makefile_text.replace(needle, replacement, 1), encoding="utf-8")
+PY
+fi
+
 if [ "$(basename "$TARGET")" = "poppler" ]; then
   if [ -z "${{FORMTRIG_OPENJPEG_DIR:-}}" ]; then
     for cfg in /usr/lib/*/openjpeg-*/OpenJPEGConfig.cmake \
@@ -964,7 +1124,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
         for path in required_fuzzer_artifacts
     )
     target_repo = target / "repo"
-    target_needs_fetch = args.force_target_fetch or not target_repo.exists()
+    target_needs_fetch = args.force_target_fetch or not git_repo_has_head(target_repo)
     patches_needed = args.force_patches or target_needs_fetch or not repo_has_magma_log(target_repo)
 
     instrument_command = (
@@ -996,7 +1156,7 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
         ),
         step(
             "target_fetch",
-            ["bash", str(target / "fetch.sh")],
+            target_fetch_command(target / "fetch.sh", target_repo),
             env={"TARGET": str(target)},
             selected=target_needs_fetch and not args.skip_target_fetch,
             reason="target repo missing or forced" if target_needs_fetch else "target repo already present",
