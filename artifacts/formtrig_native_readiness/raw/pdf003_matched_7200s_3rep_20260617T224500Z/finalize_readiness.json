@@ -1,0 +1,103 @@
+{
+  "analysis_time_utc": "2026-06-18T04:02:23Z",
+  "baseline_roots": [
+    "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines",
+    "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z"
+  ],
+  "claim_boundary": "ready_to_finalize only checks baseline run-record completeness and duplicate resolution; final claims still require finalize output review",
+  "complete_selected_run_count": 9,
+  "duplicate_policy": "prefer-later",
+  "duplicate_runs": [
+    {
+      "discarded": [
+        {
+          "has_run_record": false,
+          "has_status": false,
+          "run": "aflplusplus_cmplog_7200s_rep3",
+          "run_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/runs/aflplusplus_cmplog_7200s_rep3",
+          "source_root": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines"
+        }
+      ],
+      "kept": {
+        "has_run_record": true,
+        "has_status": true,
+        "run": "aflplusplus_cmplog_7200s_rep3",
+        "run_dir": "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z/runs/aflplusplus_cmplog_7200s_rep3",
+        "source_root": "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z"
+      },
+      "policy": "prefer-later",
+      "run": "aflplusplus_cmplog_7200s_rep3"
+    },
+    {
+      "discarded": [
+        {
+          "has_run_record": false,
+          "has_status": false,
+          "run": "aflplusplus_vanilla_7200s_rep3",
+          "run_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/runs/aflplusplus_vanilla_7200s_rep3",
+          "source_root": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines"
+        }
+      ],
+      "kept": {
+        "has_run_record": true,
+        "has_status": true,
+        "run": "aflplusplus_vanilla_7200s_rep3",
+        "run_dir": "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z/runs/aflplusplus_vanilla_7200s_rep3",
+        "source_root": "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z"
+      },
+      "policy": "prefer-later",
+      "run": "aflplusplus_vanilla_7200s_rep3"
+    },
+    {
+      "discarded": [
+        {
+          "has_run_record": false,
+          "has_status": false,
+          "run": "redqueen_operand_7200s_rep3",
+          "run_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/runs/redqueen_operand_7200s_rep3",
+          "source_root": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines"
+        }
+      ],
+      "kept": {
+        "has_run_record": true,
+        "has_status": true,
+        "run": "redqueen_operand_7200s_rep3",
+        "run_dir": "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z/runs/redqueen_operand_7200s_rep3",
+        "source_root": "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z"
+      },
+      "policy": "prefer-later",
+      "run": "redqueen_operand_7200s_rep3"
+    }
+  ],
+  "expected_run_count": 9,
+  "finalize_command": [
+    "scripts/finalize_magma_matched_run.sh",
+    "--run-root",
+    "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z",
+    "--baseline-dir",
+    "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines",
+    "--guidance-out",
+    "artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z",
+    "--comparison-out",
+    "artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z"
+  ],
+  "incomplete_runs": [],
+  "merge_command": [
+    "python3",
+    "tools/merge_magma_baseline_roots.py",
+    "--out",
+    "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/merged_baselines",
+    "--source",
+    "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines",
+    "--source",
+    "artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z",
+    "--duplicate-policy",
+    "prefer-later"
+  ],
+  "missing_runs": [],
+  "ready_to_finalize": true,
+  "run_root": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z",
+  "selected_run_count": 9,
+  "target_id": "PDF003",
+  "unexpected_runs": []
+}

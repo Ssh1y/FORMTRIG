@@ -235,6 +235,80 @@ FORMTRIG vs fastest successful baseline-family median:
 
 TIF012 因此也不是“baseline 做不到”或“baseline 时间成本不可接受”的 hard-gap 目标：vanilla 是 3/3 成功，Redqueen/operand 也有一个 210s 成功 rep。它的价值是严格的 speedup/control 证据：FORMTRIG 把同一个 repaired typed trigger knowledge 转成了稳定的早期 terminal evidence，但 faithful baseline 已经在可接受时间内触发，所以当前 harness/seed 设计不能证明随机撞见 TC 触发的概率小到构成 SOTA 痛点。注意这个 run 的 strict pre-trigger gate 是 mixed：3 个 FORMTRIG rep 都 endpoint 成功，但只有 1/3 满足 `strict_pretrigger_guidance=true`；因此论文主收益应写 endpoint TTE speedup 和 typed-repair attribution，不能写成连续非触发 `D_F` 梯度成功，也不能写成 hard SOTA-pain 证据。
 
+当前 PDF003 7200s x3 matched run 是第一个通过 baseline no-guidance proof gate 的
+Magma hard-target 候选：
+
+```text
+baseline guidance gap:
+  status = measured_pass
+  interpretation = baseline evidence supports a hard binary-TC no-guidance candidate
+  pre-trigger binary flatness = pass
+  endpoint cost = pass
+
+AFL++ CmpLog:
+  0/3 _T in 7200s
+  total R = 1,573,928
+  total T = 0
+  zero-T rule-of-three upper bound per reached exec ~= 1.91e-6
+
+AFL++ vanilla:
+  1/3 _T
+  first _T = 5670s
+  2/3 missing
+
+local AFL++ Redqueen/operand path:
+  1/3 _T
+  first _T = 4530s
+  2/3 missing
+
+FORMTRIG:
+  3/3 _T
+  best first _T upper bound = 0.31s
+  total terminal-triggered counts by rep = 7693, 7246, 6607
+  speedup over fastest successful baseline run = 14612.90x
+```
+
+这个包能支撑的收益是 hard-target speedup/reliability：同预算下 baseline 的
+pre-`_T` 可见信号 flat/binary，endpoint late/missing/high-variance，而 FORMTRIG
+稳定很早触发 `_T`。但它不能支撑严格的 pre-trigger `D_F` 机制胜利：
+`strict_pretrigger_guidance=false` for 3/3，`accepted_non_trigger=0`，
+`saved_non_trigger=0`。原因不是 baseline gap 不存在，而是 FORMTRIG 几乎立即进入
+terminal 区域，缺少 `_T` 前 accepted/saved non-trigger progress 样本。因此 PDF003
+现在应写成“hard binary-TC no-guidance candidate with strong endpoint benefit, but
+mechanism still needs a separate pre-trigger-guidance target or ablation”，不能把中间机制
+夸成已经被这个 target 证明。
+
+PDF016 现在已经从 dependency/native-build blocker 中解锁，但还不是长测目标：
+
+```text
+native build:
+  executable = artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl/pdf_fuzzer
+  site_map = artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv
+  site rows = 47051
+  dependency preflight = ok for cairo/openjpeg/tiff/lcms2
+
+B3 BindingSpec:
+  artifact = artifacts/binding_specs/PDF016.native_b3_parser_ref_candidate.yml
+  roles = lifecycle_event + use + root_observe + same_object
+  audit = B3 pass
+
+600s validation with -t 5000:
+  status = not_ready
+  diagnosis = triggered
+  execs = 3431
+  reached = 3354
+  triggered = 8
+  saved_triggered = 1
+  accepted_non_trigger_progress = 0
+  saved_non_trigger = 0
+  binding_signal = pass / triggered
+```
+
+PDF016 的当前价值是工程解锁和负向机制诊断：spec wiring 已经能通过 B3 audit，也能触发
+terminal oracle，但还没有把 lifecycle/root signal 转成 non-trigger frontier progress。
+下一步不能直接上 matched screen；应先补 input-influence/range signal 或 parser-token
+typed mutation，让 `_T` 前出现 accepted/saved non-trigger progress。
+
 ---
 
 > **不是把 TC 的布尔结果或 native distance 直接拿来做 guidance，而是把 TC 提升成一组更细粒度、更稳定、可排序、可归因、可变异的 trigger-progress features。**

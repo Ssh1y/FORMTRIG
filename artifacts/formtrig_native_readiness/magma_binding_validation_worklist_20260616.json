@@ -1,6 +1,6 @@
 {
-  "blocked_count": 2,
-  "generated_at_utc": "2026-06-17T19:03:24+00:00",
+  "blocked_count": 1,
+  "generated_at_utc": "2026-06-18T04:13:34+00:00",
   "inputs": {
     "assets": "artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json",
     "drafts": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
@@ -9,7 +9,7 @@
     "rnt_status": "artifacts/rnt_corpus_status.json",
     "validation_root": "artifacts/formtrig_native_readiness/binding_validation"
   },
-  "runnable_now_count": 4,
+  "runnable_now_count": 5,
   "schema": "formtrig_magma_binding_validation_worklist_v1",
   "task_count": 6,
   "tasks": [
@@ -145,16 +145,13 @@
       "afl_args": "",
       "benefit_to_prove": "Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.",
       "binding_spec": "artifacts/binding_specs/PDF016.native_draft_magma_canary.yml",
-      "blockers": [
-        "target_cwd is missing or unresolved: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016",
-        "target_cmd is missing or still contains TODO"
-      ],
+      "blockers": [],
       "category": "compound-sequence-lifecycle",
       "claim_boundary": "Validation is a gate; it is not FORMTRIG-vs-baseline efficacy evidence.",
-      "command": "",
+      "command": "(cd /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl && /home/cwh/FORMTRIG/scripts/run_formtrig_binding_candidate_sweep.sh --in /home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF016/seeds --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_binding_validation_600s --target-bug PDF016 --category lifecycle --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv --candidate /home/cwh/FORMTRIG/artifacts/binding_specs/PDF016.native_draft_magma_canary.yml --candidate-kind binding-spec --duration 600 --seed-preflight require --seed-preflight-max 32 --seed-preflight-timeout 5 --aflpp-dir /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus -- /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl/pdf_fuzzer @@) && python3 /home/cwh/FORMTRIG/tools/summarize_binding_candidate_sweep.py --summary-jsonl /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_binding_validation_600s/summary.jsonl --target-id PDF016 --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json --out-md /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.md --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/PDF016.native_draft_magma_canary.yml",
       "duration_s": 600,
       "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/PDF016.manifest.template",
-      "next_step": "Provide native Magma assets in --assets before running validation.",
+      "next_step": "Run the command, inspect the generated validation record, then rerun the hard-target and benefit-first planners.",
       "out_dir": "artifacts/formtrig_native_readiness/raw/pdf016_binding_validation_600s",
       "program": "pdf_fuzzer",
       "project": "poppler",
@@ -162,14 +159,14 @@
       "rnt_program": "pdf_fuzzer",
       "rnt_seed_files": 20,
       "rnt_status": "formal_ready",
-      "runnable_now": false,
+      "runnable_now": true,
       "runner_category": "lifecycle",
       "seed_dir": "artifacts/rnt_corpus/PDF016/seeds",
       "seed_source": "assets",
-      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv",
-      "summary_command": "",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_POPPLER_PDF_FUZZER_BINARY @@",
-      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016",
+      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv",
+      "summary_command": "python3 /home/cwh/FORMTRIG/tools/summarize_binding_candidate_sweep.py --summary-jsonl /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf016_binding_validation_600s/summary.jsonl --target-id PDF016 --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json --out-md /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.md --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/PDF016.native_draft_magma_canary.yml",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl/pdf_fuzzer @@",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl",
       "target_id": "PDF016",
       "target_site_ids": "",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json"

@@ -433,6 +433,10 @@ static void print_role_requirements(const query_t *q) {
                            0, 0);
   } else if (category_has(q, "lifecycle") || category_has(q, "sequence") ||
              category_has(q, "compound")) {
+    print_role_requirement("root_observe", "root_state", "outcome",
+                           "observe the lifecycle TC root state or terminal "
+                           "condition",
+                           1, 1);
     print_role_requirement("lifecycle_event", "lifecycle_prefix", "hit",
                            "observe ordered lifecycle events for prefix "
                            "progress",

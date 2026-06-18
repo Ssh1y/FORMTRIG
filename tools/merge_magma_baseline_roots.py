@@ -80,11 +80,6 @@ def collect_runs(
         if not runs_dir.is_dir():
             raise SystemExit(f"baseline source has no runs/ directory: {source}")
         for run_dir in sorted(path for path in runs_dir.iterdir() if path.is_dir()):
-            if not (run_dir / "run_record.json").is_file():
-                if skip_incomplete_runs:
-                    skipped.append(str(run_dir))
-                    continue
-                raise SystemExit(f"baseline run is incomplete, missing run_record.json: {run_dir}")
             if run_dir.name in runs:
                 if duplicate_policy == "refuse":
                     raise SystemExit(
@@ -104,6 +99,14 @@ def collect_runs(
                     runs[run_dir.name] = run_dir
                 continue
             runs[run_dir.name] = run_dir
+    for run_name, run_dir in list(runs.items()):
+        if (run_dir / "run_record.json").is_file():
+            continue
+        if skip_incomplete_runs:
+            skipped.append(str(run_dir))
+            del runs[run_name]
+            continue
+        raise SystemExit(f"baseline run is incomplete, missing run_record.json: {run_dir}")
     return runs, skipped, duplicates
 
 

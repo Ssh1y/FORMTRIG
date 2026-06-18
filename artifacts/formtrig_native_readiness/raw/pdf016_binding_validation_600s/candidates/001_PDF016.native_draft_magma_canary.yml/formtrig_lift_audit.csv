@@ -1,0 +1,2 @@
+atom_id,category,binding_tier,lift_allowed,roles,event_count,location_only_count,collapsed,reason
+1,compound-sequence-lifecycle,B0,false,0x00000001,1,0,0,missing_stateful_root_observe

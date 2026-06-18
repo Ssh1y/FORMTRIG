@@ -1,0 +1,9 @@
+{
+  "snapshot_count": 7141,
+  "first_trigger_time_s": 2,
+  "first_triggered_execs": 8,
+  "first_trigger_snapshot": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/formtrig/001_PDF003/out/formtrig_stats_monitor/108.stats",
+  "latest_time_s": 7200,
+  "latest_triggered_execs": 7693,
+  "latest_snapshot": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/formtrig/001_PDF003/out/formtrig_stats_monitor/final.stats"
+}

@@ -10,5 +10,6 @@ duration: 600
 seed_preflight: require
 seed_preflight_max: 32
 seed_preflight_timeout: 5
+afl_args: -t 5000
 target_cwd: TODO_FORMTRIG_NATIVE_TARGET_CWD
 target_cmd: TODO_FORMTRIG_MAGMA_POPPLER_PDFIMAGES_BINARY @@ /tmp/out

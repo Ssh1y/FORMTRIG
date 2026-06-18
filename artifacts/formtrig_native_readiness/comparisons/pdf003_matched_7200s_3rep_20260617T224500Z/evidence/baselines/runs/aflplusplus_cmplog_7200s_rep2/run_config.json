@@ -1,0 +1,45 @@
+{
+  "afl_arg": [],
+  "afl_fuzz": "",
+  "baseline": "aflplusplus_cmplog",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/instrumentation/README.cmplog.md",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ CmpLog instrumentation plus matching cmplog binary",
+    "information_budget": "AFL++ CmpLog operand map and normal AFL++ feedback; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "comparison operand logging and comparison-guided mutation from AFL++",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "faithful AFL++ CmpLog baseline for visible scalar/string comparison feedback"
+  },
+  "budget_sec": 7200,
+  "cmplog_binary": "",
+  "env": [],
+  "existing_fuzzer_out": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_cmplog_7200s_rep2/findings",
+  "magma_bug_id": "PDF003",
+  "magma_monitor_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_cmplog_7200s_rep2/monitor",
+  "memory_limit": "none",
+  "mode": "harvest",
+  "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/runs/aflplusplus_cmplog_7200s_rep2",
+  "rep": 2,
+  "seed_corpus": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/PDF003/seeds",
+  "standard_event_schema": {
+    "baseline": "baseline identifier",
+    "details": "event-specific object",
+    "event": "run_start|tool_resolution|fuzzer_start|fuzzer_exit|run_complete|run_error",
+    "rep": "integer repetition id",
+    "target_id": "target identifier",
+    "time_utc": "ISO-8601 UTC timestamp"
+  },
+  "target_cmd": "magma/captain aflplusplus poppler pdfimages @@ /tmp/out",
+  "target_id": "PDF003",
+  "tc_category": "binary-state-null",
+  "timeout_grace_sec": 5
+}

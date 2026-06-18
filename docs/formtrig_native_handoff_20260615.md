@@ -101,6 +101,86 @@ Magma monitor flatness 证据，且 baseline 更早触发。因此下一步要�
 speedup target”，而是 `baseline_guidance_gap.status=measured_pass` 的 target：
 flat pre-`_T` signal 加上 late/missing/high-variance baseline endpoint。
 
+### 2026-06-18 PDF003/PDF016 update
+
+PDF003 7200s x3 matched run 现在是第一个通过 baseline no-guidance proof gate
+的 Magma hard-target 候选：
+
+```text
+baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z:
+  status = measured_pass
+  interpretation = baseline evidence supports a hard binary-TC no-guidance candidate
+  pre-trigger binary flatness = pass
+  endpoint cost = pass
+
+baselines:
+  AFL++ CmpLog: 0/3 _T, total R = 1,573,928, total T = 0
+  AFL++ vanilla: 1/3 _T, first _T = 5670s, 2/3 missing
+  Redqueen/operand path: 1/3 _T, first _T = 4530s, 2/3 missing
+
+FORMTRIG:
+  3/3 _T
+  best first _T upper bound = 0.31s
+  terminal-triggered counts = 7693, 7246, 6607
+  comparison verdict = positive_speedup_matched_comparison
+  main claim strength = hard_speedup_or_reliability_candidate
+  speedup over fastest successful baseline run = 14612.90x
+```
+
+Claim boundary: PDF003 supports hard-target endpoint speedup/reliability plus a
+measured baseline binary-TC no-guidance gap. It does not prove strict pre-trigger
+FORMTRIG mechanism benefit in this package: all three FORMTRIG reps have
+`strict_pretrigger_guidance=false`, `accepted_non_trigger=0`, and
+`saved_non_trigger=0`. The reason is that FORMTRIG reaches terminal `_T` almost
+immediately, leaving no accepted/saved non-trigger progress sample. Use PDF003
+as the current strongest hard SOTA-pain candidate, but keep mechanism claims
+to terminal-oracle speedup unless a separate pre-trigger target or ablation
+fills this gap.
+
+PDF016 is now buildable/runnable after installing `libtiff-dev` and `liblcms2-dev`.
+The native assets are:
+
+```text
+executable:
+  artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl/pdf_fuzzer
+site_map:
+  artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv
+site rows:
+  47051
+```
+
+The lifecycle draft generator and site-map role guidance were fixed so lifecycle
+targets require a stateful `root_observe` role. The conservative B3 candidate is:
+
+```text
+artifacts/binding_specs/PDF016.native_b3_parser_ref_candidate.yml
+roles:
+  lifecycle_event + use + root_observe + same_object
+audit:
+  B3 pass
+```
+
+Validation result with `-t 5000`:
+
+```text
+artifacts/formtrig_native_readiness/raw/pdf016_b3_binding_validation_600s_t5000:
+  status = not_ready
+  diagnosis = triggered
+  execs = 3431
+  reached = 3354
+  triggered = 8
+  saved_triggered = 1
+  accepted_non_trigger_progress = 0
+  saved_non_trigger = 0
+  binding_signal = pass / triggered
+```
+
+PDF016 should not enter matched long-run yet. It is currently useful as a
+negative/spec-repair target: B3 wiring is valid and terminal `_T` is reachable,
+but lifecycle/root signal still has not become accepted/saved non-trigger
+frontier progress. Next action should be input-influence/range signal or
+parser-token typed mutation, not more endpoint budget.
+
 `artifacts/formtrig_native_readiness/hard_target_triage_20260617.{json,csv,md}`
 现在显式输出 `sota_pain_class`，避免只靠中间信号或口头解释判断。当前分类是：
 
@@ -133,9 +213,11 @@ promoted hard-target candidates:
   0
 ```
 
-因此当前没有任何 target 可作为主 SOTA-pain evidence。TIF012、LIBARCHIVE_2936
-和 PHP009 只能作为 speedup/control/attribution evidence；PNG006 和 LIBCOAP 当前
-不能作为 SOTA-pain 主证据。
+这个 2026-06-17 triage artifact 尚未纳入 2026-06-18 的 PDF003 7200s x3
+measured-pass 结果。更新前的结论仍然成立于 TIF012、LIBARCHIVE_2936、PHP009、
+PNG006 和 LIBCOAP：它们不能作为主 SOTA-pain evidence。现在必须重跑 hard-target
+triage/worklist，把 PDF003 晋升为当前 hard SOTA-pain candidate，同时保留它缺少
+strict pre-trigger mechanism proof 的边界。
 
 `artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260617.*`
 现在也读取这个 triage artifact。主执行队列会把：

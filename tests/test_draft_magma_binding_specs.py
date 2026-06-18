@@ -15,6 +15,35 @@ def load_tool():
 
 
 class DraftMagmaBindingSpecsTest(unittest.TestCase):
+    def test_lifecycle_canary_draft_observes_stateful_root(self):
+        drafts = load_tool()
+        text = drafts.draft_spec_text(
+            {
+                "target_id": "PDF016",
+                "project": "poppler",
+                "program": "pdf_fuzzer",
+                "args_template": "@@",
+                "primary_tc_category": "compound-sequence-lifecycle",
+                "canary_expression": "MAGMA_OR(num <=0, gen < 0)",
+            },
+            [
+                {
+                    "function": "Parser::getObj",
+                    "file": "poppler/Parser.cc",
+                    "line": 190,
+                    "column": 13,
+                }
+            ],
+            "cmp",
+            1,
+        )
+
+        self.assertIn("category: 'compound-sequence-lifecycle'", text)
+        self.assertIn("role: 'root_observe'", text)
+        self.assertIn("component: 'root_state'", text)
+        self.assertIn("value_mode: 'outcome'", text)
+        self.assertNotIn("component: 'lifecycle_prefix'", text)
+
     def test_drafts_spec_and_manifest_template_from_queue(self):
         drafts = load_tool()
         with tempfile.TemporaryDirectory() as tmp:

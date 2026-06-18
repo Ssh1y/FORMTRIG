@@ -197,6 +197,7 @@ class MagmaNativeAssetDiscoveryTest(unittest.TestCase):
                         "site_map: TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF003.tsv",
                         "target_cwd: TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF003",
                         "target_cmd: TODO_FORMTRIG_MAGMA_POPPLER_PDFIMAGES_BINARY @@ /tmp/pdf-out",
+                        "afl_args: -t 5000",
                     ]
                 )
                 + "\n",
@@ -258,6 +259,7 @@ class MagmaNativeAssetDiscoveryTest(unittest.TestCase):
             self.assertEqual(target["site_map"], str(site_map))
             self.assertEqual(target["target_cwd"], str(target_dir))
             self.assertEqual(target["target_cmd"], f"{executable} @@ /tmp/pdf-out")
+            self.assertEqual(target["afl_args"], "-t 5000")
             self.assertEqual(target["runner_category"], "binary-null")
             self.assertEqual(target["discovery_status"], "runnable_candidate")
             self.assertEqual(target["discovery_blockers"], [])

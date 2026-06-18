@@ -143,8 +143,6 @@ def category_for_manifest(category: str) -> str:
 def binding_shape(category: str) -> dict[str, str]:
     if category == "numeric-margin":
         return {"component": "boundary_margin", "direction": "lower", "value_mode": "distance"}
-    if category == "compound-sequence-lifecycle":
-        return {"component": "lifecycle_prefix", "direction": "higher", "value_mode": "hit"}
     if category == "equality/magic":
         return {"component": "native_distance", "direction": "lower", "value_mode": "distance"}
     return {"component": "root_state", "direction": "higher", "value_mode": "outcome"}

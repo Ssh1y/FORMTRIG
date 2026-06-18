@@ -1,0 +1,33 @@
+{
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "existing_fuzzer_out": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z/magma/redqueen_operand_7200s_rep3/findings",
+  "magma_monitor_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z/magma/redqueen_operand_7200s_rep3/monitor",
+  "resolved_cmd": [
+    "magma/captain",
+    "aflplusplus",
+    "poppler",
+    "pdfimages",
+    "@@",
+    "/tmp/out"
+  ],
+  "returncode": null,
+  "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/pdf003_baselines_rep3_shard_7200s_20260618T014149Z/runs/redqueen_operand_7200s_rep3/run_record.json",
+  "status": "harvested"
+}

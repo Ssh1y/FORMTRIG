@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-17T19:03:24+00:00",
+  "generated_at_utc": "2026-06-18T04:13:34+00:00",
   "schema": "formtrig_magma_binding_validation_assets_template_v1",
   "source_worklist": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
   "targets": {
@@ -35,7 +35,7 @@
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PDF016.tsv",
-      "target_cmd": "TODO_FORMTRIG_MAGMA_POPPLER_PDF_FUZZER_BINARY @@",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl/pdf_fuzzer @@",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json"
     },

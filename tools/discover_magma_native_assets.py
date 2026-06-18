@@ -479,6 +479,7 @@ def build_discovery(
             "site_map": best_site["path"] if best_site else f"TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_{target_id}.tsv",
             "target_cwd": stable_path(best_exe.parent) if best_exe else f"TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_{target_id}",
             "target_cmd": target_command(best_exe, args_template) if best_exe else manifest.get("target_cmd", ""),
+            "afl_args": manifest.get("afl_args", ""),
             "category": draft_category or "generic",
             "runner_category": runner_category_for(draft_category, manifest.get("category", "")),
             "duration_s": 600,

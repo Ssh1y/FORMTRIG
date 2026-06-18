@@ -1,10 +1,11 @@
 {
-  "generated_at_utc": "2026-06-17T18:26:10+00:00",
+  "generated_at_utc": "2026-06-18T04:13:34+00:00",
   "inputs": {
     "drafts": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
     "max_files": 500000,
     "rnt_status": "artifacts/rnt_corpus_status.json",
     "search_roots": [
+      "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016",
       "artifacts/formtrig_native_readiness",
       "experiments/magma_workspace"
     ]
@@ -17,31 +18,30 @@
     "pkcs7_decode",
     "tiff_read_rgba_fuzzer"
   ],
-  "runnable_candidate_count": 4,
-  "scanned_file_count": 73668,
+  "runnable_candidate_count": 5,
+  "scanned_file_count": 73896,
   "schema": "formtrig_magma_native_asset_discovery_v1",
-  "site_map_count": 6,
+  "site_map_count": 7,
   "targets": [
     {
       "best_site_map": {
-        "matched_selectors": 1,
+        "matched_selectors": 9,
         "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv",
         "row_count": 47790,
         "same_build_as_executable": true,
-        "score": 1999,
-        "selector_count": 2
+        "score": 9999,
+        "selector_count": 10
       },
       "blockers": [],
       "executable_candidates": [
-        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages",
-        "/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/poppler/work/poppler/utils/pdfimages"
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/afl/pdfimages"
       ],
       "program": "pdfimages",
       "rnt_program": "pdfimages",
       "rnt_seed_files": 12,
       "rnt_status": "formal_ready",
       "runnable_candidate": true,
-      "selector_count": 2,
+      "selector_count": 10,
       "target_id": "PDF003"
     },
     {
@@ -110,21 +110,21 @@
     {
       "best_site_map": {
         "matched_selectors": 1,
-        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF003/out/formtrig_native/formtrig_sites.tsv",
-        "row_count": 47790,
-        "same_build_as_executable": false,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/formtrig_native/formtrig_sites.tsv",
+        "row_count": 47051,
+        "same_build_as_executable": true,
         "score": 1999,
         "selector_count": 1
       },
-      "blockers": [
-        "no executable found for program pdf_fuzzer"
+      "blockers": [],
+      "executable_candidates": [
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl/pdf_fuzzer"
       ],
-      "executable_candidates": [],
       "program": "pdf_fuzzer",
       "rnt_program": "pdf_fuzzer",
       "rnt_seed_files": 20,
       "rnt_status": "formal_ready",
-      "runnable_candidate": false,
+      "runnable_candidate": true,
       "selector_count": 1,
       "target_id": "PDF016"
     },
