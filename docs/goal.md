@@ -1159,6 +1159,65 @@ next main-budget candidates:
 也就是说，现在不是只在文档里承认“看不出来”，而是实验 planner 会直接阻止这些
 target 继续进入主长测预算。
 
+2026-06-18 的更新是：PDF003 7200s x3 matched result 已经进入自动 triage，
+并成为当前唯一 promoted hard-target candidate：
+
+```text
+artifacts/formtrig_native_readiness/hard_target_triage_20260618.*
+  promoted hard-target candidates = 1
+
+PDF003:
+  disposition = candidate_extend_longruns
+  sota_pain_class = visible_hard_speedup_or_reliability
+  baseline_guidance_gap_status = measured_pass
+  FORMTRIG first_T = 0.31s
+  fastest successful baseline run = 4530s
+  speedup over fastest successful baseline run = 14612.90x
+
+TIF012 / PHP009 / LIBARCHIVE_2936:
+  disposition = demote_to_control_or_negative
+  reason = baseline guidance-gap gate is fail_fast_baseline
+
+PNG006 / LIBCOAP_CVE_2023_35862:
+  disposition = demote_to_control_or_negative
+  reason = baseline-visible/no FORMTRIG advantage in current package
+```
+
+新的 budget 队列是：
+
+```text
+artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260618.*
+
+P0:
+  PDF003 -> expand_cross_target_hard_evidence
+  rationale = matched 7200s x3 already complete; do not burn budget repeating
+              the same campaign until another Magma/real-CVE hard target exists
+
+P1:
+  SSL015 -> validate_binding_spec_then_short_screen
+  PDF016 -> validate_binding_spec_then_short_screen
+  LIBXML2_1107 -> validate_binding_spec_then_short_screen
+  GPAC_3403 -> validate_replay_then_draft_binding_spec
+```
+
+PDF016 在 2026-06-18 worklist 中也从“未验证”变成明确的 repair/negative target：
+
+```text
+artifacts/formtrig_native_readiness/binding_validation/PDF016.native_b3_parser_ref_candidate.validation.json
+  status = terminal_only_variable_semantic_roles_no_pretrigger_guidance
+  native_site_map_validated = true
+  lift_audit_pass = true
+  dynamic_binding_signal_pass = true
+  terminal_triggered = true
+  pretrigger_lift_guidance_ready = false
+  blocker = semantic BindingSpec roles varied, but no accepted non-trigger
+            frontier progress was observed
+```
+
+因此 PDF016 的下一步不是 matched long-run，而是修 lift 聚合、dominance frontier
+接受条件或 parser-token typed mutation，让 root role 的 `{1,0}` 变化变成
+accepted/saved non-trigger `D_F` progress。
+
 已能支撑的说法是：
 
 ```text

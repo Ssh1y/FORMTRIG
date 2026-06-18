@@ -526,6 +526,96 @@ class ExperimentWorklistTest(unittest.TestCase):
                 task["evidence_paths"],
             )
 
+    def test_terminal_only_validation_reports_real_blockers(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            validation_root = root / "binding_validation"
+            comparison_root.mkdir()
+            validation_root.mkdir()
+            validation_path = validation_root / "PDF016.native_b3.validation.json"
+            summary_path = root / "raw" / "pdf016_b3" / "summary.jsonl"
+            summary_path.parent.mkdir(parents=True)
+            summary_path.write_text("{}\n", encoding="utf-8")
+            validation_path.write_text(
+                json.dumps(
+                    {
+                        "target_id": "PDF016",
+                        "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
+                        "ready_for_short_gate": False,
+                        "generated_at_utc": "2026-06-18T04:20:00+00:00",
+                        "checks": {
+                            "native_site_map_validated": True,
+                            "lift_audit_pass": True,
+                            "dynamic_binding_signal_pass": True,
+                            "pretrigger_lift_guidance_ready": False,
+                            "terminal_triggered": True,
+                        },
+                        "blockers": [
+                            "pre-trigger lift guidance is not ready",
+                            "terminal signal appeared without non-trigger guidance",
+                            "semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed",
+                        ],
+                        "source": {"summary_jsonl": str(summary_path)},
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 5,
+                                "target_id": "PDF016",
+                                "source": "magma",
+                                "project": "poppler",
+                                "primary_category": "compound-sequence-lifecycle",
+                                "secondary_category": "",
+                                "lane": "binding_validation_first",
+                                "status": "needs_binding_validation",
+                                "existing_disposition": "",
+                                "blockers": "BindingSpec candidate is not native-site-map validated",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                binding_validation_root=validation_root,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "validate_binding_spec_then_short_screen")
+            self.assertFalse(task["runnable_now"])
+            self.assertIn("pre-trigger lift guidance is not ready", task["blocking_issue"])
+            self.assertIn(
+                "terminal signal appeared without non-trigger guidance",
+                task["blocking_issue"],
+            )
+            self.assertNotIn(
+                "BindingSpec candidate is not native-site-map validated",
+                task["blocking_issue"],
+            )
+            self.assertIn(str(validation_path), task["evidence_paths"])
+            self.assertIn(str(summary_path), task["evidence_paths"])
+
     def test_validated_short_screen_reuses_manifest_afl_args_for_baselines(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

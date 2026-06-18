@@ -251,6 +251,30 @@ def binding_validation_ready(payload: dict[str, Any] | None) -> bool:
     return str(payload.get("status") or "") == "native_binding_validated"
 
 
+def binding_validation_blockers(
+    row: dict[str, Any],
+    validation: dict[str, Any] | None,
+) -> list[str]:
+    if not validation:
+        return [
+            item.strip()
+            for item in str(row.get("blockers") or "").split(";")
+            if item.strip()
+        ] or ["BindingSpec is present but not validated"]
+
+    blockers = [str(item) for item in validation.get("blockers") or [] if str(item)]
+    if blockers:
+        return blockers
+
+    status = str(validation.get("status") or "")
+    checks = validation.get("checks") if isinstance(validation.get("checks"), dict) else {}
+    if not checks.get("native_site_map_validated"):
+        return ["BindingSpec candidate is not native-site-map validated"]
+    if status:
+        return [f"binding validation is not ready for short gate: {status}"]
+    return ["binding validation is not ready for short gate"]
+
+
 def binding_validation_score(payload: dict[str, Any]) -> tuple[int, str, str]:
     return (
         int(binding_validation_ready(payload)),
@@ -1304,6 +1328,7 @@ def binding_spec_first_task(
 def validation_first_task(
     row: dict[str, Any],
     comparison: dict[str, Any] | None,
+    validation: dict[str, Any] | None,
     *,
     short_duration_s: int,
     jobs: int,
@@ -1351,15 +1376,14 @@ def validation_first_task(
             "binding-signal diagnosis pass",
             "seed readiness with reached non-trigger seeds",
         ],
-        "blocking_issue": [item.strip() for item in str(row.get("blockers") or "").split(";") if item.strip()]
-        or ["BindingSpec is present but not validated"],
+        "blocking_issue": binding_validation_blockers(row, validation),
         "claim_boundary": "Validation is a gate, not an efficacy result.",
         "command": "",
         "post_unblock_commands": post_unblock,
         "comparison_verdict": comparison_summary(comparison)["verdict"],
         "current_primary_benefits": comparison_summary(comparison)["primary_benefits"],
         "blocked_claims": comparison_summary(comparison)["blocked_claims"],
-        "evidence_paths": evidence_paths(row, comparison),
+        "evidence_paths": evidence_paths_with_validation(row, comparison, validation),
     }
 
 
@@ -1605,6 +1629,7 @@ def task_for_row(
             validation_first_task(
                 row,
                 comparison,
+                validation,
                 short_duration_s=short_duration_s,
                 jobs=jobs,
                 reps=reps,

@@ -1,0 +1,958 @@
+{
+  "baseline_guidance_gap_count": 6,
+  "baseline_guidance_gaps": [
+    {
+      "analysis_id": "libarchive_2936_matched_7200s_3rep_20260617",
+      "endpoint_cost_pass": false,
+      "fastest_successful_baseline_trigger_time_s": 9.456,
+      "interpretation": "a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "pretrigger_binary_flat_measured": false,
+      "pretrigger_binary_flat_pass": false,
+      "reasons": [
+        "pretrigger_binary_flatness_not_measured_for_all_runs",
+        "fast_successful_baseline_within_acceptable_threshold",
+        "baseline_endpoint_cost_not_sufficient_for_hard_pain"
+      ],
+      "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/libarchive_2936_matched_7200s_3rep_20260617/baseline_guidance_gap.json",
+      "status": "fail_fast_baseline",
+      "target_id": "LIBARCHIVE_2936"
+    },
+    {
+      "analysis_id": "pdf003_matched_7200s_3rep_20260618T040544Z_baseline_guidance_gap",
+      "endpoint_cost_pass": true,
+      "fastest_successful_baseline_trigger_time_s": 4530.0,
+      "interpretation": "baseline evidence supports a hard binary-TC no-guidance candidate",
+      "pretrigger_binary_flat_measured": true,
+      "pretrigger_binary_flat_pass": true,
+      "reasons": [
+        "pretrigger_binary_oracle_flat_before_T",
+        "baseline_endpoint_cost_late_missing_or_high_variance"
+      ],
+      "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z/baseline_guidance_gap.json",
+      "status": "measured_pass",
+      "target_id": "PDF003"
+    },
+    {
+      "analysis_id": "pdf003_baseline_guidance_gap_600s_3rep_20260617",
+      "endpoint_cost_pass": true,
+      "fastest_successful_baseline_trigger_time_s": null,
+      "interpretation": "baseline evidence supports a hard binary-TC no-guidance candidate",
+      "pretrigger_binary_flat_measured": true,
+      "pretrigger_binary_flat_pass": true,
+      "reasons": [
+        "pretrigger_binary_oracle_flat_before_T",
+        "baseline_endpoint_cost_late_missing_or_high_variance"
+      ],
+      "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_validated_short_600s_3rep_20260617/baseline_guidance_gap.json",
+      "status": "measured_pass",
+      "target_id": "PDF003"
+    },
+    {
+      "analysis_id": "php009_validated_short_600s_1rep_20260617",
+      "endpoint_cost_pass": false,
+      "fastest_successful_baseline_trigger_time_s": 120.0,
+      "interpretation": "a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "pretrigger_binary_flat_measured": true,
+      "pretrigger_binary_flat_pass": true,
+      "reasons": [
+        "low_replication",
+        "pretrigger_binary_oracle_flat_before_T",
+        "fast_successful_baseline_within_acceptable_threshold",
+        "baseline_endpoint_cost_not_sufficient_for_hard_pain"
+      ],
+      "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/php009_validated_short_600s_1rep_20260617/baseline_guidance_gap.json",
+      "status": "fail_fast_baseline",
+      "target_id": "PHP009"
+    },
+    {
+      "analysis_id": "tif012_matched_7200s_3rep_20260618T022236Z_baseline_guidance_gap",
+      "endpoint_cost_pass": false,
+      "fastest_successful_baseline_trigger_time_s": 210.0,
+      "interpretation": "a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "pretrigger_binary_flat_measured": true,
+      "pretrigger_binary_flat_pass": true,
+      "reasons": [
+        "pretrigger_binary_oracle_flat_before_T",
+        "fast_successful_baseline_within_acceptable_threshold",
+        "baseline_endpoint_cost_not_sufficient_for_hard_pain"
+      ],
+      "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/tif012_b5_matched_7200s_3rep_20260616T223012Z/baseline_guidance_gap.json",
+      "status": "fail_fast_baseline",
+      "target_id": "TIF012"
+    },
+    {
+      "analysis_id": "tif012_b5_matched_7200s_3rep_20260617",
+      "endpoint_cost_pass": false,
+      "fastest_successful_baseline_trigger_time_s": 210.0,
+      "interpretation": "a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "pretrigger_binary_flat_measured": true,
+      "pretrigger_binary_flat_pass": true,
+      "reasons": [
+        "pretrigger_binary_oracle_flat_before_T",
+        "fast_successful_baseline_within_acceptable_threshold",
+        "baseline_endpoint_cost_not_sufficient_for_hard_pain"
+      ],
+      "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/tif012_b5_matched_7200s_3rep_20260617/baseline_guidance_gap.json",
+      "status": "fail_fast_baseline",
+      "target_id": "TIF012"
+    }
+  ],
+  "generated_at_utc": "2026-06-18T04:26:40+00:00",
+  "package_count": 20,
+  "packages": [
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no endpoint/TTE benefit is established",
+        "no arm reaches _T in 600 seconds",
+        "Redqueen/operand-aware baseline is still missing",
+        "single repetition is not final efficacy evidence"
+      ],
+      "comparison_id": "LIBARCHIVE_2936_b4_formtrig_10m_vs_aflpp_10m_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 2,
+      "max_budget_s": 600.0,
+      "missing_required_baselines": [
+        "redqueen_operand"
+      ],
+      "next_steps": [
+        "do not claim endpoint/TTE performance benefit from this package",
+        "keep b4 as the current LIBARCHIVE readiness candidate",
+        "add structure-aware typed mutation for RNT entry count and path hierarchy",
+        "add or run Redqueen/operand-aware baseline before any final baseline-family claim"
+      ],
+      "observed_benefits": [
+        "FORMTRIG saved non-trigger progress improves from 0 to 10 events against the old native FORMTRIG run",
+        "D_F_spec_lifted changes from constant [2] to variable [1,0]",
+        "binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed"
+      ],
+      "package_status": "mechanism_only_needs_terminal_oracle",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "pretrigger_guidance_improved_no_endpoint_success"
+    },
+    {
+      "best_formtrig_trigger_time_s": 1.326,
+      "blocked_claims": [
+        "AFL++ vanilla, CmpLog, and Redqueen/operand are all baseline-visible in this replicated 60s package, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case",
+        "60s repetitions plus one 10m confirmation are still not a substitute for 2h matched repetitions, Magma long-run evidence, and broader real-CVE evidence",
+        "the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped",
+        "10m confirmation is still one additional matched point, not broad generality across Magma and real-CVE targets",
+        "All baseline families trigger in the 10m confirmation, so LIBARCHIVE_2936 remains a speedup/attribution case rather than a baseline-impossibility case"
+      ],
+      "comparison_id": "LIBARCHIVE_2936_b4_path_hierarchy_hook_60s_20260616",
+      "fastest_baseline_family_median_trigger_time_s": 24.45,
+      "fastest_baseline_trigger_time_s": 24.45,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": true,
+      "main_claim_strength": "",
+      "matched_baselines": 3,
+      "max_budget_s": 600.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "prioritize harder Magma and real-CVE targets where baseline-visible crashes are less immediate, using the 10m confirmation as a control speedup case",
+        "extend LIBARCHIVE_2936 from the confirmed 10m matched speedup point to 2h repeated matched runs if it remains a paper target",
+        "repeat the same replicated protocol on harder Magma and real-CVE targets where baseline-visible crashes are less immediate",
+        "report LIBARCHIVE_2936 as short-run speedup/attribution evidence, not as a baseline-impossibility case"
+      ],
+      "observed_benefits": [
+        "FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families",
+        "FORMTRIG median first-`_T` is 18.44x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline family",
+        "FORMTRIG b4 path-hierarchy hook saves terminal crashes in 3/3 short-run repetitions",
+        "D_F_spec_lifted is non-constant {0,1} and the endpoint is attributable to BindingSpec typed mutation",
+        "The 10m matched confirmation preserves the endpoint benefit: FORMTRIG reaches first `_T` at 1.220s / exec 32 versus the fastest successful baseline at 20.671s / exec 28677",
+        "The 10m matched confirmation gives 16.94x lower wall-clock time and 896.16x fewer executions than the fastest successful baseline in that run"
+      ],
+      "package_status": "promote_or_extend_longruns",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_vanilla",
+        "aflplusplus_cmplog",
+        "redqueen_operand"
+      ],
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": 18.43891402714932,
+      "verdict": "positive_speedup_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no endpoint/TTE benefit is established",
+        "scalar D_F_spec_lifted is still constant at 2, so the next repair should expose a lower-is-better scalar or root-proximal value",
+        "single 60s repetition is not final efficacy evidence",
+        "no faithful AFL++/CmpLog/Redqueen performance comparison is made in this mechanism package"
+      ],
+      "comparison_id": "LIBARCHIVE_2936_binding_signal_repair_60s_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 0,
+      "max_budget_s": 60.0,
+      "missing_required_baselines": [
+        "aflplusplus_vanilla",
+        "aflplusplus_cmplog",
+        "redqueen_operand"
+      ],
+      "next_steps": [
+        "promote only to 10-30m FORMTRIG screen after root-proximal or lower-is-better scalar guidance is added",
+        "keep faithful AFL++/CmpLog/Redqueen comparisons separate from this mechanism package",
+        "preserve this package as evidence that saturated hit-role bindings can be repaired into saved non-trigger progress"
+      ],
+      "observed_benefits": [
+        "same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events",
+        "binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed",
+        "pretrigger_lift_guidance_ready improves from false to true"
+      ],
+      "package_status": "mechanism_only_needs_terminal_oracle",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_binding_signal_repair_60s_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "mechanism_benefit_no_endpoint_success"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no FORMTRIG terminal success is established",
+        "no time-to-_T or crash improvement is established",
+        "no accepted non-trigger frontier progress is established",
+        "D_F and D_F_spec_lifted are constant, so the present guidance is not an effective R2T gradient",
+        "replication is one run per arm and Redqueen/operand baseline is still missing"
+      ],
+      "comparison_id": "LIBARCHIVE_2936_formtrig_10m_vs_aflpp_10m_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 2,
+      "max_budget_s": 600.0,
+      "missing_required_baselines": [
+        "redqueen_operand"
+      ],
+      "next_steps": [
+        "refine LIBARCHIVE_2936 BindingSpec/root-state observability before long-run promotion",
+        "add a producer/root signal that varies before _T, such as path-table cardinality, parent-link creation, or hierarchy ordering",
+        "extend typed mutation toward RNT entry count and path hierarchy instead of only byte-local slash insertion",
+        "rerun a 10-30m FORMTRIG/baseline screen only after non-trigger D_F variability appears",
+        "add Redqueen/operand-aware baseline before any final performance claim"
+      ],
+      "observed_benefits": [
+        "diagnostic triage benefit: exact native binding and typed mutation executed without endpoint success",
+        "diagnostic triage benefit: constant lifted D_F/D_F_spec_lifted identified as the current R2T blocker"
+      ],
+      "package_status": "needs_signal_refinement",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json",
+      "strict_pretrigger_guidance": false,
+      "successful_baselines": [],
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "short_gate_no_terminal_constant_lift_signal"
+    },
+    {
+      "best_formtrig_trigger_time_s": 1.358,
+      "blocked_claims": [
+        "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
+      ],
+      "comparison_id": "libarchive_2936_matched_7200s_3rep_20260617T070307Z",
+      "fastest_baseline_family_median_trigger_time_s": 32.517,
+      "fastest_baseline_trigger_time_s": 9.456,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
+      "matched_baselines": 9,
+      "max_budget_s": 7207.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "treat as speedup/control evidence, not hard SOTA-pain evidence",
+        "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+        "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
+      ],
+      "observed_benefits": [
+        "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
+        "FORMTRIG observed first-`_T` is 6.96x faster than the fastest matched successful baseline run",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 1.358s",
+        "fastest matched successful baseline-run first `_T` upper bound is 9.456s",
+        "fastest matched successful baseline-family median first `_T` upper bound is 32.517s",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "needs_harder_experiment_design",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_cmplog",
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": 6.963181148748158,
+      "verdict": "positive_speedup_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no endpoint/TTE benefit is established",
+        "no terminal _T event was observed in either 60s arm",
+        "this is a single short readiness screen, not final efficacy evidence"
+      ],
+      "comparison_id": "LIBARCHIVE_2936_root_distance_repair_60s_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 0,
+      "max_budget_s": null,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "promote b4 to a 10-30m screen as a readiness candidate",
+        "compare against faithful AFL++ vanilla/CmpLog using the same terminal oracle before any performance claim",
+        "keep endpoint claims blocked until _T/TTE evidence exists"
+      ],
+      "observed_benefits": [
+        "b4 converts b3's producer/use-only role variation into root-observe scalar/spec lift variation visible to FORMTRIG diagnostics."
+      ],
+      "package_status": "mechanism_only_needs_terminal_oracle",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_root_distance_repair_60s_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "scalar_guidance_repair_no_endpoint_success"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no strict pre-trigger guidance benefit is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "LIBCOAP_35862_asan_terminal_30m_vs_asan_baselines_20260616",
+      "fastest_baseline_family_median_trigger_time_s": 1060.0,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 3,
+      "max_budget_s": 1800.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget",
+        "do not claim SOTA advantage on this target without harder targets or stronger statistics"
+      ],
+      "observed_benefits": [
+        "FORMTRIG terminal oracle success is observed"
+      ],
+      "package_status": "control_or_negative",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_asan_terminal_30m_vs_asan_baselines_20260616/comparison.json",
+      "strict_pretrigger_guidance": false,
+      "successful_baselines": [
+        "aflplusplus_cmplog",
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "LIBCOAP_CVE_2023_35862",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "baseline_also_triggers_not_sota_advantage"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no FORMTRIG terminal success is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 3,
+      "max_budget_s": 1800.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget",
+        "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+      ],
+      "observed_benefits": [
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "mechanism_only_needs_terminal_oracle",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_pretrigger_30m_vs_non_asan_baselines_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "LIBCOAP_CVE_2023_35862",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "pretrigger_guidance_only"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.31,
+      "blocked_claims": [
+        "no strict pre-trigger guidance benefit is established"
+      ],
+      "comparison_id": "pdf003_matched_7200s_3rep_20260618T040544Z",
+      "fastest_baseline_family_median_trigger_time_s": 4530.0,
+      "fastest_baseline_trigger_time_s": 4530.0,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "hard_speedup_or_reliability_candidate",
+      "matched_baselines": 9,
+      "max_budget_s": 7201.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "quantify success-rate and TTE-tail improvement with additional repetitions",
+        "treat this as a speedup claim and complete repetitions/longer runs before final performance claims"
+      ],
+      "observed_benefits": [
+        "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
+        "FORMTRIG observed first-`_T` is 14612.90x faster than the fastest matched successful baseline run",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 0.31s",
+        "fastest matched successful baseline-run first `_T` upper bound is 4530s",
+        "fastest matched successful baseline-family median first `_T` upper bound is 4530s"
+      ],
+      "package_status": "promote_or_extend_longruns",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z/comparison.json",
+      "strict_pretrigger_guidance": false,
+      "successful_baselines": [
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "PDF003",
+      "tte_speedup_over_fastest_baseline": 14612.903225806453,
+      "verdict": "positive_speedup_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.287,
+      "blocked_claims": [
+        "the 30s typed-hook smoke is not a matched long-run endpoint comparison",
+        "the current PDF003 evidence does not prove strict pre-trigger frontier guidance because saved_non_trigger_progress remains zero",
+        "generality over Magma and real CVEs still requires replicated targets and faithful baselines under the same budgets"
+      ],
+      "comparison_id": null,
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "format_aware_typed_r2t_smoke_not_matched_longrun",
+      "matched_baselines": 3,
+      "max_budget_s": 600.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "run matched repetitions with the PDF image typed hook enabled before making endpoint speedup claims",
+        "separate format-aware typed mutation benefit from strict pre-trigger frontier guidance in the paper tables",
+        "keep improving non-trigger save/frontier handoff because this smoke reaches _T directly and still saves no non-trigger progress",
+        "audit whether comparable grammar/format-aware baselines should be included for a fair PDF-specific comparison"
+      ],
+      "observed_benefits": [],
+      "package_status": "insufficient_evidence",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/pdf003_validated_short_600s_1rep_20260617/comparison.json",
+      "strict_pretrigger_guidance": false,
+      "successful_baselines": [],
+      "target_id": "PDF003",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "positive_format_typed_r2t_smoke_with_sota_pain_not_longrun"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.29,
+      "blocked_claims": [
+        "no strict pre-trigger guidance benefit is established"
+      ],
+      "comparison_id": "pdf003_validated_short_600s_3rep_20260617",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "hard_endpoint_gap_candidate",
+      "matched_baselines": 9,
+      "max_budget_s": 602.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "promote to replicated long-run or cross-target confirmation if harness fidelity passes"
+      ],
+      "observed_benefits": [
+        "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 0.29s"
+      ],
+      "package_status": "promote_or_extend_longruns",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/pdf003_validated_short_600s_3rep_20260617/comparison.json",
+      "strict_pretrigger_guidance": false,
+      "successful_baselines": [],
+      "target_id": "PDF003",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "positive_endpoint_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": 87.04,
+      "blocked_claims": [
+        "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
+      ],
+      "comparison_id": "php009_validated_short_600s_1rep_20260617",
+      "fastest_baseline_family_median_trigger_time_s": 120.0,
+      "fastest_baseline_trigger_time_s": 120.0,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
+      "matched_baselines": 3,
+      "max_budget_s": 600.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "treat as speedup/control evidence, not hard SOTA-pain evidence",
+        "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+        "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
+      ],
+      "observed_benefits": [
+        "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
+        "FORMTRIG observed first-`_T` is 1.38x faster than the fastest matched successful baseline run",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 87.04s",
+        "fastest matched successful baseline-run first `_T` upper bound is 120s",
+        "fastest matched successful baseline-family median first `_T` upper bound is 120s",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "needs_harder_experiment_design",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/php009_validated_short_600s_1rep_20260617/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_cmplog",
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "PHP009",
+      "tte_speedup_over_fastest_baseline": 1.3786764705882353,
+      "verdict": "positive_speedup_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "no matched-budget baseline benefit comparison is available"
+      ],
+      "comparison_id": "PNG006_formtrig_2h_vs_baseline_30m_gap_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 0,
+      "max_budget_s": 7200.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "run faithful baselines at FORMTRIG budget(s): [7200]"
+      ],
+      "observed_benefits": [
+        "FORMTRIG terminal oracle success is observed",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "incomparable_needs_matched_budget",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_baseline_30m_gap_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "PNG006",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "not_comparable_missing_matched_budget"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "required baseline families are still missing",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 1,
+      "max_budget_s": 7200.0,
+      "missing_required_baselines": [
+        "aflplusplus_cmplog",
+        "redqueen_operand"
+      ],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget",
+        "run missing required baselines: aflplusplus_cmplog,redqueen_operand"
+      ],
+      "observed_benefits": [
+        "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+        "FORMTRIG terminal oracle success is observed",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "candidate_needs_required_baselines",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_2h_incomplete_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "PNG006",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "incomplete_required_baseline_set"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+        "required baseline families are still missing",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "PNG006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616",
+      "fastest_baseline_family_median_trigger_time_s": 120.0,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 2,
+      "max_budget_s": 7200.0,
+      "missing_required_baselines": [
+        "redqueen_operand"
+      ],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget",
+        "run missing required baselines: redqueen_operand",
+        "do not claim SOTA advantage on this target without harder targets or stronger statistics"
+      ],
+      "observed_benefits": [
+        "FORMTRIG terminal oracle success is observed",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "control_or_negative",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_cmplog"
+      ],
+      "target_id": "PNG006",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "incomplete_required_baseline_set"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.035,
+      "blocked_claims": [],
+      "comparison_id": "tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 9,
+      "max_budget_s": 120.0,
+      "missing_required_baselines": [],
+      "next_steps": [],
+      "observed_benefits": [
+        "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 0.035s",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "promote_or_extend_longruns",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [],
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "positive_endpoint_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.035,
+      "blocked_claims": [
+        "no strict pre-trigger guidance benefit is established",
+        "replication is too low for a final performance claim"
+      ],
+      "comparison_id": "tif012_b5_formtrig_120s_vs_aflpp_family_120s_20260616",
+      "fastest_baseline_family_median_trigger_time_s": null,
+      "fastest_baseline_trigger_time_s": null,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 3,
+      "max_budget_s": 120.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "collect at least 3 repetitions per matched baseline/budget"
+      ],
+      "observed_benefits": [
+        "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 0.035s"
+      ],
+      "package_status": "promote_or_complete_reps",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_vs_aflpp_family_120s_20260616/comparison.json",
+      "strict_pretrigger_guidance": false,
+      "successful_baselines": [],
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "positive_endpoint_but_under_replicated"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.034,
+      "blocked_claims": [
+        "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
+      ],
+      "comparison_id": "tif012_matched_7200s_3rep_20260618T022236Z",
+      "fastest_baseline_family_median_trigger_time_s": 1410.0,
+      "fastest_baseline_trigger_time_s": 210.0,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
+      "matched_baselines": 9,
+      "max_budget_s": 7200.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "treat as speedup/control evidence, not hard SOTA-pain evidence",
+        "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+        "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
+      ],
+      "observed_benefits": [
+        "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
+        "FORMTRIG observed first-`_T` is 6176.47x faster than the fastest matched successful baseline run",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 0.034s",
+        "fastest matched successful baseline-run first `_T` upper bound is 210s",
+        "fastest matched successful baseline-family median first `_T` upper bound is 1410s",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "needs_harder_experiment_design",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260616T223012Z/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_cmplog",
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": 6176.470588235294,
+      "verdict": "positive_speedup_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": 0.034,
+      "blocked_claims": [
+        "a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence"
+      ],
+      "comparison_id": "tif012_b5_matched_7200s_3rep_20260617",
+      "fastest_baseline_family_median_trigger_time_s": 1410.0,
+      "fastest_baseline_trigger_time_s": 210.0,
+      "formtrig_terminal": true,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
+      "matched_baselines": 9,
+      "max_budget_s": 7200.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "treat as speedup/control evidence, not hard SOTA-pain evidence",
+        "move main budget to targets where no faithful baseline triggers within the acceptable-time threshold",
+        "if retained, report only FORMTRIG TTE speedup and mechanism attribution"
+      ],
+      "observed_benefits": [
+        "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run",
+        "FORMTRIG observed first-`_T` is 6176.47x faster than the fastest matched successful baseline run",
+        "FORMTRIG terminal oracle success is observed",
+        "FORMTRIG first `_T` upper bound is recorded at 0.034s",
+        "fastest matched successful baseline-run first `_T` upper bound is 210s",
+        "fastest matched successful baseline-family median first `_T` upper bound is 1410s",
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "needs_harder_experiment_design",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260617/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_cmplog",
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": 6176.470588235294,
+      "verdict": "positive_speedup_matched_comparison"
+    },
+    {
+      "best_formtrig_trigger_time_s": null,
+      "blocked_claims": [
+        "no FORMTRIG terminal success is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage"
+      ],
+      "comparison_id": "tif012_formtrig_600s_vs_aflpp_family_600s_20260616",
+      "fastest_baseline_family_median_trigger_time_s": 300.0,
+      "fastest_baseline_trigger_time_s": 300.0,
+      "formtrig_terminal": false,
+      "longrun_10m_confirmed": false,
+      "main_claim_strength": "",
+      "matched_baselines": 3,
+      "max_budget_s": 600.0,
+      "missing_required_baselines": [],
+      "next_steps": [
+        "do not claim SOTA advantage on this target without harder targets or stronger statistics",
+        "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+      ],
+      "observed_benefits": [
+        "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+      ],
+      "package_status": "control_or_negative",
+      "source_path": "artifacts/formtrig_native_readiness/comparisons/tif012_formtrig_600s_vs_aflpp_family_600s_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "successful_baselines": [
+        "aflplusplus_vanilla",
+        "redqueen_operand"
+      ],
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": null,
+      "verdict": "baseline_also_triggers_not_sota_advantage"
+    }
+  ],
+  "target_count": 6,
+  "targets": [
+    {
+      "baseline_guidance_gap_evidence": "baseline_guidance_gap.status=measured_pass; pre_T_binary_flat=true; fastest_baseline_T=4530s; baseline evidence supports a hard binary-TC no-guidance candidate",
+      "baseline_guidance_gap_status": "measured_pass",
+      "baseline_triggers": "aflplusplus_vanilla,redqueen_operand",
+      "best_formtrig_trigger_time_s": 0.31,
+      "best_package": "pdf003_matched_7200s_3rep_20260618T040544Z",
+      "best_verdict": "positive_speedup_matched_comparison",
+      "blocked_claims": "the 30s typed-hook smoke is not a matched long-run endpoint comparison; the current PDF003 evidence does not prove strict pre-trigger frontier guidance because saved_non_trigger_progress remains zero; generality over Magma and real CVEs still requires replicated targets and faithful baselines under the same budgets",
+      "disposition": "candidate_extend_longruns",
+      "fastest_baseline_trigger_time_s": 4530.0,
+      "formtrig_terminal": true,
+      "main_claim_strength": "hard_speedup_or_reliability_candidate",
+      "max_budget_s": 7201.0,
+      "next_action": "extend to longer matched-budget runs to test whether the replicated FORMTRIG TTE speedup persists",
+      "observed_benefits": "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run; FORMTRIG observed first-`_T` is 14612.90x faster than the fastest matched successful baseline run; FORMTRIG terminal oracle success is observed; FORMTRIG first `_T` upper bound is recorded at 0.31s; fastest matched successful baseline-run first `_T` upper bound is 4530s; fastest matched successful baseline-family median first `_T` upper bound is 4530s; FORMTRIG reaches terminal success where matched baselines do not trigger in this budget; FORMTRIG first `_T` upper bound is recorded at 0.29s",
+      "priority": 15,
+      "sota_pain_class": "visible_hard_speedup_or_reliability",
+      "sota_pain_evidence": "at least one strong baseline family is unstable or has low success under the matched budget; strength=hard_speedup_or_reliability_candidate; FORMTRIG first_T=0.31s; baseline fastest_T=4530s; baseline family_median_T=4530s; speedup=14612.9x; baseline_visible=aflplusplus_vanilla,redqueen_operand; baseline_guidance_gap.status=measured_pass; pre_T_binary_flat=true; fastest_baseline_T=4530s; baseline evidence supports a hard binary-TC no-guidance candidate",
+      "sources": "artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z/comparison.json; artifacts/formtrig_native_readiness/comparisons/pdf003_validated_short_600s_1rep_20260617/comparison.json; artifacts/formtrig_native_readiness/comparisons/pdf003_validated_short_600s_3rep_20260617/comparison.json; artifacts/formtrig_native_readiness/baseline_guidance_gap/pdf003_matched_7200s_3rep_20260617T224500Z/baseline_guidance_gap.json",
+      "strict_pretrigger_guidance": false,
+      "target_id": "PDF003",
+      "tte_speedup_over_fastest_baseline": 14612.903225806453
+    },
+    {
+      "baseline_guidance_gap_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=false; fastest_baseline_T=9.456s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "baseline_guidance_gap_status": "fail_fast_baseline",
+      "baseline_triggers": "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand",
+      "best_formtrig_trigger_time_s": 1.358,
+      "best_package": "libarchive_2936_matched_7200s_3rep_20260617T070307Z",
+      "best_verdict": "positive_speedup_matched_comparison",
+      "blocked_claims": "baseline guidance-gap gate is not measured_pass: fail_fast_baseline; a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence; single repetition is not final efficacy evidence; AFL++ vanilla, CmpLog, and Redqueen/operand are all baseline-visible in this replicated 60s package, so LIBARCHIVE_2936 is a speedup/attribution case rather than a baseline-impossibility case; 60s repetitions plus one 10m confirmation are still not a substitute for 2h matched repetitions, Magma long-run evidence, and broader real-CVE evidence; the Redqueen/operand row is the local AFL++ CmpLog/Redqueen implementation path, not the original Redqueen artifact unless separately mapped; 10m confirmation is still one additional matched point, not broad generality across Magma and real-CVE targets; All baseline families trigger in the 10m confirmation, so LIBARCHIVE_2936 remains a speedup/attribution case rather than a baseline-impossibility case",
+      "disposition": "demote_to_control_or_negative",
+      "fastest_baseline_trigger_time_s": 9.456,
+      "formtrig_terminal": true,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
+      "max_budget_s": 7207.0,
+      "next_action": "do not spend main long-run budget here; baseline guidance-gap analysis shows a faithful baseline reaches _T within the acceptable threshold",
+      "observed_benefits": "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run; FORMTRIG observed first-`_T` is 6.96x faster than the fastest matched successful baseline run; FORMTRIG terminal oracle success is observed; FORMTRIG first `_T` upper bound is recorded at 1.358s; fastest matched successful baseline-run first `_T` upper bound is 9.456s; fastest matched successful baseline-family median first `_T` upper bound is 32.517s; binary or sparse trigger feedback was lifted into accepted non-trigger search progress; FORMTRIG saved non-trigger progress improves from 0 to 10 events against the old native FORMTRIG run; D_F_spec_lifted changes from constant [2] to variable [1,0]; binding-signal diagnosis improves from fail/constant_lift_signal to pass/role_signal_progress_observed; FORMTRIG has a lower replicated first-`_T` upper bound than all matched successful baseline families; FORMTRIG median first-`_T` is 18.44x faster by wall-clock and 1074.34x fewer executions than the fastest matched successful baseline family; FORMTRIG b4 path-hierarchy hook saves terminal crashes in 3/3 short-run repetitions; D_F_spec_lifted is non-constant {0,1} and the endpoint is attributable to BindingSpec typed mutation; The 10m matched confirmation preserves the endpoint benefit: FORMTRIG reaches first `_T` at 1.220s / exec 32 versus the fastest successful baseline at 20.671s / exec 28677; The 10m matched confirmation gives 16.94x lower wall-clock time and 896.16x fewer executions than the fastest successful baseline in that run; same-budget FORMTRIG signal repair improves saved non-trigger progress from 0 to 3 events; pretrigger_lift_guidance_ready improves from false to true; diagnostic triage benefit: exact native binding and typed mutation executed without endpoint success; b4 converts b3's producer/use-only role variation into root-observe scalar/spec lift variation visible to FORMTRIG diagnostics.",
+      "priority": 90,
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=false; fastest_baseline_T=9.456s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "sources": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_formtrig_10m_vs_aflpp_10m_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_b4_path_hierarchy_hook_60s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_binding_signal_repair_60s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_formtrig_10m_vs_aflpp_10m_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/comparison.json; artifacts/formtrig_native_readiness/comparisons/libarchive_2936_root_distance_repair_60s_20260616/comparison.json; artifacts/formtrig_native_readiness/baseline_guidance_gap/libarchive_2936_matched_7200s_3rep_20260617/baseline_guidance_gap.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "LIBARCHIVE_2936",
+      "tte_speedup_over_fastest_baseline": 6.963181148748158
+    },
+    {
+      "baseline_guidance_gap_evidence": "",
+      "baseline_guidance_gap_status": "",
+      "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "best_formtrig_trigger_time_s": null,
+      "best_package": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
+      "best_verdict": "pretrigger_guidance_only",
+      "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; replication is too low for a final performance claim; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+      "disposition": "demote_to_control_or_negative",
+      "fastest_baseline_trigger_time_s": "",
+      "formtrig_terminal": true,
+      "main_claim_strength": "",
+      "max_budget_s": 1800.0,
+      "next_action": "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets",
+      "observed_benefits": "binary or sparse trigger feedback was lifted into accepted non-trigger search progress; FORMTRIG terminal oracle success is observed",
+      "priority": 90,
+      "sota_pain_class": "not_visible_baseline_visible_no_formtrig_advantage",
+      "sota_pain_evidence": "matched faithful baselines trigger and current evidence has no FORMTRIG first_T/TTE advantage",
+      "sources": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_asan_terminal_30m_vs_asan_baselines_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libcoap_35862_pretrigger_30m_vs_non_asan_baselines_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "LIBCOAP_CVE_2023_35862",
+      "tte_speedup_over_fastest_baseline": null
+    },
+    {
+      "baseline_guidance_gap_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=120s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "baseline_guidance_gap_status": "fail_fast_baseline",
+      "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "best_formtrig_trigger_time_s": 87.04,
+      "best_package": "php009_validated_short_600s_1rep_20260617",
+      "best_verdict": "positive_speedup_matched_comparison",
+      "blocked_claims": "baseline guidance-gap gate is not measured_pass: fail_fast_baseline; a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence",
+      "disposition": "demote_to_control_or_negative",
+      "fastest_baseline_trigger_time_s": 120.0,
+      "formtrig_terminal": true,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
+      "max_budget_s": 600.0,
+      "next_action": "do not spend main long-run budget here; baseline guidance-gap analysis shows a faithful baseline reaches _T within the acceptable threshold",
+      "observed_benefits": "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run; FORMTRIG observed first-`_T` is 1.38x faster than the fastest matched successful baseline run; FORMTRIG terminal oracle success is observed; FORMTRIG first `_T` upper bound is recorded at 87.04s; fastest matched successful baseline-run first `_T` upper bound is 120s; fastest matched successful baseline-family median first `_T` upper bound is 120s; binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+      "priority": 90,
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=120s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "sources": "artifacts/formtrig_native_readiness/comparisons/php009_validated_short_600s_1rep_20260617/comparison.json; artifacts/formtrig_native_readiness/baseline_guidance_gap/php009_validated_short_600s_1rep_20260617/baseline_guidance_gap.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "PHP009",
+      "tte_speedup_over_fastest_baseline": 1.3786764705882353
+    },
+    {
+      "baseline_guidance_gap_evidence": "",
+      "baseline_guidance_gap_status": "",
+      "baseline_triggers": "aflplusplus_cmplog",
+      "best_formtrig_trigger_time_s": null,
+      "best_package": "PNG006_formtrig_2h_vs_vanilla_2h_incomplete_20260616",
+      "best_verdict": "incomplete_required_baseline_set",
+      "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; required baseline families are still missing; replication is too low for a final performance claim; no matched-budget baseline benefit comparison is available; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
+      "disposition": "demote_to_control_or_negative",
+      "fastest_baseline_trigger_time_s": "",
+      "formtrig_terminal": true,
+      "main_claim_strength": "",
+      "max_budget_s": 7200.0,
+      "next_action": "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets",
+      "observed_benefits": "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget; FORMTRIG terminal oracle success is observed; binary or sparse trigger feedback was lifted into accepted non-trigger search progress",
+      "priority": 90,
+      "sota_pain_class": "not_visible_baseline_visible_no_formtrig_advantage",
+      "sota_pain_evidence": "matched faithful baselines trigger and current evidence has no FORMTRIG first_T/TTE advantage",
+      "sources": "artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_baseline_30m_gap_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_2h_incomplete_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/png006_formtrig_2h_vs_vanilla_cmplog_2h_incomplete_20260616/comparison.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "PNG006",
+      "tte_speedup_over_fastest_baseline": null
+    },
+    {
+      "baseline_guidance_gap_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=210s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "baseline_guidance_gap_status": "fail_fast_baseline",
+      "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
+      "best_formtrig_trigger_time_s": 0.034,
+      "best_package": "tif012_b5_matched_7200s_3rep_20260617",
+      "best_verdict": "positive_speedup_matched_comparison",
+      "blocked_claims": "baseline guidance-gap gate is not measured_pass: fail_fast_baseline; a matched faithful baseline reaches the trigger within the acceptable-time threshold, so this is not hard SOTA-pain evidence",
+      "disposition": "demote_to_control_or_negative",
+      "fastest_baseline_trigger_time_s": 210.0,
+      "formtrig_terminal": true,
+      "main_claim_strength": "not_hard_pain_baseline_fast_enough",
+      "max_budget_s": 7200.0,
+      "next_action": "do not spend main long-run budget here; baseline guidance-gap analysis shows a faithful baseline reaches _T within the acceptable threshold",
+      "observed_benefits": "FORMTRIG has a lower observed first-`_T` upper bound than every matched successful baseline run; FORMTRIG observed first-`_T` is 6176.47x faster than the fastest matched successful baseline run; FORMTRIG terminal oracle success is observed; FORMTRIG first `_T` upper bound is recorded at 0.034s; fastest matched successful baseline-run first `_T` upper bound is 210s; fastest matched successful baseline-family median first `_T` upper bound is 1410s; binary or sparse trigger feedback was lifted into accepted non-trigger search progress; FORMTRIG reaches terminal success where matched baselines do not trigger in this budget; FORMTRIG first `_T` upper bound is recorded at 0.035s",
+      "priority": 90,
+      "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
+      "sota_pain_evidence": "baseline_guidance_gap.status=fail_fast_baseline; pre_T_binary_flat=true; fastest_baseline_T=210s; a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence",
+      "sources": "artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_3rep_vs_aflpp_family_120s_3rep_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/tif012_b5_formtrig_120s_vs_aflpp_family_120s_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260616T223012Z/comparison.json; artifacts/formtrig_native_readiness/comparisons/tif012_b5_matched_7200s_3rep_20260617/comparison.json; artifacts/formtrig_native_readiness/comparisons/tif012_formtrig_600s_vs_aflpp_family_600s_20260616/comparison.json; artifacts/formtrig_native_readiness/baseline_guidance_gap/tif012_b5_matched_7200s_3rep_20260616T223012Z/baseline_guidance_gap.json",
+      "strict_pretrigger_guidance": true,
+      "target_id": "TIF012",
+      "tte_speedup_over_fastest_baseline": 6176.470588235294
+    }
+  ]
+}

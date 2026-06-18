@@ -215,18 +215,73 @@ promoted hard-target candidates:
 
 这个 2026-06-17 triage artifact 尚未纳入 2026-06-18 的 PDF003 7200s x3
 measured-pass 结果。更新前的结论仍然成立于 TIF012、LIBARCHIVE_2936、PHP009、
-PNG006 和 LIBCOAP：它们不能作为主 SOTA-pain evidence。现在必须重跑 hard-target
-triage/worklist，把 PDF003 晋升为当前 hard SOTA-pain candidate，同时保留它缺少
-strict pre-trigger mechanism proof 的边界。
+PNG006 和 LIBCOAP：它们不能作为主 SOTA-pain evidence。2026-06-18 已经重跑
+hard-target triage/worklist：
 
-`artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260617.*`
-现在也读取这个 triage artifact。主执行队列会把：
+```text
+artifacts/formtrig_native_readiness/hard_target_triage_20260618.*
+  promoted hard-target candidates = 1
+
+PDF003:
+  disposition = candidate_extend_longruns
+  sota_pain_class = visible_hard_speedup_or_reliability
+  baseline_guidance_gap_status = measured_pass
+  FORMTRIG first_T = 0.31s
+  fastest successful baseline run = 4530s
+  speedup over fastest successful baseline run = 14612.90x
+
+TIF012 / PHP009 / LIBARCHIVE_2936:
+  demote_to_control_or_negative
+  reason = fail_fast_baseline guidance-gap gate
+
+PNG006 / LIBCOAP_CVE_2023_35862:
+  demote_to_control_or_negative
+  reason = baseline-visible/no FORMTRIG advantage in current package
+```
+
+新的主预算队列是：
+
+```text
+artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260618.*
+
+P0:
+  PDF003 -> expand_cross_target_hard_evidence
+  reason = matched 7200s x3 already complete; use it as one hard-speedup
+           data point, then spend new budget on another Magma/real-CVE hard target
+
+P1:
+  SSL015 -> validate_binding_spec_then_short_screen
+  PDF016 -> validate_binding_spec_then_short_screen
+  LIBXML2_1107 -> validate_binding_spec_then_short_screen
+  GPAC_3403 -> validate_replay_then_draft_binding_spec
+```
+
+PDF016 现在有正式 validation record：
+
+```text
+artifacts/formtrig_native_readiness/binding_validation/PDF016.native_b3_parser_ref_candidate.validation.json
+  status = terminal_only_variable_semantic_roles_no_pretrigger_guidance
+  native_site_map_validated = true
+  lift_audit_pass = true
+  dynamic_binding_signal_pass = true
+  terminal_triggered = true
+  pretrigger_lift_guidance_ready = false
+```
+
+Planner 已修正：这种状态不再显示为“not native-site-map validated”，而是显示真实
+blocker：pre-trigger lift guidance 不 ready，terminal-only，semantic roles 有变化但
+没有 accepted non-trigger frontier progress。PDF016 下一步是修 lift 聚合、dominance
+frontier 或 parser-token typed mutation，不是 matched long-run。
+
+`artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260618.*`
+现在读取最新 triage artifact。主执行队列会把：
 
 - `not_visible_baseline_visible_no_formtrig_advantage` 目标跳过主预算；
 - `not_visible_baseline_time_cost_acceptable` 目标跳过主预算；
 - `weak_or_moderate_baseline_time_cost` 或 near-seed/harness-shaped 目标只作为设计改进候选；
-- 下一批主预算候选从 PDF003、SSL015、PDF016、PHP009、LIBXML2_1107、
-  GPAC_3403 等 target 的 native validation / short screen 开始。
+- PDF003 标记为已完成当前 matched 7200s x3，应转向 cross-target hard evidence；
+- 下一批主预算候选从 SSL015、PDF016、LIBXML2_1107、GPAC_3403 等 target 的
+  validation/spec-repair 开始。
 
 这避免了 triage 已经判定“看不出 SOTA pain”的目标继续消耗长测预算。
 
