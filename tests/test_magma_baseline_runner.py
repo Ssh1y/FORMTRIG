@@ -29,6 +29,16 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
         self.assertIn("rm -rf \"$target_repo_path\"", script)
         self.assertIn("trap restore_target_context EXIT", script)
 
+    def test_no_build_recovery_runs_do_not_patch_target_repositories(self):
+        script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn('if [[ "$run_build" == "1" ]]; then\n  sync_formtrig_canary_runtime', script)
+        self.assertIn('if [[ "$run_build" == "1" ]]; then\n  prepare_clean_target_context', script)
+        self.assertIn("patch_target_build_helpers\n  patch_target_canary_include_flags", script)
+        self.assertIn('if [[ "$run_build" == "1" ]]; then\n  restore_target_context', script)
+
     def test_runner_patches_libtiff_autogen_without_network_dependency(self):
         script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(
             encoding="utf-8"
@@ -51,7 +61,7 @@ class MagmaBaselineRunnerTest(unittest.TestCase):
         self.assertIn('export CXXFLAGS="${CXXFLAGS:-} -I$MAGMA/formtrig/include"', script)
         self.assertIn("changed = False", script)
         self.assertIn("if changed:", script)
-        self.assertIn("patch_target_build_helpers\npatch_target_canary_include_flags", script)
+        self.assertIn("patch_target_build_helpers\n  patch_target_canary_include_flags", script)
 
     def test_runner_handles_cmake_targets_without_repo_cd(self):
         script = (REPO_ROOT / "scripts" / "run_magma_baselines.sh").read_text(

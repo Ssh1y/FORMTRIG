@@ -712,7 +712,9 @@ magma_dir="$(abs_path "$magma_dir")"
 require_path "$inventory"
 require_path "$magma_dir/tools/captain/build.sh"
 require_path "$magma_dir/tools/captain/start.sh"
-sync_formtrig_canary_runtime
+if [[ "$run_build" == "1" ]]; then
+  sync_formtrig_canary_runtime
+fi
 
 magma_target="$(inventory_field project)"
 program="$(inventory_field program)"
@@ -786,13 +788,13 @@ fi
   printf 'fuzz_args=%s\n' "${extra_fuzz_args[*]}"
 } > "$out_dir/run_metadata.txt"
 
-prepare_clean_target_context
-patch_target_build_helpers
-patch_target_canary_include_flags
-patch_php_host_compatibility
-trap restore_target_context EXIT
-
 if [[ "$run_build" == "1" ]]; then
+  prepare_clean_target_context
+  patch_target_build_helpers
+  patch_target_canary_include_flags
+  patch_php_host_compatibility
+  trap restore_target_context EXIT
+
   declare -A built_fuzzers=()
   while IFS= read -r baseline; do
     fuzzer="$(magma_fuzzer_for_baseline "$baseline")"
@@ -827,8 +829,10 @@ if [[ "$run_sweeps" == "1" ]]; then
     --out-tsv "$out_dir/summary.tsv"
 fi
 
-restore_target_context
-trap - EXIT
+if [[ "$run_build" == "1" ]]; then
+  restore_target_context
+  trap - EXIT
+fi
 
 echo "$target_id Magma baseline flow complete"
 echo "  out=$out_dir"

@@ -185,6 +185,43 @@ class MergeMagmaBaselineRootsTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("missing run_record.json", result.stderr)
 
+    def test_can_skip_incomplete_runs_for_live_recovery_merge(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            shard = root / "shard"
+            out = root / "merged"
+            self.write_run(
+                shard,
+                "aflplusplus_vanilla_7200s_rep1",
+                baseline="aflplusplus_vanilla",
+                rep=1,
+                reached=10,
+                triggered=0,
+            )
+            (shard / "runs" / "aflplusplus_vanilla_7200s_rep2").mkdir(parents=True)
+
+            subprocess.run(
+                [
+                    "python3",
+                    str(REPO_ROOT / "tools" / "merge_magma_baseline_roots.py"),
+                    "--out",
+                    str(out),
+                    "--source",
+                    str(shard),
+                    "--skip-incomplete-runs",
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            summary = json.loads((out / "summary.json").read_text(encoding="utf-8"))
+            metadata = json.loads(
+                (out / "baseline_merge_metadata.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(len(summary["records"]), 1)
+        self.assertEqual(len(metadata["skipped_incomplete_runs"]), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

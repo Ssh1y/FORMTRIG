@@ -66,14 +66,22 @@ def copy_run_dir(src: Path, dst: Path) -> list[str]:
     return copied
 
 
-def collect_runs(sources: list[Path]) -> dict[str, Path]:
+def collect_runs(
+    sources: list[Path],
+    *,
+    skip_incomplete_runs: bool = False,
+) -> tuple[dict[str, Path], list[str]]:
     runs: dict[str, Path] = {}
+    skipped: list[str] = []
     for source in sources:
         runs_dir = source / "runs"
         if not runs_dir.is_dir():
             raise SystemExit(f"baseline source has no runs/ directory: {source}")
         for run_dir in sorted(path for path in runs_dir.iterdir() if path.is_dir()):
             if not (run_dir / "run_record.json").is_file():
+                if skip_incomplete_runs:
+                    skipped.append(str(run_dir))
+                    continue
                 raise SystemExit(f"baseline run is incomplete, missing run_record.json: {run_dir}")
             if run_dir.name in runs:
                 raise SystemExit(
@@ -81,7 +89,7 @@ def collect_runs(sources: list[Path]) -> dict[str, Path]:
                     f"{runs[run_dir.name]} and {run_dir}"
                 )
             runs[run_dir.name] = run_dir
-    return runs
+    return runs, skipped
 
 
 def rebuild_summary(out_dir: Path) -> list[dict[str, Any]]:
@@ -106,6 +114,7 @@ def write_merge_metadata(
     out_dir: Path,
     sources: list[Path],
     runs: dict[str, Path],
+    skipped_incomplete_runs: list[str],
     copied_files: dict[str, list[str]],
     rows: list[dict[str, Any]],
 ) -> None:
@@ -118,6 +127,7 @@ def write_merge_metadata(
         "created_utc": utc_now(),
         "raw_magma_dirs_copied": False,
         "record_count": len(rows),
+        "skipped_incomplete_runs": skipped_incomplete_runs,
         "source_metadata": source_metadata,
         "sources": [str(source) for source in sources],
     }
@@ -132,6 +142,7 @@ def write_merge_metadata(
         f"- created: `{payload['created_utc']}`",
         f"- copied runs: `{len(runs)}`",
         f"- summarized records: `{len(rows)}`",
+        f"- skipped incomplete runs: `{len(skipped_incomplete_runs)}`",
         "- raw Magma monitor/findings directories copied: `false`",
         "",
         "## Sources",
@@ -140,6 +151,9 @@ def write_merge_metadata(
     lines.extend(f"- `{source}`" for source in sources)
     lines.extend(["", "## Runs", ""])
     lines.extend(f"- `{name}` from `{src}`" for name, src in sorted(runs.items()))
+    if skipped_incomplete_runs:
+        lines.extend(["", "## Skipped Incomplete Runs", ""])
+        lines.extend(f"- `{path}`" for path in skipped_incomplete_runs)
     lines.append("")
     (out_dir / "baseline_merge_metadata.md").write_text("\n".join(lines), encoding="utf-8")
 
@@ -149,6 +163,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--source", required=True, action="append", type=Path)
     parser.add_argument("--force", action="store_true", help="replace an existing output directory")
+    parser.add_argument(
+        "--skip-incomplete-runs",
+        action="store_true",
+        help="skip source run dirs that do not yet have run_record.json",
+    )
     return parser.parse_args()
 
 
@@ -162,7 +181,10 @@ def main() -> int:
         shutil.rmtree(out_dir)
     out_dir.mkdir(parents=True)
 
-    runs = collect_runs(sources)
+    runs, skipped_incomplete_runs = collect_runs(
+        sources,
+        skip_incomplete_runs=args.skip_incomplete_runs,
+    )
     copied_files: dict[str, list[str]] = {}
     for run_name, source_run in sorted(runs.items()):
         copied_files[run_name] = copy_run_dir(source_run, out_dir / "runs" / run_name)
@@ -171,7 +193,7 @@ def main() -> int:
     if first_metadata.exists():
         shutil.copy2(first_metadata, out_dir / "run_metadata.txt")
     rows = rebuild_summary(out_dir)
-    write_merge_metadata(out_dir, sources, runs, copied_files, rows)
+    write_merge_metadata(out_dir, sources, runs, skipped_incomplete_runs, copied_files, rows)
     print(f"merged {len(runs)} baseline runs into {out_dir}")
     return 0
 
