@@ -1,0 +1,313 @@
+{
+  "analysis_time_utc": "2026-06-18T00:47:47Z",
+  "claim_boundary": "live_snapshot_only; use the normal baseline summary after all runs finish for final comparison claims",
+  "groups": [
+    {
+      "baseline": "aflplusplus_cmplog",
+      "budget": 7200,
+      "max_magma_triggered": 0,
+      "median_execs_done": 693960.5,
+      "median_magma_triggered": 0,
+      "median_trigger_time_s": null,
+      "min_trigger_time_s": null,
+      "reps": 2,
+      "success_rate": 0.0,
+      "successes": 0,
+      "target_id": "PDF003"
+    },
+    {
+      "baseline": "aflplusplus_vanilla",
+      "budget": 7200,
+      "max_magma_triggered": 0,
+      "median_execs_done": 248082.5,
+      "median_magma_triggered": 0,
+      "median_trigger_time_s": null,
+      "min_trigger_time_s": null,
+      "reps": 2,
+      "success_rate": 0.0,
+      "successes": 0,
+      "target_id": "PDF003"
+    },
+    {
+      "baseline": "redqueen_operand",
+      "budget": 7200,
+      "max_magma_triggered": 0,
+      "median_execs_done": 830785.5,
+      "median_magma_triggered": 0,
+      "median_trigger_time_s": null,
+      "min_trigger_time_s": null,
+      "reps": 2,
+      "success_rate": 0.0,
+      "successes": 0,
+      "target_id": "PDF003"
+    }
+  ],
+  "records": [
+    {
+      "baseline": "aflplusplus_cmplog",
+      "budget": 7200,
+      "corpus_count": null,
+      "execs_done": 1373920,
+      "execs_per_sec": 191.46,
+      "live_snapshot": true,
+      "magma_first_reach_time_s": 90,
+      "magma_first_trigger_time_s": null,
+      "magma_monitor": {
+        "bug_id": "PDF003",
+        "first_reach": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_cmplog_7200s_rep1/monitor/90",
+          "kind": "poll",
+          "reached": 796,
+          "time_s": 90,
+          "triggered": 0
+        },
+        "first_trigger": null,
+        "latest": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_cmplog_7200s_rep1/monitor/final",
+          "kind": "final",
+          "reached": 548533,
+          "time_s": null,
+          "triggered": 0
+        },
+        "monitor_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_cmplog_7200s_rep1/monitor",
+        "reached": 548533,
+        "snapshot_count": 239,
+        "triggered": 0
+      },
+      "magma_reached": 548533,
+      "magma_snapshot_count": 239,
+      "magma_triggered": 0,
+      "rep": 1,
+      "run_record": "",
+      "run_time": 7175,
+      "saved_crashes": null,
+      "saved_hangs": null,
+      "success": false,
+      "target_id": "PDF003",
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "baseline": "aflplusplus_cmplog",
+      "budget": 7200,
+      "corpus_count": null,
+      "execs_done": 14001,
+      "execs_per_sec": 114.7,
+      "live_snapshot": true,
+      "magma_first_reach_time_s": 90,
+      "magma_first_trigger_time_s": null,
+      "magma_monitor": {
+        "bug_id": "PDF003",
+        "first_reach": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_cmplog_7200s_rep2/monitor/90",
+          "kind": "poll",
+          "reached": 4898,
+          "time_s": 90,
+          "triggered": 0
+        },
+        "first_trigger": null,
+        "latest": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_cmplog_7200s_rep2/monitor/210",
+          "kind": "poll",
+          "reached": 28445,
+          "time_s": 210,
+          "triggered": 0
+        },
+        "monitor_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_cmplog_7200s_rep2/monitor",
+        "reached": 28445,
+        "snapshot_count": 5,
+        "triggered": 0
+      },
+      "magma_reached": 28445,
+      "magma_snapshot_count": 5,
+      "magma_triggered": 0,
+      "rep": 2,
+      "run_record": "",
+      "run_time": 122,
+      "saved_crashes": null,
+      "saved_hangs": null,
+      "success": false,
+      "target_id": "PDF003",
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "baseline": "aflplusplus_vanilla",
+      "budget": 7200,
+      "corpus_count": null,
+      "execs_done": 487282,
+      "execs_per_sec": 67.91,
+      "live_snapshot": true,
+      "magma_first_reach_time_s": 90,
+      "magma_first_trigger_time_s": null,
+      "magma_monitor": {
+        "bug_id": "PDF003",
+        "first_reach": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_vanilla_7200s_rep1/monitor/90",
+          "kind": "poll",
+          "reached": 8659,
+          "time_s": 90,
+          "triggered": 0
+        },
+        "first_trigger": null,
+        "latest": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_vanilla_7200s_rep1/monitor/final",
+          "kind": "final",
+          "reached": 253025,
+          "time_s": null,
+          "triggered": 0
+        },
+        "monitor_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_vanilla_7200s_rep1/monitor",
+        "reached": 253025,
+        "snapshot_count": 239,
+        "triggered": 0
+      },
+      "magma_reached": 253025,
+      "magma_snapshot_count": 239,
+      "magma_triggered": 0,
+      "rep": 1,
+      "run_record": "",
+      "run_time": 7175,
+      "saved_crashes": null,
+      "saved_hangs": null,
+      "success": false,
+      "target_id": "PDF003",
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "baseline": "aflplusplus_vanilla",
+      "budget": 7200,
+      "corpus_count": null,
+      "execs_done": 8883,
+      "execs_per_sec": 73.39,
+      "live_snapshot": true,
+      "magma_first_reach_time_s": 90,
+      "magma_first_trigger_time_s": null,
+      "magma_monitor": {
+        "bug_id": "PDF003",
+        "first_reach": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_vanilla_7200s_rep2/monitor/90",
+          "kind": "poll",
+          "reached": 558,
+          "time_s": 90,
+          "triggered": 0
+        },
+        "first_trigger": null,
+        "latest": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_vanilla_7200s_rep2/monitor/210",
+          "kind": "poll",
+          "reached": 2599,
+          "time_s": 210,
+          "triggered": 0
+        },
+        "monitor_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/aflplusplus_vanilla_7200s_rep2/monitor",
+        "reached": 2599,
+        "snapshot_count": 5,
+        "triggered": 0
+      },
+      "magma_reached": 2599,
+      "magma_snapshot_count": 5,
+      "magma_triggered": 0,
+      "rep": 2,
+      "run_record": "",
+      "run_time": 121,
+      "saved_crashes": null,
+      "saved_hangs": null,
+      "success": false,
+      "target_id": "PDF003",
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "baseline": "redqueen_operand",
+      "budget": 7200,
+      "corpus_count": null,
+      "execs_done": 1650085,
+      "execs_per_sec": 229.94,
+      "live_snapshot": true,
+      "magma_first_reach_time_s": 90,
+      "magma_first_trigger_time_s": null,
+      "magma_monitor": {
+        "bug_id": "PDF003",
+        "first_reach": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/redqueen_operand_7200s_rep1/monitor/90",
+          "kind": "poll",
+          "reached": 7383,
+          "time_s": 90,
+          "triggered": 0
+        },
+        "first_trigger": null,
+        "latest": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/redqueen_operand_7200s_rep1/monitor/final",
+          "kind": "final",
+          "reached": 654054,
+          "time_s": null,
+          "triggered": 0
+        },
+        "monitor_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/redqueen_operand_7200s_rep1/monitor",
+        "reached": 654054,
+        "snapshot_count": 234,
+        "triggered": 0
+      },
+      "magma_reached": 654054,
+      "magma_snapshot_count": 234,
+      "magma_triggered": 0,
+      "rep": 1,
+      "run_record": "",
+      "run_time": 7176,
+      "saved_crashes": null,
+      "saved_hangs": null,
+      "success": false,
+      "target_id": "PDF003",
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "baseline": "redqueen_operand",
+      "budget": 7200,
+      "corpus_count": null,
+      "execs_done": 11486,
+      "execs_per_sec": 92.99,
+      "live_snapshot": true,
+      "magma_first_reach_time_s": 90,
+      "magma_first_trigger_time_s": null,
+      "magma_monitor": {
+        "bug_id": "PDF003",
+        "first_reach": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/redqueen_operand_7200s_rep2/monitor/90",
+          "kind": "poll",
+          "reached": 559,
+          "time_s": 90,
+          "triggered": 0
+        },
+        "first_trigger": null,
+        "latest": {
+          "file": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/redqueen_operand_7200s_rep2/monitor/210",
+          "kind": "poll",
+          "reached": 9540,
+          "time_s": 210,
+          "triggered": 0
+        },
+        "monitor_dir": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines/magma/redqueen_operand_7200s_rep2/monitor",
+        "reached": 9540,
+        "snapshot_count": 5,
+        "triggered": 0
+      },
+      "magma_reached": 9540,
+      "magma_snapshot_count": 5,
+      "magma_triggered": 0,
+      "rep": 2,
+      "run_record": "",
+      "run_time": 123,
+      "saved_crashes": null,
+      "saved_hangs": null,
+      "success": false,
+      "target_id": "PDF003",
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "run_root": "artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z/baselines",
+  "target_id": "PDF003"
+}
