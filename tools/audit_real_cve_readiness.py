@@ -44,6 +44,8 @@ FIELDS = [
     "source_locations",
     "current_speedup_package",
     "current_benefit",
+    "harness_admissibility_status",
+    "core_evidence_allowed",
     "blockers",
     "next_action",
 ]
@@ -178,6 +180,63 @@ def comparison_records(
         record["_path"] = str(path)
         records.append(record)
     return records
+
+
+def harness_admissibility_records(
+    target_id: str,
+    root: Path = Path("artifacts/formtrig_native_readiness"),
+) -> list[dict[str, Any]]:
+    if not root.exists():
+        return []
+    target_lower = target_id.lower()
+    records: list[dict[str, Any]] = []
+    for path in sorted(root.rglob("*harness_admissibility*.json")):
+        name = path.name.lower()
+        if target_lower not in str(path).lower() and target_lower not in name:
+            continue
+        try:
+            record = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        if str(record.get("target_id", target_id)) != target_id:
+            continue
+        if str(record.get("schema", "")) not in {"", "formtrig_harness_admissibility_v1"}:
+            continue
+        record["_path"] = str(path)
+        records.append(record)
+    return records
+
+
+def harness_rejects_core_evidence(records: list[dict[str, Any]]) -> bool:
+    for record in records:
+        if record.get("core_evidence_allowed") is False:
+            return True
+        if str(record.get("status", "")) == "inadmissible_core_evidence":
+            return True
+    return False
+
+
+def harness_admissibility_status(records: list[dict[str, Any]]) -> str:
+    statuses = []
+    for record in records:
+        status = str(record.get("status") or "unknown")
+        path = record.get("_path")
+        statuses.append(f"{status}@{path}" if path else status)
+    return "; ".join(statuses)
+
+
+def harness_admissibility_blocker(records: list[dict[str, Any]]) -> str:
+    for record in records:
+        status = str(record.get("status", ""))
+        if (
+            record.get("core_evidence_allowed") is False
+            or status == "inadmissible_core_evidence"
+        ):
+            status = record.get("status") or "unknown"
+            path = record.get("_path") or ""
+            summary = record.get("summary") or "core evidence is not allowed by harness admissibility audit"
+            return f"harness admissibility rejects core evidence: {status}@{path}: {summary}"
+    return ""
 
 
 def speedup_comparison(records: list[dict[str, Any]]) -> dict[str, Any] | None:
@@ -348,9 +407,12 @@ def audit_target(
     project = str(cve.get("project") or discovery.get("project") or "")
     category = str(cve.get("initial_tc_category") or discovery.get("primary_category") or "")
     existing_disposition = str(discovery.get("existing_disposition") or "")
+    harness_records = harness_admissibility_records(target_id)
+    harness_rejected = harness_rejects_core_evidence(harness_records)
     demoted = (
         discovery.get("lane") == "control_or_negative"
         or existing_disposition.startswith("demote")
+        or harness_rejected
     )
     rnt_root = Path("artifacts/rnt_corpus") / target_id
     manifest_path = rnt_root / "manifest.json"
@@ -394,7 +456,11 @@ def audit_target(
 
     blockers: list[str] = []
     if demoted:
-        blockers.append(f"existing discovery triage demotes this target: {existing_disposition or discovery.get('lane')}")
+        if discovery.get("lane") == "control_or_negative" or existing_disposition.startswith("demote"):
+            blockers.append(f"existing discovery triage demotes this target: {existing_disposition or discovery.get('lane')}")
+        harness_blocker = harness_admissibility_blocker(harness_records)
+        if harness_blocker:
+            blockers.append(harness_blocker)
     if not rnt_ready:
         blockers.append("no formal RNT seed with R=1,T=0")
     if not binary_dt_gap:
@@ -494,6 +560,8 @@ def audit_target(
         "source_locations": "; ".join(source_locations),
         "current_speedup_package": best_speedup.get("_path", "") if best_speedup else "",
         "current_benefit": speedup_benefit(best_speedup),
+        "harness_admissibility_status": harness_admissibility_status(harness_records),
+        "core_evidence_allowed": not harness_rejected if harness_records else True,
         "blockers": "; ".join(blockers),
         "next_action": next_action,
         "paths": {
@@ -504,6 +572,7 @@ def audit_target(
             "binding_specs": binding_specs,
             "binding_validation_records": [record.get("_path", "") for record in validation_records],
             "comparison_records": [record.get("_path", "") for record in comparisons],
+            "harness_admissibility_records": [record.get("_path", "") for record in harness_records],
             "atom": str(atom_path),
             "tcir": str(tcir_path),
             "trigger_graph": str(trigger_graph_path),
