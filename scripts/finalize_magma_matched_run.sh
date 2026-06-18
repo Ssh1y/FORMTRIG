@@ -9,6 +9,7 @@ duration=""
 reps=""
 baselines=""
 run_root=""
+baseline_dir=""
 guidance_out=""
 comparison_out=""
 mode="execute"
@@ -27,6 +28,7 @@ options:
   --duration SEC        override metadata per-arm duration
   --reps N              override metadata repetition count
   --baselines LIST      override metadata baseline ids
+  --baseline-dir DIR    baseline summary/evidence root, default RUN_ROOT/baselines
   --guidance-out DIR    guidance-gap output, default RUN_ROOT/baseline_guidance_gap
   --comparison-out DIR  comparison output, default RUN_ROOT/comparison
   --mode MODE           execute|dry-run, default execute
@@ -189,6 +191,10 @@ while [[ $# -gt 0 ]]; do
       baselines="${2:-}"
       shift 2
       ;;
+    --baseline-dir)
+      baseline_dir="${2:-}"
+      shift 2
+      ;;
     --guidance-out)
       guidance_out="${2:-}"
       shift 2
@@ -256,7 +262,11 @@ else
 fi
 
 formtrig_out="$run_root/formtrig"
-baseline_out="$run_root/baselines"
+if [[ -z "$baseline_dir" ]]; then
+  baseline_out="$run_root/baselines"
+else
+  baseline_out="$(abs_path "$baseline_dir")"
+fi
 gate_out="$run_root/formtrig_gate"
 logs_dir="$run_root/logs"
 plan_jsonl="$run_root/finalize_plan.jsonl"

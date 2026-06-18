@@ -13,6 +13,7 @@ class FinalizeMagmaMatchedRunTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             run_root = root / "run"
+            baseline_dir = root / "merged_baselines"
             guidance_out = root / "guidance"
             comparison_out = root / "comparison"
             run_root.mkdir()
@@ -35,6 +36,8 @@ class FinalizeMagmaMatchedRunTest(unittest.TestCase):
                     str(REPO_ROOT / "scripts" / "finalize_magma_matched_run.sh"),
                     "--run-root",
                     str(run_root),
+                    "--baseline-dir",
+                    str(baseline_dir),
                     "--guidance-out",
                     str(guidance_out),
                     "--comparison-out",
@@ -75,6 +78,8 @@ class FinalizeMagmaMatchedRunTest(unittest.TestCase):
         self.assertIn("package_magma_matched_evidence.py", plan)
         self.assertIn("rep1=", plan)
         self.assertIn("rep2=", plan)
+        self.assertIn(str(baseline_dir / "summary.json"), plan)
+        self.assertIn("--baseline-dir " + str(baseline_dir), plan)
         self.assertIn(str(guidance_out), plan)
         self.assertIn(str(comparison_out), plan)
 
