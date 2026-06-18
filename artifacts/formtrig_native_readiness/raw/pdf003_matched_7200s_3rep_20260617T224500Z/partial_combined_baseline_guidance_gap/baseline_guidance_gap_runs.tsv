@@ -1,0 +1,10 @@
+source_label	target_id	baseline	budget	rep	success	trigger_time_s	terminal_count	first_reach_time_s	first_reach_count	first_trigger_time_s	latest_reached	latest_triggered	reached_without_trigger_count	post_reach_observation_time_s	zero_trigger_reached_snapshots	empirical_trigger_rate_per_reach	rule_of_three_trigger_rate_95_upper_bound	pretrigger_binary_flat	pretrigger_binary_reason	reach_to_trigger_gap_s	live_snapshot	run_record
+combined_live	PDF003	aflplusplus_cmplog	7200	1	false		0	90.0	796		548533	0	548533	7085.0	239	0.0	5.469133124169375e-06	true	first_reach_snapshot_has_R_without_T		true	
+combined_live	PDF003	aflplusplus_cmplog	7200	2	false		0	90.0	4898		404401	0	404401	3900.0	131	0.0	7.418379281950341e-06	true	first_reach_snapshot_has_R_without_T		true	
+combined_live	PDF003	aflplusplus_cmplog	7200	3	false		0	90.0	557		20897	0	20897	480.0	17	0.0	0.00014356127673828778	true	first_reach_snapshot_has_R_without_T		true	
+combined_live	PDF003	aflplusplus_vanilla	7200	1	false		0	90.0	8659		253025	0	253025	7085.0	239	0.0	1.1856535915423377e-05	true	first_reach_snapshot_has_R_without_T		true	
+combined_live	PDF003	aflplusplus_vanilla	7200	2	false		0	90.0	558		17707	0	17707	3900.0	131	0.0	0.00016942452137572712	true	first_reach_snapshot_has_R_without_T		true	
+combined_live	PDF003	aflplusplus_vanilla	7200	3	false		0	90.0	5973		58023	0	58023	480.0	17	0.0	5.1703634765524014e-05	true	first_reach_snapshot_has_R_without_T		true	
+combined_live	PDF003	redqueen_operand	7200	1	false		0	90.0	7383		654054	0	654054	7086.0	234	0.0	4.586777238576631e-06	true	first_reach_snapshot_has_R_without_T		true	
+combined_live	PDF003	redqueen_operand	7200	2	false		0	90.0	559		167012	0	167012	3900.0	131	0.0	1.7962781117524488e-05	true	first_reach_snapshot_has_R_without_T		true	
+combined_live	PDF003	redqueen_operand	7200	3	false		0	90.0	557		33789	0	33789	480.0	17	0.0	8.878629139660837e-05	true	first_reach_snapshot_has_R_without_T		true	
