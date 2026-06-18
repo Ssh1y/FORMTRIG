@@ -182,8 +182,8 @@ def formtrig_runs(run_root: Path, target_id: str) -> list[dict[str, Any]]:
 BASELINE_RE = re.compile(r"(?P<baseline>.+)_(?P<duration>\d+)s_rep(?P<rep>\d+)$")
 
 
-def baseline_runs(run_root: Path, target_id: str) -> list[dict[str, Any]]:
-    root = run_root / "baselines" / "magma"
+def baseline_runs(baseline_root: Path, target_id: str) -> list[dict[str, Any]]:
+    root = baseline_root / "magma"
     runs: list[dict[str, Any]] = []
     for run_dir in sorted(root.iterdir() if root.is_dir() else []):
         if not run_dir.is_dir():
@@ -206,6 +206,7 @@ def baseline_runs(run_root: Path, target_id: str) -> list[dict[str, Any]]:
         runs.append(
             {
                 "run": run_dir.name,
+                "source_root": str(baseline_root),
                 "baseline": match.group("baseline"),
                 "duration_s": int(match.group("duration")),
                 "rep": int(match.group("rep")),
@@ -225,6 +226,19 @@ def baseline_runs(run_root: Path, target_id: str) -> list[dict[str, Any]]:
             }
         )
     return runs
+
+
+def duplicate_run_names(rows: list[dict[str, Any]]) -> list[str]:
+    seen: set[str] = set()
+    duplicates: set[str] = set()
+    for row in rows:
+        name = str(row.get("run") or "")
+        if not name:
+            continue
+        if name in seen:
+            duplicates.add(name)
+        seen.add(name)
+    return sorted(duplicates)
 
 
 def group_baselines(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -300,9 +314,18 @@ def schedule_status(
     }
 
 
-def summarize(run_root: Path, target_id: str) -> dict[str, Any]:
+def summarize(
+    run_root: Path,
+    target_id: str,
+    baseline_dirs: list[Path] | None = None,
+) -> dict[str, Any]:
     formtrig = formtrig_runs(run_root, target_id)
-    baselines = baseline_runs(run_root, target_id)
+    baseline_roots = baseline_dirs if baseline_dirs else [run_root / "baselines"]
+    baselines = [
+        row
+        for baseline_root in baseline_roots
+        for row in baseline_runs(baseline_root, target_id)
+    ]
     metadata_path = run_root / "run_metadata.json"
     metadata = {}
     if metadata_path.exists():
@@ -314,6 +337,8 @@ def summarize(run_root: Path, target_id: str) -> dict[str, Any]:
         "snapshot_time_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "target_id": target_id,
         "run_root": str(run_root),
+        "baseline_root": str(baseline_roots[0]),
+        "baseline_roots": [str(root) for root in baseline_roots],
         "metadata": metadata,
         "formtrig": {
             "runs": formtrig,
@@ -334,6 +359,7 @@ def summarize(run_root: Path, target_id: str) -> dict[str, Any]:
             "groups": group_baselines(baselines),
             "run_count": len(baselines),
             "triggered_runs": sum(1 for row in baselines if int_value(row.get("triggered")) > 0),
+            "duplicate_runs": duplicate_run_names(baselines),
         },
         "schedule": schedule_status(run_root, metadata, baselines),
         "status_boundary": (
@@ -362,6 +388,7 @@ def to_markdown(payload: dict[str, Any]) -> str:
         "",
         f"- snapshot: `{payload['snapshot_time_utc']}`",
         f"- run root: `{payload['run_root']}`",
+        f"- baseline roots: `{', '.join(payload['baseline_roots'])}`",
         f"- boundary: {payload['status_boundary']}",
         "",
         "## Schedule",
@@ -462,6 +489,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Summarize live Magma matched-run status.")
     parser.add_argument("--target-id", required=True)
     parser.add_argument("--run-root", required=True)
+    parser.add_argument(
+        "--baseline-dir",
+        action="append",
+        help="baseline root containing magma/; may be repeated for sharded live runs",
+    )
     parser.add_argument("--format", choices=["json", "md"], default="md")
     parser.add_argument("--out-json")
     parser.add_argument("--out-md")
@@ -470,7 +502,11 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    payload = summarize(Path(args.run_root), args.target_id)
+    payload = summarize(
+        Path(args.run_root),
+        args.target_id,
+        [Path(path) for path in args.baseline_dir] if args.baseline_dir else None,
+    )
     if args.out_json:
         Path(args.out_json).parent.mkdir(parents=True, exist_ok=True)
         Path(args.out_json).write_text(

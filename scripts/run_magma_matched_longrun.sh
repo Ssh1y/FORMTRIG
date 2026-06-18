@@ -493,6 +493,7 @@ LIVE_STATUS_CMD=(
   python3 "$repo_root/tools/live_magma_matched_status.py"
   --target-id "$target_id"
   --run-root "$out_dir"
+  --baseline-dir "$baseline_out"
   --format "md"
   --out-json "$out_dir/live_status.json"
   --out-md "$out_dir/live_status.md"

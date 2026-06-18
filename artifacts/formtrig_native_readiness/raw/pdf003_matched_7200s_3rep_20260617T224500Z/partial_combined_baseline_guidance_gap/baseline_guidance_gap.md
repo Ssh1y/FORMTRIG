@@ -3,7 +3,7 @@
 - target: `PDF003`
 - status: `live_snapshot_only`
 - interpretation: live baseline evidence is provisional and cannot support a final hard-pain claim
-- fastest successful baseline `_T`: `None`
+- fastest successful baseline `_T`: `4530.0`
 - pre-trigger binary flatness measured: `True`
 - pre-trigger binary flatness pass: `True`
 - endpoint cost pass: `True`
@@ -19,9 +19,9 @@
 
 | baseline | budget | reps | success rate | min T | median T | max T | missing | flat pre-T runs | total R | total T | empirical T/R | zero-T 95% upper bound |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| aflplusplus_cmplog | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 1050336 | 0 | 0 | 2.85623e-06 |
-| aflplusplus_vanilla | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 396457 | 0 | 0 | 7.56702e-06 |
-| redqueen_operand | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 874796 | 0 | 0 | 3.42937e-06 |
+| aflplusplus_cmplog | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 1125007 | 0 | 0 | 2.66665e-06 |
+| aflplusplus_vanilla | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 442642 | 0 | 0 | 6.77749e-06 |
+| redqueen_operand | 7200 | 3 | 0.333 | 4530.0 | 4530.0 | 4530.0 | 2 | 3/3 | 973772 | 18 | 1.84848e-05 |  |
 
 ## Random-Hit Proxy
 
@@ -30,9 +30,9 @@ When a baseline has many reached executions and zero trigger executions, the rul
 
 | baseline | reached without T | zero-T reached runs | median post-reach window | total post-reach window |
 | --- | ---: | ---: | ---: | ---: |
-| aflplusplus_cmplog | 1050336 | 3/3 runs | 4230.0 | 12095.0 |
-| aflplusplus_vanilla | 396457 | 3/3 runs | 4230.0 | 12095.0 |
-| redqueen_operand | 874796 | 3/3 runs | 4200.0 | 12066.0 |
+| aflplusplus_cmplog | 1125007 | 3/3 runs | 5040.0 | 13745.0 |
+| aflplusplus_vanilla | 442642 | 3/3 runs | 5040.0 | 13745.0 |
+| redqueen_operand | 973754 | 2/3 runs | 4440.0 | 13146.0 |
 
 ## Claim Boundary
 

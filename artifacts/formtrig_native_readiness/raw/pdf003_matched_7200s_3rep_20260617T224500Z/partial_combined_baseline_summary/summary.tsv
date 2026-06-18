@@ -1,10 +1,10 @@
 target_id	baseline	budget	rep	success	trigger_time_s	trigger_time_kind	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	magma_reached	magma_triggered	magma_first_reach_time_s	magma_first_trigger_time_s	magma_snapshot_count
 PDF003	aflplusplus_cmplog	7200	1	false	NA	NA	7175	1373920	191.46	NA	NA	NA	548533	0	90	NA	239
-PDF003	aflplusplus_cmplog	7200	2	false	NA	NA	4244	917291	216.09	NA	NA	NA	428553	0	90	NA	142
-PDF003	aflplusplus_cmplog	7200	3	false	NA	NA	835	183813	219.97	NA	NA	NA	47608	0	90	NA	27
+PDF003	aflplusplus_cmplog	7200	2	false	NA	NA	5065	1136181	224.28	NA	NA	NA	475229	0	90	NA	169
+PDF003	aflplusplus_cmplog	7200	3	false	NA	NA	1638	424092	258.84	NA	NA	NA	101245	0	90	NA	54
 PDF003	aflplusplus_vanilla	7200	1	false	NA	NA	7175	487282	67.91	NA	NA	NA	253025	0	90	NA	239
-PDF003	aflplusplus_vanilla	7200	2	false	NA	NA	4213	81954	19.45	NA	NA	NA	18372	0	90	NA	142
-PDF003	aflplusplus_vanilla	7200	3	false	NA	NA	833	84472	101.32	NA	NA	NA	120434	0	90	NA	27
+PDF003	aflplusplus_vanilla	7200	2	false	NA	NA	5056	83957	16.6	NA	NA	NA	19982	0	90	NA	169
+PDF003	aflplusplus_vanilla	7200	3	false	NA	NA	1593	188550	118.34	NA	NA	NA	169635	0	90	NA	55
 PDF003	redqueen_operand	7200	1	false	NA	NA	7176	1650085	229.94	NA	NA	NA	654054	0	90	NA	234
-PDF003	redqueen_operand	7200	2	false	NA	NA	4216	789596	187.25	NA	NA	NA	167023	0	90	NA	141
-PDF003	redqueen_operand	7200	3	false	NA	NA	788	224642	284.89	NA	NA	NA	49226	0	90	NA	27
+PDF003	redqueen_operand	7200	2	true	4530	magma_monitor_upper_bound	5082	988017	194.4	NA	NA	NA	212464	18	90	4530	169
+PDF003	redqueen_operand	7200	3	false	NA	NA	1651	420343	254.47	NA	NA	NA	107254	0	90	NA	54
