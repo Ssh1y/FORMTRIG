@@ -19,9 +19,9 @@
 
 | baseline | budget | reps | success rate | min T | median T | max T | missing | flat pre-T runs | total R | total T | empirical T/R | zero-T 95% upper bound |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| aflplusplus_cmplog | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 973831 | 0 | 0 | 3.08062e-06 |
-| aflplusplus_vanilla | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 328755 | 0 | 0 | 9.12534e-06 |
-| redqueen_operand | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 854855 | 0 | 0 | 3.50937e-06 |
+| aflplusplus_cmplog | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 1050336 | 0 | 0 | 2.85623e-06 |
+| aflplusplus_vanilla | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 396457 | 0 | 0 | 7.56702e-06 |
+| redqueen_operand | 7200 | 3 | 0.000 |  |  |  | 3 | 3/3 | 874796 | 0 | 0 | 3.42937e-06 |
 
 ## Random-Hit Proxy
 
@@ -30,9 +30,9 @@ When a baseline has many reached executions and zero trigger executions, the rul
 
 | baseline | reached without T | zero-T reached runs | median post-reach window | total post-reach window |
 | --- | ---: | ---: | ---: | ---: |
-| aflplusplus_cmplog | 973831 | 3/3 runs | 3900.0 | 11465.0 |
-| aflplusplus_vanilla | 328755 | 3/3 runs | 3900.0 | 11465.0 |
-| redqueen_operand | 854855 | 3/3 runs | 3900.0 | 11466.0 |
+| aflplusplus_cmplog | 1050336 | 3/3 runs | 4230.0 | 12095.0 |
+| aflplusplus_vanilla | 396457 | 3/3 runs | 4230.0 | 12095.0 |
+| redqueen_operand | 874796 | 3/3 runs | 4200.0 | 12066.0 |
 
 ## Claim Boundary
 

@@ -6,7 +6,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tools.analyze_baseline_guidance_gap import load_baseline_rows, target_analysis
+from tools.analyze_baseline_guidance_gap import (
+    load_baseline_rows,
+    target_analysis,
+    write_run_tsv,
+)
 
 
 class BaselineGuidanceGapTest(unittest.TestCase):
@@ -238,6 +242,33 @@ class BaselineGuidanceGapTest(unittest.TestCase):
         self.assertEqual(analysis["status"], "not_measured")
         self.assertFalse(analysis["pretrigger_binary_flat_measured"])
         self.assertIn("pretrigger_binary_flatness_not_measured_for_all_runs", analysis["reasons"])
+
+    def test_run_tsv_uses_explicit_na_for_missing_trailing_fields(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "runs.tsv"
+            write_run_tsv(
+                out,
+                [
+                    {
+                        "source_label": "matched",
+                        "target_id": "TGT",
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 7200,
+                        "rep": 1,
+                        "success": False,
+                        "trigger_time_s": None,
+                        "live_snapshot": True,
+                        "run_record": "",
+                    }
+                ],
+            )
+
+            lines = out.read_text(encoding="utf-8").splitlines()
+
+        self.assertEqual(len(lines), 2)
+        self.assertFalse(lines[1].endswith("\t"))
+        self.assertIn("\tNA\t", lines[1])
+        self.assertTrue(lines[1].endswith("\tNA"))
 
 
 if __name__ == "__main__":
