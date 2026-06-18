@@ -8,7 +8,7 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-18T13:34:45+00:00",
+  "generated_at_utc": "2026-06-18T14:01:51+00:00",
   "inputs": {
     "active_runs": "",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
@@ -1019,7 +1019,9 @@
       ],
       "blocking_issue": [
         "no FORMTRIG terminal success is established",
-        "FORMTRIG first `_T`/TTE is not recorded for this run"
+        "FORMTRIG first `_T`/TTE is not recorded for this run",
+        "producer role has no positive candidate signal: desired_producer",
+        "pre-trigger guidance does not yet close R-to-T; repair BindingSpec producer or input hot-range before endpoint spending"
       ],
       "category": "compound-sequence-lifecycle+numeric-margin",
       "claim_boundary": "This is a repair target, not a performance target. Do not rerun the same matched short screen until FORMTRIG terminal success or a revised BindingSpec/typed mutation is available.",
@@ -1028,12 +1030,15 @@
       "current_primary_benefits": [],
       "duration_s": "",
       "evidence_paths": [
+        "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json",
         "artifacts/formtrig_native_readiness/comparisons/php003_validated_short_600s_1rep_r2/comparison.json",
+        "artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
         "artifacts/magma_canary_inventory.json"
       ],
       "lane": "short_triage_ready",
       "mechanism_evidence_required": [
-        "strict_pretrigger_guidance"
+        "strict_pretrigger_guidance",
+        "producer role constant-zero diagnosis"
       ],
       "post_unblock_commands": [
         "replay FORMTRIG saved non-trigger queue entries and inspect which role blocks _T",

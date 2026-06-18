@@ -525,6 +525,94 @@ class MagmaBindingValidationWorkflowTest(unittest.TestCase):
             self.assertEqual(record["blockers"], [])
             self.assertEqual(record["next_action"], "run the benefit-first short endpoint screen against faithful AFL++ family baselines")
 
+    def test_summarizer_routes_constant_zero_producer_to_terminal_repair(self):
+        summarizer = load_tool("summarize_binding_candidate_sweep")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            out_dir = root / "out"
+            out_dir.mkdir()
+            (out_dir / "formtrig_mutation_hook.json").write_text(
+                json.dumps({"enabled": False, "source": "none"}) + "\n",
+                encoding="utf-8",
+            )
+            summary = root / "summary.jsonl"
+            summary.write_text(
+                json.dumps(
+                    {
+                        "index": 1,
+                        "score": 572400,
+                        "candidate": "PHP003.yml",
+                        "out_dir": str(out_dir),
+                        "exit_code": 0,
+                        "diagnosis": "queued_tc_rooted_progress",
+                        "experiment_ready": True,
+                        "pretrigger_lift_guidance_ready": True,
+                        "has_non_trigger_progress": True,
+                        "non_trigger_progress_events": 4,
+                        "saved_non_trigger_progress_events": 4,
+                        "saved_triggered_progress_events": 0,
+                        "execs_done": 26636,
+                        "reached_execs": 20833,
+                        "triggered_execs": 0,
+                        "binding_signal_status": "pass",
+                        "binding_signal_diagnosis": "role_signal_progress_observed",
+                        "candidate_events": 4090,
+                        "accepted_non_trigger_progress_events": 4,
+                        "non_trigger_candidate_lift_delta": True,
+                        "lift_delta_only_on_triggered_candidates": False,
+                        "semantic_candidate_variable_roles": 3,
+                        "binding_signal_json": {
+                            "atoms": [
+                                {
+                                    "atom_id": 1,
+                                    "roles": [
+                                        {
+                                            "role": "desired_producer",
+                                            "samples": 2395,
+                                            "candidate_samples": 2387,
+                                            "values": [0],
+                                            "candidate_values": [0],
+                                        },
+                                        {
+                                            "role": "root_observe",
+                                            "samples": 4102,
+                                            "candidate_samples": 4090,
+                                            "values": [0, 1],
+                                            "candidate_values": [0, 1],
+                                        },
+                                    ],
+                                }
+                            ]
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            row = summarizer.best_row(summarizer.read_jsonl(summary))
+            record = summarizer.build_record(
+                row=row,
+                target_id="PHP003",
+                binding_spec="PHP003.yml",
+                site_map="site_map.tsv",
+                summary_jsonl=summary,
+            )
+
+            self.assertEqual(record["status"], "needs_terminal_repair")
+            self.assertFalse(record["ready_for_short_gate"])
+            self.assertTrue(record["checks"]["producer_constant_zero"])
+            self.assertFalse(record["checks"]["typed_mutation_hook_enabled"])
+            self.assertEqual(record["producer_signal"]["constant_zero_roles"], ["desired_producer"])
+            self.assertIn(
+                "producer role has no positive candidate signal: desired_producer",
+                record["blockers"],
+            )
+            self.assertEqual(
+                record["next_action"],
+                "repair the BindingSpec producer/input hot-range path and rerun the candidate sweep before matched baselines",
+            )
+
     def test_summarizer_distinguishes_terminal_only_with_variable_semantic_roles(self):
         summarizer = load_tool("summarize_binding_candidate_sweep")
         with tempfile.TemporaryDirectory() as tmp:

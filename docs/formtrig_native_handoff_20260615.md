@@ -133,6 +133,22 @@ terminal”的闭环：frontier 从 root-only 推进到 root+guard+use，但 pro
 优先修 BindingSpec producer/input-influence/hot-range 或 typed mutation 的字段定位，
 而不是重复跑同一 600s matched baseline。
 
+同日已把 PHP003 的 validation/worklist gate 收紧，防止 strict pre-trigger
+guidance 被误调度成 endpoint 性能比较：
+
+```text
+artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json
+  status = needs_terminal_repair
+  ready_for_short_gate = false
+  producer_constant_zero = true
+  typed_mutation_hook_enabled = false
+  blocker = producer role has no positive candidate signal: desired_producer
+
+artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260618.json
+  PHP003 action = repair_guidance_to_terminal
+  runnable_now = false
+```
+
 当前要找的是 `baseline_guidance_gap.status=measured_pass` 且 FORMTRIG 也能
 terminal success 的 target：flat pre-`_T` signal 加上 late/missing/high-variance
 baseline endpoint，再加 FORMTRIG first `_T`/success-rate 收益。

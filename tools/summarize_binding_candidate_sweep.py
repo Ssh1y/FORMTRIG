@@ -10,6 +10,9 @@ from pathlib import Path
 from typing import Any
 
 
+PRODUCER_ROLES = {"producer", "desired_producer", "opposite_producer"}
+
+
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     with path.open(encoding="utf-8") as handle:
@@ -41,6 +44,96 @@ def number(value: Any, default: int = 0) -> int:
         return default
 
 
+def unique(values: list[str]) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        if value and value not in seen:
+            out.append(value)
+            seen.add(value)
+    return out
+
+
+def int_values(value: Any) -> set[int]:
+    if not isinstance(value, list):
+        return set()
+    values: set[int] = set()
+    for item in value:
+        try:
+            values.add(int(item))
+        except (TypeError, ValueError):
+            continue
+    return values
+
+
+def binding_signal_atoms(row: dict[str, Any]) -> list[dict[str, Any]]:
+    signal = row.get("binding_signal_json")
+    if not isinstance(signal, dict):
+        return []
+    atoms = signal.get("atoms")
+    if not isinstance(atoms, list):
+        return []
+    return [atom for atom in atoms if isinstance(atom, dict)]
+
+
+def producer_role_signal(row: dict[str, Any]) -> dict[str, Any]:
+    observed: list[str] = []
+    variable: list[str] = []
+    nonzero: list[str] = []
+    constant_zero: list[str] = []
+    for atom in binding_signal_atoms(row):
+        roles = atom.get("roles")
+        if not isinstance(roles, list):
+            continue
+        for role in roles:
+            if not isinstance(role, dict):
+                continue
+            role_name = str(role.get("role") or "")
+            if role_name not in PRODUCER_ROLES:
+                continue
+            candidate_samples = number(role.get("candidate_samples"))
+            samples = number(role.get("samples"))
+            if candidate_samples > 0:
+                values = int_values(role.get("candidate_values"))
+            else:
+                values = int_values(role.get("values"))
+            if not values and samples <= 0:
+                continue
+            observed.append(role_name)
+            if len(values) > 1:
+                variable.append(role_name)
+            if any(item != 0 for item in values):
+                nonzero.append(role_name)
+            if values and all(item == 0 for item in values):
+                constant_zero.append(role_name)
+    return {
+        "observed_roles": unique(observed),
+        "variable_roles": unique(variable),
+        "nonzero_roles": unique(nonzero),
+        "constant_zero_roles": unique(constant_zero),
+    }
+
+
+def mutation_hook_info(row: dict[str, Any]) -> dict[str, Any]:
+    out_dir = str(row.get("out_dir") or "")
+    if not out_dir:
+        return {"available": False}
+    path = Path(out_dir) / "formtrig_mutation_hook.json"
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"available": False, "path": str(path)}
+    if not isinstance(payload, dict):
+        return {"available": False, "path": str(path)}
+    return {
+        "available": True,
+        "path": str(path),
+        "enabled": boolish(payload.get("enabled")),
+        "source": payload.get("source"),
+        "sha256": payload.get("sha256"),
+    }
+
+
 def best_row(rows: list[dict[str, Any]]) -> dict[str, Any]:
     if not rows:
         raise ValueError("candidate sweep summary contains no rows")
@@ -54,7 +147,10 @@ def status_for(row: dict[str, Any]) -> str:
     binding_signal_pass = str(row.get("binding_signal_status") or "") == "pass"
     terminal_triggered = number(row.get("triggered_execs")) > 0
     semantic_variable_roles = number(row.get("semantic_candidate_variable_roles")) > 0
+    producer_signal = producer_role_signal(row)
     if exit_code == 0 and experiment_ready and pretrigger and binding_signal_pass:
+        if not terminal_triggered and producer_signal["constant_zero_roles"]:
+            return "needs_terminal_repair"
         return "native_binding_validated"
     if terminal_triggered and not pretrigger:
         if semantic_variable_roles:
@@ -84,6 +180,8 @@ def build_record(
     terminal_triggered = number(row.get("triggered_execs")) > 0
     binding_signal_pass = str(row.get("binding_signal_status") or "") == "pass"
     native_static_pass = exit_code == 0
+    producer_signal = producer_role_signal(row)
+    mutation_hook = mutation_hook_info(row)
 
     return {
         "schema": "formtrig_binding_candidate_validation_v1",
@@ -104,6 +202,8 @@ def build_record(
             "non_trigger_candidate_lift_delta": boolish(row.get("non_trigger_candidate_lift_delta")),
             "lift_delta_only_on_triggered": boolish(row.get("lift_delta_only_on_triggered_candidates")),
             "terminal_triggered": terminal_triggered,
+            "producer_constant_zero": bool(producer_signal["constant_zero_roles"]),
+            "typed_mutation_hook_enabled": mutation_hook.get("enabled"),
         },
         "native_site_map": {
             "path": site_map,
@@ -127,6 +227,8 @@ def build_record(
             "accepted_non_trigger_progress_events": number(row.get("accepted_non_trigger_progress_events")),
             "semantic_candidate_variable_roles": number(row.get("semantic_candidate_variable_roles")),
         },
+        "producer_signal": producer_signal,
+        "mutation_hook": mutation_hook,
         "benefit_readout": {
             "terminal_triggered": terminal_triggered,
             "pretrigger_lift_guidance_ready": pretrigger,
@@ -152,6 +254,7 @@ def blockers_for(status: str, row: dict[str, Any]) -> list[str]:
     if status == "native_binding_validated":
         return []
     blockers: list[str] = []
+    producer_signal = producer_role_signal(row)
     if number(row.get("exit_code")) != 0:
         blockers.append(f"candidate sweep exited with {number(row.get('exit_code'))}")
     if str(row.get("binding_signal_status") or "") != "pass":
@@ -171,6 +274,12 @@ def blockers_for(status: str, row: dict[str, Any]) -> list[str]:
         blockers.append(
             "semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed"
         )
+    if status == "needs_terminal_repair":
+        roles = ", ".join(producer_signal["constant_zero_roles"]) or "producer"
+        blockers.append(f"producer role has no positive candidate signal: {roles}")
+        blockers.append(
+            "pre-trigger guidance does not yet close R-to-T; repair BindingSpec producer or input hot-range before endpoint spending"
+        )
     return blockers
 
 
@@ -181,12 +290,16 @@ def limitations_for(status: str, row: dict[str, Any]) -> list[str]:
     ]
     if status == "native_binding_validated" and number(row.get("accepted_non_trigger_progress_events")) == 0:
         limitations.append("binding-signal pass has no accepted non-trigger progress events in this summary")
+    if status == "needs_terminal_repair":
+        limitations.append("candidate sweep showed pre-trigger movement but a producer role stayed constant zero")
     return limitations
 
 
 def next_action_for(status: str) -> str:
     if status == "native_binding_validated":
         return "run the benefit-first short endpoint screen against faithful AFL++ family baselines"
+    if status == "needs_terminal_repair":
+        return "repair the BindingSpec producer/input hot-range path and rerun the candidate sweep before matched baselines"
     if status in {
         "terminal_only_no_pretrigger_guidance",
         "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
@@ -209,6 +322,8 @@ def write_markdown(path: Path, record: dict[str, Any]) -> None:
         f"- Pre-trigger guidance ready: `{checks.get('pretrigger_lift_guidance_ready')}`",
         f"- Accepted non-trigger progress: `{record['binding_signal'].get('accepted_non_trigger_progress_events')}`",
         f"- Terminal triggered: `{benefit.get('terminal_triggered')}`",
+        f"- Producer constant zero: `{checks.get('producer_constant_zero')}`",
+        f"- Typed mutation hook enabled: `{checks.get('typed_mutation_hook_enabled')}`",
         "",
         "## Blockers",
         "",

@@ -13,7 +13,7 @@ set -euo pipefail
 
 # P1 PHP003 repair_guidance_to_terminal
 # benefit: The matched short screen already showed strict pre-trigger FORMTRIG guidance and baseline no-guidance pain, but FORMTRIG did not reach terminal _T. Convert the saved non-trigger frontier into a terminal same-oracle outcome before spending another matched-baseline budget.
-# blocked: no FORMTRIG terminal success is established; FORMTRIG first `_T`/TTE is not recorded for this run
+# blocked: no FORMTRIG terminal success is established; FORMTRIG first `_T`/TTE is not recorded for this run; producer role has no positive candidate signal: desired_producer; pre-trigger guidance does not yet close R-to-T; repair BindingSpec producer or input hot-range before endpoint spending
 # post-unblock: replay FORMTRIG saved non-trigger queue entries and inspect which role blocks _T
 # post-unblock: repair BindingSpec or typed mutation so the non-trigger frontier can cross R2T
 # post-unblock: run a FORMTRIG-only terminal gate before repeating faithful baselines

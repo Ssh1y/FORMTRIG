@@ -1313,8 +1313,32 @@ def expand_hard_evidence_task(
 def repair_guidance_to_terminal_task(
     row: dict[str, Any],
     comparison: dict[str, Any] | None,
+    validation: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     summary = comparison_summary(comparison)
+    blocking_issue = summary["blocked_claims"] or [
+        "FORMTRIG terminal _T missing after strict pre-trigger guidance"
+    ]
+    if validation:
+        blocking_issue = add_unique(
+            list(blocking_issue),
+            binding_validation_blockers(row, validation),
+        )
+    mechanism_evidence = summary["design_evidence"] or [
+        "strict pre-trigger D_F progress",
+        "saved non-trigger frontier replay",
+        "typed mutation provenance",
+    ]
+    producer_signal = (
+        validation.get("producer_signal")
+        if isinstance(validation, dict) and isinstance(validation.get("producer_signal"), dict)
+        else {}
+    )
+    if producer_signal.get("constant_zero_roles"):
+        mechanism_evidence = add_unique(
+            list(mechanism_evidence),
+            ["producer role constant-zero diagnosis"],
+        )
     return {
         "priority": priority_for(row),
         "rank": int(row.get("rank") or 0),
@@ -1337,14 +1361,8 @@ def repair_guidance_to_terminal_task(
             "first _T / execution count after the repair",
             "same Magma/CVE oracle as the matched baseline screen",
         ],
-        "mechanism_evidence_required": summary["design_evidence"]
-        or [
-            "strict pre-trigger D_F progress",
-            "saved non-trigger frontier replay",
-            "typed mutation provenance",
-        ],
-        "blocking_issue": summary["blocked_claims"]
-        or ["FORMTRIG terminal _T missing after strict pre-trigger guidance"],
+        "mechanism_evidence_required": mechanism_evidence,
+        "blocking_issue": blocking_issue,
         "claim_boundary": (
             "This is a repair target, not a performance target. Do not rerun "
             "the same matched short screen until FORMTRIG terminal success or "
@@ -1360,7 +1378,7 @@ def repair_guidance_to_terminal_task(
         "comparison_verdict": summary["verdict"],
         "current_primary_benefits": summary["primary_benefits"],
         "blocked_claims": summary["blocked_claims"],
-        "evidence_paths": evidence_paths(row, comparison),
+        "evidence_paths": evidence_paths_with_validation(row, comparison, validation),
     }
 
 
@@ -1699,7 +1717,10 @@ def task_for_row(
             triage,
         )
     if comparison_verdict(comparison) in GUIDANCE_ONLY_REPAIR_VERDICTS:
-        return attach_sota_pain(repair_guidance_to_terminal_task(row, comparison), triage)
+        return attach_sota_pain(
+            repair_guidance_to_terminal_task(row, comparison, validation),
+            triage,
+        )
     if disposition == "candidate_extend_longruns":
         return attach_sota_pain(
             longrun_task(

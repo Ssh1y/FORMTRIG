@@ -634,8 +634,8 @@ class ExperimentWorklistTest(unittest.TestCase):
                 json.dumps(
                     {
                         "target_id": "PHP003",
-                        "status": "native_binding_validated",
-                        "ready_for_short_gate": True,
+                        "status": "needs_terminal_repair",
+                        "ready_for_short_gate": False,
                         "benefit_readout": {
                             "pretrigger_lift_guidance_ready": True,
                             "non_trigger_progress_events": 4,
@@ -645,6 +645,16 @@ class ExperimentWorklistTest(unittest.TestCase):
                             "status": "pass",
                             "accepted_non_trigger_progress_events": 4,
                         },
+                        "checks": {
+                            "native_site_map_validated": True,
+                            "producer_constant_zero": True,
+                        },
+                        "producer_signal": {
+                            "constant_zero_roles": ["desired_producer"],
+                        },
+                        "blockers": [
+                            "producer role has no positive candidate signal: desired_producer",
+                        ],
                     }
                 )
                 + "\n",
@@ -715,9 +725,15 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertFalse(task["runnable_now"])
             self.assertEqual(task["comparison_verdict"], "pretrigger_guidance_only")
             self.assertEqual(task["command"], "")
+            self.assertIn(
+                "producer role has no positive candidate signal: desired_producer",
+                task["blocking_issue"],
+            )
+            self.assertIn("producer role constant-zero diagnosis", task["mechanism_evidence_required"])
             self.assertTrue(
                 any(path.endswith("comparison.json") for path in task["evidence_paths"])
             )
+            self.assertIn(str(validation_path), task["evidence_paths"])
 
     def test_ready_binding_validation_without_strict_guidance_stays_gated(self):
         planner = load_planner()

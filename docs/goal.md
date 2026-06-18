@@ -1293,6 +1293,16 @@ PHP003:
   root-only 推进到 root+guard+use，但 producer 没满足，root/use 目标值仍未满足，
   typed mutation 没拿到输入 hot range。下一步优先级不是重复 matched 600s，而是
   修 producer/input-influence/hot-range 或 typed mutation 的字段定位。
+  2026-06-18 已把 BindingSpec validation gate 收紧：
+    artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json
+    status = needs_terminal_repair
+    ready_for_short_gate = false
+    producer_constant_zero = true
+    typed_mutation_hook_enabled = false
+    blocker = producer role has no positive candidate signal: desired_producer
+  重新生成的 20260618 benefit-first worklist 已把 PHP003 保持在
+  `repair_guidance_to_terminal`，并把 comparison + validation summary 一起作为
+  evidence；不能再把该 TC 当作 ready matched-short target 调度。
 
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance

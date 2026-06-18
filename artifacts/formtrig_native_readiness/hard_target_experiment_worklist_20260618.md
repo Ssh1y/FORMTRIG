@@ -2,7 +2,7 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-18T13:34:45+00:00`
+Generated: `2026-06-18T14:01:51+00:00`
 Tasks: `24`; runnable now: `0`; blocked/gated: `24`; demoted controls skipped: `9`; low-priority skipped: `93`.
 
 ## Budget Order
@@ -80,14 +80,19 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Blocking issue:
 - no FORMTRIG terminal success is established
 - FORMTRIG first `_T`/TTE is not recorded for this run
+- producer role has no positive candidate signal: desired_producer
+- pre-trigger guidance does not yet close R-to-T; repair BindingSpec producer or input hot-range before endpoint spending
 - Mechanism evidence required after benefit:
 - strict_pretrigger_guidance
+- producer role constant-zero diagnosis
 - Post-unblock commands or steps:
 - replay FORMTRIG saved non-trigger queue entries and inspect which role blocks _T
 - repair BindingSpec or typed mutation so the non-trigger frontier can cross R2T
 - run a FORMTRIG-only terminal gate before repeating faithful baselines
 - Evidence paths:
+- artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json
 - artifacts/formtrig_native_readiness/comparisons/php003_validated_short_600s_1rep_r2/comparison.json
+- artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl
 - artifacts/magma_canary_inventory.json
 
 ### P0 LIBXML2_1107 - validate_binding_spec_then_short_screen

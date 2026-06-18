@@ -17,7 +17,10 @@
     "status": "pass"
   },
   "binding_spec": "/home/cwh/FORMTRIG/artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml",
-  "blockers": [],
+  "blockers": [
+    "producer role has no positive candidate signal: desired_producer",
+    "pre-trigger guidance does not yet close R-to-T; repair BindingSpec producer or input hot-range before endpoint spending"
+  ],
   "checks": {
     "binding_spec_compile_pass": true,
     "dynamic_binding_signal_pass": true,
@@ -26,9 +29,11 @@
     "native_site_map_validated": true,
     "non_trigger_candidate_lift_delta": true,
     "pretrigger_lift_guidance_ready": true,
+    "producer_constant_zero": true,
     "runtime_event_map_pass": true,
     "terminal_triggered": false,
-    "tool_compile_pass": true
+    "tool_compile_pass": true,
+    "typed_mutation_hook_enabled": false
   },
   "dynamic_seed_readiness": {
     "atom_signals": null,
@@ -41,24 +46,42 @@
     "status": "pass",
     "triggered": 0
   },
-  "generated_at_utc": "2026-06-18T09:12:38+00:00",
+  "generated_at_utc": "2026-06-18T13:59:58+00:00",
+  "mutation_hook": {
+    "available": true,
+    "enabled": false,
+    "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/candidates/001_PHP003.native_b2_thumbnail_guard_candidate.yml/formtrig_mutation_hook.json",
+    "sha256": null,
+    "source": "none"
+  },
   "native_site_map": {
     "native_runtime_evidence": true,
     "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv"
   },
   "native_site_map_validated": true,
-  "next_action": "run the benefit-first short endpoint screen against faithful AFL++ family baselines",
-  "ready_for_short_gate": true,
+  "next_action": "repair the BindingSpec producer/input hot-range path and rerun the candidate sweep before matched baselines",
+  "producer_signal": {
+    "constant_zero_roles": [
+      "desired_producer"
+    ],
+    "nonzero_roles": [],
+    "observed_roles": [
+      "desired_producer"
+    ],
+    "variable_roles": []
+  },
+  "ready_for_short_gate": false,
   "remaining_limitations": [
     "candidate sweep is a validation gate, not a matched baseline comparison",
-    "short-gate and long-run endpoint evidence are still required before efficacy claims"
+    "short-gate and long-run endpoint evidence are still required before efficacy claims",
+    "candidate sweep showed pre-trigger movement but a producer role stayed constant zero"
   ],
   "schema": "formtrig_binding_candidate_validation_v1",
   "source": {
     "candidate_index": 1,
     "candidate_out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/candidates/001_PHP003.native_b2_thumbnail_guard_candidate.yml",
-    "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl"
+    "summary_jsonl": "artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl"
   },
-  "status": "native_binding_validated",
+  "status": "needs_terminal_repair",
   "target_id": "PHP003"
 }
