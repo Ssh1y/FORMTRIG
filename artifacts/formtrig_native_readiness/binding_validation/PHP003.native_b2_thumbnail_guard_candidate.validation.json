@@ -31,6 +31,7 @@
     "pretrigger_lift_guidance_ready": true,
     "producer_constant_zero": true,
     "runtime_event_map_pass": true,
+    "tc_rooted_static_pass": true,
     "terminal_triggered": false,
     "tool_compile_pass": true,
     "typed_mutation_hook_enabled": false
@@ -46,7 +47,7 @@
     "status": "pass",
     "triggered": 0
   },
-  "generated_at_utc": "2026-06-18T13:59:58+00:00",
+  "generated_at_utc": "2026-06-18T16:19:28+00:00",
   "mutation_hook": {
     "available": true,
     "enabled": false,
@@ -83,5 +84,39 @@
     "summary_jsonl": "artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl"
   },
   "status": "needs_terminal_repair",
-  "target_id": "PHP003"
+  "target_id": "PHP003",
+  "tc_rooted_static": {
+    "atom_count": 1,
+    "binding_count": 4,
+    "blockers": [],
+    "checks": {
+      "exact_runtime_mapping_pass": true,
+      "negative_role_rejection_pass": true,
+      "semantic_role_coverage_pass": true,
+      "static_root_binding_pass": true
+    },
+    "generated_at_utc": "2026-06-18T16:19:28+00:00",
+    "limitations": [],
+    "normalized_category": "binary-null",
+    "role_counts": {
+      "desired_producer": 1,
+      "guard": 1,
+      "root_observe": 1,
+      "use": 1
+    },
+    "roles_by_atom": {
+      "1": [
+        "desired_producer",
+        "guard",
+        "root_observe",
+        "use"
+      ]
+    },
+    "schema": "formtrig_binding_spec_tc_rooted_audit_v1",
+    "source_path": "/home/cwh/FORMTRIG/artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml",
+    "status": "pass",
+    "tc_category": "binary-state-null",
+    "tc_expression": "MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)",
+    "tc_id": "PHP003"
+  }
 }

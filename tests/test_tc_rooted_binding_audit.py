@@ -50,6 +50,41 @@ bindings:
 """
 
 
+RANGE_INPUT_INFLUENCE_SPEC = """
+tc_id: TIF012
+tc:
+  category: binary-state-null
+  expression: td->td_transferfunction[0] != NULL
+atoms:
+  - id: 1
+    expr: td->td_transferfunction[0] != NULL
+    kind: binary-state-null
+    root: td->td_transferfunction
+bindings:
+  - id: transferfunction_root
+    atom: 1
+    role: root_observe
+    expr: observe transferfunction root
+    observe_at:
+      site_id: 2633682639
+    component: root_state
+    priority: 10
+    direction: higher
+    value_mode: outcome
+  - id: ifd_tag_order_influence
+    atom: 1
+    role: input_influence
+    expr: TIFF IFD byte range controls tag order reaching TransferFunction state
+    component: input_influence
+    priority: 20
+    direction: higher
+    value_mode: hit
+    range_start: 4
+    range_len: 4
+    mutation_hook: scripts/formtrig_hooks/tiff_tif012_ifd_tag_hook.py
+"""
+
+
 ROOT_ONLY_BINARY_SPEC = """
 tc_id: BAD001
 tc:
@@ -90,6 +125,19 @@ class TcRootedBindingAuditTest(unittest.TestCase):
             self.assertTrue(audit["checks"]["exact_runtime_mapping_pass"])
             self.assertEqual(audit["role_counts"]["root_observe"], 1)
             self.assertEqual(audit["role_counts"]["desired_producer"], 1)
+
+    def test_input_influence_can_be_rooted_by_exact_input_range(self):
+        audit_tool = load_tool("audit_binding_spec_tc_rooted")
+        with tempfile.TemporaryDirectory() as tmp:
+            spec = Path(tmp) / "TIF012.yml"
+            spec.write_text(RANGE_INPUT_INFLUENCE_SPEC, encoding="utf-8")
+
+            audit = audit_tool.audit_file(spec)
+
+            self.assertEqual(audit["status"], "pass")
+            self.assertTrue(audit["checks"]["semantic_role_coverage_pass"])
+            self.assertTrue(audit["checks"]["exact_runtime_mapping_pass"])
+            self.assertEqual(audit["role_counts"]["input_influence"], 1)
 
     def test_binary_root_only_spec_is_not_tc_rooted_effective_subset(self):
         audit_tool = load_tool("audit_binding_spec_tc_rooted")

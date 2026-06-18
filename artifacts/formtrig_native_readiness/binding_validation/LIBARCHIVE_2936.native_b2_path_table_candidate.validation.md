@@ -4,6 +4,7 @@
 - Status: `native_binding_validated`
 - Ready for FORMTRIG short gate: `true`
 - Native site-map validated: `true`
+- TC-rooted static pass: `true`
 
 ## Benefit Evidence First
 

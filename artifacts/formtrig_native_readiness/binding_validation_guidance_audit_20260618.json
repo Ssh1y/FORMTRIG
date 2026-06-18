@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-06-18T09:25:23+00:00",
-  "record_count": 11,
+  "generated_at_utc": "2026-06-18T16:21:54+00:00",
+  "record_count": 12,
   "records": [
     {
       "accepted_non_trigger_progress_events": 0,
@@ -17,6 +17,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": false,
       "target_id": "LIBARCHIVE_2936",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     },
     {
@@ -34,6 +35,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": false,
       "target_id": "PDF003",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     },
     {
@@ -51,6 +53,7 @@
       "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
       "strict_pretrigger_guidance": false,
       "target_id": "PDF016",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -68,6 +71,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": true,
       "target_id": "PDF016",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -77,14 +81,15 @@
       "execs_done": 26636,
       "next_action": "run endpoint short screen against faithful AFL++ family baselines",
       "non_trigger_progress_events": 4,
-      "raw_source": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
-      "ready_for_short_gate": true,
+      "raw_source": "artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
+      "ready_for_short_gate": false,
       "saved_non_trigger_progress_events": 4,
       "soft_pretrigger_signal": true,
       "source_path": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json",
-      "status": "native_binding_validated",
+      "status": "needs_terminal_repair",
       "strict_pretrigger_guidance": true,
       "target_id": "PHP003",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     },
     {
@@ -102,6 +107,25 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": true,
       "target_id": "PHP009",
+      "tc_rooted_static_status": "pass",
+      "terminal_triggered": true
+    },
+    {
+      "accepted_non_trigger_progress_events": 0,
+      "candidate_events": 4094,
+      "disposition": "terminal_only_control",
+      "execs_done": 25411,
+      "next_action": "keep as control or revise BindingSpec/seed distance; do not claim R-to-T guidance benefit",
+      "non_trigger_progress_events": 0,
+      "raw_source": "artifacts/formtrig_native_readiness/raw/png007_b4_crashlog_one_seed_30s_20260618T_cont/summary.jsonl",
+      "ready_for_short_gate": false,
+      "saved_non_trigger_progress_events": 0,
+      "soft_pretrigger_signal": false,
+      "source_path": "artifacts/formtrig_native_readiness/binding_validation/PNG007.b4_pre_root_absence_30s.validation.json",
+      "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
+      "strict_pretrigger_guidance": false,
+      "target_id": "PNG007",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -119,6 +143,7 @@
       "status": "terminal_only_no_pretrigger_guidance",
       "strict_pretrigger_guidance": false,
       "target_id": "PNG007",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -136,6 +161,7 @@
       "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
       "strict_pretrigger_guidance": false,
       "target_id": "SSL011",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -153,6 +179,7 @@
       "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
       "strict_pretrigger_guidance": false,
       "target_id": "SSL015",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -170,6 +197,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": true,
       "target_id": "TIF012",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     },
     {
@@ -187,6 +215,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": true,
       "target_id": "TIF012",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     }
   ],
@@ -197,7 +226,7 @@
       "mechanism_only_needs_endpoint": 3,
       "native_binding_validated_no_guidance_readout": 1,
       "soft_signal_needs_frontier_evidence": 1,
-      "terminal_only_control": 4
+      "terminal_only_control": 5
     },
     "strict_pretrigger_target_count": 4,
     "target_disposition_counts": {
@@ -226,6 +255,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": false,
       "target_id": "LIBARCHIVE_2936",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     },
     {
@@ -243,6 +273,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": false,
       "target_id": "PDF003",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     },
     {
@@ -260,6 +291,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": true,
       "target_id": "PDF016",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -269,14 +301,15 @@
       "execs_done": 26636,
       "next_action": "run endpoint short screen against faithful AFL++ family baselines",
       "non_trigger_progress_events": 4,
-      "raw_source": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
-      "ready_for_short_gate": true,
+      "raw_source": "artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
+      "ready_for_short_gate": false,
       "saved_non_trigger_progress_events": 4,
       "soft_pretrigger_signal": true,
       "source_path": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json",
-      "status": "native_binding_validated",
+      "status": "needs_terminal_repair",
       "strict_pretrigger_guidance": true,
       "target_id": "PHP003",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     },
     {
@@ -294,23 +327,25 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": true,
       "target_id": "PHP009",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
       "accepted_non_trigger_progress_events": 0,
-      "candidate_events": 0,
+      "candidate_events": 4094,
       "disposition": "terminal_only_control",
-      "execs_done": 0,
+      "execs_done": 25411,
       "next_action": "keep as control or revise BindingSpec/seed distance; do not claim R-to-T guidance benefit",
       "non_trigger_progress_events": 0,
-      "raw_source": "artifacts/formtrig_native_readiness/binding_validation/PNG007.current_site_sweep_20s.validation.json",
+      "raw_source": "artifacts/formtrig_native_readiness/raw/png007_b4_crashlog_one_seed_30s_20260618T_cont/summary.jsonl",
       "ready_for_short_gate": false,
       "saved_non_trigger_progress_events": 0,
       "soft_pretrigger_signal": false,
-      "source_path": "artifacts/formtrig_native_readiness/binding_validation/PNG007.current_site_sweep_20s.validation.json",
-      "status": "terminal_only_no_pretrigger_guidance",
+      "source_path": "artifacts/formtrig_native_readiness/binding_validation/PNG007.b4_pre_root_absence_30s.validation.json",
+      "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
       "strict_pretrigger_guidance": false,
       "target_id": "PNG007",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -328,6 +363,7 @@
       "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
       "strict_pretrigger_guidance": false,
       "target_id": "SSL011",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -345,6 +381,7 @@
       "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
       "strict_pretrigger_guidance": false,
       "target_id": "SSL015",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": true
     },
     {
@@ -362,6 +399,7 @@
       "status": "native_binding_validated",
       "strict_pretrigger_guidance": true,
       "target_id": "TIF012",
+      "tc_rooted_static_status": "pass",
       "terminal_triggered": false
     }
   ]

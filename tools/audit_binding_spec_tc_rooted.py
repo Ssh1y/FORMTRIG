@@ -75,6 +75,22 @@ def observe_at_is_exact(observe_at: Any) -> bool:
     return nonempty(observe_at.get("file")) and atom_id(observe_at.get("line")) is not None
 
 
+def input_influence_mapping_is_exact(binding: dict[str, Any]) -> bool:
+    start = atom_id(binding.get("range_start"))
+    length = atom_id(binding.get("range_len"))
+    if start is not None and length is not None and length > 0:
+        return True
+    return nonempty(binding.get("mutation_hook")) or nonempty(binding.get("typed_mutation_hook"))
+
+
+def binding_mapping_is_exact(binding: dict[str, Any]) -> bool:
+    if observe_at_is_exact(binding.get("observe_at")):
+        return True
+    if str(binding.get("role") or "") == "input_influence":
+        return input_influence_mapping_is_exact(binding)
+    return False
+
+
 def sorted_counter(counter: Counter[str]) -> dict[str, int]:
     return {key: counter[key] for key in sorted(counter)}
 
@@ -140,11 +156,11 @@ def audit_payload(payload: dict[str, Any], *, source_path: str = "") -> dict[str
         role_counts[role] += 1
         if role == "repair_hook":
             repair_hook_bindings += 1
-        if observe_at_is_exact(raw_binding.get("observe_at")):
+        if binding_mapping_is_exact(raw_binding):
             bindings_with_exact_observe += 1
         else:
             blockers.append(
-                f"binding {raw_binding.get('id') or index} lacks exact observe_at mapping"
+                f"binding {raw_binding.get('id') or index} lacks exact runtime/input mapping"
             )
         if role == "same_object":
             same_object_bindings += 1

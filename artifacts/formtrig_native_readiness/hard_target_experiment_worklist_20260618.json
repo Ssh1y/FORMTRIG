@@ -8,7 +8,7 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-18T14:01:51+00:00",
+  "generated_at_utc": "2026-06-18T16:23:12+00:00",
   "inputs": {
     "active_runs": "",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
@@ -1033,7 +1033,8 @@
         "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json",
         "artifacts/formtrig_native_readiness/comparisons/php003_validated_short_600s_1rep_r2/comparison.json",
         "artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
-        "artifacts/magma_canary_inventory.json"
+        "artifacts/magma_canary_inventory.json",
+        "artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/build_plan.json"
       ],
       "lane": "short_triage_ready",
       "mechanism_evidence_required": [

@@ -30,9 +30,12 @@
     "native_site_map_validated": true,
     "non_trigger_candidate_lift_delta": false,
     "pretrigger_lift_guidance_ready": false,
+    "producer_constant_zero": false,
     "runtime_event_map_pass": true,
+    "tc_rooted_static_pass": true,
     "terminal_triggered": true,
-    "tool_compile_pass": true
+    "tool_compile_pass": true,
+    "typed_mutation_hook_enabled": true
   },
   "dynamic_seed_readiness": {
     "atom_signals": null,
@@ -45,13 +48,32 @@
     "status": "pass",
     "triggered": 163
   },
-  "generated_at_utc": "2026-06-18T10:30:34+00:00",
+  "generated_at_utc": "2026-06-18T16:19:29+00:00",
+  "mutation_hook": {
+    "available": true,
+    "enabled": true,
+    "path": "artifacts/formtrig_native_readiness/raw/png007_b4_crashlog_one_seed_30s_20260618T_cont/candidates/001_PNG007.native_b4_pre_root_absence_candidate.yml/formtrig_mutation_hook.json",
+    "sha256": "4988c1307ed723fb3ddeb6793241204669c6d6fb1affdced3d2e386a35461de3",
+    "source": "binding_spec"
+  },
   "native_site_map": {
     "native_runtime_evidence": true,
     "path": "artifacts/formtrig_native_readiness/magma_native_builds/PNG007/out/formtrig_native/formtrig_sites.tsv"
   },
   "native_site_map_validated": true,
   "next_action": "keep as negative/control evidence or revise the BindingSpec to expose non-trigger guidance",
+  "producer_signal": {
+    "constant_zero_roles": [],
+    "nonzero_roles": [
+      "opposite_producer"
+    ],
+    "observed_roles": [
+      "opposite_producer"
+    ],
+    "variable_roles": [
+      "opposite_producer"
+    ]
+  },
   "ready_for_short_gate": false,
   "remaining_limitations": [
     "candidate sweep is a validation gate, not a matched baseline comparison",
@@ -64,5 +86,41 @@
     "summary_jsonl": "artifacts/formtrig_native_readiness/raw/png007_b4_crashlog_one_seed_30s_20260618T_cont/summary.jsonl"
   },
   "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
-  "target_id": "PNG007"
+  "target_id": "PNG007",
+  "tc_rooted_static": {
+    "atom_count": 1,
+    "binding_count": 7,
+    "blockers": [],
+    "checks": {
+      "exact_runtime_mapping_pass": true,
+      "negative_role_rejection_pass": true,
+      "semantic_role_coverage_pass": true,
+      "static_root_binding_pass": true
+    },
+    "generated_at_utc": "2026-06-18T16:19:29+00:00",
+    "limitations": [],
+    "normalized_category": "binary-null",
+    "role_counts": {
+      "guard": 2,
+      "input_influence": 2,
+      "opposite_producer": 1,
+      "root_observe": 1,
+      "use": 1
+    },
+    "roles_by_atom": {
+      "1": [
+        "guard",
+        "input_influence",
+        "opposite_producer",
+        "root_observe",
+        "use"
+      ]
+    },
+    "schema": "formtrig_binding_spec_tc_rooted_audit_v1",
+    "source_path": "artifacts/binding_specs/PNG007.native_b4_pre_root_absence_candidate.yml",
+    "status": "pass",
+    "tc_category": "binary-state-null",
+    "tc_expression": "png_ptr->palette == NULL",
+    "tc_id": "PNG007"
+  }
 }

@@ -2,7 +2,7 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-18T14:01:51+00:00`
+Generated: `2026-06-18T16:23:12+00:00`
 Tasks: `24`; runnable now: `0`; blocked/gated: `24`; demoted controls skipped: `9`; low-priority skipped: `93`.
 
 ## Budget Order
@@ -94,6 +94,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/comparisons/php003_validated_short_600s_1rep_r2/comparison.json
 - artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl
 - artifacts/magma_canary_inventory.json
+- artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/build_plan.json
 
 ### P0 LIBXML2_1107 - validate_binding_spec_then_short_screen
 

@@ -30,9 +30,12 @@
     "native_site_map_validated": true,
     "non_trigger_candidate_lift_delta": false,
     "pretrigger_lift_guidance_ready": false,
+    "producer_constant_zero": false,
     "runtime_event_map_pass": true,
+    "tc_rooted_static_pass": true,
     "terminal_triggered": true,
-    "tool_compile_pass": true
+    "tool_compile_pass": true,
+    "typed_mutation_hook_enabled": false
   },
   "dynamic_seed_readiness": {
     "atom_signals": null,
@@ -45,13 +48,26 @@
     "status": "pass",
     "triggered": 26965
   },
-  "generated_at_utc": "2026-06-18T08:35:46+00:00",
+  "generated_at_utc": "2026-06-18T16:19:29+00:00",
+  "mutation_hook": {
+    "available": true,
+    "enabled": false,
+    "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/ssl015_binding_validation_60s_20260618/candidates/001_SSL015.native_b2_pkcs7_decode_candidate.yml/formtrig_mutation_hook.json",
+    "sha256": null,
+    "source": "none"
+  },
   "native_site_map": {
     "native_runtime_evidence": true,
     "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL015/out/formtrig_native/formtrig_sites.tsv"
   },
   "native_site_map_validated": true,
   "next_action": "keep as negative/control evidence or revise the BindingSpec to expose non-trigger guidance",
+  "producer_signal": {
+    "constant_zero_roles": [],
+    "nonzero_roles": [],
+    "observed_roles": [],
+    "variable_roles": []
+  },
   "ready_for_short_gate": false,
   "remaining_limitations": [
     "candidate sweep is a validation gate, not a matched baseline comparison",
@@ -64,5 +80,37 @@
     "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/ssl015_binding_validation_60s_20260618/summary.jsonl"
   },
   "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
-  "target_id": "SSL015"
+  "target_id": "SSL015",
+  "tc_rooted_static": {
+    "atom_count": 1,
+    "binding_count": 6,
+    "blockers": [],
+    "checks": {
+      "exact_runtime_mapping_pass": true,
+      "negative_role_rejection_pass": true,
+      "semantic_role_coverage_pass": true,
+      "static_root_binding_pass": true
+    },
+    "generated_at_utc": "2026-06-18T16:19:29+00:00",
+    "limitations": [],
+    "normalized_category": "binary-null",
+    "role_counts": {
+      "desired_producer": 1,
+      "root_observe": 4,
+      "use": 1
+    },
+    "roles_by_atom": {
+      "1": [
+        "desired_producer",
+        "root_observe",
+        "use"
+      ]
+    },
+    "schema": "formtrig_binding_spec_tc_rooted_audit_v1",
+    "source_path": "/home/cwh/FORMTRIG/artifacts/binding_specs/SSL015.native_b2_pkcs7_decode_candidate.yml",
+    "status": "pass",
+    "tc_category": "binary-state-null",
+    "tc_expression": "PKCS7_dataDecode reaches MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)",
+    "tc_id": "SSL015"
+  }
 }

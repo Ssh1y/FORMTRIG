@@ -26,9 +26,12 @@
     "native_site_map_validated": true,
     "non_trigger_candidate_lift_delta": true,
     "pretrigger_lift_guidance_ready": true,
+    "producer_constant_zero": false,
     "runtime_event_map_pass": true,
+    "tc_rooted_static_pass": true,
     "terminal_triggered": true,
-    "tool_compile_pass": true
+    "tool_compile_pass": true,
+    "typed_mutation_hook_enabled": false
   },
   "dynamic_seed_readiness": {
     "atom_signals": null,
@@ -41,13 +44,26 @@
     "status": "pass",
     "triggered": 17
   },
-  "generated_at_utc": "2026-06-17T15:36:16+00:00",
+  "generated_at_utc": "2026-06-18T16:19:29+00:00",
+  "mutation_hook": {
+    "available": true,
+    "enabled": false,
+    "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_binding_validation_60s/candidates/001_PHP009.native_draft_magma_canary.yml/formtrig_mutation_hook.json",
+    "sha256": null,
+    "source": "none"
+  },
   "native_site_map": {
     "native_runtime_evidence": true,
     "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv"
   },
   "native_site_map_validated": true,
   "next_action": "run the benefit-first short endpoint screen against faithful AFL++ family baselines",
+  "producer_signal": {
+    "constant_zero_roles": [],
+    "nonzero_roles": [],
+    "observed_roles": [],
+    "variable_roles": []
+  },
   "ready_for_short_gate": true,
   "remaining_limitations": [
     "candidate sweep is a validation gate, not a matched baseline comparison",
@@ -60,5 +76,35 @@
     "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_binding_validation_60s/summary.jsonl"
   },
   "status": "native_binding_validated",
-  "target_id": "PHP009"
+  "target_id": "PHP009",
+  "tc_rooted_static": {
+    "atom_count": 1,
+    "binding_count": 2,
+    "blockers": [],
+    "checks": {
+      "exact_runtime_mapping_pass": true,
+      "negative_role_rejection_pass": true,
+      "semantic_role_coverage_pass": true,
+      "static_root_binding_pass": true
+    },
+    "generated_at_utc": "2026-06-18T16:19:29+00:00",
+    "limitations": [],
+    "normalized_category": "numeric",
+    "role_counts": {
+      "guard": 1,
+      "root_observe": 1
+    },
+    "roles_by_atom": {
+      "1": [
+        "guard",
+        "root_observe"
+      ]
+    },
+    "schema": "formtrig_binding_spec_tc_rooted_audit_v1",
+    "source_path": "/home/cwh/FORMTRIG/artifacts/binding_specs/PHP009.native_draft_magma_canary.yml",
+    "status": "pass",
+    "tc_category": "numeric-margin",
+    "tc_expression": "MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)",
+    "tc_id": "PHP009"
+  }
 }

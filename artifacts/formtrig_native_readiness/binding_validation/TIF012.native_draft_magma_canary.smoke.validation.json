@@ -26,9 +26,12 @@
     "native_site_map_validated": true,
     "non_trigger_candidate_lift_delta": true,
     "pretrigger_lift_guidance_ready": true,
+    "producer_constant_zero": false,
     "runtime_event_map_pass": true,
+    "tc_rooted_static_pass": true,
     "terminal_triggered": false,
-    "tool_compile_pass": true
+    "tool_compile_pass": true,
+    "typed_mutation_hook_enabled": true
   },
   "dynamic_seed_readiness": {
     "atom_signals": null,
@@ -41,13 +44,30 @@
     "status": "pass",
     "triggered": 0
   },
-  "generated_at_utc": "2026-06-16T19:03:52+00:00",
+  "generated_at_utc": "2026-06-18T16:20:56+00:00",
+  "mutation_hook": {
+    "available": true,
+    "enabled": true,
+    "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_binding_validation_smoke_2s/candidates/001_TIF012.native_draft_magma_canary.yml/formtrig_mutation_hook.json",
+    "sha256": "3ea43d942223b4d414f731092948a7ddf60783fdf2571868cf235a07fe6d2fbf",
+    "source": "binding_spec"
+  },
   "native_site_map": {
     "native_runtime_evidence": true,
     "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/TIF012/out/formtrig_native/formtrig_sites.tsv"
   },
   "native_site_map_validated": true,
   "next_action": "run the benefit-first short endpoint screen against faithful AFL++ family baselines",
+  "producer_signal": {
+    "constant_zero_roles": [],
+    "nonzero_roles": [
+      "desired_producer"
+    ],
+    "observed_roles": [
+      "desired_producer"
+    ],
+    "variable_roles": []
+  },
   "ready_for_short_gate": true,
   "remaining_limitations": [
     "candidate sweep is a validation gate, not a matched baseline comparison",
@@ -60,5 +80,39 @@
     "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/tif012_binding_validation_smoke_2s/summary.jsonl"
   },
   "status": "native_binding_validated",
-  "target_id": "TIF012"
+  "target_id": "TIF012",
+  "tc_rooted_static": {
+    "atom_count": 1,
+    "binding_count": 27,
+    "blockers": [],
+    "checks": {
+      "exact_runtime_mapping_pass": true,
+      "negative_role_rejection_pass": true,
+      "semantic_role_coverage_pass": true,
+      "static_root_binding_pass": true
+    },
+    "generated_at_utc": "2026-06-18T16:20:56+00:00",
+    "limitations": [],
+    "normalized_category": "binary-null",
+    "role_counts": {
+      "desired_producer": 4,
+      "input_influence": 1,
+      "root_observe": 16,
+      "use": 6
+    },
+    "roles_by_atom": {
+      "1": [
+        "desired_producer",
+        "input_influence",
+        "root_observe",
+        "use"
+      ]
+    },
+    "schema": "formtrig_binding_spec_tc_rooted_audit_v1",
+    "source_path": "/home/cwh/FORMTRIG/artifacts/binding_specs/TIF012.native_draft_magma_canary.yml",
+    "status": "pass",
+    "tc_category": "binary-state-null",
+    "tc_expression": "MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))",
+    "tc_id": "TIF012"
+  }
 }
