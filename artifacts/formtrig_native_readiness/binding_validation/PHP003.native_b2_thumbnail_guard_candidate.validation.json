@@ -1,0 +1,64 @@
+{
+  "benefit_readout": {
+    "execs_done": 26636,
+    "has_non_trigger_progress": true,
+    "non_trigger_progress_events": 4,
+    "pretrigger_lift_guidance_ready": true,
+    "saved_non_trigger_progress_events": 4,
+    "saved_triggered_progress_events": 0,
+    "score": 572400,
+    "terminal_triggered": false
+  },
+  "binding_signal": {
+    "accepted_non_trigger_progress_events": 4,
+    "candidate_events": 4090,
+    "diagnosis": "role_signal_progress_observed",
+    "semantic_candidate_variable_roles": 2,
+    "status": "pass"
+  },
+  "binding_spec": "/home/cwh/FORMTRIG/artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml",
+  "blockers": [],
+  "checks": {
+    "binding_spec_compile_pass": true,
+    "dynamic_binding_signal_pass": true,
+    "lift_audit_pass": true,
+    "lift_delta_only_on_triggered": false,
+    "native_site_map_validated": true,
+    "non_trigger_candidate_lift_delta": true,
+    "pretrigger_lift_guidance_ready": true,
+    "runtime_event_map_pass": true,
+    "terminal_triggered": false,
+    "tool_compile_pass": true
+  },
+  "dynamic_seed_readiness": {
+    "atom_signals": null,
+    "components": null,
+    "diagnosis": "queued_tc_rooted_progress",
+    "reached": 20833,
+    "role_signals": null,
+    "seed_count": null,
+    "spec_lifted": null,
+    "status": "pass",
+    "triggered": 0
+  },
+  "generated_at_utc": "2026-06-18T09:12:38+00:00",
+  "native_site_map": {
+    "native_runtime_evidence": true,
+    "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv"
+  },
+  "native_site_map_validated": true,
+  "next_action": "run the benefit-first short endpoint screen against faithful AFL++ family baselines",
+  "ready_for_short_gate": true,
+  "remaining_limitations": [
+    "candidate sweep is a validation gate, not a matched baseline comparison",
+    "short-gate and long-run endpoint evidence are still required before efficacy claims"
+  ],
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "source": {
+    "candidate_index": 1,
+    "candidate_out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/candidates/001_PHP003.native_b2_thumbnail_guard_candidate.yml",
+    "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl"
+  },
+  "status": "native_binding_validated",
+  "target_id": "PHP003"
+}

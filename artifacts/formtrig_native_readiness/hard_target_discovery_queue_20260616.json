@@ -1,51 +1,22 @@
 {
   "all_targets": [
     {
-      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml,LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
-      "binding_spec_validated": true,
-      "blockers": "",
-      "comparison_count": 6,
-      "existing_disposition": "candidate_extend_longruns",
-      "lane": "real_cve_replacement",
-      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
-      "primary_category": "binary-state-null",
-      "project": "libarchive",
-      "rank": 1,
-      "raw": {
-        "bug_type": "NULL Pointer Dereference",
-        "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 6,
-        "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
-        "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
-        "pull_links": "",
-        "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
-      },
-      "score": 115,
-      "secondary_category": "",
-      "source": "real_cve",
-      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
-      "status": "short_gate_triaged",
-      "suggested_short_triage": "positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets",
-      "target_id": "LIBARCHIVE_2936"
-    },
-    {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "TIF012.native_draft_magma_canary.yml",
+      "binding_spec": "PDF003.native_draft_magma_canary.yml",
       "binding_spec_validated": true,
       "blockers": "",
-      "comparison_count": 4,
+      "comparison_count": 3,
       "existing_disposition": "candidate_extend_longruns",
       "lane": "short_triage_ready",
       "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
       "primary_category": "binary-state-null",
-      "project": "libtiff",
-      "rank": 2,
+      "project": "poppler",
+      "rank": 1,
       "raw": {
-        "canary_expression": "MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))",
-        "comparison_count": 4,
-        "patch_path": "experiments/magma_workspace/magma/targets/libtiff/patches/bugs/TIF012.patch",
-        "program": "tiff_read_rgba_fuzzer"
+        "canary_expression": "MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))",
+        "comparison_count": 3,
+        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF003.patch",
+        "program": "pdfimages"
       },
       "score": 109,
       "secondary_category": "compound-sequence-lifecycle",
@@ -53,111 +24,33 @@
       "source_evidence": "artifacts/magma_canary_inventory.json",
       "status": "short_gate_triaged",
       "suggested_short_triage": "positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets",
-      "target_id": "TIF012"
-    },
-    {
-      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "PDF003.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "binary-state-null",
-      "project": "poppler",
-      "rank": 3,
-      "raw": {
-        "canary_expression": "MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF003.patch",
-        "program": "pdfimages"
-      },
-      "score": 90,
-      "secondary_category": "compound-sequence-lifecycle",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
       "target_id": "PDF003"
     },
     {
-      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "SSL015.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "binary-state-null",
-      "project": "openssl",
-      "rank": 4,
-      "raw": {
-        "canary_expression": "MAGMA_OR(p7 == NULL, p7->d.ptr) ; MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/openssl/patches/bugs/SSL015.patch",
-        "program": "asn1"
-      },
-      "score": 90,
-      "secondary_category": "compound-sequence-lifecycle",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
-      "target_id": "SSL015"
-    },
-    {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
-      "binding_spec": "PDF016.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "compound-sequence-lifecycle",
-      "project": "poppler",
-      "rank": 5,
-      "raw": {
-        "canary_expression": "MAGMA_OR(num <=0, gen < 0)",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF016.patch",
-        "program": "pdf_fuzzer"
-      },
-      "score": 81,
-      "secondary_category": "",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
-      "target_id": "PDF016"
-    },
-    {
-      "benefit_hypothesis": "validated numeric-margin root can test whether lifted offset/length guidance yields endpoint benefit beyond binary Magma _T feedback",
-      "binding_spec": "PHP009.native_draft_magma_canary.yml",
+      "binding_spec": "PHP003.native_b2_thumbnail_guard_candidate.yml",
       "binding_spec_validated": true,
       "blockers": "no comparison package exists yet",
       "comparison_count": 0,
       "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "run validated matched short endpoint screen against faithful AFL++ family baselines",
-      "primary_category": "numeric-margin",
+      "lane": "short_triage_ready",
+      "next_action": "run short FORMTRIG gate and same-seed AFL++ family baseline screen",
+      "primary_category": "compound-sequence-lifecycle",
       "project": "php",
-      "rank": 6,
+      "rank": 2,
       "raw": {
-        "canary_expression": "MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)",
+        "canary_expression": "MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)",
         "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/php/patches/bugs/PHP009.patch",
+        "patch_path": "experiments/magma_workspace/magma/targets/php/patches/bugs/PHP003.patch",
         "program": "exif"
       },
-      "score": 81,
-      "secondary_category": "",
+      "score": 96,
+      "secondary_category": "numeric-margin",
       "source": "magma",
       "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "binding_validation_passed",
-      "suggested_short_triage": "run 600s matched FORMTRIG/baseline screen; promote only if baseline binary feedback is flat and _T remains late, missing, or high-variance",
-      "target_id": "PHP009"
+      "status": "needs_short_discovery",
+      "suggested_short_triage": "run 10-30m FORMTRIG seed-readiness/gate, then same-seed AFL++ vanilla/CmpLog/Redqueen short baselines with `scripts/run_magma_baselines.sh --target-id PHP003 --durations 600,1800 --jobs N`",
+      "target_id": "PHP003"
     },
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
@@ -170,7 +63,7 @@
       "next_action": "validate BindingSpec against native site map and dynamic binding signal before short gate",
       "primary_category": "binary-state-null",
       "project": "libxml2",
-      "rank": 7,
+      "rank": 3,
       "raw": {
         "bug_type": "NULL Pointer Dereference",
         "commit_links": "",
@@ -199,7 +92,7 @@
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "compound-sequence-lifecycle",
       "project": "gpac",
-      "rank": 8,
+      "rank": 4,
       "raw": {
         "bug_type": "Double Free",
         "commit_links": "https://github.com/gpac/gpac/commit/3ab9394473dfcdc830a4fb44a138db5276ae4bdb;https://github.com/gpac/gpac/commit/52f65707c512a2b6bab361301cb703a2c6c8b53e",
@@ -228,7 +121,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "sqlite3",
-      "rank": 9,
+      "rank": 5,
       "raw": {
         "canary_expression": "pNew->nLSlot < (pNew->nLTerm+1)",
         "comparison_count": 0,
@@ -254,7 +147,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "openssl",
-      "rank": 10,
+      "rank": 6,
       "raw": {
         "canary_expression": "MAGMA_AND(f != NULL, MAGMA_AND(f->addressFamily != NULL, MAGMA_AND(f->addressFamily->data != NULL, f->addressFamily->length < 2)))",
         "comparison_count": 0,
@@ -280,33 +173,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "php",
-      "rank": 11,
-      "raw": {
-        "canary_expression": "MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/php/patches/bugs/PHP003.patch",
-        "program": "exif"
-      },
-      "score": 74,
-      "secondary_category": "numeric-margin",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_short_discovery",
-      "suggested_short_triage": "draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs N`",
-      "target_id": "PHP003"
-    },
-    {
-      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
-      "binding_spec": "",
-      "binding_spec_validated": false,
-      "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_spec_first",
-      "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
-      "primary_category": "compound-sequence-lifecycle",
-      "project": "php",
-      "rank": 12,
+      "rank": 7,
       "raw": {
         "canary_expression": "MAGMA_AND(MAGMA_OR(pos > SIZE_MAX - length, length > ImageInfo->Thumbnail.size), pos < ImageInfo->Thumbnail.size - length) ; MAGMA_OR(length < 8, ImageInfo->Thumbnail.size - 8 < pos)",
         "comparison_count": 0,
@@ -332,7 +199,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "php",
-      "rank": 13,
+      "rank": 8,
       "raw": {
         "canary_expression": "ptr_offset_overflows(info->offset_base, offset) ; ptr_offset_overflows(info->offset_base + offset, length) ; MAGMA_OR((info->offset_base + offset) < info->valid_start, (info->offset_base + offset + length) > info->valid_end)",
         "comparison_count": 0,
@@ -358,7 +225,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "sqlite3",
-      "rank": 14,
+      "rank": 9,
       "raw": {
         "canary_expression": "MAGMA_AND((pExTab->tabFlags & TF_HasGenerated)!=0, MAGMA_AND((pExTab->aCol[n].colFlags & COLFLAG_GENERATED)!=0, MAGMA_AND(pExTab->nCol >= BMS, result < ALLBITS)))",
         "comparison_count": 0,
@@ -384,7 +251,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "openssl",
-      "rank": 15,
+      "rank": 10,
       "raw": {
         "canary_expression": "MAGMA_AND(PACKET_remaining(&responder_id_list) > 0, sk_OCSP_RESPID_num(s->ext.ocsp.ids) > 0)",
         "comparison_count": 0,
@@ -410,7 +277,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libtiff",
-      "rank": 16,
+      "rank": 11,
       "raw": {
         "canary_expression": "MAGMA_OR(i == sizeof(td->td_transferfunction) / sizeof(*td->td_transferfunction), i == (td->td_samplesperpixel - td->td_extrasamples))",
         "comparison_count": 0,
@@ -436,7 +303,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libtiff",
-      "rank": 17,
+      "rank": 12,
       "raw": {
         "canary_expression": "MAGMA_AND(tif->tif_mode == O_RDONLY, MAGMA_AND(nstrips > 1000000, MAGMA_OR(offset >= TIFFGetFileSize(tif), stripbytes * (nstrips - 1) > (TIFFGetFileSize(tif) - offset))))",
         "comparison_count": 0,
@@ -462,7 +329,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libxml2",
-      "rank": 18,
+      "rank": 13,
       "raw": {
         "canary_expression": "MAGMA_AND(entity->etype == XML_EXTERNAL_PARAMETER_ENTITY, MAGMA_AND((ctxt->options & XML_PARSE_NOENT) == 0, MAGMA_AND((ctxt->options & XML_PARSE_DTDVALID) == 0, MAGMA_AND((ctxt->options & XML_PARSE_DTDLOAD) == 0, MAGMA_AND((ctxt->options & XML_PARSE_DTDATTR) == 0, MAGMA_AND(ctxt->replaceEntities == 0, ctxt->validate == 0))))))",
         "comparison_count": 0,
@@ -488,7 +355,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libxml2",
-      "rank": 19,
+      "rank": 14,
       "raw": {
         "canary_expression": "MAGMA_AND(state->how != GZIP, MAGMA_AND(ret != LZMA_OK, ret != LZMA_STREAM_END))",
         "comparison_count": 0,
@@ -514,7 +381,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libxml2",
-      "rank": 20,
+      "rank": 15,
       "raw": {
         "canary_expression": "MAGMA_AND(m_tmp == 1, MAGMA_AND((ctxt->options & XML_PARSE_NOENT) == 0, MAGMA_AND((ctxt->options & XML_PARSE_DTDVALID) == 0, ctxt->validate == 0)))",
         "comparison_count": 0,
@@ -540,7 +407,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 21,
+      "rank": 16,
       "raw": {
         "canary_expression": "ckey == NULL",
         "comparison_count": 0,
@@ -566,7 +433,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 22,
+      "rank": 17,
       "raw": {
         "canary_expression": "pktmp == NULL",
         "comparison_count": 0,
@@ -592,7 +459,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 23,
+      "rank": 18,
       "raw": {
         "canary_expression": "best_crl == NULL",
         "comparison_count": 0,
@@ -618,7 +485,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "poppler",
-      "rank": 24,
+      "rank": 19,
       "raw": {
         "canary_expression": "t3GlyphStack == nullptr",
         "comparison_count": 0,
@@ -644,7 +511,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 25,
+      "rank": 20,
       "raw": {
         "canary_expression": "s->init_msg != (s->init_buf->data + msg_offset)",
         "comparison_count": 0,
@@ -670,7 +537,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "lua",
-      "rank": 26,
+      "rank": 21,
       "raw": {
         "canary_expression": "p->lineinfo == NULL",
         "comparison_count": 0,
@@ -696,7 +563,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "php",
-      "rank": 27,
+      "rank": 22,
       "raw": {
         "canary_expression": "memchr(pos + 1, '.', filename_len - (pos - filename) - 1) == NULL",
         "comparison_count": 0,
@@ -722,7 +589,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "libtiff",
-      "rank": 28,
+      "rank": 23,
       "raw": {
         "canary_expression": "tif->tif_dir.td_transferfunction[2] == NULL ; tif->tif_dir.td_transferfunction[1] == NULL",
         "comparison_count": 0,
@@ -748,7 +615,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "lua",
-      "rank": 29,
+      "rank": 24,
       "raw": {
         "canary_expression": "!l_checkmodep(mode)",
         "comparison_count": 0,
@@ -774,7 +641,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "poppler",
-      "rank": 30,
+      "rank": 25,
       "raw": {
         "canary_expression": "!fileSpec.isDict()",
         "comparison_count": 0,
@@ -800,7 +667,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "poppler",
-      "rank": 31,
+      "rank": 26,
       "raw": {
         "canary_expression": "!m_objStr.isStream()",
         "comparison_count": 0,
@@ -826,7 +693,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "poppler",
-      "rank": 32,
+      "rank": 27,
       "raw": {
         "canary_expression": "!path",
         "comparison_count": 0,
@@ -852,7 +719,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libsndfile",
-      "rank": 33,
+      "rank": 28,
       "raw": {
         "canary_expression": "!isfinite(ptr[i])",
         "comparison_count": 0,
@@ -878,7 +745,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libsndfile",
-      "rank": 34,
+      "rank": 29,
       "raw": {
         "canary_expression": "!isfinite(ptr[i])",
         "comparison_count": 0,
@@ -904,7 +771,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "sqlite3",
-      "rank": 35,
+      "rank": 30,
       "raw": {
         "canary_expression": "ExpandBlob(pVal)",
         "comparison_count": 0,
@@ -930,7 +797,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libxml2",
-      "rank": 36,
+      "rank": 31,
       "raw": {
         "canary_expression": "1",
         "comparison_count": 0,
@@ -956,7 +823,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 37,
+      "rank": 32,
       "raw": {
         "canary_expression": "MAGMA_OR(surface_width == 0, surface_height == 0)",
         "comparison_count": 0,
@@ -982,7 +849,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 38,
+      "rank": 33,
       "raw": {
         "canary_expression": "MAGMA_OR(intersectionIndex < 0, (unsigned)intersectionIndex >= allIntersections.size())",
         "comparison_count": 0,
@@ -1008,7 +875,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 39,
+      "rank": 34,
       "raw": {
         "canary_expression": "MAGMA_OR(src->getWidth() - xSrc < width, MAGMA_OR(src->getHeight() - ySrc < height, MAGMA_OR(bitmap->getWidth() - xDest < width, bitmap->getHeight() - yDest < height)))",
         "comparison_count": 0,
@@ -1034,7 +901,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 40,
+      "rank": 35,
       "raw": {
         "canary_expression": "MAGMA_OR(y + yy >= h, y + yy < 0)",
         "comparison_count": 0,
@@ -1060,7 +927,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 41,
+      "rank": 36,
       "raw": {
         "canary_expression": "tmp_line_len < 1 ; MAGMA_AND(tmp_line_len == 1, tmp_line[tmp_line_len - 1] == ' n')",
         "comparison_count": 0,
@@ -1086,7 +953,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 42,
+      "rank": 37,
       "raw": {
         "canary_expression": "buffer + 28 > endbuffer ; entry.filename_len > INT_MAX - 20 ; MAGMA_AND(entry.filename_len > (size_t)(endbuffer - buffer - 24), entry.filename_len <= (size_t)(endbuffer - buffer - 20))",
         "comparison_count": 0,
@@ -1112,7 +979,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 43,
+      "rank": 38,
       "raw": {
         "canary_expression": "MAGMA_OR(paf_fmt.channels < 1, paf_fmt.channels > SF_MAX_CHANNELS)",
         "comparison_count": 0,
@@ -1138,7 +1005,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 44,
+      "rank": 39,
       "raw": {
         "canary_expression": "MAGMA_OR(bytes == 0, items == 0)",
         "comparison_count": 0,
@@ -1164,7 +1031,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 45,
+      "rank": 40,
       "raw": {
         "canary_expression": "MAGMA_AND(psf->sf.channels > 0, psf->sf.samplerate != (int) metadata->data.stream_info.sample_rate)",
         "comparison_count": 0,
@@ -1190,7 +1057,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 46,
+      "rank": 41,
       "raw": {
         "canary_expression": "MAGMA_AND(psf->sf.channels > 0, psf->sf.channels != (int) metadata->data.stream_info.channels)",
         "comparison_count": 0,
@@ -1216,7 +1083,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 47,
+      "rank": 42,
       "raw": {
         "canary_expression": "MAGMA_AND(pTerm != 0, pIter->nKey+1 < nTerm)",
         "comparison_count": 0,
@@ -1242,7 +1109,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 48,
+      "rank": 43,
       "raw": {
         "canary_expression": "MAGMA_OR( MAGMA_AND(pLeft->op==TK_COLUMN, pLeft->y.pTab == 0), MAGMA_AND(pLeft->op!=TK_COLUMN, MAGMA_AND(pRight->op==TK_COLUMN, pRight->y.pTab == 0))) ; MAGMA_AND((X)->op==TK_COLUMN, (X)->y.pTab == 0)",
         "comparison_count": 0,
@@ -1268,7 +1135,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 49,
+      "rank": 44,
       "raw": {
         "canary_expression": "MAGMA_AND(peek, MAGMA_AND(SSL3_RECORD_get_length(rr) == 0, !SSL3_RECORD_is_read(rr)))",
         "comparison_count": 0,
@@ -1294,7 +1161,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 50,
+      "rank": 45,
       "raw": {
         "canary_expression": "size < 0 ; MAGMA_OR(size < 0, len < 0)",
         "comparison_count": 0,
@@ -1320,7 +1187,7 @@
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "numeric-margin",
       "project": "gpac",
-      "rank": 51,
+      "rank": 46,
       "raw": {
         "bug_type": "Heap Buffer Overflow",
         "commit_links": "https://github.com/gpac/gpac/commit/b40ce70f56c49705af95a291347a2a1688d3f13a",
@@ -1349,7 +1216,7 @@
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "numeric-margin",
       "project": "libarchive",
-      "rank": 52,
+      "rank": 47,
       "raw": {
         "bug_type": "Heap Buffer Overflow",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
@@ -1378,7 +1245,7 @@
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "numeric-margin",
       "project": "libarchive",
-      "rank": 53,
+      "rank": 48,
       "raw": {
         "bug_type": "OOB Read",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
@@ -1407,7 +1274,7 @@
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "numeric-margin",
       "project": "libarchive",
-      "rank": 54,
+      "rank": 49,
       "raw": {
         "bug_type": "OOB Write",
         "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
@@ -1436,7 +1303,7 @@
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "numeric-margin",
       "project": "libarchive",
-      "rank": 55,
+      "rank": 50,
       "raw": {
         "bug_type": "OOB Read",
         "commit_links": "",
@@ -1465,7 +1332,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "poppler",
-      "rank": 56,
+      "rank": 51,
       "raw": {
         "canary_expression": "MAGMA_AND(alt->getMode() == csDeviceGray, name->cmp(\"Black\") == 0) ; MAGMA_OR(name->cmp(\"Black\") == 0, MAGMA_OR(name->cmp(\"Cyan\") == 0, MAGMA_OR(name->cmp(\"Magenta\") == 0, name->cmp(\"Yellow\") == 0)))",
         "comparison_count": 0,
@@ -1491,7 +1358,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "libxml2",
-      "rank": 57,
+      "rank": 52,
       "raw": {
         "canary_expression": "RAW != '>'",
         "comparison_count": 0,
@@ -1517,7 +1384,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 58,
+      "rank": 53,
       "raw": {
         "canary_expression": "componentPixels != priv->npixels",
         "comparison_count": 0,
@@ -1543,7 +1410,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 59,
+      "rank": 54,
       "raw": {
         "canary_expression": "val.pos == offset",
         "comparison_count": 0,
@@ -1569,7 +1436,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 60,
+      "rank": 55,
       "raw": {
         "canary_expression": "dlen == 0 ; (size_t) dlen < ((size_t)n) + 2",
         "comparison_count": 0,
@@ -1595,7 +1462,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libpng",
-      "rank": 61,
+      "rank": 56,
       "raw": {
         "canary_expression": "(image->flags & PNG_IMAGE_FLAG_INVALID) != 0",
         "comparison_count": 0,
@@ -1621,7 +1488,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libpng",
-      "rank": 62,
+      "rank": 57,
       "raw": {
         "canary_expression": "(row_width * pixel_depth) != (u_int64_t)row_width * pixel_depth",
         "comparison_count": 0,
@@ -1647,7 +1514,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 63,
+      "rank": 58,
       "raw": {
         "canary_expression": "psf->sf.channels != (int) frame->header.channels",
         "comparison_count": 0,
@@ -1673,7 +1540,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 64,
+      "rank": 59,
       "raw": {
         "canary_expression": "psf->header.indx + 4 + (sf_count_t) size + (sf_count_t) (size & 1) > psf->header.len ; padding == 1",
         "comparison_count": 0,
@@ -1699,7 +1566,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 65,
+      "rank": 60,
       "raw": {
         "canary_expression": "(p->selFlags & SF_Distinct)!=0",
         "comparison_count": 0,
@@ -1725,7 +1592,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 66,
+      "rank": 61,
       "raw": {
         "canary_expression": "(int)strlen(zPath) != nPath ; (int)strlen(zName) != nName",
         "comparison_count": 0,
@@ -1751,7 +1618,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 67,
+      "rank": 62,
       "raw": {
         "canary_expression": "p->pWin != 0",
         "comparison_count": 0,
@@ -1777,7 +1644,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 68,
+      "rank": 63,
       "raw": {
         "canary_expression": "pTerm!=&pWC->a[idxTerm]",
         "comparison_count": 0,
@@ -1803,7 +1670,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 69,
+      "rank": 64,
       "raw": {
         "canary_expression": "sqlite3VdbeGetOp(v,-1)->opcode!=OP_Column",
         "comparison_count": 0,
@@ -1829,7 +1696,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 70,
+      "rank": 65,
       "raw": {
         "canary_expression": "pParse->nErr != 0",
         "comparison_count": 0,
@@ -1855,7 +1722,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 71,
+      "rank": 66,
       "raw": {
         "canary_expression": "(pIn3->flags & MEM_Dyn) != (flags3 & MEM_Dyn) ; (pIn1->flags & MEM_Dyn) != (flags1 & MEM_Dyn)",
         "comparison_count": 0,
@@ -1881,7 +1748,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 72,
+      "rank": 67,
       "raw": {
         "canary_expression": "pDup->u.zToken !=0",
         "comparison_count": 0,
@@ -1907,7 +1774,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 73,
+      "rank": 68,
       "raw": {
         "canary_expression": "a->type == V_ASN1_BOOLEAN",
         "comparison_count": 0,
@@ -1933,7 +1800,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 74,
+      "rank": 69,
       "raw": {
         "canary_expression": "(cc%stride)!=0 ; (cc%(2*stride))!=0 ; (cc%(4*stride))!=0 ; (cc%(bps*stride))!=0 ; (occ0%rowsize)!=0 ; (cc0%rowsize)!=0",
         "comparison_count": 0,
@@ -1959,7 +1826,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 75,
+      "rank": 70,
       "raw": {
         "canary_expression": "sp->decoder_ok == 0",
         "comparison_count": 0,
@@ -1985,7 +1852,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 76,
+      "rank": 71,
       "raw": {
         "canary_expression": "sp->encoder_state == 0",
         "comparison_count": 0,
@@ -2011,7 +1878,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 77,
+      "rank": 72,
       "raw": {
         "canary_expression": "(sp->state&PLSTATE_INIT) == 0",
         "comparison_count": 0,
@@ -2037,7 +1904,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 78,
+      "rank": 73,
       "raw": {
         "canary_expression": "avail != (in->end - in->cur)",
         "comparison_count": 0,
@@ -2063,7 +1930,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 79,
+      "rank": 74,
       "raw": {
         "canary_expression": "ctxt->instate == XML_PARSER_EOF",
         "comparison_count": 0,
@@ -2089,7 +1956,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 80,
+      "rank": 75,
       "raw": {
         "canary_expression": "(end - len) != (BASE_PTR + startPosition)",
         "comparison_count": 0,
@@ -2115,7 +1982,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 81,
+      "rank": 76,
       "raw": {
         "canary_expression": "ctxt->input->base != base",
         "comparison_count": 0,
@@ -2141,7 +2008,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 82,
+      "rank": 77,
       "raw": {
         "canary_expression": "(dir_start - value_ptr) > value_len - (2+NumDirEntries*12)",
         "comparison_count": 0,
@@ -2167,7 +2034,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libpng",
-      "rank": 83,
+      "rank": 78,
       "raw": {
         "canary_expression": "row_factor_l == ((size_t)1 << (sizeof(png_uint_32) * 8))",
         "comparison_count": 0,
@@ -2193,7 +2060,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "libsndfile",
-      "rank": 84,
+      "rank": 79,
       "raw": {
         "canary_expression": "ptr[i] == INT_MIN",
         "comparison_count": 0,
@@ -2219,7 +2086,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "libsndfile",
-      "rank": 85,
+      "rank": 80,
       "raw": {
         "canary_expression": "ptr[i] == INT_MIN",
         "comparison_count": 0,
@@ -2245,7 +2112,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "sqlite3",
-      "rank": 86,
+      "rank": 81,
       "raw": {
         "canary_expression": "zPath == 0",
         "comparison_count": 0,
@@ -2271,7 +2138,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "sqlite3",
-      "rank": 87,
+      "rank": 82,
       "raw": {
         "canary_expression": "pSelect != 0",
         "comparison_count": 0,
@@ -2297,7 +2164,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "sqlite3",
-      "rank": 88,
+      "rank": 83,
       "raw": {
         "canary_expression": "azCol==0",
         "comparison_count": 0,
@@ -2323,7 +2190,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "sqlite3",
-      "rank": 89,
+      "rank": 84,
       "raw": {
         "canary_expression": "dequote==0",
         "comparison_count": 0,
@@ -2349,7 +2216,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "openssl",
-      "rank": 90,
+      "rank": 85,
       "raw": {
         "canary_expression": "i == 0",
         "comparison_count": 0,
@@ -2375,7 +2242,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "openssl",
-      "rank": 91,
+      "rank": 86,
       "raw": {
         "canary_expression": "udp[0] == 0",
         "comparison_count": 0,
@@ -2401,7 +2268,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "libtiff",
-      "rank": 92,
+      "rank": 87,
       "raw": {
         "canary_expression": "stripsperplane == 0",
         "comparison_count": 0,
@@ -2427,7 +2294,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "equality/magic",
       "project": "libxml2",
-      "rank": 93,
+      "rank": 88,
       "raw": {
         "canary_expression": "q != (BASE_PTR+startPosition)",
         "comparison_count": 0,
@@ -2453,7 +2320,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "lua",
-      "rank": 94,
+      "rank": 89,
       "raw": {
         "canary_expression": "INT_MAX - nextra <= (n - 1)",
         "comparison_count": 0,
@@ -2479,7 +2346,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "lua",
-      "rank": 95,
+      "rank": 90,
       "raw": {
         "canary_expression": "pcRel(L->oldpc, p) < 0",
         "comparison_count": 0,
@@ -2505,7 +2372,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 96,
+      "rank": 91,
       "raw": {
         "canary_expression": "oLen.getInt() < 0",
         "comparison_count": 0,
@@ -2531,7 +2398,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 97,
+      "rank": 92,
       "raw": {
         "canary_expression": "readChars < 0",
         "comparison_count": 0,
@@ -2557,7 +2424,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 98,
+      "rank": 93,
       "raw": {
         "canary_expression": "vertsPerRow <= 0",
         "comparison_count": 0,
@@ -2583,7 +2450,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 99,
+      "rank": 94,
       "raw": {
         "canary_expression": "length >= LLONG_MAX - pos - 5000",
         "comparison_count": 0,
@@ -2609,7 +2476,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 100,
+      "rank": 95,
       "raw": {
         "canary_expression": "i < 0",
         "comparison_count": 0,
@@ -2635,7 +2502,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 101,
+      "rank": 96,
       "raw": {
         "canary_expression": "pos > LLONG_MAX - length",
         "comparison_count": 0,
@@ -2661,7 +2528,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 102,
+      "rank": 97,
       "raw": {
         "canary_expression": "i >= capacity",
         "comparison_count": 0,
@@ -2687,7 +2554,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 103,
+      "rank": 98,
       "raw": {
         "canary_expression": "length > (int)sizeof(vheaTab) ; length > vmtxTabLength",
         "comparison_count": 0,
@@ -2713,7 +2580,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "poppler",
-      "rank": 104,
+      "rank": 99,
       "raw": {
         "canary_expression": "nComps <= 0",
         "comparison_count": 0,
@@ -2739,7 +2606,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 105,
+      "rank": 100,
       "raw": {
         "canary_expression": "dir_offset > SIZE_MAX - 2",
         "comparison_count": 0,
@@ -2765,7 +2632,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 106,
+      "rank": 101,
       "raw": {
         "canary_expression": "str_left <= 1",
         "comparison_count": 0,
@@ -2791,7 +2658,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 107,
+      "rank": 102,
       "raw": {
         "canary_expression": "pos >= ImageInfo->Thumbnail.size",
         "comparison_count": 0,
@@ -2817,7 +2684,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 108,
+      "rank": 103,
       "raw": {
         "canary_expression": "buffer + 4 > endbuffer",
         "comparison_count": 0,
@@ -2843,7 +2710,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 109,
+      "rank": 104,
       "raw": {
         "canary_expression": "(slocale_len > INTL_MAX_LOCALE_LEN)",
         "comparison_count": 0,
@@ -2869,7 +2736,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 110,
+      "rank": 105,
       "raw": {
         "canary_expression": "loc_name_len > ULOC_FULLNAME_CAPACITY",
         "comparison_count": 0,
@@ -2895,7 +2762,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "php",
-      "rank": 111,
+      "rank": 106,
       "raw": {
         "canary_expression": "sig_len < sizeof(digest) ; read <= 8",
         "comparison_count": 0,
@@ -2921,7 +2788,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libpng",
-      "rank": 112,
+      "rank": 107,
       "raw": {
         "canary_expression": "num > max_palette_length",
         "comparison_count": 0,
@@ -2947,7 +2814,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libpng",
-      "rank": 113,
+      "rank": 108,
       "raw": {
         "canary_expression": "row_bytes_check < ((png_ptr->width + 7) & ~((png_uint_32)7))",
         "comparison_count": 0,
@@ -2973,7 +2840,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 114,
+      "rank": 109,
       "raw": {
         "canary_expression": "rsrc.map_offset + 28 > rsrc.rsrc_len",
         "comparison_count": 0,
@@ -2999,7 +2866,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 115,
+      "rank": 110,
       "raw": {
         "canary_expression": "psf->sf.channels > (layout_tag & 0xffff)",
         "comparison_count": 0,
@@ -3025,7 +2892,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 116,
+      "rank": 111,
       "raw": {
         "canary_expression": "psf->header.indx + 4 + (sf_count_t) size + (sf_count_t) (size & 1) > psf->header.len",
         "comparison_count": 0,
@@ -3051,7 +2918,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 117,
+      "rank": 112,
       "raw": {
         "canary_expression": "psf->header.indx + 1 + (sf_count_t) size > psf->header.len",
         "comparison_count": 0,
@@ -3077,7 +2944,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 118,
+      "rank": 113,
       "raw": {
         "canary_expression": "psf->sf.channels > SF_MAX_CHANNELS",
         "comparison_count": 0,
@@ -3103,7 +2970,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 119,
+      "rank": 114,
       "raw": {
         "canary_expression": "k >= psf->sf.channels",
         "comparison_count": 0,
@@ -3129,7 +2996,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 120,
+      "rank": 115,
       "raw": {
         "canary_expression": "bit < 2",
         "comparison_count": 0,
@@ -3155,7 +3022,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libsndfile",
-      "rank": 121,
+      "rank": 116,
       "raw": {
         "canary_expression": "psf->instrument->loop_count > ARRAY_LEN (psf->instrument->loops)",
         "comparison_count": 0,
@@ -3181,7 +3048,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 122,
+      "rank": 117,
       "raw": {
         "canary_expression": "pParse->nErr",
         "comparison_count": 0,
@@ -3207,7 +3074,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 123,
+      "rank": 118,
       "raw": {
         "canary_expression": "pRtree->iNodeSize<(512-64)",
         "comparison_count": 0,
@@ -3233,7 +3100,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "sqlite3",
-      "rank": 124,
+      "rank": 119,
       "raw": {
         "canary_expression": "MAX(e2,0) + precision > (((int)-1)&0x7fffffff) - 15 - width",
         "comparison_count": 0,
@@ -3259,7 +3126,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 125,
+      "rank": 120,
       "raw": {
         "canary_expression": "i <= 0",
         "comparison_count": 0,
@@ -3285,7 +3152,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 126,
+      "rank": 121,
       "raw": {
         "canary_expression": "num > (int)sizeof(ebcdic_buf)",
         "comparison_count": 0,
@@ -3311,7 +3178,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 127,
+      "rank": 122,
       "raw": {
         "canary_expression": "INT_MAX - inl < ctx->num",
         "comparison_count": 0,
@@ -3337,7 +3204,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 128,
+      "rank": 123,
       "raw": {
         "canary_expression": "SIZE_MAX - len < i",
         "comparison_count": 0,
@@ -3363,7 +3230,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 129,
+      "rank": 124,
       "raw": {
         "canary_expression": "bits > (INT_MAX - BN_BITS2 + 1)",
         "comparison_count": 0,
@@ -3389,7 +3256,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 130,
+      "rank": 125,
       "raw": {
         "canary_expression": "magma_int < 0",
         "comparison_count": 0,
@@ -3415,7 +3282,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 131,
+      "rank": 126,
       "raw": {
         "canary_expression": "msg_len > dtls1_max_handshake_message_len(s)",
         "comparison_count": 0,
@@ -3441,7 +3308,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "openssl",
-      "rank": 132,
+      "rank": 127,
       "raw": {
         "canary_expression": "eticklen <= TLSEXT_KEYNAME_LENGTH + EVP_CIPHER_CTX_get_iv_length(ctx) + mlen",
         "comparison_count": 0,
@@ -3467,7 +3334,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 133,
+      "rank": 128,
       "raw": {
         "canary_expression": "(tmsize_t)sp->stream.avail_out > sp->tbuf_size",
         "comparison_count": 0,
@@ -3493,7 +3360,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 134,
+      "rank": 129,
       "raw": {
         "canary_expression": "nstrips > TIFFhowmany_32(td->td_imagelength, rowsperstrip)",
         "comparison_count": 0,
@@ -3519,7 +3386,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 135,
+      "rank": 130,
       "raw": {
         "canary_expression": "op_offset >= scanline",
         "comparison_count": 0,
@@ -3545,7 +3412,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 136,
+      "rank": 131,
       "raw": {
         "canary_expression": "tp <= op",
         "comparison_count": 0,
@@ -3571,7 +3438,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libtiff",
-      "rank": 137,
+      "rank": 132,
       "raw": {
         "canary_expression": "(tmsize_t)decodedSize > size",
         "comparison_count": 0,
@@ -3597,7 +3464,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 138,
+      "rank": 133,
       "raw": {
         "canary_expression": "(size - len - xmlStrlen(content->prefix)) < (xmlStrlen(content->name) + 10)",
         "comparison_count": 0,
@@ -3623,7 +3490,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 139,
+      "rank": 134,
       "raw": {
         "canary_expression": "size > (MAX_SIZE_T - RESERVE_SIZE)",
         "comparison_count": 0,
@@ -3649,7 +3516,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 140,
+      "rank": 135,
       "raw": {
         "canary_expression": "size - strlen(buf) <= 2",
         "comparison_count": 0,
@@ -3675,7 +3542,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 141,
+      "rank": 136,
       "raw": {
         "canary_expression": "m_tmp < 0",
         "comparison_count": 0,
@@ -3701,7 +3568,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 142,
+      "rank": 137,
       "raw": {
         "canary_expression": "in >= ctxt->input->end",
         "comparison_count": 0,
@@ -3727,7 +3594,7 @@
       "next_action": "keep for control coverage unless a replay shows D_T degenerates to an uninformative binary signal",
       "primary_category": "numeric-margin",
       "project": "libxml2",
-      "rank": 143,
+      "rank": 138,
       "raw": {
         "canary_expression": "end < start",
         "comparison_count": 0,
@@ -3743,6 +3610,87 @@
       "target_id": "XML016"
     },
     {
+      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
+      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml,LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
+      "binding_spec_validated": true,
+      "blockers": "existing comparison/admissibility evidence demotes this target",
+      "comparison_count": 6,
+      "existing_disposition": "demote_to_control_or_negative",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "primary_category": "binary-state-null",
+      "project": "libarchive",
+      "rank": 139,
+      "raw": {
+        "bug_type": "NULL Pointer Dereference",
+        "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
+        "comparison_count": 6,
+        "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
+        "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
+        "pull_links": "",
+        "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
+      },
+      "score": 20,
+      "secondary_category": "",
+      "source": "real_cve",
+      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
+      "status": "do_not_promote",
+      "suggested_short_triage": "short-gate comparison package already exists; inspect the benefit readout first, promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance before rerunning",
+      "target_id": "LIBARCHIVE_2936"
+    },
+    {
+      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
+      "binding_spec": "TIF012.native_draft_magma_canary.yml",
+      "binding_spec_validated": true,
+      "blockers": "existing comparison/admissibility evidence demotes this target",
+      "comparison_count": 5,
+      "existing_disposition": "demote_to_control_or_negative",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "primary_category": "binary-state-null",
+      "project": "libtiff",
+      "rank": 140,
+      "raw": {
+        "canary_expression": "MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))",
+        "comparison_count": 5,
+        "patch_path": "experiments/magma_workspace/magma/targets/libtiff/patches/bugs/TIF012.patch",
+        "program": "tiff_read_rgba_fuzzer"
+      },
+      "score": 19,
+      "secondary_category": "compound-sequence-lifecycle",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "do_not_promote",
+      "suggested_short_triage": "short-gate comparison package already exists; inspect the benefit readout first, promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance before rerunning",
+      "target_id": "TIF012"
+    },
+    {
+      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "binding_spec": "PHP009.native_draft_magma_canary.yml",
+      "binding_spec_validated": true,
+      "blockers": "existing comparison/admissibility evidence demotes this target",
+      "comparison_count": 1,
+      "existing_disposition": "demote_to_control_or_negative",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "primary_category": "compound-sequence-lifecycle",
+      "project": "php",
+      "rank": 141,
+      "raw": {
+        "canary_expression": "MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)",
+        "comparison_count": 1,
+        "patch_path": "experiments/magma_workspace/magma/targets/php/patches/bugs/PHP009.patch",
+        "program": "exif"
+      },
+      "score": 8,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "do_not_promote",
+      "suggested_short_triage": "short-gate comparison package already exists; inspect the benefit readout first, promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance before rerunning",
+      "target_id": "PHP009"
+    },
+    {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
       "binding_spec": "PNG006.native_b2_candidate.yml,PNG006.native_b2_exif_insert_candidate.yml",
       "binding_spec_validated": false,
@@ -3753,7 +3701,7 @@
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "primary_category": "binary-state-null",
       "project": "libpng",
-      "rank": 144,
+      "rank": 142,
       "raw": {
         "canary_expression": "MAGMA_AND(info_ptr->eXIf_buf != NULL, (mask & info_ptr->free_me & PNG_FREE_EXIF) == 0)",
         "comparison_count": 3,
@@ -3779,7 +3727,7 @@
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 145,
+      "rank": 143,
       "raw": {
         "canary_expression": "MAGMA_AND(data_body == NULL, in_bio == NULL)",
         "comparison_count": 0,
@@ -3795,6 +3743,32 @@
       "target_id": "SSL011"
     },
     {
+      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
+      "binding_spec": "SSL015.native_b2_pkcs7_decode_candidate.yml,SSL015.native_draft_magma_canary.yml",
+      "binding_spec_validated": false,
+      "blockers": "pre-trigger lift guidance is not ready; terminal signal appeared without non-trigger guidance; semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "primary_category": "binary-state-null",
+      "project": "openssl",
+      "rank": 144,
+      "raw": {
+        "canary_expression": "MAGMA_OR(p7 == NULL, p7->d.ptr) ; MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/openssl/patches/bugs/SSL015.patch",
+        "program": "asn1"
+      },
+      "score": 0,
+      "secondary_category": "compound-sequence-lifecycle",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "do_not_promote",
+      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
+      "target_id": "SSL015"
+    },
+    {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
       "binding_spec": "PNG007.native_b2_candidate.yml,PNG007.native_b2_plte_delete_candidate.yml,PNG007.native_b2_plte_multi_delete_candidate.yml,PNG007.native_b3_current_root46.yml,PNG007.native_b3_current_root49.yml,PNG007.native_b3_current_root58.yml,PNG007.native_b3_current_root70.yml",
       "binding_spec_validated": false,
@@ -3805,7 +3779,7 @@
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "primary_category": "binary-state-null",
       "project": "libpng",
-      "rank": 146,
+      "rank": 145,
       "raw": {
         "canary_expression": "png_ptr->palette == NULL",
         "comparison_count": 0,
@@ -3821,6 +3795,32 @@
       "target_id": "PNG007"
     },
     {
+      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "binding_spec": "PDF016.native_b3_parser_ref_candidate.yml,PDF016.native_b4_parser_gen_distance_candidate.yml,PDF016.native_draft_magma_canary.yml",
+      "binding_spec_validated": true,
+      "blockers": "pre-trigger lift guidance is not ready; terminal signal appeared without non-trigger guidance; semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed",
+      "comparison_count": 1,
+      "existing_disposition": "demote_to_control_or_negative",
+      "lane": "control_or_negative",
+      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "primary_category": "compound-sequence-lifecycle",
+      "project": "poppler",
+      "rank": 146,
+      "raw": {
+        "canary_expression": "MAGMA_OR(num <=0, gen < 0)",
+        "comparison_count": 1,
+        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF016.patch",
+        "program": "pdf_fuzzer"
+      },
+      "score": -82,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "do_not_promote",
+      "suggested_short_triage": "short-gate comparison package already exists; inspect the benefit readout first, promote only positive endpoint/pre-trigger evidence, otherwise refine BindingSpec/root-state guidance before rerunning",
+      "target_id": "PDF016"
+    },
+    {
       "benefit_hypothesis": "current evidence does not support a main hard-target benefit claim",
       "binding_spec": "",
       "binding_spec_validated": false,
@@ -3834,17 +3834,23 @@
       "rank": 147,
       "raw": {
         "triage_row": {
+          "baseline_guidance_gap_evidence": "",
+          "baseline_guidance_gap_status": "",
           "baseline_triggers": "aflplusplus_cmplog,aflplusplus_vanilla,redqueen_operand",
           "best_formtrig_trigger_time_s": null,
           "best_package": "LIBCOAP_35862_pretrigger_30m_vs_non_asan_baselines_20260616",
           "best_verdict": "pretrigger_guidance_only",
           "blocked_claims": "matched faithful baselines trigger in the current package set; not a hard SOTA-gap target; FORMTRIG first `_T`/TTE is not recorded for this run; replication is too low for a final performance claim; matched baselines also trigger, so terminal success alone is not a FORMTRIG advantage",
           "disposition": "demote_to_control_or_negative",
-          "fastest_baseline_trigger_time_s": 1060.0,
+          "fastest_baseline_trigger_time_s": "",
           "formtrig_terminal": true,
+          "main_claim_strength": "",
+          "max_budget_s": 1800.0,
           "next_action": "do not spend main long-run budget here; use as control/evidence plumbing and search harder targets",
           "observed_benefits": "binary or sparse trigger feedback was lifted into accepted non-trigger search progress; FORMTRIG terminal oracle success is observed",
           "priority": 90,
+          "sota_pain_class": "not_visible_baseline_visible_no_formtrig_advantage",
+          "sota_pain_evidence": "matched faithful baselines trigger and current evidence has no FORMTRIG first_T/TTE advantage",
           "sources": "artifacts/formtrig_native_readiness/comparisons/libcoap_35862_asan_terminal_30m_vs_asan_baselines_20260616/comparison.json; artifacts/formtrig_native_readiness/comparisons/libcoap_35862_pretrigger_30m_vs_non_asan_baselines_20260616/comparison.json",
           "strict_pretrigger_guidance": true,
           "target_id": "LIBCOAP_CVE_2023_35862",
@@ -3854,17 +3860,17 @@
       "score": -99,
       "secondary_category": "",
       "source": "existing_evidence",
-      "source_evidence": "artifacts/formtrig_native_readiness/hard_target_triage_20260616.json",
+      "source_evidence": "artifacts/formtrig_native_readiness/hard_target_triage_20260618.json",
       "status": "do_not_promote",
       "suggested_short_triage": "none for main queue",
       "target_id": "LIBCOAP_CVE_2023_35862"
     }
   ],
-  "generated_at_utc": "2026-06-17T13:53:01+00:00",
+  "generated_at_utc": "2026-06-18T09:25:32+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
-    "current_triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260616.json",
+    "current_triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260618.json",
     "cve_inventory": "artifacts/cve_bench_candidate_audit.json",
     "magma_inventory": "artifacts/magma_canary_inventory.json"
   },
@@ -3873,51 +3879,22 @@
   "selected_count": 147,
   "top_targets": [
     {
-      "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
-      "binding_spec": "LIBARCHIVE_2936.native_b2_path_table_candidate.yml,LIBARCHIVE_2936.native_b3_path_table_count_candidate.yml,LIBARCHIVE_2936.native_b4_path_table_root_distance_candidate.yml",
-      "binding_spec_validated": true,
-      "blockers": "",
-      "comparison_count": 6,
-      "existing_disposition": "candidate_extend_longruns",
-      "lane": "real_cve_replacement",
-      "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
-      "primary_category": "binary-state-null",
-      "project": "libarchive",
-      "rank": 1,
-      "raw": {
-        "bug_type": "NULL Pointer Dereference",
-        "commit_links": "https://github.com/libarchive/libarchive/commit/a819cc28299dca6cf455af074a1a7939efbfb13c",
-        "comparison_count": 6,
-        "external_input_links": "https://github.com/TimChan2001/pocs/raw/refs/heads/main/poc-libarchive-npd-0",
-        "issue_url": "https://github.com/libarchive/libarchive/issues/2936",
-        "pull_links": "",
-        "title": "NULL Pointer Dereference in ISO9660 Path Table Sorting in libarchive (_compare_path_table) \u00b7 Issue #2936 \u00b7 libarchive/libarchive \u00b7 GitHub"
-      },
-      "score": 115,
-      "secondary_category": "",
-      "source": "real_cve",
-      "source_evidence": "artifacts/cve_bench_candidate_audit.json",
-      "status": "short_gate_triaged",
-      "suggested_short_triage": "positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets",
-      "target_id": "LIBARCHIVE_2936"
-    },
-    {
       "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "TIF012.native_draft_magma_canary.yml",
+      "binding_spec": "PDF003.native_draft_magma_canary.yml",
       "binding_spec_validated": true,
       "blockers": "",
-      "comparison_count": 4,
+      "comparison_count": 3,
       "existing_disposition": "candidate_extend_longruns",
       "lane": "short_triage_ready",
       "next_action": "run 2h matched repetitions if retained as a paper case; otherwise shift main budget to harder Magma/real-CVE targets",
       "primary_category": "binary-state-null",
-      "project": "libtiff",
-      "rank": 2,
+      "project": "poppler",
+      "rank": 1,
       "raw": {
-        "canary_expression": "MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1))) ; MAGMA_OR(td->td_sminsamplevalue != NULL, MAGMA_OR(td->td_smaxsamplevalue != NULL, MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, !(td->td_samplesperpixel - td->td_extrasamples > 1)))))",
-        "comparison_count": 4,
-        "patch_path": "experiments/magma_workspace/magma/targets/libtiff/patches/bugs/TIF012.patch",
-        "program": "tiff_read_rgba_fuzzer"
+        "canary_expression": "MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))",
+        "comparison_count": 3,
+        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF003.patch",
+        "program": "pdfimages"
       },
       "score": 109,
       "secondary_category": "compound-sequence-lifecycle",
@@ -3925,111 +3902,33 @@
       "source_evidence": "artifacts/magma_canary_inventory.json",
       "status": "short_gate_triaged",
       "suggested_short_triage": "positive speedup evidence already exists; run 2h matched FORMTRIG/AFL++ family repetitions only if this target remains in paper scope, otherwise shift budget to harder targets",
-      "target_id": "TIF012"
-    },
-    {
-      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "PDF003.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "binary-state-null",
-      "project": "poppler",
-      "rank": 3,
-      "raw": {
-        "canary_expression": "MAGMA_AND(colorMap->getColorSpace2() == nullptr, (size_t)colorMap->getNumPixelComps() > sizeof(zero))",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF003.patch",
-        "program": "pdfimages"
-      },
-      "score": 90,
-      "secondary_category": "compound-sequence-lifecycle",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
       "target_id": "PDF003"
     },
     {
-      "benefit_hypothesis": "binary terminal state is gated by parser/object lifecycle progress that CmpLog-style direct comparison feedback may not expose",
-      "binding_spec": "SSL015.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "binary-state-null",
-      "project": "openssl",
-      "rank": 4,
-      "raw": {
-        "canary_expression": "MAGMA_OR(p7 == NULL, p7->d.ptr) ; MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/openssl/patches/bugs/SSL015.patch",
-        "program": "asn1"
-      },
-      "score": 90,
-      "secondary_category": "compound-sequence-lifecycle",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
-      "target_id": "SSL015"
-    },
-    {
       "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
-      "binding_spec": "PDF016.native_draft_magma_canary.yml",
-      "binding_spec_validated": false,
-      "blockers": "BindingSpec candidate is not native-site-map validated; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "validate BindingSpec against native site map and binding-signal diagnosis before short gate",
-      "primary_category": "compound-sequence-lifecycle",
-      "project": "poppler",
-      "rank": 5,
-      "raw": {
-        "canary_expression": "MAGMA_OR(num <=0, gen < 0)",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF016.patch",
-        "program": "pdf_fuzzer"
-      },
-      "score": 81,
-      "secondary_category": "",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_binding_validation",
-      "suggested_short_triage": "compile BindingSpec against the native site map, pass lift audit and binding-signal diagnosis, then run 10-30m FORMTRIG/baseline screen",
-      "target_id": "PDF016"
-    },
-    {
-      "benefit_hypothesis": "validated numeric-margin root can test whether lifted offset/length guidance yields endpoint benefit beyond binary Magma _T feedback",
-      "binding_spec": "PHP009.native_draft_magma_canary.yml",
+      "binding_spec": "PHP003.native_b2_thumbnail_guard_candidate.yml",
       "binding_spec_validated": true,
       "blockers": "no comparison package exists yet",
       "comparison_count": 0,
       "existing_disposition": "",
-      "lane": "binding_validation_first",
-      "next_action": "run validated matched short endpoint screen against faithful AFL++ family baselines",
-      "primary_category": "numeric-margin",
+      "lane": "short_triage_ready",
+      "next_action": "run short FORMTRIG gate and same-seed AFL++ family baseline screen",
+      "primary_category": "compound-sequence-lifecycle",
       "project": "php",
-      "rank": 6,
+      "rank": 2,
       "raw": {
-        "canary_expression": "MAGMA_OR(maker_note->offset == value_len - 1,value_len < 2)",
+        "canary_expression": "MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)",
         "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/php/patches/bugs/PHP009.patch",
+        "patch_path": "experiments/magma_workspace/magma/targets/php/patches/bugs/PHP003.patch",
         "program": "exif"
       },
-      "score": 81,
-      "secondary_category": "",
+      "score": 96,
+      "secondary_category": "numeric-margin",
       "source": "magma",
       "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "binding_validation_passed",
-      "suggested_short_triage": "run 600s matched FORMTRIG/baseline screen; promote only if baseline binary feedback is flat and _T remains late, missing, or high-variance",
-      "target_id": "PHP009"
+      "status": "needs_short_discovery",
+      "suggested_short_triage": "run 10-30m FORMTRIG seed-readiness/gate, then same-seed AFL++ vanilla/CmpLog/Redqueen short baselines with `scripts/run_magma_baselines.sh --target-id PHP003 --durations 600,1800 --jobs N`",
+      "target_id": "PHP003"
     },
     {
       "benefit_hypothesis": "native trigger feedback is likely 0/1, so FORMTRIG can test whether lifted producer/use or lifecycle features guide R2T",
@@ -4042,7 +3941,7 @@
       "next_action": "validate BindingSpec against native site map and dynamic binding signal before short gate",
       "primary_category": "binary-state-null",
       "project": "libxml2",
-      "rank": 7,
+      "rank": 3,
       "raw": {
         "bug_type": "NULL Pointer Dereference",
         "commit_links": "",
@@ -4071,7 +3970,7 @@
       "next_action": "validate vulnerable build/PoC replay, audit harness admissibility, then draft BindingSpec",
       "primary_category": "compound-sequence-lifecycle",
       "project": "gpac",
-      "rank": 8,
+      "rank": 4,
       "raw": {
         "bug_type": "Double Free",
         "commit_links": "https://github.com/gpac/gpac/commit/3ab9394473dfcdc830a4fb44a138db5276ae4bdb;https://github.com/gpac/gpac/commit/52f65707c512a2b6bab361301cb703a2c6c8b53e",
@@ -4100,7 +3999,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "sqlite3",
-      "rank": 9,
+      "rank": 5,
       "raw": {
         "canary_expression": "pNew->nLSlot < (pNew->nLTerm+1)",
         "comparison_count": 0,
@@ -4126,7 +4025,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "openssl",
-      "rank": 10,
+      "rank": 6,
       "raw": {
         "canary_expression": "MAGMA_AND(f != NULL, MAGMA_AND(f->addressFamily != NULL, MAGMA_AND(f->addressFamily->data != NULL, f->addressFamily->length < 2)))",
         "comparison_count": 0,
@@ -4152,33 +4051,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "php",
-      "rank": 11,
-      "raw": {
-        "canary_expression": "MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)",
-        "comparison_count": 0,
-        "patch_path": "experiments/magma_workspace/magma/targets/php/patches/bugs/PHP003.patch",
-        "program": "exif"
-      },
-      "score": 74,
-      "secondary_category": "numeric-margin",
-      "source": "magma",
-      "source_evidence": "artifacts/magma_canary_inventory.json",
-      "status": "needs_short_discovery",
-      "suggested_short_triage": "draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs N`",
-      "target_id": "PHP003"
-    },
-    {
-      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
-      "binding_spec": "",
-      "binding_spec_validated": false,
-      "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
-      "comparison_count": 0,
-      "existing_disposition": "",
-      "lane": "binding_spec_first",
-      "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
-      "primary_category": "compound-sequence-lifecycle",
-      "project": "php",
-      "rank": 12,
+      "rank": 7,
       "raw": {
         "canary_expression": "MAGMA_AND(MAGMA_OR(pos > SIZE_MAX - length, length > ImageInfo->Thumbnail.size), pos < ImageInfo->Thumbnail.size - length) ; MAGMA_OR(length < 8, ImageInfo->Thumbnail.size - 8 < pos)",
         "comparison_count": 0,
@@ -4204,7 +4077,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "php",
-      "rank": 13,
+      "rank": 8,
       "raw": {
         "canary_expression": "ptr_offset_overflows(info->offset_base, offset) ; ptr_offset_overflows(info->offset_base + offset, length) ; MAGMA_OR((info->offset_base + offset) < info->valid_start, (info->offset_base + offset + length) > info->valid_end)",
         "comparison_count": 0,
@@ -4230,7 +4103,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "sqlite3",
-      "rank": 14,
+      "rank": 9,
       "raw": {
         "canary_expression": "MAGMA_AND((pExTab->tabFlags & TF_HasGenerated)!=0, MAGMA_AND((pExTab->aCol[n].colFlags & COLFLAG_GENERATED)!=0, MAGMA_AND(pExTab->nCol >= BMS, result < ALLBITS)))",
         "comparison_count": 0,
@@ -4256,7 +4129,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "openssl",
-      "rank": 15,
+      "rank": 10,
       "raw": {
         "canary_expression": "MAGMA_AND(PACKET_remaining(&responder_id_list) > 0, sk_OCSP_RESPID_num(s->ext.ocsp.ids) > 0)",
         "comparison_count": 0,
@@ -4282,7 +4155,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libtiff",
-      "rank": 16,
+      "rank": 11,
       "raw": {
         "canary_expression": "MAGMA_OR(i == sizeof(td->td_transferfunction) / sizeof(*td->td_transferfunction), i == (td->td_samplesperpixel - td->td_extrasamples))",
         "comparison_count": 0,
@@ -4308,7 +4181,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libtiff",
-      "rank": 17,
+      "rank": 12,
       "raw": {
         "canary_expression": "MAGMA_AND(tif->tif_mode == O_RDONLY, MAGMA_AND(nstrips > 1000000, MAGMA_OR(offset >= TIFFGetFileSize(tif), stripbytes * (nstrips - 1) > (TIFFGetFileSize(tif) - offset))))",
         "comparison_count": 0,
@@ -4334,7 +4207,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libxml2",
-      "rank": 18,
+      "rank": 13,
       "raw": {
         "canary_expression": "MAGMA_AND(entity->etype == XML_EXTERNAL_PARAMETER_ENTITY, MAGMA_AND((ctxt->options & XML_PARSE_NOENT) == 0, MAGMA_AND((ctxt->options & XML_PARSE_DTDVALID) == 0, MAGMA_AND((ctxt->options & XML_PARSE_DTDLOAD) == 0, MAGMA_AND((ctxt->options & XML_PARSE_DTDATTR) == 0, MAGMA_AND(ctxt->replaceEntities == 0, ctxt->validate == 0))))))",
         "comparison_count": 0,
@@ -4360,7 +4233,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libxml2",
-      "rank": 19,
+      "rank": 14,
       "raw": {
         "canary_expression": "MAGMA_AND(state->how != GZIP, MAGMA_AND(ret != LZMA_OK, ret != LZMA_STREAM_END))",
         "comparison_count": 0,
@@ -4386,7 +4259,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "libxml2",
-      "rank": 20,
+      "rank": 15,
       "raw": {
         "canary_expression": "MAGMA_AND(m_tmp == 1, MAGMA_AND((ctxt->options & XML_PARSE_NOENT) == 0, MAGMA_AND((ctxt->options & XML_PARSE_DTDVALID) == 0, ctxt->validate == 0)))",
         "comparison_count": 0,
@@ -4412,7 +4285,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 21,
+      "rank": 16,
       "raw": {
         "canary_expression": "ckey == NULL",
         "comparison_count": 0,
@@ -4438,7 +4311,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 22,
+      "rank": 17,
       "raw": {
         "canary_expression": "pktmp == NULL",
         "comparison_count": 0,
@@ -4464,7 +4337,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 23,
+      "rank": 18,
       "raw": {
         "canary_expression": "best_crl == NULL",
         "comparison_count": 0,
@@ -4490,7 +4363,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "poppler",
-      "rank": 24,
+      "rank": 19,
       "raw": {
         "canary_expression": "t3GlyphStack == nullptr",
         "comparison_count": 0,
@@ -4516,7 +4389,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "openssl",
-      "rank": 25,
+      "rank": 20,
       "raw": {
         "canary_expression": "s->init_msg != (s->init_buf->data + msg_offset)",
         "comparison_count": 0,
@@ -4542,7 +4415,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "lua",
-      "rank": 26,
+      "rank": 21,
       "raw": {
         "canary_expression": "p->lineinfo == NULL",
         "comparison_count": 0,
@@ -4568,7 +4441,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "php",
-      "rank": 27,
+      "rank": 22,
       "raw": {
         "canary_expression": "memchr(pos + 1, '.', filename_len - (pos - filename) - 1) == NULL",
         "comparison_count": 0,
@@ -4594,7 +4467,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "binary-state-null",
       "project": "libtiff",
-      "rank": 28,
+      "rank": 23,
       "raw": {
         "canary_expression": "tif->tif_dir.td_transferfunction[2] == NULL ; tif->tif_dir.td_transferfunction[1] == NULL",
         "comparison_count": 0,
@@ -4620,7 +4493,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "lua",
-      "rank": 29,
+      "rank": 24,
       "raw": {
         "canary_expression": "!l_checkmodep(mode)",
         "comparison_count": 0,
@@ -4646,7 +4519,7 @@
       "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
       "primary_category": "compound-sequence-lifecycle",
       "project": "poppler",
-      "rank": 30,
+      "rank": 25,
       "raw": {
         "canary_expression": "!fileSpec.isDict()",
         "comparison_count": 0,
@@ -4660,6 +4533,136 @@
       "status": "needs_short_discovery",
       "suggested_short_triage": "draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id PDF013 --durations 600 --jobs N`",
       "target_id": "PDF013"
+    },
+    {
+      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "binding_spec": "",
+      "binding_spec_validated": false,
+      "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "binding_spec_first",
+      "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
+      "primary_category": "compound-sequence-lifecycle",
+      "project": "poppler",
+      "rank": 26,
+      "raw": {
+        "canary_expression": "!m_objStr.isStream()",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF015.patch",
+        "program": "pdf_fuzzer"
+      },
+      "score": 68,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "needs_short_discovery",
+      "suggested_short_triage": "draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id PDF015 --durations 600 --jobs N`",
+      "target_id": "PDF015"
+    },
+    {
+      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "binding_spec": "",
+      "binding_spec_validated": false,
+      "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "binding_spec_first",
+      "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
+      "primary_category": "compound-sequence-lifecycle",
+      "project": "poppler",
+      "rank": 27,
+      "raw": {
+        "canary_expression": "!path",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/poppler/patches/bugs/PDF018.patch",
+        "program": "pdf_fuzzer"
+      },
+      "score": 68,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "needs_short_discovery",
+      "suggested_short_triage": "draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id PDF018 --durations 600 --jobs N`",
+      "target_id": "PDF018"
+    },
+    {
+      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "binding_spec": "",
+      "binding_spec_validated": false,
+      "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "binding_spec_first",
+      "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
+      "primary_category": "compound-sequence-lifecycle",
+      "project": "libsndfile",
+      "rank": 28,
+      "raw": {
+        "canary_expression": "!isfinite(ptr[i])",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/libsndfile/patches/bugs/SND014.patch",
+        "program": "sndfile_fuzzer"
+      },
+      "score": 68,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "needs_short_discovery",
+      "suggested_short_triage": "draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id SND014 --durations 600 --jobs N`",
+      "target_id": "SND014"
+    },
+    {
+      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "binding_spec": "",
+      "binding_spec_validated": false,
+      "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "binding_spec_first",
+      "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
+      "primary_category": "compound-sequence-lifecycle",
+      "project": "libsndfile",
+      "rank": 29,
+      "raw": {
+        "canary_expression": "!isfinite(ptr[i])",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/libsndfile/patches/bugs/SND022.patch",
+        "program": "sndfile_fuzzer"
+      },
+      "score": 68,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "needs_short_discovery",
+      "suggested_short_triage": "draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id SND022 --durations 600 --jobs N`",
+      "target_id": "SND022"
+    },
+    {
+      "benefit_hypothesis": "terminal success depends on event order, object identity, or parser state rather than one scalar branch distance",
+      "binding_spec": "",
+      "binding_spec_validated": false,
+      "blockers": "no BindingSpec candidate exists yet; no comparison package exists yet",
+      "comparison_count": 0,
+      "existing_disposition": "",
+      "lane": "binding_spec_first",
+      "next_action": "draft BindingSpec from TC root/producers, run binding audit, then short FORMTRIG/baseline triage",
+      "primary_category": "compound-sequence-lifecycle",
+      "project": "sqlite3",
+      "rank": 30,
+      "raw": {
+        "canary_expression": "ExpandBlob(pVal)",
+        "comparison_count": 0,
+        "patch_path": "experiments/magma_workspace/magma/targets/sqlite3/patches/bugs/SQL009.patch",
+        "program": "sqlite3_fuzz"
+      },
+      "score": 68,
+      "secondary_category": "",
+      "source": "magma",
+      "source_evidence": "artifacts/magma_canary_inventory.json",
+      "status": "needs_short_discovery",
+      "suggested_short_triage": "draft BindingSpec from Magma canary sites, pass static/dynamic binding audit, then run 10m FORMTRIG plus a 10m baseline screen with `scripts/run_magma_baselines.sh --target-id SQL009 --durations 600 --jobs N`",
+      "target_id": "SQL009"
     }
   ]
 }

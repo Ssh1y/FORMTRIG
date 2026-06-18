@@ -1,0 +1,95 @@
+tc_id: 'PHP003'
+target:
+  project: 'php'
+  binary: 'exif'
+  command: '@@'
+tc:
+  category: 'binary-state-null'
+  expression: 'MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'data != NULL && ImageInfo->Thumbnail.size < 4'
+    kind: 'binary-state-null'
+    root: 'ImageInfo->Thumbnail.data and ImageInfo->Thumbnail.size'
+bindings:
+  - id: 'php003_thumbnail_data_present_guard'
+    atom: 1
+    role: 'guard'
+    expr: 'thumbnail data pointer is present before the vulnerable early-return guard'
+    observe_at:
+      kind: 'cmp'
+      site_id: 1397263073
+      function: 'exif_scan_JPEG_header'
+      file: 'ext/exif/exif.c'
+      line: 3911
+      inst_no: 250
+      opcode: 'icmp'
+      column: 12
+    component: 'guard_progress'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.65
+    observe_window: 'any'
+  - id: 'php003_thumbnail_header_admission_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'thumbnail bytes have entered the JPEG header scanner before the PHP003 data/size guard'
+    observe_at:
+      kind: 'cmp'
+      site_id: 2484435316
+      function: 'exif_scan_JPEG_header'
+      file: 'ext/exif/exif.c'
+      line: 3895
+      inst_no: 198
+      opcode: 'icmp'
+      column: 9
+    component: 'producer_use'
+    priority: 15
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'php003_thumbnail_size_lt4_root'
+    atom: 1
+    role: 'root_observe'
+    expr: 'PHP003 Magma canary size arm: ImageInfo->Thumbnail.size < 4'
+    observe_at:
+      kind: 'cmp'
+      site_id: 1447743025
+      function: 'exif_scan_JPEG_header'
+      file: 'ext/exif/exif.c'
+      line: 3918
+      inst_no: 265
+      opcode: 'icmp'
+      column: 36
+    component: 'root_state'
+    priority: 20
+    direction: 'lower'
+    value_mode: 'distance'
+    value: 0.0
+    confidence: 0.70
+    observe_window: 'any'
+  - id: 'php003_thumbnail_jpeg_header_use'
+    atom: 1
+    role: 'use'
+    expr: 'thumbnail data is consumed by the JPEG header memcmp after the PHP003 guard'
+    observe_at:
+      kind: 'cmp'
+      site_id: 1446757287
+      function: 'exif_scan_JPEG_header'
+      file: 'ext/exif/exif.c'
+      line: 3944
+      inst_no: 281
+      opcode: 'icmp'
+      column: 23
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.60
+    observe_window: 'any'

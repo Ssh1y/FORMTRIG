@@ -26,7 +26,7 @@ A target can support the main claim only if all of these hold:
 | PNG006 eXIf | admissible Magma evidence | Keep as current positive 2-hour Magma structure/state case. |
 | LIBCOAP_CVE_2023_35862 | admissible real-CVE smoke | Promote to real-CVE long-run candidate after ASAN campaign wiring. |
 | LIBXML2_1107 | inadmissible as core evidence | Keep only as native pipeline, BindingSpec, typed mutation, and crash-accounting sanity case. |
-| PNG007 PLTE | control / negative | Current-site BindingSpecs now validate and trigger `_T`, but all 20s candidates are terminal-only: `pretrigger_lift_guidance_ready=false`, `saved_non_trigger_progress_events=0`, and `lift_delta_only_on_triggered_candidates=true`. |
+| PNG007 PLTE | TrigFuzz-motivated control / negative | TrigFuzz explicitly uses PNG007 as a binary triggering-distance limitation, but current FORMTRIG BindingSpecs are terminal-only: `pretrigger_lift_guidance_ready=false`, `saved_non_trigger_progress_events=0`, and `lift_delta_only_on_triggered_candidates=true`. |
 | SQL013 | not positive | Binding is insufficient without planner-internal root/same-object/lifecycle evidence. |
 
 ## LIBXML2_1107 Finding
@@ -88,3 +88,17 @@ terminal state is reached. It can remain as a control or negative example, but
 main long-run budget should move to targets that first show spec-driven
 non-trigger progress and then convert that progress into same-budget terminal
 TTE benefit.
+
+On 2026-06-18, the local TrigFuzz paper copy was rechecked at
+`third_party/TrigFuzz/docs/trigfuzz.pdf` with the repository README at
+`third_party/TrigFuzz/README.md`. The paper explicitly names PNG007 and
+`png_ptr->palette == NULL` as a correctly generated triggering condition whose
+distance collapses to `1` for non-triggered executions and `0` only when the
+vulnerability is already triggered. The paper states that this binary distance
+does not effectively guide scheduling or mutation and can reduce TrigFuzz to
+its AFLGo baseline behavior.
+
+This makes PNG007 a strong motivation/control target for the binary-`D_T`
+problem. It does not make PNG007 positive FORMTRIG evidence in the current
+artifact state, because FORMTRIG must show pre-trigger accepted progress before
+claiming it solved the R-to-T guidance gap on this target.

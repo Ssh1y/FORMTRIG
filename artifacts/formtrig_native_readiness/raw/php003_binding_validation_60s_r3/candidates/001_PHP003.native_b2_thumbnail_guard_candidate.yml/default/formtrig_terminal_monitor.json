@@ -1,0 +1,9 @@
+{
+  "snapshot_count": 3,
+  "first_trigger_time_s": null,
+  "first_triggered_execs": null,
+  "first_trigger_snapshot": null,
+  "latest_time_s": 60,
+  "latest_triggered_execs": 0,
+  "latest_snapshot": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/candidates/001_PHP003.native_b2_thumbnail_guard_candidate.yml/formtrig_stats_monitor/final.stats"
+}

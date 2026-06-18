@@ -1,6 +1,6 @@
 {
   "blocked_count": 0,
-  "generated_at_utc": "2026-06-18T08:33:36+00:00",
+  "generated_at_utc": "2026-06-18T09:08:21+00:00",
   "inputs": {
     "assets": "artifacts/formtrig_native_readiness/magma_binding_validation_assets.discovered_20260616.json",
     "drafts": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
@@ -9,9 +9,9 @@
     "rnt_status": "artifacts/rnt_corpus_status.json",
     "validation_root": "artifacts/formtrig_native_readiness/binding_validation"
   },
-  "runnable_now_count": 6,
+  "runnable_now_count": 7,
   "schema": "formtrig_magma_binding_validation_worklist_v1",
-  "task_count": 6,
+  "task_count": 7,
   "tasks": [
     {
       "action": "run_binding_candidate_sweep_then_summarize_validation",
@@ -198,6 +198,37 @@
       "target_id": "PHP009",
       "target_site_ids": "",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PHP009.native_draft_magma_canary.validation.json"
+    },
+    {
+      "action": "run_binding_candidate_sweep_then_summarize_validation",
+      "afl_args": "",
+      "benefit_to_prove": "Validate that this BindingSpec creates replay-stable, non-terminal pre-trigger guidance before spending endpoint comparison budget.",
+      "binding_spec": "artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml",
+      "blockers": [],
+      "category": "binary-state-null",
+      "claim_boundary": "Validation is a gate; it is not FORMTRIG-vs-baseline efficacy evidence.",
+      "command": "(cd /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl && /home/cwh/FORMTRIG/scripts/run_formtrig_binding_candidate_sweep.sh --in /home/cwh/FORMTRIG/artifacts/rnt_corpus/PHP003/seeds --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_600s --target-bug PHP003 --category binary-null --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv --candidate /home/cwh/FORMTRIG/artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml --candidate-kind binding-spec --duration 600 --seed-preflight require --seed-preflight-max 32 --seed-preflight-timeout 5 --aflpp-dir /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus -- /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif @@) && python3 /home/cwh/FORMTRIG/tools/summarize_binding_candidate_sweep.py --summary-jsonl /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_600s/summary.jsonl --target-id PHP003 --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json --out-md /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.md --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml",
+      "duration_s": 600,
+      "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/PHP003.manifest.template",
+      "next_step": "Run the command, inspect the generated validation record, then rerun the hard-target and benefit-first planners.",
+      "out_dir": "artifacts/formtrig_native_readiness/raw/php003_binding_validation_600s",
+      "program": "exif",
+      "project": "php",
+      "rnt_blocking_reason": "",
+      "rnt_program": "exif",
+      "rnt_seed_files": 5,
+      "rnt_status": "formal_ready",
+      "runnable_now": true,
+      "runner_category": "binary-null",
+      "seed_dir": "artifacts/rnt_corpus/PHP003/seeds",
+      "seed_source": "assets",
+      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv",
+      "summary_command": "python3 /home/cwh/FORMTRIG/tools/summarize_binding_candidate_sweep.py --summary-jsonl /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_600s/summary.jsonl --target-id PHP003 --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json --out-md /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.md --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif @@",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl",
+      "target_id": "PHP003",
+      "target_site_ids": "",
+      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json"
     }
   ]
 }

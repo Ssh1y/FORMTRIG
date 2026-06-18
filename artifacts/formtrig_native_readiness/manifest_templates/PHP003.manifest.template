@@ -1,0 +1,14 @@
+# Draft manifest template generated from Magma inventory.
+# PHP003 reuses the php/exif native runner after discovery verifies source selectors.
+target_id: PHP003
+category: binary-null
+seed_dir: experiments/magma_workspace/magma/targets/php/corpus/exif
+out_dir: ../../formtrig_native_readiness/raw/php003_binding_validation_600s
+binding_spec: ../../binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml
+site_map: TODO_FORMTRIG_NATIVE_SITE_MAP.tsv
+duration: 600
+seed_preflight: require
+seed_preflight_max: 32
+seed_preflight_timeout: 5
+target_cwd: TODO_FORMTRIG_NATIVE_TARGET_CWD
+target_cmd: TODO_FORMTRIG_MAGMA_PHP_EXIF_BINARY @@

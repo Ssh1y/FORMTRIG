@@ -77,6 +77,19 @@
       "source_kind": "cmp",
       "status": "draft_needs_native_site_map_validation",
       "target_id": "PHP009"
+    },
+    {
+      "binding_spec": "artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml",
+      "category": "binary-state-null",
+      "location_count": 1,
+      "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/PHP003.manifest.template",
+      "next_step": "reuse the FORMTRIG-native php/exif site map if discovery verifies PHP003 selectors, then run seed readiness and binding-signal diagnosis before endpoint screening",
+      "program": "exif",
+      "project": "php",
+      "secondary_category": "compound-sequence-lifecycle",
+      "source_kind": "cmp",
+      "status": "draft_needs_native_site_map_validation",
+      "target_id": "PHP003"
     }
   ],
   "generated_at_utc": "2026-06-16T17:05:10+00:00",
@@ -92,7 +105,8 @@
       "SSL015",
       "TIF012",
       "PDF016",
-      "PHP009"
+      "PHP009",
+      "PHP003"
     ]
   },
   "schema": "formtrig_magma_binding_drafts_v1",

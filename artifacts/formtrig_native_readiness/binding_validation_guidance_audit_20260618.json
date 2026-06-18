@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-06-18T08:45:27+00:00",
-  "record_count": 10,
+  "generated_at_utc": "2026-06-18T09:25:23+00:00",
+  "record_count": 11,
   "records": [
     {
       "accepted_non_trigger_progress_events": 0,
@@ -69,6 +69,23 @@
       "strict_pretrigger_guidance": true,
       "target_id": "PDF016",
       "terminal_triggered": true
+    },
+    {
+      "accepted_non_trigger_progress_events": 4,
+      "candidate_events": 4090,
+      "disposition": "mechanism_only_needs_endpoint",
+      "execs_done": 26636,
+      "next_action": "run endpoint short screen against faithful AFL++ family baselines",
+      "non_trigger_progress_events": 4,
+      "raw_source": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
+      "ready_for_short_gate": true,
+      "saved_non_trigger_progress_events": 4,
+      "soft_pretrigger_signal": true,
+      "source_path": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json",
+      "status": "native_binding_validated",
+      "strict_pretrigger_guidance": true,
+      "target_id": "PHP003",
+      "terminal_triggered": false
     },
     {
       "accepted_non_trigger_progress_events": 2,
@@ -177,22 +194,22 @@
   "summary": {
     "record_disposition_counts": {
       "mechanism_and_endpoint_candidate": 2,
-      "mechanism_only_needs_endpoint": 2,
+      "mechanism_only_needs_endpoint": 3,
       "native_binding_validated_no_guidance_readout": 1,
       "soft_signal_needs_frontier_evidence": 1,
       "terminal_only_control": 4
     },
-    "strict_pretrigger_target_count": 3,
+    "strict_pretrigger_target_count": 4,
     "target_disposition_counts": {
       "mechanism_and_endpoint_candidate": 2,
-      "mechanism_only_needs_endpoint": 1,
+      "mechanism_only_needs_endpoint": 2,
       "native_binding_validated_no_guidance_readout": 1,
       "soft_signal_needs_frontier_evidence": 1,
       "terminal_only_control": 3
     },
     "terminal_only_target_count": 3
   },
-  "target_count": 8,
+  "target_count": 9,
   "targets": [
     {
       "accepted_non_trigger_progress_events": 0,
@@ -244,6 +261,23 @@
       "strict_pretrigger_guidance": true,
       "target_id": "PDF016",
       "terminal_triggered": true
+    },
+    {
+      "accepted_non_trigger_progress_events": 4,
+      "candidate_events": 4090,
+      "disposition": "mechanism_only_needs_endpoint",
+      "execs_done": 26636,
+      "next_action": "run endpoint short screen against faithful AFL++ family baselines",
+      "non_trigger_progress_events": 4,
+      "raw_source": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
+      "ready_for_short_gate": true,
+      "saved_non_trigger_progress_events": 4,
+      "soft_pretrigger_signal": true,
+      "source_path": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json",
+      "status": "native_binding_validated",
+      "strict_pretrigger_guidance": true,
+      "target_id": "PHP003",
+      "terminal_triggered": false
     },
     {
       "accepted_non_trigger_progress_events": 2,

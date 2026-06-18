@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-18T08:33:36+00:00",
+  "generated_at_utc": "2026-06-18T09:08:21+00:00",
   "schema": "formtrig_magma_binding_validation_assets_template_v1",
   "source_worklist": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
   "targets": {
@@ -38,6 +38,24 @@
       "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PDF016/out/afl/pdf_fuzzer @@",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PDF016",
       "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json"
+    },
+    "PHP003": {
+      "afl_args": "",
+      "binding_spec": "artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml",
+      "category": "binary-state-null",
+      "duration_s": 600,
+      "notes": [
+        "Replace TODO_* fields with paths from a FORMTRIG-native Magma build.",
+        "Use formal RNT seeds for pre-trigger validation; do not substitute the initial Magma corpus unless a new RNT seed source is validated."
+      ],
+      "runner_category": "binary-null",
+      "seed_dir": "artifacts/rnt_corpus/PHP003/seeds",
+      "seed_preflight_max": 32,
+      "seed_preflight_timeout": 5,
+      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_PHP003.tsv",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif @@",
+      "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_PHP003",
+      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json"
     },
     "PHP009": {
       "afl_args": "",

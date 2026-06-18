@@ -4,8 +4,8 @@ This is a validation worklist, not a performance-result table. A runnable
 task executes a short BindingSpec candidate sweep and then summarizes it
 into the existing `binding_validation` schema consumed by target planners.
 
-Generated: `2026-06-18T08:33:36+00:00`
-Tasks: `6`; runnable now: `6`; blocked: `0`
+Generated: `2026-06-18T09:08:21+00:00`
+Tasks: `7`; runnable now: `7`; blocked: `0`
 
 | target | category | runnable | blocker summary | validation record |
 | --- | --- | --- | --- | --- |
@@ -15,6 +15,7 @@ Tasks: `6`; runnable now: `6`; blocked: `0`
 | TIF012 | binary-state-null | yes | none | `artifacts/formtrig_native_readiness/binding_validation/TIF012.native_draft_magma_canary.validation.json` |
 | PDF016 | compound-sequence-lifecycle | yes | none | `artifacts/formtrig_native_readiness/binding_validation/PDF016.native_draft_magma_canary.validation.json` |
 | PHP009 | numeric-margin | yes | none | `artifacts/formtrig_native_readiness/binding_validation/PHP009.native_draft_magma_canary.validation.json` |
+| PHP003 | binary-state-null | yes | none | `artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json` |
 
 ## Runnable Commands
 
@@ -52,6 +53,12 @@ Tasks: `6`; runnable now: `6`; blocked: `0`
 
 ```bash
 (cd /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl && /home/cwh/FORMTRIG/scripts/run_formtrig_binding_candidate_sweep.sh --in /home/cwh/FORMTRIG/artifacts/rnt_corpus/PHP009/seeds --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_binding_validation_600s --target-bug PHP009 --category numeric --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv --candidate /home/cwh/FORMTRIG/artifacts/binding_specs/PHP009.native_draft_magma_canary.yml --candidate-kind binding-spec --duration 600 --seed-preflight require --seed-preflight-max 32 --seed-preflight-timeout 5 --aflpp-dir /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus -- /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif @@) && python3 /home/cwh/FORMTRIG/tools/summarize_binding_candidate_sweep.py --summary-jsonl /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php009_binding_validation_600s/summary.jsonl --target-id PHP009 --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PHP009.native_draft_magma_canary.validation.json --out-md /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PHP009.native_draft_magma_canary.validation.md --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/PHP009.native_draft_magma_canary.yml
+```
+
+### PHP003
+
+```bash
+(cd /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl && /home/cwh/FORMTRIG/scripts/run_formtrig_binding_candidate_sweep.sh --in /home/cwh/FORMTRIG/artifacts/rnt_corpus/PHP003/seeds --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_600s --target-bug PHP003 --category binary-null --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv --candidate /home/cwh/FORMTRIG/artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml --candidate-kind binding-spec --duration 600 --seed-preflight require --seed-preflight-max 32 --seed-preflight-timeout 5 --aflpp-dir /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus -- /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif @@) && python3 /home/cwh/FORMTRIG/tools/summarize_binding_candidate_sweep.py --summary-jsonl /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_600s/summary.jsonl --target-id PHP003 --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json --out-md /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.md --site-map /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/PHP003.native_b2_thumbnail_guard_candidate.yml
 ```
 
 

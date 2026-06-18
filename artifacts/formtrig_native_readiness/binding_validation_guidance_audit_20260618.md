@@ -1,6 +1,6 @@
 # Binding Validation Guidance Audit
 
-Generated UTC: 2026-06-18T08:45:27+00:00
+Generated UTC: 2026-06-18T09:25:23+00:00
 
 This audit separates native BindingSpec validity from evidence that FORMTRIG produced accepted pre-trigger frontier guidance.
 
@@ -9,7 +9,7 @@ This audit separates native BindingSpec validity from evidence that FORMTRIG pro
 | disposition | targets |
 |---|---:|
 | `mechanism_and_endpoint_candidate` | 2 |
-| `mechanism_only_needs_endpoint` | 1 |
+| `mechanism_only_needs_endpoint` | 2 |
 | `native_binding_validated_no_guidance_readout` | 1 |
 | `soft_signal_needs_frontier_evidence` | 1 |
 | `terminal_only_control` | 3 |
@@ -20,6 +20,7 @@ This audit separates native BindingSpec validity from evidence that FORMTRIG pro
 |---|---|---:|---:|---:|---|
 | PDF016 | `mechanism_and_endpoint_candidate` | true | true | 4 | run matched baselines and baseline-guidance-gap analysis; promote only if baselines are late, missing, or high variance |
 | PHP009 | `mechanism_and_endpoint_candidate` | true | true | 2 | run matched baselines and baseline-guidance-gap analysis; promote only if baselines are late, missing, or high variance |
+| PHP003 | `mechanism_only_needs_endpoint` | true | false | 4 | run endpoint short screen against faithful AFL++ family baselines |
 | TIF012 | `mechanism_only_needs_endpoint` | true | false | 1 | run endpoint short screen against faithful AFL++ family baselines |
 | PDF003 | `soft_signal_needs_frontier_evidence` | false | false | 0 | collect accepted non-trigger frontier progress or a replayable signal path before efficacy claims |
 | LIBARCHIVE_2936 | `native_binding_validated_no_guidance_readout` | false | false | 0 | run or regenerate binding-signal diagnosis with benefit readout before endpoint spending |

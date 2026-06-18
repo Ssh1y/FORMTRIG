@@ -1,11 +1,11 @@
 {
-  "generated_at_utc": "2026-06-18T08:33:19+00:00",
+  "generated_at_utc": "2026-06-18T09:08:01+00:00",
   "inputs": {
     "drafts": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
     "max_files": 500000,
     "rnt_status": "artifacts/rnt_corpus_status.json",
     "search_roots": [
-      "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL015",
+      "artifacts/formtrig_native_readiness/magma_native_builds/PHP009",
       "artifacts/formtrig_native_readiness",
       "experiments/magma_workspace"
     ]
@@ -17,8 +17,8 @@
     "pkcs7_decode",
     "tiff_read_rgba_fuzzer"
   ],
-  "runnable_candidate_count": 6,
-  "scanned_file_count": 73917,
+  "runnable_candidate_count": 7,
+  "scanned_file_count": 73925,
   "schema": "formtrig_magma_native_asset_discovery_v1",
   "site_map_count": 7,
   "targets": [
@@ -155,6 +155,28 @@
       "runnable_candidate": true,
       "selector_count": 2,
       "target_id": "PHP009"
+    },
+    {
+      "best_site_map": {
+        "matched_selectors": 4,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/formtrig_native/formtrig_sites.tsv",
+        "row_count": 200000,
+        "same_build_as_executable": true,
+        "score": 4999,
+        "selector_count": 4,
+        "target_build_match": false
+      },
+      "blockers": [],
+      "executable_candidates": [
+        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP009/out/afl/exif"
+      ],
+      "program": "exif",
+      "rnt_program": "exif",
+      "rnt_seed_files": 5,
+      "rnt_status": "formal_ready",
+      "runnable_candidate": true,
+      "selector_count": 4,
+      "target_id": "PHP003"
     }
   ]
 }

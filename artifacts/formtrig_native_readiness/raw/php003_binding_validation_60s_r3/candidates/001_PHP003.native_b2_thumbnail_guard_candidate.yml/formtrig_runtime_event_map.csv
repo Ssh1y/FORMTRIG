@@ -1,0 +1,5 @@
+binding_id,atom_id,category,role,event_kind,site_id,event_id,mapping_status,collapsed_with,binding_tier,lift_allowed,reason,component_kind,priority,direction,value_mode,function,file,line,column,opcode,observe_window
+1,1,binary-state-null,guard,7,1397263073,dc389a1074a3cb00,exact,0x00000000,B2,true,ok,5,10,higher,outcome,exif_scan_JPEG_header,/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/repo/ext/exif/exif.c,3911,12,icmp,any
+2,1,binary-state-null,desired_producer,7,2484435316,69be26cc25ffdd47,exact,0x00000000,B2,true,ok,6,15,higher,outcome,exif_scan_JPEG_header,/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/repo/ext/exif/exif.c,3895,9,icmp,any
+3,1,binary-state-null,root_observe,7,1447743025,9b63aa8e29e62393,exact,0x00000000,B2,true,ok,3,20,lower,distance,exif_scan_JPEG_header,/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/repo/ext/exif/exif.c,3918,36,icmp,any
+4,1,binary-state-null,use,7,1446757287,d3f4f67627181f60,exact,0x00000000,B2,true,ok,6,30,higher,outcome,exif_scan_JPEG_header,/home/cwh/FORMTRIG/experiments/magma_workspace/magma/targets/php/repo/ext/exif/exif.c,3944,23,icmp,any

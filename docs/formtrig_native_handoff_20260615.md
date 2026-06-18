@@ -832,6 +832,12 @@ artifacts/formtrig_native_readiness/magma_lift_smoke_20260615.md
 - PNG006 无 input influence 时：static 可能过，但 dynamic `D_F` constant，不能声称有效 lift。
 - PNG006 加外部 eXIf mutation hook 后：出现有效 pre-trigger lift/progress，是 Magma 正例方向。
 - PNG007 PLTE deletion：目前偏 terminal-trigger-only，不足以证明 pre-trigger binary-null lift。
+- PNG007 同时是 TrigFuzz 论文明确点名的 binary triggering-distance 痛点：
+  `png_ptr->palette == NULL` 正确但距离只有 non-trigger `1` / triggered
+  `0`，论文认为这对 scheduling/mutation 不提供有效指导并会退化到 AFLGo
+  级别。FORMTRIG 当前不能把 PNG007 当正例；它应作为“论文动机 + 负例/控制”
+  保留，直到某个 BindingSpec 先产生 accepted non-trigger progress，再在同预算
+  faithful baseline 比较中体现 terminal/TTE 收益。
 - SQL013：DeepSeek 曾辅助看 BindingSpec，结论是 `insufficient_binding`，因为没有真实绑定 `pNew` / same-object / planner internal root；不能伪造 `nLSlot/nLTerm`。
 
 SQL013 分类要记住：
