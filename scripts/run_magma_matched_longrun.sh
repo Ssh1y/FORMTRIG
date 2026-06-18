@@ -37,7 +37,7 @@ options:
   --duration SEC            per-arm budget, default 7200
   --reps N                  repetitions, default 3
   --jobs N                  concurrent FORMTRIG manifest jobs
-  --baseline-jobs N         concurrent baseline runs, default --jobs
+  --baseline-jobs N         concurrent baseline runs, default baselines*reps
   --mode MODE               execute|dry-run, default execute
   --out DIR                 output root
   --manifest FILE           single FORMTRIG manifest repeated --reps times
@@ -356,10 +356,16 @@ if [[ -z "$target_id" ]]; then
   usage
   exit 2
 fi
+for numeric in "$duration" "$reps" "$jobs" "$poll"; do
+  if ! [[ "$numeric" =~ ^[0-9]+$ ]] || [[ "$numeric" -lt 1 ]]; then
+    echo "duration, reps, jobs, baseline-jobs, and poll must be positive integers" >&2
+    exit 2
+  fi
+done
 if [[ -z "$baseline_jobs" ]]; then
-  baseline_jobs="$jobs"
+  baseline_jobs=$(($(count_list "$baselines") * reps))
 fi
-for numeric in "$duration" "$reps" "$jobs" "$baseline_jobs" "$poll"; do
+for numeric in "$baseline_jobs"; do
   if ! [[ "$numeric" =~ ^[0-9]+$ ]] || [[ "$numeric" -lt 1 ]]; then
     echo "duration, reps, jobs, baseline-jobs, and poll must be positive integers" >&2
     exit 2

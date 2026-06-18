@@ -95,6 +95,49 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
             self.assertIn("001_PDF003/out", plan)
             self.assertIn("002_PDF003/out", plan)
 
+    def test_generic_magma_runner_defaults_baseline_jobs_to_one_batch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            out_dir = root / "pdf003"
+            manifest = root / "PDF003.manifest"
+            manifest.write_text(
+                "target_id: PDF003\ncategory: binary-null\nafl_args: -t 5000\n",
+                encoding="utf-8",
+            )
+            manifest_list = root / "PDF003.current_2rep.list"
+            manifest_list.write_text(f"{manifest}\n{manifest}\n", encoding="utf-8")
+
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_magma_matched_longrun.sh"),
+                    "--target-id",
+                    "PDF003",
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "60",
+                    "--reps",
+                    "2",
+                    "--jobs",
+                    "2",
+                    "--out",
+                    str(out_dir),
+                    "--manifest-list",
+                    str(manifest_list),
+                    "--no-build-baselines",
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["baseline_run_count"], 6)
+            self.assertEqual(metadata["baseline_jobs"], 6)
+            self.assertEqual(metadata["baseline_batches"], 1)
+            schedule = json.loads((out_dir / "schedule_audit.json").read_text(encoding="utf-8"))
+            self.assertEqual(schedule["verdict"], "single_batch_baseline_schedule")
+
     def test_dry_run_emits_complete_matched_flow(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "tif012"
@@ -158,6 +201,36 @@ class Tif012MatchedRunnerTest(unittest.TestCase):
                 len(manifest_list.read_text(encoding="utf-8").splitlines()),
                 2,
             )
+
+    def test_tif012_runner_defaults_baseline_jobs_to_one_batch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "tif012"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_tif012_b5_matched_longrun.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "60",
+                    "--reps",
+                    "2",
+                    "--jobs",
+                    "2",
+                    "--out",
+                    str(out_dir),
+                    "--no-build-baselines",
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["baseline_run_count"], 6)
+            self.assertEqual(metadata["baseline_jobs"], 6)
+            self.assertEqual(metadata["baseline_batches"], 1)
+            schedule = json.loads((out_dir / "schedule_audit.json").read_text(encoding="utf-8"))
+            self.assertEqual(schedule["verdict"], "single_batch_baseline_schedule")
 
     def test_manifest_batch_uses_unique_dirs_for_duplicate_targets(self):
         script = (REPO_ROOT / "scripts" / "run_formtrig_manifest_batch.sh").read_text(
