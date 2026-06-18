@@ -1,0 +1,17 @@
+target_id=PHP003
+magma_target=php
+program=exif
+args_template=@@
+tc_category=compound-sequence-lifecycle
+out_dir=/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2
+magma_dir=/home/cwh/FORMTRIG/experiments/magma_workspace/magma
+seed_dir=/home/cwh/FORMTRIG/artifacts/rnt_corpus/PHP003/seeds
+inventory=/home/cwh/FORMTRIG/artifacts/magma_canary_inventory.json
+baselines=aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand
+durations=600
+reps=1
+rep_start=1
+rep_end=1
+jobs=3
+poll=30
+fuzz_args=

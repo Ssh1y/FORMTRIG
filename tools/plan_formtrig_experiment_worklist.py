@@ -73,6 +73,10 @@ COMPLETE_REPS_VERDICTS = {
     "speedup_but_under_replicated",
 }
 
+GUIDANCE_ONLY_REPAIR_VERDICTS = {
+    "pretrigger_guidance_only",
+}
+
 WEAK_MAIN_CLAIM_STRENGTHS = {
     "weak_near_seed_or_harness_shaped_speedup",
     "moderate_speedup_needs_harder_design",
@@ -1306,6 +1310,60 @@ def expand_hard_evidence_task(
     }
 
 
+def repair_guidance_to_terminal_task(
+    row: dict[str, Any],
+    comparison: dict[str, Any] | None,
+) -> dict[str, Any]:
+    summary = comparison_summary(comparison)
+    return {
+        "priority": priority_for(row),
+        "rank": int(row.get("rank") or 0),
+        "target_id": str(row.get("target_id") or ""),
+        "source": str(row.get("source") or ""),
+        "project": str(row.get("project") or ""),
+        "category": category_text(row),
+        "lane": str(row.get("lane") or ""),
+        "action": "repair_guidance_to_terminal",
+        "duration_s": "",
+        "repetitions": "",
+        "benefit_to_prove": (
+            "The matched short screen already showed strict pre-trigger FORMTRIG "
+            "guidance and baseline no-guidance pain, but FORMTRIG did not reach "
+            "terminal _T. Convert the saved non-trigger frontier into a terminal "
+            "same-oracle outcome before spending another matched-baseline budget."
+        ),
+        "primary_endpoint_metrics": [
+            "FORMTRIG terminal success after the saved non-trigger frontier",
+            "first _T / execution count after the repair",
+            "same Magma/CVE oracle as the matched baseline screen",
+        ],
+        "mechanism_evidence_required": summary["design_evidence"]
+        or [
+            "strict pre-trigger D_F progress",
+            "saved non-trigger frontier replay",
+            "typed mutation provenance",
+        ],
+        "blocking_issue": summary["blocked_claims"]
+        or ["FORMTRIG terminal _T missing after strict pre-trigger guidance"],
+        "claim_boundary": (
+            "This is a repair target, not a performance target. Do not rerun "
+            "the same matched short screen until FORMTRIG terminal success or "
+            "a revised BindingSpec/typed mutation is available."
+        ),
+        "command": "",
+        "runnable_now": False,
+        "post_unblock_commands": [
+            "replay FORMTRIG saved non-trigger queue entries and inspect which role blocks _T",
+            "repair BindingSpec or typed mutation so the non-trigger frontier can cross R2T",
+            "run a FORMTRIG-only terminal gate before repeating faithful baselines",
+        ],
+        "comparison_verdict": summary["verdict"],
+        "current_primary_benefits": summary["primary_benefits"],
+        "blocked_claims": summary["blocked_claims"],
+        "evidence_paths": evidence_paths(row, comparison),
+    }
+
+
 def binding_spec_first_task(
     row: dict[str, Any],
     comparison: dict[str, Any] | None,
@@ -1640,6 +1698,8 @@ def task_for_row(
             ),
             triage,
         )
+    if comparison_verdict(comparison) in GUIDANCE_ONLY_REPAIR_VERDICTS:
+        return attach_sota_pain(repair_guidance_to_terminal_task(row, comparison), triage)
     if disposition == "candidate_extend_longruns":
         return attach_sota_pain(
             longrun_task(

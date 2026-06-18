@@ -1,0 +1,302 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 600,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "min_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 600,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "min_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget": 600,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "min_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      }
+    ],
+    "best_formtrig_trigger_time_s": null,
+    "experiment_strength": {
+      "acceptable_baseline_fastest_trigger_threshold_s": 600.0,
+      "baseline_guidance_gap": {
+        "analysis_id": "php003_validated_short_600s_1rep_r2_baseline_guidance_gap",
+        "baseline_groups": [
+          {
+            "aggregate_empirical_trigger_rate_per_reach": 0.0,
+            "baseline": "aflplusplus_cmplog",
+            "budget": 600,
+            "max_trigger_time_s": null,
+            "median_post_reach_observation_time_s": 507.0,
+            "median_trigger_time_s": null,
+            "min_trigger_time_s": null,
+            "missing": 1,
+            "pretrigger_binary_flat_all_measured": true,
+            "pretrigger_binary_flat_all_runs": true,
+            "pretrigger_binary_flat_measured_runs": 1,
+            "pretrigger_binary_flat_pass_runs": 1,
+            "reps": 1,
+            "success_rate": 0.0,
+            "successes": 0,
+            "total_post_reach_observation_time_s": 507.0,
+            "total_reached": 29955,
+            "total_reached_without_trigger": 29955,
+            "total_triggered": 0,
+            "trigger_time_range_s": null,
+            "trigger_times_s": [],
+            "zero_trigger_rule_of_three_95_upper_bound_per_reach": 0.00010015022533800701,
+            "zero_trigger_runs": 1
+          },
+          {
+            "aggregate_empirical_trigger_rate_per_reach": 0.0,
+            "baseline": "aflplusplus_vanilla",
+            "budget": 600,
+            "max_trigger_time_s": null,
+            "median_post_reach_observation_time_s": 507.0,
+            "median_trigger_time_s": null,
+            "min_trigger_time_s": null,
+            "missing": 1,
+            "pretrigger_binary_flat_all_measured": true,
+            "pretrigger_binary_flat_all_runs": true,
+            "pretrigger_binary_flat_measured_runs": 1,
+            "pretrigger_binary_flat_pass_runs": 1,
+            "reps": 1,
+            "success_rate": 0.0,
+            "successes": 0,
+            "total_post_reach_observation_time_s": 507.0,
+            "total_reached": 10711,
+            "total_reached_without_trigger": 10711,
+            "total_triggered": 0,
+            "trigger_time_range_s": null,
+            "trigger_times_s": [],
+            "zero_trigger_rule_of_three_95_upper_bound_per_reach": 0.0002800858930071889,
+            "zero_trigger_runs": 1
+          },
+          {
+            "aggregate_empirical_trigger_rate_per_reach": 0.0,
+            "baseline": "redqueen_operand",
+            "budget": 600,
+            "max_trigger_time_s": null,
+            "median_post_reach_observation_time_s": 507.0,
+            "median_trigger_time_s": null,
+            "min_trigger_time_s": null,
+            "missing": 1,
+            "pretrigger_binary_flat_all_measured": true,
+            "pretrigger_binary_flat_all_runs": true,
+            "pretrigger_binary_flat_measured_runs": 1,
+            "pretrigger_binary_flat_pass_runs": 1,
+            "reps": 1,
+            "success_rate": 0.0,
+            "successes": 0,
+            "total_post_reach_observation_time_s": 507.0,
+            "total_reached": 7816,
+            "total_reached_without_trigger": 7816,
+            "total_triggered": 0,
+            "trigger_time_range_s": null,
+            "trigger_times_s": [],
+            "zero_trigger_rule_of_three_95_upper_bound_per_reach": 0.00038382804503582393,
+            "zero_trigger_runs": 1
+          }
+        ],
+        "endpoint_cost_pass": true,
+        "fastest_successful_baseline_trigger_time_s": null,
+        "interpretation": "baseline evidence supports a hard binary-TC no-guidance candidate",
+        "pretrigger_binary_flat_measured": true,
+        "pretrigger_binary_flat_pass": true,
+        "reasons": [
+          "pretrigger_binary_oracle_flat_before_T",
+          "baseline_endpoint_cost_late_missing_or_high_variance"
+        ],
+        "required_evidence": [
+          "baseline-visible TC signal is flat or binary before _T",
+          "accepted non-trigger improvement under the baseline-visible signal is absent",
+          "matched repeated endpoint runs are late, missing, or high-variance"
+        ],
+        "required_for_hard_sota_pain": false,
+        "source_path": "artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_validated_short_600s_1rep_r2/baseline_guidance_gap.json",
+        "status": "measured_pass"
+      },
+      "best_baseline_family_median_trigger_time_s": null,
+      "early_baseline_family_median_threshold_s": 60.0,
+      "hard_baseline_fastest_trigger_threshold_s": 1800.0,
+      "main_claim_strength": "not_supporting_main_claim",
+      "reasons": [
+        "no_endpoint_or_speedup_advantage_for_formtrig",
+        "baseline_guidance_gap_measured_pass"
+      ],
+      "recommended_design_actions": [
+        "repair BindingSpec/mutation design or move budget to a harder target"
+      ]
+    },
+    "fastest_baseline_family_median_trigger_time_s": null,
+    "fastest_baseline_trigger_time_s": null,
+    "matched_baseline_count": 3,
+    "missing_required_baselines": [],
+    "next_steps": [
+      "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+    ],
+    "reasons": [
+      "formtrig_strict_pretrigger_guidance_present",
+      "formtrig_terminal_oracle_missing",
+      "baseline_guidance_gap_measured_pass"
+    ],
+    "tte_speedup_over_fastest_baseline": null,
+    "tte_speedup_over_fastest_baseline_family_median": null,
+    "verdict": "pretrigger_guidance_only"
+  },
+  "baseline_rows": [
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_cmplog",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 78426,
+      "execs_per_sec": "131.34",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 29955,
+      "rep": 1,
+      "run_time": 597,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2/runs/aflplusplus_cmplog_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "PHP003",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_vanilla",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 77882,
+      "execs_per_sec": "130.38",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 10711,
+      "rep": 1,
+      "run_time": 597,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2/runs/aflplusplus_vanilla_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "PHP003",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "redqueen_operand",
+      "binding_signal_status": null,
+      "budget": 600,
+      "execs_done": 78515,
+      "execs_per_sec": "131.49",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 7816,
+      "rep": 1,
+      "run_time": 597,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "aflpp_family_600s_1rep",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2/runs/redqueen_operand_600s/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "PHP003",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "no FORMTRIG terminal success is established",
+      "FORMTRIG first `_T`/TTE is not recorded for this run"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance"
+    ],
+    "endpoint_observations": [],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "observed_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "primary_benefits": [],
+    "summary": "current package supports mechanism/search-guidance benefit, subject to remaining blockers"
+  },
+  "comparison_id": "php003_validated_short_600s_1rep_r2",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 6,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 600,
+      "execs_done": 205673,
+      "execs_per_sec": null,
+      "gate_reasons": null,
+      "gate_status": "ok",
+      "heuristic_lifted": 0,
+      "manual_lifted": 0,
+      "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/001_PHP003/out",
+      "reached": 121014,
+      "rep": null,
+      "run_time": 600,
+      "saved_non_trigger": 6,
+      "source_label": "formtrig_600s_1rep",
+      "source_path": "artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig/batch_summary.csv",
+      "spec_lifted": 4203,
+      "strict_pretrigger_guidance": true,
+      "success": false,
+      "target_id": "PHP003",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "target_id": "PHP003"
+}

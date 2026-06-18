@@ -613,6 +613,112 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertIn(str(manifest_list), task["command"])
             self.assertIn(str(validation_path), task["evidence_paths"])
 
+    def test_pretrigger_guidance_only_comparison_routes_to_terminal_repair(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            validation_root = root / "binding_validation"
+            manifest_root = root / "manifests"
+            comparison_dir = comparison_root / "php003_pretrigger_only"
+            comparison_dir.mkdir(parents=True)
+            validation_root.mkdir()
+            manifest_root.mkdir()
+            (manifest_root / "PHP003.current_1rep.list").write_text(
+                "PHP003.native_b2_thumbnail_guard.600s.manifest\n",
+                encoding="utf-8",
+            )
+            validation_path = validation_root / "PHP003.native_b2_thumbnail_guard_candidate.validation.json"
+            validation_path.write_text(
+                json.dumps(
+                    {
+                        "target_id": "PHP003",
+                        "status": "native_binding_validated",
+                        "ready_for_short_gate": True,
+                        "benefit_readout": {
+                            "pretrigger_lift_guidance_ready": True,
+                            "non_trigger_progress_events": 4,
+                            "saved_non_trigger_progress_events": 4,
+                        },
+                        "binding_signal": {
+                            "status": "pass",
+                            "accepted_non_trigger_progress_events": 4,
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            (comparison_dir / "comparison.json").write_text(
+                json.dumps(
+                    {
+                        "target_id": "PHP003",
+                        "analysis": {
+                            "verdict": "pretrigger_guidance_only",
+                            "experiment_strength": {
+                                "main_claim_strength": "not_supporting_main_claim"
+                            },
+                        },
+                        "benefit_readout": {
+                            "design_evidence": ["strict_pretrigger_guidance"],
+                            "blocked_claims": [
+                                "no FORMTRIG terminal success is established",
+                            ],
+                            "primary_benefits": [],
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 2,
+                                "target_id": "PHP003",
+                                "source": "magma",
+                                "project": "php",
+                                "primary_category": "compound-sequence-lifecycle",
+                                "secondary_category": "numeric-margin",
+                                "lane": "short_triage_ready",
+                                "status": "ready_for_short_triage",
+                                "existing_disposition": "",
+                                "blockers": "",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                binding_validation_root=validation_root,
+                manifest_root=manifest_root,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "repair_guidance_to_terminal")
+            self.assertFalse(task["runnable_now"])
+            self.assertEqual(task["comparison_verdict"], "pretrigger_guidance_only")
+            self.assertEqual(task["command"], "")
+            self.assertTrue(
+                any(path.endswith("comparison.json") for path in task["evidence_paths"])
+            )
+
     def test_ready_binding_validation_without_strict_guidance_stays_gated(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

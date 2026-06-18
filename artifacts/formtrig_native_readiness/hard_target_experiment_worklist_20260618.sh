@@ -11,9 +11,12 @@ set -euo pipefail
 # post-unblock: prioritize targets where strong baselines have low success or long R2T tails
 # post-unblock: add ablations for any target-specific typed hook before main-claim use
 
-# P1 PHP003 run_validated_matched_short_screen
-# benefit: Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.
-scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.current_1rep.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig
+# P1 PHP003 repair_guidance_to_terminal
+# benefit: The matched short screen already showed strict pre-trigger FORMTRIG guidance and baseline no-guidance pain, but FORMTRIG did not reach terminal _T. Convert the saved non-trigger frontier into a terminal same-oracle outcome before spending another matched-baseline budget.
+# blocked: no FORMTRIG terminal success is established; FORMTRIG first `_T`/TTE is not recorded for this run
+# post-unblock: replay FORMTRIG saved non-trigger queue entries and inspect which role blocks _T
+# post-unblock: repair BindingSpec or typed mutation so the non-trigger frontier can cross R2T
+# post-unblock: run a FORMTRIG-only terminal gate before repeating faithful baselines
 
 # P0 LIBXML2_1107 validate_binding_spec_then_short_screen
 # benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.

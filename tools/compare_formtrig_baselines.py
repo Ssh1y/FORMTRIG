@@ -160,6 +160,27 @@ def int_value(value: Any, default: int = 0) -> int:
     return int(parsed) if parsed is not None else default
 
 
+def first_numeric(*values: Any) -> int | float | None:
+    for value in values:
+        parsed = numeric(value)
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def first_int(default: int, *values: Any) -> int:
+    parsed = first_numeric(*values)
+    return int(parsed) if parsed is not None else default
+
+
+def first_bool(*values: Any) -> bool:
+    for value in values:
+        if value is None or value == "":
+            continue
+        return parse_bool(value)
+    return False
+
+
 def str_value(value: Any) -> str | None:
     if value is None:
         return None
@@ -198,14 +219,63 @@ def formtrig_gate_csv(path: Path) -> Path:
     return path
 
 
+def read_json_if_exists(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    data = read_json(path)
+    return data if isinstance(data, dict) else {}
+
+
+def manifest_duration_s(path_text: Any) -> int | None:
+    path_value = str_value(path_text)
+    if not path_value:
+        return None
+    path = Path(path_value)
+    if not path.exists():
+        return None
+    match = re.search(r"(?:^|[._-])(\d+)s(?:[._-]|$)", path.name)
+    if match:
+        return int(match.group(1))
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        if key.strip() in {"duration", "duration_s", "budget", "budget_s"}:
+            parsed = numeric(value.strip())
+            if parsed is not None:
+                return int(parsed)
+    return None
+
+
+def label_duration_s(label: str) -> int | None:
+    match = re.search(r"(?:^|[._-])(\d+)s(?:[._-]|$)", label)
+    return int(match.group(1)) if match else None
+
+
 def strict_pretrigger(row: dict[str, Any]) -> bool:
+    accepted_non_trigger = first_int(
+        0,
+        row.get("accepted_non_trigger"),
+        row.get("accepted_non_trigger_progress"),
+        row.get("accepted_non_trigger_progress_events"),
+        row.get("non_trigger_progress"),
+        row.get("non_trigger_progress_events"),
+    )
+    saved_non_trigger = first_int(
+        0,
+        row.get("saved_non_trigger"),
+        row.get("saved_non_trigger_progress"),
+        row.get("saved_non_trigger_progress_events"),
+    )
     return (
         parse_bool(row.get("experiment_ready"))
         and parse_bool(row.get("pretrigger_lift_guidance_ready"))
-        and int_value(row.get("accepted_non_trigger")) > 0
-        and int_value(row.get("saved_non_trigger")) > 0
-        and parse_bool(row.get("non_trigger_candidate_lift_delta"))
-        and not parse_bool(row.get("lift_delta_only_on_triggered"))
+        and accepted_non_trigger > 0
+        and saved_non_trigger > 0
+        and not first_bool(
+            row.get("lift_delta_only_on_triggered"),
+            row.get("lift_delta_only_on_triggered_candidates"),
+        )
         and int_value(row.get("spec_lifted")) > 0
         and int_value(row.get("heuristic_lifted")) == 0
         and int_value(row.get("manual_lifted")) == 0
@@ -268,37 +338,131 @@ def load_formtrig_rows(items: list[str], target_id: str) -> list[dict[str, Any]]
             raise SystemExit(f"FORMTRIG gate summary does not exist: {path}")
         with path.open(newline="", encoding="utf-8") as handle:
             for raw in csv.DictReader(handle):
-                run_time = numeric(raw.get("run_time"))
+                out_dir = str_value(raw.get("out_dir"))
+                default_dir = Path(out_dir) / "default" if out_dir else None
+                summary = (
+                    read_json_if_exists(default_dir / "formtrig_summary.json")
+                    if default_dir is not None
+                    else {}
+                )
+                diagnosis = (
+                    read_json_if_exists(default_dir / "formtrig_diagnosis.json")
+                    if default_dir is not None
+                    else {}
+                )
+                binding_signal = (
+                    read_json_if_exists(default_dir / "formtrig_binding_signal_diagnosis.json")
+                    if default_dir is not None
+                    else {}
+                )
+                budget = first_numeric(
+                    raw.get("budget"),
+                    raw.get("budget_s"),
+                    raw.get("duration"),
+                    raw.get("duration_s"),
+                    raw.get("run_time"),
+                    summary.get("budget"),
+                    summary.get("duration"),
+                    summary.get("run_time"),
+                    manifest_duration_s(raw.get("manifest")),
+                    label_duration_s(label),
+                )
+                accepted_non_trigger = first_int(
+                    0,
+                    raw.get("accepted_non_trigger"),
+                    raw.get("accepted_non_trigger_progress"),
+                    raw.get("accepted_non_trigger_progress_events"),
+                    raw.get("non_trigger_progress"),
+                    raw.get("non_trigger_progress_events"),
+                    binding_signal.get("accepted_non_trigger_progress_events"),
+                    diagnosis.get("non_trigger_progress_events"),
+                    summary.get("non_trigger_progress_events"),
+                )
+                saved_non_trigger = first_int(
+                    0,
+                    raw.get("saved_non_trigger"),
+                    raw.get("saved_non_trigger_progress"),
+                    raw.get("saved_non_trigger_progress_events"),
+                    diagnosis.get("saved_non_trigger_progress_events"),
+                    summary.get("saved_non_trigger_progress_events"),
+                )
+                terminal_count = first_int(
+                    0,
+                    raw.get("terminal_triggered"),
+                    raw.get("triggered"),
+                    diagnosis.get("terminal_triggered_execs"),
+                    summary.get("terminal_triggered_execs"),
+                    summary.get("formtrig_triggered_execs"),
+                )
+                normalized = {
+                    **raw,
+                    "accepted_non_trigger": accepted_non_trigger,
+                    "saved_non_trigger": saved_non_trigger,
+                    "experiment_ready": raw.get("experiment_ready")
+                    or diagnosis.get("experiment_ready"),
+                    "pretrigger_lift_guidance_ready": raw.get(
+                        "pretrigger_lift_guidance_ready"
+                    )
+                    or diagnosis.get("pretrigger_lift_guidance_ready"),
+                    "lift_delta_only_on_triggered": raw.get(
+                        "lift_delta_only_on_triggered"
+                    )
+                    or diagnosis.get("lift_delta_only_on_triggered_candidates")
+                    or binding_signal.get("lift_delta_only_on_triggered_candidates"),
+                    "spec_lifted": raw.get("spec_lifted")
+                    or diagnosis.get("spec_lifted_events")
+                    or summary.get("spec_lifted_events"),
+                    "heuristic_lifted": raw.get("heuristic_lifted")
+                    or diagnosis.get("heuristic_lifted_events")
+                    or summary.get("heuristic_lifted_events"),
+                    "manual_lifted": raw.get("manual_lifted")
+                    or diagnosis.get("manual_lifted_events")
+                    or summary.get("manual_lifted_events"),
+                    "binding_signal_status": raw.get("binding_signal_status")
+                    or diagnosis.get("binding_signal_status")
+                    or binding_signal.get("status"),
+                }
                 row = {
                     "arm": "formtrig",
                     "source_label": label,
                     "target_id": target_id,
-                    "budget": int(run_time) if run_time is not None else None,
-                    "run_time": int_value(raw.get("run_time")),
+                    "budget": int(budget) if budget is not None else None,
+                    "run_time": int_value(
+                        raw.get("run_time"),
+                        int(budget) if budget is not None else 0,
+                    ),
                     "rep": None,
-                    "success": int_value(raw.get("terminal_triggered")) > 0,
-                    "terminal_count": int_value(raw.get("terminal_triggered")),
+                    "success": terminal_count > 0,
+                    "terminal_count": terminal_count,
                     "trigger_time_s": numeric(raw.get("first_terminal_time_s")),
                     "trigger_time_kind": str_value(raw.get("first_terminal_time_kind")),
                     "trigger_execs": numeric(raw.get("first_terminal_execs"))
                     or numeric(raw.get("first_trigger_execs")),
-                    "execs_done": int_value(raw.get("execs_done")),
+                    "execs_done": first_int(0, raw.get("execs_done"), summary.get("execs_done")),
                     "execs_per_sec": str_value(raw.get("execs_per_sec")),
-                    "reached": int_value(raw.get("reached")),
-                    "accepted_non_trigger": int_value(raw.get("accepted_non_trigger")),
-                    "saved_non_trigger": int_value(raw.get("saved_non_trigger")),
-                    "spec_lifted": int_value(raw.get("spec_lifted")),
-                    "heuristic_lifted": int_value(raw.get("heuristic_lifted")),
-                    "manual_lifted": int_value(raw.get("manual_lifted")),
-                    "strict_pretrigger_guidance": strict_pretrigger(raw),
-                    "binding_signal_status": str_value(raw.get("binding_signal_status")),
-                    "binding_signal_diagnosis": str_value(raw.get("binding_signal_diagnosis")),
+                    "reached": first_int(
+                        0,
+                        raw.get("reached"),
+                        summary.get("formtrig_reached_execs"),
+                        diagnosis.get("formtrig_reached_execs"),
+                    ),
+                    "accepted_non_trigger": accepted_non_trigger,
+                    "saved_non_trigger": saved_non_trigger,
+                    "spec_lifted": int_value(normalized.get("spec_lifted")),
+                    "heuristic_lifted": int_value(normalized.get("heuristic_lifted")),
+                    "manual_lifted": int_value(normalized.get("manual_lifted")),
+                    "strict_pretrigger_guidance": strict_pretrigger(normalized),
+                    "binding_signal_status": str_value(normalized.get("binding_signal_status")),
+                    "binding_signal_diagnosis": str_value(
+                        raw.get("binding_signal_diagnosis")
+                        or diagnosis.get("binding_signal_diagnosis")
+                        or binding_signal.get("diagnosis")
+                    ),
                     "gate_status": str_value(raw.get("status")),
                     "gate_reasons": str_value(raw.get("reasons")),
                     "source_path": str(path),
-                    "out_dir": str_value(raw.get("out_dir")),
+                    "out_dir": out_dir,
                 }
-                out_dir = str_value(raw.get("out_dir"))
                 if out_dir:
                     exact = first_formtrig_trigger(Path(out_dir))
                     if exact:

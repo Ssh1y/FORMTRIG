@@ -1,6 +1,6 @@
 {
   "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
-  "blocked_count": 23,
+  "blocked_count": 24,
   "defaults": {
     "jobs": 4,
     "longrun_duration_s": 7200,
@@ -8,7 +8,7 @@
     "repetitions": 1,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-18T09:33:15+00:00",
+  "generated_at_utc": "2026-06-18T13:34:45+00:00",
   "inputs": {
     "active_runs": "",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
@@ -18,7 +18,7 @@
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
     "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260618.json"
   },
-  "runnable_now_count": 1,
+  "runnable_now_count": 0,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
   "skipped_control_count": 9,
   "skipped_controls": [
@@ -1011,46 +1011,45 @@
       "target_id": "PDF003"
     },
     {
-      "action": "run_validated_matched_short_screen",
-      "benefit_to_prove": "Now that BindingSpec guidance is validated, test endpoint benefit against faithful AFL++ family baselines under the same budget. Promote only if baseline binary TC remains flat before _T and FORMTRIG improves terminal success, TTE, or execution cost.",
-      "blocked_claims": [],
-      "blocking_issue": [],
+      "action": "repair_guidance_to_terminal",
+      "benefit_to_prove": "The matched short screen already showed strict pre-trigger FORMTRIG guidance and baseline no-guidance pain, but FORMTRIG did not reach terminal _T. Convert the saved non-trigger frontier into a terminal same-oracle outcome before spending another matched-baseline budget.",
+      "blocked_claims": [
+        "no FORMTRIG terminal success is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run"
+      ],
+      "blocking_issue": [
+        "no FORMTRIG terminal success is established",
+        "FORMTRIG first `_T`/TTE is not recorded for this run"
+      ],
       "category": "compound-sequence-lifecycle+numeric-margin",
-      "claim_boundary": "A passing short screen is still promotion evidence, not final 2h evidence; if baselines trigger early with acceptable time cost, demote to control/design work.",
-      "command": "scripts/run_magma_baselines.sh --target-id PHP003 --durations 600 --jobs 4 --out artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines && scripts/run_formtrig_manifest_batch.sh --manifest-list artifacts/formtrig_native_readiness/manifests/PHP003.current_1rep.list --duration 600 --jobs 4 --continue-on-fail --out-root artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_formtrig",
-      "comparison_verdict": "",
+      "claim_boundary": "This is a repair target, not a performance target. Do not rerun the same matched short screen until FORMTRIG terminal success or a revised BindingSpec/typed mutation is available.",
+      "command": "",
+      "comparison_verdict": "pretrigger_guidance_only",
       "current_primary_benefits": [],
-      "duration_s": 600,
+      "duration_s": "",
       "evidence_paths": [
-        "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_binding_validation_60s_r3/summary.jsonl",
-        "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b2_thumbnail_guard_candidate.validation.json",
+        "artifacts/formtrig_native_readiness/comparisons/php003_validated_short_600s_1rep_r2/comparison.json",
         "artifacts/magma_canary_inventory.json"
       ],
       "lane": "short_triage_ready",
       "mechanism_evidence_required": [
-        "validated native BindingSpec with replay-stable pre-trigger D_F progress",
-        "accepted non-trigger progress before terminal _T",
-        "same seed corpus and Magma _T oracle as faithful AFL++ baselines",
-        "binary-TC guidance-gap classification before any main-claim promotion",
-        "validation non-trigger progress events=4",
-        "validation candidate events=4090"
+        "strict_pretrigger_guidance"
       ],
       "post_unblock_commands": [
-        "after both arms finish, build a comparison package with tools/compare_formtrig_baselines.py",
-        "classify the target as hard-gap evidence only if faithful baselines show flat binary TC guidance and late/missing/high-variance _T"
+        "replay FORMTRIG saved non-trigger queue entries and inspect which role blocks _T",
+        "repair BindingSpec or typed mutation so the non-trigger frontier can cross R2T",
+        "run a FORMTRIG-only terminal gate before repeating faithful baselines"
       ],
       "primary_endpoint_metrics": [
-        "same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline-visible binary TC flatness before _T",
-        "baseline R2T late/missing/high-variance evidence across repetitions"
+        "FORMTRIG terminal success after the saved non-trigger frontier",
+        "first _T / execution count after the repair",
+        "same Magma/CVE oracle as the matched baseline screen"
       ],
       "priority": "P1",
       "project": "php",
       "rank": 2,
-      "repetitions": 1,
-      "runnable_now": true,
+      "repetitions": "",
+      "runnable_now": false,
       "sota_pain_class": "",
       "sota_pain_evidence": "",
       "source": "magma",

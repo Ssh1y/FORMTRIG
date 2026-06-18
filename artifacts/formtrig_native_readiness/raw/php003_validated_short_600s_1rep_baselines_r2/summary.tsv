@@ -1,0 +1,4 @@
+target_id	baseline	budget	rep	success	trigger_time_s	trigger_time_kind	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	magma_reached	magma_triggered	magma_first_reach_time_s	magma_first_trigger_time_s	magma_snapshot_count
+PHP003	aflplusplus_cmplog	600	1	false	NA	NA	597	78426	131.34	176	0	0	29955	0	90	NA	19
+PHP003	aflplusplus_vanilla	600	1	false	NA	NA	597	77882	130.38	258	0	0	10711	0	90	NA	19
+PHP003	redqueen_operand	600	1	false	NA	NA	597	78515	131.49	198	0	0	7816	0	90	NA	10

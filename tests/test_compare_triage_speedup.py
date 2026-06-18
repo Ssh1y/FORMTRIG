@@ -201,6 +201,74 @@ class SpeedupClassificationTest(unittest.TestCase):
             rows[0]["trigger_time_kind"], "formtrig_progress_queue_filename_exact"
         )
 
+    def test_formtrig_rows_normalize_manifest_batch_summary_fields(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            out_dir = root / "out"
+            default = out_dir / "default"
+            default.mkdir(parents=True)
+            manifest = root / "PHP003.native_b2_thumbnail_guard.600s.manifest"
+            manifest.write_text(
+                "target_id: PHP003\n"
+                "duration: 600\n",
+                encoding="utf-8",
+            )
+            (default / "formtrig_summary.json").write_text(
+                json.dumps(
+                    {
+                        "execs_done": 205673,
+                        "formtrig_reached_execs": 121014,
+                        "non_trigger_progress_events": 6,
+                        "saved_non_trigger_progress_events": 6,
+                        "terminal_triggered_execs": 0,
+                        "spec_lifted_events": 4203,
+                        "heuristic_lifted_events": 0,
+                        "manual_lifted_events": 0,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            (default / "formtrig_diagnosis.json").write_text(
+                json.dumps(
+                    {
+                        "experiment_ready": True,
+                        "pretrigger_lift_guidance_ready": True,
+                        "lift_delta_only_on_triggered_candidates": False,
+                        "binding_signal_status": "pass",
+                        "binding_signal_diagnosis": "role_signal_progress_observed",
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            gate = root / "batch_summary.csv"
+            gate.write_text(
+                "manifest,target_id,status,experiment_ready,pretrigger_lift_guidance_ready,"
+                "diagnosis,progress_status,has_non_trigger_progress,non_trigger_progress,"
+                "saved_non_trigger_progress,saved_triggered_progress,execs_done,reached,"
+                "triggered,queued_progress,spec_lifted,heuristic_lifted,manual_lifted,"
+                "d_f_constant,out_dir,log\n"
+                f'"{manifest}","PHP003","ok","true","true","queued_tc_rooted_progress",'
+                f'"progress_queued","true",6,6,0,205673,121014,0,6,4203,0,0,'
+                f'"true","{out_dir}","{root / "batch_run.log"}"\n',
+                encoding="utf-8",
+            )
+
+            rows = load_formtrig_rows([f"formtrig_600s_1rep={gate}"], "PHP003")
+
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["budget"], 600)
+        self.assertEqual(row["run_time"], 600)
+        self.assertEqual(row["accepted_non_trigger"], 6)
+        self.assertEqual(row["saved_non_trigger"], 6)
+        self.assertEqual(row["terminal_count"], 0)
+        self.assertEqual(row["spec_lifted"], 4203)
+        self.assertEqual(row["reached"], 121014)
+        self.assertEqual(row["binding_signal_status"], "pass")
+        self.assertTrue(row["strict_pretrigger_guidance"])
+
     def test_successful_baseline_can_still_be_speedup_evidence(self):
         formtrig_rows = [
             {

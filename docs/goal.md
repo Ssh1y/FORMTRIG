@@ -1259,6 +1259,25 @@ PDF003:
   更适合作为 hard binary/lifecycle TC 的下一条验证线。
   当前 blocker 是 native Poppler build 依赖，不是算法证据。
 
+PHP003:
+  2026-06-18 validated short screen 已补齐 faithful baseline 侧证据：
+    artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_validated_short_600s_1rep_r2
+    status = measured_pass
+    AFL++ CmpLog: R = 29,955, T = 0 in 600s
+    AFL++ vanilla: R = 10,711, T = 0 in 600s
+    Redqueen/operand path: R = 7,816, T = 0 in 600s
+  FORMTRIG 同预算 600s：
+    strict_pretrigger_guidance = true
+    accepted_non_trigger = 6
+    saved_non_trigger = 6
+    spec_lifted = 4,203
+    terminal _T = 0
+  当前 comparison verdict 是 `pretrigger_guidance_only`。这是一条重要机制证据：
+  baseline pain gate 已经通过，FORMTRIG 也确实产生了 TC-rooted non-trigger
+  guidance；但 endpoint 还没有出现，所以不能写成性能正例或 hard SOTA-pain
+  主结果。下一步是修 PHP003 的 typed mutation/BindingSpec 终态转换，或提高预算
+  直到 FORMTRIG 出现同 oracle terminal `_T`，再进入 matched endpoint 比较。
+
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance
   痛点例子。2026-06-18 B4/pre-root 复查证明 runtime 和 AFL++ 都能看到 terminal

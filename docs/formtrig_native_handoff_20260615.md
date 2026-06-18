@@ -93,13 +93,27 @@ artifacts/formtrig_native_readiness/baseline_guidance_gap/libarchive_2936_matche
   status = fail_fast_baseline
   pre-trigger binary flatness = not measured by Magma monitor
   fastest baseline terminal crash = 9.456s
+
+artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_validated_short_600s_1rep_r2
+  status = measured_pass
+  interpretation = baseline evidence supports a hard binary-TC no-guidance candidate
+  AFL++ CmpLog: R = 29,955, T = 0 in 600s
+  AFL++ vanilla: R = 10,711, T = 0 in 600s
+  Redqueen/operand path: R = 7,816, T = 0 in 600s
 ```
 
-这三个包都没有通过 hard SOTA-pain gate。注意：PHP009 和 TIF012 的 `_T` 前
+前三个旧包都没有通过 hard SOTA-pain gate。注意：PHP009 和 TIF012 的 `_T` 前
 binary oracle 确实是 flat 的，但 endpoint 成本不够硬；LIBARCHIVE_2936 没有
-Magma monitor flatness 证据，且 baseline 更早触发。因此下一步要找的不是“又一个
-speedup target”，而是 `baseline_guidance_gap.status=measured_pass` 的 target：
-flat pre-`_T` signal 加上 late/missing/high-variance baseline endpoint。
+Magma monitor flatness 证据，且 baseline 更早触发。PHP003_r2 是新出现的
+measured-pass pain 候选，但它还不是 FORMTRIG 性能正例：FORMTRIG 600s 有
+strict pre-trigger guidance（accepted/saved non-trigger = 6/6），但 terminal
+`_T=0`。因此它证明了“baseline pain 存在 + FORMTRIG 能产生指导”，下一步必须
+修 BindingSpec/typed mutation 或加预算，让同一个 target 出现 FORMTRIG terminal
+success，才能进入主 endpoint 表。
+
+当前要找的是 `baseline_guidance_gap.status=measured_pass` 且 FORMTRIG 也能
+terminal success 的 target：flat pre-`_T` signal 加上 late/missing/high-variance
+baseline endpoint，再加 FORMTRIG first `_T`/success-rate 收益。
 
 ### 2026-06-18 PDF003/PDF016 update
 

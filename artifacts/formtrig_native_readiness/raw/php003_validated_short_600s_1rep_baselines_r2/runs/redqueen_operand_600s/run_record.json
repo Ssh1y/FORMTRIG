@@ -1,0 +1,76 @@
+{
+  "baseline": "redqueen_operand",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "budget": 600,
+  "command_line": [
+    "magma/captain",
+    "aflplusplus",
+    "php",
+    "exif",
+    "@@"
+  ],
+  "config_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2/runs/redqueen_operand_600s/run_config.json",
+  "first_crash": null,
+  "fuzzer_stats": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2/magma/redqueen_operand_600s/findings/default/fuzzer_stats",
+  "last_crash_time_s": null,
+  "magma_monitor": {
+    "bug_id": "PHP003",
+    "first_reach": {
+      "bug_id": "PHP003",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2/magma/redqueen_operand_600s/monitor/90",
+      "kind": "poll",
+      "reached": 749,
+      "time_s": 90,
+      "triggered": 0
+    },
+    "first_trigger": null,
+    "latest": {
+      "bug_id": "PHP003",
+      "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2/magma/redqueen_operand_600s/monitor/final",
+      "kind": "final",
+      "reached": 7816,
+      "time_s": null,
+      "triggered": 0
+    },
+    "monitor_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_validated_short_600s_1rep_baselines_r2/magma/redqueen_operand_600s/monitor",
+    "reached": 7816,
+    "snapshot_count": 10,
+    "triggered": 0
+  },
+  "run_id": "PHP003:redqueen_operand:rep1",
+  "seed_set_id": "/home/cwh/FORMTRIG/artifacts/rnt_corpus/PHP003/seeds",
+  "stats": {
+    "corpus_count": 198,
+    "execs_done": 78515,
+    "execs_per_sec": "131.49",
+    "magma_reached": 7816,
+    "magma_triggered": 0,
+    "run_time": 597,
+    "saved_crashes": 0,
+    "saved_hangs": 0
+  },
+  "success": false,
+  "target_id": "PHP003",
+  "tc_category": "compound-sequence-lifecycle",
+  "timeout": false,
+  "trigger_execs": null,
+  "trigger_time_kind": null,
+  "trigger_time_s": null
+}
