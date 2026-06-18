@@ -1,0 +1,68 @@
+{
+  "benefit_readout": {
+    "execs_done": 28192,
+    "has_non_trigger_progress": false,
+    "non_trigger_progress_events": 0,
+    "pretrigger_lift_guidance_ready": false,
+    "saved_non_trigger_progress_events": 0,
+    "saved_triggered_progress_events": 2967,
+    "score": 122200,
+    "terminal_triggered": true
+  },
+  "binding_signal": {
+    "accepted_non_trigger_progress_events": 0,
+    "candidate_events": 2967,
+    "diagnosis": "triggered",
+    "semantic_candidate_variable_roles": 1,
+    "status": "pass"
+  },
+  "binding_spec": "/home/cwh/FORMTRIG/artifacts/binding_specs/SSL015.native_b2_pkcs7_decode_candidate.yml",
+  "blockers": [
+    "pre-trigger lift guidance is not ready",
+    "terminal signal appeared without non-trigger guidance",
+    "semantic BindingSpec roles varied, but no accepted non-trigger frontier progress was observed"
+  ],
+  "checks": {
+    "binding_spec_compile_pass": true,
+    "dynamic_binding_signal_pass": true,
+    "lift_audit_pass": true,
+    "lift_delta_only_on_triggered": false,
+    "native_site_map_validated": true,
+    "non_trigger_candidate_lift_delta": false,
+    "pretrigger_lift_guidance_ready": false,
+    "runtime_event_map_pass": true,
+    "terminal_triggered": true,
+    "tool_compile_pass": true
+  },
+  "dynamic_seed_readiness": {
+    "atom_signals": null,
+    "components": null,
+    "diagnosis": "triggered",
+    "reached": 26965,
+    "role_signals": null,
+    "seed_count": null,
+    "spec_lifted": null,
+    "status": "pass",
+    "triggered": 26965
+  },
+  "generated_at_utc": "2026-06-18T08:35:46+00:00",
+  "native_site_map": {
+    "native_runtime_evidence": true,
+    "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL015/out/formtrig_native/formtrig_sites.tsv"
+  },
+  "native_site_map_validated": true,
+  "next_action": "keep as negative/control evidence or revise the BindingSpec to expose non-trigger guidance",
+  "ready_for_short_gate": false,
+  "remaining_limitations": [
+    "candidate sweep is a validation gate, not a matched baseline comparison",
+    "short-gate and long-run endpoint evidence are still required before efficacy claims"
+  ],
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "source": {
+    "candidate_index": 1,
+    "candidate_out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/ssl015_binding_validation_60s_20260618/candidates/001_SSL015.native_b2_pkcs7_decode_candidate.yml",
+    "summary_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/ssl015_binding_validation_60s_20260618/summary.jsonl"
+  },
+  "status": "terminal_only_variable_semantic_roles_no_pretrigger_guidance",
+  "target_id": "SSL015"
+}

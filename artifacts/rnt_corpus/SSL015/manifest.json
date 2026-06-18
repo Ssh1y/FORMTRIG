@@ -1,0 +1,15 @@
+{
+  "created_at_utc": "2026-06-18T08:32:32Z",
+  "formal_replay_log": "artifacts/formtrig_native_readiness/raw/ssl015_pkcs7_cms_screen_60s_20260618/candidates/001_SSL015.native_b2_pkcs7_decode_candidate.yml/.formtrig/formtrig_seed_readiness.json",
+  "metadata_status": "formal_replay_verified_rnt",
+  "native_DT_semantics": "binary R/T oracle distance from FORMTRIG-native Magma SSL015 seed readiness under pkcs7_decode",
+  "native_DT_status": "computed",
+  "producer": "pkcs7_decode_cms_formtrig_seed_readiness",
+  "program": "pkcs7_decode",
+  "seed_count": 32,
+  "source_seedbank": "experiments/magma_workspace/magma/targets/openssl/corpus/cms",
+  "suite": "magma",
+  "target_id": "SSL015",
+  "tc_root_state_status": "computed",
+  "unique_rnt_seed_count": 32
+}

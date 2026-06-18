@@ -1,0 +1,29 @@
+{
+  "status": "fail",
+  "diagnosis": "constant_actionable_lifted_components",
+  "runtime_records": 511,
+  "reached_records": 91,
+  "triggered_records": 3,
+  "rnt_records": 88,
+  "spec_lifted_records": 91,
+  "rnt_spec_lifted_records": 88,
+  "spec_d_f_samples": 88,
+  "spec_d_f_unique": 2,
+  "spec_d_f_constant": false,
+  "spec_d_f_min": 2,
+  "spec_d_f_max": 3,
+  "component_keys": 5,
+  "spec_component_keys": 5,
+  "actionable_component_keys": 3,
+  "constant_components": 5,
+  "variable_components": 0,
+  "constant_actionable_components": 3,
+  "variable_actionable_components": 0,
+  "components": [
+    {"kind":3,"atom_id":1,"role":1,"source_id":3951536135353278578,"samples":88,"spec_lifted_samples":88,"actionable_samples":88,"flags_or":86,"flags_and":86,"max_confidence":0.59999999999999998,"unique_values":1,"constant":true,"min":1,"max":1,"values":[1]},
+    {"kind":3,"atom_id":1,"role":1,"source_id":10318708721649112788,"samples":88,"spec_lifted_samples":88,"actionable_samples":88,"flags_or":86,"flags_and":86,"max_confidence":0.59999999999999998,"unique_values":1,"constant":true,"min":1,"max":1,"values":[1]},
+    {"kind":3,"atom_id":1,"role":1,"source_id":337707396692187312,"samples":88,"spec_lifted_samples":88,"actionable_samples":0,"flags_or":86,"flags_and":86,"max_confidence":0.59999999999999998,"unique_values":1,"constant":true,"min":0,"max":0,"values":[0]},
+    {"kind":3,"atom_id":1,"role":1,"source_id":16401305622948380091,"samples":88,"spec_lifted_samples":88,"actionable_samples":0,"flags_or":86,"flags_and":86,"max_confidence":0.59999999999999998,"unique_values":1,"constant":true,"min":0,"max":0,"values":[0]},
+    {"kind":6,"atom_id":1,"role":4,"source_id":5998094971411063000,"samples":2,"spec_lifted_samples":2,"actionable_samples":2,"flags_or":86,"flags_and":86,"max_confidence":0.55000000000000004,"unique_values":1,"constant":true,"min":1,"max":1,"values":[1]}
+  ]
+}

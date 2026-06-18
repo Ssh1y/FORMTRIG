@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-18T04:13:34+00:00",
+  "generated_at_utc": "2026-06-18T08:33:19+00:00",
   "schema": "formtrig_magma_binding_validation_assets_discovered_v1",
   "source_discovery": "artifacts/formtrig_native_readiness/magma_native_asset_discovery_20260616.json",
   "targets": {
@@ -69,22 +69,19 @@
     },
     "SSL015": {
       "afl_args": "",
-      "binding_spec": "artifacts/binding_specs/SSL015.native_draft_magma_canary.yml",
+      "binding_spec": "artifacts/binding_specs/SSL015.native_b2_pkcs7_decode_candidate.yml",
       "category": "binary-state-null",
-      "discovery_blockers": [
-        "formal RNT seed corpus is not ready: excluded",
-        "no site_map.tsv matched the BindingSpec source selectors"
-      ],
-      "discovery_status": "blocked",
+      "discovery_blockers": [],
+      "discovery_status": "runnable_candidate",
       "duration_s": 600,
       "runner_category": "binary-null",
-      "seed_dir": "TODO_FORMAL_RNT_SEED_DIR_FOR_SSL015_ASN1",
+      "seed_dir": "artifacts/rnt_corpus/SSL015/seeds",
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
-      "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv",
-      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1 @@",
-      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl",
-      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_draft_magma_canary.validation.json"
+      "site_map": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL015/out/formtrig_native/formtrig_sites.tsv",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL015/out/afl/pkcs7_decode -",
+      "target_cwd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL015/out/afl",
+      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_b2_pkcs7_decode_candidate.validation.json"
     },
     "TIF012": {
       "afl_args": "",

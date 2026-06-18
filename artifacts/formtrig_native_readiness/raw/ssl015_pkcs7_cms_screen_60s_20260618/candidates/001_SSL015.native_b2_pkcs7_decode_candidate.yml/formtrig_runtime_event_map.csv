@@ -1,0 +1,7 @@
+binding_id,atom_id,category,role,event_kind,site_id,event_id,mapping_status,collapsed_with,binding_tier,lift_allowed,reason,component_kind,priority,direction,value_mode,function,file,line,column,opcode,observe_window
+1,1,binary-state-null,root_observe,7,1315756502,36d6ad2dd0da2072,exact,0x00000000,B2,true,ok,3,10,higher,outcome,PKCS7_dataDecode,crypto/pkcs7/pk7_doit.c,436,5,icmp,any
+2,1,binary-state-null,root_observe,7,1399644597,8f336ae9569ed6d4,exact,0x00000000,B2,true,ok,3,11,higher,outcome,PKCS7_dataDecode,crypto/pkcs7/pk7_doit.c,436,5,icmp,any
+3,1,binary-state-null,root_observe,7,3108228678,04afc71689dc18b0,exact,0x00000000,B2,true,ok,3,12,higher,outcome,PKCS7_dataDecode,crypto/pkcs7/pk7_doit.c,436,5,icmp,any
+4,1,binary-state-null,root_observe,7,3208894392,e39d2490f4747dbb,exact,0x00000000,B2,true,ok,3,13,higher,outcome,PKCS7_dataDecode,crypto/pkcs7/pk7_doit.c,436,5,icmp,any
+5,1,binary-state-null,desired_producer,7,1313567898,533d8398e40360d8,exact,0x00000000,B2,true,ok,6,30,higher,outcome,PKCS7_dataDecode,crypto/pkcs7/pk7_doit.c,451,14,icmp,any
+6,1,binary-state-null,use,7,3881733592,540300cbbc9bd5a9,exact,0x00000000,B2,true,ok,6,40,higher,outcome,PKCS7_dataDecode,crypto/pkcs7/pk7_doit.c,659,42,icmp,any

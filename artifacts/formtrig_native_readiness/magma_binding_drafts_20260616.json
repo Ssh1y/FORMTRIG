@@ -27,12 +27,12 @@
       "target_id": "SSL011"
     },
     {
-      "binding_spec": "artifacts/binding_specs/SSL015.native_draft_magma_canary.yml",
+      "binding_spec": "artifacts/binding_specs/SSL015.native_b2_pkcs7_decode_candidate.yml",
       "category": "binary-state-null",
-      "location_count": 2,
+      "location_count": 1,
       "manifest_template": "artifacts/formtrig_native_readiness/manifest_templates/SSL015.manifest.template",
-      "next_step": "compile against a FORMTRIG-native site_map.tsv, then run seed readiness and binding-signal diagnosis before endpoint screening",
-      "program": "asn1",
+      "next_step": "screen the cms corpus under pkcs7_decode for formal SSL015 RNT seeds, then run binding-signal diagnosis before endpoint screening",
+      "program": "pkcs7_decode",
       "project": "openssl",
       "secondary_category": "compound-sequence-lifecycle",
       "source_kind": "cmp",

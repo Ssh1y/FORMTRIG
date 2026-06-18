@@ -1,0 +1,135 @@
+tc_id: 'SSL015'
+target:
+  project: 'openssl'
+  binary: 'pkcs7_decode'
+  command: '-'
+tc:
+  category: 'binary-state-null'
+  expression: 'PKCS7_dataDecode reaches MAGMA_OR(p7 == NULL, p7->d.ptr == NULL)'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'p7 == NULL || p7->d.ptr == NULL at PKCS7_dataDecode'
+    kind: 'binary-state-null'
+    root: 'p7->d.ptr'
+bindings:
+  - id: 'ssl015_datadecode_root_cmp_91'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL015 dataDecode canary root state'
+    observe_at:
+      site_id: 1315756502
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 91
+      opcode: 'icmp'
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 436
+      column: 5
+    component: 'root_state'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.6
+    observe_window: 'any'
+  - id: 'ssl015_datadecode_root_cmp_94'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL015 dataDecode canary root state'
+    observe_at:
+      site_id: 1399644597
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 94
+      opcode: 'icmp'
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 436
+      column: 5
+    component: 'root_state'
+    priority: 11
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.6
+    observe_window: 'any'
+  - id: 'ssl015_datadecode_root_cmp_103'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL015 dataDecode canary root state'
+    observe_at:
+      site_id: 3108228678
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 103
+      opcode: 'icmp'
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 436
+      column: 5
+    component: 'root_state'
+    priority: 12
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.6
+    observe_window: 'any'
+  - id: 'ssl015_datadecode_root_cmp_109'
+    atom: 1
+    role: 'root_observe'
+    expr: 'SSL015 dataDecode canary root state'
+    observe_at:
+      site_id: 3208894392
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 109
+      opcode: 'icmp'
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 436
+      column: 5
+    component: 'root_state'
+    priority: 13
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.6
+    observe_window: 'any'
+  - id: 'ssl015_pkcs7_type_desired_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'PKCS7 content type selection feeds p7->d before data body use'
+    observe_at:
+      site_id: 1313567898
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 154
+      opcode: 'icmp'
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 451
+      column: 14
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+  - id: 'ssl015_data_body_use'
+    atom: 1
+    role: 'use'
+    expr: 'PKCS7_dataDecode consumes p7-derived data_body after the canary'
+    observe_at:
+      site_id: 3881733592
+      kind: 'cmp'
+      function: 'PKCS7_dataDecode'
+      inst_no: 620
+      opcode: 'icmp'
+      file: 'crypto/pkcs7/pk7_doit.c'
+      line: 659
+      column: 42
+    component: 'producer_use'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'

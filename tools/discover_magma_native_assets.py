@@ -334,12 +334,39 @@ def magma_native_build_root(path: Path) -> Path | None:
     return Path(*parts[: index + 2])
 
 
+def magma_native_build_label(path: Path | str) -> str:
+    parts = Path(path).resolve().parts
+    try:
+        index = parts.index("magma_native_builds")
+    except ValueError:
+        return ""
+    if index + 1 >= len(parts):
+        return ""
+    return parts[index + 1]
+
+
+def target_native_build_match(path: Path | str, target_id: str) -> bool:
+    label = magma_native_build_label(path)
+    return bool(label and (label == target_id or label.startswith(f"{target_id}_")))
+
+
 def same_native_build(path_a: Path | str, path_b: Path | str | None) -> bool:
     if path_b is None:
         return False
     root_a = magma_native_build_root(Path(path_a))
     root_b = magma_native_build_root(Path(path_b))
     return bool(root_a and root_b and root_a == root_b)
+
+
+def rank_executable_candidates(paths: list[Path], target_id: str) -> list[Path]:
+    return sorted(
+        paths,
+        key=lambda path: (
+            target_native_build_match(path, target_id),
+            stable_path(path),
+        ),
+        reverse=True,
+    )
 
 
 def shell_join(args: list[str]) -> str:
@@ -447,15 +474,17 @@ def build_discovery(
         selectors = binding_selectors(spec)
         site_scores = [score_site_map(path, selectors) for path in maps]
         best_site = site_scores[0] if site_scores and site_scores[0]["matched_selectors"] > 0 else None
-        exe_candidates = executables.get(program, [])
+        exe_candidates = rank_executable_candidates(executables.get(program, []), target_id)
         best_exe = exe_candidates[0] if exe_candidates else None
         for site_score in site_scores:
             site_score["same_build_as_executable"] = same_native_build(site_score["path"], best_exe)
+            site_score["target_build_match"] = target_native_build_match(site_score["path"], target_id)
         site_scores = sorted(
             site_scores,
             key=lambda row: (
                 row["matched_selectors"],
                 row.get("same_build_as_executable", False),
+                row.get("target_build_match", False),
                 row["score"],
             ),
             reverse=True,

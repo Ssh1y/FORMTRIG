@@ -1,26 +1,26 @@
 # RNT Corpus Status
 
-Generated UTC: 2026-06-11T13:02:22Z
+Generated UTC: 2026-06-18T08:32:32Z
 
 ## Overall
 
 | status | count |
-|---|---:|
-| excluded | 61 |
-| formal_ready | 89 |
+|---|---|
+| excluded | 59 |
+| formal_ready | 91 |
 
 ## By Suite
 
 | suite | formal_ready | candidate_only | invalid | missing | excluded |
-|---|---:|---:|---:|---:|---:|
+|---|---|---|---|---|---|
 | cve | 11 | 0 | 0 | 0 | 1 |
-| magma | 78 | 0 | 0 | 0 | 60 |
+| magma | 80 | 0 | 0 | 0 | 58 |
 
 ## By TC Class
 
 | TC class | formal_ready | candidate_only | invalid | missing | excluded |
-|---|---:|---:|---:|---:|---:|
-| binary-state-null | 10 | 0 | 0 | 0 | 7 |
+|---|---|---|---|---|---|
+| binary-state-null | 12 | 0 | 0 | 0 | 5 |
 | compound-sequence-lifecycle | 15 | 0 | 0 | 0 | 9 |
 | equality/magic | 9 | 0 | 0 | 0 | 6 |
 | numeric-margin | 55 | 0 | 0 | 0 | 39 |
@@ -66,6 +66,6 @@ Generated UTC: 2026-06-11T13:02:22Z
 | SSL006 | magma | numeric-margin | excluded | No strict RNT seed is available under asn1: SSL006 is logged in EVP_EncodeUpdate, but the selected asn1 runner does not exercise the EVP base64 encoder and corpus/source-guided replays did not produce SSL006_R. |
 | SSL007 | magma | numeric-margin | excluded | No strict RNT seed is available under asn1: SSL007 is logged in MDC2_Update, but the selected asn1 runner does not exercise MDC2 digest update and corpus/source-guided replays did not produce SSL007_R. |
 | SSL008 | magma | binary-state-null | excluded | No strict RNT seed is available under server: SSL008 is logged in client key-exchange construction, while the selected server runner processes client bytes as a server and does not construct client key exchange messages. |
-| SSL011 | magma | binary-state-null | formal_ready | pkcs7_decode formal RNT seed corpus: 1 CMS corpus seed replays as R=1,T=0 under the FORMTRIG-native pkcs7_decode runner. |
 | SSL012 | magma | binary-state-null | excluded | No strict RNT seed is available under x509: SSL012 is logged in X509_to_X509_REQ, but the selected x509 runner parses/prints/hashes/serializes X509 certificates and does not convert X509 to certificate requests. |
 | SSL013 | magma | numeric-margin | excluded | No strict RNT seed is available under asn1: SSL013 is logged in rsa_item_verify, but the selected asn1 runner does not perform RSA-PSS signature verification and corpus/source-guided replays did not produce SSL013_R. |
+| SSL014 | magma | numeric-margin | excluded | No strict RNT seed is available under asn1: SSL014 is logged in ASN1_TYPE_cmp, but the selected asn1 runner does not compare ASN1_TYPE objects and corpus/source-guided replays did not produce SSL014_R. |

@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-18T04:13:34+00:00",
+  "generated_at_utc": "2026-06-18T08:33:36+00:00",
   "schema": "formtrig_magma_binding_validation_assets_template_v1",
   "source_worklist": "artifacts/formtrig_native_readiness/magma_binding_drafts_20260616.json",
   "targets": {
@@ -77,22 +77,21 @@
     },
     "SSL015": {
       "afl_args": "",
-      "binding_spec": "artifacts/binding_specs/SSL015.native_draft_magma_canary.yml",
+      "binding_spec": "artifacts/binding_specs/SSL015.native_b2_pkcs7_decode_candidate.yml",
       "category": "binary-state-null",
       "duration_s": 600,
       "notes": [
         "Replace TODO_* fields with paths from a FORMTRIG-native Magma build.",
         "Use formal RNT seeds for pre-trigger validation; do not substitute the initial Magma corpus unless a new RNT seed source is validated."
       ],
-      "rnt_blocker": "No strict RNT seed is available under asn1: SSL015 is logged in PKCS7 data init/decode/final/verify workflows, but the selected asn1 runner decodes/prints/serializes ASN1 items and does not perform those PKCS7 workflows.",
       "runner_category": "binary-null",
-      "seed_dir": "TODO_FORMAL_RNT_SEED_DIR_FOR_SSL015",
+      "seed_dir": "artifacts/rnt_corpus/SSL015/seeds",
       "seed_preflight_max": 32,
       "seed_preflight_timeout": 5,
       "site_map": "TODO_FORMTRIG_NATIVE_SITE_MAP_FOR_SSL015.tsv",
-      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL011/out/afl/asn1 @@",
+      "target_cmd": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/SSL015/out/afl/pkcs7_decode -",
       "target_cwd": "TODO_FORMTRIG_NATIVE_TARGET_CWD_FOR_SSL015",
-      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_draft_magma_canary.validation.json"
+      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/SSL015.native_b2_pkcs7_decode_candidate.validation.json"
     },
     "TIF012": {
       "afl_args": "",
