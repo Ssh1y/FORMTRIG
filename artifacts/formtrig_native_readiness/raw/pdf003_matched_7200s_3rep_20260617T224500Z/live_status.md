@@ -1,6 +1,6 @@
 # Live Matched Status: PDF003
 
-- snapshot: `2026-06-18T00:47:47Z`
+- snapshot: `2026-06-18T01:06:13Z`
 - run root: `artifacts/formtrig_native_readiness/raw/pdf003_matched_7200s_3rep_20260617T224500Z`
 - boundary: live_snapshot_only; final claims require formtrig_gate, baseline_guidance_gap, comparison, and evidence packaging
 
@@ -22,9 +22,9 @@
 
 | baseline | runs | triggered runs | total R | total T | R without T | empirical T/R | zero-T 95% ub |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| aflplusplus_cmplog | 2 | 0 | 576978 | 0 | 576978 | 0 | 5.19951e-06 |
-| aflplusplus_vanilla | 2 | 0 | 255624 | 0 | 255624 | 0 | 1.1736e-05 |
-| redqueen_operand | 2 | 0 | 663594 | 0 | 663594 | 0 | 4.52084e-06 |
+| aflplusplus_cmplog | 2 | 0 | 717602 | 0 | 717602 | 0 | 4.18059e-06 |
+| aflplusplus_vanilla | 2 | 0 | 265200 | 0 | 265200 | 0 | 1.13122e-05 |
+| redqueen_operand | 2 | 0 | 755339 | 0 | 755339 | 0 | 3.97173e-06 |
 
 The zero-T upper bound is a descriptive rule-of-three proxy for matched live runs with reached executions but no trigger events; it is not a proof that baseline mutations are independent.
 
@@ -33,8 +33,8 @@ The zero-T upper bound is a descriptive rule-of-three proxy for matched live run
 | run | time | execs | first R | latest monitor | R | T |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | aflplusplus_cmplog_7200s_rep1 | 7175 | 1373920 | 90 |  | 548533 | 0 |
-| aflplusplus_cmplog_7200s_rep2 | 122 | 14001 | 90 | 210 | 28445 | 0 |
+| aflplusplus_cmplog_7200s_rep2 | 1225 | 250386 | 90 | 1320 | 169069 | 0 |
 | aflplusplus_vanilla_7200s_rep1 | 7175 | 487282 | 90 |  | 253025 | 0 |
-| aflplusplus_vanilla_7200s_rep2 | 121 | 8883 | 90 | 210 | 2599 | 0 |
+| aflplusplus_vanilla_7200s_rep2 | 1225 | 75709 | 90 | 1320 | 12175 | 0 |
 | redqueen_operand_7200s_rep1 | 7176 | 1650085 | 90 |  | 654054 | 0 |
-| redqueen_operand_7200s_rep2 | 123 | 11486 | 90 | 210 | 9540 | 0 |
+| redqueen_operand_7200s_rep2 | 1253 | 244807 | 90 | 1290 | 101285 | 0 |

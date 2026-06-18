@@ -1,7 +1,7 @@
 target_id	baseline	budget	rep	success	trigger_time_s	trigger_time_kind	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	magma_reached	magma_triggered	magma_first_reach_time_s	magma_first_trigger_time_s	magma_snapshot_count
 PDF003	aflplusplus_cmplog	7200	1	false	NA	NA	7175	1373920	191.46	NA	NA	NA	548533	0	90	NA	239
-PDF003	aflplusplus_cmplog	7200	2	false	NA	NA	122	14001	114.7	NA	NA	NA	28445	0	90	NA	5
+PDF003	aflplusplus_cmplog	7200	2	false	NA	NA	1225	250386	204.39	NA	NA	NA	169069	0	90	NA	41
 PDF003	aflplusplus_vanilla	7200	1	false	NA	NA	7175	487282	67.91	NA	NA	NA	253025	0	90	NA	239
-PDF003	aflplusplus_vanilla	7200	2	false	NA	NA	121	8883	73.39	NA	NA	NA	2599	0	90	NA	5
+PDF003	aflplusplus_vanilla	7200	2	false	NA	NA	1225	75709	61.79	NA	NA	NA	12113	0	90	NA	41
 PDF003	redqueen_operand	7200	1	false	NA	NA	7176	1650085	229.94	NA	NA	NA	654054	0	90	NA	234
-PDF003	redqueen_operand	7200	2	false	NA	NA	123	11486	92.99	NA	NA	NA	9540	0	90	NA	5
+PDF003	redqueen_operand	7200	2	false	NA	NA	1253	244807	195.22	NA	NA	NA	101285	0	90	NA	41
