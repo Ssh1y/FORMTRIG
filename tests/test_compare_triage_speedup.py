@@ -229,6 +229,25 @@ class SpeedupClassificationTest(unittest.TestCase):
                 + "\n",
                 encoding="utf-8",
             )
+            queue = default / "queue"
+            queue.mkdir()
+            queue_file = (
+                queue / "id:000123,src:000001,time:1358,execs:9021,op:ftgtype,pos:8"
+            )
+            queue_file.write_bytes(b"seed")
+            (default / "formtrig_progress.jsonl").write_text(
+                json.dumps(
+                    {
+                        "event": "saved_progress",
+                        "reason": "triggered",
+                        "queue_id": 123,
+                        "execs_done": 9077,
+                        "triggered": 1,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
             (default / "formtrig_diagnosis.json").write_text(
                 json.dumps(
                     {
@@ -267,6 +286,8 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertEqual(row["spec_lifted"], 4203)
         self.assertEqual(row["reached"], 121014)
         self.assertEqual(row["binding_signal_status"], "pass")
+        self.assertEqual(row["trigger_time_s"], 1.358)
+        self.assertEqual(row["trigger_execs"], 9021)
         self.assertTrue(row["strict_pretrigger_guidance"])
 
     def test_successful_baseline_can_still_be_speedup_evidence(self):

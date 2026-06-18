@@ -283,6 +283,12 @@ def strict_pretrigger(row: dict[str, Any]) -> bool:
     )
 
 
+def resolve_formtrig_default_dir(out_dir: Path) -> Path:
+    if (out_dir / "formtrig_progress.jsonl").exists():
+        return out_dir
+    return out_dir / "default"
+
+
 def first_formtrig_trigger(default_dir: Path) -> dict[str, Any]:
     progress_path = default_dir / "formtrig_progress.jsonl"
     queue_dir = default_dir / "queue"
@@ -464,7 +470,7 @@ def load_formtrig_rows(items: list[str], target_id: str) -> list[dict[str, Any]]
                     "out_dir": out_dir,
                 }
                 if out_dir:
-                    exact = first_formtrig_trigger(Path(out_dir))
+                    exact = first_formtrig_trigger(resolve_formtrig_default_dir(Path(out_dir)))
                     if exact:
                         row.update(exact)
                         if numeric(exact.get("first_formtrig_trigger_time_s")) is not None:
