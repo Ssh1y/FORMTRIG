@@ -525,6 +525,14 @@ replay、pre-`_T` non-constant `D_F_spec_lifted`、`non_trigger_candidate_lift_d
 progress、typed mutation 能推动 role/input field、以及 replay/ablation 支撑。
 缺任何一环都不能写成主结果里的有效 R2T guidance。
 
+2026-06-18 已把第一段证明落成机器 gate：
+`tools/audit_binding_spec_tc_rooted.py` 静态审计 BindingSpec 是否从 TC atom/root 出发，
+是否有 category 所需的 semantic roles 和 exact runtime mapping。
+`tools/summarize_binding_candidate_sweep.py` 会把结果写入 validation record 的
+`tc_rooted_static` 字段；`tools/audit_binding_validation_guidance.py` 在看到
+`tc_rooted_static.status=fail` 时会降级为 `static_binding_not_tc_rooted`，即使动态
+frontier 看起来移动，也不能把它当作新 TC 的泛化证据。
+
 ### Per-atom category
 
 已经修掉全局 category 的问题。现在支持每个 atom 独立 category：

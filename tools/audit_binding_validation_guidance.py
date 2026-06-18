@@ -21,6 +21,7 @@ from typing import Any
 CSV_FIELDS = [
     "target_id",
     "disposition",
+    "tc_rooted_static_status",
     "strict_pretrigger_guidance",
     "soft_pretrigger_signal",
     "terminal_triggered",
@@ -85,6 +86,9 @@ def audit_record(path: Path) -> dict[str, Any]:
     benefit = nested_dict(payload, "benefit_readout")
     signal = nested_dict(payload, "binding_signal")
     checks = nested_dict(payload, "checks")
+    tc_rooted_static = nested_dict(payload, "tc_rooted_static")
+    tc_rooted_static_status = str(tc_rooted_static.get("status") or "unknown")
+    static_not_rooted = tc_rooted_static_status == "fail"
     target_id = str(payload.get("target_id") or "")
     accepted_non_trigger = intish(signal.get("accepted_non_trigger_progress_events"))
     saved_non_trigger = intish(benefit.get("saved_non_trigger_progress_events"))
@@ -99,14 +103,18 @@ def audit_record(path: Path) -> dict[str, Any]:
     pretrigger_ready = boolish(benefit.get("pretrigger_lift_guidance_ready")) or boolish(
         checks.get("pretrigger_lift_guidance_ready")
     )
-    strict = (
+    runtime_strict = (
         accepted_non_trigger > 0
         or saved_non_trigger > 0
         or non_trigger_progress > 0
         or boolish(benefit.get("has_non_trigger_progress"))
     )
-    soft = pretrigger_ready or non_trigger_delta or strict
-    if strict and terminal:
+    strict = runtime_strict and not static_not_rooted
+    soft = (pretrigger_ready or non_trigger_delta or strict) and not static_not_rooted
+    if static_not_rooted:
+        disposition = "static_binding_not_tc_rooted"
+        next_action = "repair the BindingSpec semantic roles before using dynamic progress as guidance evidence"
+    elif strict and terminal:
         disposition = "mechanism_and_endpoint_candidate"
         next_action = "run matched baselines and baseline-guidance-gap analysis; promote only if baselines are late, missing, or high variance"
     elif strict:
@@ -127,6 +135,7 @@ def audit_record(path: Path) -> dict[str, Any]:
     return {
         "target_id": target_id,
         "disposition": disposition,
+        "tc_rooted_static_status": tc_rooted_static_status,
         "strict_pretrigger_guidance": strict,
         "soft_pretrigger_signal": soft,
         "terminal_triggered": terminal,
@@ -150,6 +159,7 @@ def record_rank(record: dict[str, Any]) -> tuple[int, int, int, int, int, str]:
         "soft_signal_needs_frontier_evidence": 4,
         "native_binding_validated_no_guidance_readout": 3,
         "terminal_only_control": 2,
+        "static_binding_not_tc_rooted": 1,
         "validation_not_ready": 1,
     }
     return (
@@ -205,15 +215,16 @@ def write_md(path: Path, payload: dict[str, Any]) -> None:
             "",
             "## Target Triage",
             "",
-            "| target | disposition | strict pre-trigger | terminal | accepted non-trigger | next action |",
-            "|---|---|---:|---:|---:|---|",
+            "| target | disposition | TC-rooted static | strict pre-trigger | terminal | accepted non-trigger | next action |",
+            "|---|---|---|---:|---:|---:|---|",
         ]
     )
     for row in sorted(rows, key=lambda item: (-record_rank(item)[0], str(item.get("target_id")))):
         lines.append(
-            "| {target} | `{disp}` | {strict} | {terminal} | {accepted} | {action} |".format(
+            "| {target} | `{disp}` | `{tc_rooted}` | {strict} | {terminal} | {accepted} | {action} |".format(
                 target=row.get("target_id", ""),
                 disp=row.get("disposition", ""),
+                tc_rooted=row.get("tc_rooted_static_status", "unknown"),
                 strict=str(row.get("strict_pretrigger_guidance")).lower(),
                 terminal=str(row.get("terminal_triggered")).lower(),
                 accepted=row.get("accepted_non_trigger_progress_events", 0),
@@ -227,6 +238,7 @@ def write_md(path: Path, payload: dict[str, Any]) -> None:
             "",
             "- `terminal_only_control` means `_T` appeared without accepted non-trigger guidance; it must not be used as R-to-T guidance evidence.",
             "- `soft_signal_needs_frontier_evidence` means lifted signal moved before `_T`, but the current artifact lacks accepted/saved non-trigger frontier progress.",
+            "- `static_binding_not_tc_rooted` means dynamic movement exists only after the BindingSpec failed the static TC-rooted role gate.",
             "- `mechanism_*` targets are candidates for matched baseline experiments, not final efficacy claims by themselves.",
             "",
         ]

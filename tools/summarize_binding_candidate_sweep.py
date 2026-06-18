@@ -5,12 +5,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 
 PRODUCER_ROLES = {"producer", "desired_producer", "opposite_producer"}
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+from audit_binding_spec_tc_rooted import audit_file  # noqa: E402
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -140,7 +146,38 @@ def best_row(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return max(rows, key=lambda row: (number(row.get("score"), -10**12), -number(row.get("index"), 10**9)))
 
 
-def status_for(row: dict[str, Any]) -> str:
+def tc_rooted_static_audit(binding_spec: str) -> dict[str, Any]:
+    if not binding_spec:
+        return {
+            "status": "unknown",
+            "source_path": "",
+            "blockers": ["no BindingSpec path was provided"],
+            "limitations": [],
+            "checks": {
+                "static_root_binding_pass": False,
+                "semantic_role_coverage_pass": False,
+                "exact_runtime_mapping_pass": False,
+                "negative_role_rejection_pass": False,
+            },
+        }
+    path = Path(binding_spec)
+    if not path.exists():
+        return {
+            "status": "unknown",
+            "source_path": binding_spec,
+            "blockers": ["BindingSpec path was not readable during validation summarization"],
+            "limitations": [],
+            "checks": {
+                "static_root_binding_pass": False,
+                "semantic_role_coverage_pass": False,
+                "exact_runtime_mapping_pass": False,
+                "negative_role_rejection_pass": False,
+            },
+        }
+    return audit_file(path)
+
+
+def status_for(row: dict[str, Any], tc_rooted_static: dict[str, Any] | None = None) -> str:
     exit_code = number(row.get("exit_code"))
     pretrigger = boolish(row.get("pretrigger_lift_guidance_ready"))
     experiment_ready = boolish(row.get("experiment_ready"))
@@ -148,6 +185,8 @@ def status_for(row: dict[str, Any]) -> str:
     terminal_triggered = number(row.get("triggered_execs")) > 0
     semantic_variable_roles = number(row.get("semantic_candidate_variable_roles")) > 0
     producer_signal = producer_role_signal(row)
+    if tc_rooted_static and tc_rooted_static.get("status") == "fail":
+        return "static_binding_not_tc_rooted"
     if exit_code == 0 and experiment_ready and pretrigger and binding_signal_pass:
         if not terminal_triggered and producer_signal["constant_zero_roles"]:
             return "needs_terminal_repair"
@@ -173,7 +212,9 @@ def build_record(
     site_map: str,
     summary_jsonl: Path,
 ) -> dict[str, Any]:
-    status = status_for(row)
+    resolved_binding_spec = binding_spec or str(row.get("candidate") or "")
+    tc_rooted_static = tc_rooted_static_audit(resolved_binding_spec)
+    status = status_for(row, tc_rooted_static)
     ready = status == "native_binding_validated"
     exit_code = number(row.get("exit_code"))
     pretrigger = boolish(row.get("pretrigger_lift_guidance_ready"))
@@ -186,7 +227,7 @@ def build_record(
     return {
         "schema": "formtrig_binding_candidate_validation_v1",
         "target_id": target_id,
-        "binding_spec": binding_spec or str(row.get("candidate") or ""),
+        "binding_spec": resolved_binding_spec,
         "status": status,
         "ready_for_short_gate": ready,
         "native_site_map_validated": native_static_pass,
@@ -204,7 +245,9 @@ def build_record(
             "terminal_triggered": terminal_triggered,
             "producer_constant_zero": bool(producer_signal["constant_zero_roles"]),
             "typed_mutation_hook_enabled": mutation_hook.get("enabled"),
+            "tc_rooted_static_pass": tc_rooted_static.get("status") == "pass",
         },
+        "tc_rooted_static": tc_rooted_static,
         "native_site_map": {
             "path": site_map,
             "native_runtime_evidence": bool(site_map) and native_static_pass,
@@ -244,17 +287,25 @@ def build_record(
             "candidate_out_dir": str(row.get("out_dir") or ""),
             "candidate_index": number(row.get("index")),
         },
-        "blockers": blockers_for(status, row),
-        "remaining_limitations": limitations_for(status, row),
+        "blockers": blockers_for(status, row, tc_rooted_static),
+        "remaining_limitations": limitations_for(status, row, tc_rooted_static),
         "next_action": next_action_for(status),
     }
 
 
-def blockers_for(status: str, row: dict[str, Any]) -> list[str]:
+def blockers_for(
+    status: str,
+    row: dict[str, Any],
+    tc_rooted_static: dict[str, Any] | None = None,
+) -> list[str]:
     if status == "native_binding_validated":
         return []
     blockers: list[str] = []
     producer_signal = producer_role_signal(row)
+    if status == "static_binding_not_tc_rooted":
+        blockers.append("BindingSpec failed TC-rooted static audit")
+        for blocker in (tc_rooted_static or {}).get("blockers") or []:
+            blockers.append(str(blocker))
     if number(row.get("exit_code")) != 0:
         blockers.append(f"candidate sweep exited with {number(row.get('exit_code'))}")
     if str(row.get("binding_signal_status") or "") != "pass":
@@ -283,7 +334,11 @@ def blockers_for(status: str, row: dict[str, Any]) -> list[str]:
     return blockers
 
 
-def limitations_for(status: str, row: dict[str, Any]) -> list[str]:
+def limitations_for(
+    status: str,
+    row: dict[str, Any],
+    tc_rooted_static: dict[str, Any] | None = None,
+) -> list[str]:
     limitations = [
         "candidate sweep is a validation gate, not a matched baseline comparison",
         "short-gate and long-run endpoint evidence are still required before efficacy claims",
@@ -292,12 +347,18 @@ def limitations_for(status: str, row: dict[str, Any]) -> list[str]:
         limitations.append("binding-signal pass has no accepted non-trigger progress events in this summary")
     if status == "needs_terminal_repair":
         limitations.append("candidate sweep showed pre-trigger movement but a producer role stayed constant zero")
+    if status == "static_binding_not_tc_rooted":
+        limitations.append("dynamic correlation cannot substitute for a TC-rooted BindingSpec")
+        for limitation in (tc_rooted_static or {}).get("limitations") or []:
+            limitations.append(str(limitation))
     return limitations
 
 
 def next_action_for(status: str) -> str:
     if status == "native_binding_validated":
         return "run the benefit-first short endpoint screen against faithful AFL++ family baselines"
+    if status == "static_binding_not_tc_rooted":
+        return "repair the BindingSpec so roles are rooted in TC atoms before using dynamic guidance evidence"
     if status == "needs_terminal_repair":
         return "repair the BindingSpec producer/input hot-range path and rerun the candidate sweep before matched baselines"
     if status in {
@@ -319,6 +380,7 @@ def write_markdown(path: Path, record: dict[str, Any]) -> None:
         f"- BindingSpec: `{record['binding_spec']}`",
         f"- Site map: `{record['native_site_map'].get('path', '')}`",
         f"- Dynamic signal pass: `{checks.get('dynamic_binding_signal_pass')}`",
+        f"- TC-rooted static pass: `{checks.get('tc_rooted_static_pass')}`",
         f"- Pre-trigger guidance ready: `{checks.get('pretrigger_lift_guidance_ready')}`",
         f"- Accepted non-trigger progress: `{record['binding_signal'].get('accepted_non_trigger_progress_events')}`",
         f"- Terminal triggered: `{benefit.get('terminal_triggered')}`",

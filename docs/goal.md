@@ -859,6 +859,13 @@ negative-role rejection:
   对 lifecycle，只有 lifecycle_event 而没有 same_object relation 不够。
 ```
 
+这条静态证据链现在由 `tools/audit_binding_spec_tc_rooted.py` 生成机器可审计
+artifact，并被 `tools/summarize_binding_candidate_sweep.py` 写入 validation record 的
+`tc_rooted_static` 字段。后续新 TC 不能只靠动态相关性证明指导有效：如果
+BindingSpec 在静态 TC-rooted role gate 中失败，即使运行时出现
+accepted/saved non-trigger movement，也必须先降级为 `static_binding_not_tc_rooted`，
+修正 BindingSpec 后再谈 dynamic guidance。
+
 effective guidance 的证据链：
 
 ```text

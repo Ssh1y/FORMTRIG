@@ -104,6 +104,51 @@ class AuditBindingValidationGuidanceTest(unittest.TestCase):
             )
             self.assertFalse(by_target["PDF003"]["strict_pretrigger_guidance"])
 
+    def test_static_non_rooted_binding_overrides_dynamic_progress(self):
+        tool = load_tool("audit_binding_validation_guidance")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "bad.validation.json").write_text(
+                json.dumps(
+                    {
+                        "target_id": "BAD001",
+                        "status": "static_binding_not_tc_rooted",
+                        "ready_for_short_gate": False,
+                        "tc_rooted_static": {
+                            "status": "fail",
+                            "blockers": [
+                                "atom 1 lacks producer/use/input_influence binding for binary/null TC"
+                            ],
+                        },
+                        "benefit_readout": {
+                            "terminal_triggered": False,
+                            "pretrigger_lift_guidance_ready": True,
+                            "saved_non_trigger_progress_events": 2,
+                            "non_trigger_progress_events": 2,
+                        },
+                        "binding_signal": {
+                            "accepted_non_trigger_progress_events": 2,
+                            "candidate_events": 5,
+                        },
+                        "checks": {"non_trigger_candidate_lift_delta": True},
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            audit = tool.build_audit([str(root)])
+            row = audit["targets"][0]
+
+            self.assertEqual(row["disposition"], "static_binding_not_tc_rooted")
+            self.assertEqual(row["tc_rooted_static_status"], "fail")
+            self.assertFalse(row["strict_pretrigger_guidance"])
+            self.assertFalse(row["soft_pretrigger_signal"])
+            self.assertEqual(
+                row["next_action"],
+                "repair the BindingSpec semantic roles before using dynamic progress as guidance evidence",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
