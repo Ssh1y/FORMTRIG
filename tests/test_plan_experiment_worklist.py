@@ -526,6 +526,93 @@ class ExperimentWorklistTest(unittest.TestCase):
                 task["evidence_paths"],
             )
 
+    def test_short_triage_ready_with_strict_validation_runs_matched_short_screen(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            validation_root = root / "binding_validation"
+            manifest_root = root / "manifests"
+            comparison_root.mkdir()
+            validation_root.mkdir()
+            manifest_root.mkdir()
+            manifest_list = manifest_root / "PHP003.current_1rep.list"
+            manifest_list.write_text("PHP003.native_b2_thumbnail_guard.600s.manifest\n", encoding="utf-8")
+            validation_path = validation_root / "PHP003.native_b2_thumbnail_guard_candidate.validation.json"
+            validation_path.write_text(
+                json.dumps(
+                    {
+                        "target_id": "PHP003",
+                        "status": "native_binding_validated",
+                        "ready_for_short_gate": True,
+                        "generated_at_utc": "2026-06-18T09:20:00+00:00",
+                        "benefit_readout": {
+                            "pretrigger_lift_guidance_ready": True,
+                            "non_trigger_progress_events": 4,
+                            "saved_non_trigger_progress_events": 4,
+                            "terminal_triggered": False,
+                        },
+                        "binding_signal": {
+                            "status": "pass",
+                            "accepted_non_trigger_progress_events": 4,
+                            "candidate_events": 4090,
+                        },
+                        "checks": {
+                            "non_trigger_candidate_lift_delta": True,
+                            "lift_delta_only_on_triggered": False,
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 2,
+                                "target_id": "PHP003",
+                                "source": "magma",
+                                "project": "php",
+                                "primary_category": "compound-sequence-lifecycle",
+                                "secondary_category": "numeric-margin",
+                                "lane": "short_triage_ready",
+                                "status": "ready_for_short_triage",
+                                "existing_disposition": "",
+                                "blockers": "no comparison package exists yet",
+                                "source_evidence": "magma.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                binding_validation_root=validation_root,
+                manifest_root=manifest_root,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "run_validated_matched_short_screen")
+            self.assertTrue(task["runnable_now"])
+            self.assertIn("scripts/run_magma_baselines.sh --target-id PHP003", task["command"])
+            self.assertIn("scripts/run_formtrig_manifest_batch.sh --manifest-list", task["command"])
+            self.assertIn(str(manifest_list), task["command"])
+            self.assertIn(str(validation_path), task["evidence_paths"])
+
     def test_ready_binding_validation_without_strict_guidance_stays_gated(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

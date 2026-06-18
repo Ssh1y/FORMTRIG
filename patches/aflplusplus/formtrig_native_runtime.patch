@@ -343,7 +343,21 @@ index 87157ca..508b19b 100644
      if (likely(afl->q_testcase_max_cache_size)) {
 
        queue_testcase_store_mem(afl, afl->queue_top, mem);
-@@ -878,4 +1008,3 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+@@ -855,6 +985,12 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+   if (unlikely(fd < 0)) { PFATAL("Unable to create '%s'", fn); }
+   ck_write(fd, mem, len, fn);
+   close(fd);
+-
++  if (afl->formtrig_last.seen) {
++    const char *reason = fault == FSRV_RUN_CRASH ? "saved_crash" : "saved_hang";
++    if (afl->formtrig_last.triggered) { reason = "triggered"; }
++    formtrig_log_progress(afl, "saved_progress", reason,
++                          &afl->formtrig_last,
++                          afl->queue_cur ? afl->queue_cur->id : 0, len);
++  }
+ #ifdef __linux__
+   if (afl->fsrv.nyx_mode && fault == FSRV_RUN_CRASH) {
+@@ -878,4 +1014,3 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
    return keeping;
 
  }
@@ -2379,6 +2393,30 @@ index 48fd33e..dce7cba 100644
 +
 +}
 +
++static u8 formtrig_pre_reach_guidance_eligible(
++    const formtrig_queue_meta_t *m) {
++
++  if (!m || !m->seen || m->reached || m->triggered) { return 0; }
++  if (!(m->source_flags & FORMTRIG_SOURCE_SPEC_LIFTED)) { return 0; }
++  return formtrig_actionable_component_count(m) ? 1 : 0;
++
++}
++
++static u8 formtrig_guidance_eligible(const formtrig_queue_meta_t *m) {
++
++  if (!m || !m->seen) { return 0; }
++  return m->reached || formtrig_pre_reach_guidance_eligible(m);
++
++}
++
++static const char *formtrig_reach_or_pre_reach_reason(
++    const formtrig_queue_meta_t *m) {
++
++  return formtrig_pre_reach_guidance_eligible(m) ? "pre_reach_guidance"
++                                                 : "not_reached";
++
++}
++
 +static const char *formtrig_frontier_reason(afl_state_t *afl,
 +                                            const formtrig_queue_meta_t *m,
 +                                            u8 *accepted) {
@@ -2387,7 +2425,11 @@ index 48fd33e..dce7cba 100644
 +
 +  if (!afl || !afl->formtrig_enabled) { return "formtrig_disabled"; }
 +  if (!m || !m->seen) { return "no_runtime_signal"; }
-+  if (!m->reached) { return "not_reached"; }
++  if (!formtrig_guidance_eligible(m)) {
++
++    return formtrig_reach_or_pre_reach_reason(m);
++
++  }
 +  if (m->triggered) {
 +
 +    if (accepted) { *accepted = 1; }
@@ -2501,7 +2543,7 @@ index 48fd33e..dce7cba 100644
 +  const formtrig_queue_meta_t *m = &afl->formtrig_last;
 +  u8 accepted = 0;
 +  const char *reason = formtrig_frontier_reason(afl, m, &accepted);
-+  if (!accepted && m->seen && m->reached) {
++  if (!accepted && formtrig_guidance_eligible(m)) {
 +
 +    formtrig_log_progress(afl, "frontier_reject", reason, m, 0, 0);
 +
@@ -2515,8 +2557,8 @@ index 48fd33e..dce7cba 100644
 +                            const formtrig_queue_meta_t *confirmed) {
 +
 +  if (!baseline || !confirmed) { return 0; }
-+  if (!baseline->seen || !baseline->reached) { return 0; }
-+  if (!confirmed->seen || !confirmed->reached) { return 0; }
++  if (!formtrig_guidance_eligible(baseline)) { return 0; }
++  if (!formtrig_guidance_eligible(confirmed)) { return 0; }
 +
 +  if (baseline->triggered || confirmed->triggered) {
 +
@@ -2557,7 +2599,7 @@ index 48fd33e..dce7cba 100644
 +static u8 formtrig_update_scalar_best(afl_state_t *afl) {
 +
 +  const formtrig_queue_meta_t *m = &afl->formtrig_last;
-+  if (!afl->formtrig_enabled || !m->seen || !m->reached) { return 0; }
++  if (!afl->formtrig_enabled || !formtrig_guidance_eligible(m)) { return 0; }
 +  if (m->triggered) { return 0; }
 +
 +  u8 changed = 0;
@@ -2587,7 +2629,7 @@ index 48fd33e..dce7cba 100644
 +                                   const formtrig_queue_meta_t *m,
 +                                   u32 queue_id, const char *event) {
 +
-+  if (!afl->formtrig_enabled || !m->seen || !m->reached) { return 0; }
++  if (!afl->formtrig_enabled || !formtrig_guidance_eligible(m)) { return 0; }
 +  if (m->triggered) { return 0; }
 +  if (!m->stable) {
 +
@@ -2693,7 +2735,7 @@ index 48fd33e..dce7cba 100644
 +
 +double formtrig_queue_weight_multiplier(const struct queue_entry *q) {
 +
-+  if (!q || !q->formtrig.seen || !q->formtrig.reached) { return 1.0; }
++  if (!q || !formtrig_guidance_eligible(&q->formtrig)) { return 1.0; }
 +  if (!q->formtrig.stable) { return 1.0; }
 +  if (q->formtrig.triggered) { return 16.0; }
 +

@@ -180,6 +180,17 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
 FORMTRIG_LIFT_SPEC="$work_dir/absent_value_mode_spec.txt" \
   "$work_dir/absent_value_mode_smoke"
 
+printf 'role_component 8 111 guard 5 1 10 higher outcome 1.0 1.0 1111 3001 pre_reach\nrole_component 8 222 opposite_producer 6 1 20 higher absent 1.0 1.0 2222 3001 any\n' \
+  > "$work_dir/pre_reach_absent_value_mode_spec.txt"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Wno-unused-parameter -Werror -DFORMTRIG_USE_AFL_MAP_FALLBACK=1 \
+  "$repo_root/formtrig/tests/pre_reach_absent_value_mode_smoke.c" \
+  "$repo_root/formtrig/runtime/formtrig_runtime.c" \
+  -o "$work_dir/pre_reach_absent_value_mode_smoke" -lrt -lm
+FORMTRIG_LIFT_SPEC="$work_dir/pre_reach_absent_value_mode_spec.txt" \
+  FORMTRIG_PRE_REACH_EVENTS=1 \
+  "$work_dir/pre_reach_absent_value_mode_smoke"
+
 cat > "$work_dir/role_graph_distance_spec.txt" <<'SPEC'
 role_component 7 201 root_observe 3 1 10 higher outcome 1.0 1.0
 role_component 8 202 use 6 1 20 higher hit 1.0 1.0

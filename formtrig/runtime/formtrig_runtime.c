@@ -167,6 +167,7 @@ typedef struct {
   double d_f_spec_lifted;
   double d_f_heuristic_lifted;
   double d_f_manual_lifted;
+  int pre_reach_spec_lifted;
   formtrig_df_source_t df_source;
   uint32_t lift_candidate_count;
   uint32_t lift_linked_count;
@@ -1811,15 +1812,18 @@ static int component_matches_role(const formtrig_progress_component_t *component
          (component->flags & FORMTRIG_COMPONENT_SPEC_LIFTED);
 }
 
+static int direction_value_satisfies_goal(uint32_t flags, double value) {
+  if (!isfinite(value)) return 0;
+
+  if (flags & FORMTRIG_COMPONENT_HIGHER_IS_BETTER) return value > 0.0;
+  if (flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER) return value <= 0.0;
+  return 0;
+}
+
 static int component_value_satisfies_goal(
     const formtrig_progress_component_t *component) {
-  if (!component || !isfinite(component->value)) return 0;
-
-  if (component->flags & FORMTRIG_COMPONENT_HIGHER_IS_BETTER)
-    return component->value > 0.0;
-  if (component->flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER)
-    return component->value <= 0.0;
-  return 0;
+  if (!component) return 0;
+  return direction_value_satisfies_goal(component->flags, component->value);
 }
 
 static double unsatisfied_component_role_cost(
@@ -2595,6 +2599,12 @@ static void record_probe_component(const formtrig_probe_spec_t *spec,
                                    spec->role, spec->priority, flags,
                                    source_id, context_hash, value,
                                    spec->confidence);
+  if (!g_state.reached &&
+      (spec->observe_window == FORMTRIG_SPEC_WINDOW_PRE_REACH ||
+       spec->observe_window == FORMTRIG_SPEC_WINDOW_ANY ||
+       (event && !event->after_reach) || !event) &&
+      direction_value_satisfies_goal(flags, value))
+    g_state.pre_reach_spec_lifted = 1;
   refresh_spec_role_graph_distance();
   if ((spec->direction_flag & FORMTRIG_COMPONENT_LOWER_IS_BETTER) &&
       value < g_state.d_f_spec_lifted) {
@@ -2664,7 +2674,7 @@ static void apply_probe_specs_to_event(const formtrig_event_t *event) {
 
 static void record_absent_probe_components(void) {
   ensure_probe_specs_loaded();
-  if (!g_probe_spec_count || !g_state.reached) return;
+  if (!g_probe_spec_count) return;
 
   for (uint32_t i = 0; i < g_probe_spec_count; i++) {
     formtrig_probe_spec_t *spec = &g_probe_specs[i];
@@ -2672,6 +2682,25 @@ static void record_absent_probe_components(void) {
         spec->value_mode != FORMTRIG_SPEC_VALUE_ABSENT ||
         spec->observed_count)
       continue;
+    if (!g_state.reached) {
+      if (!record_pre_reach_events()) continue;
+      if (spec->observe_window != FORMTRIG_SPEC_WINDOW_PRE_REACH &&
+          spec->observe_window != FORMTRIG_SPEC_WINDOW_ANY)
+        continue;
+      int atom_anchored = 0;
+      for (uint32_t j = 0; j < g_state.component_count; j++) {
+        const formtrig_progress_component_t *component =
+            &g_state.components[j];
+        if (component->atom_id == spec->atom_id &&
+            component->role != FORMTRIG_ROLE_OPPOSITE_PRODUCER &&
+            (component->flags & FORMTRIG_COMPONENT_SPEC_LIFTED) &&
+            component_value_satisfies_goal(component)) {
+          atom_anchored = 1;
+          break;
+        }
+      }
+      if (!atom_anchored) continue;
+    }
 
     double value = spec->value > 0.0 ? spec->value : 1.0;
     record_probe_component(spec, NULL, value);
@@ -2679,13 +2708,14 @@ static void record_absent_probe_components(void) {
 }
 
 static void publish_shm(void) {
-  if (!g_state.reached) return;
   if (!g_state.finalized && !g_state.crash_predicate && !publish_eager())
     return;
 
   record_absent_probe_components();
   refresh_spec_role_graph_distance();
   refresh_selected_lifted_distance();
+
+  if (!g_state.reached && !g_state.pre_reach_spec_lifted) return;
 
   formtrig_shm_record_t *rec = shm_record();
   if (!rec) return;
@@ -2829,6 +2859,11 @@ static void publish_shm(void) {
           max_influence, 0.8);
     }
   }
+}
+
+static void publish_pre_reach_if_ready(void) {
+  if (__formtrig_active || !g_state.pre_reach_spec_lifted) return;
+  publish_shm();
 }
 
 static void json_write_escaped(FILE *f, const char *s) {
@@ -3340,7 +3375,10 @@ void __formtrig_log_cmp_ex(uint32_t site_id, uint32_t predicate, uint64_t lhs,
       7u, site_id, lhs, rhs, ((uint64_t)predicate << 32) | outcome, d, 0,
       has_input, (uint8_t)(site_class & 0xffu), event_input_start,
       event_input_len);
-  if (active) publish_shm();
+  if (active)
+    publish_shm();
+  else
+    publish_pre_reach_if_ready();
 }
 
 void __formtrig_log_cmp(uint32_t site_id, uint32_t predicate, uint64_t lhs,
@@ -3357,7 +3395,10 @@ void __formtrig_log_branch(uint32_t site_id, uint8_t outcome) {
   int active = __formtrig_active;
   if (!active && !pre_reach_event_capture_enabled(8u, site_id)) return;
   push_event(8u, site_id, outcome, 0, outcome ? 0.0 : 1.0);
-  if (active) publish_shm();
+  if (active)
+    publish_shm();
+  else
+    publish_pre_reach_if_ready();
 }
 
 void __formtrig_log_mem_access(uint32_t site_id, const void *ptr, size_t size,

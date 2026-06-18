@@ -632,8 +632,8 @@ fi
 prepare_args=(
   python3 "$FUZZER/formtrig/tools/prepare_native_build.py"
   --work-dir "$native_work"
-  --cc-compiler "$FUZZER/repo/afl-clang-fast"
-  --cxx-compiler "$FUZZER/repo/afl-clang-fast++"
+  --cc-compiler "${{FORMTRIG_CC_COMPILER:-$FUZZER/repo/afl-clang-fast}}"
+  --cxx-compiler "${{FORMTRIG_CXX_COMPILER:-$FUZZER/repo/afl-clang-fast++}}"
   --runtime-cc "${{FORMTRIG_RUNTIME_CC:-clang}}"
   --instrument-level "${{FORMTRIG_INSTRUMENT_LEVEL:-balanced}}"
   --runtime-link-mode never
@@ -935,6 +935,8 @@ def build_plan(args: argparse.Namespace) -> dict[str, Any]:
         "FORMTRIG_SOURCE_DIR": str((Path.cwd() / "formtrig").resolve()),
     }
     optional_env = {
+        "FORMTRIG_CC_COMPILER": args.cc_compiler,
+        "FORMTRIG_CXX_COMPILER": args.cxx_compiler,
         "FORMTRIG_AFL_CC": args.afl_cc,
         "FORMTRIG_AFL_CXX": args.afl_cxx,
         "FORMTRIG_PASS_CXX": args.pass_cxx,
@@ -1306,6 +1308,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--instrument-level", default="balanced")
     parser.add_argument("--instrument-entry", choices=["runner", "fuzzer", "cli"], default="runner")
     parser.add_argument("--cxx-stdlib", choices=["libc++", "libstdc++", "none"], default="libc++")
+    parser.add_argument("--cc-compiler", default="", help="Compiler/wrapper used by generated FORMTRIG CC")
+    parser.add_argument("--cxx-compiler", default="", help="Compiler/wrapper used by generated FORMTRIG CXX")
     parser.add_argument("--afl-cc", default="", help="Set AFL_CC inside generated FORMTRIG wrappers")
     parser.add_argument("--afl-cxx", default="", help="Set AFL_CXX inside generated FORMTRIG wrappers")
     parser.add_argument("--pass-cxx", default="", help="C++ compiler used to build the FORMTRIG LLVM pass")

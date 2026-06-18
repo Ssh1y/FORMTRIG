@@ -1654,6 +1654,19 @@ def task_for_row(
             ),
             triage,
         )
+    if binding_validation_ready(validation) and binding_validation_strict_pretrigger_guidance(validation):
+        return attach_sota_pain(
+            validated_short_screen_task(
+                row,
+                comparison,
+                validation,
+                short_duration_s=short_duration_s,
+                jobs=jobs,
+                reps=reps,
+                manifest_root=manifest_root,
+            ),
+            triage,
+        )
     if lane == "binding_spec_first":
         return attach_sota_pain(
             binding_spec_first_task(
@@ -1666,19 +1679,6 @@ def task_for_row(
             triage,
         )
     if lane == "binding_validation_first":
-        if binding_validation_ready(validation) and binding_validation_strict_pretrigger_guidance(validation):
-            return attach_sota_pain(
-                validated_short_screen_task(
-                    row,
-                    comparison,
-                    validation,
-                    short_duration_s=short_duration_s,
-                    jobs=jobs,
-                    reps=reps,
-                    manifest_root=manifest_root,
-                ),
-                triage,
-            )
         return attach_sota_pain(
             validation_first_task(
                 row,

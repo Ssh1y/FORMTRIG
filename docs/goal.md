@@ -754,6 +754,31 @@ root-use aligned
 pointer address closer to zero
 ```
 
+2026-06-18 PNG007 的复查说明了这一类 TC 的验收边界：
+
+```text
+target = PNG007 / png_ptr->palette == NULL
+candidate = PNG007.native_b4_pre_root_absence_candidate.yml
+result = terminal-only, not pre-trigger guidance
+
+terminal evidence:
+  direct POSIX SHM replay wrote flags=15 before segfault
+  saved_triggered_progress = 3
+  terminal_triggered = true
+
+missing guidance:
+  saved_non_trigger_progress = 0
+  accepted_non_trigger_progress = 0
+  pretrigger_lift_guidance_ready = false
+  lift_delta_only_on_triggered = true
+```
+
+这说明 FORMTRIG 可以正确看到 PNG007 的 terminal `_T`，但这版 BindingSpec 还没有把
+`palette != NULL -> palette == NULL` 的因果链转化成可保存的 non-trigger frontier。
+RNT 种子已经是 palette PNG，PLTE deletion/absence 很容易直接跳到 terminal，
+中间没有稳定、replay-stable、accepted 的 R-not-T 状态。因此 PNG007 当前只能作为
+negative/control/spec-repair target，不能作为 binary-state-null 的正例收益。
+
 ## 这类的 lifted progress 可以写成
 
 ```text
@@ -1233,6 +1258,20 @@ LIBARCHIVE_2936:
 PDF003:
   更适合作为 hard binary/lifecycle TC 的下一条验证线。
   当前 blocker 是 native Poppler build 依赖，不是算法证据。
+
+PNG007:
+  属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance
+  痛点例子。2026-06-18 B4/pre-root 复查证明 runtime 和 AFL++ 都能看到 terminal
+  `_T`，但 validation 仍是 terminal-only：
+    status = terminal_only_variable_semantic_roles_no_pretrigger_guidance
+    saved_triggered_progress = 3
+    saved_non_trigger_progress = 0
+    accepted_non_trigger_progress = 0
+    pretrigger_lift_guidance_ready = false
+    lift_delta_only_on_triggered = true
+  当前不能写成 FORMTRIG 正例。它的价值是 negative/control/spec-repair：
+  说明只触发 `_T` 不等于解决 R2T guidance；必须先产生稳定的 accepted
+  non-trigger frontier，才进入 matched baseline 比较。
 
 PHP009:
   已从旧的 lifecycle 初稿修正为 numeric-margin BindingSpec root：

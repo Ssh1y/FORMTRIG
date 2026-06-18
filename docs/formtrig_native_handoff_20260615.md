@@ -838,6 +838,22 @@ artifacts/formtrig_native_readiness/magma_lift_smoke_20260615.md
   级别。FORMTRIG 当前不能把 PNG007 当正例；它应作为“论文动机 + 负例/控制”
   保留，直到某个 BindingSpec 先产生 accepted non-trigger progress，再在同预算
   faithful baseline 比较中体现 terminal/TTE 收益。
+- 2026-06-18 PNG007 B4/pre-root 复查已经把“看不到 `_T`”和“没有有效指导”
+  分开了：
+  - runtime 直接 POSIX SHM replay crash input 时写出了 `flags=15`
+    (`REACHED|CRASH_PREDICATE|LIFTED|SPEC_LIFTED`)，说明 terminal `_T`
+    信号在崩溃前已经存在。
+  - AFL++ crash/hang 保存路径已补 `saved_progress` 记录，避免 crash terminal
+    样本只进 crashes 而不进 FORMTRIG progress log。
+  - `PNG007.native_b4_pre_root_absence_candidate.yml` 的 30s 单种子 validation
+    显示 `terminal_triggered=true`、`saved_triggered_progress=3`，但
+    `saved_non_trigger_progress=0`、`accepted_non_trigger_progress=0`、
+    `pretrigger_lift_guidance_ready=false`、`lift_delta_only_on_triggered=true`。
+  - 因此 PNG007 当前结论是 terminal-only variable semantic roles，不是
+    pre-trigger lift guidance。实际 blocker 是 RNT 种子已经是 palette PNG，
+    删除/绕过 PLTE 直接跳到 terminal `_T`，没有稳定、可保存、非触发的中间
+    frontier。PNG007 继续保留为 negative/control/spec-repair target，不能进入
+    主正例或 matched long-run。
 - SQL013：DeepSeek 曾辅助看 BindingSpec，结论是 `insufficient_binding`，因为没有真实绑定 `pNew` / same-object / planner internal root；不能伪造 `nLSlot/nLTerm`。
 
 SQL013 分类要记住：
