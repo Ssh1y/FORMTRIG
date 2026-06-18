@@ -924,6 +924,7 @@ def longrun_task(
     jobs: int,
     manifest_root: Path,
     active_runs: dict[str, dict[str, Any]] | None = None,
+    active_runs_path: Path | None = None,
 ) -> dict[str, Any]:
     summary = comparison_summary(comparison)
     target_id = str(row.get("target_id") or "")
@@ -957,6 +958,24 @@ def longrun_task(
             blocking_issue.append(f"active run root: {run_root}")
         post_unblock_commands = []
         baseline_roots = [str(value) for value in active_run.get("baseline_roots") or [] if str(value)]
+        if active_runs_path:
+            post_unblock_commands.append(
+                shell_join(
+                    [
+                        "python3",
+                        "tools/check_magma_matched_finalize_ready.py",
+                        "--active-runs",
+                        str(active_runs_path),
+                        "--target-id",
+                        target_id,
+                        "--out-json",
+                        f"{run_root}/finalize_readiness.json",
+                        "--out-md",
+                        f"{run_root}/finalize_readiness.md",
+                        "--fail-if-not-ready",
+                    ]
+                )
+            )
         if len(baseline_roots) > 1:
             post_unblock_commands.append(
                 "python3 tools/merge_magma_baseline_roots.py "
@@ -1502,6 +1521,7 @@ def task_for_row(
     target_triage: dict[str, dict[str, Any]],
     binding_validations: dict[str, dict[str, Any]],
     active_runs: dict[str, dict[str, Any]],
+    active_runs_path: Path | None,
     *,
     short_duration_s: int,
     longrun_duration_s: int,
@@ -1538,6 +1558,7 @@ def task_for_row(
                 jobs=jobs,
                 manifest_root=manifest_root,
                 active_runs=active_runs,
+                active_runs_path=active_runs_path,
             ),
             triage,
         )
@@ -1551,6 +1572,7 @@ def task_for_row(
                 jobs=jobs,
                 manifest_root=manifest_root,
                 active_runs=active_runs,
+                active_runs_path=active_runs_path,
             ),
             triage,
         )
@@ -1672,6 +1694,7 @@ def build_worklist(
             target_triage,
             binding_validations,
             active_runs,
+            active_runs_path,
             short_duration_s=short_duration_s,
             longrun_duration_s=longrun_duration_s,
             jobs=jobs,
