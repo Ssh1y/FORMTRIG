@@ -17,12 +17,15 @@ bindings:
     atom: 1
     role: 'desired_producer'
     expr: 'Media_GetSample allocates the sample data buffer that later becomes the object in the double free'
+    site_id: 2074894587
     observe_at:
       kind: 'binary'
       function: 'Media_GetSample'
-      file: 'media.c'
+      file: 'isomedia/media.c'
       line: 633
-      column: 24
+      inst_no: 795
+      opcode: 'add'
+      column: 47
     component: 'producer_use'
     priority: 10
     direction: 'higher'
@@ -33,13 +36,16 @@ bindings:
   - id: 'gpac_sample_fetch_lifecycle_event'
     atom: 1
     role: 'lifecycle_event'
-    expr: 'cat_isomedia_file obtains the source sample with gf_isom_get_sample before append/cat processing'
+    expr: 'cat_isomedia_file reaches the post-fetch guard after obtaining the source sample with gf_isom_get_sample'
+    site_id: 2693650777
     observe_at:
       kind: 'branch'
       function: 'cat_isomedia_file'
       file: 'fileimport.c'
-      line: 3138
-      column: 12
+      line: 3139
+      inst_no: 1189
+      opcode: 'br'
+      column: 8
     component: 'lifecycle_prefix'
     priority: 20
     direction: 'higher'
@@ -51,12 +57,15 @@ bindings:
     atom: 1
     role: 'lifecycle_event'
     expr: 'gf_isom_sample_del releases GF_ISOSample->data while later cleanup can still own an alias'
+    site_id: 3030846436
     observe_at:
       kind: 'branch'
       function: 'gf_isom_sample_del'
-      file: 'isom_read.c'
+      file: 'isomedia/isom_read.c'
       line: 112
-      column: 36
+      inst_no: 22
+      opcode: 'br'
+      column: 6
     component: 'lifecycle_prefix'
     priority: 25
     direction: 'higher'
@@ -68,11 +77,14 @@ bindings:
     atom: 1
     role: 'lifecycle_event'
     expr: 'gf_bs_new_cbk_buffer stores an externally supplied buffer in GF_BitStream->original while using WRITE_DYN ownership semantics'
+    site_id: 3232240958
     observe_at:
       kind: 'branch'
       function: 'gf_bs_new_cbk_buffer'
-      file: 'bitstream.c'
+      file: 'utils/bitstream.c'
       line: 296
+      inst_no: 34
+      opcode: 'br'
       column: 6
     component: 'lifecycle_prefix'
     priority: 30
@@ -85,12 +97,15 @@ bindings:
     atom: 1
     role: 'use'
     expr: 'mdia_box_del deletes nalu_out_bs during movie cleanup, routing the aliased buffer to gf_bs_del'
+    site_id: 3837068185
     observe_at:
       kind: 'branch'
       function: 'mdia_box_del'
-      file: 'box_code_base.c'
+      file: 'isomedia/box_code_base.c'
       line: 3310
-      column: 25
+      inst_no: 25
+      opcode: 'br'
+      column: 6
     component: 'producer_use'
     priority: 40
     direction: 'higher'
@@ -102,12 +117,15 @@ bindings:
     atom: 1
     role: 'root_observe'
     expr: 'gf_bs_del frees bs->original when bsmode is GF_BITSTREAM_WRITE_DYN'
+    site_id: 65063371
     observe_at:
       kind: 'cmp'
       function: 'gf_bs_del'
-      file: 'bitstream.c'
+      file: 'utils/bitstream.c'
       line: 372
-      column: 6
+      inst_no: 47
+      opcode: 'icmp'
+      column: 48
     component: 'root_state'
     priority: 50
     direction: 'higher'
@@ -118,13 +136,16 @@ bindings:
   - id: 'gpac_sample_bitstream_same_object'
     atom: 1
     role: 'same_object'
-    expr: 'gf_bs_new_cbk_buffer assigns the externally supplied sample buffer into GF_BitStream->original, establishing the alias that later reaches cleanup'
+    expr: 'gf_bs_new_cbk_buffer takes the external-buffer alias path; this is the only path assigning tmp->original = buffer before WRITE_DYN cleanup'
+    site_id: 3299351434
     observe_at:
-      kind: 'binary'
+      kind: 'cmp'
       function: 'gf_bs_new_cbk_buffer'
-      file: 'bitstream.c'
-      line: 304
-      column: 19
+      file: 'utils/bitstream.c'
+      line: 296
+      inst_no: 30
+      opcode: 'icmp'
+      column: 6
     component: 'object_identity'
     priority: 60
     direction: 'higher'
@@ -139,12 +160,15 @@ bindings:
     atom: 1
     role: 'input_influence'
     expr: 'MP4 moov/trak/mdia box structure controls track/sample cleanup and dynamic bitstream ownership paths'
+    site_id: 2708309825
     observe_at:
       kind: 'branch'
       function: 'cat_isomedia_file'
       file: 'fileimport.c'
-      line: 3138
-      column: 12
+      line: 3136
+      inst_no: 1178
+      opcode: 'br'
+      column: 3
     component: 'input_influence'
     priority: 70
     direction: 'higher'
@@ -159,12 +183,15 @@ bindings:
     atom: 1
     role: 'input_influence'
     expr: 'MP4 mdat sample payload bytes influence HEVC sample parsing and the sample buffer lifecycle'
+    site_id: 2074894587
     observe_at:
       kind: 'binary'
       function: 'Media_GetSample'
-      file: 'media.c'
+      file: 'isomedia/media.c'
       line: 633
-      column: 24
+      inst_no: 795
+      opcode: 'add'
+      column: 47
     component: 'input_influence'
     priority: 80
     direction: 'higher'

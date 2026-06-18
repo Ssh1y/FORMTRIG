@@ -196,13 +196,14 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
             site_map.write_text(
                 "\n".join(
                     [
-                        "101\tbinary\tMedia_GetSample\t1\tcall\tmedia.c\t633\t24",
-                        "102\tbranch\tcat_isomedia_file\t1\tbr\tfileimport.c\t3138\t12",
-                        "103\tbranch\tgf_isom_sample_del\t1\tbr\tisom_read.c\t112\t36",
-                        "104\tbranch\tgf_bs_new_cbk_buffer\t1\tbr\tbitstream.c\t296\t6",
-                        "105\tbranch\tmdia_box_del\t1\tbr\tbox_code_base.c\t3310\t25",
-                        "106\tcmp\tgf_bs_del\t1\ticmp\tbitstream.c\t372\t6",
-                        "107\tbinary\tgf_bs_new_cbk_buffer\t2\tassign\tbitstream.c\t304\t19",
+                        "2074894587\tbinary\tMedia_GetSample\t795\tadd\tisomedia/media.c\t633\t47",
+                        "2693650777\tbranch\tcat_isomedia_file\t1189\tbr\tfileimport.c\t3139\t8",
+                        "3030846436\tbranch\tgf_isom_sample_del\t22\tbr\tisomedia/isom_read.c\t112\t6",
+                        "3232240958\tbranch\tgf_bs_new_cbk_buffer\t34\tbr\tutils/bitstream.c\t296\t6",
+                        "3837068185\tbranch\tmdia_box_del\t25\tbr\tisomedia/box_code_base.c\t3310\t6",
+                        "65063371\tcmp\tgf_bs_del\t47\ticmp\tutils/bitstream.c\t372\t48",
+                        "3299351434\tcmp\tgf_bs_new_cbk_buffer\t30\ticmp\tutils/bitstream.c\t296\t6",
+                        "2708309825\tbranch\tcat_isomedia_file\t1178\tbr\tfileimport.c\t3136\t3",
                     ]
                 )
                 + "\n",
@@ -231,7 +232,7 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
             self.assertEqual(compile_proc.returncode, 0, compile_proc.stderr)
 
             lift_text = lift_spec.read_text(encoding="utf-8")
-            self.assertIn("role_component 11 107 same_object", lift_text)
+            self.assertIn("role_component 7 3299351434 same_object", lift_text)
             self.assertIn(
                 "same_object_relation 1 lifecycle_event use "
                 "GF_ISOSample.data==GF_BitStream.original",

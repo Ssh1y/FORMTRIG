@@ -1,0 +1,158 @@
+{
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "target_id": "GPAC_3403",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml",
+  "status": "native_site_map_validated",
+  "ready_for_short_gate": true,
+  "native_site_map_validated": true,
+  "generated_at_utc": "2026-06-18T18:57:00+00:00",
+  "checks": {
+    "tool_compile_pass": true,
+    "binding_spec_compile_pass": true,
+    "lift_audit_pass": true,
+    "native_site_map_validated": true,
+    "runtime_event_map_pass": true,
+    "harness_admissibility_pass": true,
+    "dynamic_binding_signal_pass": false,
+    "pretrigger_lift_guidance_ready": false,
+    "tc_rooted_static_pass": true,
+    "typed_mutation_hook_enabled": true
+  },
+  "tc_rooted_static": {
+    "status": "pass",
+    "source_path": "artifacts/formtrig_native_readiness/binding_static_audit/GPAC_3403.native_b1_bitstream_lifecycle_candidate.tc_rooted.json"
+  },
+  "native_site_map": {
+    "path": "/tmp/formtrig_gpac3403_native_env/site_map.tsv",
+    "native_runtime_evidence": true,
+    "committed": false,
+    "row_count": 272013,
+    "sha256": "9a8dc6bf3c3283a7299f5d279480da518b3e749fc765c097bd23949f858b4ed7",
+    "build_env": "/tmp/formtrig_gpac3403_native_env/formtrig_native_env.sh",
+    "compiler": "clang-15",
+    "llvm_config": "llvm-config-15"
+  },
+  "native_target": {
+    "path": "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+    "sha256": "799e2d0d7158d05098560fd0611be343101bb1e6e459d6f3c0c833b8ef7062c1",
+    "command": "MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null"
+  },
+  "lift_spec": {
+    "path": "/tmp/formtrig_gpac3403_binding_validation/GPAC_3403.lift",
+    "sha256": "e73af16c1d9c5f140ee0bb8de07d0a498195f19807aea73dee2e86caea2dc809",
+    "line_count": 26
+  },
+  "lift_audit": {
+    "atom_id": 1,
+    "category": "compound-sequence-lifecycle",
+    "binding_tier": "B4",
+    "lift_allowed": true,
+    "roles": "0x000001e9",
+    "event_count": 9,
+    "location_only_count": 0,
+    "collapsed": 0,
+    "reason": "ok"
+  },
+  "role_sites": [
+    {
+      "role": "desired_producer",
+      "site_id": 2074894587,
+      "kind": "binary",
+      "function": "Media_GetSample",
+      "file": "isomedia/media.c",
+      "line": 633,
+      "inst_no": 795
+    },
+    {
+      "role": "lifecycle_event",
+      "site_id": 2693650777,
+      "kind": "branch",
+      "function": "cat_isomedia_file",
+      "file": "fileimport.c",
+      "line": 3139,
+      "inst_no": 1189
+    },
+    {
+      "role": "lifecycle_event",
+      "site_id": 3030846436,
+      "kind": "branch",
+      "function": "gf_isom_sample_del",
+      "file": "isomedia/isom_read.c",
+      "line": 112,
+      "inst_no": 22
+    },
+    {
+      "role": "lifecycle_event",
+      "site_id": 3232240958,
+      "kind": "branch",
+      "function": "gf_bs_new_cbk_buffer",
+      "file": "utils/bitstream.c",
+      "line": 296,
+      "inst_no": 34
+    },
+    {
+      "role": "use",
+      "site_id": 3837068185,
+      "kind": "branch",
+      "function": "mdia_box_del",
+      "file": "isomedia/box_code_base.c",
+      "line": 3310,
+      "inst_no": 25
+    },
+    {
+      "role": "root_observe",
+      "site_id": 65063371,
+      "kind": "cmp",
+      "function": "gf_bs_del",
+      "file": "utils/bitstream.c",
+      "line": 372,
+      "inst_no": 47
+    },
+    {
+      "role": "same_object",
+      "site_id": 3299351434,
+      "kind": "cmp",
+      "function": "gf_bs_new_cbk_buffer",
+      "file": "utils/bitstream.c",
+      "line": 296,
+      "inst_no": 30
+    },
+    {
+      "role": "input_influence",
+      "site_id": 2708309825,
+      "kind": "branch",
+      "function": "cat_isomedia_file",
+      "file": "fileimport.c",
+      "line": 3136,
+      "inst_no": 1178
+    }
+  ],
+  "harness_admissibility": {
+    "status": "pass",
+    "reason": "Direct MP4Box replay command; no artificial trigger-control harness knob was introduced for this validation."
+  },
+  "dynamic_seed_readiness": {
+    "status": "not_run",
+    "diagnosis": "native site-map BindingSpec validation only; run FORMTRIG seed-readiness/short gate next"
+  },
+  "binding_signal": {
+    "status": "not_run",
+    "diagnosis": "dynamic binding-signal sweep is pending"
+  },
+  "benefit_readout": {
+    "terminal_triggered": false,
+    "pretrigger_lift_guidance_ready": false,
+    "has_non_trigger_progress": false,
+    "non_trigger_progress_events": 0,
+    "saved_non_trigger_progress_events": 0,
+    "saved_triggered_progress_events": 0,
+    "execs_done": 0,
+    "score": 0
+  },
+  "blockers": [],
+  "remaining_limitations": [
+    "Dynamic binding-signal and pre-trigger guidance have not been run yet.",
+    "The 20MB native site-map and 99MB MP4Box build are recorded by hash but not committed."
+  ],
+  "next_action": "run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines"
+}

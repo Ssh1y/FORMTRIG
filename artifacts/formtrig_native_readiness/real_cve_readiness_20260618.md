@@ -7,7 +7,7 @@ or terminal validation.
 
 | rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | short-gate packages | next action |
 | ---: | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
-| 1 | GPAC_3403 | compound-sequence-lifecycle | `needs_binding_validation` | yes | yes | yes | yes | no | 0 | build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility |
+| 1 | GPAC_3403 | compound-sequence-lifecycle | `ready_for_formtrig_short_gate` | yes | yes | yes | yes | yes | 0 | run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines |
 | 2 | LIBARCHIVE_2935 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 3 | LIBARCHIVE_2937 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 4 | LIBARCHIVE_2938 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
@@ -24,11 +24,11 @@ or terminal validation.
 - Source locations: src/utils/bitstream.c:372#gf_bs_del
 - Native D_T values in RNT metadata: `1`
 - Terminal validation signal: SUMMARY: AddressSanitizer: double-free (/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box+0x194f48a) (BuildId: da5c3e139317cf0e2b8580968246bc6803e86243) in free
-- Binding validation status: none
+- Binding validation status: native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json
 - Short-gate comparison packages: 0
 - Current speedup package: none
 - Current benefit: none
-- Blockers: BindingSpec candidate is not native-site-map validated
+- Blockers: none
 - Program: `benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box`
 - RNT manifest: `artifacts/rnt_corpus/GPAC_3403/manifest.json`
 

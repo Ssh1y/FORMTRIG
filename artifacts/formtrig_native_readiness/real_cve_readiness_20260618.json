@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-18T18:48:31+00:00",
+  "generated_at_utc": "2026-06-18T19:01:00+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -12,10 +12,10 @@
       "atom_ready": true,
       "binary_dt_gap": true,
       "binding_spec_present": true,
-      "binding_spec_ready": false,
-      "binding_spec_validated": false,
-      "binding_validation_status": "",
-      "blockers": "BindingSpec candidate is not native-site-map validated",
+      "binding_spec_ready": true,
+      "binding_spec_validated": true,
+      "binding_validation_status": "native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
+      "blockers": "",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
       "comparison_count": 0,
@@ -28,13 +28,15 @@
       "harness_admissibility_status": "",
       "harness_source_ready": false,
       "native_dt_values": "1",
-      "next_action": "build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility",
+      "next_action": "run FORMTRIG seed-readiness/gate and matched AFL++ family short baselines",
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [
           "GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml"
         ],
-        "binding_validation_records": [],
+        "binding_validation_records": [
+          "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json"
+        ],
         "comparison_records": [],
         "harness_admissibility_records": [],
         "harness_sources": [],
@@ -47,10 +49,10 @@
         "validation_log": "artifacts/cve_validation_logs/GPAC_3403.validation.log"
       },
       "poc_ready": true,
-      "priority": 15,
+      "priority": 10,
       "project": "gpac",
       "rank": 1,
-      "readiness": "needs_binding_validation",
+      "readiness": "ready_for_formtrig_short_gate",
       "rnt_ready": true,
       "seed_count": 1,
       "source_locations": "src/utils/bitstream.c:372#gf_bs_del",
