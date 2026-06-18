@@ -1103,10 +1103,31 @@ seed readiness:
 
 Interpretation: old `exif` runner remains harness-lifecycle negative/control.
 The repaired `exif_thumbnail` runner proves the missing producer lifecycle was
-the blocker and can now reach `_T`. Remaining limitation: scalar
-`D_F_spec_lifted` is still constant `0`; the effective signal is role-level
-(`use` varies `{0,1}`). Before using PHP003 as main evidence, fix scalar
-aggregation and run faithful baselines on the same runner.
+the blocker and can now reach `_T`.
+
+2026-06-18 follow-up repaired scalar role-graph aggregation. The previous
+runtime collapsed `D_F_spec_lifted` to `0` because lower-is-better
+`root_observe/input_influence` components had value `0`; the fix separates
+single-component spec distance from multi-role residual role-graph distance.
+On the rebuilt `exif_thumbnail` binary:
+
+```text
+seed replay:
+  artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_seed_readiness_role_df_20260618_r2/formtrig_seed_readiness.json
+  RNT/spec_lifted = 5/5
+  D_F_spec_lifted values = {2}
+20s sweep:
+  artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_hook_20s_role_df_20260618/summary.tsv
+  diagnosis = triggered
+  pretrigger_lift_guidance_ready = true
+  D_F_spec_lifted constant = false
+  D_F_spec_lifted values = {2,3}
+  non-trigger candidate D_F_spec_lifted values = {2,3}
+  terminal _T = 277
+```
+
+Remaining limitation before using PHP003 as endpoint evidence: run faithful
+baselines on the same `exif_thumbnail` runner and replicate with longer budgets.
 
 ### 5. SQL013 不能硬做
 

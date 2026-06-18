@@ -29,6 +29,22 @@ On that runner, the same B4 BindingSpec reaches pre-trigger guidance and
 terminal `_T` in a 120-second smoke. The remaining limitation moves from
 harness/API lifecycle to scalar `D_F_spec_lifted` aggregation.
 
+2026-06-18 follow-up: the scalar aggregation blocker was repaired by separating
+single-component spec distance from multi-role residual role-graph distance.
+After rebuilding the `exif_thumbnail` binary, the same B4 BindingSpec now
+produces non-constant scalar lifted distance before/alongside `_T`:
+
+```text
+artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_hook_20s_role_df_20260618/summary.tsv
+diagnosis = triggered
+D_F_spec_lifted values = {2,3}
+non-trigger candidate D_F_spec_lifted values = {2,3}
+terminal _T = 277
+```
+
+The remaining PHP003 gap is no longer scalar aggregation; it is faithful
+same-runner baseline comparison and replicated longer endpoint evidence.
+
 ## Current Lift Degree
 
 B4 hook run:

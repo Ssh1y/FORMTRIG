@@ -4,7 +4,7 @@ This is a build/readiness artifact, not endpoint performance evidence.
 A successful build should be followed by native asset discovery and a
 BindingSpec validation sweep before any long-run benefit claim.
 
-Generated: `2026-06-18T15:10:33+00:00`
+Generated: `2026-06-18T15:43:15+00:00`
 Mode: `execute`
 Target: `PHP003` / `exif_thumbnail`
 Instrumentation entry: `runner`

@@ -18,6 +18,18 @@
     "spec_d_f_unique": 1,
     "diagnosis": "ready_constant_seed_spec_d_f_needs_mutation_calibration"
   },
+  "seed_readiness_after_role_df_repair": {
+    "artifact": "artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_seed_readiness_role_df_20260618_r2/formtrig_seed_readiness.json",
+    "status": "pass",
+    "replayed_seeds": 5,
+    "reached": 5,
+    "triggered": 0,
+    "rnt": 5,
+    "spec_lifted": 5,
+    "spec_d_f_unique": 1,
+    "spec_d_f_values": [2],
+    "diagnosis": "ready_constant_seed_spec_d_f_needs_mutation_calibration"
+  },
   "screens": [
     {
       "duration_s": 20,
@@ -51,22 +63,44 @@
       "terminal_triggered_execs": 277,
       "first_trigger_monitor_upper_bound_s": 60,
       "variable_roles": ["use"]
+    },
+    {
+      "duration_s": 20,
+      "artifact": "artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_hook_20s_role_df_20260618/summary.tsv",
+      "diagnosis": "triggered",
+      "pretrigger_lift_guidance_ready": true,
+      "execs_done": 5802,
+      "reached_execs": 2667,
+      "typed_execs": 118,
+      "typed_finds": 35,
+      "queued_progress": 32,
+      "accepted_non_trigger_progress": 1,
+      "saved_non_trigger_progress": 1,
+      "saved_triggered_progress": 31,
+      "terminal_triggered_execs": 277,
+      "d_f_spec_lifted_constant": false,
+      "d_f_spec_lifted_values": [2, 3],
+      "non_trigger_candidate_d_f_spec_lifted_values": [2, 3],
+      "variable_roles": ["use"],
+      "runtime_rebuilt_with_role_graph_df": true
     }
   ],
-  "verdict": "repaired_runner_endpoint_smoke",
+  "verdict": "repaired_runner_scalar_df_smoke",
   "claim_supported": [
     "stock php-fuzz-exif was blocked by thumbnail producer lifecycle",
     "exif_thumbnail stream,width,height runner reaches PHP003 terminal oracle",
-    "B4 BindingSpec yields pre-trigger TC-rooted role-level guidance before terminal trigger"
+    "B4 BindingSpec yields pre-trigger TC-rooted role-level guidance before terminal trigger",
+    "role-graph aggregation prevents lower-zero role components from collapsing D_F_spec_lifted to 0",
+    "after runtime repair, PHP003 mutation sweep observes non-constant pre-trigger D_F_spec_lifted values [2,3]"
   ],
   "limitations": [
-    "D_F_spec_lifted scalar is still constant at 0",
-    "effective signal is currently role-level use variation rather than scalar-distance ordering",
-    "faithful baselines have not yet been run on the exif_thumbnail runner"
+    "this is still a short single-candidate smoke, not a matched long-run result",
+    "faithful baselines have not yet been run on the exif_thumbnail runner",
+    "endpoint evidence still needs replicated long-run comparison on the same runner"
   ],
   "next_steps": [
-    "repair scalar aggregation so role progress changes D_F_spec_lifted",
     "run faithful AFL++ baseline family on the same exif_thumbnail runner",
-    "only then admit PHP003 to matched endpoint evidence"
+    "run replicated longer FORMTRIG/baseline comparison",
+    "admit PHP003 to matched endpoint evidence only after same-runner baseline comparison"
   ]
 }

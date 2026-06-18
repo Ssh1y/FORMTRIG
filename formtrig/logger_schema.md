@@ -13,6 +13,9 @@ set. Required fields:
 - `D_F_lifted`: selected lifted distance used by the current runtime mode.
   FORMTRIG-main selects BindingSpec-driven lift by default.
 - `D_F_spec_lifted`: BindingSpec/runtime-event-map generated lifted distance.
+  For multi-role TC atoms, this is the residual role-graph distance; a single
+  lower-is-better component with value `0` must not collapse the whole lifted
+  atom to terminal distance before the TC oracle confirms `_T`.
 - `D_F_heuristic_lifted`: runtime-synthesized exploratory lift from generic
   event-ring heuristics. It is not FORMTRIG-main guidance unless
   `FORMTRIG_ALLOW_HEURISTIC_LIFT=1` is set.

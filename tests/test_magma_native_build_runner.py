@@ -104,6 +104,8 @@ chmod +x "$OUT/afl/$PROGRAM"
             script_text = script.read_text(encoding="utf-8")
             self.assertIn("FORMTRIG_MAGMA_CXX_STDLIB", script_text)
             self.assertIn("FORMTRIG_SOURCE_DIR", script_text)
+            self.assertIn('"$FUZZER/formtrig" "$MAGMA/formtrig"', script_text)
+            self.assertIn("$MAGMA/formtrig", script_text)
             self.assertIn("--afl-cc", script_text)
             self.assertIn("FORMTRIG_LOCAL_CONFIG_AUX", script_text)
             self.assertIn("--runtime-link-mode never", script_text)

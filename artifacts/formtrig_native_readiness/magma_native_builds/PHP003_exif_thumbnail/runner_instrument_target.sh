@@ -87,19 +87,20 @@ if [ -n "${FORMTRIG_SOURCE_DIR:-}" ]; then
     exit 2
   fi
   source_formtrig="$(cd "$FORMTRIG_SOURCE_DIR" && pwd -P)"
-  target_formtrig="$FUZZER/formtrig"
-  mkdir -p "$target_formtrig"
-  for rel in include runtime llvm binding_specs; do
-    if [ -e "$source_formtrig/$rel" ]; then
-      rm -rf "$target_formtrig/$rel"
-      cp -a "$source_formtrig/$rel" "$target_formtrig/$rel"
+  for target_formtrig in "$FUZZER/formtrig" "$MAGMA/formtrig"; do
+    mkdir -p "$target_formtrig"
+    for rel in include runtime llvm binding_specs; do
+      if [ -e "$source_formtrig/$rel" ]; then
+        rm -rf "$target_formtrig/$rel"
+        cp -a "$source_formtrig/$rel" "$target_formtrig/$rel"
+      fi
+    done
+    if [ -f "$source_formtrig/logger_schema.md" ]; then
+      cp -a "$source_formtrig/logger_schema.md" "$target_formtrig/logger_schema.md"
     fi
   done
-  if [ -f "$source_formtrig/logger_schema.md" ]; then
-    cp -a "$source_formtrig/logger_schema.md" "$target_formtrig/logger_schema.md"
-  fi
-  if [ ! -f "$target_formtrig/tools/prepare_native_build.py" ]; then
-    echo "FORMTRIG fuzzer overlay is missing tools/prepare_native_build.py: $target_formtrig" >&2
+  if [ ! -f "$FUZZER/formtrig/tools/prepare_native_build.py" ]; then
+    echo "FORMTRIG fuzzer overlay is missing tools/prepare_native_build.py: $FUZZER/formtrig" >&2
     exit 2
   fi
 fi

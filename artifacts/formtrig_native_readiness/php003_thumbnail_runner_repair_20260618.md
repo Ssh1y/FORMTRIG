@@ -137,21 +137,45 @@ baseline evidence. It proves that PHP003 was previously blocked by harness/API
 lifecycle and that the new runner can convert the B4 BindingSpec into
 pre-trigger progress and terminal `_T`.
 
-## Remaining Limitation
+## Scalar Role-Graph Repair
 
-The scalar `D_F_spec_lifted` is still constant at `0` in these PHP003 B4 runs.
-The effective signal is currently role-level:
+The first repaired-runner screens exposed a real runtime aggregation bug: the
+`root_observe` and `input_influence` components had lower-is-better value `0`,
+so the scalar `D_F_spec_lifted` collapsed to `0` even while the `use` role still
+varied. That defeated the intended sortable lifted signal.
+
+The runtime now keeps single-component spec distance separate from role-graph
+spec distance. When an atom has a multi-role TC-rooted graph, `D_F_spec_lifted`
+uses the residual role-graph cost instead of the minimum single component.
+
+Post-repair seed replay on the rebuilt `exif_thumbnail` binary:
 
 ```text
-use role values = {0, 1}
-desired_producer = 1
-guard = 1
-root_observe = 0
-input_influence = 0
+artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_seed_readiness_role_df_20260618_r2/formtrig_seed_readiness.json
+replayed = 5
+reached/RNT/spec_lifted = 5/5/5
+triggered = 0
+D_F_spec_lifted values = {2}
 ```
 
-So PHP003 should not yet be used as a clean scalar-distance example. The next
-repair is to make the lifted scalar reflect role progress, for example by
-assigning positive residual distance while `use=0` or while the root/use
-alignment is incomplete. After that, PHP003 can move to matched baseline
-comparison on the `exif_thumbnail` runner.
+Post-repair 20s B4 sweep:
+
+```text
+artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_hook_20s_role_df_20260618/summary.tsv
+diagnosis = triggered
+pretrigger_lift_guidance_ready = true
+execs = 5802
+reached = 2667
+queued_progress = 32
+saved_non_trigger = 1
+saved_triggered = 31
+terminal _T = 277
+D_F_spec_lifted constant = false
+D_F_spec_lifted values = {2, 3}
+non-trigger candidate D_F_spec_lifted values = {2, 3}
+variable role = use
+```
+
+PHP003 can now be used as repaired-runner scalar-D_F smoke evidence. It is not
+yet final endpoint evidence: faithful AFL++/CmpLog/related baselines still need
+to be run on the same `exif_thumbnail` runner with replicated longer budgets.

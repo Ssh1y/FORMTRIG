@@ -1479,10 +1479,27 @@ PHP003:
 
   这把 PHP003 从旧 runner 的 harness-lifecycle negative 推进到了 repaired-runner
   endpoint smoke：同一个 B4 BindingSpec 在新 runner 下出现 pre-trigger
-  TC-rooted role-level guidance，并最终触达 `_T`。但它仍不是最终主结果：
-  `D_F_spec_lifted` scalar 仍恒为 `0`，有效变化来自 `use` role 的 `{0,1}`；
-  还需要修 scalar aggregation，并补 faithful baseline 同 runner 对照，才能进入
-  matched endpoint evidence。
+  TC-rooted role-level guidance，并最终触达 `_T`。
+
+  2026-06-18 follow-up 修复了 scalar aggregation：runtime 现在把单个
+  spec component distance 与多角色 residual role-graph distance 分开，避免
+  `root_observe/input_influence` 的 lower-is-better `0` 把整个
+  `D_F_spec_lifted` 压成 `0`。重建 `exif_thumbnail` 后：
+    seed replay:
+      artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_seed_readiness_role_df_20260618_r2/formtrig_seed_readiness.json
+      RNT/spec_lifted = 5/5
+      D_F_spec_lifted values = {2}
+    20s sweep:
+      artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_hook_20s_role_df_20260618/summary.tsv
+      diagnosis = triggered
+      D_F_spec_lifted constant = false
+      D_F_spec_lifted values = {2,3}
+      non-trigger candidate D_F_spec_lifted values = {2,3}
+      terminal _T = 277
+
+  PHP003 现在可以作为 repaired-runner scalar-D_F smoke；仍不是最终主结果，
+  因为还缺 faithful baseline 同 runner 对照和 replicated long-run matched
+  endpoint evidence。
 
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance

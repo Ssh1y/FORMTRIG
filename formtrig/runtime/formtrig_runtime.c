@@ -165,6 +165,8 @@ typedef struct {
   double d_f_direct;
   double d_f_lifted;
   double d_f_spec_lifted;
+  double d_f_spec_component_lifted;
+  double d_f_spec_role_lifted;
   double d_f_heuristic_lifted;
   double d_f_manual_lifted;
   int pre_reach_spec_lifted;
@@ -725,6 +727,8 @@ static void reset_state(formtrig_state_t *s) {
   s->d_f_direct = FORMTRIG_INF;
   s->d_f_lifted = FORMTRIG_INF;
   s->d_f_spec_lifted = FORMTRIG_INF;
+  s->d_f_spec_component_lifted = FORMTRIG_INF;
+  s->d_f_spec_role_lifted = FORMTRIG_INF;
   s->d_f_heuristic_lifted = FORMTRIG_INF;
   s->d_f_manual_lifted = FORMTRIG_INF;
   s->trace_signature = 1469598103934665603ULL;
@@ -736,6 +740,16 @@ static double min_double(double a, double b) {
 
 static int finite_lift(double distance) {
   return distance < FORMTRIG_INF / 2.0;
+}
+
+static double selected_spec_lifted_distance(void) {
+  if (finite_lift(g_state.d_f_spec_role_lifted))
+    return g_state.d_f_spec_role_lifted;
+  return g_state.d_f_spec_component_lifted;
+}
+
+static void refresh_spec_lifted_distance(void) {
+  g_state.d_f_spec_lifted = selected_spec_lifted_distance();
 }
 
 static double selected_lifted_distance(void) {
@@ -807,6 +821,7 @@ static uint32_t observed_lift_source_flags(void) {
 }
 
 static void refresh_selected_lifted_distance(void) {
+  refresh_spec_lifted_distance();
   g_state.d_f_lifted = selected_lifted_distance();
 }
 
@@ -1826,33 +1841,63 @@ static int component_value_satisfies_goal(
   return direction_value_satisfies_goal(component->flags, component->value);
 }
 
-static double unsatisfied_component_role_cost(
-    const formtrig_progress_component_t *component) {
-  if (!component) return 1.0;
-  if (component_value_satisfies_goal(component)) return 0.0;
+typedef struct {
+  double cost;
+  int scaled;
+} formtrig_role_cost_t;
 
-  if (component->flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER) {
-    if (component->value > 1.0) return component->value;
-    return 1.0;
+static int component_has_scaled_role_cost(
+    const formtrig_progress_component_t *component) {
+  if (!component) return 0;
+  if (!(component->flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER)) return 0;
+  switch (component->kind) {
+    case FORMTRIG_COMPONENT_BOUNDARY_MARGIN:
+    case FORMTRIG_COMPONENT_NATIVE_DISTANCE:
+    case FORMTRIG_COMPONENT_LIFTED_DISTANCE:
+      return component->value > 0.0;
+    default:
+      return 0;
   }
-  return 1.0;
 }
 
-static double spec_role_missing_cost_for_atom(uint32_t atom_id,
-                                              uint32_t role) {
-  double best_unsatisfied = FORMTRIG_INF;
+static formtrig_role_cost_t unsatisfied_component_role_cost(
+    const formtrig_progress_component_t *component) {
+  formtrig_role_cost_t cost = {1.0, 0};
+  if (!component) return cost;
+  if (component_value_satisfies_goal(component)) {
+    cost.cost = 0.0;
+    cost.scaled = 0;
+    return cost;
+  }
+
+  if (component->flags & FORMTRIG_COMPONENT_LOWER_IS_BETTER) {
+    if (component->value > 1.0) cost.cost = component->value;
+    cost.scaled = component_has_scaled_role_cost(component);
+    return cost;
+  }
+  return cost;
+}
+
+static formtrig_role_cost_t spec_role_missing_cost_for_atom(uint32_t atom_id,
+                                                            uint32_t role) {
+  formtrig_role_cost_t best_unsatisfied = {FORMTRIG_INF, 0};
   int observed = 0;
 
   for (uint32_t i = 0; i < g_state.component_count; i++) {
     const formtrig_progress_component_t *component = &g_state.components[i];
     if (!component_matches_role(component, atom_id, role)) continue;
     observed = 1;
-    double cost = unsatisfied_component_role_cost(component);
-    if (cost == 0.0) return 0.0;
-    best_unsatisfied = min_double(best_unsatisfied, cost);
+    formtrig_role_cost_t cost = unsatisfied_component_role_cost(component);
+    if (cost.cost == 0.0) return cost;
+    if (cost.cost < best_unsatisfied.cost ||
+        (cost.cost == best_unsatisfied.cost && cost.scaled))
+      best_unsatisfied = cost;
   }
 
-  if (!observed || !finite_lift(best_unsatisfied)) return 1.0;
+  if (!observed || !finite_lift(best_unsatisfied.cost)) {
+    best_unsatisfied.cost = 1.0;
+    best_unsatisfied.scaled = 0;
+  }
   return best_unsatisfied;
 }
 
@@ -1864,13 +1909,17 @@ static double spec_role_graph_distance(void) {
     uint32_t expected = expected_spec_role_bits_for_atom(signal->atom_id);
     uint32_t required = 0;
     double missing_cost = 0.0;
+    int has_scaled_cost = 0;
 
     for (uint32_t role = FORMTRIG_ROLE_ROOT_OBSERVE;
          role <= FORMTRIG_ROLE_SAME_OBJECT; role++) {
       if (!(expected & role_bit(role))) continue;
       if (!role_counts_for_spec_df(role)) continue;
       required++;
-      missing_cost += spec_role_missing_cost_for_atom(signal->atom_id, role);
+      formtrig_role_cost_t role_cost =
+          spec_role_missing_cost_for_atom(signal->atom_id, role);
+      missing_cost += role_cost.cost;
+      if (role_cost.scaled && role_cost.cost > 0.0) has_scaled_cost = 1;
     }
 
     if (required < 2) continue;
@@ -1882,7 +1931,10 @@ static double spec_role_graph_distance(void) {
      * roles add one step, while unsatisfied lower-is-better roles retain their
      * numeric distance so OR-style canaries do not collapse to a boolean.
      */
-    best = min_double(best, missing_cost + 1.0);
+    double role_df = 1.0;
+    if (missing_cost > 0.0)
+      role_df = has_scaled_cost ? missing_cost : missing_cost + 1.0;
+    best = min_double(best, role_df);
   }
 
   return best;
@@ -1891,10 +1943,8 @@ static double spec_role_graph_distance(void) {
 static void refresh_spec_role_graph_distance(void) {
   double role_df = spec_role_graph_distance();
   if (!finite_lift(role_df)) return;
-  if (role_df < g_state.d_f_spec_lifted) {
-    g_state.d_f_spec_lifted = role_df;
-    refresh_selected_lifted_distance();
-  }
+  g_state.d_f_spec_role_lifted = role_df;
+  refresh_selected_lifted_distance();
 }
 
 static formtrig_atom_signal_t *atom_signal_slot(formtrig_atom_signal_t *signals,
@@ -2605,13 +2655,13 @@ static void record_probe_component(const formtrig_probe_spec_t *spec,
        (event && !event->after_reach) || !event) &&
       direction_value_satisfies_goal(flags, value))
     g_state.pre_reach_spec_lifted = 1;
-  refresh_spec_role_graph_distance();
   if ((spec->direction_flag & FORMTRIG_COMPONENT_LOWER_IS_BETTER) &&
-      value < g_state.d_f_spec_lifted) {
-    g_state.d_f_spec_lifted = value;
-    refresh_selected_lifted_distance();
+      value < g_state.d_f_spec_component_lifted) {
+    g_state.d_f_spec_component_lifted = value;
     if (event) remember_df_source_with_distance(event, 1u, 10u, value);
   }
+  refresh_spec_role_graph_distance();
+  refresh_selected_lifted_distance();
   if (event && event->input_len)
     prioritize_hot_range(event->input_start, event->input_len, 3.0);
 }
