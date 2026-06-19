@@ -1,0 +1,211 @@
+{
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b3_nalu_reassign_alias_candidate.yml",
+  "checked_utc": "2026-06-19",
+  "checks": {
+    "b2_same_object_role_observed_full_poc": false,
+    "b3_same_object_role_observed_full_poc": true,
+    "b3_same_object_role_observed_prefix": true,
+    "binding_spec_compile_pass": true,
+    "current_same_object_binding_valid_for_crash_path": true,
+    "full_poc_cleanup_use_role_observed": false,
+    "lift_audit_pass": true,
+    "poc_reproduces_abort": true,
+    "prefix_complete_lifecycle_roles_observed": true
+  },
+  "compiled_lift_spec": "/tmp/gpac3403_b3_validation/formtrig_binding.lift",
+  "inputs": {
+    "poc": {
+      "format_observation": "raw HEVC elementary stream, not MP4 container",
+      "path": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "sha256": "9257df807f064d3bef04ee07fabd9995c7c485016b369bf786b9e9ccf3798ec1",
+      "size_bytes": 16329
+    },
+    "seed": {
+      "path": "benchmarks/cve_seeds/gpac/white.mp4",
+      "sha256": "f7f909fb41fbf344240457caae906807375e33f0bdbc26a335884799c9f39553",
+      "size_bytes": 1660
+    },
+    "site_map": "/tmp/formtrig_gpac3403_native_env/site_map.tsv"
+  },
+  "notes": [
+    "B2 PoC snapshot triage recorded zero same_object samples for prefix and full PoC.",
+    "B3 records same_object pointer values via value_mode=a; example full-PoC same_object samples set object_id_bucket=48 in the last atom signal.",
+    "ASAN terminal validation still identifies mdia_box_del:3310 -> gf_bs_del:372 as the aborting cleanup path, but current runtime snapshots did not capture the use role on the aborting full PoC.",
+    "Raw JSONL snapshots are local /tmp diagnostics; this artifact records hashes, counts, and extracted role summaries."
+  ],
+  "ready_for_short_gate": false,
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "snapshot_replays": {
+    "full_poc": {
+      "d_f_spec_lifted": {
+        "last": 3,
+        "max": 6,
+        "min": 3
+      },
+      "exit_code": 134,
+      "label": "full_poc",
+      "last_atom_signal": {
+        "atom_id": 1,
+        "event_bits": 144770114,
+        "flags": 7,
+        "guard_bits": 0,
+        "lifecycle_prefix": 1,
+        "object_id_bucket": 48,
+        "producer_bits": 2,
+        "role_bits": 457,
+        "root_value_bucket": 0,
+        "use_bits": 0
+      },
+      "raw_path": "/tmp/gpac3403_b3_snapshot_20260619T021028/full.snapshot.jsonl",
+      "raw_sha256": "1e6817220e2e4c960f13751ac690d6bf49663a2a08b1144b717ae334d9d7c177",
+      "raw_size_bytes": 2206846,
+      "role_sample_counts": {
+        "desired_producer": 52,
+        "guard": 0,
+        "input_influence": 104,
+        "lifecycle_event": 104,
+        "opposite_producer": 0,
+        "producer": 0,
+        "repair_hook": 0,
+        "root_observe": 1838,
+        "same_object": 51,
+        "use": 0
+      },
+      "snapshot_lines": 1838,
+      "stderr_tail": "Appending: |==============      | (74/100); \u001b[32mISOBMF: Extractor target track is not present in file - skipping.; \u001b[0m\u001b[31m[iso file] Invalid nal size 0 in sample 130; \u001b[0mfree(): double free detected in tcache 2; timeout: the monitored command dumped core"
+    },
+    "full_poc_use_cmp_branch_probe": {
+      "d_f_spec_lifted": {
+        "last": 3,
+        "max": 3,
+        "min": 3
+      },
+      "exit_code": 134,
+      "label": "full_poc_use_cmp_branch_probe",
+      "last_atom_signal": {
+        "atom_id": 1,
+        "event_bits": 144770114,
+        "flags": 7,
+        "guard_bits": 0,
+        "lifecycle_prefix": 1,
+        "object_id_bucket": 48,
+        "producer_bits": 2,
+        "role_bits": 457,
+        "root_value_bucket": 0,
+        "use_bits": 0
+      },
+      "raw_path": "/tmp/gpac3403_b3_snapshot_20260619T021028/use_cmp_branch_probe/full_use_cmp_branch.snapshot.jsonl",
+      "raw_sha256": "1d91b3ac49dfe766efe08a5aa08341d4c8c9126a14f55e82929f9b25f63f385d",
+      "raw_size_bytes": 98160,
+      "role_sample_counts": {
+        "desired_producer": 40,
+        "guard": 0,
+        "input_influence": 80,
+        "lifecycle_event": 80,
+        "opposite_producer": 0,
+        "producer": 0,
+        "repair_hook": 0,
+        "root_observe": 40,
+        "same_object": 40,
+        "use": 0
+      },
+      "snapshot_lines": 40,
+      "stderr_tail": "Appending: |==============      | (74/100); \u001b[32mISOBMF: Extractor target track is not present in file - skipping.; \u001b[0m\u001b[31m[iso file] Invalid nal size 0 in sample 130; \u001b[0mfree(): double free detected in tcache 2; timeout: the monitored command dumped core"
+    },
+    "full_poc_use_target_probe": {
+      "d_f_spec_lifted": {
+        "last": 3,
+        "max": 3,
+        "min": 3
+      },
+      "exit_code": 134,
+      "label": "full_poc_use_target_probe",
+      "last_atom_signal": {
+        "atom_id": 1,
+        "event_bits": 144770114,
+        "flags": 7,
+        "guard_bits": 0,
+        "lifecycle_prefix": 1,
+        "object_id_bucket": 48,
+        "producer_bits": 2,
+        "role_bits": 457,
+        "root_value_bucket": 0,
+        "use_bits": 0
+      },
+      "raw_path": "/tmp/gpac3403_b3_snapshot_20260619T021028/use_target_probe/full_use_target.snapshot.jsonl",
+      "raw_sha256": "7deb62233200ab061de42e104cafb0685c84a392693765d8455791e7d6f9231d",
+      "raw_size_bytes": 98120,
+      "role_sample_counts": {
+        "desired_producer": 40,
+        "guard": 0,
+        "input_influence": 80,
+        "lifecycle_event": 80,
+        "opposite_producer": 0,
+        "producer": 0,
+        "repair_hook": 0,
+        "root_observe": 40,
+        "same_object": 40,
+        "use": 0
+      },
+      "snapshot_lines": 40,
+      "stderr_tail": "Appending: |==============      | (74/100); \u001b[32mISOBMF: Extractor target track is not present in file - skipping.; \u001b[0m\u001b[31m[iso file] Invalid nal size 0 in sample 130; \u001b[0mfree(): double free detected in tcache 2; timeout: the monitored command dumped core"
+    },
+    "prefix_12288": {
+      "d_f_spec_lifted": {
+        "last": 1,
+        "max": 6,
+        "min": 1
+      },
+      "exit_code": 0,
+      "label": "prefix_12288",
+      "last_atom_signal": {
+        "atom_id": 1,
+        "event_bits": 144770626,
+        "flags": 7,
+        "guard_bits": 0,
+        "lifecycle_prefix": 1,
+        "object_id_bucket": 48,
+        "producer_bits": 2,
+        "role_bits": 489,
+        "root_value_bucket": 1,
+        "use_bits": 2
+      },
+      "raw_path": "/tmp/gpac3403_b3_snapshot_20260619T021028/prefix.snapshot.jsonl",
+      "raw_sha256": "1d32dc77eae2cd470fc2e742bfa9ad5fad163af8faeec1692a1ef80653b6cb1e",
+      "raw_size_bytes": 1517886,
+      "role_sample_counts": {
+        "desired_producer": 71,
+        "guard": 0,
+        "input_influence": 142,
+        "lifecycle_event": 142,
+        "opposite_producer": 0,
+        "producer": 0,
+        "repair_hook": 0,
+        "root_observe": 1222,
+        "same_object": 71,
+        "use": 23
+      },
+      "snapshot_lines": 1222,
+      "stderr_tail": "ISO File Writing: |=================== | (97/100); ISO File Writing: |=================== | (98/100); ISO File Writing: |=================== | (99/100); ISO File Writing: |====================| (100/100)"
+    }
+  },
+  "static_validation": {
+    "compile_stderr": "",
+    "compiled_lift_sha256": "a16c5469b195bbac1eafbc987a13dde98a33645a83eba7cff5d9073f6d01f563",
+    "compiled_lift_size_bytes": 2868,
+    "key_site_ids": {
+      "gf_bs_del_root_line_372_cmp": 65063371,
+      "mdia_cleanup_use_line_3310_branch": 3837068185,
+      "mdia_cleanup_use_line_3310_cmp": 3820290566,
+      "nalu_out_reassign_fallback_avc_ext_line_672_branch": 1766076671,
+      "same_object_gf_bs_reassign_buffer_line_122_cmp": 1549213408
+    },
+    "lift_audit_csv": "atom_id,category,binding_tier,lift_allowed,roles,event_count,location_only_count,collapsed,reason\n1,compound-sequence-lifecycle,B4,true,0x000001e9,9,0,0,ok\n"
+  },
+  "status": "alias_role_repaired_cleanup_use_not_captured",
+  "summary": {
+    "action": "Keep B3 as the current GPAC_3403 candidate. Next repair should focus on making cleanup-use observable on the aborting full PoC, either by binding a pre-call cleanup state that is sampled before gf_bs_del aborts or by improving snapshot-on-abort coverage.",
+    "conclusion": "B3 repairs the B2 same_object miss by binding object identity to gf_bs_reassign_buffer(buffer) on the observed NALU output reassign path. Prefix and full PoC snapshots both sample same_object; full PoC still does not sample the mdia_box_del use role before abort, so GPAC_3403 is not yet promoted to complete matched long-run evidence."
+  },
+  "target_id": "GPAC_3403"
+}

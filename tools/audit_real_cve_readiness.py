@@ -162,6 +162,28 @@ def binding_validation_status(records: list[dict[str, Any]]) -> str:
     return "; ".join(statuses)
 
 
+LIMITING_BINDING_VALIDATION_STATUSES = {
+    "same_object_binding_not_on_crash_path": "same-object binding is not on the observed crash path",
+    "partial_mechanism_missing_role_coverage": "BindingSpec has partial mechanism coverage with missing role samples",
+    "alias_role_repaired_cleanup_use_not_captured": "alias role is repaired, but cleanup-use is not captured on the aborting path",
+}
+
+
+def binding_validation_limitations(records: list[dict[str, Any]]) -> list[str]:
+    limitations: list[str] = []
+    for record in records:
+        status = str(record.get("status") or "")
+        reason = LIMITING_BINDING_VALIDATION_STATUSES.get(status)
+        if not reason:
+            continue
+        path = record.get("_path") or ""
+        summary = record.get("summary") if isinstance(record.get("summary"), dict) else {}
+        action = summary.get("action") or summary.get("conclusion") or reason
+        location = f"@{path}" if path else ""
+        limitations.append(f"{status}{location}: {action}")
+    return limitations
+
+
 def comparison_records(
     target_id: str,
     root: Path = Path("artifacts/formtrig_native_readiness/comparisons"),
@@ -483,6 +505,7 @@ def audit_target(
     validation_records = binding_validation_records(target_id)
     binding_spec_validated = binding_validation_pass(validation_records)
     binding_status = binding_validation_status(validation_records)
+    binding_limitations = binding_validation_limitations(validation_records)
     comparisons = comparison_records(target_id, comparison_root)
     comparison_count = len(comparisons)
     best_speedup = speedup_comparison(comparisons)
@@ -530,7 +553,14 @@ def audit_target(
         next_action = "keep as control/sanity evidence; do not spend main real-CVE long-run budget"
         priority = 95
     elif rnt_ready and binary_dt_gap and terminal_validated and binding_spec_validated:
-        if has_10m_speedup:
+        if binding_limitations:
+            readiness = "needs_binding_role_repair"
+            next_action = (
+                "repair BindingSpec role coverage before matched endpoint long-runs; "
+                "do not promote mechanism-limited validation as complete evidence"
+            )
+            priority = 13
+        elif has_10m_speedup:
             readiness = "ten_min_matched_speedup_confirmed"
             next_action = (
                 "run 2h matched repetitions if retained as a paper case; otherwise "
@@ -614,7 +644,7 @@ def audit_target(
         "current_benefit": speedup_benefit(best_speedup) or short_gate_benefit(best_short_gate),
         "harness_admissibility_status": harness_admissibility_status(harness_records),
         "core_evidence_allowed": not harness_rejected if harness_records else True,
-        "blockers": "; ".join(blockers),
+        "blockers": "; ".join(blockers + binding_limitations),
         "next_action": next_action,
         "paths": {
             "program": program,

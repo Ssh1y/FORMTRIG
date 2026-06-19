@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from tools.audit_real_cve_readiness import (
+    binding_validation_limitations,
     harness_admissibility_blocker,
     harness_admissibility_records,
     harness_rejects_core_evidence,
@@ -67,6 +68,27 @@ class RealCveReadinessAuditTest(unittest.TestCase):
         self.assertIn("pre-trigger lifted guidance", benefit)
         self.assertIn("valid baseline reps 6", benefit)
         self.assertIn("0 endpoint successes", benefit)
+
+    def test_binding_validation_limitations_block_mechanism_promotion(self):
+        records = [
+            {
+                "status": "native_binding_validated",
+                "_path": "binding/pass.json",
+            },
+            {
+                "status": "alias_role_repaired_cleanup_use_not_captured",
+                "_path": "binding/gpac_b3.json",
+                "summary": {
+                    "action": "make cleanup-use observable before matched endpoint long-runs"
+                },
+            },
+        ]
+
+        limitations = binding_validation_limitations(records)
+
+        self.assertEqual(len(limitations), 1)
+        self.assertIn("alias_role_repaired_cleanup_use_not_captured", limitations[0])
+        self.assertIn("cleanup-use observable", limitations[0])
 
 
 if __name__ == "__main__":

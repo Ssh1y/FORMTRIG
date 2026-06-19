@@ -197,11 +197,13 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
                 "\n".join(
                     [
                         "2074894587\tbinary\tMedia_GetSample\t795\tadd\tisomedia/media.c\t633\t47",
+                        "1549213408\tcmp\tgf_bs_reassign_buffer\t123\ticmp\tutils/bitstream.c\t122\t6",
                         "2693650777\tbranch\tcat_isomedia_file\t1189\tbr\tfileimport.c\t3139\t8",
                         "3030846436\tbranch\tgf_isom_sample_del\t22\tbr\tisomedia/isom_read.c\t112\t6",
                         "3232240958\tbranch\tgf_bs_new_cbk_buffer\t34\tbr\tutils/bitstream.c\t296\t6",
                         "3837068185\tbranch\tmdia_box_del\t25\tbr\tisomedia/box_code_base.c\t3310\t6",
                         "65063371\tcmp\tgf_bs_del\t47\ticmp\tutils/bitstream.c\t372\t48",
+                        "1766076671\tbranch\tgf_isom_nalu_sample_rewrite\t1048\tbr\tisomedia/avc_ext.c\t672\t59",
                         "3299351434\tcmp\tgf_bs_new_cbk_buffer\t30\ticmp\tutils/bitstream.c\t296\t6",
                         "2708309825\tbranch\tcat_isomedia_file\t1178\tbr\tfileimport.c\t3136\t3",
                     ]
@@ -289,6 +291,56 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
             self.assertIn(
                 "1,compound-sequence-lifecycle,B4,true,0x000001e9,8,0,0,ok",
                 b2_audit_proc.stdout,
+            )
+
+            b3_lift_spec = root / "gpac_b3.lift"
+            b3_compile_proc = subprocess.run(
+                [
+                    str(compile_tool),
+                    "--site-map",
+                    str(site_map),
+                    "--out",
+                    str(b3_lift_spec),
+                    str(
+                        REPO_ROOT
+                        / "artifacts"
+                        / "binding_specs"
+                        / "GPAC_3403.native_b3_nalu_reassign_alias_candidate.yml"
+                    ),
+                ],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b3_compile_proc.returncode, 0, b3_compile_proc.stderr)
+
+            b3_lift_text = b3_lift_spec.read_text(encoding="utf-8")
+            self.assertIn(
+                "role_component 7 1549213408 same_object 8 1 60 higher a",
+                b3_lift_text,
+            )
+            self.assertIn(
+                "role_component 8 1766076671 lifecycle_event 7 1 30 higher hit",
+                b3_lift_text,
+            )
+            self.assertIn(
+                "same_object_relation 1 lifecycle_event use "
+                "GF_ISOSample.data==GF_BitStream.original via gf_bs_reassign_buffer(buffer)",
+                b3_lift_text,
+            )
+
+            b3_audit_proc = subprocess.run(
+                [str(audit_tool), "--category", "lifecycle", str(b3_lift_spec)],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b3_audit_proc.returncode, 0, b3_audit_proc.stderr)
+            self.assertIn(
+                "1,compound-sequence-lifecycle,B4,true,0x000001e9,9,0,0,ok",
+                b3_audit_proc.stdout,
             )
 
 
