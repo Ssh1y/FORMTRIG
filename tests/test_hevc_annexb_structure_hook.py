@@ -163,6 +163,27 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
             self.assertTrue(any(item["num_layer_sets_minus1"] >= 1 for item in parsed_vps))
             self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
 
+    def test_compact_output_layer_set_ops_keep_extractor_without_large_growth(self):
+        hook = load_hook()
+        audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_for_compact_hook_test")
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 41)
+            for op in range(32, 36)
+        ]
+
+        for output in mutated_outputs:
+            parsed_vps = parse_vps_items(hook, audit, output)
+            types = {hook.nalu_type(output, nalu) for nalu in hook.parse_nalus(output)}
+
+            self.assertGreaterEqual(len(hook.parse_nalus(output)), 100)
+            self.assertLess(len(output), 16000)
+            self.assertIn(49, types)
+            self.assertTrue(any(item["max_layers_minus1"] <= 3 for item in parsed_vps))
+            self.assertTrue(any(item["max_layer_id"] <= 3 for item in parsed_vps))
+            self.assertTrue(any(item["num_layer_sets_minus1"] >= 1 for item in parsed_vps))
+
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()
         original = b"not annex b"

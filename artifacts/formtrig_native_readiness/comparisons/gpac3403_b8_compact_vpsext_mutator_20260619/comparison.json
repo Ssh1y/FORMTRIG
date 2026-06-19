@@ -1,0 +1,313 @@
+{
+  "after_compact_ops32_35": {
+    "diagnosis": "Compact bounded ops keep all target-adjacent endpoint signatures while reaching 30/32 runtime replays with D_F=1 and only 2/32 timeouts.",
+    "endpoint_signature_counts": {
+      "asan": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 2,
+        "variant_files": 0,
+        "variant_occurrences": 0,
+        "variant_top_values": []
+      },
+      "failed_vps_extensions": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 4,
+        "variant_files": 32,
+        "variant_occurrences": 32,
+        "variant_top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 2,
+        "variant_files": 32,
+        "variant_occurrences": 64,
+        "variant_top_values": []
+      },
+      "track_importing_hevc": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 1,
+        "variant_files": 32,
+        "variant_occurrences": 32,
+        "variant_top_values": []
+      },
+      "wrong_output_layer_sets": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 4,
+        "variant_files": 32,
+        "variant_occurrences": 32,
+        "variant_top_values": [
+          {
+            "count": 4,
+            "value": "5/4"
+          },
+          {
+            "count": 4,
+            "value": "6/4"
+          },
+          {
+            "count": 4,
+            "value": "8/4"
+          },
+          {
+            "count": 4,
+            "value": "12/4"
+          },
+          {
+            "count": 4,
+            "value": "16/4"
+          },
+          {
+            "count": 4,
+            "value": "33/4"
+          }
+        ]
+      }
+    },
+    "summary": {
+      "d_f_spec_lifted_max": 1.0,
+      "d_f_spec_lifted_min": 1.0,
+      "duration_s": 36.06,
+      "endpoint_native_crashes": 0,
+      "endpoint_replayed_variants": 32,
+      "endpoint_sanitizer_crashes": 0,
+      "endpoint_timeouts": 0,
+      "generated_variants": 32,
+      "reached": 30,
+      "rnt": 30,
+      "triggered": 0
+    }
+  },
+  "before_heavy_dense_insert_ops28_31": {
+    "diagnosis": "Stable target-adjacent endpoint signatures, but only 2/16 runtime replays reached and 14/16 timed out at 5 seconds.",
+    "endpoint_signature_counts": {
+      "asan": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 2,
+        "variant_files": 0,
+        "variant_occurrences": 0,
+        "variant_top_values": []
+      },
+      "failed_vps_extensions": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 4,
+        "variant_files": 16,
+        "variant_occurrences": 60,
+        "variant_top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 2,
+        "variant_files": 16,
+        "variant_occurrences": 61,
+        "variant_top_values": []
+      },
+      "track_importing_hevc": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 1,
+        "variant_files": 16,
+        "variant_occurrences": 16,
+        "variant_top_values": []
+      },
+      "wrong_output_layer_sets": {
+        "positive_control_files": 1,
+        "positive_control_occurrences": 4,
+        "variant_files": 16,
+        "variant_occurrences": 60,
+        "variant_top_values": [
+          {
+            "count": 11,
+            "value": "12/4"
+          },
+          {
+            "count": 9,
+            "value": "16/4"
+          },
+          {
+            "count": 9,
+            "value": "33/4"
+          },
+          {
+            "count": 7,
+            "value": "6/4"
+          },
+          {
+            "count": 7,
+            "value": "8/4"
+          },
+          {
+            "count": 7,
+            "value": "65/4"
+          }
+        ]
+      }
+    },
+    "summary": {
+      "d_f_spec_lifted_max": 2.0,
+      "d_f_spec_lifted_min": 1.0,
+      "duration_s": 78.693,
+      "endpoint_native_crashes": 0,
+      "endpoint_replayed_variants": 16,
+      "endpoint_sanitizer_crashes": 0,
+      "endpoint_timeouts": 0,
+      "generated_variants": 16,
+      "reached": 2,
+      "rnt": 2,
+      "triggered": 0
+    }
+  },
+  "claim_status": {
+    "current_gap": "ASAN/_T remains absent in short sweeps; compact ops make the target-adjacent signal cheap enough for longer fuzzing or endpoint-signature feedback.",
+    "runtime_schedulability_improved": true,
+    "stable_T": false,
+    "stable_target_adjacent_endpoint_signatures": true
+  },
+  "engineering_result": {
+    "implemented_ops": "hevc_annexb_structure_hook op 32-35",
+    "mutator_shape": "Preserve seed parameter-set prefix, insert a compact dense extractor sequence plus one bounded VPS-extension/output-layer-set train at the first slice.",
+    "next_step": "Run a longer FORMTRIG campaign with op32-35 enabled and compare against AFL++/CmpLog/Redqueen on the same GPAC_3403 endpoint, while preserving ASAN endpoint validation.",
+    "why_this_matters": "The guidance signal is no longer just diagnostic: it is stable, attributable to VPS-extension/type49 fields, sortable by D_F, and cheap enough for runtime scheduling."
+  },
+  "evidence": {
+    "compact_ops32_35_endpoint_signature_audit": {
+      "path": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b8_compact_vpsext_mutator_20260619/evidence/compact_ops32_35_endpoint_signature_audit.json",
+      "sha256": "bec372295cd94c2994eeefd49812845a78b112ab545d5a2c3f623aeef63b7ae6"
+    },
+    "compact_param_probe_summary": {
+      "path": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b8_compact_vpsext_mutator_20260619/evidence/compact_param_probe_summary.json",
+      "sha256": "73e44c6b36c4533bede39653c50ab45a76aa0cf188f28ac1739324494d12fd0f"
+    },
+    "previous_heavy_dense_insert_endpoint_signature_audit": {
+      "path": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b7_vpsext_frontier_repair_20260619/evidence/vpsext_dense_insert_ops28_31_endpoint_signature_audit.json",
+      "sha256": "709ff97c495e0ba4a185fbe92a5d1178266449ae12a447931d5d361834204ce2"
+    }
+  },
+  "generated_date": "2026-06-19",
+  "parameter_probe": {
+    "best_low_cost_examples": [
+      {
+        "asan": false,
+        "cycles": 6,
+        "d_f": 1,
+        "idx": 0,
+        "import_nalus": 135,
+        "layout": "dense_train",
+        "ols": true,
+        "reached": true,
+        "reps": 1,
+        "samples": 51,
+        "size": 7585,
+        "type49": true,
+        "vpsext": true
+      },
+      {
+        "asan": false,
+        "cycles": 6,
+        "d_f": 1,
+        "idx": 1,
+        "import_nalus": 136,
+        "layout": "dense_train",
+        "ols": true,
+        "reached": true,
+        "reps": 2,
+        "samples": 51,
+        "size": 7626,
+        "type49": true,
+        "vpsext": true
+      },
+      {
+        "asan": false,
+        "cycles": 8,
+        "d_f": 1,
+        "idx": 2,
+        "import_nalus": 176,
+        "layout": "dense_train",
+        "ols": true,
+        "reached": true,
+        "reps": 1,
+        "samples": 68,
+        "size": 9888,
+        "type49": true,
+        "vpsext": true
+      },
+      {
+        "asan": false,
+        "cycles": 8,
+        "d_f": 1,
+        "idx": 3,
+        "import_nalus": 177,
+        "layout": "dense_train",
+        "ols": true,
+        "reached": true,
+        "reps": 2,
+        "samples": 68,
+        "size": 9929,
+        "type49": true,
+        "vpsext": true
+      },
+      {
+        "asan": false,
+        "cycles": 10,
+        "d_f": 1,
+        "idx": 4,
+        "import_nalus": 217,
+        "layout": "dense_train",
+        "ols": true,
+        "reached": true,
+        "reps": 1,
+        "samples": 83,
+        "size": 12235,
+        "type49": true,
+        "vpsext": true
+      },
+      {
+        "asan": false,
+        "cycles": 10,
+        "d_f": 1,
+        "idx": 5,
+        "import_nalus": 218,
+        "layout": "dense_train",
+        "ols": true,
+        "reached": true,
+        "reps": 2,
+        "samples": 83,
+        "size": 12276,
+        "type49": true,
+        "vpsext": true
+      },
+      {
+        "asan": false,
+        "cycles": 12,
+        "d_f": 1,
+        "idx": 6,
+        "import_nalus": 258,
+        "layout": "dense_train",
+        "ols": true,
+        "reached": true,
+        "reps": 1,
+        "samples": 99,
+        "size": 14496,
+        "type49": true,
+        "vpsext": true
+      },
+      {
+        "asan": false,
+        "cycles": 12,
+        "d_f": 1,
+        "idx": 7,
+        "import_nalus": 259,
+        "layout": "dense_train",
+        "ols": true,
+        "reached": true,
+        "reps": 2,
+        "samples": 99,
+        "size": 14537,
+        "type49": true,
+        "vpsext": true
+      }
+    ],
+    "candidates_with_all_target_adjacent_signatures_and_no_runtime_timeout": 30,
+    "total_candidates": 30
+  },
+  "schema": "formtrig_gpac3403_compact_vpsext_mutator_v1",
+  "subject": "GPAC_3403 compact VPS-extension/type49 mutator for long-run scheduling"
+}

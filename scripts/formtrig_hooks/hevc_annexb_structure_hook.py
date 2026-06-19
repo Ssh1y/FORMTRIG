@@ -23,7 +23,7 @@ VPS_MAX_LAYER_ID = [0, 1, 2, 3, 4, 7, 22, 31, 50, 63]
 DENSE_LAYER_IDS = [0, 1, 4, 7, 14, 16, 18, 22, 31, 32, 36, 37, 46, 50]
 DENSE_SEQUENCE_TYPES = [34, 0, 34, 33, 16, 34, 0, 21, 34, 0, 34, 33, 14, 34, 0, 34, 16, 0, 34]
 OUTPUT_LAYER_SET_TOTALS = [5, 6, 8, 12, 16, 33, 65, 132]
-OP_SELECTOR_COUNT = 32
+OP_SELECTOR_COUNT = 36
 
 
 @dataclass(frozen=True)
@@ -377,6 +377,22 @@ def output_layer_set_train(data: bytes, nalus: list[Nalu], anchor: Nalu, sample:
     return b"".join(chunks)
 
 
+def compact_output_layer_extractor_sequence(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    cycles: int,
+    split: bool,
+) -> bytes:
+    dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=cycles)
+    train = output_layer_set_train(data, nalus, anchor, sample, repetitions=1)
+    if split:
+        midpoint = len(dense) // 2
+        return dense[:midpoint] + train + dense[midpoint:]
+    return dense + train
+
+
 def extractor_payload(sample: int) -> bytes:
     pattern = bytes(
         [
@@ -644,6 +660,30 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
         train = output_layer_set_train(data, nalus, anchor, sample + 17, repetitions=3 + (sample % 4))
         splice = max(0, len(dense) // 2)
         out = data[: anchor.start] + dense[:splice] + train + dense[splice:] + data[anchor.start :]
+    elif selector == 32:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        compact = compact_output_layer_extractor_sequence(
+            data, nalus, anchor, sample, cycles=6 + (sample % 2), split=False
+        )
+        out = data[: anchor.start] + compact + data[anchor.start :]
+    elif selector == 33:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        compact = compact_output_layer_extractor_sequence(
+            data, nalus, anchor, sample, cycles=6 + (sample % 2), split=True
+        )
+        out = data[: anchor.start] + compact + data[anchor.start :]
+    elif selector == 34:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        compact = compact_output_layer_extractor_sequence(
+            data, nalus, anchor, sample, cycles=8 + (sample % 2), split=False
+        )
+        out = data[: anchor.start] + compact + data[anchor.start :]
+    elif selector == 35:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        compact = compact_output_layer_extractor_sequence(
+            data, nalus, anchor, sample, cycles=8 + (sample % 2), split=True
+        )
+        out = data[: anchor.start] + compact + data[anchor.start :]
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]
