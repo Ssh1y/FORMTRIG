@@ -372,7 +372,9 @@ still should not burn 7200s x3 yet because this parser-scale progress has not
 become same-object lifecycle-alias terminal behavior. The B7 value audit narrows
 that blocker: release/sample->data and reassign buffer match, but cleanup
 GF_BitStream->original still differs, so the next repair must target cleanup
-ownership rather than more parser scale. New hard-pain budget should
+ownership rather than more parser scale. Typed-retained endpoint packages now
+embed the alias relation audit verdict, so future GPAC evidence packages cannot
+claim endpoint closure from parser/import signatures alone. New hard-pain budget should
 go to cross-target evidence after PDF003, to GPAC_3403 lifecycle-alias repair, or
 to a replacement real-CVE target whose input naturally drives parser state. Do
 not spend main budget on another PHP003 rerun or on
@@ -1363,5 +1365,7 @@ LIBXML2_1107 当主正例，因为它的 harness 暴露了 allocation-failure kn
 现在有真实 CVE parser-frontier guidance，但 lifecycle alias audit 证明它还不是
 endpoint 正例；B7 value audit 进一步证明 release->reassign 已经同指针，但 cleanup
 GF_BitStream->original 尚未同指针：下一步要先修 relation-aware HEVC/lifecycle
-cleanup ownership mutation，再进入 matched baselines。最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
+cleanup ownership mutation，再进入 matched baselines。GPAC retained endpoint package
+会自动嵌入 alias relation audit，避免把 parser/import 近邻当作 endpoint 闭环。
+最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。

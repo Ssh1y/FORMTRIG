@@ -25,6 +25,47 @@ def nalu(hook, nal_type, layer, payload):
     return b"\x00\x00\x00\x01" + hook.make_header(nal_type, layer) + payload
 
 
+def write_alias_lift(path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "\n".join(
+            [
+                "role_component 8 3030846436 lifecycle_event 7 1 25 higher hit 1.0 0.85 1004 1004 any",
+                "role_component 7 3013921722 lifecycle_event 8 1 26 higher a 1.0 0.9 1001 1001 any",
+                "role_component 8 14730514 use 6 1 40 higher not_outcome 1.0 0.8 1005 1005 any",
+                "role_component 7 65063371 use 8 1 42 higher a 1.0 0.9 1003 1003 any",
+                "role_component 7 115396228 root_observe 3 1 50 higher not_outcome 1.0 0.9 1006 1006 any",
+                "role_component 7 1549213408 same_object 8 1 60 higher a 1.0 0.85 1002 1002 any",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def write_alias_runtime(path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "components": [
+                    {"source_id": 1001, "value": 0x10000},
+                    {"source_id": 1002, "value": 0x10000},
+                    {"source_id": 1003, "value": 0x20000},
+                    {"source_id": 1004, "value": 1},
+                    {"source_id": 1005, "value": 1},
+                    {"source_id": 1006, "value": 1},
+                ],
+                "D_F_spec_lifted": 2,
+                "reached": True,
+                "target_hit_count": 1,
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
 class PackageGpac3403TypedRetainedAuditTest(unittest.TestCase):
     def test_empty_retained_package_keeps_claim_boundary_explicit(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -59,6 +100,7 @@ class PackageGpac3403TypedRetainedAuditTest(unittest.TestCase):
         self.assertTrue(package["structure_audit"]["available"])
         self.assertEqual(package["structure_audit"]["variant_summary"]["record_count"], 0)
         self.assertFalse(package["endpoint_audit"]["available"])
+        self.assertFalse(package["alias_relation_audit"]["available"])
         self.assertEqual(package["evidence_assessment"]["retained_records"], 0)
         self.assertIn("No typed-retained candidates", package["evidence_assessment"]["claim_boundary"])
 
@@ -119,6 +161,12 @@ class PackageGpac3403TypedRetainedAuditTest(unittest.TestCase):
                 ),
                 encoding="utf-8",
             )
+            write_alias_lift(
+                run_dir / "fuzzer_out" / ".formtrig" / "formtrig_lift.normalized"
+            )
+            write_alias_runtime(
+                run_dir / "fuzzer_out" / "default" / "formtrig_progress.jsonl"
+            )
             out = run_dir / "package.json"
 
             subprocess.run(
@@ -141,11 +189,23 @@ class PackageGpac3403TypedRetainedAuditTest(unittest.TestCase):
             package["endpoint_audit"]["report"]["summary"]["endpoint_replayed_variants"],
             1,
         )
+        self.assertTrue(package["alias_relation_audit"]["available"])
+        self.assertEqual(
+            package["alias_relation_audit"]["report"]["verdict"]["status"],
+            "release_reassign_alias_observed_terminal_cleanup_missing",
+        )
+        self.assertEqual(
+            assessment["alias_relation_status"],
+            "release_reassign_alias_observed_terminal_cleanup_missing",
+        )
+        self.assertFalse(assessment["alias_relation_complete"])
+        self.assertTrue(assessment["alias_release_reassign_observed"])
         self.assertIn(
             "wrong_output_layer_sets",
             assessment["positive_control_signatures_absent_from_variants"],
         )
         self.assertIn("structure and endpoint evidence", assessment["claim_boundary"])
+        self.assertIn("Alias/free relation audit is not terminal-complete", assessment["claim_boundary"])
 
 
 if __name__ == "__main__":

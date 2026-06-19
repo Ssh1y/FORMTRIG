@@ -22,6 +22,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 STRUCTURE_AUDIT = REPO_ROOT / "tools" / "gpac3403_hevc_structure_audit.py"
 ENDPOINT_AUDIT = REPO_ROOT / "tools" / "gpac3403_endpoint_signature_audit.py"
+ALIAS_AUDIT = REPO_ROOT / "tools" / "gpac3403_alias_relation_audit.py"
 DEFAULT_HOOK = REPO_ROOT / "scripts" / "formtrig_hooks" / "hevc_annexb_structure_hook.py"
 
 
@@ -135,6 +136,64 @@ def infer_endpoint_logs(run_dir: Path, provided: Path | None) -> Path | None:
     return None
 
 
+def infer_alias_lift_spec(run_dir: Path, provided: Path | None) -> Path | None:
+    if provided is not None:
+        return provided
+    for candidate in (
+        run_dir / "fuzzer_out" / ".formtrig" / "formtrig_lift.normalized",
+        run_dir / ".formtrig" / "formtrig_lift.normalized",
+    ):
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def infer_alias_runtime_jsonl(run_dir: Path, provided: list[Path] | None) -> list[Path]:
+    if provided:
+        return provided
+    for candidate in (
+        run_dir / "fuzzer_out" / "default" / "formtrig_progress.jsonl",
+        run_dir / "default" / "formtrig_progress.jsonl",
+    ):
+        if candidate.is_file():
+            return [candidate]
+    return []
+
+
+def build_alias_relation_audit(
+    lift_spec: Path | None,
+    runtime_jsonl: list[Path],
+) -> dict[str, Any]:
+    missing: list[str] = []
+    if lift_spec is None:
+        missing.append("normalized lift spec")
+    elif not lift_spec.is_file():
+        missing.append(f"normalized lift spec: {lift_spec}")
+
+    existing_runtime = [path for path in runtime_jsonl if path.is_file()]
+    missing_runtime = [path for path in runtime_jsonl if not path.is_file()]
+    if not runtime_jsonl:
+        missing.append("runtime progress JSONL")
+    missing.extend(f"runtime progress JSONL: {path}" for path in missing_runtime)
+
+    if missing or lift_spec is None:
+        return {
+            "available": False,
+            "reason": "missing " + "; missing ".join(missing),
+            "lift_spec": str(lift_spec) if lift_spec else None,
+            "runtime_jsonl": [str(path) for path in runtime_jsonl],
+        }
+
+    alias = load_module(ALIAS_AUDIT, "gpac3403_alias_relation_audit_for_package")
+    report = alias.build_report(lift_spec, existing_runtime)
+    return {
+        "available": True,
+        "lift_spec": str(lift_spec),
+        "runtime_jsonl": [str(path) for path in existing_runtime],
+        "report": report,
+    }
+
+
 def build_endpoint_audit(
     logs_dir: Path | None,
     endpoint_summary: Path | None,
@@ -178,6 +237,7 @@ def assess_evidence(
     records_jsonl: Path | None,
     structure_audit: dict[str, Any],
     endpoint_audit: dict[str, Any],
+    alias_relation_audit: dict[str, Any],
 ) -> dict[str, Any]:
     retained_records = int((typed_summary or {}).get("retained_records") or 0)
     existing_inputs = int((typed_summary or {}).get("existing_inputs") or 0)
@@ -229,6 +289,20 @@ def assess_evidence(
             "claiming R2T progress."
         )
 
+    alias_status = None
+    alias_complete = None
+    alias_release_reassign = None
+    if alias_relation_audit.get("available"):
+        verdict = alias_relation_audit.get("report", {}).get("verdict", {})
+        alias_status = verdict.get("status")
+        alias_complete = verdict.get("complete_alias_free_relation")
+        alias_release_reassign = verdict.get("release_reassign_alias_observed")
+        if not alias_complete:
+            claim_boundary += (
+                " Alias/free relation audit is not terminal-complete; do not "
+                "claim GPAC_3403 endpoint R2T closure from this package."
+            )
+
     return {
         "retained_records": retained_records,
         "existing_inputs": existing_inputs,
@@ -240,6 +314,9 @@ def assess_evidence(
         "endpoint_variant_files": endpoint_variant_files,
         "endpoint_positive_control_files": endpoint_positive_files,
         "positive_control_signatures_absent_from_variants": positive_only,
+        "alias_relation_status": alias_status,
+        "alias_relation_complete": alias_complete,
+        "alias_release_reassign_observed": alias_release_reassign,
         "claim_boundary": claim_boundary,
     }
 
@@ -249,6 +326,8 @@ def build_package(args: argparse.Namespace) -> dict[str, Any]:
     typed_summary_path = args.typed_summary or run_dir / "typed_retained_summary.json"
     records_jsonl = args.records_jsonl or run_dir / "typed_retained_records.jsonl"
     endpoint_logs_dir = infer_endpoint_logs(run_dir, args.endpoint_logs_dir)
+    alias_lift_spec = infer_alias_lift_spec(run_dir, args.alias_lift_spec)
+    alias_runtime_jsonl = infer_alias_runtime_jsonl(run_dir, args.alias_runtime_jsonl)
     endpoint_summary = args.endpoint_summary
     if endpoint_summary is None:
         inferred_summary = run_dir / "typed_retained_endpoint_replay_summary.json"
@@ -268,6 +347,7 @@ def build_package(args: argparse.Namespace) -> dict[str, Any]:
         endpoint_summary,
         args.include_endpoint_records,
     )
+    alias_relation_audit = build_alias_relation_audit(alias_lift_spec, alias_runtime_jsonl)
     return {
         "schema": "formtrig_gpac3403_typed_retained_audit_package_v1",
         "run_dir": str(run_dir),
@@ -276,11 +356,13 @@ def build_package(args: argparse.Namespace) -> dict[str, Any]:
         "typed_retained": compact_typed_summary(typed_summary),
         "structure_audit": structure_audit,
         "endpoint_audit": endpoint_audit,
+        "alias_relation_audit": alias_relation_audit,
         "evidence_assessment": assess_evidence(
             typed_summary,
             records_jsonl,
             structure_audit,
             endpoint_audit,
+            alias_relation_audit,
         ),
     }
 
@@ -296,6 +378,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--endpoint-logs-dir", type=Path)
     parser.add_argument("--endpoint-summary", type=Path)
     parser.add_argument("--include-endpoint-records", action="store_true")
+    parser.add_argument("--alias-lift-spec", type=Path)
+    parser.add_argument("--alias-runtime-jsonl", action="append", type=Path)
     parser.add_argument("--top", type=int, default=8)
     parser.add_argument("--out", type=Path)
     args = parser.parse_args(argv)
