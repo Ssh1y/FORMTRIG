@@ -79,6 +79,10 @@ class Gpac3403EndpointSignatureAuditTest(unittest.TestCase):
                 "[HEVC] Error parsing Video Param Set\n",
                 encoding="utf-8",
             )
+            (logs / "variant_000001.endpoint_1.stderr").write_text(
+                "HEVC Import results: 1 samples (7 NALUs) - Slices: 0 I 0 P 0 B\n",
+                encoding="utf-8",
+            )
             (logs / "positive_control.endpoint_1.stderr").write_text(
                 "[HEVC] Wrong number of output layer sets in VPS 132, max 4 supported\n"
                 "[HEVC] Failed to parse VPS extensions\n"
@@ -103,6 +107,7 @@ class Gpac3403EndpointSignatureAuditTest(unittest.TestCase):
 
         self.assertEqual(report["summary"]["generated_variants"], 1)
         self.assertEqual(report["variant"]["signatures"]["vps_max_layer_id"]["files"], 1)
+        self.assertEqual(report["variant"]["signatures"]["hevc_import_results"]["files"], 1)
         self.assertEqual(report["positive_control"]["signatures"]["asan"]["files"], 1)
         self.assertEqual(report["positive_control"]["metrics"]["hevc_samples_max"], 172)
         self.assertEqual(report["positive_control"]["metrics"]["hevc_nalus_max"], 413)
@@ -116,6 +121,11 @@ class Gpac3403EndpointSignatureAuditTest(unittest.TestCase):
             "failed_vps_extensions",
             report["contrast"]["positive_control_signatures_absent_from_variants"],
         )
+        overlap = report["contrast"]["top_variants_by_positive_overlap"][0]
+        self.assertEqual(overlap["variant_index"], 1)
+        self.assertEqual(overlap["matched_positive_signatures"], ["hevc_import_results"])
+        self.assertIn("wrong_output_layer_sets", overlap["missing_positive_signatures"])
+        self.assertEqual(overlap["matched_values"]["hevc_import_results"], ["1/7"])
 
 
 if __name__ == "__main__":

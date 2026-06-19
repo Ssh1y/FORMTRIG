@@ -30,6 +30,20 @@ SIGNATURES: dict[str, re.Pattern[str]] = {
     "asan": re.compile(r"AddressSanitizer|SUMMARY: AddressSanitizer"),
     "asan_double_free": re.compile(r"AddressSanitizer: attempting double-free|SUMMARY: AddressSanitizer: double-free|double[- ]free"),
 }
+SIGNATURE_WEIGHTS = {
+    "asan": 100,
+    "asan_double_free": 100,
+    "wrong_output_layer_sets": 30,
+    "failed_vps_extensions": 30,
+    "nal_type_49_not_handled": 25,
+    "layers_only_4": 20,
+    "vps_max_layer_id": 20,
+    "hevc_import_results": 8,
+    "lhevc_import_results": 8,
+    "video_param_set_error": 5,
+    "nal_type_32_error": 5,
+    "track_importing_hevc": 4,
+}
 
 
 def clean_stderr(text: str) -> str:
@@ -151,6 +165,84 @@ def summarize_group(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def signature_order(names: set[str] | list[str]) -> list[str]:
+    rank = {name: index for index, name in enumerate(SIGNATURES)}
+    return sorted(names, key=lambda name: rank.get(name, len(rank)))
+
+
+def present_signatures(record: dict[str, Any]) -> set[str]:
+    return {
+        name
+        for name, signature in record["signatures"].items()
+        if signature["present"]
+    }
+
+
+def signature_values(record: dict[str, Any], names: list[str]) -> dict[str, Any]:
+    values: dict[str, Any] = {}
+    for name in names:
+        raw_values = record["signatures"][name]["values"]
+        if raw_values:
+            values[name] = ["/".join(item) for item in raw_values[:8]]
+    return values
+
+
+def signature_weight(names: set[str] | list[str]) -> int:
+    return sum(SIGNATURE_WEIGHTS.get(name, 1) for name in names)
+
+
+def positive_signature_overlap(
+    variant_records: list[dict[str, Any]],
+    positive_records: list[dict[str, Any]],
+    top: int = 12,
+) -> dict[str, Any]:
+    positive_signatures = set()
+    for record in positive_records:
+        positive_signatures.update(present_signatures(record))
+
+    ranked = []
+    for record in variant_records:
+        present = present_signatures(record)
+        matched = present & positive_signatures
+        missing = positive_signatures - present
+        extra = present - positive_signatures
+        matched_ordered = signature_order(matched)
+        missing_ordered = signature_order(missing)
+        extra_ordered = signature_order(extra)
+        ranked.append(
+            {
+                "path": record["path"],
+                "variant_index": record.get("variant_index"),
+                "rep": record.get("rep"),
+                "matched_positive_signatures": matched_ordered,
+                "missing_positive_signatures": missing_ordered,
+                "extra_variant_signatures": extra_ordered,
+                "matched_positive_signature_count": len(matched),
+                "missing_positive_signature_count": len(missing),
+                "weighted_match_score": signature_weight(matched),
+                "weighted_missing_score": signature_weight(missing),
+                "matched_values": signature_values(record, matched_ordered),
+                "extra_values": signature_values(record, extra_ordered),
+            }
+        )
+
+    ranked.sort(
+        key=lambda item: (
+            item["weighted_match_score"],
+            item["matched_positive_signature_count"],
+            -item["weighted_missing_score"],
+            -item["missing_positive_signature_count"],
+            -(item["variant_index"] if item["variant_index"] is not None else 1 << 30),
+        ),
+        reverse=True,
+    )
+    return {
+        "positive_signatures": signature_order(positive_signatures),
+        "weighted_positive_signature_total": signature_weight(positive_signatures),
+        "top_variants_by_positive_overlap": ranked[:top],
+    }
+
+
 def compact_summary(summary: dict[str, Any] | None) -> dict[str, Any] | None:
     if summary is None:
         return None
@@ -210,6 +302,7 @@ def build_report(args: argparse.Namespace) -> dict[str, Any]:
             "positive_control_signatures_absent_from_variants": positive_only,
             "variant_files": variant_summary["files"],
             "positive_control_files": positive_summary["files"],
+            **positive_signature_overlap(variant_records, positive_records),
         },
     }
 
