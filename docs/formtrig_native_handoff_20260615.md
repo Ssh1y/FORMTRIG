@@ -346,10 +346,13 @@ GPAC_3403:
                      (221 samples / 550 NALUs vs 172 / 413), while still not
                      producing ASAN/double-free terminal behavior
   lifecycle audit = artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json
+  alias relation audit = artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.json
   endpoint-scale repair = artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.json
-  blocked claims = same_object relation runtime proof is false; endpoint-scale
-                   variants still have 0 ASAN/double-free files; remaining
-                   missing signatures are asan and asan_double_free
+  blocked claims = B7 runtime value audit proves release->reassign same-object
+                   equality but cleanup GF_BitStream->original points to a
+                   different value, so alias/free terminal equality is still
+                   missing; endpoint-scale variants still have 0 ASAN/double-free
+                   files; remaining missing signatures are asan and asan_double_free
 
 LIBXML2_1107:
   skipped = harness_admissibility_not_core_evidence
@@ -366,7 +369,10 @@ proves the format-scale gap is no longer the main blocker: a 16-variant endpoint
 sweep reached 221 samples / 550 NALUs and matched every positive-control
 parser/import signature, leaving only asan and asan_double_free absent. GPAC_3403
 still should not burn 7200s x3 yet because this parser-scale progress has not
-become same-object lifecycle-alias terminal behavior. New hard-pain budget should
+become same-object lifecycle-alias terminal behavior. The B7 value audit narrows
+that blocker: release/sample->data and reassign buffer match, but cleanup
+GF_BitStream->original still differs, so the next repair must target cleanup
+ownership rather than more parser scale. New hard-pain budget should
 go to cross-target evidence after PDF003, to GPAC_3403 lifecycle-alias repair, or
 to a replacement real-CVE target whose input naturally drives parser state. Do
 not spend main budget on another PHP003 rerun or on
@@ -1355,6 +1361,7 @@ FORMTRIG native 已经有 PDF003 这一条 hard Magma endpoint speedup/no-guidan
 或机制归因证据；但还没有完成最终实验级闭环。真实 CVE 侧不能再把
 LIBXML2_1107 当主正例，因为它的 harness 暴露了 allocation-failure knob。GPAC_3403
 现在有真实 CVE parser-frontier guidance，但 lifecycle alias audit 证明它还不是
-endpoint 正例：下一步要先修 relation-aware HEVC/lifecycle mutation，再进入 matched
-baselines。最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
+endpoint 正例；B7 value audit 进一步证明 release->reassign 已经同指针，但 cleanup
+GF_BitStream->original 尚未同指针：下一步要先修 relation-aware HEVC/lifecycle
+cleanup ownership mutation，再进入 matched baselines。最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。

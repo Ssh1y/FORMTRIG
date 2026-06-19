@@ -6,6 +6,7 @@
     "cve_inventory": "artifacts/cve_bench_candidate_audit.json",
     "discovery": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
     "gpac_lifecycle_gap_audit": "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json",
+    "gpac_alias_relation_audit": "artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.json",
     "previous_readiness": "artifacts/formtrig_native_readiness/real_cve_readiness_20260618.json"
   },
   "target_count": 8,
@@ -17,7 +18,7 @@
       "binding_spec_ready": true,
       "binding_spec_validated": true,
       "binding_validation_status": "native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; same_object_binding_not_on_crash_path@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json; partial_mechanism_missing_role_coverage@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json; alias_role_repaired_cleanup_use_not_captured@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json; complete_role_graph_preabort_verified@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
-      "blockers": "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free",
+      "blockers": "lifecycle alias/free relation is not proven at runtime: B7 value audit proves release->reassign same-object equality, but cleanup GF_BitStream->original points to a different value; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
       "comparison_count": 3,
@@ -30,14 +31,15 @@
       "harness_admissibility_status": "",
       "harness_source_ready": false,
       "native_dt_values": "1",
-      "next_action": "repair the lifecycle-alias/free terminal gap before 7200s x3: bind and score sample->data allocation/release against GF_BitStream->original cleanup, then rerun FORMTRIG-only endpoint gate and only promote to matched baselines after ASAN/double-free or equivalent alias proof",
+      "next_action": "repair the lifecycle-alias/free terminal gap before 7200s x3: drive cleanup ownership so GF_BitStream->original equals the release/reassign sample-data pointer, then rerun FORMTRIG-only endpoint gate and only promote to matched baselines after ASAN/double-free or equivalent alias/free proof",
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [
           "GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml",
           "GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml",
           "GPAC_3403.native_b3_nalu_reassign_alias_candidate.yml",
-          "GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml"
+          "GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml",
+          "GPAC_3403.native_b7_relation_value_candidate.yml"
         ],
         "binding_validation_records": [
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json",
@@ -58,6 +60,8 @@
         "diagnostics": [
           "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json",
           "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.md",
+          "artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.json",
+          "artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.md",
           "artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.json",
           "artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.md",
           "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/summary.json",

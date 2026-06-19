@@ -82,7 +82,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Endpoint metrics: FORMTRIG endpoint ASAN/double-free success after repair, first _T / terminal-crash wall-clock time after repair, retained variant endpoint signature overlap with positive control, same_object lifecycle alias relation observed at runtime
 - Claim boundary: This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.
 - Blocking issue:
-- lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free
+- lifecycle alias/free relation is not proven at runtime: B7 value audit proves release->reassign same-object equality, but cleanup GF_BitStream->original points to a different value; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free
 - Mechanism evidence required after benefit:
 - same_object object identity across lifecycle_event and use endpoints
 - endpoint ASAN/double-free or equivalent alias/free terminal proof
@@ -120,6 +120,8 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/endpoint_signature_audit.json
 - artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json
 - artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.md
+- artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.json
+- artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.md
 - artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json
 - artifacts/rnt_corpus/GPAC_3403/manifest.json
 - artifacts/rnt_corpus/GPAC_3403/metadata.csv

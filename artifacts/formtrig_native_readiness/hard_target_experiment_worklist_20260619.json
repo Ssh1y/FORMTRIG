@@ -1060,10 +1060,10 @@
       "action": "repair_real_cve_lifecycle_alias_to_endpoint",
       "benefit_to_prove": "Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget.",
       "blocked_claims": [
-        "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free"
+        "lifecycle alias/free relation is not proven at runtime: B7 value audit proves release->reassign same-object equality, but cleanup GF_BitStream->original points to a different value; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free"
       ],
       "blocking_issue": [
-        "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free"
+        "lifecycle alias/free relation is not proven at runtime: B7 value audit proves release->reassign same-object equality, but cleanup GF_BitStream->original points to a different value; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free"
       ],
       "category": "compound-sequence-lifecycle",
       "claim_boundary": "This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.",
@@ -1095,6 +1095,8 @@
         "artifacts/formtrig_native_readiness/comparisons/gpac3403_b8_typedops36_matched_600s_1rep_20260619/comparison.json",
         "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json",
         "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.md",
+        "artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.json",
+        "artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.md",
         "artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json",
         "artifacts/rnt_corpus/GPAC_3403/manifest.json",
         "artifacts/rnt_corpus/GPAC_3403/metadata.csv",

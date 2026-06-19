@@ -1395,10 +1395,13 @@ GPAC_3403:
                      (221 samples / 550 NALUs vs 172 / 413), while still not
                      producing ASAN/double-free terminal behavior
   lifecycle audit = artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json
+  alias relation audit = artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.json
   endpoint-scale repair = artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.json
-  blocked claims = same_object relation runtime proof is false; endpoint-scale
-                   variants still have 0 ASAN/double-free files; remaining
-                   missing signatures are asan and asan_double_free
+  blocked claims = B7 runtime value audit proves release->reassign same-object
+                   equality but cleanup GF_BitStream->original points to a
+                   different value, so alias/free terminal equality is still
+                   missing; endpoint-scale variants still have 0 ASAN/double-free
+                   files; remaining missing signatures are asan and asan_double_free
 
 LIBXML2_1107:
   skipped = harness_admissibility_not_core_evidence
@@ -1416,7 +1419,10 @@ variant 全部进入 HEVC/L-HEVC import，最高 221 samples / 550 NALUs，正�
 现在的 blocker 不再是“样本规模不够”，而是“sample->data 到
 GF_BitStream->original 的 alias/free terminal 关系没有闭合”。它仍不能直接进入
 7200s x3 endpoint 长测，除非先出现 ASAN/double-free 或等价的 lifecycle-alias
-runtime proof。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
+runtime proof。新增的 B7 value audit 把这个 blocker 收窄为：
+release/sample->data 与 reassign buffer 已经是同一指针，但 cleanup
+GF_BitStream->original 是另一个指针，因此下一步应直接驱动 cleanup ownership
+关系，而不是继续扩 parser/import 规模。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
 core real-CVE 正例；LIBXML2 只能保留为 native pipeline / BindingSpec /
 crash-accounting sanity evidence。主预算应围绕 PDF003 的 cross-target hard
 evidence、GPAC_3403 的 lifecycle-alias repair，以及新的自然输入驱动 real-CVE
