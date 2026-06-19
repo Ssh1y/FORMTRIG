@@ -80,7 +80,8 @@ options:
                           max retained records to endpoint replay, 0 means all,
                           default 0
   --typed-retain-endpoint-selection MODE
-                          input-order|best-d-f|op-diverse, default best-d-f
+                          input-order|best-d-f|op-diverse|structure-best|df-structure,
+                          default best-d-f
   --typed-retain-endpoint-cmd CMD
                           endpoint replay command; use @@ for retained input,
                           default FORMTRIG MP4Box -cat @@ white.mp4 -out /dev/null
@@ -631,10 +632,10 @@ case "$typed_retain_endpoint_replay" in
     ;;
 esac
 case "$typed_retain_endpoint_selection" in
-  input-order|best-d-f|op-diverse)
+  input-order|best-d-f|op-diverse|structure-best|df-structure)
     ;;
   *)
-    echo "--typed-retain-endpoint-selection must be input-order, best-d-f, or op-diverse: $typed_retain_endpoint_selection" >&2
+    echo "--typed-retain-endpoint-selection must be input-order, best-d-f, op-diverse, structure-best, or df-structure: $typed_retain_endpoint_selection" >&2
     exit 2
     ;;
 esac

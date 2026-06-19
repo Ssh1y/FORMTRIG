@@ -82,17 +82,18 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Endpoint metrics: FORMTRIG endpoint ASAN/double-free success after repair, first _T / terminal-crash wall-clock time after repair, retained variant endpoint signature overlap with positive control, same_object lifecycle alias relation observed at runtime
 - Claim boundary: This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.
 - Blocking issue:
-- latest B7 relation endpoint gate ran for 601s and passed strict pre-trigger guidance (35 accepted/saved non-trigger progress events, 1819 spec-lifted events, 224 typed execs, 38 typed finds) but still produced terminal _T=0, ASAN/double-free=0; the repaired campaign-progress alias audit proves release->reassign same-object equality while cleanup GF_BitStream->original points to a different value; retained endpoint variants reach only 8 samples / 26 NALUs versus positive control 172 / 413, so the remaining blocker is cleanup ownership plus relation-aware retained selection, not just parser-scale mutation
+- latest B7 relation endpoint gate and df-structure replay still produced terminal _T=0, ASAN/double-free=0; release->reassign same-object equality is observed, but cleanup GF_BitStream->original points to a different value; df-structure improves retained endpoint import coverage but still misses nal_type_49_not_handled and asan_double_free, so remaining work is cleanup ownership plus extractor/double-free closure rather than matched baselines
 - Mechanism evidence required after benefit:
 - same_object object identity across lifecycle_event and use endpoints
 - endpoint ASAN/double-free or equivalent alias/free terminal proof
 - D_F_spec_lifted reaches the replay pre-abort distance and remains non-terminal until endpoint
 - typed mutation provenance for endpoint-scale VPS/SPS/PPS/slice/access-unit construction
 - Current primary benefits:
-- GPAC now has stable TC-rooted pre-trigger guidance and typed-retained endpoint packaging: the B7 gate saved 35 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 224 typed candidates, replayed 128 endpoint variants, and proved release->reassign alias observation. This is mechanism evidence only; endpoint closure is still missing.
+- GPAC now has stable TC-rooted pre-trigger guidance, typed-retained endpoint packaging, and a positive retained-selection repair: the B7 gate saved 35 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 224 typed candidates, and proved release->reassign alias observation; the new df-structure endpoint selection preserves D_F priority and improves retained replay coverage from 38 to 60 HEVC-import files and from 6 to 11 L-HEVC-import files. This is mechanism/selection evidence only; endpoint closure is still missing.
 - Post-unblock commands or steps:
-- repair relation-aware cleanup ownership and retained-candidate selection
-- rerun `scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1`
+- rerun `scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1` with df-structure selection
+- repair cleanup GF_BitStream->original ownership so it equals the release/reassign sample-data pointer
+- repair nal_type_49/double-free closure if cleanup alias still does not trigger ASAN
 - require ASAN/double-free or equivalent alias/free proof before matched baselines
 - only then run matched 600s/7200s faithful baselines
 - Evidence paths:
@@ -126,6 +127,10 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.md
 - artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.json
 - artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.md
+- artifacts/formtrig_native_readiness/gpac3403_b7_df_structure_selection_20260619.json
+- artifacts/formtrig_native_readiness/gpac3403_b7_df_structure_selection_20260619.md
+- artifacts/formtrig_native_readiness/raw/gpac3403_b7_df_structure_endpoint_replay_20260619T234445Z/typed_retained_endpoint_replay_summary.json
+- artifacts/formtrig_native_readiness/raw/gpac3403_b7_df_structure_endpoint_replay_20260619T234445Z/endpoint_signature_audit.json
 - artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/alias_relation_audit.json
 - artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/runs/formtrig_rep1/typed_retained_audit_package.json
 - artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json

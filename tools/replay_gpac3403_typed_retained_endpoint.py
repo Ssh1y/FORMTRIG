@@ -25,6 +25,8 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FRONTIER_SWEEP = REPO_ROOT / "tools" / "gpac3403_hevc_frontier_sweep.py"
+DEFAULT_STRUCTURE_HOOK = REPO_ROOT / "scripts" / "formtrig_hooks" / "hevc_annexb_structure_hook.py"
+ENDPOINT_RELEVANT_TYPES = {0, 1, 5, 14, 16, 19, 20, 21, 32, 33, 34, 49}
 
 
 def load_frontier_sweep() -> ModuleType:
@@ -34,6 +36,16 @@ def load_frontier_sweep() -> ModuleType:
     )
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load GPAC frontier sweep helper: {FRONTIER_SWEEP}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_structure_hook(path: Path) -> ModuleType:
+    spec = importlib.util.spec_from_file_location("gpac3403_retained_structure_hook", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load GPAC structure hook: {path}")
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
@@ -125,11 +137,102 @@ def select_op_diverse(records: list[dict[str, Any]], max_records: int) -> list[d
         depth += 1
 
 
+def structure_profile(record: dict[str, Any], hook: ModuleType) -> dict[str, Any]:
+    path = Path(str(record.get("path") or ""))
+    if not path.is_file():
+        return {
+            "available": False,
+            "score": 0,
+            "nalu_count": 0,
+            "unique_types": [],
+            "unique_layers": [],
+            "size": 0,
+        }
+
+    data = path.read_bytes()
+    nalus = hook.parse_nalus(data)
+    types = [hook.nalu_type(data, nalu) for nalu in nalus]
+    layers = [hook.layer_id(data, nalu) for nalu in nalus]
+    unique_types = sorted({value for value in types if value >= 0})
+    unique_layers = sorted(set(layers))
+    parameter_count = sum(1 for value in types if value in {32, 33, 34})
+    vcl_count = sum(1 for value in types if 0 <= value <= 31)
+    extractor_count = sum(1 for value in types if value == 49)
+    endpoint_type_count = sum(1 for value in types if value in ENDPOINT_RELEVANT_TYPES)
+    high_layer_count = sum(1 for value in layers if value > 4)
+    max_layer = max(layers) if layers else None
+    score = (
+        len(nalus) * 16
+        + len(unique_types) * 24
+        + len(unique_layers) * 16
+        + endpoint_type_count * 8
+        + parameter_count * 10
+        + vcl_count * 8
+        + extractor_count * 80
+        + high_layer_count * 6
+        + min(len(data), 65536) // 128
+    )
+    return {
+        "available": True,
+        "score": score,
+        "nalu_count": len(nalus),
+        "unique_types": unique_types,
+        "unique_layers": unique_layers,
+        "max_layer": max_layer,
+        "parameter_count": parameter_count,
+        "vcl_count": vcl_count,
+        "extractor_count": extractor_count,
+        "endpoint_type_count": endpoint_type_count,
+        "high_layer_count": high_layer_count,
+        "size": len(data),
+    }
+
+
+def select_structure_best(
+    records: list[dict[str, Any]],
+    max_records: int,
+    hook: ModuleType,
+    *,
+    d_f_first: bool = False,
+) -> list[dict[str, Any]]:
+    scored: list[dict[str, Any]] = []
+    for record in records:
+        profile = structure_profile(record, hook)
+        enriched = dict(record)
+        enriched["endpoint_selection_profile"] = profile
+        scored.append(enriched)
+
+    if d_f_first:
+        scored.sort(
+            key=lambda record: (
+                record_d_f(record) if record_d_f(record) is not None else 1.0e300,
+                -int(record["endpoint_selection_profile"].get("score") or 0),
+                -int(record["endpoint_selection_profile"].get("nalu_count") or 0),
+                -int(record["endpoint_selection_profile"].get("size") or 0),
+                int(record.get("index") or 0),
+            )
+        )
+    else:
+        scored.sort(
+            key=lambda record: (
+                -int(record["endpoint_selection_profile"].get("score") or 0),
+                -int(record["endpoint_selection_profile"].get("nalu_count") or 0),
+                -int(record["endpoint_selection_profile"].get("size") or 0),
+                record_d_f(record) if record_d_f(record) is not None else 1.0e300,
+                int(record.get("index") or 0),
+            )
+        )
+    if max_records > 0:
+        scored = scored[:max_records]
+    return scored
+
+
 def select_records(
     records: list[dict[str, Any]],
     max_records: int,
     d_f_max: float | None,
     selection: str,
+    structure_hook: ModuleType | None = None,
 ) -> list[dict[str, Any]]:
     selected = []
     for record in records:
@@ -149,6 +252,16 @@ def select_records(
         )
     elif selection == "op-diverse":
         selected = select_op_diverse(selected, max_records)
+        return selected
+    elif selection == "structure-best":
+        if structure_hook is None:
+            raise ValueError("structure-best selection requires a structure hook")
+        selected = select_structure_best(selected, max_records, structure_hook)
+        return selected
+    elif selection == "df-structure":
+        if structure_hook is None:
+            raise ValueError("df-structure selection requires a structure hook")
+        selected = select_structure_best(selected, max_records, structure_hook, d_f_first=True)
         return selected
     elif selection != "input-order":
         raise ValueError(f"unknown selection policy: {selection}")
@@ -197,6 +310,16 @@ def summarize(
         if probe.get("timed_out")
     )
     d_f_values = [record_d_f(record) for record in enriched if record_d_f(record) is not None]
+    structure_profiles = [
+        record.get("endpoint_selection_profile")
+        for record in enriched
+        if isinstance(record.get("endpoint_selection_profile"), dict)
+    ]
+    structure_scores = [
+        int(profile.get("score") or 0)
+        for profile in structure_profiles
+        if profile.get("available")
+    ]
     return {
         "schema": "formtrig_gpac3403_typed_retained_endpoint_replay_v1",
         "records_jsonl": str(records_path),
@@ -220,6 +343,10 @@ def summarize(
         "selection": args.selection,
         "max_records": args.max_records,
         "d_f_max": args.d_f_max,
+        "structure_hook": str(args.structure_hook) if args.selection in {"structure-best", "df-structure"} else None,
+        "structure_profiled_records": len(structure_profiles),
+        "structure_score_min": min(structure_scores) if structure_scores else None,
+        "structure_score_max": max(structure_scores) if structure_scores else None,
         "endpoint_probe_runs": endpoint_probe_runs,
         "endpoint_sanitizer_crashes": endpoint_sanitizer_crashes,
         "endpoint_native_crashes": endpoint_native_crashes,
@@ -242,7 +369,18 @@ def build_replay(args: argparse.Namespace) -> dict[str, Any]:
         raise SystemExit("--endpoint-cmd must not be empty")
     endpoint_env = sweep.parse_env_pairs(args.endpoint_env)
     all_records = read_records(records_path)
-    selected = select_records(all_records, args.max_records, args.d_f_max, args.selection)
+    structure_hook = (
+        load_structure_hook(args.structure_hook)
+        if args.selection in {"structure-best", "df-structure"}
+        else None
+    )
+    selected = select_records(
+        all_records,
+        args.max_records,
+        args.d_f_max,
+        args.selection,
+        structure_hook,
+    )
     started = time.time()
     enriched: list[dict[str, Any]] = []
 
@@ -309,7 +447,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--endpoint-positive-control", type=Path)
     parser.add_argument("--max-records", type=int, default=0, help="0 means replay every selected record.")
     parser.add_argument("--d-f-max", type=float)
-    parser.add_argument("--selection", choices=("input-order", "best-d-f", "op-diverse"), default="input-order")
+    parser.add_argument(
+        "--selection",
+        choices=("input-order", "best-d-f", "op-diverse", "structure-best", "df-structure"),
+        default="input-order",
+    )
+    parser.add_argument("--structure-hook", type=Path, default=DEFAULT_STRUCTURE_HOOK)
     parser.add_argument("--out-summary", type=Path)
     parser.add_argument("--out-records-jsonl", type=Path)
     args = parser.parse_args(argv)

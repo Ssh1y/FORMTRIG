@@ -1,0 +1,88 @@
+{
+  "schema": "formtrig_gpac3403_b7_endpoint_selection_repair_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T23:48:00Z",
+  "basis_run": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z",
+  "basis_records": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/runs/formtrig_rep1/typed_retained_records.jsonl",
+  "implemented_selection": "df-structure",
+  "implemented_in": [
+    "tools/replay_gpac3403_typed_retained_endpoint.py",
+    "scripts/run_gpac3403_typedops36_matched_longrun.sh",
+    "scripts/run_gpac3403_b7_relation_endpoint_gate.sh"
+  ],
+  "selection_results": [
+    {
+      "selection": "op-diverse",
+      "run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z",
+      "input_records": 224,
+      "selected_records": 128,
+      "replayed_records": 128,
+      "structure_profiled_records": 0,
+      "endpoint_sanitizer_crashes": 0,
+      "endpoint_native_crashes": 0,
+      "positive_control_native_crashes": 1,
+      "variant_hevc_import_files": 38,
+      "variant_lhevc_import_files": 6,
+      "variant_hevc_samples_max": 8,
+      "variant_hevc_nalus_max": 26,
+      "variant_asan_double_free_files": 0,
+      "positive_control_signatures_absent_from_variants": [
+        "nal_type_49_not_handled",
+        "asan_double_free"
+      ]
+    },
+    {
+      "selection": "structure-best",
+      "run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_structure_best_endpoint_replay_20260619T234119Z",
+      "input_records": 224,
+      "selected_records": 128,
+      "replayed_records": 128,
+      "structure_profiled_records": 128,
+      "structure_score_min": 1024,
+      "structure_score_max": 22012,
+      "endpoint_sanitizer_crashes": 0,
+      "endpoint_native_crashes": 0,
+      "positive_control_native_crashes": 1,
+      "variant_hevc_import_files": 5,
+      "variant_lhevc_import_files": 0,
+      "variant_hevc_samples_max": 8,
+      "variant_hevc_nalus_max": 26,
+      "variant_asan_double_free_files": 0,
+      "positive_control_signatures_absent_from_variants": [
+        "wrong_output_layer_sets",
+        "failed_vps_extensions",
+        "layers_only_4",
+        "vps_max_layer_id",
+        "video_param_set_error",
+        "nal_type_32_error",
+        "nal_type_49_not_handled",
+        "lhevc_import_results",
+        "asan_double_free"
+      ]
+    },
+    {
+      "selection": "df-structure",
+      "run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_df_structure_endpoint_replay_20260619T234445Z",
+      "input_records": 224,
+      "selected_records": 128,
+      "replayed_records": 128,
+      "structure_profiled_records": 128,
+      "structure_score_min": 309,
+      "structure_score_max": 22012,
+      "endpoint_sanitizer_crashes": 0,
+      "endpoint_native_crashes": 0,
+      "positive_control_native_crashes": 1,
+      "variant_hevc_import_files": 60,
+      "variant_lhevc_import_files": 11,
+      "variant_hevc_samples_max": 8,
+      "variant_hevc_nalus_max": 26,
+      "variant_asan_double_free_files": 0,
+      "positive_control_signatures_absent_from_variants": [
+        "nal_type_49_not_handled",
+        "asan_double_free"
+      ]
+    }
+  ],
+  "interpretation": "Pure structure maximization is a negative selection policy because large malformed candidates are rejected before useful GPAC import behavior. D_F-first structure ranking preserves FORMTRIG's lifted objective priority and uses HEVC structure only as a tie-breaker, improving retained endpoint import coverage from 38 to 60 HEVC-import files and from 6 to 11 L-HEVC-import files without claiming endpoint closure.",
+  "claim_boundary": "This is a retained endpoint selection repair, not a new terminal success. GPAC_3403 still has terminal _T=0 and ASAN/double-free=0 under these replays; matched baselines remain blocked until the B7 gate closes alias/free or reaches ASAN/double-free."
+}

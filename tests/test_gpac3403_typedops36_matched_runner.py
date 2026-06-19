@@ -159,7 +159,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertEqual(metadata["typed_ops"], 48)
             self.assertEqual(metadata["typed_op_start"], 44)
             self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")
-            self.assertEqual(metadata["typed_retain_endpoint_selection"], "op-diverse")
+            self.assertEqual(metadata["typed_retain_endpoint_selection"], "df-structure")
             self.assertEqual(metadata["typed_retain_endpoint_max_records"], 128)
             self.assertIn("GPAC_3403.poc", metadata["typed_retain_endpoint_positive_control"])
 
@@ -172,6 +172,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             ).read_text(encoding="utf-8")
             self.assertIn("--seed-preflight-timeout 10", runner)
             self.assertIn("--typed-retain-endpoint-replay", runner)
+            self.assertIn("--typed-retain-endpoint-selection df-structure", runner)
             self.assertIn("GPAC_3403.native_b7_relation_value_candidate.yml", runner)
             self.assertIn("GPAC_3403.poc", runner)
 

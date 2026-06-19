@@ -17,7 +17,7 @@ exec "$repo_root/scripts/run_gpac3403_typedops36_matched_longrun.sh" \
   --typed-retain-max 256 \
   --typed-retain-mode all \
   --typed-retain-endpoint-replay on \
-  --typed-retain-endpoint-selection op-diverse \
+  --typed-retain-endpoint-selection df-structure \
   --typed-retain-endpoint-max-records 128 \
   --typed-retain-endpoint-positive-control "$repo_root/benchmarks/cve_pocs/gpac/GPAC_3403.poc" \
   "$@"

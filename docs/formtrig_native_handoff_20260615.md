@@ -378,6 +378,13 @@ The retained endpoint replay still has `_T=0`, ASAN/double-free=0, and only
 8 samples / 26 NALUs at maximum versus positive control 172 / 413. GPAC_3403
 therefore remains a lifecycle-alias repair target: next repair must target
 cleanup ownership plus relation-aware retained selection, not matched baselines.
+The first selection repair is now in
+`artifacts/formtrig_native_readiness/gpac3403_b7_df_structure_selection_20260619.json`:
+pure `structure-best` is a negative policy, but `df-structure` keeps lifted
+`D_F_spec_lifted` priority and uses HEVC structure only as a tie-breaker,
+improving retained endpoint replay from 38 to 60 HEVC-import files and from
+6 to 11 L-HEVC-import files. This is still not endpoint closure because
+ASAN/double-free remains 0.
 Typed-retained endpoint packages now embed the alias relation audit verdict, so
 future GPAC evidence packages cannot claim endpoint closure from parser/import
 signatures alone. New hard-pain budget should
@@ -1373,7 +1380,9 @@ endpoint 正例；B7 relation endpoint gate 已经证明 strict pre-trigger guid
 release->reassign alias observation，但 601s 内 `_T=0`、ASAN/double-free=0，cleanup
 GF_BitStream->original 尚未同指针，retained replay 的最大 import scale 也只有
 8 samples / 26 NALUs：下一步要先修 relation-aware retained selection 和 cleanup
-ownership mutation，再进入 matched baselines。GPAC retained endpoint package 会自动
+ownership mutation，再进入 matched baselines。`df-structure` selection repair 已经
+把 retained endpoint replay 覆盖从 38/6 提高到 60/11 HEVC/L-HEVC import files，
+但没有触发 ASAN/double-free，所以这只是 selection 侧正向修复。GPAC retained endpoint package 会自动
 嵌入 alias relation audit，避免把 parser/import 近邻当作 endpoint 闭环。
 最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。
