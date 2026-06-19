@@ -15,6 +15,13 @@ monitor_poll="${FORMTRIG_STATS_MONITOR_POLL:-10}"
 typed_ops="36"
 typed_mutation_max="64"
 typed_retain_max="0"
+typed_retain_endpoint_replay="off"
+typed_retain_endpoint_timeout="5"
+typed_retain_endpoint_replays="1"
+typed_retain_endpoint_max_records="0"
+typed_retain_endpoint_selection="best-d-f"
+typed_retain_endpoint_cmd=""
+typed_retain_endpoint_positive_control=""
 seed_preflight="require"
 seed_preflight_max="1"
 seed_preflight_timeout="2"
@@ -52,6 +59,25 @@ options:
   --typed-mutation-max N  FORMTRIG_TYPED_MUTATION_MAX, default 64
   --typed-retain-max N    retain up to N non-queued typed candidates per rep,
                           default 0/off
+  --typed-retain-endpoint-replay MODE
+                          off|on, replay retained candidates through endpoint
+                          before packaging, default off
+  --typed-retain-endpoint-timeout SEC
+                          per retained endpoint replay timeout, default 5
+  --typed-retain-endpoint-replays N
+                          endpoint replay repetitions per retained candidate,
+                          default 1
+  --typed-retain-endpoint-max-records N
+                          max retained records to endpoint replay, 0 means all,
+                          default 0
+  --typed-retain-endpoint-selection MODE
+                          input-order|best-d-f, default best-d-f
+  --typed-retain-endpoint-cmd CMD
+                          endpoint replay command; use @@ for retained input,
+                          default FORMTRIG MP4Box -cat @@ white.mp4 -out /dev/null
+  --typed-retain-endpoint-positive-control FILE
+                          optional positive-control input replayed through the
+                          same endpoint command
   --seed-dir DIR          HEVC RNT seed corpus
   --binding-spec FILE     FORMTRIG BindingSpec
   --site-map FILE         FORMTRIG native site map
@@ -306,8 +332,38 @@ summarize_typed_retained_one() {
     --out-json "$run_out/typed_retained_summary.json" \
     --out-records-jsonl "$run_out/typed_retained_records.jsonl" \
     > "$run_out/typed_retained_summary.stdout"
+  local package_records="$run_out/typed_retained_records.jsonl"
+  local -a package_args=()
+  if [[ "$typed_retain_endpoint_replay" == "on" ]]; then
+    local endpoint_cmd="$typed_retain_endpoint_cmd"
+    if [[ -z "$endpoint_cmd" ]]; then
+      endpoint_cmd="$(target_cmd_string "$formtrig_binary")"
+    fi
+    local -a replay_args=(
+      python3 "$repo_root/tools/replay_gpac3403_typed_retained_endpoint.py"
+      --run-dir "$run_out"
+      --records-jsonl "$run_out/typed_retained_records.jsonl"
+      --endpoint-cmd "$endpoint_cmd"
+      --endpoint-timeout "$typed_retain_endpoint_timeout"
+      --endpoint-replays "$typed_retain_endpoint_replays"
+      --selection "$typed_retain_endpoint_selection"
+      --out-summary "$run_out/typed_retained_endpoint_replay_summary.json"
+      --out-records-jsonl "$run_out/typed_retained_endpoint_records.jsonl"
+    )
+    if [[ "$typed_retain_endpoint_max_records" != "0" ]]; then
+      replay_args+=(--max-records "$typed_retain_endpoint_max_records")
+    fi
+    if [[ -n "$typed_retain_endpoint_positive_control" ]]; then
+      replay_args+=(--endpoint-positive-control "$typed_retain_endpoint_positive_control")
+    fi
+    "${replay_args[@]}" > "$run_out/typed_retained_endpoint_replay.stdout"
+    package_records="$run_out/typed_retained_endpoint_records.jsonl"
+    package_args+=(--endpoint-summary "$run_out/typed_retained_endpoint_replay_summary.json")
+  fi
   python3 "$repo_root/tools/package_gpac3403_typed_retained_audit.py" \
     --run-dir "$run_out" \
+    --records-jsonl "$package_records" \
+    "${package_args[@]}" \
     --out "$run_out/typed_retained_audit_package.json" \
     > "$run_out/typed_retained_audit_package.stdout"
 }
@@ -331,6 +387,13 @@ write_metadata() {
   "timeout_oracle": "-t $timeout_arg",
   "typed_mutation_max": $typed_mutation_max,
   "typed_retain_max": $typed_retain_max,
+  "typed_retain_endpoint_replay": "$typed_retain_endpoint_replay",
+  "typed_retain_endpoint_timeout": $typed_retain_endpoint_timeout,
+  "typed_retain_endpoint_replays": $typed_retain_endpoint_replays,
+  "typed_retain_endpoint_max_records": $typed_retain_endpoint_max_records,
+  "typed_retain_endpoint_selection": "$typed_retain_endpoint_selection",
+  "typed_retain_endpoint_cmd": $(json_escape "$typed_retain_endpoint_cmd"),
+  "typed_retain_endpoint_positive_control": $(json_escape "$typed_retain_endpoint_positive_control"),
   "typed_ops": $typed_ops,
   "white_mp4": "$white_mp4"
 }
@@ -381,6 +444,34 @@ while [[ $# -gt 0 ]]; do
       ;;
     --typed-retain-max)
       typed_retain_max="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-endpoint-replay)
+      typed_retain_endpoint_replay="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-endpoint-timeout)
+      typed_retain_endpoint_timeout="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-endpoint-replays)
+      typed_retain_endpoint_replays="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-endpoint-max-records)
+      typed_retain_endpoint_max_records="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-endpoint-selection)
+      typed_retain_endpoint_selection="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-endpoint-cmd)
+      typed_retain_endpoint_cmd="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-endpoint-positive-control)
+      typed_retain_endpoint_positive_control="${2:-}"
       shift 2
       ;;
     --seed-dir)
@@ -464,9 +555,10 @@ case "$seed_preflight" in
     ;;
 esac
 for numeric in "$duration" "$reps" "$jobs" "$monitor_poll" "$typed_ops" \
-  "$typed_mutation_max" "$seed_preflight_max" "$seed_preflight_timeout"; do
+  "$typed_mutation_max" "$seed_preflight_max" "$seed_preflight_timeout" \
+  "$typed_retain_endpoint_timeout" "$typed_retain_endpoint_replays"; do
   if ! [[ "$numeric" =~ ^[0-9]+$ ]] || [[ "$numeric" -lt 1 ]]; then
-    echo "duration, reps, jobs, monitor poll, typed ops, mutation max, and seed preflight limits must be positive integers" >&2
+    echo "duration, reps, jobs, monitor poll, typed ops, mutation max, seed preflight limits, and endpoint replay limits must be positive integers" >&2
     exit 2
   fi
 done
@@ -474,6 +566,26 @@ if ! [[ "$typed_retain_max" =~ ^[0-9]+$ ]]; then
   echo "typed retain max must be a non-negative integer" >&2
   exit 2
 fi
+if ! [[ "$typed_retain_endpoint_max_records" =~ ^[0-9]+$ ]]; then
+  echo "typed retain endpoint max records must be a non-negative integer" >&2
+  exit 2
+fi
+case "$typed_retain_endpoint_replay" in
+  off|on)
+    ;;
+  *)
+    echo "--typed-retain-endpoint-replay must be off or on: $typed_retain_endpoint_replay" >&2
+    exit 2
+    ;;
+esac
+case "$typed_retain_endpoint_selection" in
+  input-order|best-d-f)
+    ;;
+  *)
+    echo "--typed-retain-endpoint-selection must be input-order or best-d-f: $typed_retain_endpoint_selection" >&2
+    exit 2
+    ;;
+esac
 
 seed_dir="$(abs_path "$seed_dir")"
 binding_spec="$(abs_path "$binding_spec")"
@@ -483,6 +595,9 @@ if [[ "$site_map" != /* ]]; then site_map="$(abs_path "$site_map")"; fi
 if [[ "$formtrig_binary" != /* ]]; then formtrig_binary="$(abs_path "$formtrig_binary")"; fi
 if [[ "$plain_binary" != /* ]]; then plain_binary="$(abs_path "$plain_binary")"; fi
 if [[ "$cmplog_binary" != /* ]]; then cmplog_binary="$(abs_path "$cmplog_binary")"; fi
+if [[ -n "$typed_retain_endpoint_positive_control" && "$typed_retain_endpoint_positive_control" != /* ]]; then
+  typed_retain_endpoint_positive_control="$(abs_path "$typed_retain_endpoint_positive_control")"
+fi
 
 if [[ -z "$out_dir" ]]; then
   timeout_safe="${timeout_arg//[^A-Za-z0-9]/}"
@@ -509,6 +624,9 @@ if [[ "$mode" == "execute" ]]; then
   require_path "$formtrig_binary"
   require_path "$plain_binary"
   require_path "$afl_fuzz"
+  if [[ -n "$typed_retain_endpoint_positive_control" ]]; then
+    require_path "$typed_retain_endpoint_positive_control"
+  fi
   for baseline in $(split_list "$baselines"); do
     if baseline_needs_cmplog "$baseline"; then
       require_path "$cmplog_binary"

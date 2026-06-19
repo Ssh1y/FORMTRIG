@@ -249,6 +249,11 @@ def build_package(args: argparse.Namespace) -> dict[str, Any]:
     typed_summary_path = args.typed_summary or run_dir / "typed_retained_summary.json"
     records_jsonl = args.records_jsonl or run_dir / "typed_retained_records.jsonl"
     endpoint_logs_dir = infer_endpoint_logs(run_dir, args.endpoint_logs_dir)
+    endpoint_summary = args.endpoint_summary
+    if endpoint_summary is None:
+        inferred_summary = run_dir / "typed_retained_endpoint_replay_summary.json"
+        if inferred_summary.is_file():
+            endpoint_summary = inferred_summary
     typed_summary = read_json(typed_summary_path)
 
     structure_audit = build_structure_audit(
@@ -260,7 +265,7 @@ def build_package(args: argparse.Namespace) -> dict[str, Any]:
     )
     endpoint_audit = build_endpoint_audit(
         endpoint_logs_dir,
-        args.endpoint_summary,
+        endpoint_summary,
         args.include_endpoint_records,
     )
     return {

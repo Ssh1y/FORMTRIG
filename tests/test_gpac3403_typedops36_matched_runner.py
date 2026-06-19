@@ -158,6 +158,18 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
                     "formtrig,aflplusplus_vanilla",
                     "--typed-retain-max",
                     "32",
+                    "--typed-retain-endpoint-replay",
+                    "on",
+                    "--typed-retain-endpoint-timeout",
+                    "3",
+                    "--typed-retain-endpoint-replays",
+                    "2",
+                    "--typed-retain-endpoint-max-records",
+                    "5",
+                    "--typed-retain-endpoint-selection",
+                    "input-order",
+                    "--typed-retain-endpoint-cmd",
+                    "python3 endpoint.py @@",
                     "--out",
                     str(out_dir),
                 ],
@@ -180,11 +192,19 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
 
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["typed_retain_max"], 32)
+            self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")
+            self.assertEqual(metadata["typed_retain_endpoint_timeout"], 3)
+            self.assertEqual(metadata["typed_retain_endpoint_replays"], 2)
+            self.assertEqual(metadata["typed_retain_endpoint_max_records"], 5)
+            self.assertEqual(metadata["typed_retain_endpoint_selection"], "input-order")
+            self.assertEqual(metadata["typed_retain_endpoint_cmd"], "python3 endpoint.py @@")
 
             runner = (
                 REPO_ROOT / "scripts" / "run_gpac3403_typedops36_matched_longrun.sh"
             ).read_text(encoding="utf-8")
+            self.assertIn("replay_gpac3403_typed_retained_endpoint.py", runner)
             self.assertIn("package_gpac3403_typed_retained_audit.py", runner)
+            self.assertIn("typed_retained_endpoint_records.jsonl", runner)
             self.assertIn("typed_retained_audit_package.json", runner)
 
 

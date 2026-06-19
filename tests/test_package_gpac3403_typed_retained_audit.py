@@ -107,6 +107,18 @@ class PackageGpac3403TypedRetainedAuditTest(unittest.TestCase):
                 "[HEVC] Failed to parse VPS extensions\n",
                 encoding="utf-8",
             )
+            (run_dir / "typed_retained_endpoint_replay_summary.json").write_text(
+                json.dumps(
+                    {
+                        "endpoint_replayed_variants": 1,
+                        "endpoint_sanitizer_crashes": 0,
+                        "endpoint_native_crashes": 0,
+                        "endpoint_timeouts": 0,
+                        "duration_s": 0.1,
+                    }
+                ),
+                encoding="utf-8",
+            )
             out = run_dir / "package.json"
 
             subprocess.run(
@@ -125,6 +137,10 @@ class PackageGpac3403TypedRetainedAuditTest(unittest.TestCase):
         self.assertEqual(assessment["structure_profiled_candidates"], 1)
         self.assertEqual(assessment["endpoint_variant_files"], 1)
         self.assertEqual(assessment["endpoint_positive_control_files"], 1)
+        self.assertEqual(
+            package["endpoint_audit"]["report"]["summary"]["endpoint_replayed_variants"],
+            1,
+        )
         self.assertIn(
             "wrong_output_layer_sets",
             assessment["positive_control_signatures_absent_from_variants"],
