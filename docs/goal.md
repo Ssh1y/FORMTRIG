@@ -1424,7 +1424,10 @@ release/sample->data 与 reassign buffer 已经是同一指针，但 cleanup
 GF_BitStream->original 是另一个指针，因此下一步应直接驱动 cleanup ownership
 关系，而不是继续扩 parser/import 规模。typed-retained endpoint package 现在会
 自动嵌入 alias relation audit verdict，防止只凭 parser/import signature 误判
-GPAC endpoint 闭环。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
+GPAC endpoint 闭环。新增的 `scripts/run_gpac3403_b7_relation_endpoint_gate.sh`
+是下一轮标准 gate：B7 BindingSpec、op44-op47 前置、typed-retained endpoint replay
+和 alias relation audit 同时开启；只有这个 gate 出现 ASAN/double-free 或等价
+alias/free proof 后，GPAC 才能升到 matched baselines。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
 core real-CVE 正例；LIBXML2 只能保留为 native pipeline / BindingSpec /
 crash-accounting sanity evidence。主预算应围绕 PDF003 的 cross-target hard
 evidence、GPAC_3403 的 lifecycle-alias repair，以及新的自然输入驱动 real-CVE

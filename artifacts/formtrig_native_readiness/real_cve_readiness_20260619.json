@@ -31,7 +31,7 @@
       "harness_admissibility_status": "",
       "harness_source_ready": false,
       "native_dt_values": "1",
-      "next_action": "repair the lifecycle-alias/free terminal gap before 7200s x3: drive cleanup ownership so GF_BitStream->original equals the release/reassign sample-data pointer, then rerun FORMTRIG-only endpoint gate and only promote to matched baselines after ASAN/double-free or equivalent alias/free proof",
+      "next_action": "run scripts/run_gpac3403_b7_relation_endpoint_gate.sh as the FORMTRIG-only cleanup-ownership gate before 7200s x3: drive cleanup ownership so GF_BitStream->original equals the release/reassign sample-data pointer, then only promote to matched baselines after ASAN/double-free or equivalent alias/free proof",
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [
@@ -75,7 +75,8 @@
         "rnt_metadata": "artifacts/rnt_corpus/GPAC_3403/metadata.csv",
         "tcir": "artifacts/tcir/GPAC_3403.json",
         "trigger_graph": "artifacts/trigger_graphs/GPAC_3403.json",
-        "validation_log": "artifacts/cve_validation_logs/GPAC_3403.validation.log"
+        "validation_log": "artifacts/cve_validation_logs/GPAC_3403.validation.log",
+        "relation_endpoint_gate_runner": "scripts/run_gpac3403_b7_relation_endpoint_gate.sh"
       },
       "poc_ready": true,
       "priority": 12,

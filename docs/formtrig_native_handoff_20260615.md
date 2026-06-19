@@ -374,7 +374,10 @@ that blocker: release/sample->data and reassign buffer match, but cleanup
 GF_BitStream->original still differs, so the next repair must target cleanup
 ownership rather than more parser scale. Typed-retained endpoint packages now
 embed the alias relation audit verdict, so future GPAC evidence packages cannot
-claim endpoint closure from parser/import signatures alone. New hard-pain budget should
+claim endpoint closure from parser/import signatures alone. The standard next
+gate is `scripts/run_gpac3403_b7_relation_endpoint_gate.sh`: it uses the B7
+BindingSpec, starts typed mutation at op44, enables typed-retained endpoint
+replay, and packages the alias relation audit. New hard-pain budget should
 go to cross-target evidence after PDF003, to GPAC_3403 lifecycle-alias repair, or
 to a replacement real-CVE target whose input naturally drives parser state. Do
 not spend main budget on another PHP003 rerun or on
@@ -1367,5 +1370,7 @@ endpoint 正例；B7 value audit 进一步证明 release->reassign 已经同指�
 GF_BitStream->original 尚未同指针：下一步要先修 relation-aware HEVC/lifecycle
 cleanup ownership mutation，再进入 matched baselines。GPAC retained endpoint package
 会自动嵌入 alias relation audit，避免把 parser/import 近邻当作 endpoint 闭环。
+下一步标准命令是 `scripts/run_gpac3403_b7_relation_endpoint_gate.sh`，先用 B7
+relation gate 证明 cleanup ownership，再决定是否跑 matched baseline。
 最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。

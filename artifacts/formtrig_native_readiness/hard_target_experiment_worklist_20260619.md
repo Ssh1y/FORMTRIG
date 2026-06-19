@@ -91,6 +91,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Current primary benefits:
 - GPAC typed mutation now has endpoint-scale parser/import evidence: op44-op47 variants reach HEVC/L-HEVC import states, match all positive-control parser/import signatures, and exceed the positive-control import scale (221 samples / 550 NALUs vs 172 / 413), while still not producing ASAN/double-free terminal behavior.
 - Post-unblock commands or steps:
+- run `scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1 --out artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_<UTC>` as the FORMTRIG-only cleanup-ownership gate
 - bind and score the sample-data to GF_BitStream->original alias/free relation
 - rerun a FORMTRIG-only endpoint gate with op44-op47 enabled and typed-retained endpoint replay
 - only then run matched 600s/7200s faithful baselines
@@ -100,6 +101,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/binding_specs/GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml
 - artifacts/binding_specs/GPAC_3403.native_b3_nalu_reassign_alias_candidate.yml
 - artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml
+- artifacts/binding_specs/GPAC_3403.native_b7_relation_value_candidate.yml
 - artifacts/cve_bench_candidate_audit.json
 - artifacts/cve_validation_logs/GPAC_3403.validation.log
 - artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json
@@ -123,6 +125,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.json
 - artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.md
 - artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json
+- scripts/run_gpac3403_b7_relation_endpoint_gate.sh
 - artifacts/rnt_corpus/GPAC_3403/manifest.json
 - artifacts/rnt_corpus/GPAC_3403/metadata.csv
 - artifacts/tcir/GPAC_3403.json

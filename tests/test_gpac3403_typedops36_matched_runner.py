@@ -118,6 +118,61 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
             self.assertIn("--typed-ops 40", plan)
 
+    def test_b7_relation_endpoint_gate_defaults_to_alias_audit_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "gpac3403_b7_endpoint_gate"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_gpac3403_b7_relation_endpoint_gate.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--out",
+                    str(out_dir),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual(len(records), 1)
+            self.assertEqual(records[0]["arm"], "formtrig")
+            self.assertEqual(records[0]["duration_s"], 600)
+            self.assertEqual(records[0]["typed_ops"], 48)
+            self.assertEqual(records[0]["typed_op_start"], 44)
+            self.assertEqual(records[0]["typed_schedule"], "op-first")
+            self.assertEqual(records[0]["typed_mutation_max"], 256)
+            self.assertEqual(records[0]["typed_retain_max"], 256)
+            self.assertEqual(records[0]["typed_retain_mode"], "all")
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["arms"], "formtrig")
+            self.assertEqual(metadata["baselines"], "")
+            self.assertIn(
+                "GPAC_3403.native_b7_relation_value_candidate.yml",
+                metadata["binding_spec"],
+            )
+            self.assertEqual(metadata["typed_ops"], 48)
+            self.assertEqual(metadata["typed_op_start"], 44)
+            self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")
+            self.assertEqual(metadata["typed_retain_endpoint_selection"], "op-diverse")
+            self.assertEqual(metadata["typed_retain_endpoint_max_records"], 128)
+            self.assertIn("GPAC_3403.poc", metadata["typed_retain_endpoint_positive_control"])
+
+            plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
+            self.assertIn("FORMTRIG_TYPED_OP_START=44", plan)
+            self.assertIn("FORMTRIG_TYPED_RETAIN_MODE=all", plan)
+            self.assertIn("GPAC_3403.native_b7_relation_value_candidate.yml", plan)
+            runner = (
+                REPO_ROOT / "scripts" / "run_gpac3403_b7_relation_endpoint_gate.sh"
+            ).read_text(encoding="utf-8")
+            self.assertIn("--typed-retain-endpoint-replay", runner)
+            self.assertIn("GPAC_3403.native_b7_relation_value_candidate.yml", runner)
+            self.assertIn("GPAC_3403.poc", runner)
+
     def test_dry_run_supports_nohook_ablation(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "gpac3403_nohook"
