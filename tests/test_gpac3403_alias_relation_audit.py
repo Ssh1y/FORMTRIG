@@ -40,6 +40,15 @@ def component(source_id: int, value: int) -> dict:
     return {"source_id": source_id, "value": value}
 
 
+def progress_component(source_id: int, value: int, role: int, priority: int) -> dict:
+    return {
+        "source_id": source_id,
+        "value": value,
+        "role": role,
+        "priority": priority,
+    }
+
+
 class Gpac3403AliasRelationAuditTest(unittest.TestCase):
     def test_release_reassign_alias_without_cleanup_free_alias(self):
         audit = load_module(AUDIT_PATH, "gpac3403_alias_relation_audit_gap")
@@ -116,6 +125,45 @@ class Gpac3403AliasRelationAuditTest(unittest.TestCase):
         best = report["runtimes"][0]["best_record"]
         self.assertEqual(best["release_cleanup_matches"], [0x30000])
         self.assertEqual(best["same_object_cleanup_matches"], [0x30000])
+
+    def test_campaign_progress_schema_uses_component_values_and_lowercase_df(self):
+        audit = load_module(AUDIT_PATH, "gpac3403_alias_relation_audit_progress")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            lift = root / "b7.normalized.lift"
+            runtime = root / "formtrig_progress.jsonl"
+            write_lift(lift)
+            runtime.write_text(
+                json.dumps(
+                    {
+                        "components": 6,
+                        "component_values": [
+                            progress_component(1001, 0x40000, 7, 26),
+                            progress_component(1002, 0x40000, 8, 60),
+                            progress_component(1003, 0x50000, 6, 42),
+                            progress_component(1004, 1, 7, 25),
+                            progress_component(1005, 1, 6, 40),
+                            progress_component(1006, 1, 1, 50),
+                        ],
+                        "d_f_spec_lifted": 2,
+                        "reached": 1,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            report = audit.build_report(lift, [runtime])
+
+        self.assertEqual(
+            report["verdict"]["status"],
+            "release_reassign_alias_observed_terminal_cleanup_missing",
+        )
+        best = report["runtimes"][0]["best_record"]
+        self.assertEqual(best["component_count"], 6)
+        self.assertEqual(best["d_f_spec_lifted"], 2)
+        self.assertEqual(best["release_same_object_matches"], [0x40000])
+        self.assertEqual(best["cleanup_values"], [0x50000])
 
 
 if __name__ == "__main__":

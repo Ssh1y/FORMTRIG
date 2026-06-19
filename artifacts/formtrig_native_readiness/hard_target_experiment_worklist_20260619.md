@@ -16,7 +16,7 @@ Tasks: `28`; runnable now: `0`; blocked/gated: `28`; demoted controls skipped: `
 | priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
 | P0 | 1 | PDF003 | magma | visible_hard_speedup_or_reliability | expand_cross_target_hard_evidence | blocked | The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign. |
-| P0 | 4 | GPAC_3403 | real_cve | not_assessed | repair_real_cve_lifecycle_alias_to_endpoint | blocked | Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget. |
+| P0 | 4 | GPAC_3403 | real_cve | not_assessed_until_endpoint_closure | repair_real_cve_lifecycle_alias_to_endpoint | blocked | Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget. |
 | P1 | 5 | SQL013 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 6 | SSL009 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 7 | PHP010 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -77,23 +77,23 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 ### P0 GPAC_3403 - repair_real_cve_lifecycle_alias_to_endpoint
 
 - Benefit to prove: Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget.
-- SOTA pain: `not_assessed`
-- SOTA pain evidence: collect matched FORMTRIG and faithful baseline evidence
+- SOTA pain: `not_assessed_until_endpoint_closure`
+- SOTA pain evidence: B7 gate has strict pre-trigger guidance but no endpoint _T; baseline pain cannot be assessed until FORMTRIG endpoint closure exists.
 - Endpoint metrics: FORMTRIG endpoint ASAN/double-free success after repair, first _T / terminal-crash wall-clock time after repair, retained variant endpoint signature overlap with positive control, same_object lifecycle alias relation observed at runtime
 - Claim boundary: This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.
 - Blocking issue:
-- lifecycle alias/free relation is not proven at runtime: B7 value audit proves release->reassign same-object equality, but cleanup GF_BitStream->original points to a different value; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free
+- latest B7 relation endpoint gate ran for 601s and passed strict pre-trigger guidance (35 accepted/saved non-trigger progress events, 1819 spec-lifted events, 224 typed execs, 38 typed finds) but still produced terminal _T=0, ASAN/double-free=0; the repaired campaign-progress alias audit proves release->reassign same-object equality while cleanup GF_BitStream->original points to a different value; retained endpoint variants reach only 8 samples / 26 NALUs versus positive control 172 / 413, so the remaining blocker is cleanup ownership plus relation-aware retained selection, not just parser-scale mutation
 - Mechanism evidence required after benefit:
 - same_object object identity across lifecycle_event and use endpoints
 - endpoint ASAN/double-free or equivalent alias/free terminal proof
 - D_F_spec_lifted reaches the replay pre-abort distance and remains non-terminal until endpoint
 - typed mutation provenance for endpoint-scale VPS/SPS/PPS/slice/access-unit construction
 - Current primary benefits:
-- GPAC typed mutation now has endpoint-scale parser/import evidence: op44-op47 variants reach HEVC/L-HEVC import states, match all positive-control parser/import signatures, and exceed the positive-control import scale (221 samples / 550 NALUs vs 172 / 413), while still not producing ASAN/double-free terminal behavior.
+- GPAC now has stable TC-rooted pre-trigger guidance and typed-retained endpoint packaging: the B7 gate saved 35 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 224 typed candidates, replayed 128 endpoint variants, and proved release->reassign alias observation. This is mechanism evidence only; endpoint closure is still missing.
 - Post-unblock commands or steps:
-- run `scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1 --out artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_<UTC>` as the FORMTRIG-only cleanup-ownership gate
-- bind and score the sample-data to GF_BitStream->original alias/free relation
-- rerun a FORMTRIG-only endpoint gate with op44-op47 enabled and typed-retained endpoint replay
+- repair relation-aware cleanup ownership and retained-candidate selection
+- rerun `scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1`
+- require ASAN/double-free or equivalent alias/free proof before matched baselines
 - only then run matched 600s/7200s faithful baselines
 - Evidence paths:
 - artifacts/atoms/GPAC_3403.json
@@ -124,6 +124,10 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.md
 - artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.json
 - artifacts/formtrig_native_readiness/gpac3403_alias_relation_audit_20260619.md
+- artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.json
+- artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.md
+- artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/alias_relation_audit.json
+- artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/runs/formtrig_rep1/typed_retained_audit_package.json
 - artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json
 - scripts/run_gpac3403_b7_relation_endpoint_gate.sh
 - artifacts/rnt_corpus/GPAC_3403/manifest.json

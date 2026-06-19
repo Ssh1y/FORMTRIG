@@ -1060,17 +1060,17 @@
       "action": "repair_real_cve_lifecycle_alias_to_endpoint",
       "benefit_to_prove": "Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget.",
       "blocked_claims": [
-        "lifecycle alias/free relation is not proven at runtime: B7 value audit proves release->reassign same-object equality, but cleanup GF_BitStream->original points to a different value; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free"
+        "latest B7 relation endpoint gate ran for 601s and passed strict pre-trigger guidance (35 accepted/saved non-trigger progress events, 1819 spec-lifted events, 224 typed execs, 38 typed finds) but still produced terminal _T=0, ASAN/double-free=0; the repaired campaign-progress alias audit proves release->reassign same-object equality while cleanup GF_BitStream->original points to a different value; retained endpoint variants reach only 8 samples / 26 NALUs versus positive control 172 / 413, so the remaining blocker is cleanup ownership plus relation-aware retained selection, not just parser-scale mutation"
       ],
       "blocking_issue": [
-        "lifecycle alias/free relation is not proven at runtime: B7 value audit proves release->reassign same-object equality, but cleanup GF_BitStream->original points to a different value; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free"
+        "latest B7 relation endpoint gate ran for 601s and passed strict pre-trigger guidance (35 accepted/saved non-trigger progress events, 1819 spec-lifted events, 224 typed execs, 38 typed finds) but still produced terminal _T=0, ASAN/double-free=0; the repaired campaign-progress alias audit proves release->reassign same-object equality while cleanup GF_BitStream->original points to a different value; retained endpoint variants reach only 8 samples / 26 NALUs versus positive control 172 / 413, so the remaining blocker is cleanup ownership plus relation-aware retained selection, not just parser-scale mutation"
       ],
       "category": "compound-sequence-lifecycle",
       "claim_boundary": "This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.",
       "command": "scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1 --out artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_<UTC>",
       "comparison_verdict": "ten_min_single_rep_not_replicated",
       "current_primary_benefits": [
-        "GPAC typed mutation now has endpoint-scale parser/import evidence: op44-op47 variants reach HEVC/L-HEVC import states, match all positive-control parser/import signatures, and exceed the positive-control import scale (221 samples / 550 NALUs vs 172 / 413), while still not producing ASAN/double-free terminal behavior."
+        "GPAC now has stable TC-rooted pre-trigger guidance and typed-retained endpoint packaging: the B7 gate saved 35 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 224 typed candidates, replayed 128 endpoint variants, and proved release->reassign alias observation. This is mechanism evidence only; endpoint closure is still missing."
       ],
       "duration_s": "",
       "evidence_paths": [
@@ -1109,7 +1109,11 @@
         "artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.json",
         "artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.md",
         "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/summary.json",
-        "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/endpoint_signature_audit.json"
+        "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/endpoint_signature_audit.json",
+        "artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.json",
+        "artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.md",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/alias_relation_audit.json",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/runs/formtrig_rep1/typed_retained_audit_package.json"
       ],
       "lane": "binding_spec_first",
       "main_claim_strength": "",
@@ -1120,9 +1124,9 @@
         "typed mutation provenance for endpoint-scale VPS/SPS/PPS/slice/access-unit construction"
       ],
       "post_unblock_commands": [
-        "scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1 --out artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_<UTC>",
-        "bind and score the sample-data to GF_BitStream->original alias/free relation",
-        "rerun a FORMTRIG-only endpoint gate with op44-op47 enabled and typed-retained endpoint replay",
+        "repair relation-aware cleanup ownership and retained-candidate selection",
+        "rerun scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1",
+        "require ASAN/double-free or equivalent alias/free proof before matched baselines",
         "only then run matched 600s/7200s faithful baselines"
       ],
       "primary_endpoint_metrics": [
@@ -1136,8 +1140,8 @@
       "rank": 4,
       "repetitions": "",
       "runnable_now": false,
-      "sota_pain_class": "not_assessed",
-      "sota_pain_evidence": "collect matched FORMTRIG and faithful baseline evidence",
+      "sota_pain_class": "not_assessed_until_endpoint_closure",
+      "sota_pain_evidence": "B7 gate has strict pre-trigger guidance but no endpoint _T; baseline pain cannot be assessed until FORMTRIG endpoint closure exists.",
       "source": "real_cve",
       "target_id": "GPAC_3403"
     },

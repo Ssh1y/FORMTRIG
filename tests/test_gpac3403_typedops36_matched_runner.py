@@ -151,6 +151,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["arms"], "formtrig")
             self.assertEqual(metadata["baselines"], "")
+            self.assertEqual(metadata["seed_preflight"], "require")
             self.assertIn(
                 "GPAC_3403.native_b7_relation_value_candidate.yml",
                 metadata["binding_spec"],
@@ -169,6 +170,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             runner = (
                 REPO_ROOT / "scripts" / "run_gpac3403_b7_relation_endpoint_gate.sh"
             ).read_text(encoding="utf-8")
+            self.assertIn("--seed-preflight-timeout 10", runner)
             self.assertIn("--typed-retain-endpoint-replay", runner)
             self.assertIn("GPAC_3403.native_b7_relation_value_candidate.yml", runner)
             self.assertIn("GPAC_3403.poc", runner)

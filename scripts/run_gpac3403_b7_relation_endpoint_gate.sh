@@ -8,6 +8,7 @@ exec "$repo_root/scripts/run_gpac3403_typedops36_matched_longrun.sh" \
   --reps 1 \
   --arms formtrig \
   --baselines "" \
+  --seed-preflight-timeout 10 \
   --binding-spec "$repo_root/artifacts/binding_specs/GPAC_3403.native_b7_relation_value_candidate.yml" \
   --typed-ops 48 \
   --typed-op-start 44 \

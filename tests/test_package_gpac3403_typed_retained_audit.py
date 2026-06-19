@@ -48,7 +48,8 @@ def write_alias_runtime(path):
     path.write_text(
         json.dumps(
             {
-                "components": [
+                "components": 6,
+                "component_values": [
                     {"source_id": 1001, "value": 0x10000},
                     {"source_id": 1002, "value": 0x10000},
                     {"source_id": 1003, "value": 0x20000},
@@ -56,8 +57,8 @@ def write_alias_runtime(path):
                     {"source_id": 1005, "value": 1},
                     {"source_id": 1006, "value": 1},
                 ],
-                "D_F_spec_lifted": 2,
-                "reached": True,
+                "d_f_spec_lifted": 2,
+                "reached": 1,
                 "target_hit_count": 1,
             }
         )

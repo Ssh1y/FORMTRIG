@@ -365,19 +365,22 @@ endpoint comparison and is now speedup/control plus mechanism evidence, not a
 hard-pain target; GPAC_3403 is no longer a "draft BindingSpec first" target
 because the real-CVE readiness record proves BindingSpec, short-gate, and
 typed-retained parser-frontier evidence. The 2026-06-19 op44-op47 repair also
-proves the format-scale gap is no longer the main blocker: a 16-variant endpoint
+proves the format-scale gap is not the only blocker: a 16-variant endpoint
 sweep reached 221 samples / 550 NALUs and matched every positive-control
-parser/import signature, leaving only asan and asan_double_free absent. GPAC_3403
-still should not burn 7200s x3 yet because this parser-scale progress has not
-become same-object lifecycle-alias terminal behavior. The B7 value audit narrows
-that blocker: release/sample->data and reassign buffer match, but cleanup
-GF_BitStream->original still differs, so the next repair must target cleanup
-ownership rather than more parser scale. Typed-retained endpoint packages now
-embed the alias relation audit verdict, so future GPAC evidence packages cannot
-claim endpoint closure from parser/import signatures alone. The standard next
-gate is `scripts/run_gpac3403_b7_relation_endpoint_gate.sh`: it uses the B7
-BindingSpec, starts typed mutation at op44, enables typed-retained endpoint
-replay, and packages the alias relation audit. New hard-pain budget should
+parser/import signature, leaving only asan and asan_double_free absent. The
+standard B7 relation endpoint gate has now run:
+`artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.json`.
+It passed strict pre-trigger guidance in 601s with 35 saved non-trigger progress
+events, `D_F_spec_lifted=2..5`, 224 typed execs, and 38 typed finds. The repaired
+alias audit now reads campaign `component_values` and proves release/sample->data
+and reassign buffer match, but cleanup `GF_BitStream->original` still differs.
+The retained endpoint replay still has `_T=0`, ASAN/double-free=0, and only
+8 samples / 26 NALUs at maximum versus positive control 172 / 413. GPAC_3403
+therefore remains a lifecycle-alias repair target: next repair must target
+cleanup ownership plus relation-aware retained selection, not matched baselines.
+Typed-retained endpoint packages now embed the alias relation audit verdict, so
+future GPAC evidence packages cannot claim endpoint closure from parser/import
+signatures alone. New hard-pain budget should
 go to cross-target evidence after PDF003, to GPAC_3403 lifecycle-alias repair, or
 to a replacement real-CVE target whose input naturally drives parser state. Do
 not spend main budget on another PHP003 rerun or on
@@ -1366,11 +1369,11 @@ FORMTRIG native 已经有 PDF003 这一条 hard Magma endpoint speedup/no-guidan
 或机制归因证据；但还没有完成最终实验级闭环。真实 CVE 侧不能再把
 LIBXML2_1107 当主正例，因为它的 harness 暴露了 allocation-failure knob。GPAC_3403
 现在有真实 CVE parser-frontier guidance，但 lifecycle alias audit 证明它还不是
-endpoint 正例；B7 value audit 进一步证明 release->reassign 已经同指针，但 cleanup
-GF_BitStream->original 尚未同指针：下一步要先修 relation-aware HEVC/lifecycle
-cleanup ownership mutation，再进入 matched baselines。GPAC retained endpoint package
-会自动嵌入 alias relation audit，避免把 parser/import 近邻当作 endpoint 闭环。
-下一步标准命令是 `scripts/run_gpac3403_b7_relation_endpoint_gate.sh`，先用 B7
-relation gate 证明 cleanup ownership，再决定是否跑 matched baseline。
+endpoint 正例；B7 relation endpoint gate 已经证明 strict pre-trigger guidance 和
+release->reassign alias observation，但 601s 内 `_T=0`、ASAN/double-free=0，cleanup
+GF_BitStream->original 尚未同指针，retained replay 的最大 import scale 也只有
+8 samples / 26 NALUs：下一步要先修 relation-aware retained selection 和 cleanup
+ownership mutation，再进入 matched baselines。GPAC retained endpoint package 会自动
+嵌入 alias relation audit，避免把 parser/import 近邻当作 endpoint 闭环。
 最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。

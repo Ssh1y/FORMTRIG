@@ -125,6 +125,27 @@ def component_binding(component: dict[str, Any], bindings: dict[int, Binding]) -
     return None
 
 
+def record_components(record: dict[str, Any]) -> tuple[list[dict[str, Any]], int]:
+    raw_components = record.get("components")
+    if isinstance(raw_components, list):
+        components = [row for row in raw_components if isinstance(row, dict)]
+        return components, len(components)
+
+    raw_component_values = record.get("component_values")
+    if isinstance(raw_component_values, list):
+        components = [row for row in raw_component_values if isinstance(row, dict)]
+        return components, len(components)
+
+    parsed_count = intish(raw_components)
+    return [], parsed_count or 0
+
+
+def record_d_f_spec_lifted(record: dict[str, Any]) -> Any:
+    if "D_F_spec_lifted" in record:
+        return record.get("D_F_spec_lifted")
+    return record.get("d_f_spec_lifted")
+
+
 def collect_record_values(
     record: dict[str, Any],
     bindings: dict[int, Binding],
@@ -135,11 +156,9 @@ def collect_record_values(
     release_branch = False
     cleanup_branch = False
     dynamic_root = False
-    components = record.get("components") if isinstance(record.get("components"), list) else []
+    components, component_count = record_components(record)
 
     for component in components:
-        if not isinstance(component, dict):
-            continue
         binding = component_binding(component, bindings)
         role = binding.role if binding else role_name(component.get("role"))
         priority = binding.priority if binding else intish(component.get("priority"))
@@ -198,8 +217,8 @@ def collect_record_values(
         "release_same_object_matches": compact_values(release_same),
         "same_object_cleanup_matches": compact_values(same_cleanup),
         "release_cleanup_matches": compact_values(release_cleanup),
-        "component_count": len(components),
-        "d_f_spec_lifted": record.get("D_F_spec_lifted"),
+        "component_count": component_count,
+        "d_f_spec_lifted": record_d_f_spec_lifted(record),
         "reached": bool(record.get("reached")),
         "target_hit_count": record.get("target_hit_count"),
     }

@@ -1,0 +1,80 @@
+{
+  "schema": "formtrig_gpac3403_b7_relation_endpoint_gate_summary_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T23:31:00Z",
+  "raw_run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z",
+  "runner": "scripts/run_gpac3403_b7_relation_endpoint_gate.sh",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b7_relation_value_candidate.yml",
+  "duration_s": 601,
+  "gate_status": "pass",
+  "formtrig": {
+    "execs_done": 2894,
+    "execs_per_sec": 4.81,
+    "reached_execs": 2895,
+    "terminal_triggered_execs": 0,
+    "saved_crashes": 0,
+    "saved_hangs": 0,
+    "queued_progress": 35,
+    "accepted_non_trigger": 35,
+    "saved_non_trigger": 35,
+    "frontier_updates": 35,
+    "typed_execs": 224,
+    "typed_finds": 38,
+    "best_d_f": 2,
+    "spec_lifted_events": 1819,
+    "d_f_spec_lifted_min": 2,
+    "d_f_spec_lifted_max": 5,
+    "pretrigger_lift_guidance_ready": true,
+    "non_trigger_candidate_lift_delta": true,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed"
+  },
+  "typed_retained": {
+    "retained_records": 224,
+    "existing_inputs": 224,
+    "endpoint_replayed_variants": 128,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_timeouts": 0,
+    "positive_control_native_crashes": 1,
+    "positive_control_sanitizer_crashes": 0
+  },
+  "endpoint_signature": {
+    "variant_hevc_import_files": 38,
+    "variant_hevc_samples_max": 8,
+    "variant_hevc_nalus_max": 26,
+    "variant_lhevc_import_files": 6,
+    "variant_asan_double_free_files": 0,
+    "positive_control_hevc_samples_max": 172,
+    "positive_control_hevc_nalus_max": 413,
+    "positive_control_asan_double_free_files": 1,
+    "positive_control_signatures_absent_from_variants": [
+      "nal_type_49_not_handled",
+      "asan_double_free"
+    ]
+  },
+  "alias_relation_audit": {
+    "status": "release_reassign_alias_observed_terminal_cleanup_missing",
+    "complete_alias_free_relation": false,
+    "release_reassign_alias_observed": true,
+    "best_record": {
+      "release_values": [
+        111371568390752
+      ],
+      "same_object_values": [
+        111371568390752
+      ],
+      "cleanup_values": [
+        111371568313776
+      ],
+      "release_same_object_matches": [
+        111371568390752
+      ],
+      "release_cleanup_matches": [],
+      "same_object_cleanup_matches": [],
+      "d_f_spec_lifted": 2,
+      "component_count": 12
+    }
+  },
+  "claim_boundary": "This gate proves stable TC-rooted pre-trigger guidance and release->reassign alias observation, but it does not prove GPAC_3403 endpoint closure: no terminal _T/ASAN/double-free appears, endpoint variants remain far below the positive-control import scale in this retained replay, and cleanup GF_BitStream->original still uses a different pointer."
+}

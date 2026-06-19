@@ -18,12 +18,12 @@
       "binding_spec_ready": true,
       "binding_spec_validated": true,
       "binding_validation_status": "native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; same_object_binding_not_on_crash_path@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json; partial_mechanism_missing_role_coverage@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json; alias_role_repaired_cleanup_use_not_captured@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json; complete_role_graph_preabort_verified@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
-      "blockers": "lifecycle alias/free relation is not proven at runtime: B7 value audit proves release->reassign same-object equality, but cleanup GF_BitStream->original points to a different value; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free",
+      "blockers": "latest B7 relation endpoint gate ran for 601s and passed strict pre-trigger guidance (35 accepted/saved non-trigger progress events, 1819 spec-lifted events, 224 typed execs, 38 typed finds) but still produced terminal _T=0, ASAN/double-free=0; the repaired campaign-progress alias audit proves release->reassign same-object equality while cleanup GF_BitStream->original points to a different value; retained endpoint variants reach only 8 samples / 26 NALUs versus positive control 172 / 413, so the remaining blocker is cleanup ownership plus relation-aware retained selection, not just parser-scale mutation",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
       "comparison_count": 3,
       "core_evidence_allowed": true,
-      "current_benefit": "GPAC typed mutation now has endpoint-scale parser/import evidence: op44-op47 variants reach HEVC/L-HEVC import states, match all positive-control parser/import signatures, and exceed the positive-control import scale (221 samples / 550 NALUs vs 172 / 413), while still not producing ASAN/double-free terminal behavior.",
+      "current_benefit": "GPAC now has stable TC-rooted pre-trigger guidance and typed-retained endpoint packaging: the B7 gate saved 35 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 224 typed candidates, replayed 128 endpoint variants, and proved release->reassign alias observation. This is mechanism evidence only; endpoint closure is still missing.",
       "current_speedup_package": "",
       "discovery_lane": "binding_spec_first",
       "discovery_rank": 4,
@@ -31,7 +31,7 @@
       "harness_admissibility_status": "",
       "harness_source_ready": false,
       "native_dt_values": "1",
-      "next_action": "run scripts/run_gpac3403_b7_relation_endpoint_gate.sh as the FORMTRIG-only cleanup-ownership gate before 7200s x3: drive cleanup ownership so GF_BitStream->original equals the release/reassign sample-data pointer, then only promote to matched baselines after ASAN/double-free or equivalent alias/free proof",
+      "next_action": "repair relation-aware cleanup ownership/retained selection so GF_BitStream->original equals the release/reassign sample-data pointer, rerun scripts/run_gpac3403_b7_relation_endpoint_gate.sh, and only promote to matched baselines after ASAN/double-free or equivalent alias/free proof",
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [
@@ -65,7 +65,11 @@
           "artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.json",
           "artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.md",
           "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/summary.json",
-          "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/endpoint_signature_audit.json"
+          "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/endpoint_signature_audit.json",
+          "artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.json",
+          "artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.md",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/alias_relation_audit.json",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/runs/formtrig_rep1/typed_retained_audit_package.json"
         ],
         "harness_admissibility_records": [],
         "harness_sources": [],
