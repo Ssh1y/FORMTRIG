@@ -73,6 +73,29 @@ class Gpac3403HevcFrontierSweepTest(unittest.TestCase):
         self.assertTrue(variants)
         self.assertTrue(all(8 <= v.op < 10 for v in variants))
 
+    def test_round_robin_schedule_interleaves_operator_window(self):
+        sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_round_robin")
+        hook = load_module(HOOK_PATH, "hevc_annexb_structure_hook_for_sweep_round_robin")
+        seed = sample_hevc()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            variants = sweep.generate_variants(
+                hook=hook,
+                seed=seed,
+                ranges=[(0, len(seed))],
+                max_variants=12,
+                op_start=8,
+                op_count=3,
+                sample_count=8,
+                variants_dir=Path(tmp),
+                schedule="round_robin",
+            )
+
+        self.assertEqual({8, 9, 10}, {v.op for v in variants})
+        self.assertGreaterEqual(sum(1 for v in variants if v.op == 8), 2)
+        self.assertGreaterEqual(sum(1 for v in variants if v.op == 9), 2)
+        self.assertGreaterEqual(sum(1 for v in variants if v.op == 10), 2)
+
     def test_summary_counts_trigger_and_same_object(self):
         sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_summary")
         records = [

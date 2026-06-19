@@ -65,6 +65,32 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
             self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
             self.assertNotEqual(output, original)
 
+    def test_bit_helpers_use_msb_first_fields(self):
+        hook = load_hook()
+
+        payload = hook.set_bits(b"\x00\x00", 4, 6, 0b101011)
+
+        self.assertEqual(hook.get_bits(payload, 4, 6), 0b101011)
+
+    def test_field_ops_emit_vps_sps_pps_field_trains(self):
+        hook = load_hook()
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 17)
+            for op in range(14, 20)
+        ]
+
+        self.assertTrue(any(has_nalu_type(hook, output, 32) for output in mutated_outputs))
+        self.assertTrue(any(has_nalu_type(hook, output, 33) for output in mutated_outputs))
+        self.assertTrue(any(has_nalu_type(hook, output, 34) for output in mutated_outputs))
+        self.assertTrue(any(has_layer_at_least(hook, output, 7) for output in mutated_outputs))
+        self.assertTrue(any(first_vps_max_layers_minus1(hook, output) is not None for output in mutated_outputs))
+        for output in mutated_outputs:
+            self.assertIn(b"\x00\x00\x00\x01", output)
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+            self.assertNotEqual(output, original)
+
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()
         original = b"not annex b"
@@ -122,6 +148,16 @@ def has_nalu_type(hook, data, nal_type):
         if hook.nalu_type(data, nalu) == nal_type:
             return True
     return False
+
+
+def first_vps_max_layers_minus1(hook, data):
+    for nalu in hook.parse_nalus(data):
+        if hook.nalu_type(data, nalu) != 32:
+            continue
+        body = data[nalu.payload_start + 2 : nalu.end]
+        if len(body) >= 2:
+            return hook.get_bits(body, 6, 6)
+    return None
 
 
 if __name__ == "__main__":

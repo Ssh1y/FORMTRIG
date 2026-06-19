@@ -1,0 +1,188 @@
+{
+  "schema": "formtrig_comparison_v1",
+  "comparison_type": "gpac3403_b6_fieldops_endpoint_asan_sweep",
+  "generated_at_utc": "2026-06-19T11:20:16Z",
+  "target_id": "GPAC_3403",
+  "source_campaign": "gpac3403_b6_blackwhite_annexb_60s_20260619",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619",
+  "hook_revision": "hevc_annexb_fieldops14_19_round_robin",
+  "sweep": {
+    "seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+    "target_site_ids": "65063371",
+    "generated_variants": 384,
+    "replayed_variants": 384,
+    "op_start": 14,
+    "ops": 6,
+    "samples": 64,
+    "schedule": "round_robin",
+    "reached": 317,
+    "rnt": 317,
+    "triggered": 0,
+    "spec_lifted": 317,
+    "d_f_spec_lifted_values": [
+      1.0,
+      2.0
+    ],
+    "d_f_spec_lifted_min": 1.0,
+    "d_f_spec_lifted_max": 2.0,
+    "d_f_spec_lifted_eq_1_count": 306,
+    "d_f_spec_lifted_eq_1_endpoint_clean_exit_count": 306,
+    "same_object_samples": 317,
+    "reached_same_object_samples": 317,
+    "endpoint_replayed_variants": 384,
+    "endpoint_probe_runs": 384,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_exit_code_counts": {
+      "0": 320,
+      "1": 64
+    },
+    "runtime_timeouts": 3,
+    "endpoint_timeouts": 0,
+    "duration_s": 174.599
+  },
+  "op_coverage": [
+    {
+      "op": 14,
+      "count": 64,
+      "reached": 62,
+      "rnt": 62,
+      "d_f_1": 51,
+      "d_f_2": 11,
+      "same_object": 62,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ],
+      "runtime_timeouts": 2
+    },
+    {
+      "op": 15,
+      "count": 64,
+      "reached": 0,
+      "rnt": 0,
+      "d_f_1": 0,
+      "d_f_2": 0,
+      "same_object": 0,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "1"
+      ],
+      "runtime_timeouts": 0
+    },
+    {
+      "op": 16,
+      "count": 64,
+      "reached": 64,
+      "rnt": 64,
+      "d_f_1": 64,
+      "d_f_2": 0,
+      "same_object": 64,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ],
+      "runtime_timeouts": 0
+    },
+    {
+      "op": 17,
+      "count": 64,
+      "reached": 64,
+      "rnt": 64,
+      "d_f_1": 64,
+      "d_f_2": 0,
+      "same_object": 64,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ],
+      "runtime_timeouts": 0
+    },
+    {
+      "op": 18,
+      "count": 64,
+      "reached": 63,
+      "rnt": 63,
+      "d_f_1": 63,
+      "d_f_2": 0,
+      "same_object": 63,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ],
+      "runtime_timeouts": 1
+    },
+    {
+      "op": 19,
+      "count": 64,
+      "reached": 64,
+      "rnt": 64,
+      "d_f_1": 64,
+      "d_f_2": 0,
+      "same_object": 64,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ],
+      "runtime_timeouts": 0
+    }
+  ],
+  "endpoint_oracle": {
+    "command": [
+      "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+      "-cat",
+      "@@",
+      "benchmarks/cve_seeds/gpac/white.mp4",
+      "-out",
+      "/dev/null"
+    ],
+    "env_keys": [
+      "ASAN_OPTIONS"
+    ],
+    "sanitizer_exit_code": 86,
+    "positive_control": {
+      "exit_code": 86,
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "kind": "positive_control",
+      "native_crash": false,
+      "rep": 1,
+      "sanitizer_crash": true,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "d49acf8f6e154b8f2d7898236bac45c77ab05bac3ec04d0038eb986dda0d64fc",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  },
+  "interpretation": {
+    "supports": [
+      "Field-level HEVC operators preserve stable GPAC_3403 B6 pre-trigger guidance: 317/384 variants reach RNT and same_object, with lifted D_F values confined to 1 or 2.",
+      "Round-robin scheduling explicitly covers op 14 through op 19, preventing early truncation from hiding later mutation families.",
+      "The endpoint oracle is live: the GPAC_3403 PoC positive control exits with sanitizer_crash=true."
+    ],
+    "does_not_support": [
+      "The current field-level operators do not solve the final GPAC_3403 endpoint: sanitizer/native endpoint crashes remain 0/384.",
+      "Low D_F and same_object guidance alone are insufficient here; the last step requires deeper HEVC state construction than isolated field edits and parameter-set insertion."
+    ],
+    "engineering_conclusion": "FORMTRIG has stable, sortable, TC-rooted guidance on GPAC_3403 B6, but the present mutator cannot yet turn that guidance into a triggering HEVC object state. The failure is therefore an actuation/grammar gap, not absence of guidance.",
+    "next_actions": [
+      "Add a stateful HEVC sequence constructor that preserves multi-NAL dependencies across VPS/SPS/PPS/slice/extractor records instead of mutating isolated fields.",
+      "Use the same round-robin endpoint protocol for additional real-CVE targets to separate general guidance benefit from GPAC-specific last-mile difficulty.",
+      "Keep GPAC_3403 as a hard negative/diagnostic case unless and until endpoint trigger is reproducible under the validated ASAN oracle."
+    ]
+  },
+  "evidence": {
+    "compact_summary": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/evidence/fieldops_endpoint_sweep_summary.json",
+    "op_coverage": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/evidence/fieldops_op_coverage.json",
+    "raw_summary_sha256": "7bf67932cc17273a84e0714b15d70ef1da69acba82230f89ffc228a38970e1f2",
+    "raw_records_sha256": "947e94abcd08351b36f1346a79ecdbbcce31bda7615fb6f42deedd896c060a71",
+    "compact_summary_sha256": "7bf67932cc17273a84e0714b15d70ef1da69acba82230f89ffc228a38970e1f2",
+    "op_coverage_sha256": "4e7f14a62d8fe1afcecebdda753dcce01d1d4ee6b357b55b5c6a5702618d4786"
+  }
+}

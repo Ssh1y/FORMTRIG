@@ -217,45 +217,66 @@ def generate_variants(
     op_count: int,
     sample_count: int,
     variants_dir: Path,
+    schedule: str = "nested",
 ) -> list[MutationCase]:
     variants_dir.mkdir(parents=True, exist_ok=True)
     seen = {sha256_bytes(seed)}
     variants: list[MutationCase] = []
+    op_values = list(range(op_start, op_start + op_count))
 
+    def add_variant(start: int, span: int, off: int, op: int, sample: int) -> bool:
+        mutated = hook.mutate(seed, start=start, span=span, off=off, op=op, sample=sample)
+        digest = sha256_bytes(mutated)
+        if digest in seen:
+            return False
+        seen.add(digest)
+        index = len(variants)
+        path = variants_dir / f"variant_{index:06d}.hevc"
+        path.write_bytes(mutated)
+        variants.append(
+            MutationCase(
+                index=index,
+                op=op,
+                sample=sample,
+                start=start,
+                span=span,
+                off=off,
+                sha256=digest,
+                size=len(mutated),
+                path=str(path),
+            )
+        )
+        return len(variants) >= max_variants
+
+    range_infos: list[tuple[int, int, list[int]]] = []
     for start, span in ranges:
-        if len(variants) >= max_variants:
-            break
         if start >= len(seed):
             continue
         span = min(span, len(seed) - start)
         if span <= 0:
             continue
         offsets = candidate_offsets(hook, seed, start, span)
+        if offsets:
+            range_infos.append((start, span, offsets))
+
+    if schedule == "round_robin":
+        max_depth = max((max(sample_count, len(offsets)) for _, _, offsets in range_infos), default=0)
+        for depth in range(max_depth):
+            for start, span, offsets in range_infos:
+                off = offsets[depth % len(offsets)]
+                sample = depth % sample_count
+                for op in op_values:
+                    if add_variant(start, span, off, op, sample):
+                        return variants
+        return variants
+
+    for start, span, offsets in range_infos:
+        if len(variants) >= max_variants:
+            break
         for off in offsets:
-            for op in range(op_start, op_start + op_count):
+            for op in op_values:
                 for sample in range(sample_count):
-                    mutated = hook.mutate(seed, start=start, span=span, off=off, op=op, sample=sample)
-                    digest = sha256_bytes(mutated)
-                    if digest in seen:
-                        continue
-                    seen.add(digest)
-                    index = len(variants)
-                    path = variants_dir / f"variant_{index:06d}.hevc"
-                    path.write_bytes(mutated)
-                    variants.append(
-                        MutationCase(
-                            index=index,
-                            op=op,
-                            sample=sample,
-                            start=start,
-                            span=span,
-                            off=off,
-                            sha256=digest,
-                            size=len(mutated),
-                            path=str(path),
-                        )
-                    )
-                    if len(variants) >= max_variants:
+                    if add_variant(start, span, off, op, sample):
                         return variants
     return variants
 
@@ -609,6 +630,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--op-start", type=int, default=0)
     parser.add_argument("--ops", type=int, default=16)
     parser.add_argument("--samples", type=int, default=16)
+    parser.add_argument("--schedule", choices=("nested", "round_robin"), default="nested")
     parser.add_argument("--timeout", type=float, default=5.0)
     parser.add_argument("--endpoint-cmd", help="Optional shell-like endpoint replay command; use @@ for the variant path.")
     parser.add_argument("--endpoint-env", action="append", default=[])
@@ -662,6 +684,7 @@ def main(argv: list[str] | None = None) -> int:
         op_count=args.ops,
         sample_count=args.samples,
         variants_dir=variants_dir,
+        schedule=args.schedule,
     )
 
     env_base = {
@@ -722,6 +745,7 @@ def main(argv: list[str] | None = None) -> int:
     summary["op_start"] = args.op_start
     summary["ops"] = args.ops
     summary["samples"] = args.samples
+    summary["schedule"] = args.schedule
     summary["endpoint_cmd"] = endpoint_cmd
     summary["endpoint_env_keys"] = sorted(endpoint_env)
     summary["endpoint_replays"] = args.endpoint_replays if endpoint_cmd else 0
