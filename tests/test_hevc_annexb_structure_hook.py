@@ -48,6 +48,23 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
 
         self.assertTrue(any(has_nonzero_layer_id(hook, output) for output in mutated_outputs))
 
+    def test_layer_stress_ops_emit_high_layers_and_extractors(self):
+        hook = load_hook()
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 11)
+            for op in range(8, 14)
+        ]
+
+        self.assertTrue(any(has_layer_at_least(hook, output, 4) for output in mutated_outputs))
+        self.assertTrue(any(has_nalu_type(hook, output, 49) for output in mutated_outputs))
+        self.assertTrue(any(len(output) > len(original) * 2 for output in mutated_outputs))
+        for output in mutated_outputs:
+            self.assertIn(b"\x00\x00\x00\x01", output)
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+            self.assertNotEqual(output, original)
+
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()
         original = b"not annex b"
@@ -89,6 +106,20 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
 def has_nonzero_layer_id(hook, data):
     for nalu in hook.parse_nalus(data):
         if hook.layer_id(data, nalu):
+            return True
+    return False
+
+
+def has_layer_at_least(hook, data, minimum):
+    for nalu in hook.parse_nalus(data):
+        if hook.layer_id(data, nalu) >= minimum:
+            return True
+    return False
+
+
+def has_nalu_type(hook, data, nal_type):
+    for nalu in hook.parse_nalus(data):
+        if hook.nalu_type(data, nalu) == nal_type:
             return True
     return False
 

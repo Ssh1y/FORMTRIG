@@ -1,0 +1,75 @@
+[
+  {
+    "op": 8,
+    "count": 64,
+    "reached": 64,
+    "d_f_1": 56,
+    "same_object": 64,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "exit_codes": [
+      "0"
+    ]
+  },
+  {
+    "op": 9,
+    "count": 64,
+    "reached": 64,
+    "d_f_1": 64,
+    "same_object": 64,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "exit_codes": [
+      "0"
+    ]
+  },
+  {
+    "op": 10,
+    "count": 64,
+    "reached": 33,
+    "d_f_1": 9,
+    "same_object": 10,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "exit_codes": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "op": 11,
+    "count": 64,
+    "reached": 64,
+    "d_f_1": 64,
+    "same_object": 64,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "exit_codes": [
+      "0"
+    ]
+  },
+  {
+    "op": 12,
+    "count": 64,
+    "reached": 64,
+    "d_f_1": 64,
+    "same_object": 64,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "exit_codes": [
+      "0"
+    ]
+  },
+  {
+    "op": 13,
+    "count": 64,
+    "reached": 64,
+    "d_f_1": 56,
+    "same_object": 64,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "exit_codes": [
+      "0"
+    ]
+  }
+]

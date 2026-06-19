@@ -16,6 +16,8 @@ MAX_OUTPUT_LEN = 65536
 START3 = b"\x00\x00\x01"
 START4 = b"\x00\x00\x00\x01"
 INTERESTING_TYPES = [32, 33, 34, 35, 39, 14, 16, 19, 20, 48, 49]
+LAYER_STRESS_IDS = [0, 1, 2, 4, 7, 14, 22, 31, 36, 46, 50]
+LAYERED_TRAIN_TYPES = [32, 33, 34, 32, 33, 34, 14, 16, 21, 49]
 
 
 @dataclass(frozen=True)
@@ -97,6 +99,76 @@ def make_nalu(nal_type: int, payload: bytes = b"\x80", layer: int = 0) -> bytes:
     return START4 + make_header(nal_type, layer) + payload
 
 
+def nalus_of_type(data: bytes, nalus: list[Nalu], nal_type: int) -> list[Nalu]:
+    return [nalu for nalu in nalus if nalu_type(data, nalu) == nal_type]
+
+
+def nalu_body(data: bytes, nalu: Nalu) -> bytes:
+    body_start = min(nalu.payload_start + 2, nalu.end)
+    return data[body_start:nalu.end]
+
+
+def payload_for_type(data: bytes, nalus: list[Nalu], nal_type: int, fallback: Nalu, sample: int) -> bytes:
+    typed = nalus_of_type(data, nalus, nal_type)
+    source = typed[sample % len(typed)] if typed else fallback
+    payload = nalu_body(data, source) or b"\x80"
+    if nal_type == 49:
+        return extractor_payload(sample)
+    if nal_type in (14, 16, 21):
+        return stress_payload(payload, sample, min_len=24)
+    if nal_type in (32, 33, 34):
+        return stress_payload(payload, sample, min_len=40)
+    return stress_payload(payload, sample, min_len=16)
+
+
+def stress_payload(payload: bytes, sample: int, min_len: int) -> bytes:
+    if not payload:
+        payload = b"\x80"
+    repeat = (min_len + len(payload) - 1) // len(payload)
+    out = bytearray((payload * max(1, repeat))[: max(min_len, min(len(payload), 128))])
+    for index in range(min(8, len(out))):
+        out[index] ^= (0x21 + sample * 17 + index * 29) & 0xFF
+    if out:
+        out[-1] |= 0x80
+    return bytes(out)
+
+
+def extractor_payload(sample: int) -> bytes:
+    pattern = bytes(
+        [
+            0x00,
+            0x01 + (sample & 0x03),
+            0x00,
+            0x00,
+            0x00,
+            0x01,
+            0x40 | (sample & 0x3F),
+            0x95,
+            0x82,
+            0x40,
+            0x00,
+            0x80,
+        ]
+    )
+    return pattern
+
+
+def layered_parameter_train(data: bytes, nalus: list[Nalu], anchor: Nalu, sample: int) -> bytes:
+    chunks = []
+    for index, nal_type in enumerate(LAYERED_TRAIN_TYPES):
+        layer = LAYER_STRESS_IDS[(sample + index) % len(LAYER_STRESS_IDS)]
+        payload = payload_for_type(data, nalus, nal_type, anchor, sample + index)
+        chunks.append(make_nalu(nal_type, payload, layer))
+    return b"".join(chunks)
+
+
+def first_slice_or_anchor(data: bytes, nalus: list[Nalu], anchor: Nalu) -> Nalu:
+    for nalu in nalus:
+        if nalu_type(data, nalu) in (0, 1, 14, 16, 19, 20, 21):
+            return nalu
+    return anchor
+
+
 def payload_window(data: bytes, nalu: Nalu, off: int, sample: int) -> bytes:
     body_start = min(nalu.payload_start + 2, nalu.end)
     if body_start >= nalu.end:
@@ -138,7 +210,7 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
     if not nalus:
         return data
     nalu = choose_nalu(nalus, start, span, off, op, sample)
-    selector = op % 8
+    selector = op % 14
     out = data
 
     if selector == 0:
@@ -172,13 +244,62 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
             1 + (sample % 3),
         )
         out = data[: nalu.start] + replacement + data[nalu.end :]
-    else:
+    elif selector == 7:
         payload = payload_window(data, nalu, off, sample)
         prefix = make_nalu(32, payload[:48], 0)
         prefix += make_nalu(33, payload[8:72], 1)
         prefix += make_nalu(34, payload[16:80], 1)
         prefix += make_nalu(19, payload[24:96], 1)
         out = prefix + data
+    elif selector == 8:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = layered_parameter_train(data, nalus, anchor, sample)
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 9:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        burst = []
+        for index, nal_type in enumerate((14, 16, 21, 0, 1, 16, 14)):
+            layer = LAYER_STRESS_IDS[(sample + index * 2) % len(LAYER_STRESS_IDS)]
+            payload = payload_for_type(data, nalus, nal_type, anchor, sample + index)
+            burst.append(make_nalu(nal_type, payload, layer))
+        out = data[: anchor.start] + b"".join(burst) + data[anchor.start :]
+    elif selector == 10:
+        out_buf = bytearray(data)
+        type_cycle = (32, 33, 34, 14, 16, 21, 49)
+        for index, item in enumerate(nalus):
+            if item.payload_start + 2 > item.end:
+                continue
+            if index % 2 != sample % 2:
+                continue
+            nal_type = type_cycle[(sample + index) % len(type_cycle)]
+            layer = LAYER_STRESS_IDS[(sample + index) % len(LAYER_STRESS_IDS)]
+            tid = out_buf[item.payload_start + 1] & 0x07
+            out_buf[item.payload_start : item.payload_start + 2] = make_header(nal_type, layer, tid or 1)
+        out = bytes(out_buf)
+    elif selector == 11:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = layered_parameter_train(data, nalus, anchor, sample)
+        payload = payload_window(data, anchor, off, sample)
+        layer = LAYER_STRESS_IDS[(sample + 5) % len(LAYER_STRESS_IDS)]
+        extractor = make_nalu(49, extractor_payload(sample), layer)
+        out = train + extractor + make_nalu(20, stress_payload(payload, sample, 64), layer) + data
+    elif selector == 12:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        payload = payload_window(data, anchor, off, sample)
+        inflated = b"".join(
+            make_nalu(20 if index % 2 else 16, stress_payload(payload, sample + index, 96), LAYER_STRESS_IDS[(sample + index) % len(LAYER_STRESS_IDS)])
+            for index in range(4)
+        )
+        out = data[: anchor.end] + inflated + data[anchor.end :]
+    else:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        repetitions = 2 + (sample % 4)
+        out = data
+        insert_at = anchor.start
+        for index in range(repetitions):
+            train = layered_parameter_train(data, nalus, anchor, sample + index)
+            out = out[:insert_at] + train + out[insert_at:]
+            insert_at += len(train)
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]

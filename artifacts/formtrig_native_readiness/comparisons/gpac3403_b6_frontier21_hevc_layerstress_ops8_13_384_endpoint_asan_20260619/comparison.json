@@ -1,0 +1,168 @@
+{
+  "schema": "formtrig_comparison_v1",
+  "comparison_type": "gpac3403_b6_layerstress_endpoint_asan_sweep",
+  "generated_at_utc": "2026-06-19T09:05:59Z",
+  "target_id": "GPAC_3403",
+  "source_campaign": "gpac3403_b6_blackwhite_annexb_60s_20260619",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619",
+  "hook_revision": "hevc_annexb_layerstress_ops8_13",
+  "sweep": {
+    "seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+    "target_site_ids": "65063371",
+    "generated_variants": 384,
+    "replayed_variants": 384,
+    "op_start": 8,
+    "ops": 6,
+    "samples": 64,
+    "reached": 353,
+    "rnt": 353,
+    "triggered": 0,
+    "spec_lifted": 353,
+    "d_f_spec_lifted_values": [
+      1.0,
+      2.0,
+      4.0
+    ],
+    "d_f_spec_lifted_min": 1.0,
+    "d_f_spec_lifted_max": 4.0,
+    "d_f_spec_lifted_eq_1_count": 313,
+    "d_f_spec_lifted_eq_1_endpoint_clean_exit_count": 313,
+    "reached_same_object_samples": 330,
+    "endpoint_replayed_variants": 384,
+    "endpoint_probe_runs": 384,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_exit_code_counts": {
+      "0": 330,
+      "1": 54
+    },
+    "duration_s": 130.098
+  },
+  "op_coverage": [
+    {
+      "op": 8,
+      "count": 64,
+      "reached": 64,
+      "d_f_1": 56,
+      "same_object": 64,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ]
+    },
+    {
+      "op": 9,
+      "count": 64,
+      "reached": 64,
+      "d_f_1": 64,
+      "same_object": 64,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ]
+    },
+    {
+      "op": 10,
+      "count": 64,
+      "reached": 33,
+      "d_f_1": 9,
+      "same_object": 10,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "op": 11,
+      "count": 64,
+      "reached": 64,
+      "d_f_1": 64,
+      "same_object": 64,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ]
+    },
+    {
+      "op": 12,
+      "count": 64,
+      "reached": 64,
+      "d_f_1": 64,
+      "same_object": 64,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ]
+    },
+    {
+      "op": 13,
+      "count": 64,
+      "reached": 64,
+      "d_f_1": 56,
+      "same_object": 64,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "exit_codes": [
+        "0"
+      ]
+    }
+  ],
+  "endpoint_oracle": {
+    "command": [
+      "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+      "-cat",
+      "@@",
+      "benchmarks/cve_seeds/gpac/white.mp4",
+      "-out",
+      "/dev/null"
+    ],
+    "env_keys": [
+      "ASAN_OPTIONS"
+    ],
+    "sanitizer_exit_code": 86,
+    "positive_control": {
+      "exit_code": 86,
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "kind": "positive_control",
+      "native_crash": false,
+      "rep": 1,
+      "sanitizer_crash": true,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "990275b9aae86816dd6ea72c81bc560b9e66ebc28ca8a10891bf7dcfc8ad06b9",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  },
+  "interpretation": {
+    "supports": [
+      "Layer-stress typed operators preserve GPAC_3403 B6 pre-trigger guidance: 353/384 variants reach RNT and 330/384 reach same_object.",
+      "The sweep now explicitly covers op 8 through op 13, avoiding the earlier truncation bias toward generic operators.",
+      "The endpoint oracle is live: the GPAC_3403 PoC positive control exits with sanitizer_crash=true."
+    ],
+    "does_not_support": [
+      "Layer-stress operators alone do not solve the final GPAC_3403 endpoint: sanitizer/native endpoint crashes remain 0/384.",
+      "High-layer parameter-set trains are not sufficient; the next mutation stage needs more precise HEVC field-level bit editing."
+    ],
+    "engineering_conclusion": "FORMTRIG continues to provide stable, sortable, role-attributed frontier guidance, but GPAC_3403 requires a finer last-mile typed mutator than current layer-stress structure generation.",
+    "next_actions": [
+      "Add bit-level VPS/SPS field setters for max_layers_minus1, max_layer_id, num_layer_sets_minus1, vps_extension_flag, and output-layer-set fields.",
+      "Add generator scheduling that can round-robin op/sample/offset for fair mutation-family ablations.",
+      "Keep this package as negative endpoint evidence and positive guidance-stability evidence for B6."
+    ]
+  },
+  "evidence": {
+    "compact_summary": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/evidence/layerstress_endpoint_sweep_summary.json",
+    "op_coverage": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/evidence/layerstress_op_coverage.json",
+    "raw_summary_sha256": "a18a5152e48d9bb409b6603b28683b680462677ab662ad55f7ea8995d46b3f64",
+    "raw_records_sha256": "33d6d3be01530d531c40c02b1772ebc826a68f35107ad67ea5123f7b1bfdbfa8",
+    "compact_summary_sha256": "a18a5152e48d9bb409b6603b28683b680462677ab662ad55f7ea8995d46b3f64",
+    "op_coverage_sha256": "14b50647992620222809284ffeb4c818e6c261a57694cd0f62e3437f3fa9e496"
+  }
+}

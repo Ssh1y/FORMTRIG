@@ -213,6 +213,7 @@ def generate_variants(
     seed: bytes,
     ranges: Iterable[tuple[int, int]],
     max_variants: int,
+    op_start: int,
     op_count: int,
     sample_count: int,
     variants_dir: Path,
@@ -231,7 +232,7 @@ def generate_variants(
             continue
         offsets = candidate_offsets(hook, seed, start, span)
         for off in offsets:
-            for op in range(op_count):
+            for op in range(op_start, op_start + op_count):
                 for sample in range(sample_count):
                     mutated = hook.mutate(seed, start=start, span=span, off=off, op=op, sample=sample)
                     digest = sha256_bytes(mutated)
@@ -605,6 +606,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--range", dest="ranges", action="append", type=parse_range_token)
     parser.add_argument("--max-variants", type=int, default=256)
     parser.add_argument("--max-replays", type=int, default=256)
+    parser.add_argument("--op-start", type=int, default=0)
     parser.add_argument("--ops", type=int, default=16)
     parser.add_argument("--samples", type=int, default=16)
     parser.add_argument("--timeout", type=float, default=5.0)
@@ -623,6 +625,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("target command is required after --")
     if args.max_variants <= 0 or args.max_replays <= 0:
         parser.error("--max-variants and --max-replays must be positive")
+    if args.op_start < 0:
+        parser.error("--op-start must be non-negative")
     if args.ops <= 0 or args.samples <= 0:
         parser.error("--ops and --samples must be positive")
     if args.endpoint_replays <= 0:
@@ -654,6 +658,7 @@ def main(argv: list[str] | None = None) -> int:
         seed=seed,
         ranges=ranges,
         max_variants=args.max_variants,
+        op_start=args.op_start,
         op_count=args.ops,
         sample_count=args.samples,
         variants_dir=variants_dir,
@@ -714,6 +719,9 @@ def main(argv: list[str] | None = None) -> int:
     summary["target_site_ids"] = target_site_ids
     summary["target_cmd"] = args.target_cmd
     summary["ranges"] = ranges
+    summary["op_start"] = args.op_start
+    summary["ops"] = args.ops
+    summary["samples"] = args.samples
     summary["endpoint_cmd"] = endpoint_cmd
     summary["endpoint_env_keys"] = sorted(endpoint_env)
     summary["endpoint_replays"] = args.endpoint_replays if endpoint_cmd else 0

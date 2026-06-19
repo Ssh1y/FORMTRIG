@@ -1,0 +1,1149 @@
+{
+  "best_frontier_variants": [
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000000.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "stderr_sha256": "ffe20f9576489dd3f12a38073ff70cc6969c986cca1591fc622a42e837dffb9b",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 0,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000000.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.runtime.jsonl",
+      "sample": 0,
+      "sha256": "d0d96f886d5c5b594a428998fd35df98f5032d667671611f362138512988275f",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x09af04e9925e9ceb",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000001.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "stderr_sha256": "76bb6396d4d87be2f7d415c186b74d153911971b5016db977515e03fb5131d86",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 1,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000001.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.runtime.jsonl",
+      "sample": 1,
+      "sha256": "46cea78b1176a0c15614042d20854516330a430b289ed7858981195bcc32c670",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xfd8b8660da3429c2",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000002.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "stderr_sha256": "548f7443b7160e5262fef6541d2678732966164e6c5e6d2a09d1d8dcaf6485a0",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 2,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000002.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.runtime.jsonl",
+      "sample": 2,
+      "sha256": "4eccd5ee53d408bb9e05bbcad1769a2f8ac374f0785ccb5aaafbdc3b3b180335",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x5423412b26ca6487",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000003.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "stderr_sha256": "a669f179083c3b37b8c66feb1343008d520d8d528ac1de4d053b0be8e845cf3a",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 3,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000003.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.runtime.jsonl",
+      "sample": 3,
+      "sha256": "8c1840699109e50a37bfa60990244c42e0706944a0d27b0a1d5851f97f32af76",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x9368e597baf7c0b4",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000004.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "stderr_sha256": "34f0ecbcc44853fe47f30d3b98337dab575937f348ec1ede7d7994f147d931fd",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 4,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000004.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.runtime.jsonl",
+      "sample": 4,
+      "sha256": "0f49ce66b00f682b9837cf66f8acd9079e3c4644d129945d17f2492e79fc5a6e",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x2825b14eef597f97",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000005.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "stderr_sha256": "11a483904e040090bbb10b5e86cc95f49ba30f52d4e2c87253ac372112f95902",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 5,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000005.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.runtime.jsonl",
+      "sample": 5,
+      "sha256": "8c3de053aaeb0950080c69c31d4a6190768a7e5f119a8991ff9d4380aca0083f",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x9656701cb2fb21c1",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000006.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "stderr_sha256": "778cedf4f98f175e64cee1784356d213cebcd0da3ee0f07e6ccc1d33d9daa7ae",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 6,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000006.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.runtime.jsonl",
+      "sample": 6,
+      "sha256": "13bdfabe9f1630b86f44f0505bba616591002e21b68133fcea4374065c847300",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x772c5b77c7be8175",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000008.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stderr",
+          "stderr_sha256": "219dd0bdef15c6f04bcb48f98dcc7700496757db7686414038275ab96cfaf627",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 8,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000008.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.runtime.jsonl",
+      "sample": 8,
+      "sha256": "fff63ce0a698546606d5f422e5aafeb71a0d73a255c161db5a18e62b197154f4",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xf042a9b1e34e19f1",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000009.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.endpoint_1.stderr",
+          "stderr_sha256": "a13a26c7d4927be743d2d5299a692024a7dabb54eb1ced769ab74064f7bf15f2",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 9,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000009.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.runtime.jsonl",
+      "sample": 9,
+      "sha256": "59ab5c27a6ecabc68835ffe98c80c31aa58395c62eef4bd32fa797c758f10150",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x1ccaba73666b195d",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000011.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.endpoint_1.stderr",
+          "stderr_sha256": "16f962fd2a98e688fb976ae6bbe4434e346d8213b3ae5d64478b8c787e2c9406",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 11,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000011.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.runtime.jsonl",
+      "sample": 11,
+      "sha256": "bd464323c48713d9b3b8b76b818f81f6d8e78886f83cae2e840a79ec41538ad7",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x824fa2a7d0ea05bc",
+      "triggered": false
+    }
+  ],
+  "best_reached_frontier_variants": [
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000000.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "stderr_sha256": "ffe20f9576489dd3f12a38073ff70cc6969c986cca1591fc622a42e837dffb9b",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 0,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000000.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.runtime.jsonl",
+      "sample": 0,
+      "sha256": "d0d96f886d5c5b594a428998fd35df98f5032d667671611f362138512988275f",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000000.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x09af04e9925e9ceb",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000001.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "stderr_sha256": "76bb6396d4d87be2f7d415c186b74d153911971b5016db977515e03fb5131d86",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 1,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000001.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.runtime.jsonl",
+      "sample": 1,
+      "sha256": "46cea78b1176a0c15614042d20854516330a430b289ed7858981195bcc32c670",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000001.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xfd8b8660da3429c2",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000002.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "stderr_sha256": "548f7443b7160e5262fef6541d2678732966164e6c5e6d2a09d1d8dcaf6485a0",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 2,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000002.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.runtime.jsonl",
+      "sample": 2,
+      "sha256": "4eccd5ee53d408bb9e05bbcad1769a2f8ac374f0785ccb5aaafbdc3b3b180335",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000002.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x5423412b26ca6487",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000003.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "stderr_sha256": "a669f179083c3b37b8c66feb1343008d520d8d528ac1de4d053b0be8e845cf3a",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 3,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000003.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.runtime.jsonl",
+      "sample": 3,
+      "sha256": "8c1840699109e50a37bfa60990244c42e0706944a0d27b0a1d5851f97f32af76",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000003.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x9368e597baf7c0b4",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000004.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "stderr_sha256": "34f0ecbcc44853fe47f30d3b98337dab575937f348ec1ede7d7994f147d931fd",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 4,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000004.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.runtime.jsonl",
+      "sample": 4,
+      "sha256": "0f49ce66b00f682b9837cf66f8acd9079e3c4644d129945d17f2492e79fc5a6e",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000004.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x2825b14eef597f97",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000005.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "stderr_sha256": "11a483904e040090bbb10b5e86cc95f49ba30f52d4e2c87253ac372112f95902",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 5,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000005.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.runtime.jsonl",
+      "sample": 5,
+      "sha256": "8c3de053aaeb0950080c69c31d4a6190768a7e5f119a8991ff9d4380aca0083f",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000005.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x9656701cb2fb21c1",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000006.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "stderr_sha256": "778cedf4f98f175e64cee1784356d213cebcd0da3ee0f07e6ccc1d33d9daa7ae",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 6,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000006.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.runtime.jsonl",
+      "sample": 6,
+      "sha256": "13bdfabe9f1630b86f44f0505bba616591002e21b68133fcea4374065c847300",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000006.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x772c5b77c7be8175",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000008.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stderr",
+          "stderr_sha256": "219dd0bdef15c6f04bcb48f98dcc7700496757db7686414038275ab96cfaf627",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 8,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000008.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.runtime.jsonl",
+      "sample": 8,
+      "sha256": "fff63ce0a698546606d5f422e5aafeb71a0d73a255c161db5a18e62b197154f4",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000008.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xf042a9b1e34e19f1",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000009.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.endpoint_1.stderr",
+          "stderr_sha256": "a13a26c7d4927be743d2d5299a692024a7dabb54eb1ced769ab74064f7bf15f2",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 9,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000009.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.runtime.jsonl",
+      "sample": 9,
+      "sha256": "59ab5c27a6ecabc68835ffe98c80c31aa58395c62eef4bd32fa797c758f10150",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000009.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x1ccaba73666b195d",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000011.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.endpoint_1.stderr",
+          "stderr_sha256": "16f962fd2a98e688fb976ae6bbe4434e346d8213b3ae5d64478b8c787e2c9406",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 11,
+      "off": 0,
+      "op": 8,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/variants/variant_000011.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.runtime.jsonl",
+      "sample": 11,
+      "sha256": "bd464323c48713d9b3b8b76b818f81f6d8e78886f83cae2e840a79ec41538ad7",
+      "size": 1425,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/variant_000011.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x824fa2a7d0ea05bc",
+      "triggered": false
+    }
+  ],
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+  "d_f_spec_lifted_max": 4.0,
+  "d_f_spec_lifted_min": 1.0,
+  "d_f_spec_lifted_values": [
+    1.0,
+    2.0,
+    4.0
+  ],
+  "duration_s": 130.098,
+  "endpoint_cmd": [
+    "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "endpoint_env_keys": [
+    "ASAN_OPTIONS"
+  ],
+  "endpoint_exit_code_counts": {
+    "0": 330,
+    "1": 54
+  },
+  "endpoint_native_crashes": 0,
+  "endpoint_positive_control": [
+    {
+      "exit_code": 86,
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "kind": "positive_control",
+      "native_crash": false,
+      "rep": 1,
+      "sanitizer_crash": true,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "990275b9aae86816dd6ea72c81bc560b9e66ebc28ca8a10891bf7dcfc8ad06b9",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_layerstress_ops8_13_384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  ],
+  "endpoint_probe_runs": 384,
+  "endpoint_replayed_variants": 384,
+  "endpoint_replays": 1,
+  "endpoint_sanitizer_crashes": 0,
+  "endpoint_sanitizer_exit_code": 86,
+  "endpoint_timeout": 12.0,
+  "endpoint_timeouts": 0,
+  "first_endpoint_native_crash": null,
+  "first_endpoint_sanitizer_crash": null,
+  "first_trigger": null,
+  "generated_variants": 384,
+  "hook": "scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+  "lift_spec": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/.formtrig/formtrig_binding.lift",
+  "op_start": 8,
+  "ops": 6,
+  "ranges": [
+    [
+      0,
+      729
+    ]
+  ],
+  "reached": 353,
+  "reached_role_sample_counts": {
+    "desired_producer": 330,
+    "input_influence": 330,
+    "lifecycle_event": 330,
+    "opposite_producer": 353,
+    "producer": 330,
+    "root_observe": 353,
+    "same_object": 330,
+    "use": 353
+  },
+  "reached_same_object_samples": 330,
+  "replayed_variants": 384,
+  "rnt": 353,
+  "role_sample_counts": {
+    "desired_producer": 330,
+    "input_influence": 330,
+    "lifecycle_event": 330,
+    "opposite_producer": 353,
+    "producer": 330,
+    "root_observe": 353,
+    "same_object": 330,
+    "use": 353
+  },
+  "runtime_event_map": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/formtrig_runtime_event_map.csv",
+  "same_object_samples": 330,
+  "samples": 64,
+  "schema": "formtrig_gpac3403_hevc_frontier_sweep_v1",
+  "seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+  "seed_sha256": "3d0069d0d9b34091d1d86922f9a324aee5af3e06e0c59c701fa771eba67e1189",
+  "spec_lifted": 353,
+  "target_cmd": [
+    "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "target_site_ids": "65063371",
+  "timeouts": 0,
+  "triggered": 0
+}

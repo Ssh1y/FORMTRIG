@@ -43,6 +43,7 @@ class Gpac3403HevcFrontierSweepTest(unittest.TestCase):
                 seed=seed,
                 ranges=[(0, len(seed))],
                 max_variants=24,
+                op_start=0,
                 op_count=8,
                 sample_count=8,
                 variants_dir=Path(tmp),
@@ -51,6 +52,26 @@ class Gpac3403HevcFrontierSweepTest(unittest.TestCase):
         self.assertEqual(len({v.sha256 for v in variants}), len(variants))
         self.assertGreaterEqual(len(variants), 8)
         self.assertTrue(all(v.size > 0 for v in variants))
+
+    def test_generate_variants_can_target_later_operator_window(self):
+        sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_op_start")
+        hook = load_module(HOOK_PATH, "hevc_annexb_structure_hook_for_sweep_op_start")
+        seed = sample_hevc()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            variants = sweep.generate_variants(
+                hook=hook,
+                seed=seed,
+                ranges=[(0, len(seed))],
+                max_variants=12,
+                op_start=8,
+                op_count=2,
+                sample_count=8,
+                variants_dir=Path(tmp),
+            )
+
+        self.assertTrue(variants)
+        self.assertTrue(all(8 <= v.op < 10 for v in variants))
 
     def test_summary_counts_trigger_and_same_object(self):
         sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_summary")
