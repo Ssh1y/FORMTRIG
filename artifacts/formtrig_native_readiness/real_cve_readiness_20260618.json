@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-19T02:48:59+00:00",
+  "generated_at_utc": "2026-06-19T03:20:46+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -18,9 +18,9 @@
       "blockers": "",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
-      "comparison_count": 2,
+      "comparison_count": 3,
       "core_evidence_allowed": true,
-      "current_benefit": "short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 1 accepted / 1 saved non-trigger progress events; variable TC-rooted roles: root_observe,use; spec D_F candidate values {6,5,4,2}; ASAN AFL++ family valid baseline reps 8 with 0 endpoint successes",
+      "current_benefit": "600s short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 1 accepted / 1 saved non-trigger progress events; variable TC-rooted roles: root_observe,use; spec D_F candidate values {6,5,4,2}; ASAN AFL++ family valid baseline reps 3 with 0 endpoint successes",
       "current_speedup_package": "",
       "discovery_lane": "binding_spec_first",
       "discovery_rank": 4,
@@ -47,7 +47,8 @@
         ],
         "comparison_records": [
           "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json",
-          "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/comparison.json"
+          "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/comparison.json",
+          "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/comparison.json"
         ],
         "harness_admissibility_records": [],
         "harness_sources": [],

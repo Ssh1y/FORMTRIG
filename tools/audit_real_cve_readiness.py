@@ -360,8 +360,10 @@ def short_gate_benefit(record: dict[str, Any] | None) -> str:
     if formtrig.get("pretrigger_lift_guidance_ready") is True:
         progress = intish(formtrig.get("accepted_non_trigger_progress_events"))
         saved = intish(formtrig.get("saved_non_trigger_progress_events"))
+        duration = intish(record.get("duration_s"))
+        duration_prefix = f"{duration}s " if duration else ""
         parts.append(
-            "short-gate pre-screen: FORMTRIG pre-trigger lifted guidance"
+            f"{duration_prefix}short-gate pre-screen: FORMTRIG pre-trigger lifted guidance"
             f" with {progress} accepted / {saved} saved non-trigger progress events"
         )
     variable_roles = formtrig.get("variable_roles")

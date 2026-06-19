@@ -1,0 +1,53 @@
+{
+  "afl_arg": [
+    "-t",
+    "5000+"
+  ],
+  "afl_fuzz": "experiments/aflplusplus/AFLplusplus/afl-fuzz",
+  "baseline": "redqueen_operand",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "budget_sec": 600,
+  "cmplog_binary": "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+  "env": [
+    "ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:symbolize=0",
+    "UBSAN_OPTIONS=halt_on_error=1:abort_on_error=1:print_stacktrace=0",
+    "AFL_MAP_SIZE=10000000"
+  ],
+  "existing_fuzzer_out": "",
+  "magma_bug_id": "",
+  "magma_monitor_dir": "",
+  "memory_limit": "none",
+  "mode": "execute",
+  "out_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/redqueen_operand_map10m_rep1",
+  "rep": 1,
+  "seed_corpus": "artifacts/rnt_corpus/GPAC_3403/seeds",
+  "standard_event_schema": {
+    "baseline": "baseline identifier",
+    "details": "event-specific object",
+    "event": "run_start|tool_resolution|fuzzer_start|fuzzer_exit|run_complete|run_error",
+    "rep": "integer repetition id",
+    "target_id": "target identifier",
+    "time_utc": "ISO-8601 UTC timestamp"
+  },
+  "target_cmd": "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+  "target_id": "GPAC_3403",
+  "tc_category": "compound-sequence-lifecycle",
+  "timeout_grace_sec": 5
+}

@@ -49,6 +49,7 @@ class RealCveReadinessAuditTest(unittest.TestCase):
                 "generated_at_utc": "2026-06-19T03:00:00Z",
                 "claim_status": "short_gate_only_not_longrun",
                 "comparison_type": "asan_baseline_prescreen",
+                "duration_s": 600,
                 "formtrig": {
                     "pretrigger_lift_guidance_ready": True,
                     "accepted_non_trigger_progress_events": 2,
@@ -69,6 +70,7 @@ class RealCveReadinessAuditTest(unittest.TestCase):
 
         self.assertIsNotNone(record)
         benefit = short_gate_benefit(record)
+        self.assertIn("600s short-gate pre-screen", benefit)
         self.assertIn("pre-trigger lifted guidance", benefit)
         self.assertIn("variable TC-rooted roles: root_observe,use", benefit)
         self.assertIn("spec D_F candidate values {6,4,2}", benefit)

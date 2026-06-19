@@ -1,0 +1,228 @@
+{
+  "baselines": {
+    "endpoint_oracle": "ASAN crash",
+    "invalid_diagnostics": [
+      {
+        "baseline": "redqueen_operand",
+        "execs_done": 0,
+        "reason": "cmplog forkserver startup crash before fuzzing",
+        "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/redqueen_operand_rep1/run_record.json",
+        "run_time": 2
+      }
+    ],
+    "summary": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "corpus_count": 247,
+        "endpoint_successes": 0,
+        "execs_done": 6907,
+        "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/aflplusplus_cmplog_rep1/run_record.json",
+        "saved_crashes": 0,
+        "saved_hangs": 1,
+        "trigger_time_s": null,
+        "valid_reps": 1
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "corpus_count": 226,
+        "endpoint_successes": 0,
+        "execs_done": 6900,
+        "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/aflplusplus_vanilla_rep1/run_record.json",
+        "saved_crashes": 0,
+        "saved_hangs": 0,
+        "trigger_time_s": null,
+        "valid_reps": 1
+      },
+      {
+        "baseline": "redqueen_operand",
+        "corpus_count": 308,
+        "endpoint_successes": 0,
+        "execs_done": 13654,
+        "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/redqueen_operand_map10m_rep1/run_record.json",
+        "saved_crashes": 0,
+        "saved_hangs": 0,
+        "trigger_time_s": null,
+        "valid_reps": 1
+      }
+    ],
+    "valid_summary": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "corpus_count": 247,
+        "endpoint_successes": 0,
+        "execs_done": 6907,
+        "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/aflplusplus_cmplog_rep1/run_record.json",
+        "saved_crashes": 0,
+        "saved_hangs": 1,
+        "trigger_time_s": null,
+        "valid_reps": 1
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "corpus_count": 226,
+        "endpoint_successes": 0,
+        "execs_done": 6900,
+        "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/aflplusplus_vanilla_rep1/run_record.json",
+        "saved_crashes": 0,
+        "saved_hangs": 0,
+        "trigger_time_s": null,
+        "valid_reps": 1
+      },
+      {
+        "baseline": "redqueen_operand",
+        "corpus_count": 308,
+        "endpoint_successes": 0,
+        "execs_done": 13654,
+        "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/redqueen_operand_map10m_rep1/run_record.json",
+        "saved_crashes": 0,
+        "saved_hangs": 0,
+        "trigger_time_s": null,
+        "valid_reps": 1
+      }
+    ],
+    "validity_rule": "run_time >= 600 and execs_done > 0; invalid startup failures are diagnostic only"
+  },
+  "claim_status": "ten_min_single_rep_not_replicated",
+  "comparison_type": "asan_baseline_prescreen",
+  "duration_s": 600,
+  "evidence": {
+    "baselines": {
+      "summary_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/baselines/baseline_summary.json",
+      "summary_tsv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/baselines/baseline_summary.tsv"
+    },
+    "formtrig": {
+      "binding_signal_diagnosis_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_binding_signal_diagnosis.json",
+      "diagnosis_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_diagnosis.json",
+      "gate_report_md": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/gate_report.md",
+      "gate_summary_csv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/gate_summary.csv",
+      "gate_summary_jsonl": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/gate_summary.jsonl",
+      "lift_audit_csv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_lift_audit.csv",
+      "lift_feature_audit_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_lift_feature_audit.json",
+      "mutation_hook_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_mutation_hook.json",
+      "runtime_event_map": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_runtime_event_map.csv",
+      "seed_readiness_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_seed_readiness.json",
+      "seed_signal_entropy_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_seed_signal_entropy.json",
+      "summary_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_summary.json",
+      "terminal_monitor_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/evidence/formtrig/formtrig_terminal_monitor.json"
+    },
+    "progress_jsonl_bytes": 7125769,
+    "progress_jsonl_sha256": "93de7fd6ab529335c128245211b8c93ef6f94a04fe474ed8cd3bff5a44824afd",
+    "raw_run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619"
+  },
+  "formtrig": {
+    "accepted_non_trigger_progress_events": 1,
+    "binding_signal_diagnosis": "role_signal_progress_observed",
+    "binding_signal_status": "pass",
+    "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml",
+    "corpus_count": 523,
+    "d_f_spec_lifted_constant": false,
+    "d_f_spec_lifted_max": 6,
+    "d_f_spec_lifted_min": 2,
+    "execs_done": 49444,
+    "lift_feature_audit_status": "pass",
+    "missing_campaign_roles": [
+      "same_object"
+    ],
+    "mutation_hook": {
+      "enabled": true,
+      "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/mp4_box_structure_hook.py",
+      "sha256": "2238d1be6586e8569d50c9e9146ee603f3199f39efc76b3be27f853a87bff4c0",
+      "source": "binding_spec"
+    },
+    "pretrigger_lift_guidance_ready": true,
+    "queued_progress": 1,
+    "reached_execs": 47320,
+    "role_candidate_values": {
+      "desired_producer": [
+        1
+      ],
+      "input_influence": [
+        1
+      ],
+      "lifecycle_event": [
+        1
+      ],
+      "root_observe": [
+        0,
+        1
+      ],
+      "same_object": [],
+      "use": [
+        0,
+        1
+      ]
+    },
+    "role_sample_counts": {
+      "desired_producer": 1632,
+      "input_influence": 3274,
+      "lifecycle_event": 3274,
+      "root_observe": 4102,
+      "same_object": 0,
+      "use": 4102
+    },
+    "run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/formtrig_rep1/fuzzer_out",
+    "sampled_roles": [
+      "root_observe",
+      "desired_producer",
+      "use",
+      "lifecycle_event",
+      "input_influence"
+    ],
+    "saved_crashes": 0,
+    "saved_non_trigger_progress_events": 1,
+    "seed_readiness_status": "pass",
+    "spec_d_f_candidate_values": [
+      6,
+      2,
+      4,
+      5
+    ],
+    "terminal_monitor": {
+      "first_trigger_snapshot": null,
+      "first_trigger_time_s": null,
+      "first_triggered_execs": null,
+      "latest_snapshot": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/formtrig_rep1/fuzzer_out/formtrig_stats_monitor/final.stats",
+      "latest_time_s": 600,
+      "latest_triggered_execs": 0,
+      "snapshot_count": 21
+    },
+    "terminal_triggered": false,
+    "terminal_triggered_execs": 0,
+    "typed_execs": 431,
+    "typed_finds": 24,
+    "typed_stage_start_events": 4,
+    "validation_record": "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json",
+    "variable_roles": [
+      "root_observe",
+      "use"
+    ]
+  },
+  "generated_at_utc": "2026-06-19T03:55:00Z",
+  "interpretation": {
+    "does_not_support": [
+      "FORMTRIG endpoint speedup on GPAC_3403; no arm reached terminal _T/crash in this single 600s repetition.",
+      "A replicated SOTA-pain proof; this is one repetition per valid arm and must be extended to 2h and multiple reps.",
+      "Campaign-time same_object sampling; same_object is still missing during search even though full-PoC replay verifies it."
+    ],
+    "next_action": "Run replicated 2h GPAC_3403 B5 matched campaigns, or first add a same_object-reaching seed/mutation stage to move campaign distance from 2 toward the full-PoC pre-abort distance 1.",
+    "supports": [
+      "B5 remains experiment-ready over a 600s native AFL++ campaign: gate status pass, exact runtime event map, and pre-trigger lifted guidance are present.",
+      "FORMTRIG produces TC-rooted non-trigger guidance while vanilla AFL++, CmpLog, and Redqueen/CmpLog operand baselines have zero endpoint ASAN crashes in valid 600s runs from the same RNT seed corpus.",
+      "The search signal is stable enough to be ordered: D_F_spec_lifted is non-constant with candidate values {6,5,4,2}, and root/use roles vary in candidates.",
+      "Typed mutation continues to execute at 600s scale: 431 typed execs and 24 typed finds."
+    ]
+  },
+  "lineage": {
+    "b5_60s_short_gate": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/comparison.json",
+    "b5_full_poc_replay": {
+      "full_poc_d_f_spec_lifted_last": 1,
+      "full_poc_same_object_samples": 51,
+      "full_poc_use_samples": 1838,
+      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json"
+    }
+  },
+  "rep_count": 1,
+  "schema": "formtrig_comparison_v1",
+  "seed_corpus": "artifacts/rnt_corpus/GPAC_3403/seeds",
+  "target_id": "GPAC_3403"
+}

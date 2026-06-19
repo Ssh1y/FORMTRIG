@@ -1,0 +1,68 @@
+{
+  "baseline": "redqueen_operand",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "budget": 600,
+  "command_line": [
+    "experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "artifacts/rnt_corpus/GPAC_3403/seeds",
+    "-o",
+    "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/redqueen_operand_map10m_rep1/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "600",
+    "-c",
+    "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "config_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/redqueen_operand_map10m_rep1/run_config.json",
+  "first_crash": null,
+  "fuzzer_stats": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_600s_1rep_20260619/runs/redqueen_operand_map10m_rep1/fuzzer_out/default/fuzzer_stats",
+  "last_crash_time_s": null,
+  "magma_monitor": null,
+  "run_id": "GPAC_3403:redqueen_operand:rep1",
+  "seed_set_id": "artifacts/rnt_corpus/GPAC_3403/seeds",
+  "stats": {
+    "corpus_count": 308,
+    "execs_done": 13654,
+    "execs_per_sec": "22.75",
+    "magma_reached": 0,
+    "magma_triggered": 0,
+    "run_time": 600,
+    "saved_crashes": 0,
+    "saved_hangs": 0
+  },
+  "success": false,
+  "target_id": "GPAC_3403",
+  "tc_category": "compound-sequence-lifecycle",
+  "timeout": true,
+  "trigger_execs": null,
+  "trigger_time_kind": null,
+  "trigger_time_s": null
+}
