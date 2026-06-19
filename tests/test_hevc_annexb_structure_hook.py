@@ -214,6 +214,30 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
         self.assertTrue(any(has_layer_at_least(hook, output, 22) for output in layered_outputs))
         self.assertTrue(any(parse_vps_items(hook, audit, output) for output in layered_outputs))
 
+    def test_high_max_layer_access_unit_ops_cover_vps_max_layer_path(self):
+        hook = load_hook()
+        audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_for_high_vps_hook_test")
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 47)
+            for op in range(40, 44)
+        ]
+
+        for output in mutated_outputs:
+            nalus = hook.parse_nalus(output)
+            types = {hook.nalu_type(output, nalu) for nalu in nalus}
+            parsed_vps = parse_vps_items(hook, audit, output)
+            vcl_nalus = [nalu for nalu in nalus if 0 <= hook.nalu_type(output, nalu) <= 31]
+
+            self.assertGreaterEqual(len(nalus), 24)
+            self.assertTrue(vcl_nalus)
+            self.assertIn(49, types)
+            self.assertTrue(parsed_vps)
+            self.assertTrue(any(item.get("max_layer_id", 0) >= 4 for item in parsed_vps))
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+            self.assertNotEqual(output, original)
+
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()
         original = b"not annex b"

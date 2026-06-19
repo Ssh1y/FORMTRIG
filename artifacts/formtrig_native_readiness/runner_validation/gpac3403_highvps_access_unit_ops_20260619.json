@@ -1,0 +1,143 @@
+{
+  "validation_id": "gpac3403_highvps_access_unit_ops_20260619",
+  "date_utc": "2026-06-19",
+  "purpose": "Repair the GPAC_3403 typed-hook last-mile gap after op24-30 reached VPS-extension signatures and op36-39 reached type49/access-unit signatures but did not cover the positive-control vps_max_layer_id endpoint signature.",
+  "implementation": {
+    "hook": "scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+    "op_selector_count": 44,
+    "new_ops": [
+      40,
+      41,
+      42,
+      43
+    ],
+    "new_helpers": [
+      "high_max_layer_vps_payload",
+      "high_max_layer_access_unit_train"
+    ],
+    "design": "Combine access-unit/type49 generation with TC-rooted high-VPS-max-layer payloads. Existing op24-39 behavior remains unchanged."
+  },
+  "raw_dirs": {
+    "offline_frontier_sweep": "artifacts/formtrig_native_readiness/raw/gpac3403_op40_43_highvps_frontier_endpoint_sweep_20260619T185038Z",
+    "aflpp_hook_retain_smoke": "artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z",
+    "negative_reference_op36_39_sweep": "artifacts/formtrig_native_readiness/raw/gpac3403_op36_39_frontier_endpoint_sweep_20260619T184733Z"
+  },
+  "commands": {
+    "offline_frontier_sweep": "python3 tools/gpac3403_hevc_frontier_sweep.py --seed /tmp/formtrig_gpac3403_blackwhite_seed/blackwhite_yuv444p-frame.hevc --hook scripts/formtrig_hooks/hevc_annexb_structure_hook.py --out artifacts/formtrig_native_readiness/raw/gpac3403_op40_43_highvps_frontier_endpoint_sweep_20260619T185038Z --binding-spec artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml --runtime-event-map artifacts/formtrig_native_readiness/raw/gpac3403_op24_samplefirst_hook_retain_smoke_30s_20260619T184146Z/runs/formtrig_rep1/fuzzer_out/formtrig_runtime_event_map.csv --max-variants 40 --max-replays 40 --op-start 40 --ops 4 --samples 10 --schedule round_robin --timeout 5 --endpoint-cmd \"/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box -cat @@ /home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null\" --endpoint-timeout 5 --endpoint-replays 1 --endpoint-positive-control /home/cwh/FORMTRIG/benchmarks/cve_pocs/gpac/GPAC_3403.poc -- /tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ /home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+    "aflpp_smoke": "bash scripts/run_gpac3403_typedops36_matched_longrun.sh --mode execute --duration 30 --reps 1 --jobs 1 --arms formtrig --baselines \"\" --typed-ops 44 --typed-op-start 40 --typed-schedule sample-first --typed-mutation-max 64 --typed-retain-max 96 --typed-retain-mode hook --typed-retain-endpoint-replay on --typed-retain-endpoint-timeout 5 --typed-retain-endpoint-replays 1 --typed-retain-endpoint-max-records 24 --typed-retain-endpoint-selection input-order --typed-retain-endpoint-cmd \"/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box -cat @@ /home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null\" --typed-retain-endpoint-positive-control /home/cwh/FORMTRIG/benchmarks/cve_pocs/gpac/GPAC_3403.poc --out artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z --continue-on-fail"
+  },
+  "test_commands": [
+    "python3 -m unittest tests.test_hevc_annexb_structure_hook tests.test_gpac3403_hevc_structure_audit tests.test_gpac3403_hevc_frontier_sweep tests.test_gpac3403_endpoint_signature_audit"
+  ],
+  "offline_frontier_sweep": {
+    "generated_variants": 40,
+    "replayed_variants": 40,
+    "runtime_reached": 36,
+    "runtime_triggered": 0,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_exit_code_counts": {
+      "0": 40
+    },
+    "endpoint_signature_files": {
+      "vps_max_layer_id": 40,
+      "nal_type_49_not_handled": 40,
+      "hevc_import_results": 40,
+      "lhevc_import_results": 40,
+      "layers_only_4": 18,
+      "wrong_output_layer_sets": 4,
+      "failed_vps_extensions": 4,
+      "asan": 0,
+      "asan_double_free": 0
+    },
+    "vps_max_layer_id_values": {
+      "50/4": 58,
+      "9/4": 41,
+      "7/4": 40,
+      "16/4": 39,
+      "4/4": 38,
+      "63/4": 38,
+      "31/4": 38,
+      "12/4": 1
+    },
+    "positive_control_signatures_absent_from_variants": [
+      "asan",
+      "asan_double_free"
+    ]
+  },
+  "aflpp_hook_retain_smoke": {
+    "duration_s": 30,
+    "typed_ops": 44,
+    "typed_op_start": 40,
+    "typed_schedule": "sample-first",
+    "retained_records": 25,
+    "hook_used_records": 25,
+    "retained_ops": {
+      "40": 4,
+      "41": 4,
+      "42": 4,
+      "43": 4,
+      "0": 4,
+      "1": 4,
+      "2": 1
+    },
+    "d_f_spec_lifted_unique": [
+      1.0,
+      2.0
+    ],
+    "formtrig_gate": {
+      "status": "pass",
+      "reached": 93,
+      "terminal_triggered": 0,
+      "queued_progress": 1,
+      "accepted_non_trigger": 1,
+      "saved_non_trigger": 1,
+      "spec_lifted": 22,
+      "experiment_ready": true,
+      "pretrigger_lift_guidance_ready": true,
+      "non_trigger_candidate_lift_delta": true,
+      "binding_signal_status": "pass",
+      "binding_signal_diagnosis": "role_signal_progress_observed"
+    },
+    "endpoint_replay": {
+      "selected_records": 24,
+      "replayed_records": 24,
+      "endpoint_exit_code_counts": {
+        "0": 9,
+        "1": 15
+      },
+      "endpoint_sanitizer_crashes": 0,
+      "positive_control_sanitizer_crashes": 1,
+      "signature_files": {
+        "vps_max_layer_id": 1,
+        "nal_type_49_not_handled": 1,
+        "hevc_import_results": 9,
+        "lhevc_import_results": 1,
+        "asan": 0,
+        "asan_double_free": 0
+      },
+      "top_positive_overlap": {
+        "variant_index": 5,
+        "matched_positive_signature_count": 7,
+        "matched_positive_signatures": [
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "vps_max_layer_id_values": [
+          "63/4",
+          "4/4",
+          "7/4",
+          "9/4",
+          "16/4",
+          "31/4"
+        ]
+      }
+    }
+  },
+  "interpretation": "The new high-VPS access-unit operators repair a concrete GPAC_3403 R2T guidance gap. Offline endpoint sweep shows the previously absent vps_max_layer_id signature in every op40-43 variant, and the AFL++ hook-retain smoke confirms the same signal can be generated inside native FORMTRIG typed mutation. The fuzzer-side gate also improved from constant_lift_signal/fail to role_signal_progress_observed/pass with one accepted and saved non-trigger progress seed.",
+  "claim_boundary": "This is not terminal _T evidence and does not prove a SOTA baseline gap. It is valid as GPAC R2T repair evidence: FORMTRIG can now produce and retain TC-rooted pre-trigger progress plus endpoint signatures closer to the positive control. The remaining GPAC endpoint gap is ASAN double-free, likely requiring same-object/alias lifecycle completion rather than more VPS parser-reachability signatures alone."
+}

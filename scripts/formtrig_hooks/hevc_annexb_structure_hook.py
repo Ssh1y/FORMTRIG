@@ -25,7 +25,8 @@ DENSE_SEQUENCE_TYPES = [34, 0, 34, 33, 16, 34, 0, 21, 34, 0, 34, 33, 14, 34, 0, 
 OUTPUT_LAYER_SET_TOTALS = [5, 6, 8, 12, 16, 33, 65, 132]
 ACCESS_UNIT_LAYER_IDS = [0, 1, 4, 7, 14, 16, 22, 31, 36, 37, 46, 50]
 ACCESS_UNIT_VCL_TYPES = [0, 1, 5, 14, 16, 21]
-OP_SELECTOR_COUNT = 40
+HIGH_VPS_MAX_LAYER_IDS = [4, 7, 9, 16, 31, 50, 63]
+OP_SELECTOR_COUNT = 44
 
 
 @dataclass(frozen=True)
@@ -290,6 +291,31 @@ def output_layer_set_vps_payload(sample: int) -> bytes:
     return ebsp_from_rbsp(writer.to_bytes())
 
 
+def high_max_layer_vps_payload(sample: int) -> bytes:
+    writer = BitWriter()
+    max_layers_minus1 = sample % 3
+    max_sub_layers_minus1 = 0
+    max_layer_id = HIGH_VPS_MAX_LAYER_IDS[sample % len(HIGH_VPS_MAX_LAYER_IDS)]
+
+    writer.add_bits(sample & 0x0F, 4)
+    writer.add_bool(False)
+    writer.add_bool(True)
+    writer.add_bits(max_layers_minus1, 6)
+    writer.add_bits(max_sub_layers_minus1, 3)
+    writer.add_bool(True)
+    writer.add_bits(0xFFFF, 16)
+    writer.add_bits(0, 96)
+    writer.add_bool(True)
+    writer.add_ue(0)
+    writer.add_ue(0)
+    writer.add_ue(0)
+    writer.add_bits(max_layer_id, 6)
+    writer.add_ue(0)
+    writer.byte_align_zero()
+    writer.add_bits(0x5A5A ^ (sample * 0x0101), 16)
+    return ebsp_from_rbsp(writer.to_bytes())
+
+
 def sps_field_payload(base_payload: bytes, sample: int) -> bytes:
     payload = set_bits(stress_payload(base_payload, sample, min_len=96), 0, 4, sample & 0x0F)
     payload = set_bits(payload, 4, 3, (sample // 2) % 7)
@@ -430,6 +456,35 @@ def access_unit_parameter_train(
     for index in range(pps_repeats):
         layer = ACCESS_UNIT_LAYER_IDS[(sample + index + 2) % len(ACCESS_UNIT_LAYER_IDS)]
         chunks.append(make_nalu(34, clone_payload_for_type(data, nalus, 34, anchor, sample + index), layer))
+    return b"".join(chunks)
+
+
+def high_max_layer_access_unit_train(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    units: int,
+    dense_prefix: bool,
+) -> bytes:
+    chunks = []
+    if dense_prefix:
+        chunks.append(dense_layered_sequence(data, nalus, anchor, sample, cycles=3 + (sample % 3)))
+    for unit in range(units):
+        local_sample = sample + unit
+        layer = ACCESS_UNIT_LAYER_IDS[(local_sample + 3) % len(ACCESS_UNIT_LAYER_IDS)]
+        chunks.append(make_nalu(32, high_max_layer_vps_payload(local_sample), layer))
+        chunks.append(make_nalu(33, clone_payload_for_type(data, nalus, 33, anchor, local_sample + 1), 0))
+        chunks.append(make_nalu(34, clone_payload_for_type(data, nalus, 34, anchor, local_sample + 2), layer))
+        chunks.append(make_nalu(49, extractor_payload(local_sample), layer))
+        slice_type = ACCESS_UNIT_VCL_TYPES[(local_sample + 2) % len(ACCESS_UNIT_VCL_TYPES)]
+        chunks.append(
+            make_nalu(
+                slice_type,
+                access_unit_slice_payload(data, nalus, anchor, local_sample, rewrite_seed=True),
+                layer,
+            )
+        )
     return b"".join(chunks)
 
 
@@ -843,6 +898,39 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
             include_vps_extension=True,
         )
         out = data[: anchor.start] + prefix + train + data[anchor.start :]
+    elif selector == 40:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = high_max_layer_access_unit_train(
+            data, nalus, anchor, sample, units=4 + (sample % 3), dense_prefix=False
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 41:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        prefix = access_unit_parameter_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            pps_repeats=3 + (sample % 3),
+            vps_extension=True,
+        )
+        train = high_max_layer_access_unit_train(
+            data, nalus, anchor, sample + 5, units=5 + (sample % 4), dense_prefix=False
+        )
+        out = data[: anchor.start] + prefix + train + data[anchor.start :]
+    elif selector == 42:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = high_max_layer_access_unit_train(
+            data, nalus, anchor, sample, units=6 + (sample % 5), dense_prefix=True
+        )
+        out = train + data
+    elif selector == 43:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=8 + (sample % 4))
+        high = high_max_layer_access_unit_train(
+            data, nalus, anchor, sample + 11, units=6 + (sample % 5), dense_prefix=False
+        )
+        out = data[: anchor.start] + dense + high + data[anchor.start :]
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]
