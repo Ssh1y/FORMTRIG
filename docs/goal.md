@@ -1355,6 +1355,48 @@ P1:
   GPAC_3403 -> validate_replay_then_draft_binding_spec
 ```
 
+2026-06-19 在 PHP003 current-ABI 3-rep matched baseline 补齐后，已重新生成
+post-PHP003 triage/worklist：
+
+```text
+artifacts/formtrig_native_readiness/hard_target_triage_20260619.*
+artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260619.*
+
+promoted hard-target candidates = 1
+worklist runnable_now = 0
+
+PDF003:
+  disposition = candidate_extend_longruns
+  sota_pain_class = visible_hard_speedup_or_reliability
+  baseline_guidance_gap_status = measured_pass
+  FORMTRIG first_T = 0.31s
+  fastest successful baseline run = 4530s
+  speedup over fastest successful baseline run = 14612.90x
+  next = use as one hard-speedup data point, then expand cross-target evidence
+
+PHP003:
+  disposition = demote_to_control_or_negative
+  verdict = replicated_speedup_control_not_hard_sota_pain
+  baseline_guidance_gap_status = measured_pass
+  FORMTRIG median exact first_T = 1.942s
+  fastest baseline family median first_T = 150s
+  speedup over fastest baseline family median = 77.24x
+  baseline success = 8/9; AFL++ vanilla = 3/3
+  next = keep as speedup/control + mechanism evidence, not hard SOTA-pain
+
+GPAC_3403:
+  disposition = insufficient_evidence
+  next = validate replay / draft BindingSpec before any main-budget claim
+
+LIBXML2_1107:
+  worklist action = validate_binding_spec_then_short_screen
+```
+
+这个更新修正了 2026-06-18 worklist 的过期 runnable 项：PHP003 已完成
+current-ABI endpoint comparison，不再进入主预算 runnable queue。下一轮主预算不是
+继续跑 PHP003，而是围绕 PDF003 的 cross-target hard evidence，以及 GPAC/LIBXML2
+这类真实 CVE target 的 BindingSpec/site-map validation。
+
 PDF016 在 2026-06-18 worklist 中也从“未验证”变成明确的 repair/negative target：
 
 ```text

@@ -308,6 +308,47 @@ P1:
   GPAC_3403 -> validate_replay_then_draft_binding_spec
 ```
 
+2026-06-19 在 PHP003 current-ABI 600s x3 matched comparison 补齐后，
+hard-target triage/worklist 已重新生成：
+
+```text
+artifacts/formtrig_native_readiness/hard_target_triage_20260619.*
+artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260619.*
+
+promoted hard-target candidates = 1
+worklist runnable_now = 0
+
+PDF003:
+  disposition = candidate_extend_longruns
+  sota_pain_class = visible_hard_speedup_or_reliability
+  baseline_guidance_gap_status = measured_pass
+  FORMTRIG first_T = 0.31s
+  fastest successful baseline run = 4530s
+  speedup over fastest successful baseline run = 14612.90x
+
+PHP003:
+  disposition = demote_to_control_or_negative
+  verdict = replicated_speedup_control_not_hard_sota_pain
+  baseline_guidance_gap_status = measured_pass
+  FORMTRIG median exact first_T = 1.942s
+  fastest baseline family median first_T = 150s
+  speedup over fastest baseline family median = 77.24x
+  baseline success = 8/9; AFL++ vanilla = 3/3
+
+GPAC_3403:
+  disposition = insufficient_evidence
+  next = validate replay / draft BindingSpec before any main-budget claim
+
+LIBXML2_1107:
+  worklist action = validate_binding_spec_then_short_screen
+```
+
+This fixes the stale 2026-06-18 runnable queue: PHP003 has completed its
+current-ABI endpoint comparison and is now speedup/control plus mechanism
+evidence, not a hard-pain target and not a runnable main-budget screen. New
+hard-pain budget should go to cross-target evidence after PDF003 or to
+GPAC/LIBXML2 validation, not to another PHP003 rerun.
+
 PDF016 现在有正式 validation record：
 
 ```text

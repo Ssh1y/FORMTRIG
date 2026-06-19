@@ -465,6 +465,65 @@ def benefit_readout(payload: dict[str, Any]) -> dict[str, list[str] | str]:
 
 def package_row(path: Path) -> dict[str, Any]:
     payload = read_json(path)
+    if (
+        isinstance(payload.get("formtrig"), dict)
+        and isinstance(payload.get("baselines"), dict)
+        and isinstance(payload.get("claim_boundary"), dict)
+        and isinstance(payload.get("benefit"), dict)
+    ):
+        formtrig = payload.get("formtrig") or {}
+        baselines = payload.get("baselines") or {}
+        claim = payload.get("claim_boundary") or {}
+        benefit = payload.get("benefit") or {}
+        families = baselines.get("families") or []
+        successful = [
+            str(group.get("baseline"))
+            for group in families
+            if float(group.get("success_rate") or 0.0) > 0.0
+        ]
+        verdict = str(claim.get("verdict") or payload.get("verdict") or "")
+        fastest_baseline_tte = numeric(baselines.get("fastest_successful_trigger_time_s"))
+        fastest_family_median = numeric(
+            baselines.get("fastest_family_median_success_tte_s")
+        )
+        formtrig_tte = numeric(formtrig.get("first_t_exact_time_s_median"))
+        speedup = numeric(benefit.get("median_tte_speedup_vs_fastest_baseline_family_median"))
+        hard_supported = bool_value(claim.get("hard_sota_pain_supported"))
+        main_claim_strength = (
+            "hard_speedup_or_reliability_candidate"
+            if hard_supported
+            else "not_hard_pain_baseline_fast_enough"
+        )
+        return {
+            "comparison_id": payload.get("comparison_id") or path.parent.name,
+            "target_id": payload.get("target_id"),
+            "package_status": "needs_harder_experiment_design"
+            if not hard_supported
+            else "promote_or_extend_longruns",
+            "verdict": verdict,
+            "matched_baselines": int_value(baselines.get("total_runs")),
+            "successful_baselines": successful,
+            "fastest_baseline_trigger_time_s": fastest_baseline_tte,
+            "fastest_baseline_family_median_trigger_time_s": fastest_family_median,
+            "best_formtrig_trigger_time_s": formtrig_tte,
+            "tte_speedup_over_fastest_baseline": speedup,
+            "main_claim_strength": main_claim_strength,
+            "max_budget_s": numeric(formtrig.get("budget_s")) or numeric(baselines.get("budget_s")),
+            "formtrig_terminal": int_value(formtrig.get("successes")) > 0
+            or int_value(formtrig.get("terminal_triggered_execs_total")) > 0,
+            "strict_pretrigger_guidance": bool_value(
+                formtrig.get("all_pretrigger_lift_guidance_ready")
+            )
+            or int_value(formtrig.get("saved_non_trigger_progress_events_total")) > 0,
+            "longrun_10m_confirmed": False,
+            "missing_required_baselines": [],
+            "observed_benefits": list(claim.get("supported") or []),
+            "blocked_claims": list(claim.get("not_supported") or [])
+            + list(claim.get("why_not_hard_pain") or []),
+            "next_steps": list(payload.get("next_actions") or []),
+            "source_path": str(path),
+        }
+
     analysis = payload.get("analysis", {})
     groups = analysis.get("baseline_groups") or []
     successful = [
@@ -571,7 +630,7 @@ def package_row(path: Path) -> dict[str, Any]:
         status = "insufficient_evidence"
 
     return {
-        "comparison_id": payload.get("comparison_id"),
+        "comparison_id": payload.get("comparison_id") or path.parent.name,
         "target_id": payload.get("target_id"),
         "package_status": status,
         "verdict": verdict,
@@ -1001,6 +1060,7 @@ def verdict_rank(verdict: str) -> int:
         "positive_but_under_replicated": 1,
         "positive_endpoint_but_under_replicated": 1,
         "positive_speedup_matched_comparison": 1,
+        "replicated_speedup_control_not_hard_sota_pain": 1,
         "speedup_but_under_replicated": 2,
         "pretrigger_guidance_improved_no_endpoint_success": 3,
         "scalar_guidance_repair_no_endpoint_success": 4,
@@ -1165,7 +1225,11 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     comparison_inputs = args.comparison or ["artifacts/formtrig_native_readiness/comparisons"]
-    packages = [package_row(path) for path in comparison_paths(comparison_inputs)]
+    packages = [
+        row
+        for path in comparison_paths(comparison_inputs)
+        if (row := package_row(path)).get("target_id")
+    ]
     gap_inputs = args.baseline_guidance_gap or [
         "artifacts/formtrig_native_readiness/baseline_guidance_gap"
     ]
