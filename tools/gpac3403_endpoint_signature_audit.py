@@ -25,7 +25,10 @@ SIGNATURES: dict[str, re.Pattern[str]] = {
     "nal_type_32_error": re.compile(r"Error parsing NAL unit type 32"),
     "nal_type_49_not_handled": re.compile(r"NAL Unit type 49 not handled"),
     "track_importing_hevc": re.compile(r"Track Importing HEVC"),
+    "hevc_import_results": re.compile(r"HEVC Import results:\s+(\d+)\s+samples\s+\((\d+)\s+NALUs\)"),
+    "lhevc_import_results": re.compile(r"HEVC L-HEVC Import results:\s+Slices:\s+(\d+)\s+I\s+(\d+)\s+P\s+(\d+)\s+B"),
     "asan": re.compile(r"AddressSanitizer|SUMMARY: AddressSanitizer"),
+    "asan_double_free": re.compile(r"AddressSanitizer: attempting double-free|SUMMARY: AddressSanitizer: double-free|double-free"),
 }
 
 
@@ -79,6 +82,53 @@ def endpoint_stderr_files(logs_dir: Path) -> list[Path]:
     return sorted(path for path in logs_dir.glob("*.endpoint_*.stderr") if path.is_file())
 
 
+def summarize_import_metrics(records: list[dict[str, Any]]) -> dict[str, Any]:
+    hevc_observations = []
+    lhevc_observations = []
+    double_free_records = []
+    for record in records:
+        for samples, nalus in record["signatures"]["hevc_import_results"]["values"]:
+            hevc_observations.append(
+                {
+                    "path": record["path"],
+                    "samples": int(samples),
+                    "nalus": int(nalus),
+                }
+            )
+        for i_slices, p_slices, b_slices in record["signatures"]["lhevc_import_results"]["values"]:
+            lhevc_observations.append(
+                {
+                    "path": record["path"],
+                    "i_slices": int(i_slices),
+                    "p_slices": int(p_slices),
+                    "b_slices": int(b_slices),
+                }
+            )
+        if record["signatures"]["asan_double_free"]["present"]:
+            double_free_records.append(record)
+
+    return {
+        "hevc_import_observations": len(hevc_observations),
+        "hevc_import_files": len({obs["path"] for obs in hevc_observations}),
+        "hevc_samples_max": max((obs["samples"] for obs in hevc_observations), default=None),
+        "hevc_nalus_max": max((obs["nalus"] for obs in hevc_observations), default=None),
+        "hevc_top_samples": sorted(
+            hevc_observations,
+            key=lambda obs: (obs["samples"], obs["nalus"], obs["path"]),
+            reverse=True,
+        )[:8],
+        "lhevc_import_observations": len(lhevc_observations),
+        "lhevc_import_files": len({obs["path"] for obs in lhevc_observations}),
+        "lhevc_top_slices": sorted(
+            lhevc_observations,
+            key=lambda obs: (obs["i_slices"] + obs["p_slices"] + obs["b_slices"], obs["path"]),
+            reverse=True,
+        )[:8],
+        "asan_double_free_files": len(double_free_records),
+        "asan_double_free_examples": [record["path"] for record in double_free_records[:8]],
+    }
+
+
 def summarize_group(records: list[dict[str, Any]]) -> dict[str, Any]:
     per_signature: dict[str, Any] = {}
     for name in SIGNATURES:
@@ -96,6 +146,7 @@ def summarize_group(records: list[dict[str, Any]]) -> dict[str, Any]:
         }
     return {
         "files": len(records),
+        "metrics": summarize_import_metrics(records),
         "signatures": per_signature,
     }
 
@@ -149,7 +200,7 @@ def build_report(args: argparse.Namespace) -> dict[str, Any]:
     ]
 
     return {
-        "schema": "formtrig_gpac3403_endpoint_signature_audit_v1",
+        "schema": "formtrig_gpac3403_endpoint_signature_audit_v2",
         "logs_dir": str(args.logs_dir),
         "summary": compact_summary(summary),
         "records": records if args.include_records else None,

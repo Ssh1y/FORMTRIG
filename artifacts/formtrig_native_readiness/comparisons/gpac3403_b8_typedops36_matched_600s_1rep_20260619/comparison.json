@@ -79,7 +79,7 @@
       "No TTE speedup claim is supported by this run.",
       "This is one replicate and does not establish stability across seeds or repeated long runs."
     ],
-    "next_debug_step": "Replay the five saved_non_trigger queue entries against the GPAC_3403 endpoint and identify which final trigger relation is still missing."
+    "next_debug_step": "Use endpoint import metrics to target the missing multi-sample/L-HEVC rewrite state before the gf_isom_nalu_sample_rewrite:672 lifecycle edge."
   },
   "terminal_gap_analysis": {
     "tool": "tools/analyze_formtrig_signal_path.py",
@@ -108,5 +108,29 @@
       }
     ],
     "meaning": "FORMTRIG reached and saved TC-rooted states with root/use/producer/same-object evidence, but the latest frontier still misses the NALU rewrite fallback lifecycle edge needed before terminal _T."
+  },
+  "endpoint_import_contrast": {
+    "tool": "tools/gpac3403_endpoint_signature_audit.py",
+    "raw_analysis": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_saved_progress_endpoint_replay_safe_20260619/endpoint_signature_audit_v2.json",
+    "saved_progress_replay": {
+      "variant_files": 5,
+      "hevc_import_files": 2,
+      "hevc_samples_max": 1,
+      "hevc_nalus_max": 11,
+      "lhevc_import_files": 0,
+      "asan_double_free_files": 0
+    },
+    "positive_control": {
+      "hevc_samples_max": 172,
+      "hevc_nalus_max": 413,
+      "lhevc_import_files": 1,
+      "lhevc_slices": {
+        "i": 30,
+        "p": 2,
+        "b": 87
+      },
+      "asan_double_free_files": 1
+    },
+    "meaning": "The stable FORMTRIG saved-progress samples are still one-sample endpoint imports and never enter the L-HEVC import result path observed in the positive control, so the current typed mutation operators provide stable pre-trigger guidance but do not yet solve the final R2T step for GPAC_3403."
   }
 }

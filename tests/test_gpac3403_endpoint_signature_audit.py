@@ -27,6 +27,9 @@ class Gpac3403EndpointSignatureAuditTest(unittest.TestCase):
             "\x1b[31m[HEVC] Failed to parse VPS extensions\x1b[0m\n"
             "\x1b[31m[HEVC] 47 layers in VPS but only 4 supported in GPAC\x1b[0m\n"
             "\x1b[32mTrack Importing HEVC - Width 4 Height 2 FPS 25/1\x1b[0m\n"
+            "\x1b[32mHEVC Import results: 172 samples (413 NALUs) - Slices: 0 I 0 P 0 B\x1b[0m\n"
+            "\x1b[32mHEVC L-HEVC Import results: Slices: 30 I 2 P 87 B\x1b[0m\n"
+            "==1==ERROR: AddressSanitizer: attempting double-free on 0x123 in thread T0:\n"
         )
 
         signatures = audit.analyze_text(text)
@@ -36,6 +39,9 @@ class Gpac3403EndpointSignatureAuditTest(unittest.TestCase):
         self.assertTrue(signatures["failed_vps_extensions"]["present"])
         self.assertEqual(signatures["layers_only_4"]["values"], [("47", "4")])
         self.assertTrue(signatures["track_importing_hevc"]["present"])
+        self.assertEqual(signatures["hevc_import_results"]["values"], [("172", "413")])
+        self.assertEqual(signatures["lhevc_import_results"]["values"], [("30", "2", "87")])
+        self.assertTrue(signatures["asan_double_free"]["present"])
 
     def test_classify_log_recognizes_variant_and_positive_control(self):
         audit = load_module(AUDIT_PATH, "gpac3403_endpoint_signature_audit_classify")
@@ -75,6 +81,9 @@ class Gpac3403EndpointSignatureAuditTest(unittest.TestCase):
             (logs / "positive_control.endpoint_1.stderr").write_text(
                 "[HEVC] Wrong number of output layer sets in VPS 132, max 4 supported\n"
                 "[HEVC] Failed to parse VPS extensions\n"
+                "HEVC Import results: 172 samples (413 NALUs) - Slices: 0 I 0 P 0 B\n"
+                "HEVC L-HEVC Import results: Slices: 30 I 2 P 87 B\n"
+                "==1==ERROR: AddressSanitizer: attempting double-free on 0x123 in thread T0:\n"
                 "SUMMARY: AddressSanitizer: heap-buffer-overflow\n",
                 encoding="utf-8",
             )
@@ -94,6 +103,10 @@ class Gpac3403EndpointSignatureAuditTest(unittest.TestCase):
         self.assertEqual(report["summary"]["generated_variants"], 1)
         self.assertEqual(report["variant"]["signatures"]["vps_max_layer_id"]["files"], 1)
         self.assertEqual(report["positive_control"]["signatures"]["asan"]["files"], 1)
+        self.assertEqual(report["positive_control"]["metrics"]["hevc_samples_max"], 172)
+        self.assertEqual(report["positive_control"]["metrics"]["hevc_nalus_max"], 413)
+        self.assertEqual(report["positive_control"]["metrics"]["lhevc_import_files"], 1)
+        self.assertEqual(report["positive_control"]["metrics"]["asan_double_free_files"], 1)
         self.assertIn(
             "wrong_output_layer_sets",
             report["contrast"]["positive_control_signatures_absent_from_variants"],
