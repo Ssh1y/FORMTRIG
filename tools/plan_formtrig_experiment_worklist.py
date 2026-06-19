@@ -98,6 +98,7 @@ BASELINE_FAMILY = "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 DEFAULT_NATIVE_BUILD_ROOT = Path("artifacts/formtrig_native_readiness/magma_native_builds")
 DEFAULT_BINDING_VALIDATION_ROOT = Path("artifacts/formtrig_native_readiness/binding_validation")
 DEFAULT_MANIFEST_ROOT = Path("artifacts/formtrig_native_readiness/manifests")
+DEFAULT_HARNESS_ADMISSIBILITY_ROOT = Path("artifacts/formtrig_native_readiness")
 
 
 def read_json(path: Path) -> Any:
@@ -351,6 +352,61 @@ def binding_validation_map(root: Path | None) -> dict[str, dict[str, Any]]:
         if current is None or binding_validation_score(payload) >= binding_validation_score(current):
             validations[target_id] = payload
     return validations
+
+
+def harness_admissibility_paths(root: Path | None) -> list[Path]:
+    if root is None or not root.exists():
+        return []
+    if root.is_file():
+        return [root] if "harness_admissibility" in root.name else []
+    return sorted(root.rglob("*harness_admissibility*.json"))
+
+
+def harness_admissibility_rejects(payload: dict[str, Any] | None) -> bool:
+    if not payload:
+        return False
+    status = str(payload.get("status") or "")
+    return payload.get("core_evidence_allowed") is False or status.startswith("inadmissible")
+
+
+def harness_admissibility_score(payload: dict[str, Any]) -> tuple[int, str, str]:
+    return (
+        int(harness_admissibility_rejects(payload)),
+        str(payload.get("generated_at_utc") or ""),
+        str(payload.get("_harness_admissibility_path") or ""),
+    )
+
+
+def harness_admissibility_map(root: Path | None) -> dict[str, dict[str, Any]]:
+    records: dict[str, dict[str, Any]] = {}
+    for path in harness_admissibility_paths(root):
+        try:
+            payload = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        target_id = str(payload.get("target_id") or "")
+        if not target_id:
+            continue
+        payload["_harness_admissibility_path"] = str(path)
+        current = records.get(target_id)
+        if current is None or harness_admissibility_score(payload) >= harness_admissibility_score(current):
+            records[target_id] = payload
+    return records
+
+
+def harness_admissibility_reason(payload: dict[str, Any] | None) -> str:
+    if not payload:
+        return ""
+    status = str(payload.get("status") or "unknown")
+    summary = str(payload.get("summary") or "harness is not admissible as core evidence")
+    return f"harness_admissibility_not_core_evidence: {status}: {summary}"
+
+
+def harness_admissibility_next_action(payload: dict[str, Any] | None) -> str:
+    recommendations = payload.get("recommendations") if isinstance(payload, dict) else None
+    if isinstance(recommendations, list) and recommendations:
+        return "; ".join(str(item) for item in recommendations if str(item))
+    return "keep as control/sanity evidence; replace with an admissible real-CVE target"
 
 
 def sota_pain_class(triage: dict[str, Any] | None) -> str:
@@ -1861,6 +1917,7 @@ def build_worklist(
     triage_path: Path | None = None,
     native_build_root: Path | None = None,
     binding_validation_root: Path | None = None,
+    harness_admissibility_root: Path | None = DEFAULT_HARNESS_ADMISSIBILITY_ROOT,
     active_runs_path: Path | None = None,
     manifest_root: Path = DEFAULT_MANIFEST_ROOT,
     limit: int,
@@ -1878,6 +1935,7 @@ def build_worklist(
     target_triage = triage_map(triage_path)
     build_plans = native_build_plan_map(native_build_root)
     binding_validations = binding_validation_map(binding_validation_root)
+    harness_admissibilities = harness_admissibility_map(harness_admissibility_root)
     active_runs = active_run_map(active_runs_path)
     tasks: list[dict[str, Any]] = []
     skipped_controls: list[dict[str, Any]] = [
@@ -1890,6 +1948,12 @@ def build_worklist(
             "reason": (
                 "sota_pain_triage_not_main_budget"
                 if is_sota_pain_skip(row, target_triage)
+                else harness_admissibility_reason(
+                    harness_admissibilities.get(target_id_for(row))
+                )
+                if harness_admissibility_rejects(
+                    harness_admissibilities.get(target_id_for(row))
+                )
                 else "control_or_negative_not_main_budget"
             ),
             "sota_pain_class": sota_pain_class(
@@ -1898,10 +1962,34 @@ def build_worklist(
             "sota_pain_evidence": sota_pain_evidence(
                 target_triage.get(target_id_for(row))
             ),
-            "next_action": row.get("next_action"),
+            "next_action": harness_admissibility_next_action(
+                harness_admissibilities.get(target_id_for(row))
+            )
+            if harness_admissibility_rejects(
+                harness_admissibilities.get(target_id_for(row))
+            )
+            else row.get("next_action"),
+            "harness_admissibility_status": str(
+                (
+                    harness_admissibilities.get(target_id_for(row)) or {}
+                ).get("status")
+                or ""
+            ),
+            "harness_admissibility_evidence": str(
+                (
+                    harness_admissibilities.get(target_id_for(row)) or {}
+                ).get("_harness_admissibility_path")
+                or ""
+            ),
         }
         for row in all_rows
-        if is_demoted_control(row) or is_sota_pain_skip(row, target_triage)
+        if (
+            is_demoted_control(row)
+            or is_sota_pain_skip(row, target_triage)
+            or harness_admissibility_rejects(
+                harness_admissibilities.get(target_id_for(row))
+            )
+        )
     ]
     skipped_low_priority: list[dict[str, Any]] = [
         {
@@ -1917,7 +2005,13 @@ def build_worklist(
         if is_non_main_budget(row) and not is_demoted_control(row)
     ]
     for row in rows:
-        if is_non_main_budget(row) or is_sota_pain_skip(row, target_triage):
+        if (
+            is_non_main_budget(row)
+            or is_sota_pain_skip(row, target_triage)
+            or harness_admissibility_rejects(
+                harness_admissibilities.get(target_id_for(row))
+            )
+        ):
             continue
         task = task_for_row(
             row,
@@ -1952,6 +2046,7 @@ def build_worklist(
             "triage": str(triage_path) if triage_path else "",
             "native_build_root": str(native_build_root) if native_build_root else "",
             "binding_validation_root": str(binding_validation_root) if binding_validation_root else "",
+            "harness_admissibility_root": str(harness_admissibility_root) if harness_admissibility_root else "",
             "active_runs": str(active_runs_path) if active_runs_path else "",
             "manifest_root": str(manifest_root),
         },
@@ -2171,6 +2266,12 @@ def parse_args() -> argparse.Namespace:
         help="BindingSpec validation JSON root; ready records unblock matched short screens",
     )
     parser.add_argument(
+        "--harness-admissibility-root",
+        type=Path,
+        default=DEFAULT_HARNESS_ADMISSIBILITY_ROOT,
+        help="root scanned for *harness_admissibility*.json records that can demote inadmissible real-CVE harnesses",
+    )
+    parser.add_argument(
         "--active-runs",
         type=Path,
         default=None,
@@ -2204,6 +2305,7 @@ def main() -> int:
         triage_path=args.triage,
         native_build_root=args.native_build_root,
         binding_validation_root=args.binding_validation_root,
+        harness_admissibility_root=args.harness_admissibility_root,
         active_runs_path=args.active_runs,
         manifest_root=args.manifest_root,
         limit=args.limit,

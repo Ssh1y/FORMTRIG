@@ -1,6 +1,6 @@
 {
   "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
-  "blocked_count": 29,
+  "blocked_count": 28,
   "defaults": {
     "jobs": 4,
     "longrun_duration_s": 7200,
@@ -8,11 +8,12 @@
     "repetitions": 3,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-19T22:04:01+00:00",
+  "generated_at_utc": "2026-06-19T22:10:25+00:00",
   "inputs": {
     "active_runs": "",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
+    "harness_admissibility_root": "artifacts/formtrig_native_readiness",
     "manifest_root": "artifacts/formtrig_native_readiness/manifests",
     "native_build_root": "artifacts/formtrig_native_readiness/magma_native_builds",
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
@@ -20,10 +21,12 @@
   },
   "runnable_now_count": 0,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
-  "skipped_control_count": 10,
+  "skipped_control_count": 11,
   "skipped_controls": [
     {
       "existing_disposition": "",
+      "harness_admissibility_evidence": "",
+      "harness_admissibility_status": "",
       "lane": "short_triage_ready",
       "next_action": "run short FORMTRIG gate and same-seed AFL++ family baseline screen",
       "rank": 2,
@@ -34,7 +37,22 @@
       "target_id": "PHP003"
     },
     {
+      "existing_disposition": "",
+      "harness_admissibility_evidence": "artifacts/formtrig_native_readiness/raw/libxml2_1107_harness_admissibility_20260615.json",
+      "harness_admissibility_status": "inadmissible_core_evidence",
+      "lane": "binding_validation_first",
+      "next_action": "Do not count this target as core evidence for solving natural R2T guidance.; Keep it only as a native pipeline, BindingSpec, or crash-accounting sanity case.; Replace it with targets where the input naturally drives parser state, length, magic, structure, or lifecycle constraints.",
+      "rank": 3,
+      "reason": "harness_admissibility_not_core_evidence: inadmissible_core_evidence: Not admissible as core FORMTRIG R2T evidence because the harness exposes an artificial trigger-control knob.",
+      "sota_pain_class": "",
+      "sota_pain_evidence": "",
+      "status": "needs_binding_validation",
+      "target_id": "LIBXML2_1107"
+    },
+    {
       "existing_disposition": "demote_to_control_or_negative",
+      "harness_admissibility_evidence": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/harness_admissibility.json",
+      "harness_admissibility_status": "admissible",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 139,
@@ -46,6 +64,8 @@
     },
     {
       "existing_disposition": "demote_to_control_or_negative",
+      "harness_admissibility_evidence": "",
+      "harness_admissibility_status": "",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 140,
@@ -57,6 +77,8 @@
     },
     {
       "existing_disposition": "demote_to_control_or_negative",
+      "harness_admissibility_evidence": "",
+      "harness_admissibility_status": "",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 141,
@@ -68,6 +90,8 @@
     },
     {
       "existing_disposition": "demote_to_control_or_negative",
+      "harness_admissibility_evidence": "",
+      "harness_admissibility_status": "",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 142,
@@ -79,6 +103,8 @@
     },
     {
       "existing_disposition": "",
+      "harness_admissibility_evidence": "",
+      "harness_admissibility_status": "",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 143,
@@ -90,6 +116,8 @@
     },
     {
       "existing_disposition": "",
+      "harness_admissibility_evidence": "",
+      "harness_admissibility_status": "",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 144,
@@ -101,6 +129,8 @@
     },
     {
       "existing_disposition": "",
+      "harness_admissibility_evidence": "",
+      "harness_admissibility_status": "",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 145,
@@ -112,6 +142,8 @@
     },
     {
       "existing_disposition": "demote_to_control_or_negative",
+      "harness_admissibility_evidence": "",
+      "harness_admissibility_status": "",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 146,
@@ -123,6 +155,8 @@
     },
     {
       "existing_disposition": "demote_to_control_or_negative",
+      "harness_admissibility_evidence": "artifacts/formtrig_native_readiness/raw/libcoap_35862_asan_30m_20260615T225016Z/formtrig_harness_admissibility.json",
+      "harness_admissibility_status": "admissible",
       "lane": "control_or_negative",
       "next_action": "keep as control or negative evidence; do not spend main long-run budget",
       "rank": 147,
@@ -973,7 +1007,7 @@
     }
   ],
   "skipped_low_priority_count": 93,
-  "task_count": 29,
+  "task_count": 28,
   "tasks": [
     {
       "action": "expand_cross_target_hard_evidence",
@@ -1020,49 +1054,6 @@
       "sota_pain_evidence": "at least one strong baseline family is unstable or has low success under the matched budget; strength=hard_speedup_or_reliability_candidate; FORMTRIG first_T=0.31s; baseline fastest_T=4530s; baseline family_median_T=4530s; speedup=14612.9x; baseline_visible=aflplusplus_vanilla,redqueen_operand; baseline_guidance_gap.status=measured_pass; pre_T_binary_flat=true; fastest_baseline_T=4530s; baseline evidence supports a hard binary-TC no-guidance candidate",
       "source": "magma",
       "target_id": "PDF003"
-    },
-    {
-      "action": "validate_binding_spec_then_short_screen",
-      "benefit_to_prove": "Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no external PoC/input link recorded",
-        "no vulnerable/fix commit link recorded",
-        "BindingSpec candidate is not native-site-map validated"
-      ],
-      "category": "binary-state-null",
-      "claim_boundary": "Validation is a gate, not an efficacy result.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
-      "evidence_paths": [
-        "artifacts/cve_bench_candidate_audit.json"
-      ],
-      "lane": "binding_validation_first",
-      "mechanism_evidence_required": [
-        "native site-map validation",
-        "lift audit pass",
-        "binding-signal diagnosis pass",
-        "seed readiness with reached non-trigger seeds"
-      ],
-      "post_unblock_commands": [
-        "run short FORMTRIG gate and same-budget AFL++ family baselines"
-      ],
-      "primary_endpoint_metrics": [
-        "binding audit pass/fail",
-        "accepted non-trigger progress count",
-        "short-screen first _T/TTE after validation"
-      ],
-      "priority": "P0",
-      "project": "libxml2",
-      "rank": 3,
-      "repetitions": 3,
-      "runnable_now": false,
-      "sota_pain_class": "",
-      "sota_pain_evidence": "",
-      "source": "real_cve",
-      "target_id": "LIBXML2_1107"
     },
     {
       "action": "validate_replay_then_draft_binding_spec",

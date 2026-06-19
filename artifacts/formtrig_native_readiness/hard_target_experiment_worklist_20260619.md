@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-19T22:04:01+00:00`
-Tasks: `29`; runnable now: `0`; blocked/gated: `29`; demoted controls skipped: `10`; low-priority skipped: `93`.
+Generated: `2026-06-19T22:10:25+00:00`
+Tasks: `28`; runnable now: `0`; blocked/gated: `28`; demoted controls skipped: `11`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -16,7 +16,6 @@ Tasks: `29`; runnable now: `0`; blocked/gated: `29`; demoted controls skipped: `
 | priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
 | P0 | 1 | PDF003 | magma | visible_hard_speedup_or_reliability | expand_cross_target_hard_evidence | blocked | The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign. |
-| P0 | 3 | LIBXML2_1107 | real_cve |  | validate_binding_spec_then_short_screen | blocked | Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance. |
 | P0 | 4 | GPAC_3403 | real_cve | not_assessed | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 5 | SQL013 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 6 | SSL009 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -74,27 +73,6 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z/comparison.json
 - artifacts/magma_canary_inventory.json
 - artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json
-
-### P0 LIBXML2_1107 - validate_binding_spec_then_short_screen
-
-- Benefit to prove: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
-- SOTA pain: `not recorded`
-- SOTA pain evidence: not recorded
-- Endpoint metrics: binding audit pass/fail, accepted non-trigger progress count, short-screen first _T/TTE after validation
-- Claim boundary: Validation is a gate, not an efficacy result.
-- Blocking issue:
-- no external PoC/input link recorded
-- no vulnerable/fix commit link recorded
-- BindingSpec candidate is not native-site-map validated
-- Mechanism evidence required after benefit:
-- native site-map validation
-- lift audit pass
-- binding-signal diagnosis pass
-- seed readiness with reached non-trigger seeds
-- Post-unblock commands or steps:
-- run short FORMTRIG gate and same-budget AFL++ family baselines
-- Evidence paths:
-- artifacts/cve_bench_candidate_audit.json
 
 ### P0 GPAC_3403 - validate_replay_then_draft_binding_spec
 
@@ -669,6 +647,7 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 | rank | target | lane | disposition/status | SOTA pain | reason |
 | ---: | --- | --- | --- | --- | --- |
 | 2 | PHP003 | short_triage_ready | needs_short_discovery | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
+| 3 | LIBXML2_1107 | binding_validation_first | needs_binding_validation |  | harness_admissibility_not_core_evidence: inadmissible_core_evidence: Not admissible as core FORMTRIG R2T evidence because the harness exposes an artificial trigger-control knob. |
 | 139 | LIBARCHIVE_2936 | control_or_negative | demote_to_control_or_negative | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
 | 140 | TIF012 | control_or_negative | demote_to_control_or_negative | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |
 | 141 | PHP009 | control_or_negative | demote_to_control_or_negative | not_visible_baseline_time_cost_acceptable | sota_pain_triage_not_main_budget |

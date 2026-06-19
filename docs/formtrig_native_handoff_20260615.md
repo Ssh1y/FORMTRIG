@@ -340,14 +340,18 @@ GPAC_3403:
   next = validate replay / draft BindingSpec before any main-budget claim
 
 LIBXML2_1107:
-  worklist action = validate_binding_spec_then_short_screen
+  skipped = harness_admissibility_not_core_evidence
+  status = inadmissible_core_evidence
+  reason = harness exposes an artificial allocation-failure trigger-control knob
 ```
 
 This fixes the stale 2026-06-18 runnable queue: PHP003 has completed its
 current-ABI endpoint comparison and is now speedup/control plus mechanism
 evidence, not a hard-pain target and not a runnable main-budget screen. New
-hard-pain budget should go to cross-target evidence after PDF003 or to
-GPAC/LIBXML2 validation, not to another PHP003 rerun.
+hard-pain budget should go to cross-target evidence after PDF003, to
+GPAC_3403 validation, or to a replacement real-CVE target whose input naturally
+drives parser state. Do not spend main budget on another PHP003 rerun or on
+LIBXML2_1107 as core evidence.
 
 PDF016 现在有正式 validation record：
 
@@ -802,7 +806,19 @@ cc -std=c11 -Iformtrig/include -Wall -Wextra -Werror formtrig/tools/formtrig_sit
 cc -std=c11 -Iformtrig/include -Wall -Wextra -Werror formtrig/tools/formtrig_binding_signal_diagnose.c -o /tmp/formtrig_binding_signal_diagnose
 ```
 
-## 真实 CVE 正例：LIBXML2_1107
+## 真实 CVE sanity/control：LIBXML2_1107
+
+2026-06-19 correction: LIBXML2_1107 is **not** admissible as core FORMTRIG
+R2T evidence. Keep the artifacts below only as native pipeline, BindingSpec,
+selective instrumentation, and crash-accounting sanity evidence.
+
+```text
+admissibility = artifacts/formtrig_native_readiness/raw/libxml2_1107_harness_admissibility_20260615.json
+status = inadmissible_core_evidence
+reason = harness exposes allocation failure as input byte 0
+recommendation = replace with targets where input naturally drives parser state,
+                 length, magic, structure, or lifecycle constraints
+```
 
 目标：
 
@@ -874,7 +890,10 @@ guard: fail-count enabled guard
 input_influence: byte 0, mutation hint set_byte 2
 ```
 
-注意：这个 BindingSpec 是外部语义输入，不是 core workaround。它绑定的是 harness allocation-failure semantics。后续论文/实验里要如实标注这是 harness-level BindingSpec。
+注意：这个 BindingSpec 是外部语义输入，不是 core workaround。它绑定的是 harness
+allocation-failure semantics；结合一字节 set-byte hint，会把真实 R2T 搜索折叠成
+人工 knob。后续论文/实验里必须标注这是 harness-level BindingSpec，不能作为
+FORMTRIG 解决自然 binary TC guidance 的主证据。
 
 ## CVE 30s strict sweep 结果
 
@@ -1312,6 +1331,9 @@ pNew->nLTerm
 
 ## 当前一句话状态
 
-FORMTRIG native 已经有一条可信正线：真实 CVE `LIBXML2_1107` 上，spec-driven `D_F` 在 `D_T=1,T=0` 的 non-trigger seed 上产生了可接受进展，并最终找到 crash。
-
-但它还不是最终实验级实现，因为这条证据目前依赖 full instrumentation。下一步必须把 BindingSpec/site-id selective instrumentation 用到真实 target 上，验证性能和稳定性。
+FORMTRIG native 已经有 PDF003 这一条 hard Magma endpoint speedup/no-guidance
+候选，也有 PHP003/PHP009/TIF012/LIBARCHIVE/LIBXML2 等 speedup、control、pipeline
+或机制归因证据；但还没有完成最终实验级闭环。真实 CVE 侧不能再把
+LIBXML2_1107 当主正例，因为它的 harness 暴露了 allocation-failure knob。下一步必须
+推进 GPAC_3403 或新的 admissible real-CVE target，让输入自然驱动 parser state /
+lifecycle / structure，并在 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。

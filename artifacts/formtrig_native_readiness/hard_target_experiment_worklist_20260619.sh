@@ -11,11 +11,6 @@ set -euo pipefail
 # post-unblock: prioritize targets where strong baselines have low success or long R2T tails
 # post-unblock: add ablations for any target-specific typed hook before main-claim use
 
-# P0 LIBXML2_1107 validate_binding_spec_then_short_screen
-# benefit: Before comparing performance, prove that the candidate BindingSpec creates replay-stable pre-trigger guidance.
-# blocked: no external PoC/input link recorded; no vulnerable/fix commit link recorded; BindingSpec candidate is not native-site-map validated
-# post-unblock: run short FORMTRIG gate and same-budget AFL++ family baselines
-
 # P0 GPAC_3403 validate_replay_then_draft_binding_spec
 # benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
 # blocked: no BindingSpec candidate exists yet

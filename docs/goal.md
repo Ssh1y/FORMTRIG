@@ -1389,13 +1389,17 @@ GPAC_3403:
   next = validate replay / draft BindingSpec before any main-budget claim
 
 LIBXML2_1107:
-  worklist action = validate_binding_spec_then_short_screen
+  skipped = harness_admissibility_not_core_evidence
+  status = inadmissible_core_evidence
+  reason = harness exposes an artificial allocation-failure trigger-control knob
 ```
 
 这个更新修正了 2026-06-18 worklist 的过期 runnable 项：PHP003 已完成
 current-ABI endpoint comparison，不再进入主预算 runnable queue。下一轮主预算不是
-继续跑 PHP003，而是围绕 PDF003 的 cross-target hard evidence，以及 GPAC/LIBXML2
-这类真实 CVE target 的 BindingSpec/site-map validation。
+继续跑 PHP003，也不是继续把 LIBXML2_1107 当 core real-CVE 正例；LIBXML2 只能保留
+为 native pipeline / BindingSpec / crash-accounting sanity evidence。主预算应围绕
+PDF003 的 cross-target hard evidence、GPAC_3403 的 admissible real-CVE validation，
+以及新的自然输入驱动 real-CVE target 展开。
 
 PDF016 在 2026-06-18 worklist 中也从“未验证”变成明确的 repair/negative target：
 
