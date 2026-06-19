@@ -356,6 +356,12 @@ same_object_relation 1 lifecycle_event use obj
 compound/lifecycle B3. Without it, the atom is rejected with
 `missing_same_object_relation` or `missing_same_object_endpoint`. This prevents a
 single stateful probe from being misread as a same-object lifecycle binding.
+The native runtime also consumes `same_object_relation`: when a relation is
+declared, the `same_object` role is satisfied only after the declared
+`relation_from` and `relation_to` roles report the same non-zero object value
+through `a`, `b`, or `c` value modes. A lone `same_object` pointer observation
+therefore cannot collapse lifecycle `D_F_spec_lifted` to a fully satisfied
+role graph.
 
 Binding rows also declare a `value_mode`. Basic modes forward the raw event
 distance or operands (`distance`, `hit`, `outcome`, `a`, `b`, `c`). The

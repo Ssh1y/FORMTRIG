@@ -230,6 +230,30 @@ cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
 FORMTRIG_LIFT_SPEC="$work_dir/role_graph_distance_spec.txt" \
   "$work_dir/role_graph_distance_smoke"
 
+cat > "$work_dir/same_object_relation_hit_endpoints_spec.txt" <<'SPEC'
+atom_category 1 compound-sequence-lifecycle
+role_component 7 102 lifecycle_event 7 1 20 higher hit 1.0 1.0
+role_component 7 103 use 6 1 30 higher hit 1.0 1.0
+role_component 7 201 same_object 8 1 40 higher a 1.0 1.0
+same_object_relation 1 lifecycle_event use obj
+SPEC
+cat > "$work_dir/same_object_relation_value_endpoints_spec.txt" <<'SPEC'
+atom_category 1 compound-sequence-lifecycle
+role_component 7 102 lifecycle_event 8 1 20 higher a 1.0 1.0
+role_component 7 103 use 8 1 30 higher a 1.0 1.0
+role_component 7 201 same_object 8 1 40 higher a 1.0 1.0
+same_object_relation 1 lifecycle_event use obj
+SPEC
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Wno-unused-parameter -Werror -DFORMTRIG_USE_AFL_MAP_FALLBACK=1 \
+  "$repo_root/formtrig/tests/same_object_relation_smoke.c" \
+  "$repo_root/formtrig/runtime/formtrig_runtime.c" \
+  -o "$work_dir/same_object_relation_smoke" -lrt -lm
+FORMTRIG_LIFT_SPEC="$work_dir/same_object_relation_hit_endpoints_spec.txt" \
+  FORMTRIG_EXPECT_DF=2 "$work_dir/same_object_relation_smoke"
+FORMTRIG_LIFT_SPEC="$work_dir/same_object_relation_value_endpoints_spec.txt" \
+  FORMTRIG_EXPECT_DF=1 "$work_dir/same_object_relation_smoke"
+
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
   -Werror "$repo_root/formtrig/tools/formtrig_lift_spec_audit.c" \
   -o "$work_dir/formtrig_lift_spec_audit"

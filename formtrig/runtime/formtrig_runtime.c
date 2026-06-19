@@ -23,6 +23,7 @@
 #define FORMTRIG_VALUE_PROVENANCE_CAP 256u
 #define FORMTRIG_TARGET_SITE_CAP 64u
 #define FORMTRIG_PROBE_SPEC_CAP 256u
+#define FORMTRIG_SAME_OBJECT_RELATION_CAP 64u
 #define FORMTRIG_U64_SATURATED 9007199254740991.0
 
 #define FORMTRIG_DIRECT_MEM 1u
@@ -153,6 +154,12 @@ typedef struct {
 } formtrig_probe_spec_t;
 
 typedef struct {
+  uint32_t atom_id;
+  uint32_t from_role;
+  uint32_t to_role;
+} formtrig_same_object_relation_t;
+
+typedef struct {
   int reached;
   int crash_predicate;
   int binary_sink;
@@ -231,6 +238,9 @@ static formtrig_shm_record_t *g_dedicated_shm_record = NULL;
 static int g_dedicated_shm_checked = 0;
 static formtrig_probe_spec_t g_probe_specs[FORMTRIG_PROBE_SPEC_CAP];
 static uint32_t g_probe_spec_count = 0;
+static formtrig_same_object_relation_t
+    g_same_object_relations[FORMTRIG_SAME_OBJECT_RELATION_CAP];
+static uint32_t g_same_object_relation_count = 0;
 static int g_probe_specs_loaded = 0;
 
 static void apply_probe_specs_to_event(const formtrig_event_t *event);
@@ -1815,6 +1825,13 @@ static int role_counts_for_spec_df(uint32_t role) {
   }
 }
 
+static uint32_t effective_spec_role(const formtrig_probe_spec_t *spec) {
+  if (!spec) return FORMTRIG_ROLE_UNKNOWN;
+  return spec->role == FORMTRIG_ROLE_UNKNOWN
+             ? default_role_for_component(spec->component_kind)
+             : spec->role;
+}
+
 static uint32_t expected_spec_role_bits_for_atom(uint32_t atom_id) {
   if (!atom_id) return 0;
   ensure_probe_specs_loaded();
@@ -1827,9 +1844,7 @@ static uint32_t expected_spec_role_bits_for_atom(uint32_t atom_id) {
       continue;
     if (spec->atom_id != atom_id) continue;
 
-    uint32_t role = spec->role == FORMTRIG_ROLE_UNKNOWN
-                        ? default_role_for_component(spec->component_kind)
-                        : spec->role;
+    uint32_t role = effective_spec_role(spec);
     if (role_counts_for_spec_df(role)) bits |= role_bit(role);
   }
   return bits;
@@ -1854,6 +1869,116 @@ static int component_value_satisfies_goal(
     const formtrig_progress_component_t *component) {
   if (!component) return 0;
   return direction_value_satisfies_goal(component->flags, component->value);
+}
+
+static uint64_t expected_source_id_for_spec(const formtrig_probe_spec_t *spec) {
+  if (!spec) return 0;
+  if (spec->source_id) return spec->source_id;
+  if (spec->kind == FORMTRIG_SPEC_PHASE)
+    return component_source_id(spec->component_kind, spec->atom_id,
+                               spec->priority);
+  if (spec->site_id != FORMTRIG_SPEC_WILDCARD)
+    return component_source_id(spec->component_kind, spec->site_id,
+                               spec->atom_id);
+  return 0;
+}
+
+static uint64_t expected_context_hash_for_spec(
+    const formtrig_probe_spec_t *spec) {
+  if (!spec) return 0;
+  if (spec->context_hash) return spec->context_hash;
+  return component_source_id(spec->component_kind, spec->atom_id,
+                             spec->priority);
+}
+
+static int value_mode_is_object_identity(uint32_t value_mode) {
+  return value_mode == FORMTRIG_SPEC_VALUE_A ||
+         value_mode == FORMTRIG_SPEC_VALUE_B ||
+         value_mode == FORMTRIG_SPEC_VALUE_C;
+}
+
+static int component_matches_probe_spec(
+    const formtrig_progress_component_t *component,
+    const formtrig_probe_spec_t *spec) {
+  if (!component || !spec) return 0;
+  if (spec->kind != FORMTRIG_SPEC_EVENT &&
+      spec->kind != FORMTRIG_SPEC_PHASE)
+    return 0;
+  if (component->atom_id != spec->atom_id) return 0;
+  if (component->kind != spec->component_kind) return 0;
+  if (component->role != effective_spec_role(spec)) return 0;
+  if (component->priority != spec->priority) return 0;
+
+  uint64_t source_id = expected_source_id_for_spec(spec);
+  if (source_id && component->source_id != source_id) return 0;
+  uint64_t context_hash = expected_context_hash_for_spec(spec);
+  if (context_hash && component->context_hash != context_hash) return 0;
+  return 1;
+}
+
+static int component_has_object_identity_value(
+    const formtrig_progress_component_t *component) {
+  if (!component) return 0;
+  if (!(component->flags & FORMTRIG_COMPONENT_SPEC_LIFTED)) return 0;
+  if (!isfinite(component->value) || component->value == 0.0) return 0;
+
+  ensure_probe_specs_loaded();
+  for (uint32_t i = 0; i < g_probe_spec_count; i++) {
+    const formtrig_probe_spec_t *spec = &g_probe_specs[i];
+    if (!value_mode_is_object_identity(spec->value_mode)) continue;
+    if (component_matches_probe_spec(component, spec)) return 1;
+  }
+  return 0;
+}
+
+static int same_object_relation_declared_for_atom(uint32_t atom_id) {
+  ensure_probe_specs_loaded();
+  for (uint32_t i = 0; i < g_same_object_relation_count; i++)
+    if (g_same_object_relations[i].atom_id == atom_id) return 1;
+  return 0;
+}
+
+static int relation_endpoint_has_object_value(uint32_t atom_id, uint32_t role,
+                                              double value) {
+  for (uint32_t i = 0; i < g_state.component_count; i++) {
+    const formtrig_progress_component_t *component = &g_state.components[i];
+    if (component->atom_id != atom_id || component->role != role) continue;
+    if (!component_has_object_identity_value(component)) continue;
+    if (component->value == value) return 1;
+  }
+  return 0;
+}
+
+static int same_object_relation_row_satisfied(
+    const formtrig_same_object_relation_t *relation) {
+  if (!relation) return 0;
+  for (uint32_t i = 0; i < g_state.component_count; i++) {
+    const formtrig_progress_component_t *component = &g_state.components[i];
+    if (component->atom_id != relation->atom_id ||
+        component->role != FORMTRIG_ROLE_SAME_OBJECT)
+      continue;
+    if (!component_has_object_identity_value(component)) continue;
+    double value = component->value;
+    if (relation_endpoint_has_object_value(relation->atom_id,
+                                           relation->from_role, value) &&
+        relation_endpoint_has_object_value(relation->atom_id,
+                                           relation->to_role, value))
+      return 1;
+  }
+  return 0;
+}
+
+static int same_object_relations_satisfied_for_atom(uint32_t atom_id) {
+  ensure_probe_specs_loaded();
+  int relation_count = 0;
+  for (uint32_t i = 0; i < g_same_object_relation_count; i++) {
+    const formtrig_same_object_relation_t *relation =
+        &g_same_object_relations[i];
+    if (relation->atom_id != atom_id) continue;
+    relation_count++;
+    if (!same_object_relation_row_satisfied(relation)) return 0;
+  }
+  return relation_count > 0;
 }
 
 typedef struct {
@@ -1895,6 +2020,14 @@ static formtrig_role_cost_t unsatisfied_component_role_cost(
 
 static formtrig_role_cost_t spec_role_missing_cost_for_atom(uint32_t atom_id,
                                                             uint32_t role) {
+  if (role == FORMTRIG_ROLE_SAME_OBJECT &&
+      same_object_relation_declared_for_atom(atom_id)) {
+    formtrig_role_cost_t relation_cost = {1.0, 0};
+    if (same_object_relations_satisfied_for_atom(atom_id))
+      relation_cost.cost = 0.0;
+    return relation_cost;
+  }
+
   formtrig_role_cost_t best_unsatisfied = {FORMTRIG_INF, 0};
   int observed = 0;
 
@@ -2336,6 +2469,28 @@ static void load_probe_spec_line(char *line) {
   char *saveptr = NULL;
   char *op = strtok_r(line, " \t\r\n,", &saveptr);
   if (!op || !*op) return;
+
+  if (strcmp(op, "same_object_relation") == 0 ||
+      strcmp(op, "same-object-relation") == 0 ||
+      strcmp(op, "same_object_relation_v1") == 0) {
+    if (g_same_object_relation_count >= FORMTRIG_SAME_OBJECT_RELATION_CAP)
+      return;
+    char *atom_id = next_spec_token(&saveptr);
+    char *from_role = next_spec_token(&saveptr);
+    char *to_role = next_spec_token(&saveptr);
+    formtrig_same_object_relation_t relation;
+    memset(&relation, 0, sizeof(relation));
+    if (!parse_u32_token(atom_id, &relation.atom_id)) return;
+    relation.from_role = parse_role_token(from_role);
+    relation.to_role = parse_role_token(to_role);
+    if (!relation.atom_id ||
+        relation.from_role == FORMTRIG_ROLE_UNKNOWN ||
+        relation.to_role == FORMTRIG_ROLE_UNKNOWN)
+      return;
+    g_same_object_relations[g_same_object_relation_count++] = relation;
+    return;
+  }
+
   if (g_probe_spec_count >= FORMTRIG_PROBE_SPEC_CAP) return;
 
   formtrig_probe_spec_t spec;

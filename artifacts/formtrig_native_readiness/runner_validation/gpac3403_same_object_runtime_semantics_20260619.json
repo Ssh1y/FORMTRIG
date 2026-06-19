@@ -1,0 +1,43 @@
+{
+  "schema": "formtrig_runtime_relation_semantics_validation_v1",
+  "tc_id": "GPAC_3403",
+  "date": "2026-06-19",
+  "change": {
+    "runtime": "formtrig/runtime/formtrig_runtime.c now parses same_object_relation rows and scores same_object by matching object identity across relation_from and relation_to endpoints.",
+    "smoke": "formtrig/tests/same_object_relation_smoke.c covers hit-only endpoints versus matching object-value endpoints.",
+    "runner": "scripts/run_native_formtrig_smoke.sh runs the same_object relation smoke when AFL++ preflight dependencies are present."
+  },
+  "verification": [
+    {
+      "command": "targeted same_object_relation_smoke with lifecycle/use hit endpoints",
+      "expected": "D_F_spec_lifted remains 2.0 because hit=1 endpoint roles do not prove object identity",
+      "status": "pass"
+    },
+    {
+      "command": "targeted same_object_relation_smoke with lifecycle/use/same_object value_mode=a endpoints",
+      "expected": "D_F_spec_lifted becomes 1.0 only when all relation endpoints report the same object value",
+      "status": "pass"
+    },
+    {
+      "command": "targeted role_graph_distance_smoke",
+      "expected": "existing non-lifecycle role graph distances remain unchanged",
+      "status": "pass"
+    },
+    {
+      "command": "python3 -m unittest tests.test_gpac3403_lifecycle_gap_audit tests.test_gpac3403_endpoint_signature_audit tests.test_binding_spec_compile_source_matching",
+      "expected": "GPAC lifecycle audit, endpoint signature audit, and BindingSpec compile tests pass",
+      "status": "pass"
+    },
+    {
+      "command": "bash scripts/run_native_formtrig_smoke.sh",
+      "expected": "full native smoke",
+      "status": "blocked_by_environment",
+      "detail": "preflight failed before running smoke logic because /home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-cc is missing"
+    }
+  ],
+  "gpac_3403_implication": {
+    "current_highvps_result": "The previous high-VPS run reached HEVC/LHEVC parser neighborhoods but did not trigger ASAN double-free.",
+    "fixed_false_positive": "A single gf_bs_reassign_buffer same_object pointer observation is no longer sufficient to make the lifecycle alias role graph look complete.",
+    "remaining_work": "Bind object-value endpoints for GF_ISOSample->data release and GF_BitStream->original cleanup so the runtime can prove or rank the same-buffer double-free relation."
+  }
+}
