@@ -1551,10 +1551,25 @@ PHP003:
     typed_execs / typed_finds = 242 / 44
     stability_failures = 0
     speedup over fastest successful baseline by exact queue time = 23.70x
+
+  2026-06-19 继续补了 current-ABI 600s FORMTRIG reps 2-3：
+    artifact = artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_reps2_3_formtrig_20260619T210244Z/batch_summary.jsonl
+    current-ABI FORMTRIG success = 3/3
+    exact first _T values = 7.595s, 1.942s, 1.929s
+    exact first _T median/min/max = 1.942s / 1.929s / 7.595s
+    terminal _T total = 170365
+    saved non-trigger progress total = 6
+    saved triggered progress total = 18936
+    D_F_spec_lifted values = {2,3} in all reps
+    typed_execs / typed_finds total = 1073 / 217
+    stability_failures total = 1
+    median exact first _T speedup over fastest successful 1-rep baseline
+      reference (AFL++ vanilla at 180s) = 92.69x
   结论边界不变：这证明 PHP003 repaired runner 上 FORMTRIG 侧 R2T
-  validation 和 600s FORMTRIG arm 都已经在 current ABI 下闭合；进入最终主结果
-  还必须在同一个 `exif_thumbnail` runner 上做至少 3 rep faithful
-  AFL++/CmpLog/Redqueen-family matched comparison，并刷新 comparison package。
+  validation 和 600s FORMTRIG arm 都已经在 current ABI 下闭合，且 FORMTRIG
+  侧 endpoint/TC-rooted guidance 目前是 3/3 稳定；进入最终主结果还必须在
+  同一个 `exif_thumbnail` runner 上补齐 faithful AFL++/CmpLog/Redqueen-family
+  baseline reps 2-3，并刷新 comparison package。
   除非 replicated baselines 变成 late/missing/high-variance，否则 PHP003 保持
   speedup/control，不作为 hard SOTA-pain。
 

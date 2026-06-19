@@ -1192,12 +1192,30 @@ stability_failures = 0
 speedup over fastest successful baseline by exact queue time = 23.70x
 ```
 
+Current-ABI 600s FORMTRIG reps 2-3 were added on 2026-06-19:
+
+```text
+artifact = artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_reps2_3_formtrig_20260619T210244Z/batch_summary.jsonl
+current-ABI FORMTRIG success = 3/3
+exact first _T values = 7.595s, 1.942s, 1.929s
+exact first _T median/min/max = 1.942s / 1.929s / 7.595s
+terminal _T total = 170365
+saved non-trigger progress total = 6
+saved triggered progress total = 18936
+D_F_spec_lifted values = {2,3} in all reps
+typed_execs / typed_finds total = 1073 / 217
+stability_failures total = 1
+median exact first _T speedup over fastest successful 1-rep baseline
+  reference (AFL++ vanilla at 180s) = 92.69x
+```
+
 This closes both the FORMTRIG-side repaired-runner validation and the 600s
-FORMTRIG arm under the current AFL++ ABI. The remaining PHP003 work is matched
-replication: collect at least 3 repetitions for each baseline family on the
-same `exif_thumbnail` runner and refresh the comparison package. Unless those
-replicated baselines become late, missing, or high-variance, keep PHP003 as
-speedup/control evidence rather than hard SOTA-pain evidence.
+FORMTRIG arm under the current AFL++ ABI, now with 3/3 FORMTRIG success. The
+remaining PHP003 work is matched baseline replication: collect reps 2-3 for
+each baseline family on the same `exif_thumbnail` runner and refresh the
+comparison package. Unless those replicated baselines become late, missing, or
+high-variance, keep PHP003 as speedup/control evidence rather than hard
+SOTA-pain evidence.
 
 ### 5. SQL013 不能硬做
 

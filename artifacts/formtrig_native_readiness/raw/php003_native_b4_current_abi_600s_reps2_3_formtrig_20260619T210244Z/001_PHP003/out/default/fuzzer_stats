@@ -1,0 +1,61 @@
+start_time        : 1781902971
+last_update       : 1781903571
+run_time          : 600
+fuzzer_pid        : 2526927
+cycles_done       : 0
+cycles_wo_finds   : 0
+time_wo_finds     : 13
+execs_done        : 172580
+execs_per_sec     : 287.57
+execs_ps_last_min : 229.87
+corpus_count      : 4496
+corpus_favored    : 96
+corpus_found      : 4491
+corpus_imported   : 0
+corpus_variable   : 3
+max_depth         : 6
+cur_item          : 1713
+pending_favs      : 77
+pending_total     : 4463
+stability         : 95.65%
+bitmap_cvg        : 0.35%
+saved_crashes     : 0
+saved_hangs       : 0
+last_find         : 1781903571
+last_crash        : 0
+last_hang         : 0
+execs_since_crash : 172580
+exec_timeout      : 20
+slowest_exec_ms   : 0
+peak_rss_mb       : 167
+cpu_affinity      : -1
+edges_found       : 4547
+total_edges       : 1291830
+var_byte_count    : 198
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 5149322
+testcache_count   : 4496
+testcache_evict   : 0
+afl_banner        : /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/out/afl/exif_thumbnail
+afl_version       : ++4.08c
+target_mode       : persistent shmem_testcase deferred
+command_line      : /home/cwh/FORMTRIG/experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz -i /home/cwh/FORMTRIG/artifacts/rnt_corpus/PHP003/seeds -o /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_reps2_3_formtrig_20260619T210244Z/001_PHP003/out -V 600 -- /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/out/afl/exif_thumbnail @@
+formtrig_seen_execs      : 172581
+formtrig_reached_execs   : 50881
+formtrig_triggered_execs : 37429
+formtrig_queued_progress : 4163
+formtrig_frontier_count  : 2
+formtrig_frontier_updates: 2
+formtrig_typed_execs     : 471
+formtrig_typed_finds     : 103
+formtrig_typed_skips     : 30
+formtrig_stability_checks: 12469
+formtrig_stability_failures: 1
+formtrig_progress_log_events: 12370
+formtrig_saved_progress_log_seen: 4163
+formtrig_saved_triggered_log_seen: 4161
+formtrig_saved_non_trigger_log_seen: 2
+formtrig_progress_log_dropped: 8971
+formtrig_best_df         : 2
+formtrig_best_dt         : 1.0000000000000001e+300

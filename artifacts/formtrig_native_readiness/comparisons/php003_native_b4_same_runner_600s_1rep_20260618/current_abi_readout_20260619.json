@@ -4,11 +4,12 @@
   "runner": "exif_thumbnail",
   "date": "2026-06-19",
   "sources": {
-    "current_abi_validation": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json",
-    "current_abi_600s_formtrig": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/batch_summary.jsonl",
-    "same_runner_comparison": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.json",
-    "same_runner_comparison_md": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.md",
-    "baseline_guidance_gap": "artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json"
+        "current_abi_validation": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json",
+        "current_abi_600s_formtrig": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/batch_summary.jsonl",
+        "current_abi_600s_formtrig_reps_2_3": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_reps2_3_formtrig_20260619T210244Z/batch_summary.jsonl",
+        "same_runner_comparison": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.json",
+        "same_runner_comparison_md": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.md",
+        "baseline_guidance_gap": "artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json"
   },
   "current_abi_formtrig_validation": {
     "afl_fuzz": "experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz",
@@ -55,13 +56,129 @@
     "typed_finds": 44,
     "stability_checks": 23557,
     "stability_failures": 0,
-    "progress_log_dropped": 660,
-    "speedup_over_fastest_successful_baseline_by_exact_first_t": 23.69980250164582,
-    "speedup_over_fastest_successful_baseline_by_monitor_upper_bound": 3.0
-  },
-  "existing_same_runner_600s_comparison": {
-    "status": "speedup_but_under_replicated",
-    "formtrig_first_t_s": 1.985,
+        "progress_log_dropped": 660,
+        "speedup_over_fastest_successful_baseline_by_exact_first_t": 23.69980250164582,
+        "speedup_over_fastest_successful_baseline_by_monitor_upper_bound": 3.0
+    },
+    "current_abi_formtrig_600s_repetitions": {
+        "budget_s": 600,
+        "repetitions": 3,
+        "status": "all_triggered",
+        "fastest_successful_baseline_first_t_s_reference": 180,
+        "runs": [
+            {
+                "rep": 1,
+                "source": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/PHP003/out",
+                "diagnosis": "triggered",
+                "pretrigger_lift_guidance_ready": true,
+                "first_t_exact_time_s": 7.595,
+                "first_t_monitor_upper_bound_s": 60,
+                "first_t_queue_file": "id:000083,src:000000,time:7595,execs:1815,op:havoc,rep:1,+cov",
+                "first_t_progress_execs_done": 1822,
+                "first_saved_non_trigger_execs_done": 155,
+                "saved_non_trigger_progress_events": 2,
+                "saved_triggered_progress_events": 7855,
+                "queued_progress": 7857,
+                "terminal_triggered_execs": 70678,
+                "execs_done": 118021,
+                "reached_execs": 71991,
+                "spec_lifted_events": 16167,
+                "d_f_spec_lifted_values": [
+                    2,
+                    3
+                ],
+                "typed_execs": 242,
+                "typed_finds": 44,
+                "stability_failures": 0
+            },
+            {
+                "rep": 2,
+                "source": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_reps2_3_formtrig_20260619T210244Z/001_PHP003/out",
+                "diagnosis": "triggered",
+                "pretrigger_lift_guidance_ready": true,
+                "first_t_exact_time_s": 1.942,
+                "first_t_monitor_upper_bound_s": 60,
+                "first_t_queue_file": "id:000008,src:000001,time:1942,execs:124,op:ftgtype,pos:85,+cov",
+                "first_t_progress_execs_done": 131,
+                "first_saved_non_trigger_time_s": 1.88,
+                "first_saved_non_trigger_execs_done": 123,
+                "saved_non_trigger_progress_events": 2,
+                "saved_triggered_progress_events": 4161,
+                "queued_progress": 4163,
+                "terminal_triggered_execs": 37429,
+                "execs_done": 172580,
+                "reached_execs": 50881,
+                "spec_lifted_events": 12349,
+                "d_f_spec_lifted_values": [
+                    2,
+                    3
+                ],
+                "typed_execs": 471,
+                "typed_finds": 103,
+                "stability_failures": 1
+            },
+            {
+                "rep": 3,
+                "source": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_reps2_3_formtrig_20260619T210244Z/002_PHP003/out",
+                "diagnosis": "triggered",
+                "pretrigger_lift_guidance_ready": true,
+                "first_t_exact_time_s": 1.929,
+                "first_t_monitor_upper_bound_s": 60,
+                "first_t_queue_file": "id:000008,src:000003,time:1929,execs:123,op:ftgtype,pos:85,+cov",
+                "first_t_progress_execs_done": 130,
+                "first_saved_non_trigger_time_s": 1.868,
+                "first_saved_non_trigger_execs_done": 122,
+                "saved_non_trigger_progress_events": 2,
+                "saved_triggered_progress_events": 6920,
+                "queued_progress": 6922,
+                "terminal_triggered_execs": 62258,
+                "execs_done": 131318,
+                "reached_execs": 74842,
+                "spec_lifted_events": 17866,
+                "d_f_spec_lifted_values": [
+                    2,
+                    3
+                ],
+                "typed_execs": 360,
+                "typed_finds": 70,
+                "stability_failures": 0
+            }
+        ],
+        "aggregate": {
+            "successes": 3,
+            "failures": 0,
+            "success_rate": 1.0,
+            "first_t_exact_time_s_values": [
+                7.595,
+                1.942,
+                1.929
+            ],
+            "first_t_exact_time_s_min": 1.929,
+            "first_t_exact_time_s_median": 1.942,
+            "first_t_exact_time_s_max": 7.595,
+            "speedup_over_fastest_successful_baseline_by_median_exact_first_t": 92.68795056642636,
+            "speedup_over_fastest_successful_baseline_by_slowest_exact_first_t": 23.69980250164582,
+            "terminal_triggered_execs_total": 170365,
+            "saved_non_trigger_progress_events_total": 6,
+            "saved_triggered_progress_events_total": 18936,
+            "queued_progress_total": 18942,
+            "execs_done_total": 421919,
+            "reached_execs_total": 197714,
+            "spec_lifted_events_total": 46382,
+            "typed_execs_total": 1073,
+            "typed_finds_total": 217,
+            "stability_failures_total": 1,
+            "all_pretrigger_lift_guidance_ready": true,
+            "all_d_f_spec_lifted_non_constant": true,
+            "d_f_spec_lifted_values_union": [
+                2,
+                3
+            ]
+        }
+    },
+    "existing_same_runner_600s_comparison": {
+        "status": "speedup_but_under_replicated",
+        "formtrig_first_t_s": 1.985,
     "formtrig_terminal_triggered_execs": 21024,
     "formtrig_accepted_non_trigger_progress_events": 1,
     "formtrig_saved_non_trigger_progress_events": 1,
@@ -106,20 +223,21 @@
   },
   "claim_boundary": {
     "supported": [
-      "PHP003 repaired exif_thumbnail runner closes the FORMTRIG-side R2T validation under the current AFL++ ABI",
-      "The current-ABI 600s FORMTRIG arm reaches terminal _T and preserves accepted non-trigger lift guidance",
-      "The existing same-runner 600s x1 package supports a strong TTE speedup/control readout",
-      "Baseline-visible binary feedback is flat before _T in the measured baseline runs"
-    ],
-    "not_supported_yet": [
-      "hard SOTA-pain claim for PHP003",
-      "final replicated performance claim",
-      "fully replicated current-ABI matched FORMTRIG/baseline comparison package"
+            "PHP003 repaired exif_thumbnail runner closes the FORMTRIG-side R2T validation under the current AFL++ ABI",
+            "The current-ABI 600s FORMTRIG arm reaches terminal _T and preserves accepted non-trigger lift guidance",
+            "The current-ABI 600s FORMTRIG side is now 3/3 successful with stable TC-rooted non-trigger progress before _T",
+            "The existing same-runner 600s x1 package supports a strong TTE speedup/control readout",
+            "Baseline-visible binary feedback is flat before _T in the measured baseline runs"
+        ],
+        "not_supported_yet": [
+            "hard SOTA-pain claim for PHP003",
+            "final replicated matched performance claim because baseline reps are still x1",
+            "fully replicated current-ABI matched FORMTRIG/baseline comparison package"
+        ]
+    },
+    "next_actions": [
+        "collect reps 2-3 for each matched baseline family on the same exif_thumbnail runner",
+        "assemble a refreshed comparison package that uses the current-ABI 600s FORMTRIG arm and matched baseline records",
+        "keep PHP003 as speedup/control evidence unless replicated baselines become late, missing, or high-variance"
     ]
-  },
-  "next_actions": [
-    "collect at least 3 repetitions per matched baseline family on the same exif_thumbnail runner",
-    "assemble a refreshed comparison package that uses the current-ABI 600s FORMTRIG arm and matched baseline records",
-    "keep PHP003 as speedup/control evidence unless replicated baselines become late, missing, or high-variance"
-  ]
 }
