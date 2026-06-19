@@ -1,0 +1,193 @@
+{
+  "validation_id": "gpac3403_op24_samplefirst_hook_retain_smoke_30s_20260619",
+  "date_utc": "2026-06-19",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_op24_samplefirst_hook_retain_smoke_30s_20260619T184146Z",
+  "purpose": "Validate FORMTRIG_TYPED_OP_START plus FORMTRIG_TYPED_SCHEDULE=sample-first for GPAC_3403 typed R2T repair. The prior op-diverse smoke exposed only sample=0 for many operators; this run checks whether the critical HEVC/VPS operators can cover multiple samples early enough for endpoint replay.",
+  "build_command": "make -C experiments/aflplusplus/AFLplusplus NO_PYTHON=1 -j$(nproc) afl-fuzz",
+  "test_commands": [
+    "python3 -m unittest tests.test_formtrig_typed_ops_config tests.test_gpac3403_typedops36_matched_runner tests.test_replay_gpac3403_typed_retained_endpoint",
+    "bash -n scripts/run_gpac3403_typedops36_matched_longrun.sh",
+    "bash -n scripts/run_gpac3403_typedops40_matched_longrun.sh"
+  ],
+  "fuzz_command": "bash scripts/run_gpac3403_typedops40_matched_longrun.sh --mode execute --duration 30 --reps 1 --jobs 1 --arms formtrig --baselines \"\" --typed-op-start 24 --typed-schedule sample-first --typed-mutation-max 64 --typed-retain-max 96 --typed-retain-mode hook --typed-retain-endpoint-replay on --typed-retain-endpoint-timeout 5 --typed-retain-endpoint-replays 1 --typed-retain-endpoint-max-records 24 --typed-retain-endpoint-selection input-order --typed-retain-endpoint-cmd \"/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box -cat @@ /home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null\" --typed-retain-endpoint-positive-control /home/cwh/FORMTRIG/benchmarks/cve_pocs/gpac/GPAC_3403.poc --out artifacts/formtrig_native_readiness/raw/gpac3403_op24_samplefirst_hook_retain_smoke_30s_20260619T184146Z --continue-on-fail",
+  "runner_config": {
+    "typed_ops": 40,
+    "typed_op_start": 24,
+    "typed_schedule": "sample-first",
+    "typed_mutation_max": 64,
+    "typed_retain_max": 96,
+    "typed_retain_mode": "hook",
+    "typed_retain_endpoint_selection": "input-order",
+    "typed_retain_endpoint_max_records": 24
+  },
+  "retained_summary": {
+    "retained_records": 27,
+    "existing_inputs": 27,
+    "hook_used_records": 27,
+    "ops": {
+      "24": 4,
+      "25": 4,
+      "26": 4,
+      "27": 4,
+      "28": 4,
+      "29": 4,
+      "30": 3
+    },
+    "samples_seen": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "d_f_spec_lifted_count": 11,
+    "d_f_spec_lifted_unique": [
+      2.0
+    ]
+  },
+  "endpoint_replay": {
+    "selected_records": 24,
+    "replayed_records": 24,
+    "endpoint_exit_code_counts": {
+      "0": 11,
+      "1": 13
+    },
+    "endpoint_sanitizer_crashes": 0,
+    "positive_control_sanitizer_crashes": 1,
+    "top_positive_overlap_records": [
+      {
+        "variant_index": 8,
+        "op": 26,
+        "sample": 0,
+        "stage_cur": 8,
+        "matched_positive_signature_count": 7,
+        "matched_positive_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "video_param_set_error",
+          "nal_type_32_error",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_values": {
+          "hevc_import_results": [
+            "2/15"
+          ],
+          "lhevc_import_results": [
+            "0/0/1"
+          ],
+          "wrong_output_layer_sets": [
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4"
+          ]
+        },
+        "missing_positive_signatures": [
+          "layers_only_4",
+          "vps_max_layer_id",
+          "nal_type_49_not_handled",
+          "asan",
+          "asan_double_free"
+        ],
+        "weighted_match_score": 90,
+        "weighted_missing_score": 265
+      },
+      {
+        "variant_index": 9,
+        "op": 26,
+        "sample": 1,
+        "stage_cur": 9,
+        "matched_positive_signature_count": 7,
+        "matched_positive_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "video_param_set_error",
+          "nal_type_32_error",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_values": {
+          "hevc_import_results": [
+            "2/18"
+          ],
+          "lhevc_import_results": [
+            "0/1/0"
+          ],
+          "wrong_output_layer_sets": [
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4"
+          ]
+        },
+        "missing_positive_signatures": [
+          "layers_only_4",
+          "vps_max_layer_id",
+          "nal_type_49_not_handled",
+          "asan",
+          "asan_double_free"
+        ],
+        "weighted_match_score": 90,
+        "weighted_missing_score": 265
+      },
+      {
+        "variant_index": 11,
+        "op": 26,
+        "sample": 3,
+        "stage_cur": 11,
+        "matched_positive_signature_count": 7,
+        "matched_positive_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "video_param_set_error",
+          "nal_type_32_error",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_values": {
+          "hevc_import_results": [
+            "2/24"
+          ],
+          "lhevc_import_results": [
+            "0/1/1"
+          ],
+          "wrong_output_layer_sets": [
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4"
+          ]
+        },
+        "missing_positive_signatures": [
+          "layers_only_4",
+          "vps_max_layer_id",
+          "nal_type_49_not_handled",
+          "asan",
+          "asan_double_free"
+        ],
+        "weighted_match_score": 90,
+        "weighted_missing_score": 265
+      }
+    ]
+  },
+  "formtrig_gate": {
+    "status": "fail",
+    "reached": 95,
+    "terminal_triggered": 0,
+    "queued_progress": 0,
+    "accepted_non_trigger": 0,
+    "saved_non_trigger": 0,
+    "spec_lifted": 24,
+    "binding_signal_status": "fail",
+    "binding_signal_diagnosis": "constant_lift_signal"
+  },
+  "interpretation": "The sample-first schedule fixes the immediate GPAC typed-stage coverage blind spot: the first 27 retained candidates now cover samples 0..3 for ops 24..30, instead of spreading one sample across many ops. Endpoint replay shows op26 sample variants reaching PoC-near VPS-extension behavior with seven positive-control signatures, including wrong_output_layer_sets, failed_vps_extensions, nal_type_32_error, HEVC import, and LHEVC import signatures.",
+  "claim_boundary": "This is tooling and R2T repair evidence, not terminal _T evidence. It does not prove ASAN trigger, FORMTRIG endpoint benefit, or a SOTA baseline gap. The next GPAC repair step is to add or refine TC-rooted guidance/typed mutation for the missing positive-control signatures: layers_only_4, vps_max_layer_id, nal_type_49_not_handled, and the ASAN double-free endpoint."
+}

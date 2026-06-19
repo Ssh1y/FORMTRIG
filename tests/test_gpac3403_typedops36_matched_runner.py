@@ -51,6 +51,8 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             )
             for record in records:
                 self.assertEqual(record["typed_ops"], 36)
+                self.assertEqual(record["typed_op_start"], 0)
+                self.assertEqual(record["typed_schedule"], "op-first")
                 self.assertEqual(record["typed_mutation_max"], 64)
                 self.assertEqual(record["typed_retain_max"], 0)
                 self.assertEqual(record["typed_retain_mode"], "signal")
@@ -59,6 +61,8 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["target_id"], "GPAC_3403")
             self.assertEqual(metadata["typed_ops"], 36)
+            self.assertEqual(metadata["typed_op_start"], 0)
+            self.assertEqual(metadata["typed_schedule"], "op-first")
             self.assertEqual(metadata["typed_mutation_max"], 64)
             self.assertEqual(metadata["typed_retain_max"], 0)
             self.assertEqual(metadata["typed_retain_mode"], "signal")
@@ -69,6 +73,8 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
             self.assertIn("run_formtrig_aflpp_campaign.sh", plan)
             self.assertIn("--typed-ops 36", plan)
+            self.assertIn("FORMTRIG_TYPED_OP_START=0", plan)
+            self.assertIn("FORMTRIG_TYPED_SCHEDULE=op-first", plan)
             self.assertIn("FORMTRIG_TYPED_MUTATION_MAX=64", plan)
             self.assertIn("GPAC_3403.native_b6_hevc_annexb_input_candidate.yml", plan)
             self.assertIn("MP4Box -cat @@ ", plan)
@@ -160,6 +166,10 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
                     "formtrig,aflplusplus_vanilla",
                     "--typed-retain-max",
                     "32",
+                    "--typed-op-start",
+                    "24",
+                    "--typed-schedule",
+                    "sample-first",
                     "--typed-retain-mode",
                     "hook",
                     "--typed-retain-endpoint-replay",
@@ -186,9 +196,13 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
                 for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
             ]
             self.assertEqual(len(records), 2)
+            self.assertTrue(all(record["typed_op_start"] == 24 for record in records))
+            self.assertTrue(all(record["typed_schedule"] == "sample-first" for record in records))
             self.assertTrue(all(record["typed_retain_max"] == 32 for record in records))
             self.assertTrue(all(record["typed_retain_mode"] == "hook" for record in records))
             commands = {record["arm"]: record["command"] for record in records}
+            self.assertIn("FORMTRIG_TYPED_OP_START=24", commands["formtrig"])
+            self.assertIn("FORMTRIG_TYPED_SCHEDULE=sample-first", commands["formtrig"])
             self.assertIn("FORMTRIG_TYPED_RETAIN_MAX=32", commands["formtrig"])
             self.assertIn("FORMTRIG_TYPED_RETAIN_DIR=", commands["formtrig"])
             self.assertIn("FORMTRIG_TYPED_RETAIN_MODE=hook", commands["formtrig"])
@@ -198,6 +212,8 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertNotIn("FORMTRIG_TYPED_RETAIN_MODE", commands["aflplusplus_vanilla"])
 
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["typed_op_start"], 24)
+            self.assertEqual(metadata["typed_schedule"], "sample-first")
             self.assertEqual(metadata["typed_retain_max"], 32)
             self.assertEqual(metadata["typed_retain_mode"], "hook")
             self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")

@@ -13,6 +13,8 @@ mode="execute"
 timeout_arg="5000+"
 monitor_poll="${FORMTRIG_STATS_MONITOR_POLL:-10}"
 typed_ops="36"
+typed_op_start="0"
+typed_schedule="op-first"
 typed_mutation_max="64"
 typed_retain_max="0"
 typed_retain_mode="signal"
@@ -57,6 +59,8 @@ options:
   --baselines LIST        comma/space-separated baseline arms for comparison
   --timeout AFL_T         AFL++ -t value, default 5000+
   --typed-ops N           FORMTRIG typed op count, default 36
+  --typed-op-start N      rotate typed op enumeration by N, default 0
+  --typed-schedule MODE   op-first|sample-first, default op-first
   --typed-mutation-max N  FORMTRIG_TYPED_MUTATION_MAX, default 64
   --typed-retain-max N    retain up to N typed candidates per rep, default 0/off.
                           signal mode keeps old non-queued signal candidates;
@@ -182,8 +186,11 @@ record_plan() {
     json_escape "$arm"
     printf ',"rep":%s,"kind":' "$rep"
     json_escape "$kind"
-    printf ',"duration_s":%s,"typed_ops":%s,"typed_mutation_max":%s,' \
-      "$duration" "$typed_ops" "$typed_mutation_max"
+    printf ',"duration_s":%s,"typed_ops":%s,"typed_op_start":%s,' \
+      "$duration" "$typed_ops" "$typed_op_start"
+    printf '"typed_schedule":'
+    json_escape "$typed_schedule"
+    printf ',"typed_mutation_max":%s,' "$typed_mutation_max"
     printf '"typed_retain_max":%s,"typed_retain_mode":' "$typed_retain_max"
     json_escape "$typed_retain_mode"
     printf ',"command":'
@@ -301,6 +308,8 @@ run_formtrig_one() {
   formtrig_command_array "$arm" "$rep" "$run_out"
   local retain_dir="$run_out/typed_retained"
   local -a env_args=(
+    "FORMTRIG_TYPED_OP_START=$typed_op_start"
+    "FORMTRIG_TYPED_SCHEDULE=$typed_schedule"
     "FORMTRIG_TYPED_MUTATION_MAX=$typed_mutation_max"
     "FORMTRIG_STATS_MONITOR_POLL=$monitor_poll"
   )
@@ -393,6 +402,8 @@ write_metadata() {
   "target_cmd": "$(target_cmd_string "$formtrig_binary")",
   "time_utc": "$(date -u +%FT%TZ)",
   "timeout_oracle": "-t $timeout_arg",
+  "typed_op_start": $typed_op_start,
+  "typed_schedule": "$typed_schedule",
   "typed_mutation_max": $typed_mutation_max,
   "typed_retain_max": $typed_retain_max,
   "typed_retain_mode": "$typed_retain_mode",
@@ -445,6 +456,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --typed-ops)
       typed_ops="${2:-}"
+      shift 2
+      ;;
+    --typed-op-start)
+      typed_op_start="${2:-}"
+      shift 2
+      ;;
+    --typed-schedule)
+      typed_schedule="${2:-}"
       shift 2
       ;;
     --typed-mutation-max)
@@ -579,6 +598,18 @@ if ! [[ "$typed_retain_max" =~ ^[0-9]+$ ]]; then
   echo "typed retain max must be a non-negative integer" >&2
   exit 2
 fi
+if ! [[ "$typed_op_start" =~ ^[0-9]+$ ]]; then
+  echo "typed op start must be a non-negative integer" >&2
+  exit 2
+fi
+case "$typed_schedule" in
+  op-first|sample-first)
+    ;;
+  *)
+    echo "--typed-schedule must be op-first or sample-first: $typed_schedule" >&2
+    exit 2
+    ;;
+esac
 case "$typed_retain_mode" in
   signal|hook|all)
     ;;

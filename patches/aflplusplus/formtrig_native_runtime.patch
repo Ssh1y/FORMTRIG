@@ -151,12 +151,14 @@ index 0007d5a..3a2d1e1 100644
 +    "FORMTRIG_TYPED_FALLBACK_RANGES",
 +    "FORMTRIG_TYPED_MUTATION_HOOK",
 +    "FORMTRIG_TYPED_MUTATION_MAX",
++    "FORMTRIG_TYPED_OP_START",
 +    "FORMTRIG_TYPED_OPS",
 +    "FORMTRIG_TYPED_RANGE_SAMPLES",
 +    "FORMTRIG_TYPED_RANGE_WINDOW",
 +    "FORMTRIG_TYPED_RETAIN_DIR",
 +    "FORMTRIG_TYPED_RETAIN_MAX",
 +    "FORMTRIG_TYPED_RETAIN_MODE",
++    "FORMTRIG_TYPED_SCHEDULE",
      "AFL_NOOPT",
      "AFL_NYX_AUX_SIZE",
      "AFL_NYX_DISABLE_SNAPSHOT_MODE",
@@ -403,6 +405,8 @@ index 2ad4697..4882862 100644
 +#define FORMTRIG_TYPED_RETAIN_MODE_SIGNAL 0u
 +#define FORMTRIG_TYPED_RETAIN_MODE_HOOK 1u
 +#define FORMTRIG_TYPED_RETAIN_MODE_ALL 2u
++#define FORMTRIG_TYPED_SCHEDULE_OP_FIRST 0u
++#define FORMTRIG_TYPED_SCHEDULE_SAMPLE_FIRST 1u
 +
 +static u8 formtrig_fuzz_one_finite(double v) {
 +
@@ -444,6 +448,30 @@ index 2ad4697..4882862 100644
 +  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_OPS",
 +                                   FORMTRIG_TYPED_OPS_DEFAULT, 1u,
 +                                   FORMTRIG_TYPED_OPS_HARD_MAX);
++
++}
++
++static u32 formtrig_typed_op_start(void) {
++
++  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_OP_START", 0u, 0u,
++                                   FORMTRIG_TYPED_OPS_HARD_MAX);
++
++}
++
++static u32 formtrig_typed_schedule(void) {
++
++  const char *schedule = getenv("FORMTRIG_TYPED_SCHEDULE");
++  if (!schedule || !schedule[0] || !strcmp(schedule, "op-first")) {
++
++    return FORMTRIG_TYPED_SCHEDULE_OP_FIRST;
++
++  }
++  if (!strcmp(schedule, "sample-first") || !strcmp(schedule, "sample")) {
++
++    return FORMTRIG_TYPED_SCHEDULE_SAMPLE_FIRST;
++
++  }
++  return FORMTRIG_TYPED_SCHEDULE_OP_FIRST;
 +
 +}
 +
@@ -1507,6 +1535,8 @@ index 2ad4697..4882862 100644
 +
 +  u32 sample_count = formtrig_typed_range_samples();
 +  u32 typed_ops = formtrig_typed_ops();
++  u32 typed_op_start = formtrig_typed_op_start();
++  u32 typed_schedule = formtrig_typed_schedule();
 +  u32 stage_max = component_count * range_count * typed_ops *
 +                  sample_count;
 +  u32 stage_limit = formtrig_typed_mutation_max();
@@ -1536,13 +1566,34 @@ index 2ad4697..4882862 100644
 +       ++afl->stage_cur) {
 +
 +    u32 cursor = afl->stage_cur;
-+    u32 op = cursor % typed_ops;
-+    cursor /= typed_ops;
-+    u32 component_index = cursor % component_count;
-+    cursor /= component_count;
-+    u32 range_index = cursor % range_count;
-+    cursor /= range_count;
-+    u32 sample_index = cursor % sample_count;
++    u32 op = 0, component_index = 0, range_index = 0, sample_index = 0;
++    if (typed_schedule == FORMTRIG_TYPED_SCHEDULE_SAMPLE_FIRST) {
++
++      sample_index = cursor % sample_count;
++      cursor /= sample_count;
++      op = cursor % typed_ops;
++      cursor /= typed_ops;
++
++    } else {
++
++      op = cursor % typed_ops;
++      cursor /= typed_ops;
++      component_index = cursor % component_count;
++      cursor /= component_count;
++      range_index = cursor % range_count;
++      cursor /= range_count;
++      sample_index = cursor % sample_count;
++      cursor /= sample_count;
++
++    }
++    op = (op + typed_op_start) % typed_ops;
++    if (typed_schedule == FORMTRIG_TYPED_SCHEDULE_SAMPLE_FIRST) {
++
++      component_index = cursor % component_count;
++      cursor /= component_count;
++      range_index = cursor % range_count;
++
++    }
 +
 +    const formtrig_progress_component_t *component =
 +        formtrig_typed_component(m, component_index);

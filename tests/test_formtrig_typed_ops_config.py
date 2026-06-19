@@ -38,12 +38,14 @@ class FormtrigTypedOpsConfigTest(unittest.TestCase):
             "FORMTRIG_TYPED_FALLBACK_RANGES",
             "FORMTRIG_TYPED_MUTATION_HOOK",
             "FORMTRIG_TYPED_MUTATION_MAX",
+            "FORMTRIG_TYPED_OP_START",
             "FORMTRIG_TYPED_OPS",
             "FORMTRIG_TYPED_RANGE_SAMPLES",
             "FORMTRIG_TYPED_RANGE_WINDOW",
             "FORMTRIG_TYPED_RETAIN_DIR",
             "FORMTRIG_TYPED_RETAIN_MAX",
             "FORMTRIG_TYPED_RETAIN_MODE",
+            "FORMTRIG_TYPED_SCHEDULE",
         ]:
             self.assertIn(f'"{env_name}"', patch)
 
@@ -51,6 +53,12 @@ class FormtrigTypedOpsConfigTest(unittest.TestCase):
         self.assertIn("formtrig_typed_retain_mode", patch)
         self.assertIn("formtrig_typed_retain_eligible", patch)
         self.assertIn("retain_queued_candidate", patch)
+        self.assertIn("FORMTRIG_TYPED_SCHEDULE_SAMPLE_FIRST", patch)
+        self.assertIn("static u32 formtrig_typed_op_start(void)", patch)
+        self.assertIn("static u32 formtrig_typed_schedule(void)", patch)
+        self.assertIn('getenv("FORMTRIG_TYPED_SCHEDULE")', patch)
+        self.assertIn("sample_index = cursor % sample_count", patch)
+        self.assertIn("op = (op + typed_op_start) % typed_ops", patch)
 
     def test_campaign_runner_exports_typed_ops_when_requested(self):
         runner = (
