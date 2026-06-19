@@ -1,0 +1,96 @@
+{
+  "analysis": {
+    "baseline_groups": [],
+    "best_formtrig_trigger_time_s": null,
+    "experiment_strength": {
+      "acceptable_baseline_fastest_trigger_threshold_s": 600.0,
+      "baseline_guidance_gap": {
+        "required_evidence": [
+          "baseline-visible TC signal is flat or binary before _T",
+          "accepted non-trigger improvement under the baseline-visible signal is absent",
+          "matched repeated endpoint runs are late, missing, or high-variance"
+        ],
+        "required_for_hard_sota_pain": false,
+        "status": "not_required_for_current_strength"
+      },
+      "best_baseline_family_median_trigger_time_s": null,
+      "early_baseline_family_median_threshold_s": 60.0,
+      "hard_baseline_fastest_trigger_threshold_s": 1800.0,
+      "main_claim_strength": "not_supporting_main_claim",
+      "reasons": [
+        "no_endpoint_or_speedup_advantage_for_formtrig"
+      ],
+      "recommended_design_actions": [
+        "repair BindingSpec/mutation design or move budget to a harder target"
+      ]
+    },
+    "fastest_baseline_family_median_trigger_time_s": null,
+    "fastest_baseline_trigger_time_s": null,
+    "matched_baseline_count": 0,
+    "missing_required_baselines": [],
+    "next_steps": [
+      "run faithful baselines at FORMTRIG budget(s): [301]",
+      "pair pre-trigger guidance with a same-oracle terminal run before terminal TTE claims"
+    ],
+    "reasons": [
+      "missing_matched_budget_baselines",
+      "formtrig_strict_pretrigger_guidance_present",
+      "formtrig_terminal_oracle_missing"
+    ],
+    "tte_speedup_over_fastest_baseline": null,
+    "tte_speedup_over_fastest_baseline_family_median": null,
+    "verdict": "not_comparable_missing_matched_budget"
+  },
+  "baseline_rows": [],
+  "benefit_readout": {
+    "blocked_claims": [
+      "no FORMTRIG terminal success is established",
+      "FORMTRIG first `_T`/TTE is not recorded for this run",
+      "no matched-budget baseline benefit comparison is available"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance"
+    ],
+    "endpoint_observations": [],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "observed_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "primary_benefits": [],
+    "summary": "current package supports mechanism/search-guidance benefit, subject to remaining blockers"
+  },
+  "comparison_id": "gpac3403_typedops40_matched_300s_1rep_20260619T165543Z",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 31,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 301,
+      "execs_done": 2012,
+      "execs_per_sec": "6.68",
+      "gate_reasons": "ok",
+      "gate_status": "pass",
+      "heuristic_lifted": 0,
+      "manual_lifted": 0,
+      "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_access_unit_preseed_formtrig_300s_20260619/runs/formtrig_rep1/fuzzer_out/default",
+      "reached": 1696,
+      "rep": null,
+      "run_time": 301,
+      "saved_non_trigger": 31,
+      "source_label": "typedops40",
+      "source_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_access_unit_preseed_formtrig_300s_20260619/formtrig_gate/gate_summary.csv",
+      "spec_lifted": 589,
+      "strict_pretrigger_guidance": true,
+      "success": false,
+      "target_id": "GPAC_3403",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "target_id": "GPAC_3403"
+}

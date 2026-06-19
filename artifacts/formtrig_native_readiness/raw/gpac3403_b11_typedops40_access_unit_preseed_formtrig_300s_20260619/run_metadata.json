@@ -1,0 +1,19 @@
+{
+  "arms": "formtrig",
+  "baselines": "",
+  "binding_spec": "/home/cwh/FORMTRIG/artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+  "category": "compound-sequence-lifecycle",
+  "duration_s": 300,
+  "mode": "execute",
+  "reps": 1,
+  "seed_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/preseeds/gpac3403_b10_access_unit_frontier_seed_20260619",
+  "seed_preflight": "warn",
+  "site_map": "/tmp/formtrig_gpac3403_native_env/site_map.tsv",
+  "target_id": "GPAC_3403",
+  "target_cmd": "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ /home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+  "time_utc": "2026-06-19T16:55:43Z",
+  "timeout_oracle": "-t 5000+",
+  "typed_mutation_max": 256,
+  "typed_ops": 40,
+  "white_mp4": "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4"
+}

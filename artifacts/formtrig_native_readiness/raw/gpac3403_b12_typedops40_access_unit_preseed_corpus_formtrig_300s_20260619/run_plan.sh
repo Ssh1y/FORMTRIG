@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# formtrig rep1 (formtrig)
+FORMTRIG_TYPED_MUTATION_MAX=256 FORMTRIG_STATS_MONITOR_POLL=15 /home/cwh/FORMTRIG/scripts/run_formtrig_aflpp_campaign.sh --in /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/preseeds/gpac3403_b10_access_unit_frontier_seed_20260619/corpus --out /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_typedops40_access_unit_preseed_corpus_formtrig_300s_20260619/runs/formtrig_rep1/fuzzer_out --target-bug GPAC_3403 --category lifecycle --binding-spec /home/cwh/FORMTRIG/artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml --site-map /tmp/formtrig_gpac3403_native_env/site_map.tsv --duration 300 --seed-preflight warn --seed-preflight-max 4 --seed-preflight-timeout 2 --typed-ops 40 --afl-arg -t --afl-arg 5000+ --afl-arg -m --afl-arg none -- /tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ /home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null
+

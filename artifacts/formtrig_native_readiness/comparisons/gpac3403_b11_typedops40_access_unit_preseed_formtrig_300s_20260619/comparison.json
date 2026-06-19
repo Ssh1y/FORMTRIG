@@ -1,0 +1,226 @@
+{
+  "configuration": {
+    "arms": [
+      "formtrig"
+    ],
+    "baselines": [],
+    "corrected_seed_dir_for_future_runs": "artifacts/formtrig_native_readiness/preseeds/gpac3403_b10_access_unit_frontier_seed_20260619/corpus",
+    "duration_s": 300,
+    "mutation_hook": "scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+    "reps": 1,
+    "seed_dir_polluted_by_manifest": true,
+    "seed_dir_used_by_run": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/preseeds/gpac3403_b10_access_unit_frontier_seed_20260619",
+    "typed_mutation_max": 256,
+    "typed_ops": 40
+  },
+  "endpoint_replay_artifact": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619",
+  "formtrig_gate": {
+    "accepted_non_trigger": 31,
+    "binding_signal_diagnosis": "role_signal_progress_observed",
+    "binding_signal_status": "pass",
+    "execs_done": 2012,
+    "execs_per_sec": 6.68,
+    "experiment_ready": true,
+    "heuristic_lifted": 0,
+    "manual_lifted": 0,
+    "pretrigger_lift_guidance_ready": true,
+    "queued_progress": 31,
+    "reached": 1696,
+    "run_time_s": 301,
+    "saved_non_trigger": 31,
+    "saved_triggered": 0,
+    "spec_lifted": 589,
+    "status": "pass",
+    "terminal_triggered": 0
+  },
+  "generated_at_utc": "2026-06-19T18:20:00Z",
+  "interpretation": {
+    "blocked_claims": [
+      "No GPAC_3403 terminal _T or ASAN double-free is established by this run.",
+      "The run is not a matched SOTA comparison and cannot support a speedup/TTE claim.",
+      "Because this run used the preseed directory before corpus cleanup, manifest.json was included as AFL++ id:000000; future formal runs must use the corrected corpus subdirectory.",
+      "Some saved frontier endpoint replays exit with SIGSEGV without ASAN double-free; these are recorded as non-target endpoint exits, not GPAC_3403 trigger successes."
+    ],
+    "next_actions": [
+      "Rerun 300s smoke with the corrected corpus seed_dir to verify the manifest cleanup does not change the signal path.",
+      "Bias scheduling or seed selection toward high-sample op39 L-HEVC candidates, because this saved chain still mostly mutates q195 instead of the direct high-sample access-unit seeds.",
+      "After a corrected smoke preserves endpoint progress, run matched 600s/2h baselines with explicit seed-corpus labeling."
+    ],
+    "supported_claims": [
+      "With typedops40 enabled, FORMTRIG preserves strict saved pre-trigger guidance and saves 31 non-trigger frontier states in 300s from the resumed GPAC_3403 corpus.",
+      "The saved frontier is TC-rooted and the remaining terminal gap is localized to the gf_isom_nalu_sample_rewrite:672 lifecycle binding event.",
+      "Endpoint replay shows saved frontier inputs now reach real GPAC HEVC import and some L-HEVC import behavior under the plain ASAN MP4Box endpoint."
+    ]
+  },
+  "raw_artifact": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_access_unit_preseed_formtrig_300s_20260619",
+  "saved_progress_endpoint_replay": {
+    "audit_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/endpoint_signature_audit.json",
+    "positive_control_metrics": {
+      "asan_double_free_files": 1,
+      "files": 1,
+      "hevc_import_files": 1,
+      "hevc_nalus_max": 413,
+      "hevc_samples_max": 172,
+      "lhevc_import_files": 1,
+      "top_hevc_imports": [
+        {
+          "nalus": 413,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr",
+          "samples": 172
+        }
+      ],
+      "top_lhevc_imports": [
+        {
+          "b_slices": 87,
+          "i_slices": 30,
+          "p_slices": 2,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        }
+      ]
+    },
+    "positive_control_signatures_absent_from_variants": [
+      "layers_only_4",
+      "nal_type_49_not_handled",
+      "asan",
+      "asan_double_free"
+    ],
+    "replay_records_tsv": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/replay_records.tsv",
+    "return_code_counts": {
+      "0": 23,
+      "134": 1,
+      "139": 8
+    },
+    "signal_counts": {
+      "11": 8,
+      "6": 1
+    },
+    "variant_metrics": {
+      "asan_double_free_files": 0,
+      "files": 31,
+      "hevc_import_files": 23,
+      "hevc_nalus_max": 31,
+      "hevc_samples_max": 8,
+      "lhevc_import_files": 5,
+      "top_hevc_imports": [
+        {
+          "nalus": 31,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000033.endpoint_1.stderr",
+          "samples": 8
+        },
+        {
+          "nalus": 17,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000012.endpoint_1.stderr",
+          "samples": 6
+        },
+        {
+          "nalus": 20,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "samples": 2
+        },
+        {
+          "nalus": 12,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000104.endpoint_1.stderr",
+          "samples": 2
+        },
+        {
+          "nalus": 12,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000100.endpoint_1.stderr",
+          "samples": 2
+        },
+        {
+          "nalus": 12,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000007.endpoint_1.stderr",
+          "samples": 2
+        },
+        {
+          "nalus": 16,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000046.endpoint_1.stderr",
+          "samples": 1
+        },
+        {
+          "nalus": 12,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000180.endpoint_1.stderr",
+          "samples": 1
+        }
+      ],
+      "top_lhevc_imports": [
+        {
+          "b_slices": 2,
+          "i_slices": 1,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000012.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 0,
+          "i_slices": 1,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000104.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 0,
+          "i_slices": 0,
+          "p_slices": 1,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000100.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 1,
+          "i_slices": 0,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 1,
+          "i_slices": 0,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000007.endpoint_1.stderr"
+        }
+      ]
+    }
+  },
+  "schema": "formtrig_gpac3403_b11_typedops40_preseed_smoke_v1",
+  "signal_path_analysis": {
+    "blocking_reasons": [
+      "no_terminal_T_after_saved_non_trigger_frontier",
+      "missing_binding_events_at_latest_saved_frontier"
+    ],
+    "latest_saved_non_trigger": {
+      "d_f": 1,
+      "d_f_spec_lifted": 1,
+      "execs_done": 1959,
+      "queue_file_size": 3021,
+      "queue_id": 180,
+      "trace_signature": "322f07e5fbf535ba"
+    },
+    "missing_binding_events_at_latest_saved": [
+      {
+        "atom_id": "1",
+        "binding_id": "4",
+        "column": 59,
+        "component_kind": 7,
+        "event_id": "944c63fc04584807",
+        "file": "isomedia/avc_ext.c",
+        "function": "gf_isom_nalu_sample_rewrite",
+        "line": 672,
+        "opcode": "br",
+        "priority": 30,
+        "role": "lifecycle_event",
+        "value_mode": "hit"
+      }
+    ],
+    "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_access_unit_preseed_formtrig_300s_20260619/signal_path_analysis/summary.json",
+    "preterminal_non_trigger_d_f_values": [
+      1,
+      4,
+      2
+    ],
+    "saved_non_trigger_frontier_events": 31,
+    "saved_trigger_events": 0,
+    "terminal_gap_status": "saved_frontier_missing_binding_events",
+    "total_typed_execs": 218,
+    "total_typed_finds": 43,
+    "typed_attribution": "no_typed_preterminal_attribution",
+    "typed_find_rate": 0.19724770642201836,
+    "verdict": "strict_pretrigger_guidance_observed"
+  },
+  "target_id": "GPAC_3403"
+}

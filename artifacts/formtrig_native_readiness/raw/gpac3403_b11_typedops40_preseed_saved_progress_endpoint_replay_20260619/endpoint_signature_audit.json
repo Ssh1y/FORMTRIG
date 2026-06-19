@@ -1,0 +1,3254 @@
+{
+  "contrast": {
+    "positive_control_files": 1,
+    "positive_control_signatures_absent_from_variants": [
+      "layers_only_4",
+      "nal_type_49_not_handled",
+      "asan",
+      "asan_double_free"
+    ],
+    "variant_files": 31
+  },
+  "logs_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs",
+  "positive_control": {
+    "files": 1,
+    "metrics": {
+      "asan_double_free_examples": [
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+      ],
+      "asan_double_free_files": 1,
+      "hevc_import_files": 1,
+      "hevc_import_observations": 1,
+      "hevc_nalus_max": 413,
+      "hevc_samples_max": 172,
+      "hevc_top_samples": [
+        {
+          "nalus": 413,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr",
+          "samples": 172
+        }
+      ],
+      "lhevc_import_files": 1,
+      "lhevc_import_observations": 1,
+      "lhevc_top_slices": [
+        {
+          "b_slices": 87,
+          "i_slices": 30,
+          "p_slices": 2,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        }
+      ]
+    },
+    "signatures": {
+      "asan": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "asan_double_free": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": []
+      },
+      "hevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "172/413"
+          }
+        ]
+      },
+      "layers_only_4": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 12,
+        "top_values": [
+          {
+            "count": 10,
+            "value": "47/4"
+          },
+          {
+            "count": 2,
+            "value": "41/4"
+          }
+        ]
+      },
+      "lhevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "30/2/87"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 17,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 17,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "25/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": [
+          {
+            "count": 2,
+            "value": "5/4"
+          },
+          {
+            "count": 1,
+            "value": "132/4"
+          },
+          {
+            "count": 1,
+            "value": "221/4"
+          }
+        ]
+      }
+    }
+  },
+  "records": [
+    {
+      "kind": "positive_control",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 4,
+          "present": true,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "172",
+              "413"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 12,
+          "present": true,
+          "values": [
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "41",
+              "4"
+            ],
+            [
+              "41",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ]
+          ]
+        },
+        "lhevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "30",
+              "2",
+              "87"
+            ]
+          ]
+        },
+        "nal_type_32_error": {
+          "occurrences": 17,
+          "present": true,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 17,
+          "present": true,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "25",
+              "4"
+            ]
+          ]
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 4,
+          "present": true,
+          "values": [
+            [
+              "132",
+              "4"
+            ],
+            [
+              "5",
+              "4"
+            ],
+            [
+              "221",
+              "4"
+            ],
+            [
+              "5",
+              "4"
+            ]
+          ]
+        }
+      },
+      "variant_index": null
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000005.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 5
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000007.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "2",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 7
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000008.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "11"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 8
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000012.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "6",
+              "17"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "0",
+              "2"
+            ]
+          ]
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 12
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000015.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 15
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 4,
+          "present": true,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "2",
+              "20"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "nal_type_32_error": {
+          "occurrences": 4,
+          "present": true,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 4,
+          "present": true,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 4,
+          "present": true,
+          "values": [
+            [
+              "5",
+              "4"
+            ],
+            [
+              "6",
+              "4"
+            ],
+            [
+              "8",
+              "4"
+            ],
+            [
+              "12",
+              "4"
+            ]
+          ]
+        }
+      },
+      "variant_index": 26
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000033.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "8",
+              "31"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 33
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000035.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "11"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 35
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000037.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "10"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 37
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000038.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "10"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 38
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000046.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "16"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "50",
+              "4"
+            ]
+          ]
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 46
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000051.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 51
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000061.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 61
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000065.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 65
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000067.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "11"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 67
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000068.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "10"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 68
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000072.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 72
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000079.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "8",
+              "4"
+            ]
+          ]
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 79
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000091.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 91
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000100.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "2",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 100
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000104.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "2",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 104
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000111.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 111
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000124.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 124
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000133.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "10"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 133
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000152.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 152
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000158.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "10"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 158
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000164.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 164
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000165.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 165
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000173.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "11"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 173
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000174.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 174
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000180.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "12"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "38",
+              "4"
+            ]
+          ]
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 180
+    }
+  ],
+  "schema": "formtrig_gpac3403_endpoint_signature_audit_v2",
+  "summary": null,
+  "variant": {
+    "files": 31,
+    "metrics": {
+      "asan_double_free_examples": [],
+      "asan_double_free_files": 0,
+      "hevc_import_files": 23,
+      "hevc_import_observations": 23,
+      "hevc_nalus_max": 31,
+      "hevc_samples_max": 8,
+      "hevc_top_samples": [
+        {
+          "nalus": 31,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000033.endpoint_1.stderr",
+          "samples": 8
+        },
+        {
+          "nalus": 17,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000012.endpoint_1.stderr",
+          "samples": 6
+        },
+        {
+          "nalus": 20,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "samples": 2
+        },
+        {
+          "nalus": 12,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000104.endpoint_1.stderr",
+          "samples": 2
+        },
+        {
+          "nalus": 12,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000100.endpoint_1.stderr",
+          "samples": 2
+        },
+        {
+          "nalus": 12,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000007.endpoint_1.stderr",
+          "samples": 2
+        },
+        {
+          "nalus": 16,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000046.endpoint_1.stderr",
+          "samples": 1
+        },
+        {
+          "nalus": 12,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000180.endpoint_1.stderr",
+          "samples": 1
+        }
+      ],
+      "lhevc_import_files": 5,
+      "lhevc_import_observations": 5,
+      "lhevc_top_slices": [
+        {
+          "b_slices": 2,
+          "i_slices": 1,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000012.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 0,
+          "i_slices": 1,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000104.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 0,
+          "i_slices": 0,
+          "p_slices": 1,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000100.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 1,
+          "i_slices": 0,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 1,
+          "i_slices": 0,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000007.endpoint_1.stderr"
+        }
+      ]
+    },
+    "signatures": {
+      "asan": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "asan_double_free": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": []
+      },
+      "hevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000007.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000008.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000012.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000033.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000035.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000037.endpoint_1.stderr"
+        ],
+        "files": 23,
+        "occurrences": 23,
+        "top_values": [
+          {
+            "count": 7,
+            "value": "1/12"
+          },
+          {
+            "count": 5,
+            "value": "1/10"
+          },
+          {
+            "count": 4,
+            "value": "1/11"
+          },
+          {
+            "count": 3,
+            "value": "2/12"
+          },
+          {
+            "count": 1,
+            "value": "6/17"
+          },
+          {
+            "count": 1,
+            "value": "2/20"
+          },
+          {
+            "count": 1,
+            "value": "8/31"
+          },
+          {
+            "count": 1,
+            "value": "1/16"
+          }
+        ]
+      },
+      "layers_only_4": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "lhevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000007.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000012.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000100.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000104.endpoint_1.stderr"
+        ],
+        "files": 5,
+        "occurrences": 5,
+        "top_values": [
+          {
+            "count": 2,
+            "value": "0/0/1"
+          },
+          {
+            "count": 1,
+            "value": "1/0/2"
+          },
+          {
+            "count": 1,
+            "value": "0/1/0"
+          },
+          {
+            "count": 1,
+            "value": "1/0/0"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000008.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000046.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000079.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000180.endpoint_1.stderr"
+        ],
+        "files": 6,
+        "occurrences": 9,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000037.endpoint_1.stderr"
+        ],
+        "files": 2,
+        "occurrences": 3,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000035.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000046.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000065.endpoint_1.stderr"
+        ],
+        "files": 4,
+        "occurrences": 6,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000007.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000008.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000012.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000033.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000035.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000037.endpoint_1.stderr"
+        ],
+        "files": 23,
+        "occurrences": 23,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000046.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000079.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000180.endpoint_1.stderr"
+        ],
+        "files": 4,
+        "occurrences": 7,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000046.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000079.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000180.endpoint_1.stderr"
+        ],
+        "files": 3,
+        "occurrences": 3,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "50/4"
+          },
+          {
+            "count": 1,
+            "value": "8/4"
+          },
+          {
+            "count": 1,
+            "value": "38/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_preseed_saved_progress_endpoint_replay_20260619/logs/variant_000026.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "5/4"
+          },
+          {
+            "count": 1,
+            "value": "6/4"
+          },
+          {
+            "count": 1,
+            "value": "8/4"
+          },
+          {
+            "count": 1,
+            "value": "12/4"
+          }
+        ]
+      }
+    }
+  }
+}

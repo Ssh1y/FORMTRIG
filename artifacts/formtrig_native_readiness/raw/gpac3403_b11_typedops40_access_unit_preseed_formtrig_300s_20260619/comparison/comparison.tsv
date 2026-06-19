@@ -1,0 +1,2 @@
+arm	source_label	target_id	budget	run_time	rep	success	terminal_count	trigger_time_s	trigger_time_kind	trigger_execs	execs_done	execs_per_sec	reached	accepted_non_trigger	saved_non_trigger	spec_lifted	heuristic_lifted	manual_lifted	strict_pretrigger_guidance	binding_signal_status	source_path
+formtrig	typedops40	GPAC_3403	301	301		false	0				2012	6.68	1696	31	31	589	0	0	true	pass	/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b11_typedops40_access_unit_preseed_formtrig_300s_20260619/formtrig_gate/gate_summary.csv

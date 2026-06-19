@@ -1,0 +1,53 @@
+{
+  "schema": "formtrig_gpac3403_access_unit_frontier_preseed_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T16:45:00Z",
+  "purpose": "Resume FORMTRIG from its own saved GPAC_3403 frontier and from non-PoC access-unit typed mutation candidates that direct endpoint probing showed can enter multi-sample/L-HEVC import states.",
+  "not_poc": true,
+  "corpus_dir": "artifacts/formtrig_native_readiness/preseeds/gpac3403_b10_access_unit_frontier_seed_20260619/corpus",
+  "formal_seed_dir_excludes_manifest": true,
+  "source_artifacts": {
+    "frontier_seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_saved_progress_endpoint_replay_safe_20260619/inputs/q195.hevc",
+    "access_unit_probe": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/comparison.json"
+  },
+  "seeds": [
+    {
+      "file": "corpus/seed_q195_typedops36_frontier.hevc",
+      "sha256": "2bc6f519e89ffdf87ffd94228e1db2bae01d2745f7138bcbd88857f6feaf99a6",
+      "provenance": "FORMTRIG typedops36 saved_non_trigger frontier queue sample",
+      "endpoint_hevc_samples": 1,
+      "endpoint_lhevc": false
+    },
+    {
+      "file": "corpus/seed_op39_sample5_47samples_lhevc.hevc",
+      "sha256": "53ecd4a4ba2f595f103dd2d0a86979fe4ba850b5903a8081cd8b799ca661fef3",
+      "provenance": "FORMTRIG HEVC access-unit typed mutation op39 from q195",
+      "endpoint_hevc_samples": 47,
+      "endpoint_hevc_nalus": 163,
+      "endpoint_lhevc": true
+    },
+    {
+      "file": "corpus/seed_op39_sample6_53samples_lhevc.hevc",
+      "sha256": "a74a660d3043cf7b1f96cc267d05ab415f0a6596b4b5fbba75efa57478bbbdba",
+      "provenance": "FORMTRIG HEVC access-unit typed mutation op39 from q195",
+      "endpoint_hevc_samples": 53,
+      "endpoint_hevc_nalus": 177,
+      "endpoint_lhevc": true
+    },
+    {
+      "file": "corpus/seed_op39_sample7_50samples_lhevc.hevc",
+      "sha256": "119fe841b40ccec0c82486ca53efb36812d1aa86746e5c989bd23a1bbb1c9fe0",
+      "provenance": "FORMTRIG HEVC access-unit typed mutation op39 from q195",
+      "endpoint_hevc_samples": 50,
+      "endpoint_hevc_nalus": 170,
+      "endpoint_lhevc": true
+    }
+  ],
+  "use": {
+    "runner": "scripts/run_gpac3403_typedops40_matched_longrun.sh",
+    "seed_dir_arg": "artifacts/formtrig_native_readiness/preseeds/gpac3403_b10_access_unit_frontier_seed_20260619/corpus",
+    "recommended_first_budget_s": 300,
+    "recommended_formtrig_typed_mutation_max": 256
+  },
+  "claim_boundary": "This preseed corpus is valid for debugging and staged FORMTRIG repair evidence. Matched baseline comparisons must state whether baselines receive the same resumed corpus or start from the original blackwhite corpus."
+}
