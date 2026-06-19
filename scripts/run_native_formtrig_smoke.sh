@@ -128,6 +128,25 @@ if ! grep -q '"atom_signals":\[' "$work_dir/role_signal.jsonl"; then
   exit 4
 fi
 
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Wno-unused-parameter -Werror -DFORMTRIG_USE_AFL_MAP_FALLBACK=1 \
+  "$repo_root/formtrig/tests/snapshot_log_smoke.c" \
+  "$repo_root/formtrig/runtime/formtrig_runtime.c" \
+  -o "$work_dir/snapshot_log_smoke" -lrt -lm
+FORMTRIG_LOG="$work_dir/snapshot_exit.jsonl" \
+  FORMTRIG_SNAPSHOT_LOG="$work_dir/snapshot_publish.jsonl" \
+  FORMTRIG_SNAPSHOT_INTERVAL=2 \
+  "$work_dir/snapshot_log_smoke"
+cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \
+  -Wno-unused-parameter -Werror \
+  "$repo_root/formtrig/tests/snapshot_log_smoke.c" \
+  "$repo_root/formtrig/runtime/formtrig_runtime.c" \
+  -o "$work_dir/snapshot_log_no_shm_smoke" -lrt -lm
+FORMTRIG_LOG="$work_dir/snapshot_no_shm_exit.jsonl" \
+  FORMTRIG_SNAPSHOT_LOG="$work_dir/snapshot_no_shm_publish.jsonl" \
+  FORMTRIG_SNAPSHOT_INTERVAL=2 \
+  "$work_dir/snapshot_log_no_shm_smoke"
+
 printf 'role_component 8 123 guard 5 1 20 higher hit 1.0 0.9 201 2001\n' \
   > "$work_dir/role_spec.txt"
 cc -std=c11 -I"$repo_root/formtrig/include" -Wall -Wextra \

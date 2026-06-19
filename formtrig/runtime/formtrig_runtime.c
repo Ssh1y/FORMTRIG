@@ -225,6 +225,8 @@ static int g_observe_heuristic_lift = -1;
 static uint32_t g_lift_window = 0;
 static uint32_t g_sink_lookback = 0;
 static uint32_t g_debug_event_window = 0;
+static uint32_t g_snapshot_interval = 0;
+static uint64_t g_snapshot_publish_count = 0;
 static formtrig_shm_record_t *g_dedicated_shm_record = NULL;
 static int g_dedicated_shm_checked = 0;
 static formtrig_probe_spec_t g_probe_specs[FORMTRIG_PROBE_SPEC_CAP];
@@ -233,6 +235,7 @@ static int g_probe_specs_loaded = 0;
 
 static void apply_probe_specs_to_event(const formtrig_event_t *event);
 static void ensure_probe_specs_loaded(void);
+static void maybe_write_snapshot_jsonl(void);
 static int pre_reach_event_capture_enabled(uint32_t kind, uint32_t site_id);
 static void reset_probe_spec_runtime_state(void);
 static void remember_df_source_with_distance(const formtrig_event_t *event,
@@ -435,6 +438,18 @@ static uint32_t debug_event_window(void) {
   if (g_debug_event_window > FORMTRIG_RING_CAP)
     g_debug_event_window = FORMTRIG_RING_CAP;
   return g_debug_event_window;
+}
+
+static uint32_t snapshot_interval(void) {
+  if (g_snapshot_interval) return g_snapshot_interval;
+  const char *env = getenv("FORMTRIG_SNAPSHOT_INTERVAL");
+  if (env && *env) {
+    unsigned long value = strtoul(env, NULL, 10);
+    if (value > 0 && value <= UINT32_MAX)
+      g_snapshot_interval = (uint32_t)value;
+  }
+  if (!g_snapshot_interval) g_snapshot_interval = 1u;
+  return g_snapshot_interval;
 }
 
 static uint32_t sink_lookback(void) {
@@ -2768,7 +2783,10 @@ static void publish_shm(void) {
   if (!g_state.reached && !g_state.pre_reach_spec_lifted) return;
 
   formtrig_shm_record_t *rec = shm_record();
-  if (!rec) return;
+  if (!rec) {
+    maybe_write_snapshot_jsonl();
+    return;
+  }
 
   memset(rec, 0, sizeof(*rec));
   rec->magic = FORMTRIG_SHM_MAGIC;
@@ -2909,6 +2927,8 @@ static void publish_shm(void) {
           max_influence, 0.8);
     }
   }
+
+  maybe_write_snapshot_jsonl();
 }
 
 static void publish_pre_reach_if_ready(void) {
@@ -2927,8 +2947,7 @@ static void json_write_escaped(FILE *f, const char *s) {
   fputc('"', f);
 }
 
-static void write_jsonl(void) {
-  const char *path = getenv("FORMTRIG_LOG");
+static void write_jsonl_to_path(const char *path) {
   if (!path || !*path) return;
 
   FILE *f = NULL;
@@ -3136,6 +3155,22 @@ static void write_jsonl(void) {
   if (f != stdout) fclose(f);
 }
 
+static void write_jsonl(void) {
+  write_jsonl_to_path(getenv("FORMTRIG_LOG"));
+}
+
+static void maybe_write_snapshot_jsonl(void) {
+  const char *path = getenv("FORMTRIG_SNAPSHOT_LOG");
+  if (!path || !*path) return;
+  uint32_t interval = snapshot_interval();
+  if (!interval) return;
+  g_snapshot_publish_count++;
+  if ((g_snapshot_publish_count % interval) != 0 && !g_state.finalized &&
+      !g_state.crash_predicate)
+    return;
+  write_jsonl_to_path(path);
+}
+
 static void on_exit_finalize(void) {
   formtrig_finalize();
 }
@@ -3148,6 +3183,7 @@ __attribute__((constructor)) static void formtrig_ctor(void) {
 void formtrig_reset(void) {
   reset_state(&g_state);
   __formtrig_active = 0;
+  g_snapshot_publish_count = 0;
   refresh_pre_reach_gate();
   __formtrig_suppress = 0;
   clear_shm();

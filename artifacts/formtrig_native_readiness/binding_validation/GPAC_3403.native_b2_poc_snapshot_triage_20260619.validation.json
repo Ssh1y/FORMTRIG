@@ -1,0 +1,157 @@
+{
+  "target_id": "GPAC_3403",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml",
+  "compiled_lift_spec": "/tmp/gpac3403_b2_validation/formtrig_binding.lift",
+  "status": "same_object_binding_not_on_crash_path",
+  "checked_utc": "2026-06-19",
+  "summary": {
+    "conclusion": "B2 has partial TC-rooted lifecycle/root/producer signal, but its same_object role is bound to gf_bs_new_cbk_buffer sites that are not reached by the current prefix or full PoC replay path.",
+    "action": "Do not promote GPAC_3403 B2 as complete same-object lifecycle evidence. Repair the object-alias role around the actually reached cleanup/free path, or reseed with an input that reaches gf_bs_new_cbk_buffer before long endpoint runs."
+  },
+  "checks": {
+    "poc_reproduces_abort": true,
+    "snapshot_before_abort_available": true,
+    "spec_lifted_signal_before_abort": true,
+    "same_object_role_observed_prefix": false,
+    "same_object_role_observed_full_poc": false,
+    "use_role_observed_prefix": true,
+    "use_role_observed_full_poc": false,
+    "gf_bs_new_cbk_buffer_any_site_reached_prefix": false,
+    "gf_bs_new_cbk_buffer_any_site_snapshot_full_poc": false,
+    "current_same_object_binding_valid_for_crash_path": false
+  },
+  "inputs": {
+    "poc": {
+      "path": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "sha256": "9257df807f064d3bef04ee07fabd9995c7c485016b369bf786b9e9ccf3798ec1",
+      "size_bytes": 16329,
+      "format_observation": "raw HEVC elementary stream, not MP4 container"
+    },
+    "seed": {
+      "path": "benchmarks/cve_seeds/gpac/white.mp4",
+      "sha256": "f7f909fb41fbf344240457caae906807375e33f0bdbc26a335884799c9f39553",
+      "size_bytes": 1660
+    },
+    "prefix_probe": {
+      "source": "first 12288 bytes of GPAC_3403.poc",
+      "purpose": "non-aborting HEVC prefix control replay"
+    }
+  },
+  "snapshot_replays": {
+    "prefix_12288": {
+      "raw_path": "/tmp/gpac3403_snapshot_prefix_20260618T2040/prefix.snapshot.jsonl",
+      "raw_sha256": "3f12418b490a5b74e294d37b468df3958485bde3d34310d6b80321c87ce4bfc7",
+      "raw_size_bytes": 1503331,
+      "exit_code": 0,
+      "snapshot_lines": 1222,
+      "triggered_lines": 0,
+      "role_sample_counts": {
+        "root_observe": 1222,
+        "desired_producer": 71,
+        "use": 23,
+        "lifecycle_event": 142,
+        "same_object": 0,
+        "input_influence": 142
+      },
+      "d_f_spec_lifted": {
+        "min": 2,
+        "max": 6,
+        "last": 2
+      },
+      "last_atom_signal": {
+        "role_bits": 361,
+        "producer_bits": 2,
+        "use_bits": 2,
+        "root_value_bucket": 1,
+        "object_id_bucket": 0
+      }
+    },
+    "full_poc": {
+      "raw_path": "/tmp/gpac3403_snapshot_full_20260618T2041/full_poc.snapshot.jsonl",
+      "raw_sha256": "e5aa532cf2d49e1cd3e2cf81df99f206d06fb0fefb45ee91538e16f4e8f00246",
+      "raw_size_bytes": 2196442,
+      "exit_code": 134,
+      "stderr_tail": "Invalid nal size 0 in sample 130; free(): double free detected in tcache 2",
+      "snapshot_lines": 1838,
+      "triggered_lines": 0,
+      "role_sample_counts": {
+        "root_observe": 1838,
+        "desired_producer": 52,
+        "use": 0,
+        "lifecycle_event": 104,
+        "same_object": 0,
+        "input_influence": 104
+      },
+      "d_f_spec_lifted": {
+        "min": 4,
+        "max": 6,
+        "last": 4
+      },
+      "last_atom_signal": {
+        "role_bits": 329,
+        "producer_bits": 2,
+        "use_bits": 0,
+        "root_value_bucket": 0,
+        "object_id_bucket": 0
+      }
+    },
+    "full_poc_debug_window": {
+      "raw_path": "/tmp/gpac3403_snapshot_full_debug_20260618T2044/full_poc.snapshot.jsonl",
+      "raw_sha256": "87e1244cc431bc727e0735d538712225ff450b944e41673af4c09d75f49bd0e5",
+      "raw_size_bytes": 1623616,
+      "exit_code": 134,
+      "snapshot_lines": 18,
+      "debug_event_window": 512,
+      "debug_events_matching_bound_gf_bs_new_cbk_buffer_same_object_site": 0,
+      "debug_events_matching_bound_gf_bs_del_root_site": 4
+    }
+  },
+  "gf_bs_new_cbk_buffer_reach_probe": {
+    "site_ids": [
+      3198391530,
+      3215169149,
+      732625990,
+      782958847,
+      3299351434,
+      3316129053,
+      3282573815,
+      3232240958,
+      816808275,
+      800030656,
+      3249857220,
+      3115636268,
+      3165822030
+    ],
+    "site_map_rows": [
+      "3198391530 cmp gf_bs_new_cbk_buffer utils/bitstream.c:290",
+      "3215169149 branch gf_bs_new_cbk_buffer utils/bitstream.c:290",
+      "732625990 cmp gf_bs_new_cbk_buffer utils/bitstream.c:293",
+      "782958847 branch gf_bs_new_cbk_buffer utils/bitstream.c:293",
+      "3299351434 cmp gf_bs_new_cbk_buffer utils/bitstream.c:296",
+      "3316129053 branch gf_bs_new_cbk_buffer utils/bitstream.c:296",
+      "3282573815 cmp gf_bs_new_cbk_buffer utils/bitstream.c:296",
+      "3232240958 branch gf_bs_new_cbk_buffer utils/bitstream.c:296",
+      "816808275 cmp gf_bs_new_cbk_buffer utils/bitstream.c:300",
+      "800030656 branch gf_bs_new_cbk_buffer utils/bitstream.c:300",
+      "3249857220 binary gf_bs_new_cbk_buffer utils/bitstream.c:301",
+      "3115636268 cmp gf_bs_new_cbk_buffer utils/bitstream.c:302",
+      "3165822030 branch gf_bs_new_cbk_buffer utils/bitstream.c:302"
+    ],
+    "prefix_12288": {
+      "exit_code": 0,
+      "reached": false,
+      "target_hit_count": 0,
+      "runtime_log_sha256": "1053d84a58c84236c82e064c29323eba6b264ab410c50666d672b21ffb42e989"
+    },
+    "full_poc": {
+      "exit_code": 134,
+      "snapshot_log_created": false,
+      "interpretation": "No selected gf_bs_new_cbk_buffer site reached before abort when the probe targeted all instrumented gf_bs_new_cbk_buffer sites."
+    }
+  },
+  "notes": [
+    "The original B2 60s campaign remains valid as partial pretrigger lifted progress evidence.",
+    "This PoC snapshot triage makes the missing same_object role stronger: the full crash PoC reaches root/lifecycle/producer signal but not the bound same_object role, and an all-site gf_bs_new_cbk_buffer reach probe does not reach that function.",
+    "Raw JSONL snapshots are local /tmp diagnostics and are not committed; this artifact records hashes, counts, and extracted role summaries."
+  ]
+}

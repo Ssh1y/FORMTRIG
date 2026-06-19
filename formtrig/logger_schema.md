@@ -80,6 +80,13 @@ is large enough for post-reach structure-state sinks but remains capped by the
 runtime ring buffer. `FORMTRIG_DEBUG_EVENT_WINDOW` controls how many recent
 events are emitted when `FORMTRIG_DEBUG_EVENTS=1`.
 
+`FORMTRIG_SNAPSHOT_LOG` is an opt-in diagnostic sink for targets that may abort
+before the normal `atexit` finalizer writes `FORMTRIG_LOG`. When set, the
+runtime appends the same JSON object format during the publish path. It is off
+by default. `FORMTRIG_SNAPSHOT_INTERVAL` controls the publish cadence, defaulting
+to `1`; finalized or crash-predicate states are written regardless of the
+interval so crash triage keeps the last observed lifted state.
+
 Example:
 
 ```json
