@@ -293,6 +293,21 @@ run_formtrig_one() {
   } > "$run_out/run.log" 2>&1
 }
 
+summarize_typed_retained_one() {
+  local arm="$1"
+  local rep="$2"
+  local run_out="$out_dir/runs/${arm}_rep${rep}"
+  if [[ "$typed_retain_max" == "0" || ! -d "$run_out" ]]; then
+    return 0
+  fi
+  python3 "$repo_root/tools/summarize_typed_retained_candidates.py" \
+    --retain-dir "$run_out/typed_retained" \
+    --allow-empty \
+    --out-json "$run_out/typed_retained_summary.json" \
+    --out-records-jsonl "$run_out/typed_retained_records.jsonl" \
+    > "$run_out/typed_retained_summary.stdout"
+}
+
 write_metadata() {
   cat > "$out_dir/run_metadata.json" <<EOF
 {
@@ -531,6 +546,18 @@ if [[ "$mode" == "dry-run" ]]; then
   echo "  plan=$plan_sh"
   exit 0
 fi
+
+for rep in $(seq 1 "$reps"); do
+  for arm in $(split_list "$arms"); do
+    case "$arm" in
+      formtrig|formtrig_nohook)
+        summarize_typed_retained_one "$arm" "$rep"
+        ;;
+      *)
+        ;;
+    esac
+  done
+done
 
 for arm in $(split_list "$arms"); do
   case "$arm" in

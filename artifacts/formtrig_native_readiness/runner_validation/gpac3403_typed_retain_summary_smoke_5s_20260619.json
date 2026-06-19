@@ -1,0 +1,38 @@
+{
+  "validation_id": "gpac3403_typed_retain_summary_smoke_5s_20260619",
+  "target_id": "GPAC_3403",
+  "purpose": "Validate that the GPAC3403 matched runner automatically summarizes FORMTRIG typed-retained candidates after execute-mode runs.",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_summary_smoke_5s_20260619",
+  "command": "bash scripts/run_gpac3403_typedops40_matched_longrun.sh --mode execute --duration 5 --reps 1 --jobs 1 --arms formtrig --baselines \"\" --typed-mutation-max 8 --typed-retain-max 4 --out artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_summary_smoke_5s_20260619 --continue-on-fail",
+  "script_exit_code": 0,
+  "typed_ops": 40,
+  "typed_mutation_max": 8,
+  "typed_retain_max": 4,
+  "generated_files": [
+    "runs/formtrig_rep1/typed_retained_summary.json",
+    "runs/formtrig_rep1/typed_retained_records.jsonl",
+    "runs/formtrig_rep1/typed_retained_summary.stdout"
+  ],
+  "typed_retained_summary": {
+    "retained_records": 0,
+    "existing_inputs": 0,
+    "records_jsonl_lines": 0,
+    "missing_records_tsv": [
+      "artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_summary_smoke_5s_20260619/runs/formtrig_rep1/typed_retained/records.tsv"
+    ]
+  },
+  "gate_summary": {
+    "status": "fail",
+    "reasons": "experiment_not_ready;pretrigger_lift_not_ready;no_accepted_non_trigger_progress;no_saved_non_trigger_progress;no_non_trigger_lift_delta;binding_signal_status_not_pass",
+    "run_time": 5,
+    "execs_done": 47,
+    "reached": 40,
+    "terminal_triggered": 0,
+    "accepted_non_trigger": 0,
+    "saved_non_trigger": 0,
+    "spec_lifted": 6,
+    "binding_signal_status": "fail",
+    "binding_signal_diagnosis": "constant_lift_signal"
+  },
+  "claim_boundary": "Runner and typed-retained summary wiring only. This artifact is not GPAC3403 endpoint, speedup, or positive R2T guidance evidence."
+}
