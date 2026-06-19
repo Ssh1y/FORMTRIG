@@ -132,19 +132,34 @@ index ef84a18..270906e 100644
  #endif
 -
 diff --git a/include/envs.h b/include/envs.h
-index 0007d5a..9ef509f 100644
+index 0007d5a..3a2d1e1 100644
 --- a/include/envs.h
 +++ b/include/envs.h
-@@ -189,6 +189,8 @@ static char *afl_environment_variables[] = {
+@@ -189,6 +189,23 @@ static char *afl_environment_variables[] = {
      "AFL_MAPSIZE",
      "AFL_MAX_DET_EXTRAS",
      "AFL_NO_X86",  // not really an env but we dont want to warn on it
 +    "AFL_FORMTRIG",
++    "FORMTRIG_AFLPP",
++    "FORMTRIG_ALLOW_HEURISTIC_LIFT",
++    "FORMTRIG_ALLOW_MANUAL_LIFT",
++    "FORMTRIG_PROGRESS_LOG",
++    "FORMTRIG_PROGRESS_LOG_LIMIT",
++    "FORMTRIG_SAVED_PROGRESS_LOG_LIMIT",
++    "FORMTRIG_SAVED_PROGRESS_LOG_SAMPLE_RATE",
++    "FORMTRIG_SEMANTIC_DF_SLACK",
++    "FORMTRIG_TYPED_FALLBACK_RANGES",
++    "FORMTRIG_TYPED_MUTATION_HOOK",
++    "FORMTRIG_TYPED_MUTATION_MAX",
 +    "FORMTRIG_TYPED_OPS",
++    "FORMTRIG_TYPED_RANGE_SAMPLES",
++    "FORMTRIG_TYPED_RANGE_WINDOW",
++    "FORMTRIG_TYPED_RETAIN_DIR",
++    "FORMTRIG_TYPED_RETAIN_MAX",
      "AFL_NOOPT",
      "AFL_NYX_AUX_SIZE",
      "AFL_NYX_DISABLE_SNAPSHOT_MODE",
-@@ -261,4 +263,3 @@ static char *afl_environment_variables[] = {
+@@ -261,4 +278,3 @@ static char *afl_environment_variables[] = {
  extern char *afl_environment_variables[];
 
  #endif

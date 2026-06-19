@@ -306,6 +306,10 @@ summarize_typed_retained_one() {
     --out-json "$run_out/typed_retained_summary.json" \
     --out-records-jsonl "$run_out/typed_retained_records.jsonl" \
     > "$run_out/typed_retained_summary.stdout"
+  python3 "$repo_root/tools/package_gpac3403_typed_retained_audit.py" \
+    --run-dir "$run_out" \
+    --out "$run_out/typed_retained_audit_package.json" \
+    > "$run_out/typed_retained_audit_package.stdout"
 }
 
 write_metadata() {

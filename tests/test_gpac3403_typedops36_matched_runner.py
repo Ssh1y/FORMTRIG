@@ -181,6 +181,12 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["typed_retain_max"], 32)
 
+            runner = (
+                REPO_ROOT / "scripts" / "run_gpac3403_typedops36_matched_longrun.sh"
+            ).read_text(encoding="utf-8")
+            self.assertIn("package_gpac3403_typed_retained_audit.py", runner)
+            self.assertIn("typed_retained_audit_package.json", runner)
+
 
 if __name__ == "__main__":
     unittest.main()

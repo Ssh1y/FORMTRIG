@@ -1,0 +1,33 @@
+{
+  "validation_id": "gpac3403_typed_retained_audit_package_smoke_20260619",
+  "target_id": "GPAC_3403",
+  "purpose": "Validate that the GPAC3403 typed-retained audit packager can turn retained summary JSONL outputs into a single audit package with an explicit claim boundary.",
+  "input_run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_summary_smoke_5s_20260619/runs/formtrig_rep1",
+  "command": "python3 tools/package_gpac3403_typed_retained_audit.py --run-dir artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_summary_smoke_5s_20260619/runs/formtrig_rep1 --out artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_summary_smoke_5s_20260619/runs/formtrig_rep1/typed_retained_audit_package.json > artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_summary_smoke_5s_20260619/runs/formtrig_rep1/typed_retained_audit_package.stdout",
+  "script_exit_code": 0,
+  "package_schema": "formtrig_gpac3403_typed_retained_audit_package_v1",
+  "structure_audit": {
+    "available": true,
+    "mode": "records_only",
+    "record_count": 0,
+    "profiled_count": 0
+  },
+  "endpoint_audit": {
+    "available": false,
+    "reason": "endpoint logs directory is not configured"
+  },
+  "evidence_assessment": {
+    "retained_records": 0,
+    "existing_inputs": 0,
+    "records_jsonl_lines": 0,
+    "d_f_spec_lifted_count": 0,
+    "d_f_spec_lifted_min": null,
+    "d_f_spec_lifted_max": null,
+    "structure_profiled_candidates": 0,
+    "endpoint_variant_files": 0,
+    "endpoint_positive_control_files": 0,
+    "positive_control_signatures_absent_from_variants": [],
+    "claim_boundary": "No typed-retained candidates were captured; this run only proves retention/audit wiring, not R2T guidance benefit."
+  },
+  "claim_boundary": "Packager wiring only on an empty retained-candidate smoke run. This artifact is not GPAC3403 endpoint, speedup, or positive R2T guidance evidence."
+}
