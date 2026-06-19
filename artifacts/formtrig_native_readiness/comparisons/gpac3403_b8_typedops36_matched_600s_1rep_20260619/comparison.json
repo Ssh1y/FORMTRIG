@@ -1,0 +1,84 @@
+{
+  "schema": "formtrig_gpac3403_typedops36_matched_600s_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T15:55:00Z",
+  "raw_artifact": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_matched_600s_1rep_20260619",
+  "experiment": {
+    "duration_s": 600,
+    "reps": 1,
+    "seed_dir": "/tmp/formtrig_gpac3403_blackwhite_seed",
+    "category": "compound-sequence-lifecycle",
+    "formtrig_binding_spec": "artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+    "formtrig_target_cmd": "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+    "typed_ops": 36,
+    "typed_mutation_max": 64,
+    "baseline_endpoint": "MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null"
+  },
+  "formtrig": {
+    "gate_status": "pass",
+    "run_time_s": 600,
+    "execs_done": 4690,
+    "execs_per_sec": 7.81,
+    "corpus_count": 310,
+    "seen_execs": 4243,
+    "reached_execs": 4243,
+    "terminal_triggered_execs": 0,
+    "first_terminal_time_s": null,
+    "queued_progress": 5,
+    "accepted_non_trigger": 5,
+    "saved_non_trigger": 5,
+    "frontier_updates": 6,
+    "spec_lifted_events": 2418,
+    "heuristic_lifted_events": 0,
+    "manual_lifted_events": 0,
+    "typed_execs": 55,
+    "typed_finds": 28,
+    "pretrigger_lift_guidance_ready": true,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed",
+    "diagnosis": "queued_tc_rooted_progress"
+  },
+  "baselines": [
+    {
+      "name": "aflplusplus_vanilla",
+      "run_time_s": 600,
+      "execs_done": 6724,
+      "execs_per_sec": 11.2,
+      "corpus_count": 275,
+      "saved_crashes": 0,
+      "terminal_success": false
+    },
+    {
+      "name": "aflplusplus_cmplog",
+      "run_time_s": 600,
+      "execs_done": 6705,
+      "execs_per_sec": 11.17,
+      "corpus_count": 234,
+      "saved_crashes": 0,
+      "terminal_success": false
+    },
+    {
+      "name": "redqueen_operand",
+      "run_time_s": 600,
+      "execs_done": 6699,
+      "execs_per_sec": 11.16,
+      "corpus_count": 225,
+      "saved_crashes": 0,
+      "terminal_success": false
+    }
+  ],
+  "interpretation": {
+    "verdict": "pretrigger_guidance_only",
+    "supported_claims": [
+      "Under this matched 600s GPAC_3403 setup, AFL++ vanilla, CmpLog, and Redqueen did not reach a terminal crash.",
+      "FORMTRIG converted the sparse/binary trigger context into TC-rooted, accepted non-trigger search progress.",
+      "The lifted guidance was spec-attributed: heuristic_lifted_events and manual_lifted_events were both zero."
+    ],
+    "blocked_claims": [
+      "No FORMTRIG terminal _T was observed in this run.",
+      "No TTE speedup claim is supported by this run.",
+      "This is one replicate and does not establish stability across seeds or repeated long runs."
+    ],
+    "next_debug_step": "Replay the five saved_non_trigger queue entries against the GPAC_3403 endpoint and identify which final trigger relation is still missing."
+  }
+}

@@ -16,6 +16,7 @@
       "aflplusplus_vanilla": "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
       "aflplusplus_cmplog": "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
       "redqueen_operand": "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+      "afl_no_affinity": "1",
       "asan_options": "abort_on_error=1:detect_leaks=0:symbolize=0"
     }
   },

@@ -72,6 +72,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertIn("aflplusplus_cmplog", plan)
             self.assertIn("redqueen_operand", plan)
             self.assertIn("--cmplog-binary", plan)
+            self.assertIn("AFL_NO_AFFINITY=1", plan)
             self.assertIn("ASAN_OPTIONS=abort_on_error=1", plan)
 
     def test_dry_run_supports_nohook_ablation(self):

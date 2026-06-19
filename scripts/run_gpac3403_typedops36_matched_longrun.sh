@@ -191,6 +191,7 @@ baseline_command_array() {
     --afl-fuzz "$afl_fuzz"
     --memory-limit none
     --mode execute
+    --env "AFL_NO_AFFINITY=1"
     --env "ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:symbolize=0"
     --env "UBSAN_OPTIONS=halt_on_error=1:abort_on_error=1:print_stacktrace=0"
     --afl-arg=-t
