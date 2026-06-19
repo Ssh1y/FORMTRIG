@@ -39,6 +39,7 @@ Or generate a first-pass BindingSpec from one source site:
 
 Optional manifest keys:
   duration: SEC                  # default 60
+  typed_ops: N                   # FORMTRIG typed-stage op count
   afl_args: ARGS                 # extra AFL++ args, e.g. -t 5000
   aflpp_dir: DIR
   seed_preflight: off|warn|require
@@ -108,6 +109,7 @@ seed_dir="$(resolve_path "$seed_dir")"
 out_dir="$(resolve_path "${cfg[out_dir]:-}")"
 target_cmd="${cfg[target_cmd]:-}"
 duration="${cfg[duration]:-60}"
+typed_ops="${cfg[typed_ops]:-}"
 afl_args="${cfg[afl_args]:-}"
 aflpp_dir="$(resolve_path "${cfg[aflpp_dir]:-$repo_root/experiments/aflplusplus/AFLplusplus}")"
 seed_preflight="${cfg[seed_preflight]:-warn}"
@@ -206,6 +208,9 @@ campaign_args=(
   --seed-preflight-timeout "$seed_preflight_timeout"
   --aflpp-dir "$aflpp_dir"
 )
+if [[ -n "$typed_ops" ]]; then
+  campaign_args+=(--typed-ops "$typed_ops")
+fi
 if [[ -n "$target_site_ids" ]]; then
   campaign_args+=(--target-site-ids "$target_site_ids")
 fi

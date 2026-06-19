@@ -135,15 +135,16 @@ diff --git a/include/envs.h b/include/envs.h
 index 0007d5a..9ef509f 100644
 --- a/include/envs.h
 +++ b/include/envs.h
-@@ -189,6 +189,7 @@ static char *afl_environment_variables[] = {
+@@ -189,6 +189,8 @@ static char *afl_environment_variables[] = {
      "AFL_MAPSIZE",
      "AFL_MAX_DET_EXTRAS",
      "AFL_NO_X86",  // not really an env but we dont want to warn on it
 +    "AFL_FORMTRIG",
++    "FORMTRIG_TYPED_OPS",
      "AFL_NOOPT",
      "AFL_NYX_AUX_SIZE",
      "AFL_NYX_DISABLE_SNAPSHOT_MODE",
-@@ -261,4 +262,3 @@ static char *afl_environment_variables[] = {
+@@ -261,4 +263,3 @@ static char *afl_environment_variables[] = {
  extern char *afl_environment_variables[];
 
  #endif
@@ -366,13 +367,15 @@ diff --git a/src/afl-fuzz-one.c b/src/afl-fuzz-one.c
 index 2ad4697..771bd79 100644
 --- a/src/afl-fuzz-one.c
 +++ b/src/afl-fuzz-one.c
-@@ -71,6 +71,1003 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
+@@ -71,6 +71,1075 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
 
  }
 
 +#define FORMTRIG_TYPED_MUTATION_DEFAULT_MAX 128u
 +#define FORMTRIG_TYPED_MUTATION_HARD_MAX 4096u
-+#define FORMTRIG_TYPED_OPS 16u
++#define FORMTRIG_TYPED_BUILTIN_OPS 16u
++#define FORMTRIG_TYPED_OPS_DEFAULT 16u
++#define FORMTRIG_TYPED_OPS_HARD_MAX 4096u
 +#define FORMTRIG_TYPED_RANGE_WINDOW_DEFAULT 256u
 +#define FORMTRIG_TYPED_RANGE_WINDOW_HARD_MAX 4096u
 +#define FORMTRIG_TYPED_RANGE_SAMPLES_DEFAULT 4u
@@ -412,6 +415,14 @@ index 2ad4697..771bd79 100644
 +  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_MUTATION_MAX",
 +                                   FORMTRIG_TYPED_MUTATION_DEFAULT_MAX, 1u,
 +                                   FORMTRIG_TYPED_MUTATION_HARD_MAX);
++
++}
++
++static u32 formtrig_typed_ops(void) {
++
++  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_OPS",
++                                   FORMTRIG_TYPED_OPS_DEFAULT, 1u,
++                                   FORMTRIG_TYPED_OPS_HARD_MAX);
 +
 +}
 +
@@ -899,7 +910,7 @@ index 2ad4697..771bd79 100644
 +static void formtrig_apply_distance_mutation_at(u8 *out_buf, u32 len, u32 off,
 +                                                u32 op) {
 +
-+  switch (op % FORMTRIG_TYPED_OPS) {
++  switch (op % FORMTRIG_TYPED_BUILTIN_OPS) {
 +
 +    case 0:
 +      out_buf[off] ^= 0x01;
@@ -1048,7 +1059,7 @@ index 2ad4697..771bd79 100644
 +
 +  u32 block_len = 1u << ((sample + (op >> 2)) & 3u);
 +
-+  switch (op % FORMTRIG_TYPED_OPS) {
++  switch (op % FORMTRIG_TYPED_BUILTIN_OPS) {
 +
 +    case 0:
 +      out_buf[off] ^= 0xff;
@@ -1308,7 +1319,8 @@ index 2ad4697..771bd79 100644
 +  }
 +
 +  u32 sample_count = formtrig_typed_range_samples();
-+  u32 stage_max = component_count * range_count * FORMTRIG_TYPED_OPS *
++  u32 typed_ops = formtrig_typed_ops();
++  u32 stage_max = component_count * range_count * typed_ops *
 +                  sample_count;
 +  u32 stage_limit = formtrig_typed_mutation_max();
 +  if (stage_max > stage_limit) {
@@ -1332,8 +1344,8 @@ index 2ad4697..771bd79 100644
 +       ++afl->stage_cur) {
 +
 +    u32 cursor = afl->stage_cur;
-+    u32 op = cursor % FORMTRIG_TYPED_OPS;
-+    cursor /= FORMTRIG_TYPED_OPS;
++    u32 op = cursor % typed_ops;
++    cursor /= typed_ops;
 +    u32 component_index = cursor % component_count;
 +    cursor /= component_count;
 +    u32 range_index = cursor % range_count;
@@ -1431,7 +1443,7 @@ index 2ad4697..771bd79 100644
  /* Helper function to see if a particular change (xor_val = old ^ new) could
     be a product of deterministic bit flips with the lengths and stepovers
     attempted by afl-fuzz. This is used to avoid dupes in some of the
-@@ -545,6 +1542,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
+@@ -545,6 +1614,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
 
    }
 
@@ -1444,7 +1456,7 @@ index 2ad4697..771bd79 100644
    /* Skip right away if -d is given, if it has not been chosen sufficiently
       often to warrant the expensive deterministic stage (fuzz_level), or
       if it has gone through deterministic testing in earlier, resumed runs
-@@ -3656,6 +4659,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
+@@ -3656,6 +4731,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
 
    }
 
@@ -1457,7 +1469,7 @@ index 2ad4697..771bd79 100644
    /* Go to pacemker fuzzing if MOpt is doing well */
 
    cur_ms_lv = get_cur_time();
-@@ -6213,4 +7222,3 @@ u8 fuzz_one(afl_state_t *afl) {
+@@ -6213,4 +7294,3 @@ u8 fuzz_one(afl_state_t *afl) {
    return (key_val_lv_1 | key_val_lv_2);
 
  }
@@ -1474,7 +1486,7 @@ index 48fd33e..dce7cba 100644
 
  #ifdef _STANDALONE_MODULE
  void minimize_bits(afl_state_t *afl, u8 *dst, u8 *src) {
-@@ -43,6 +44,1095 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
+@@ -43,6 +44,1302 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
 
  #endif
 
@@ -2777,7 +2789,7 @@ index 48fd33e..dce7cba 100644
  /* select next queue entry based on alias algo - fast! */
 
  inline u32 select_next_queue_entry(afl_state_t *afl) {
-@@ -80,6 +1114,7 @@ double compute_weight(afl_state_t *afl, struct queue_entry *q,
+@@ -80,6 +1377,7 @@ double compute_weight(afl_state_t *afl, struct queue_entry *q,
    if (unlikely(weight < 0.1)) { weight = 0.1; }
    if (unlikely(q->favored)) { weight *= 5; }
    if (unlikely(!q->was_fuzzed)) { weight *= 2; }
@@ -2785,7 +2797,7 @@ index 48fd33e..dce7cba 100644
 
    return weight;
 
-@@ -1167,6 +2202,15 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
+@@ -1167,6 +2465,15 @@ u32 calculate_score(afl_state_t *afl, struct queue_entry *q) {
 
    }
 
@@ -2801,7 +2813,7 @@ index 48fd33e..dce7cba 100644
    return perf_score;
 
  }
-@@ -1451,4 +2495,3 @@ inline void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q,
+@@ -1451,4 +2758,3 @@ inline void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q,
    }
 
  }

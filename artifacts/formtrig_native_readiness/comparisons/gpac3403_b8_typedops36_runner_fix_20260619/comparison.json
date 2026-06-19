@@ -1,0 +1,60 @@
+{
+  "schema": "formtrig_gpac3403_typedops36_runner_fix_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T14:50:00Z",
+  "problem": {
+    "summary": "AFL++ native typed stage was hard-coded to 16 operations, while the GPAC_3403 compact HEVC/VPS-extension mutation operators live at op32-op35.",
+    "impact": "Prior native long runs could not exercise the compact GPAC_3403 operators even when the BindingSpec selected hevc_annexb_structure_hook.py. Extra time alone would not test the intended repair."
+  },
+  "fix": {
+    "runtime": "FORMTRIG_TYPED_OPS is now read by afl-fuzz-one.c with a default of 16 and a hard max of 4096.",
+    "runner": "scripts/run_formtrig_aflpp_campaign.sh accepts --typed-ops N and exports FORMTRIG_TYPED_OPS.",
+    "manifest": "scripts/run_formtrig_native_manifest.sh accepts typed_ops: N and forwards it to the campaign runner.",
+    "binary_verification": {
+      "afl_fuzz_rebuilt": true,
+      "contains_FORMTRIG_TYPED_OPS_string": true,
+      "python_linked": false
+    }
+  },
+  "smoke_runs": [
+    {
+      "name": "gpac3403_b8_typedops36_smoke_30s_20260619",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_smoke_30s_20260619",
+      "duration_s": 30,
+      "seed_set": "public_hevc_4_seeds",
+      "typed_ops": 36,
+      "formtrig_typed_execs": 31,
+      "formtrig_typed_stage_completed": false,
+      "op32_35_schedulable_inferred": false,
+      "formtrig_triggered_execs": 0,
+      "saved_non_trigger_progress_events": 0,
+      "diagnosis": "constant_lift_signal",
+      "interpretation": "Budget ended before the key compact operators were reached."
+    },
+    {
+      "name": "gpac3403_b8_typedops36_blackwhite_smoke_60s_20260619",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_blackwhite_smoke_60s_20260619",
+      "duration_s": 60,
+      "seed_set": "blackwhite_yuv444p_single_seed",
+      "typed_ops": 36,
+      "typed_mutation_max": 64,
+      "formtrig_typed_execs": 55,
+      "formtrig_typed_stage_completed": true,
+      "op32_35_schedulable_inferred": true,
+      "formtrig_typed_finds": 28,
+      "formtrig_triggered_execs": 0,
+      "saved_non_trigger_progress_events": 1,
+      "formtrig_queued_progress": 1,
+      "pretrigger_lift_guidance_ready": true,
+      "binding_signal_status": "pass",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "diagnosis": "queued_tc_rooted_progress",
+      "interpretation": "The fixed runner reaches the compact operator window and produces TC-rooted non-trigger guidance, but still does not reach terminal _T in this short smoke."
+    }
+  ],
+  "current_meaning": {
+    "_T_status": "No stable _T yet in the corrected GPAC_3403 smoke.",
+    "guidance_status": "Positive pre-trigger guidance is now visible after the typed_ops fix: saved non-trigger progress and queued TC-rooted progress appear in 60s.",
+    "next_experiment": "Run matched long budgets with --typed-ops 36 and FORMTRIG_TYPED_MUTATION_MAX at least 64, then compare terminal TTE and endpoint signatures against AFL++ vanilla/CmpLog/Redqueen."
+  }
+}

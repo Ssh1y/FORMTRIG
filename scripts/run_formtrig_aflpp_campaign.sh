@@ -19,6 +19,7 @@ seed_preflight_max="32"
 seed_preflight_timeout="2"
 mutation_hook_override=""
 disable_mutation_hook=0
+typed_ops=""
 extra_afl_args=()
 
 usage() {
@@ -37,6 +38,7 @@ options:
   --seed-preflight-timeout SEC per-seed replay timeout (default: 2)
   --mutation-hook FILE override the BindingSpec external typed mutation hook
   --no-mutation-hook  disable the BindingSpec/env external mutation hook
+  --typed-ops N       number of FORMTRIG typed-stage ops to enumerate
   --aflpp-dir DIR      AFL++ checkout/build directory
   --afl-arg ARG        extra afl-fuzz argument, repeatable
 
@@ -223,6 +225,10 @@ while [[ $# -gt 0 ]]; do
       disable_mutation_hook=1
       shift
       ;;
+    --typed-ops)
+      typed_ops="${2:-}"
+      shift 2
+      ;;
     --aflpp-dir)
       aflpp_dir="${2:-}"
       afl_fuzz="$aflpp_dir/afl-fuzz"
@@ -267,6 +273,14 @@ if [[ -n "$binding_spec" && -z "$site_map" ]]; then
 fi
 if [[ "$disable_mutation_hook" == "1" && -n "$mutation_hook_override" ]]; then
   echo "--no-mutation-hook and --mutation-hook are mutually exclusive" >&2
+  exit 2
+fi
+if [[ -n "$typed_ops" && ! "$typed_ops" =~ ^[0-9]+$ ]]; then
+  echo "--typed-ops must be a positive integer" >&2
+  exit 2
+fi
+if [[ -n "$typed_ops" && "$typed_ops" -lt 1 ]]; then
+  echo "--typed-ops must be a positive integer" >&2
   exit 2
 fi
 
@@ -445,6 +459,22 @@ env_args=(
 if [[ -n "$mutation_hook" ]]; then
   env_args+=(FORMTRIG_TYPED_MUTATION_HOOK="$mutation_hook")
 fi
+
+if [[ -n "$typed_ops" ]]; then
+  env_args+=(FORMTRIG_TYPED_OPS="$typed_ops")
+fi
+
+{
+  printf '{\n'
+  if [[ -n "$typed_ops" ]]; then
+    printf '  "typed_ops": %s,\n' "$typed_ops"
+    printf '  "source": "cli"\n'
+  else
+    printf '  "typed_ops": null,\n'
+    printf '  "source": "runtime_default"\n'
+  fi
+  printf '}\n'
+} > "$out_dir/formtrig_typed_ops.json"
 
 if [[ -n "$runtime_lift_spec" ]]; then
   env_args+=(FORMTRIG_LIFT_SPEC="$runtime_lift_spec")
