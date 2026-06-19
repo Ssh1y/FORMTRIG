@@ -2,15 +2,19 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-aflpp_dir="${AFLPP_DIR:-$repo_root/experiments/aflplusplus/AFLplusplus}"
+aflpp_dir="${AFLPP_DIR:-}"
 clang_bin="${CLANG:-clang}"
 cxx_bin="${CXX:-}"
 llvm_config="${LLVM_CONFIG:-}"
 out_dir=""
+aflpp_dir_explicit=0
 clang_explicit=0
 cxx_explicit=0
 llvm_config_explicit=0
 
+if [[ -n "${AFLPP_DIR:-}" ]]; then
+  aflpp_dir_explicit=1
+fi
 if [[ -n "${CLANG:-}" ]]; then
   clang_explicit=1
 fi
@@ -56,6 +60,45 @@ require_file() {
   fi
 }
 
+aflpp_dir_usable() {
+  local dir="$1"
+  [[ -x "$dir/afl-cc" && -x "$dir/afl-c++" && -x "$dir/afl-fuzz" ]]
+}
+
+default_aflpp_dir() {
+  local candidate
+  for candidate in \
+    "$repo_root/experiments/magma_workspace/magma/fuzzers/formtrig_native/repo" \
+    "$repo_root/experiments/aflplusplus/AFLplusplus"
+  do
+    if aflpp_dir_usable "$candidate"; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  printf '%s\n' "$repo_root/experiments/aflplusplus/AFLplusplus"
+}
+
+clang_has_compiler_rt() {
+  local clang_cmd="$1"
+  local resource_dir
+  resource_dir="$("$clang_cmd" --print-resource-dir 2>/dev/null || true)"
+  [[ -n "$resource_dir" &&
+     -e "$resource_dir/lib/linux/libclang_rt.ubsan_standalone-x86_64.a" ]]
+}
+
+default_clang_bin() {
+  local candidate
+  for candidate in clang-15 clang-18 clang; do
+    if command -v "$candidate" >/dev/null 2>&1 &&
+       clang_has_compiler_rt "$candidate"; then
+      command -v "$candidate"
+      return
+    fi
+  done
+  command -v clang 2>/dev/null || printf 'clang\n'
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --out)
@@ -64,6 +107,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --aflpp-dir)
       aflpp_dir="${2:-}"
+      aflpp_dir_explicit=1
       shift 2
       ;;
     --clang)
@@ -101,6 +145,10 @@ fi
 mkdir -p "$out_dir"
 out_dir="$(cd "$out_dir" && pwd)"
 
+if [[ -z "$aflpp_dir" && "$aflpp_dir_explicit" == "0" ]]; then
+  aflpp_dir="$(default_aflpp_dir)"
+fi
+
 afl_cc="$aflpp_dir/afl-cc"
 afl_cxx="$aflpp_dir/afl-c++"
 afl_fuzz="$aflpp_dir/afl-fuzz"
@@ -123,6 +171,24 @@ if [[ -x "$afl_cc" ]] &&
           -x "$afl_llvm_bin/llvm-config" ]]; then
       llvm_config="$afl_llvm_bin/llvm-config"
     fi
+  fi
+fi
+
+if [[ "$clang_explicit" == "0" ]] && ! clang_has_compiler_rt "$clang_bin"; then
+  clang_bin="$(default_clang_bin)"
+  if [[ "$cxx_explicit" == "0" ]]; then
+    cxx_bin=""
+  fi
+  if [[ "$llvm_config_explicit" == "0" ]]; then
+    llvm_config=""
+  fi
+fi
+if [[ "$clang_explicit" == "1" ]]; then
+  if [[ "$cxx_explicit" == "0" ]]; then
+    cxx_bin=""
+  fi
+  if [[ "$llvm_config_explicit" == "0" ]]; then
+    llvm_config=""
   fi
 fi
 

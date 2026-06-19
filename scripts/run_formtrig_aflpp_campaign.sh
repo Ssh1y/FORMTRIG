@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-aflpp_dir="${AFLPP_DIR:-$repo_root/experiments/aflplusplus/AFLplusplus}"
+aflpp_dir="${AFLPP_DIR:-}"
 afl_fuzz="$aflpp_dir/afl-fuzz"
 seed_dir=""
 out_dir=""
@@ -56,6 +56,52 @@ require_file() {
     echo "missing required file: $1" >&2
     exit 2
   fi
+}
+
+formtrig_expected_abi_version() {
+  awk '
+    $1 == "#define" && $2 == "FORMTRIG_SHM_VERSION" {
+      print $3
+      exit
+    }
+  ' "$repo_root/formtrig/include/formtrig/formtrig_abi.h"
+}
+
+aflpp_dir_usable() {
+  local dir="$1"
+  [[ -x "$dir/afl-fuzz" ]]
+}
+
+aflpp_dir_abi_current() {
+  local dir="$1"
+  local expected_abi
+  expected_abi="$(formtrig_expected_abi_version)"
+  [[ -n "$expected_abi" ]] &&
+    aflpp_dir_usable "$dir" &&
+    grep -a -q "FORMTRIG_SHM_ABI_VERSION=$expected_abi" "$dir/afl-fuzz"
+}
+
+default_aflpp_dir() {
+  local candidate
+  for candidate in \
+    "$repo_root/experiments/magma_workspace/magma/fuzzers/formtrig_native/repo" \
+    "$repo_root/experiments/aflplusplus/AFLplusplus"
+  do
+    if aflpp_dir_abi_current "$candidate"; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  for candidate in \
+    "$repo_root/experiments/magma_workspace/magma/fuzzers/formtrig_native/repo" \
+    "$repo_root/experiments/aflplusplus/AFLplusplus"
+  do
+    if aflpp_dir_usable "$candidate"; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  printf '%s\n' "$repo_root/experiments/aflplusplus/AFLplusplus"
 }
 
 stats_field() {
@@ -259,6 +305,11 @@ if [[ -z "$seed_dir" || -z "$out_dir" || -z "$target_bug" || $# -eq 0 ]]; then
   exit 2
 fi
 
+if [[ -z "$aflpp_dir" ]]; then
+  aflpp_dir="$(default_aflpp_dir)"
+  afl_fuzz="$aflpp_dir/afl-fuzz"
+fi
+
 require_file "$seed_dir"
 require_file "$afl_fuzz"
 
@@ -296,6 +347,13 @@ esac
 if ! grep -a -q "FORMTRIG native signal channel enabled" "$afl_fuzz"; then
   echo "AFL++ checkout is not patched for FORMTRIG native guidance." >&2
   echo "Run: $repo_root/patches/aflplusplus/apply_formtrig_patch.sh" >&2
+  exit 2
+fi
+expected_abi="$(formtrig_expected_abi_version)"
+if [[ -z "$expected_abi" ]] ||
+   ! grep -a -q "FORMTRIG_SHM_ABI_VERSION=$expected_abi" "$afl_fuzz"; then
+  echo "AFL++ FORMTRIG ABI is missing or stale for FORMTRIG_SHM_VERSION=$expected_abi." >&2
+  echo "Run: AFLPP_DIR=$aflpp_dir $repo_root/patches/aflplusplus/apply_formtrig_patch.sh" >&2
   exit 2
 fi
 

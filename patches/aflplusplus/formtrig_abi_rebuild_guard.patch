@@ -1,0 +1,44 @@
+diff --git a/GNUmakefile b/GNUmakefile
+index 198fb51..4f4fd70 100644
+--- a/GNUmakefile
++++ b/GNUmakefile
+@@ -46,6 +46,7 @@ ifdef NO_SPLICING
+ endif
+
+ FORMTRIG_RUNTIME_ROOT ?= $(firstword $(wildcard $(CURDIR)/../formtrig) $(wildcard $(CURDIR)/../../../formtrig))
++FORMTRIG_ABI_HEADER := $(wildcard $(FORMTRIG_RUNTIME_ROOT)/include/formtrig/formtrig_abi.h)
+ ifneq "$(FORMTRIG_RUNTIME_ROOT)" ""
+   override CFLAGS += -I$(FORMTRIG_RUNTIME_ROOT)/include
+ endif
+@@ -460,7 +461,7 @@ src/afl-sharedmem.o: $(COMM_HDR) include/alloc-inl.h src/afl-sharedmem.c
+ src/afl-forkserver.o: $(COMM_HDR) include/alloc-inl.h src/afl-forkserver.c
+ 	$(CC) $(CFLAGS) $(CFLAGS_FLTO) -c src/afl-forkserver.c -o src/afl-forkserver.o
+
+-afl-fuzz: $(COMM_HDR) include/afl-fuzz.h $(AFL_FUZZ_FILES) src/afl-common.o src/afl-sharedmem.o src/afl-forkserver.o src/afl-performance.o | test_x86
++afl-fuzz: $(COMM_HDR) include/afl-fuzz.h $(FORMTRIG_ABI_HEADER) $(AFL_FUZZ_FILES) src/afl-common.o src/afl-sharedmem.o src/afl-forkserver.o src/afl-performance.o | test_x86
+ 	$(CC) $(CFLAGS) $(COMPILE_STATIC) $(CFLAGS_FLTO) $(AFL_FUZZ_FILES) src/afl-common.o src/afl-sharedmem.o src/afl-forkserver.o src/afl-performance.o -o $@ $(PYFLAGS) $(LDFLAGS) -lm
+
+ afl-showmap: src/afl-showmap.c src/afl-common.o src/afl-sharedmem.o src/afl-forkserver.o src/afl-performance.o | test_x86
+diff --git a/src/afl-fuzz-queue.c b/src/afl-fuzz-queue.c
+index a812c6f..e8f1c44 100644
+--- a/src/afl-fuzz-queue.c
++++ b/src/afl-fuzz-queue.c
+@@ -37,6 +37,10 @@ void run_afl_custom_queue_new_entry(afl_state_t *afl, struct queue_entry *q,
+
+ #endif
+
++#define FORMTRIG_STRINGIFY_VALUE(x) #x
++#define FORMTRIG_STRINGIFY(x) FORMTRIG_STRINGIFY_VALUE(x)
++#define FORMTRIG_AFLPP_ABI_MARKER "FORMTRIG_SHM_ABI_VERSION=" FORMTRIG_STRINGIFY(FORMTRIG_SHM_VERSION)
++
+ static u8 formtrig_env_enabled(void) {
+
+   const char *env = getenv("AFL_FORMTRIG");
+@@ -113,6 +117,6 @@ void formtrig_init(afl_state_t *afl) {
+   afl->formtrig_shm_path = ck_strdup((u8 *)path);
+   formtrig_clear_record((formtrig_shm_record_t *)area);
+   setenv(FORMTRIG_SHM_ENV_VAR, path, 1);
+-  OKF("FORMTRIG native signal channel enabled");
++  OKF("FORMTRIG native signal channel enabled (%s)", FORMTRIG_AFLPP_ABI_MARKER);
+
+ }

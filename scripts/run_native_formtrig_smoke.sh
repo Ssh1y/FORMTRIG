@@ -2,12 +2,18 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-aflpp_dir="${AFLPP_DIR:-$repo_root/experiments/aflplusplus/AFLplusplus}"
+aflpp_dir="${AFLPP_DIR:-}"
+clang_bin="${CLANG:-}"
+smoke_fuzz_duration="${FORMTRIG_NATIVE_SMOKE_FUZZ_DURATION:-10}"
 afl_fuzz="$aflpp_dir/afl-fuzz"
 afl_cc="$aflpp_dir/afl-cc"
 work_dir="${TMPDIR:-/tmp}/formtrig_native_smoke.$$"
 
 cleanup() {
+  if [[ "${FORMTRIG_KEEP_SMOKE_WORKDIR:-0}" == "1" ]]; then
+    echo "kept smoke work dir: $work_dir" >&2
+    return
+  fi
   rm -rf "$work_dir"
 }
 trap cleanup EXIT
@@ -17,6 +23,72 @@ require_file() {
     echo "missing required file: $1" >&2
     exit 2
   fi
+}
+
+formtrig_expected_abi_version() {
+  awk '
+    $1 == "#define" && $2 == "FORMTRIG_SHM_VERSION" {
+      print $3
+      exit
+    }
+  ' "$repo_root/formtrig/include/formtrig/formtrig_abi.h"
+}
+
+aflpp_dir_usable() {
+  local dir="$1"
+  [[ -x "$dir/afl-cc" && -x "$dir/afl-c++" && -x "$dir/afl-fuzz" ]]
+}
+
+aflpp_dir_abi_current() {
+  local dir="$1"
+  local expected_abi
+  expected_abi="$(formtrig_expected_abi_version)"
+  [[ -n "$expected_abi" ]] &&
+    aflpp_dir_usable "$dir" &&
+    grep -a -q "FORMTRIG_SHM_ABI_VERSION=$expected_abi" "$dir/afl-fuzz"
+}
+
+default_aflpp_dir() {
+  local candidate
+  for candidate in \
+    "$repo_root/experiments/magma_workspace/magma/fuzzers/formtrig_native/repo" \
+    "$repo_root/experiments/aflplusplus/AFLplusplus"
+  do
+    if aflpp_dir_abi_current "$candidate"; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  for candidate in \
+    "$repo_root/experiments/magma_workspace/magma/fuzzers/formtrig_native/repo" \
+    "$repo_root/experiments/aflplusplus/AFLplusplus"
+  do
+    if aflpp_dir_usable "$candidate"; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  printf '%s\n' "$repo_root/experiments/aflplusplus/AFLplusplus"
+}
+
+clang_has_compiler_rt() {
+  local clang_cmd="$1"
+  local resource_dir
+  resource_dir="$("$clang_cmd" --print-resource-dir 2>/dev/null || true)"
+  [[ -n "$resource_dir" &&
+     -e "$resource_dir/lib/linux/libclang_rt.ubsan_standalone-x86_64.a" ]]
+}
+
+default_clang_bin() {
+  local candidate
+  for candidate in clang-15 clang-18 clang; do
+    if command -v "$candidate" >/dev/null 2>&1 &&
+       clang_has_compiler_rt "$candidate"; then
+      command -v "$candidate"
+      return
+    fi
+  done
+  command -v clang 2>/dev/null || printf 'clang\n'
 }
 
 stat_value() {
@@ -39,12 +111,28 @@ json_number() {
   }' "$2"
 }
 
+if [[ -z "$aflpp_dir" ]]; then
+  aflpp_dir="$(default_aflpp_dir)"
+fi
+if [[ -z "$clang_bin" ]]; then
+  clang_bin="$(default_clang_bin)"
+fi
+afl_fuzz="$aflpp_dir/afl-fuzz"
+afl_cc="$aflpp_dir/afl-cc"
+
 require_file "$afl_fuzz"
 require_file "$afl_cc"
 
 if ! grep -a -q "FORMTRIG native signal channel enabled" "$afl_fuzz"; then
   echo "AFL++ checkout is not patched for FORMTRIG native guidance." >&2
   echo "Run: $repo_root/patches/aflplusplus/apply_formtrig_patch.sh" >&2
+  exit 2
+fi
+expected_abi="$(formtrig_expected_abi_version)"
+if [[ -z "$expected_abi" ]] ||
+   ! grep -a -q "FORMTRIG_SHM_ABI_VERSION=$expected_abi" "$afl_fuzz"; then
+  echo "AFL++ FORMTRIG ABI is missing or stale for FORMTRIG_SHM_VERSION=$expected_abi." >&2
+  echo "Run: AFLPP_DIR=$aflpp_dir $repo_root/patches/aflplusplus/apply_formtrig_patch.sh" >&2
   exit 2
 fi
 
@@ -56,7 +144,9 @@ fi
 "$repo_root/scripts/run_formtrig_source_site_smoke.sh" >/dev/null
 
 "$repo_root/scripts/prepare_formtrig_native_env.sh" \
-  --out "$work_dir/native_env" >/dev/null
+  --out "$work_dir/native_env" \
+  --aflpp-dir "$aflpp_dir" \
+  --clang "$clang_bin" >/dev/null
 cat > "$work_dir/native_env/env_target.c" <<'TARGET'
 #include <stdio.h>
 
@@ -1444,7 +1534,8 @@ if ! grep -q 'missing_root_or_use' \
   exit 11
 fi
 
-AFL_PATH="$aflpp_dir" "$afl_cc" -I"$repo_root/formtrig/include" \
+AFL_PATH="$aflpp_dir" AFL_CC_COMPILER=LLVM AFL_CC="$clang_bin" \
+  "$afl_cc" -I"$repo_root/formtrig/include" \
   "$repo_root/formtrig/tests/native_afl_role_target.c" \
   "$repo_root/formtrig/runtime/formtrig_runtime.c" \
   -o "$work_dir/native_afl_role_target" -lrt -lm
@@ -1457,7 +1548,7 @@ FORMTRIG_NO_CRASH=1 "$repo_root/scripts/run_formtrig_aflpp_campaign.sh" \
   --binding-spec "$work_dir/binary_binding_spec.yml" \
   --site-map "$work_dir/site_map.tsv" \
   --target-site-ids "$site_ids" \
-  --duration 2 \
+  --duration "$smoke_fuzz_duration" \
   --aflpp-dir "$aflpp_dir" \
   -- "$work_dir/native_afl_role_target" @@ >/dev/null
 

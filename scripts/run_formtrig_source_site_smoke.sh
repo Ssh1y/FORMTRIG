@@ -2,8 +2,9 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-clang_bin="${CLANG:-clang}"
-llvm_config="${LLVM_CONFIG:-llvm-config}"
+clang_bin="${CLANG:-}"
+cxx_bin="${CXX:-}"
+llvm_config="${LLVM_CONFIG:-}"
 work_dir="${TMPDIR:-/tmp}/formtrig_source_site_smoke.$$"
 
 cleanup() {
@@ -25,12 +26,59 @@ require_file() {
   fi
 }
 
+clang_has_compiler_rt() {
+  local clang_cmd="$1"
+  local resource_dir
+  resource_dir="$("$clang_cmd" --print-resource-dir 2>/dev/null || true)"
+  [[ -n "$resource_dir" &&
+     -e "$resource_dir/lib/linux/libclang_rt.ubsan_standalone-x86_64.a" ]]
+}
+
+default_clang_bin() {
+  local candidate
+  for candidate in clang-15 clang-18 clang; do
+    if command -v "$candidate" >/dev/null 2>&1 &&
+       clang_has_compiler_rt "$candidate"; then
+      command -v "$candidate"
+      return
+    fi
+  done
+  command -v clang 2>/dev/null || printf 'clang\n'
+}
+
+if [[ -z "$clang_bin" ]]; then
+  clang_bin="$(default_clang_bin)"
+fi
+if [[ -z "$cxx_bin" ]]; then
+  if [[ "$clang_bin" == *clang-* ]]; then
+    cxx_bin="${clang_bin/clang-/clang++-}"
+  elif [[ "$clang_bin" == *clang ]]; then
+    cxx_bin="${clang_bin%clang}clang++"
+  else
+    cxx_bin="clang++"
+  fi
+fi
+if [[ -z "$llvm_config" ]]; then
+  clang_major="$("$clang_bin" --version | sed -n \
+    's/.* version \([0-9][0-9]*\).*/\1/p' | head -n 1)"
+  if [[ -n "$clang_major" ]] && command -v "llvm-config-$clang_major" \
+      >/dev/null 2>&1; then
+    llvm_config="llvm-config-$clang_major"
+  else
+    llvm_config="llvm-config"
+  fi
+fi
+
 require_cmd "$clang_bin"
+require_cmd "$cxx_bin"
 require_cmd "$llvm_config"
 mkdir -p "$work_dir"
 
 pass_out="$work_dir/formtrig_pass.so"
-pass_build="$("$repo_root/scripts/build_formtrig_llvm_pass.sh" "$pass_out")"
+pass_build="$(
+  CXX="$cxx_bin" LLVM_CONFIG="$llvm_config" \
+    "$repo_root/scripts/build_formtrig_llvm_pass.sh" "$pass_out"
+)"
 pass_args_line="$(printf '%s\n' "$pass_build" | sed -n 's/^FORMTRIG_CLANG_PASS_ARGS=//p')"
 if [[ -z "$pass_args_line" ]]; then
   echo "FORMTRIG pass build did not report clang pass args" >&2

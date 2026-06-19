@@ -111,7 +111,7 @@ target_cmd="${cfg[target_cmd]:-}"
 duration="${cfg[duration]:-60}"
 typed_ops="${cfg[typed_ops]:-}"
 afl_args="${cfg[afl_args]:-}"
-aflpp_dir="$(resolve_path "${cfg[aflpp_dir]:-$repo_root/experiments/aflplusplus/AFLplusplus}")"
+aflpp_dir="$(resolve_path "${cfg[aflpp_dir]:-${AFLPP_DIR:-}}")"
 seed_preflight="${cfg[seed_preflight]:-warn}"
 seed_preflight_max="${cfg[seed_preflight_max]:-32}"
 seed_preflight_timeout="${cfg[seed_preflight_timeout]:-2}"
@@ -206,8 +206,10 @@ campaign_args=(
   --seed-preflight "$seed_preflight"
   --seed-preflight-max "$seed_preflight_max"
   --seed-preflight-timeout "$seed_preflight_timeout"
-  --aflpp-dir "$aflpp_dir"
 )
+if [[ -n "$aflpp_dir" ]]; then
+  campaign_args+=(--aflpp-dir "$aflpp_dir")
+fi
 if [[ -n "$typed_ops" ]]; then
   campaign_args+=(--typed-ops "$typed_ops")
 fi

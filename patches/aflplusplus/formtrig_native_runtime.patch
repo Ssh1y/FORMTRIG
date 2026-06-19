@@ -15,7 +15,7 @@ index 88816e8..198fb51 100644
    $(info Compiling ASAN version of binaries)
    override CFLAGS += $(ASAN_CFLAGS)
 diff --git a/include/afl-fuzz.h b/include/afl-fuzz.h
-index ef84a18..270906e 100644
+index ef84a18..c617e23 100644
 --- a/include/afl-fuzz.h
 +++ b/include/afl-fuzz.h
 @@ -46,6 +46,11 @@
@@ -105,7 +105,7 @@ index ef84a18..270906e 100644
    double *alias_probability;            /* alias weighted probabilities     */
    u32    *alias_table;                /* alias weighted random lookup table */
    u32     active_items;                 /* enabled entries in the queue     */
-@@ -1099,6 +1155,20 @@ void destroy_queue(afl_state_t *);
+@@ -1099,6 +1158,20 @@ void destroy_queue(afl_state_t *);
  void update_bitmap_score(afl_state_t *, struct queue_entry *);
  void cull_queue(afl_state_t *);
  u32  calculate_score(afl_state_t *, struct queue_entry *);
@@ -126,16 +126,16 @@ index ef84a18..270906e 100644
 
  /* Bitmap */
 
-@@ -1328,4 +1398,3 @@ void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q, u8 *mem);
+@@ -1328,4 +1401,3 @@ void queue_testcase_store_mem(afl_state_t *afl, struct queue_entry *q, u8 *mem);
  #endif
 
  #endif
 -
 diff --git a/include/envs.h b/include/envs.h
-index 0007d5a..3a2d1e1 100644
+index 0007d5a..b88afa2 100644
 --- a/include/envs.h
 +++ b/include/envs.h
-@@ -189,6 +189,23 @@ static char *afl_environment_variables[] = {
+@@ -189,6 +189,26 @@ static char *afl_environment_variables[] = {
      "AFL_MAPSIZE",
      "AFL_MAX_DET_EXTRAS",
      "AFL_NO_X86",  // not really an env but we dont want to warn on it
@@ -162,13 +162,13 @@ index 0007d5a..3a2d1e1 100644
      "AFL_NOOPT",
      "AFL_NYX_AUX_SIZE",
      "AFL_NYX_DISABLE_SNAPSHOT_MODE",
-@@ -261,4 +278,3 @@ static char *afl_environment_variables[] = {
+@@ -261,4 +281,3 @@ static char *afl_environment_variables[] = {
  extern char *afl_environment_variables[];
 
  #endif
 -
 diff --git a/src/afl-fuzz-bitmap.c b/src/afl-fuzz-bitmap.c
-index 87157ca..508b19b 100644
+index 87157ca..38be0df 100644
 --- a/src/afl-fuzz-bitmap.c
 +++ b/src/afl-fuzz-bitmap.c
 @@ -452,6 +452,58 @@ void write_crash_readme(afl_state_t *afl) {
@@ -362,7 +362,7 @@ index 87157ca..508b19b 100644
      if (likely(afl->q_testcase_max_cache_size)) {
 
        queue_testcase_store_mem(afl, afl->queue_top, mem);
-@@ -855,6 +985,12 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
+@@ -855,7 +985,13 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
    if (unlikely(fd < 0)) { PFATAL("Unable to create '%s'", fn); }
    ck_write(fd, mem, len, fn);
    close(fd);
@@ -376,16 +376,17 @@ index 87157ca..508b19b 100644
 +  }
  #ifdef __linux__
    if (afl->fsrv.nyx_mode && fault == FSRV_RUN_CRASH) {
+
 @@ -878,4 +1014,3 @@ save_if_interesting(afl_state_t *afl, void *mem, u32 len, u8 fault) {
    return keeping;
 
  }
 -
 diff --git a/src/afl-fuzz-one.c b/src/afl-fuzz-one.c
-index 2ad4697..4882862 100644
+index 2ad4697..4c9660b 100644
 --- a/src/afl-fuzz-one.c
 +++ b/src/afl-fuzz-one.c
-@@ -71,6 +71,1230 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
+@@ -71,6 +71,1318 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
 
  }
 
@@ -1704,7 +1705,7 @@ index 2ad4697..4882862 100644
  /* Helper function to see if a particular change (xor_val = old ^ new) could
     be a product of deterministic bit flips with the lengths and stepovers
     attempted by afl-fuzz. This is used to avoid dupes in some of the
-@@ -545,6 +1769,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
+@@ -545,6 +1857,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
 
    }
 
@@ -1717,7 +1718,7 @@ index 2ad4697..4882862 100644
    /* Skip right away if -d is given, if it has not been chosen sufficiently
       often to warrant the expensive deterministic stage (fuzz_level), or
       if it has gone through deterministic testing in earlier, resumed runs
-@@ -3656,6 +4886,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
+@@ -3656,6 +4974,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
 
    }
 
@@ -1730,13 +1731,13 @@ index 2ad4697..4882862 100644
    /* Go to pacemker fuzzing if MOpt is doing well */
 
    cur_ms_lv = get_cur_time();
-@@ -6213,4 +7449,3 @@ u8 fuzz_one(afl_state_t *afl) {
+@@ -6213,4 +7537,3 @@ u8 fuzz_one(afl_state_t *afl) {
    return (key_val_lv_1 | key_val_lv_2);
 
  }
 -
 diff --git a/src/afl-fuzz-queue.c b/src/afl-fuzz-queue.c
-index 48fd33e..dce7cba 100644
+index 48fd33e..fa40607 100644
 --- a/src/afl-fuzz-queue.c
 +++ b/src/afl-fuzz-queue.c
 @@ -26,6 +26,7 @@
@@ -3167,7 +3168,7 @@ index ac4fb4a..aa5baa9 100644
  }
 -
 diff --git a/src/afl-fuzz-state.c b/src/afl-fuzz-state.c
-index 5a6b95c..8ec86eb 100644
+index 5a6b95c..fb8e982 100644
 --- a/src/afl-fuzz-state.c
 +++ b/src/afl-fuzz-state.c
 @@ -109,6 +109,16 @@ void afl_state_init(afl_state_t *afl, uint32_t map_size) {
@@ -3187,7 +3188,7 @@ index 5a6b95c..8ec86eb 100644
  #ifndef NO_SPLICING
    afl->use_splicing = 1;
  #endif
-@@ -686,6 +693,7 @@ void afl_state_deinit(afl_state_t *afl) {
+@@ -686,6 +696,7 @@ void afl_state_deinit(afl_state_t *afl) {
    if (afl->pass_stats) { ck_free(afl->pass_stats); }
    if (afl->orig_cmp_map) { ck_free(afl->orig_cmp_map); }
    if (afl->cmplog_binary) { ck_free(afl->cmplog_binary); }
@@ -3195,13 +3196,13 @@ index 5a6b95c..8ec86eb 100644
 
    afl_free(afl->queue_buf);
    afl_free(afl->out_buf);
-@@ -748,4 +756,3 @@ void afl_states_request_skip(void) {
+@@ -748,4 +759,3 @@ void afl_states_request_skip(void) {
    LIST_FOREACH(&afl_states, afl_state_t, { el->skip_requested = 1; });
 
  }
 -
 diff --git a/src/afl-fuzz-stats.c b/src/afl-fuzz-stats.c
-index 3d0a9b9..f36df96 100644
+index 3d0a9b9..5cbdc2f 100644
 --- a/src/afl-fuzz-stats.c
 +++ b/src/afl-fuzz-stats.c
 @@ -385,6 +385,42 @@ void write_stats_file(afl_state_t *afl, u32 t_bytes, double bitmap_cvg,
@@ -3247,7 +3248,7 @@ index 3d0a9b9..f36df96 100644
    if (afl->debug) {
 
      u32 i = 0;
-@@ -2376,4 +2406,3 @@ void show_init_stats(afl_state_t *afl) {
+@@ -2376,4 +2412,3 @@ void show_init_stats(afl_state_t *afl) {
  #undef IB
 
  }
