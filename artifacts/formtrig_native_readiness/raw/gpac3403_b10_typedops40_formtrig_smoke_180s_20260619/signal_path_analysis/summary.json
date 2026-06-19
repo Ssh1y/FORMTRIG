@@ -1,0 +1,1780 @@
+{
+  "analysis_time_utc": "2026-06-19T16:24:56Z",
+  "calibrated_frontier_runs": 1,
+  "claim_boundary": "calibrated_frontier is reported for diagnosis only; strict gate still requires saved non-trigger progress before terminal _T; typed-stage attribution explains mutation activity but does not upgrade the strict gate",
+  "formtrig_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out",
+  "guidance_capability": {
+    "actionable_typed_nontrigger_runs": 1,
+    "interpretation": "see per-run capability counts",
+    "mutable_typed_find_runs": 1,
+    "sortable_lifted_df_runs": 1,
+    "stable_frontier_runs": 1,
+    "strict_saved_pretrigger_runs": 1,
+    "total_typed_execs": 108,
+    "total_typed_finds": 31,
+    "typed_find_rate": 0.28703703703703703
+  },
+  "run_count": 1,
+  "run_root": null,
+  "runs": [
+    {
+      "binding_signal_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out/default/formtrig_binding_signal_diagnosis.json",
+      "execs_done": 1368,
+      "execs_per_sec": 7.56,
+      "frontier_updates": 4,
+      "out_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out",
+      "progress_path": {
+        "actionable_typed_nontrigger_before_first_saved_trigger": true,
+        "atom_role_observations": {
+          "1": {
+            "desired_producer": 680,
+            "input_influence": 680,
+            "lifecycle_event": 680,
+            "root_observe": 684,
+            "same_object": 5,
+            "use": 684
+          }
+        },
+        "calibrated_non_trigger_events": 1,
+        "event_counts": {
+          "calibrated_frontier": 1,
+          "frontier_reject": 678,
+          "saved_progress": 3,
+          "typed_stage_end": 1,
+          "typed_stage_start": 1
+        },
+        "first_calibrated_non_trigger": {
+          "actionable_components": 5,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 539624524,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 2,
+              "producer_roles_satisfied": [
+                "desired_producer"
+              ],
+              "role_bits": 361,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use",
+                "lifecycle_event",
+                "input_influence"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 2
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 1,
+          "components": 9,
+          "d_f": 2,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "d_t": 1,
+          "event": "calibrated_frontier",
+          "execs_done": 7,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 50,
+            "role": 1,
+            "source_id": 10636081515174972418,
+            "value": 1
+          },
+          "frontier_count": 1,
+          "hot_ranges": 2,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 1,
+          "reason": "initial_frontier_seed",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "d83eca5a4fb3d3c1",
+          "triggered": false
+        },
+        "first_saved_non_trigger": {
+          "actionable_components": 6,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 606733388,
+              "flags": 7,
+              "guard_bits": 0,
+              "object_id_bucket": 48,
+              "producer_bits": 2,
+              "producer_roles_satisfied": [
+                "desired_producer"
+              ],
+              "role_bits": 489,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use",
+                "lifecycle_event",
+                "same_object",
+                "input_influence"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 2
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 1,
+          "components": 10,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "saved_progress",
+          "execs_done": 247,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 50,
+            "role": 1,
+            "source_id": 10636081515174972418,
+            "value": 1
+          },
+          "frontier_count": 2,
+          "hot_ranges": 2,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 29,
+          "queued_items": 30,
+          "reason": "root_aligned_state_transition",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "fbb84d9e5b5ffa70",
+          "triggered": false
+        },
+        "first_saved_trigger": null,
+        "first_saved_trigger_after_typed_stage": false,
+        "first_typed_lifted_nontrigger_before_first_saved_trigger": {
+          "actionable_components": 5,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 539624524,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 2,
+              "producer_roles_satisfied": [
+                "desired_producer"
+              ],
+              "role_bits": 361,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use",
+                "lifecycle_event",
+                "input_influence"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 2
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 128,
+          "components": 9,
+          "d_f": 2,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "d_t": 1,
+          "event": "typed_stage_start",
+          "execs_done": 7,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 50,
+            "role": 1,
+            "source_id": 10636081515174972418,
+            "value": 1
+          },
+          "frontier_count": 1,
+          "hot_ranges": 2,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 1,
+          "reason": "planned",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "d83eca5a4fb3d3c1",
+          "triggered": false
+        },
+        "first_typed_stage_end": {
+          "actionable_components": 5,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 539624524,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 2,
+              "producer_roles_satisfied": [
+                "desired_producer"
+              ],
+              "role_bits": 361,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use",
+                "lifecycle_event",
+                "input_influence"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 2
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 31,
+          "components": 9,
+          "d_f": 2,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "d_t": 1,
+          "event": "typed_stage_end",
+          "execs_done": 337,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 50,
+            "role": 1,
+            "source_id": 10636081515174972418,
+            "value": 1
+          },
+          "frontier_count": 2,
+          "hot_ranges": 2,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 32,
+          "reason": "completed",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "d83eca5a4fb3d3c1",
+          "triggered": false
+        },
+        "first_typed_stage_start": {
+          "actionable_components": 5,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 539624524,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 2,
+              "producer_roles_satisfied": [
+                "desired_producer"
+              ],
+              "role_bits": 361,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use",
+                "lifecycle_event",
+                "input_influence"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 2
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 128,
+          "components": 9,
+          "d_f": 2,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "d_t": 1,
+          "event": "typed_stage_start",
+          "execs_done": 7,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 50,
+            "role": 1,
+            "source_id": 10636081515174972418,
+            "value": 1
+          },
+          "frontier_count": 1,
+          "hot_ranges": 2,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 1,
+          "reason": "planned",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "d83eca5a4fb3d3c1",
+          "triggered": false
+        },
+        "first_typed_stage_start_before_first_saved_trigger": {
+          "actionable_components": 5,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 539624524,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 2,
+              "producer_roles_satisfied": [
+                "desired_producer"
+              ],
+              "role_bits": 361,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use",
+                "lifecycle_event",
+                "input_influence"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 2
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 128,
+          "components": 9,
+          "d_f": 2,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "d_t": 1,
+          "event": "typed_stage_start",
+          "execs_done": 7,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 50,
+            "role": 1,
+            "source_id": 10636081515174972418,
+            "value": 1
+          },
+          "frontier_count": 1,
+          "hot_ranges": 2,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 1,
+          "reason": "planned",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "d83eca5a4fb3d3c1",
+          "triggered": false
+        },
+        "latest_event": {
+          "actionable_components": 5,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 539624524,
+              "flags": 3,
+              "guard_bits": 0,
+              "object_id_bucket": 0,
+              "producer_bits": 2,
+              "producer_roles_satisfied": [
+                "desired_producer"
+              ],
+              "role_bits": 361,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use",
+                "lifecycle_event",
+                "input_influence"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 2
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 0,
+          "components": 9,
+          "d_f": 2,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "d_t": 1,
+          "event": "frontier_reject",
+          "execs_done": 1368,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 50,
+            "role": 1,
+            "source_id": 10636081515174972418,
+            "value": 1
+          },
+          "frontier_count": 4,
+          "hot_ranges": 2,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 86,
+          "reason": "dominated_by_existing_frontier",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "148c587f9bbdeb3b",
+          "triggered": false
+        },
+        "missing_progress_log": false,
+        "nontrigger_events_before_first_saved_trigger": 684,
+        "observed_source_flag_counts": {
+          "2": 684
+        },
+        "preterminal_nontrigger_d_f_spec_lifted_values": [
+          2,
+          1,
+          4
+        ],
+        "preterminal_nontrigger_d_f_values": [
+          2,
+          1,
+          4
+        ],
+        "producer_satisfaction_observations": {
+          "1": {
+            "desired_producer": 680
+          }
+        },
+        "reason_counts": {
+          "completed": 1,
+          "dominated_by_existing_frontier": 678,
+          "initial_frontier_seed": 1,
+          "planned": 1,
+          "root_aligned_state_transition": 3
+        },
+        "saved_non_trigger_events": 3,
+        "saved_non_trigger_frontier": [
+          {
+            "actionable_components": 6,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 606733388,
+                "flags": 7,
+                "guard_bits": 0,
+                "object_id_bucket": 48,
+                "producer_bits": 2,
+                "producer_roles_satisfied": [
+                  "desired_producer"
+                ],
+                "role_bits": 489,
+                "roles": [
+                  "root_observe",
+                  "desired_producer",
+                  "use",
+                  "lifecycle_event",
+                  "same_object",
+                  "input_influence"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 2
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.9,
+                "context_hash": "939af3c9221a4c02",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 3,
+                "priority": 50,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 10636081515174972418,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "2ec9f50c7b147ac3",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 6,
+                "priority": 40,
+                "role": 6,
+                "role_name": "use",
+                "source_id": 3371495230016879299,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.75,
+                "context_hash": "f47511669d1f8886",
+                "flags": 118,
+                "goal_satisfied": true,
+                "kind": 4,
+                "priority": 70,
+                "role": 9,
+                "role_name": "input_influence",
+                "source_id": 17615004649949988998,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "2116ae226dc92bfd",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 6,
+                "priority": 10,
+                "role": 4,
+                "role_name": "desired_producer",
+                "source_id": 2384284515633277949,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.75,
+                "context_hash": "8c658d5d2cd0b84a",
+                "flags": 118,
+                "goal_satisfied": true,
+                "kind": 4,
+                "priority": 80,
+                "role": 9,
+                "role_name": "input_influence",
+                "source_id": 10116647569281038410,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.85,
+                "context_hash": "a155d6d71f84c55a",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 8,
+                "priority": 60,
+                "role": 8,
+                "role_name": "same_object",
+                "source_id": 11625434232561911130,
+                "value": 96946005419664
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "8820a07a923bb9b3",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 7,
+                "priority": 20,
+                "role": 7,
+                "role_name": "lifecycle_event",
+                "source_id": 9809016436712782259,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.85,
+                "context_hash": "f64759dbe4dca591",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 7,
+                "priority": 25,
+                "role": 7,
+                "role_name": "lifecycle_event",
+                "source_id": 17746251657649104273,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "a09aca4f35aa53d6",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 11572784634033492950,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "97f14f4f30c2552b",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 10948619370653439275,
+                "value": 1
+              }
+            ],
+            "components": 10,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 247,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 50,
+              "role": 1,
+              "source_id": 10636081515174972418,
+              "value": 1
+            },
+            "frontier_count": 2,
+            "hot_ranges": 2,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out/default/queue/id:000029,src:000000,time:31470,execs:235,op:ftgtype,pos:0,+cov",
+            "queue_file_size": 4847,
+            "queue_id": 29,
+            "queued_items": 30,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "fbb84d9e5b5ffa70",
+            "triggered": false
+          },
+          {
+            "actionable_components": 6,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 606733388,
+                "flags": 7,
+                "guard_bits": 0,
+                "object_id_bucket": 48,
+                "producer_bits": 2,
+                "producer_roles_satisfied": [
+                  "desired_producer"
+                ],
+                "role_bits": 489,
+                "roles": [
+                  "root_observe",
+                  "desired_producer",
+                  "use",
+                  "lifecycle_event",
+                  "same_object",
+                  "input_influence"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 2
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.9,
+                "context_hash": "939af3c9221a4c02",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 3,
+                "priority": 50,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 10636081515174972418,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "2ec9f50c7b147ac3",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 6,
+                "priority": 40,
+                "role": 6,
+                "role_name": "use",
+                "source_id": 3371495230016879299,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.75,
+                "context_hash": "f47511669d1f8886",
+                "flags": 118,
+                "goal_satisfied": true,
+                "kind": 4,
+                "priority": 70,
+                "role": 9,
+                "role_name": "input_influence",
+                "source_id": 17615004649949988998,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "2116ae226dc92bfd",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 6,
+                "priority": 10,
+                "role": 4,
+                "role_name": "desired_producer",
+                "source_id": 2384284515633277949,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.75,
+                "context_hash": "8c658d5d2cd0b84a",
+                "flags": 118,
+                "goal_satisfied": true,
+                "kind": 4,
+                "priority": 80,
+                "role": 9,
+                "role_name": "input_influence",
+                "source_id": 10116647569281038410,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.85,
+                "context_hash": "a155d6d71f84c55a",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 8,
+                "priority": 60,
+                "role": 8,
+                "role_name": "same_object",
+                "source_id": 11625434232561911130,
+                "value": 96946005566160
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "8820a07a923bb9b3",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 7,
+                "priority": 20,
+                "role": 7,
+                "role_name": "lifecycle_event",
+                "source_id": 9809016436712782259,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.85,
+                "context_hash": "f64759dbe4dca591",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 7,
+                "priority": 25,
+                "role": 7,
+                "role_name": "lifecycle_event",
+                "source_id": 17746251657649104273,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "a09aca4f35aa53d6",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 11572784634033492950,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "97f14f4f30c2552b",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 10948619370653439275,
+                "value": 1
+              }
+            ],
+            "components": 10,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 864,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 50,
+              "role": 1,
+              "source_id": 10636081515174972418,
+              "value": 1
+            },
+            "frontier_count": 3,
+            "hot_ranges": 2,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out/default/queue/id:000063,src:000000,time:116506,execs:857,op:havoc,rep:2,+cov",
+            "queue_file_size": 2990,
+            "queue_id": 63,
+            "queued_items": 64,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "96fbbeaffb0820a2",
+            "triggered": false
+          },
+          {
+            "actionable_components": 6,
+            "atom_signal_values": [
+              {
+                "atom_id": 1,
+                "event_bits": 606733388,
+                "flags": 7,
+                "guard_bits": 0,
+                "object_id_bucket": 48,
+                "producer_bits": 2,
+                "producer_roles_satisfied": [
+                  "desired_producer"
+                ],
+                "role_bits": 489,
+                "roles": [
+                  "root_observe",
+                  "desired_producer",
+                  "use",
+                  "lifecycle_event",
+                  "same_object",
+                  "input_influence"
+                ],
+                "root_value_bucket": 1,
+                "use_bits": 2
+              }
+            ],
+            "atom_signals": 1,
+            "aux": 1,
+            "component_values": [
+              {
+                "atom_id": 1,
+                "confidence": 0.9,
+                "context_hash": "939af3c9221a4c02",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 3,
+                "priority": 50,
+                "role": 1,
+                "role_name": "root_observe",
+                "source_id": 10636081515174972418,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "2ec9f50c7b147ac3",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 6,
+                "priority": 40,
+                "role": 6,
+                "role_name": "use",
+                "source_id": 3371495230016879299,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.75,
+                "context_hash": "f47511669d1f8886",
+                "flags": 118,
+                "goal_satisfied": true,
+                "kind": 4,
+                "priority": 70,
+                "role": 9,
+                "role_name": "input_influence",
+                "source_id": 17615004649949988998,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "2116ae226dc92bfd",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 6,
+                "priority": 10,
+                "role": 4,
+                "role_name": "desired_producer",
+                "source_id": 2384284515633277949,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.75,
+                "context_hash": "8c658d5d2cd0b84a",
+                "flags": 118,
+                "goal_satisfied": true,
+                "kind": 4,
+                "priority": 80,
+                "role": 9,
+                "role_name": "input_influence",
+                "source_id": 10116647569281038410,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.85,
+                "context_hash": "a155d6d71f84c55a",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 8,
+                "priority": 60,
+                "role": 8,
+                "role_name": "same_object",
+                "source_id": 11625434232561911130,
+                "value": 96946005516016
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.8,
+                "context_hash": "8820a07a923bb9b3",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 7,
+                "priority": 20,
+                "role": 7,
+                "role_name": "lifecycle_event",
+                "source_id": 9809016436712782259,
+                "value": 1
+              },
+              {
+                "atom_id": 1,
+                "confidence": 0.85,
+                "context_hash": "f64759dbe4dca591",
+                "flags": 86,
+                "goal_satisfied": true,
+                "kind": 7,
+                "priority": 25,
+                "role": 7,
+                "role_name": "lifecycle_event",
+                "source_id": 17746251657649104273,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "a09aca4f35aa53d6",
+                "flags": 13,
+                "goal_satisfied": false,
+                "kind": 1,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 11572784634033492950,
+                "value": 1
+              },
+              {
+                "atom_id": 0,
+                "confidence": 1,
+                "context_hash": "97f14f4f30c2552b",
+                "flags": 85,
+                "goal_satisfied": false,
+                "kind": 2,
+                "priority": 10,
+                "role": 0,
+                "role_name": "unknown",
+                "source_id": 10948619370653439275,
+                "value": 1
+              }
+            ],
+            "components": 10,
+            "d_f": 1,
+            "d_f_lifted": 1,
+            "d_f_spec_lifted": 1,
+            "d_t": 1,
+            "event": "saved_progress",
+            "execs_done": 1133,
+            "first_actionable": {
+              "kind": 3,
+              "priority": 50,
+              "role": 1,
+              "source_id": 10636081515174972418,
+              "value": 1
+            },
+            "frontier_count": 4,
+            "hot_ranges": 2,
+            "lifted": true,
+            "observed_source_flags": 2,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out/default/queue/id:000077,src:000000,time:150268,execs:1126,op:havoc,rep:1",
+            "queue_file_size": 2975,
+            "queue_id": 77,
+            "queued_items": 78,
+            "reason": "root_aligned_state_transition",
+            "role_bits": null,
+            "source_flags": 2,
+            "stable": 1,
+            "target_hit_count": 1,
+            "trace_signature": "4dd4df09a1c23a5e",
+            "triggered": false
+          }
+        ],
+        "saved_trigger_events": 0,
+        "sortable_lifted_df_before_first_saved_trigger": true,
+        "source_flag_counts": {
+          "2": 684
+        },
+        "stable_frontier_before_first_saved_trigger": true,
+        "status": "strict_pretrigger_guidance_seen",
+        "strict_pretrigger_guidance_seen": true,
+        "typed_lifted_nontrigger_before_first_saved_trigger": false,
+        "typed_lifted_nontrigger_starts_before_first_saved_trigger": 1,
+        "typed_stage_end_events": 1,
+        "typed_stage_nontrigger_start_events": 1,
+        "typed_stage_start_events": 1,
+        "typed_stage_starts_before_first_saved_trigger": 1
+      },
+      "queued_progress": 3,
+      "reached_execs": 1093,
+      "run": "fuzzer_out",
+      "run_time_s": 180,
+      "stats_saved_non_trigger": 3,
+      "stats_saved_trigger": 0,
+      "terminal_gap": {
+        "blocking_reasons": [
+          "no_terminal_T_after_saved_non_trigger_frontier",
+          "missing_binding_events_at_latest_saved_frontier"
+        ],
+        "constant_zero_producer_roles": {},
+        "fallback_no_hot_range_typed_stages": 0,
+        "latest_atom_gaps": {
+          "1": {
+            "bound_roles": [
+              "root_observe",
+              "desired_producer",
+              "use",
+              "lifecycle_event",
+              "same_object"
+            ],
+            "category": "compound-sequence-lifecycle",
+            "constant_zero_producer_roles": [],
+            "missing_bound_roles": [],
+            "observed_roles": [
+              "desired_producer",
+              "input_influence",
+              "lifecycle_event",
+              "root_observe",
+              "same_object",
+              "use"
+            ],
+            "producer_roles": [
+              "desired_producer"
+            ],
+            "producer_roles_satisfied": [
+              "desired_producer"
+            ],
+            "role_goal_status": {
+              "desired_producer": {
+                "observations": [
+                  {
+                    "context_hash": "2116ae226dc92bfd",
+                    "flags": 86,
+                    "goal_satisfied": true,
+                    "source_id": 2384284515633277949,
+                    "value": 1
+                  }
+                ],
+                "satisfied": true,
+                "unknown": false
+              },
+              "lifecycle_event": {
+                "observations": [
+                  {
+                    "context_hash": "8820a07a923bb9b3",
+                    "flags": 86,
+                    "goal_satisfied": true,
+                    "source_id": 9809016436712782259,
+                    "value": 1
+                  },
+                  {
+                    "context_hash": "f64759dbe4dca591",
+                    "flags": 86,
+                    "goal_satisfied": true,
+                    "source_id": 17746251657649104273,
+                    "value": 1
+                  }
+                ],
+                "satisfied": true,
+                "unknown": false
+              },
+              "root_observe": {
+                "observations": [
+                  {
+                    "context_hash": "939af3c9221a4c02",
+                    "flags": 86,
+                    "goal_satisfied": true,
+                    "source_id": 10636081515174972418,
+                    "value": 1
+                  }
+                ],
+                "satisfied": true,
+                "unknown": false
+              },
+              "same_object": {
+                "observations": [
+                  {
+                    "context_hash": "a155d6d71f84c55a",
+                    "flags": 86,
+                    "goal_satisfied": true,
+                    "source_id": 11625434232561911130,
+                    "value": 96946005516016
+                  }
+                ],
+                "satisfied": true,
+                "unknown": false
+              },
+              "use": {
+                "observations": [
+                  {
+                    "context_hash": "2ec9f50c7b147ac3",
+                    "flags": 86,
+                    "goal_satisfied": true,
+                    "source_id": 3371495230016879299,
+                    "value": 1
+                  }
+                ],
+                "satisfied": true,
+                "unknown": false
+              }
+            },
+            "unsatisfied_observed_roles": [],
+            "unsatisfied_producer_roles": []
+          }
+        },
+        "latest_saved_non_trigger": {
+          "actionable_components": 6,
+          "atom_signal_values": [
+            {
+              "atom_id": 1,
+              "event_bits": 606733388,
+              "flags": 7,
+              "guard_bits": 0,
+              "object_id_bucket": 48,
+              "producer_bits": 2,
+              "producer_roles_satisfied": [
+                "desired_producer"
+              ],
+              "role_bits": 489,
+              "roles": [
+                "root_observe",
+                "desired_producer",
+                "use",
+                "lifecycle_event",
+                "same_object",
+                "input_influence"
+              ],
+              "root_value_bucket": 1,
+              "use_bits": 2
+            }
+          ],
+          "atom_signals": 1,
+          "aux": 1,
+          "component_values": [
+            {
+              "atom_id": 1,
+              "confidence": 0.9,
+              "context_hash": "939af3c9221a4c02",
+              "flags": 86,
+              "goal_satisfied": true,
+              "kind": 3,
+              "priority": 50,
+              "role": 1,
+              "role_name": "root_observe",
+              "source_id": 10636081515174972418,
+              "value": 1
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.8,
+              "context_hash": "2ec9f50c7b147ac3",
+              "flags": 86,
+              "goal_satisfied": true,
+              "kind": 6,
+              "priority": 40,
+              "role": 6,
+              "role_name": "use",
+              "source_id": 3371495230016879299,
+              "value": 1
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.75,
+              "context_hash": "f47511669d1f8886",
+              "flags": 118,
+              "goal_satisfied": true,
+              "kind": 4,
+              "priority": 70,
+              "role": 9,
+              "role_name": "input_influence",
+              "source_id": 17615004649949988998,
+              "value": 1
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.8,
+              "context_hash": "2116ae226dc92bfd",
+              "flags": 86,
+              "goal_satisfied": true,
+              "kind": 6,
+              "priority": 10,
+              "role": 4,
+              "role_name": "desired_producer",
+              "source_id": 2384284515633277949,
+              "value": 1
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.75,
+              "context_hash": "8c658d5d2cd0b84a",
+              "flags": 118,
+              "goal_satisfied": true,
+              "kind": 4,
+              "priority": 80,
+              "role": 9,
+              "role_name": "input_influence",
+              "source_id": 10116647569281038410,
+              "value": 1
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.85,
+              "context_hash": "a155d6d71f84c55a",
+              "flags": 86,
+              "goal_satisfied": true,
+              "kind": 8,
+              "priority": 60,
+              "role": 8,
+              "role_name": "same_object",
+              "source_id": 11625434232561911130,
+              "value": 96946005516016
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.8,
+              "context_hash": "8820a07a923bb9b3",
+              "flags": 86,
+              "goal_satisfied": true,
+              "kind": 7,
+              "priority": 20,
+              "role": 7,
+              "role_name": "lifecycle_event",
+              "source_id": 9809016436712782259,
+              "value": 1
+            },
+            {
+              "atom_id": 1,
+              "confidence": 0.85,
+              "context_hash": "f64759dbe4dca591",
+              "flags": 86,
+              "goal_satisfied": true,
+              "kind": 7,
+              "priority": 25,
+              "role": 7,
+              "role_name": "lifecycle_event",
+              "source_id": 17746251657649104273,
+              "value": 1
+            },
+            {
+              "atom_id": 0,
+              "confidence": 1,
+              "context_hash": "a09aca4f35aa53d6",
+              "flags": 13,
+              "goal_satisfied": false,
+              "kind": 1,
+              "priority": 10,
+              "role": 0,
+              "role_name": "unknown",
+              "source_id": 11572784634033492950,
+              "value": 1
+            },
+            {
+              "atom_id": 0,
+              "confidence": 1,
+              "context_hash": "97f14f4f30c2552b",
+              "flags": 85,
+              "goal_satisfied": false,
+              "kind": 2,
+              "priority": 10,
+              "role": 0,
+              "role_name": "unknown",
+              "source_id": 10948619370653439275,
+              "value": 1
+            }
+          ],
+          "components": 10,
+          "d_f": 1,
+          "d_f_lifted": 1,
+          "d_f_spec_lifted": 1,
+          "d_t": 1,
+          "event": "saved_progress",
+          "execs_done": 1133,
+          "first_actionable": {
+            "kind": 3,
+            "priority": 50,
+            "role": 1,
+            "source_id": 10636081515174972418,
+            "value": 1
+          },
+          "frontier_count": 4,
+          "hot_ranges": 2,
+          "lifted": true,
+          "observed_source_flags": 2,
+          "queue_file": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out/default/queue/id:000077,src:000000,time:150268,execs:1126,op:havoc,rep:1",
+          "queue_file_size": 2975,
+          "queue_id": 77,
+          "queued_items": 78,
+          "reason": "root_aligned_state_transition",
+          "role_bits": null,
+          "source_flags": 2,
+          "stable": 1,
+          "target_hit_count": 1,
+          "trace_signature": "4dd4df09a1c23a5e",
+          "triggered": false
+        },
+        "missing_binding_events_at_latest_saved": {
+          "1": [
+            {
+              "binding_id": "4",
+              "column": 59,
+              "component_kind": 7,
+              "event_id": "944c63fc04584807",
+              "file": "isomedia/avc_ext.c",
+              "function": "gf_isom_nalu_sample_rewrite",
+              "line": 672,
+              "opcode": "br",
+              "priority": 30,
+              "role": "lifecycle_event",
+              "value_mode": "hit"
+            }
+          ]
+        },
+        "missing_bound_roles_at_latest_saved": {},
+        "repair_hint": "inspect BindingSpec producer/desired_producer hooks and typed mutation targets for the saved queue frontier before rerunning matched baselines",
+        "role_progression": [
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "desired_producer",
+                  "use",
+                  "lifecycle_event",
+                  "same_object"
+                ],
+                "category": "compound-sequence-lifecycle",
+                "constant_zero_producer_roles": [],
+                "missing_bound_roles": [],
+                "observed_roles": [
+                  "desired_producer",
+                  "input_influence",
+                  "lifecycle_event",
+                  "root_observe",
+                  "same_object",
+                  "use"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [
+                  "desired_producer"
+                ],
+                "role_goal_status": {
+                  "desired_producer": {
+                    "observations": [
+                      {
+                        "context_hash": "2116ae226dc92bfd",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 2384284515633277949,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "lifecycle_event": {
+                    "observations": [
+                      {
+                        "context_hash": "8820a07a923bb9b3",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 9809016436712782259,
+                        "value": 1
+                      },
+                      {
+                        "context_hash": "f64759dbe4dca591",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 17746251657649104273,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "939af3c9221a4c02",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 10636081515174972418,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "same_object": {
+                    "observations": [
+                      {
+                        "context_hash": "a155d6d71f84c55a",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 11625434232561911130,
+                        "value": 96946005419664
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "use": {
+                    "observations": [
+                      {
+                        "context_hash": "2ec9f50c7b147ac3",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 3371495230016879299,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [],
+                "unsatisfied_producer_roles": []
+              }
+            },
+            "binding_event_gaps": {
+              "1": [
+                {
+                  "binding_id": "4",
+                  "column": 59,
+                  "component_kind": 7,
+                  "event_id": "944c63fc04584807",
+                  "file": "isomedia/avc_ext.c",
+                  "function": "gf_isom_nalu_sample_rewrite",
+                  "line": 672,
+                  "opcode": "br",
+                  "priority": 30,
+                  "role": "lifecycle_event",
+                  "value_mode": "hit"
+                }
+              ]
+            },
+            "execs_done": 247,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out/default/queue/id:000029,src:000000,time:31470,execs:235,op:ftgtype,pos:0,+cov",
+            "queue_file_size": 4847,
+            "queue_id": 29,
+            "trace_signature": "fbb84d9e5b5ffa70"
+          },
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "desired_producer",
+                  "use",
+                  "lifecycle_event",
+                  "same_object"
+                ],
+                "category": "compound-sequence-lifecycle",
+                "constant_zero_producer_roles": [],
+                "missing_bound_roles": [],
+                "observed_roles": [
+                  "desired_producer",
+                  "input_influence",
+                  "lifecycle_event",
+                  "root_observe",
+                  "same_object",
+                  "use"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [
+                  "desired_producer"
+                ],
+                "role_goal_status": {
+                  "desired_producer": {
+                    "observations": [
+                      {
+                        "context_hash": "2116ae226dc92bfd",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 2384284515633277949,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "lifecycle_event": {
+                    "observations": [
+                      {
+                        "context_hash": "8820a07a923bb9b3",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 9809016436712782259,
+                        "value": 1
+                      },
+                      {
+                        "context_hash": "f64759dbe4dca591",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 17746251657649104273,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "939af3c9221a4c02",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 10636081515174972418,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "same_object": {
+                    "observations": [
+                      {
+                        "context_hash": "a155d6d71f84c55a",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 11625434232561911130,
+                        "value": 96946005566160
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "use": {
+                    "observations": [
+                      {
+                        "context_hash": "2ec9f50c7b147ac3",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 3371495230016879299,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [],
+                "unsatisfied_producer_roles": []
+              }
+            },
+            "binding_event_gaps": {
+              "1": [
+                {
+                  "binding_id": "4",
+                  "column": 59,
+                  "component_kind": 7,
+                  "event_id": "944c63fc04584807",
+                  "file": "isomedia/avc_ext.c",
+                  "function": "gf_isom_nalu_sample_rewrite",
+                  "line": 672,
+                  "opcode": "br",
+                  "priority": 30,
+                  "role": "lifecycle_event",
+                  "value_mode": "hit"
+                }
+              ]
+            },
+            "execs_done": 864,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out/default/queue/id:000063,src:000000,time:116506,execs:857,op:havoc,rep:2,+cov",
+            "queue_file_size": 2990,
+            "queue_id": 63,
+            "trace_signature": "96fbbeaffb0820a2"
+          },
+          {
+            "atom_gaps": {
+              "1": {
+                "bound_roles": [
+                  "root_observe",
+                  "desired_producer",
+                  "use",
+                  "lifecycle_event",
+                  "same_object"
+                ],
+                "category": "compound-sequence-lifecycle",
+                "constant_zero_producer_roles": [],
+                "missing_bound_roles": [],
+                "observed_roles": [
+                  "desired_producer",
+                  "input_influence",
+                  "lifecycle_event",
+                  "root_observe",
+                  "same_object",
+                  "use"
+                ],
+                "producer_roles": [
+                  "desired_producer"
+                ],
+                "producer_roles_satisfied": [
+                  "desired_producer"
+                ],
+                "role_goal_status": {
+                  "desired_producer": {
+                    "observations": [
+                      {
+                        "context_hash": "2116ae226dc92bfd",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 2384284515633277949,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "lifecycle_event": {
+                    "observations": [
+                      {
+                        "context_hash": "8820a07a923bb9b3",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 9809016436712782259,
+                        "value": 1
+                      },
+                      {
+                        "context_hash": "f64759dbe4dca591",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 17746251657649104273,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "root_observe": {
+                    "observations": [
+                      {
+                        "context_hash": "939af3c9221a4c02",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 10636081515174972418,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "same_object": {
+                    "observations": [
+                      {
+                        "context_hash": "a155d6d71f84c55a",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 11625434232561911130,
+                        "value": 96946005516016
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  },
+                  "use": {
+                    "observations": [
+                      {
+                        "context_hash": "2ec9f50c7b147ac3",
+                        "flags": 86,
+                        "goal_satisfied": true,
+                        "source_id": 3371495230016879299,
+                        "value": 1
+                      }
+                    ],
+                    "satisfied": true,
+                    "unknown": false
+                  }
+                },
+                "unsatisfied_observed_roles": [],
+                "unsatisfied_producer_roles": []
+              }
+            },
+            "binding_event_gaps": {
+              "1": [
+                {
+                  "binding_id": "4",
+                  "column": 59,
+                  "component_kind": 7,
+                  "event_id": "944c63fc04584807",
+                  "file": "isomedia/avc_ext.c",
+                  "function": "gf_isom_nalu_sample_rewrite",
+                  "line": 672,
+                  "opcode": "br",
+                  "priority": 30,
+                  "role": "lifecycle_event",
+                  "value_mode": "hit"
+                }
+              ]
+            },
+            "execs_done": 1133,
+            "queue_file": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/runs/formtrig_rep1/fuzzer_out/default/queue/id:000077,src:000000,time:150268,execs:1126,op:havoc,rep:1",
+            "queue_file_size": 2975,
+            "queue_id": 77,
+            "trace_signature": "4dd4df09a1c23a5e"
+          }
+        ],
+        "saved_hot_range_events": 3,
+        "saved_non_trigger_frontier_events": 3,
+        "saved_trigger_events": 0,
+        "status": "saved_frontier_missing_binding_events",
+        "unsatisfied_observed_roles_at_latest_saved": {},
+        "unsatisfied_producer_roles_at_latest_saved": {}
+      },
+      "triggered_execs": 0,
+      "typed_execs": 108,
+      "typed_finds": 31
+    }
+  ],
+  "strict_pretrigger_guidance_runs": 1,
+  "target_id": "GPAC_3403",
+  "terminal_runs": 0,
+  "typed_attribution": "no_typed_preterminal_attribution",
+  "typed_lifted_nontrigger_before_terminal_runs": 0,
+  "typed_stage_before_terminal_runs": 0,
+  "verdict": "strict_pretrigger_guidance_observed"
+}

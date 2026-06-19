@@ -1,0 +1,107 @@
+{
+  "schema": "formtrig_gpac3403_typedops40_smoke_180s_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T16:30:00Z",
+  "raw_artifact": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619",
+  "configuration": {
+    "duration_s": 180,
+    "reps": 1,
+    "arms": [
+      "formtrig"
+    ],
+    "typed_ops": 40,
+    "typed_mutation_max": 128,
+    "mutation_hook": "scripts/formtrig_hooks/hevc_annexb_structure_hook.py"
+  },
+  "formtrig_gate": {
+    "status": "pass",
+    "run_time_s": 180,
+    "execs_done": 1368,
+    "execs_per_sec": 7.56,
+    "reached": 1093,
+    "terminal_triggered": 0,
+    "queued_progress": 3,
+    "accepted_non_trigger": 3,
+    "saved_non_trigger": 3,
+    "saved_triggered": 0,
+    "spec_lifted": 684,
+    "heuristic_lifted": 0,
+    "manual_lifted": 0,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed"
+  },
+  "signal_path_analysis": {
+    "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_formtrig_smoke_180s_20260619/signal_path_analysis/summary.json",
+    "stable_frontier_runs": 1,
+    "sortable_lifted_df_runs": 1,
+    "strict_saved_pretrigger_runs": 1,
+    "total_typed_execs": 108,
+    "total_typed_finds": 31,
+    "typed_find_rate": 0.28703703703703703,
+    "preterminal_non_trigger_d_f_values": [
+      2,
+      1,
+      4
+    ],
+    "saved_non_trigger_frontier_events": 3,
+    "saved_trigger_events": 0,
+    "terminal_gap_status": "saved_frontier_missing_binding_events",
+    "missing_binding_events_at_latest_saved": [
+      {
+        "binding_id": "4",
+        "role": "lifecycle_event",
+        "event_id": "944c63fc04584807",
+        "function": "gf_isom_nalu_sample_rewrite",
+        "file": "isomedia/avc_ext.c",
+        "line": 672,
+        "column": 59,
+        "opcode": "br",
+        "priority": 30,
+        "value_mode": "hit"
+      }
+    ]
+  },
+  "saved_progress_endpoint_replay": {
+    "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/endpoint_signature_audit.json",
+    "queue_ids": [
+      29,
+      63,
+      77
+    ],
+    "variant_metrics": {
+      "hevc_import_files": 2,
+      "hevc_samples_max": 8,
+      "hevc_nalus_max": 26,
+      "lhevc_import_files": 0,
+      "asan_double_free_files": 0
+    },
+    "meaning": "Under real AFL++ scheduling, typedops40 saved frontier samples begin to improve endpoint sample-boundary structure over the typedops36 one-sample plateau, but they have not yet reached the stronger L-HEVC state observed in direct op36-39 endpoint enumeration."
+  },
+  "direct_access_unit_endpoint_probe_reference": {
+    "source": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/comparison.json",
+    "variant_metrics": {
+      "generated_variants": 32,
+      "hevc_samples_max": 53,
+      "hevc_nalus_max": 177,
+      "lhevc_import_files": 21,
+      "asan_double_free_files": 0
+    }
+  },
+  "interpretation": {
+    "supported_claims": [
+      "typedops40 is wired into the AFL++/FORMTRIG campaign and executes the new access-unit operators.",
+      "FORMTRIG still provides strict saved pre-trigger guidance and localizes the remaining terminal gap to gf_isom_nalu_sample_rewrite:672.",
+      "The new operators start moving saved frontier endpoint behavior away from the old one-sample plateau, but the 180s smoke does not yet realize the stronger L-HEVC states found by direct endpoint enumeration."
+    ],
+    "blocked_claims": [
+      "No GPAC_3403 terminal _T is established by this run.",
+      "No matched-budget baseline comparison is available for this smoke.",
+      "This smoke is mechanism/debug evidence, not ICSE main-result evidence."
+    ],
+    "next_actions": [
+      "Increase early scheduling pressure for op39/access-unit variants or seed the campaign with direct op36-39 high-sample candidates.",
+      "Run typedops40 matched 600s with baselines once the scheduler produces L-HEVC saved frontier samples.",
+      "Use the same endpoint import metrics as a stop/go gate before spending 2h+ budgets."
+    ]
+  }
+}

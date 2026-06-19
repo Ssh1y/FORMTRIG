@@ -1,0 +1,731 @@
+{
+  "contrast": {
+    "positive_control_files": 1,
+    "positive_control_signatures_absent_from_variants": [
+      "wrong_output_layer_sets",
+      "failed_vps_extensions",
+      "layers_only_4",
+      "vps_max_layer_id",
+      "video_param_set_error",
+      "nal_type_32_error",
+      "nal_type_49_not_handled",
+      "lhevc_import_results",
+      "asan",
+      "asan_double_free"
+    ],
+    "variant_files": 3
+  },
+  "logs_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs",
+  "positive_control": {
+    "files": 1,
+    "metrics": {
+      "asan_double_free_examples": [
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+      ],
+      "asan_double_free_files": 1,
+      "hevc_import_files": 1,
+      "hevc_import_observations": 1,
+      "hevc_nalus_max": 413,
+      "hevc_samples_max": 172,
+      "hevc_top_samples": [
+        {
+          "nalus": 413,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr",
+          "samples": 172
+        }
+      ],
+      "lhevc_import_files": 1,
+      "lhevc_import_observations": 1,
+      "lhevc_top_slices": [
+        {
+          "b_slices": 87,
+          "i_slices": 30,
+          "p_slices": 2,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        }
+      ]
+    },
+    "signatures": {
+      "asan": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "asan_double_free": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": []
+      },
+      "hevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "172/413"
+          }
+        ]
+      },
+      "layers_only_4": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 12,
+        "top_values": [
+          {
+            "count": 10,
+            "value": "47/4"
+          },
+          {
+            "count": 2,
+            "value": "41/4"
+          }
+        ]
+      },
+      "lhevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "30/2/87"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 17,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 17,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "25/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": [
+          {
+            "count": 2,
+            "value": "5/4"
+          },
+          {
+            "count": 1,
+            "value": "132/4"
+          },
+          {
+            "count": 1,
+            "value": "221/4"
+          }
+        ]
+      }
+    }
+  },
+  "records": [
+    {
+      "kind": "positive_control",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/positive_control.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 4,
+          "present": true,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "172",
+              "413"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 12,
+          "present": true,
+          "values": [
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "41",
+              "4"
+            ],
+            [
+              "41",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ],
+            [
+              "47",
+              "4"
+            ]
+          ]
+        },
+        "lhevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "30",
+              "2",
+              "87"
+            ]
+          ]
+        },
+        "nal_type_32_error": {
+          "occurrences": 17,
+          "present": true,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 2,
+          "present": true,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 17,
+          "present": true,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "25",
+              "4"
+            ]
+          ]
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 4,
+          "present": true,
+          "values": [
+            [
+              "132",
+              "4"
+            ],
+            [
+              "5",
+              "4"
+            ],
+            [
+              "221",
+              "4"
+            ],
+            [
+              "5",
+              "4"
+            ]
+          ]
+        }
+      },
+      "variant_index": null
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000029.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "8",
+              "26"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 29
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000063.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 1,
+          "present": true,
+          "values": [
+            [
+              "1",
+              "6"
+            ]
+          ]
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 1,
+          "present": true,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 63
+    },
+    {
+      "kind": "variant",
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000077.endpoint_1.stderr",
+      "rep": 1,
+      "signatures": {
+        "asan": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "asan_double_free": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "failed_vps_extensions": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "hevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "layers_only_4": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "lhevc_import_results": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_32_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "nal_type_49_not_handled": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "picture_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "sequence_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "track_importing_hevc": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "video_param_set_error": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "vps_max_layer_id": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        },
+        "wrong_output_layer_sets": {
+          "occurrences": 0,
+          "present": false,
+          "values": []
+        }
+      },
+      "variant_index": 77
+    }
+  ],
+  "schema": "formtrig_gpac3403_endpoint_signature_audit_v2",
+  "summary": null,
+  "variant": {
+    "files": 3,
+    "metrics": {
+      "asan_double_free_examples": [],
+      "asan_double_free_files": 0,
+      "hevc_import_files": 2,
+      "hevc_import_observations": 2,
+      "hevc_nalus_max": 26,
+      "hevc_samples_max": 8,
+      "hevc_top_samples": [
+        {
+          "nalus": 26,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000029.endpoint_1.stderr",
+          "samples": 8
+        },
+        {
+          "nalus": 6,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000063.endpoint_1.stderr",
+          "samples": 1
+        }
+      ],
+      "lhevc_import_files": 0,
+      "lhevc_import_observations": 0,
+      "lhevc_top_slices": []
+    },
+    "signatures": {
+      "asan": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "asan_double_free": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "hevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000029.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000063.endpoint_1.stderr"
+        ],
+        "files": 2,
+        "occurrences": 2,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "8/26"
+          },
+          {
+            "count": 1,
+            "value": "1/6"
+          }
+        ]
+      },
+      "layers_only_4": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "lhevc_import_results": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "nal_type_32_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000029.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b10_typedops40_saved_progress_endpoint_replay_20260619/logs/variant_000063.endpoint_1.stderr"
+        ],
+        "files": 2,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "wrong_output_layer_sets": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      }
+    }
+  }
+}
