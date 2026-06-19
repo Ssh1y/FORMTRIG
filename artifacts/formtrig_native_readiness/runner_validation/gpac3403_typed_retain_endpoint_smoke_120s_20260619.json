@@ -1,0 +1,89 @@
+{
+  "validation_id": "gpac3403_typed_retain_endpoint_smoke_120s_20260619",
+  "target_id": "GPAC_3403",
+  "purpose": "Validate the real GPAC3403 typed-retained evidence loop: native FORMTRIG typed mutation produces retained candidates, endpoint replay runs them through the validated ASAN GPAC endpoint, and the audit package contrasts them with the GPAC_3403 PoC positive control.",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z",
+  "fuzz_command": "bash scripts/run_gpac3403_typedops40_matched_longrun.sh --mode execute --duration 120 --reps 1 --jobs 1 --arms formtrig --baselines \"\" --typed-mutation-max 64 --typed-retain-max 64 --typed-retain-endpoint-replay on --typed-retain-endpoint-timeout 3 --typed-retain-endpoint-replays 1 --typed-retain-endpoint-max-records 8 --typed-retain-endpoint-selection best-d-f --out artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z --continue-on-fail",
+  "positive_control_replay_command": "python3 tools/replay_gpac3403_typed_retained_endpoint.py --run-dir artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z/runs/formtrig_rep1 --records-jsonl artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z/runs/formtrig_rep1/typed_retained_records.jsonl --endpoint-cmd \"/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box -cat @@ /home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null\" --endpoint-env ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:symbolize=0 --endpoint-timeout 15 --endpoint-replays 1 --endpoint-positive-control /home/cwh/FORMTRIG/benchmarks/cve_pocs/gpac/GPAC_3403.poc --out-summary artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z/runs/formtrig_rep1/typed_retained_endpoint_replay_summary.json --out-records-jsonl artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z/runs/formtrig_rep1/typed_retained_endpoint_records.jsonl",
+  "package_command": "python3 tools/package_gpac3403_typed_retained_audit.py --run-dir artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z/runs/formtrig_rep1 --records-jsonl artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z/runs/formtrig_rep1/typed_retained_endpoint_records.jsonl --endpoint-summary artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z/runs/formtrig_rep1/typed_retained_endpoint_replay_summary.json --out artifacts/formtrig_native_readiness/raw/gpac3403_typed_retain_endpoint_smoke_120s_20260619T180136Z/runs/formtrig_rep1/typed_retained_audit_package.json",
+  "script_exit_code": 0,
+  "typed_ops": 40,
+  "typed_mutation_max": 64,
+  "typed_retain_max": 64,
+  "typed_retain_endpoint_max_records": 8,
+  "gate_summary": {
+    "status": "pass",
+    "reasons": "ok",
+    "run_time": 120,
+    "execs_done": 827,
+    "execs_per_sec": "6.84",
+    "reached": 532,
+    "spec_lifted": 166,
+    "accepted_non_trigger": 3,
+    "saved_non_trigger": 3,
+    "terminal_triggered": 0,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed",
+    "pretrigger_lift_guidance_ready": true,
+    "non_trigger_candidate_lift_delta": true
+  },
+  "typed_retained_summary": {
+    "retained_records": 8,
+    "existing_inputs": 8,
+    "missing_inputs": 0,
+    "d_f_spec_lifted": {
+      "count": 8,
+      "min": 2.0,
+      "max": 2.0,
+      "unique": [
+        2.0
+      ]
+    }
+  },
+  "endpoint_replay_summary": {
+    "input_records": 8,
+    "existing_inputs": 8,
+    "selected_records": 8,
+    "replayed_records": 8,
+    "endpoint_probe_runs": 8,
+    "endpoint_exit_code_counts": {
+      "0": 8
+    },
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_timeouts": 0,
+    "positive_control_probe_runs": 1,
+    "positive_control_sanitizer_crashes": 1,
+    "positive_control_native_crashes": 0
+  },
+  "variant_signature_files": {
+    "hevc_import_results": 8,
+    "lhevc_import_results": 1,
+    "layers_only_4": 1,
+    "vps_max_layer_id": 3,
+    "wrong_output_layer_sets": 0,
+    "failed_vps_extensions": 0,
+    "nal_type_49_not_handled": 0,
+    "asan": 0,
+    "asan_double_free": 0
+  },
+  "positive_control_signature_files": {
+    "hevc_import_results": 1,
+    "lhevc_import_results": 1,
+    "layers_only_4": 1,
+    "vps_max_layer_id": 1,
+    "wrong_output_layer_sets": 1,
+    "failed_vps_extensions": 1,
+    "nal_type_49_not_handled": 1,
+    "asan": 1,
+    "asan_double_free": 1
+  },
+  "positive_control_signatures_absent_from_variants": [
+    "wrong_output_layer_sets",
+    "failed_vps_extensions",
+    "nal_type_49_not_handled",
+    "asan",
+    "asan_double_free"
+  ],
+  "claim_boundary": "This is real GPAC3403 typed-retained endpoint evidence, not terminal success evidence. FORMTRIG produced retained candidates and endpoint-semantic HEVC progress within 120s, but the retained candidates still miss the positive-control VPS-extension and ASAN double-free signatures."
+}

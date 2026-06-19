@@ -28,7 +28,7 @@ SIGNATURES: dict[str, re.Pattern[str]] = {
     "hevc_import_results": re.compile(r"HEVC Import results:\s+(\d+)\s+samples\s+\((\d+)\s+NALUs\)"),
     "lhevc_import_results": re.compile(r"HEVC L-HEVC Import results:\s+Slices:\s+(\d+)\s+I\s+(\d+)\s+P\s+(\d+)\s+B"),
     "asan": re.compile(r"AddressSanitizer|SUMMARY: AddressSanitizer"),
-    "asan_double_free": re.compile(r"AddressSanitizer: attempting double-free|SUMMARY: AddressSanitizer: double-free|double-free"),
+    "asan_double_free": re.compile(r"AddressSanitizer: attempting double-free|SUMMARY: AddressSanitizer: double-free|double[- ]free"),
 }
 
 

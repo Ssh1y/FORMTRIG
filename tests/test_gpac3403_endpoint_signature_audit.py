@@ -30,6 +30,7 @@ class Gpac3403EndpointSignatureAuditTest(unittest.TestCase):
             "\x1b[32mHEVC Import results: 172 samples (413 NALUs) - Slices: 0 I 0 P 0 B\x1b[0m\n"
             "\x1b[32mHEVC L-HEVC Import results: Slices: 30 I 2 P 87 B\x1b[0m\n"
             "==1==ERROR: AddressSanitizer: attempting double-free on 0x123 in thread T0:\n"
+            "free(): double free detected in tcache 2\n"
         )
 
         signatures = audit.analyze_text(text)
