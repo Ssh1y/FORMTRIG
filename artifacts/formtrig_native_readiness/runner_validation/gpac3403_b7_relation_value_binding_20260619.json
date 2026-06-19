@@ -1,0 +1,53 @@
+{
+  "schema": "formtrig_gpac3403_relation_value_binding_validation_v1",
+  "tc_id": "GPAC_3403",
+  "date": "2026-06-19",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b7_relation_value_candidate.yml",
+  "purpose": "Upgrade the GPAC_3403 lifecycle same-object binding from a single pointer observation to relation endpoint values that the native runtime can score.",
+  "binding_changes": [
+    {
+      "id": "gpac_sample_release_data_object_value",
+      "role": "lifecycle_event",
+      "site_id": 3013921722,
+      "value_mode": "a",
+      "meaning": "GF_ISOSample->data pointer observed immediately before gf_isom_sample_del releases it"
+    },
+    {
+      "id": "gpac_bitstream_original_cleanup_object_value",
+      "role": "use",
+      "site_id": 65063371,
+      "value_mode": "a",
+      "meaning": "GF_BitStream->original pointer observed at the gf_bs_del dynamic free guard"
+    },
+    {
+      "id": "gpac_bitstream_dynamic_mode_root",
+      "role": "root_observe",
+      "site_id": 115396228,
+      "value_mode": "not_outcome",
+      "meaning": "bsmode check separated from the bs->original pointer check to avoid semantic role collapse"
+    }
+  ],
+  "static_validation": {
+    "binding_spec_compile": "pass",
+    "formtrig_lift_spec_audit": "B4,true,roles=0x000001e9,event_count=11,collapsed=0,reason=ok",
+    "formtrig_binding_map": "pass, exact mappings for lifecycle_event site 3013921722 and use site 65063371, no semantic_role_collapse"
+  },
+  "runtime_probe": {
+    "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_alias_endpoint_probe_20260619T192157Z",
+    "input": "typed retained variant_000005 from gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z",
+    "target_binary_note": "The replay binary was built before the relation-aware runtime scoring change, so the logged D_F value is not authoritative for new scoring; component operand values are the evidence used here.",
+    "observed_values": {
+      "gf_isom_sample_del_data_lifecycle_value": 100683191992208,
+      "gf_bs_reassign_buffer_same_object_value": 100683191992208,
+      "gf_bs_del_original_use_value": 100683191825968,
+      "gf_bs_del_bsmode_root_value": 4,
+      "gf_isom_sample_del_data_length_value": 634
+    },
+    "interpretation": "The retained variant reaches the released sample buffer and the reassign-buffer object value, but gf_bs_del later observes a different original pointer. Under relation-aware scoring this is useful non-terminal alias guidance rather than a completed R2T trigger."
+  },
+  "next_actions": [
+    "Rebuild the GPAC_3403 native target with the relation-aware runtime and b7 BindingSpec.",
+    "Run a short b7 FORMTRIG smoke to confirm retained variants no longer collapse same_object to D_F=1 unless cleanup original matches the released sample data pointer.",
+    "Then run the GPAC_3403 long campaign and compare time-to-_T against faithful baselines."
+  ]
+}

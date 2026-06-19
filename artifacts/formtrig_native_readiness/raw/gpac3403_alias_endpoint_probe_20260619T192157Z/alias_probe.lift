@@ -1,0 +1,7 @@
+atom_category 1 compound-sequence-lifecycle
+role_component 7 3013921722 lifecycle_event 8 1 21 higher a 1.0 0.9 any
+role_component 7 3081179293 lifecycle_event 8 1 22 higher a 1.0 0.9 any
+role_component 7 1549213408 same_object 8 1 60 higher a 1.0 0.9 any
+role_component 7 115396228 use 8 1 41 higher a 1.0 0.9 any
+role_component 7 65063371 use 8 1 42 higher a 1.0 0.9 any
+same_object_relation 1 lifecycle_event use GF_ISOSample.data==GF_BitStream.original

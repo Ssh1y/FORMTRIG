@@ -44,6 +44,24 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
         )
         return tool
 
+    def build_binding_map_tool(self, root: Path) -> Path:
+        tool = root / "formtrig_binding_map"
+        subprocess.run(
+            [
+                "cc",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-I",
+                str(REPO_ROOT / "formtrig" / "include"),
+                str(REPO_ROOT / "formtrig" / "tools" / "formtrig_binding_map.c"),
+                "-o",
+                str(tool),
+            ],
+            check=True,
+        )
+        return tool
+
     def write_spec(self, path: Path, *, line: int) -> None:
         path.write_text(
             "\n".join(
@@ -191,6 +209,7 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
             root = Path(tmp)
             compile_tool = self.build_tool(root)
             audit_tool = self.build_lift_audit_tool(root)
+            map_tool = self.build_binding_map_tool(root)
             site_map = root / "gpac_sites.tsv"
             lift_spec = root / "gpac.lift"
             site_map.write_text(
@@ -200,8 +219,10 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
                         "1549213408\tcmp\tgf_bs_reassign_buffer\t123\ticmp\tutils/bitstream.c\t122\t6",
                         "2693650777\tbranch\tcat_isomedia_file\t1189\tbr\tfileimport.c\t3139\t8",
                         "3030846436\tbranch\tgf_isom_sample_del\t22\tbr\tisomedia/isom_read.c\t112\t6",
+                        "3013921722\tcmp\tgf_isom_sample_del\t15\ticmp\tisomedia/isom_read.c\t112\t6",
                         "3232240958\tbranch\tgf_bs_new_cbk_buffer\t34\tbr\tutils/bitstream.c\t296\t6",
                         "3837068185\tbranch\tmdia_box_del\t25\tbr\tisomedia/box_code_base.c\t3310\t6",
+                        "115396228\tcmp\tgf_bs_del\t42\ticmp\tutils/bitstream.c\t372\t18",
                         "65063371\tcmp\tgf_bs_del\t47\ticmp\tutils/bitstream.c\t372\t48",
                         "14730514\tbranch\tgf_bs_del\t48\tbr\tutils/bitstream.c\t372\t6",
                         "1766076671\tbranch\tgf_isom_nalu_sample_rewrite\t1048\tbr\tisomedia/avc_ext.c\t672\t59",
@@ -391,6 +412,85 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
             self.assertIn(
                 "1,compound-sequence-lifecycle,B4,true,0x000001e9,9,0,0,ok",
                 b5_audit_proc.stdout,
+            )
+
+            b7_lift_spec = root / "gpac_b7.lift"
+            b7_compile_proc = subprocess.run(
+                [
+                    str(compile_tool),
+                    "--site-map",
+                    str(site_map),
+                    "--out",
+                    str(b7_lift_spec),
+                    str(
+                        REPO_ROOT
+                        / "artifacts"
+                        / "binding_specs"
+                        / "GPAC_3403.native_b7_relation_value_candidate.yml"
+                    ),
+                ],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b7_compile_proc.returncode, 0, b7_compile_proc.stderr)
+
+            b7_lift_text = b7_lift_spec.read_text(encoding="utf-8")
+            self.assertIn(
+                "role_component 7 3013921722 lifecycle_event 8 1 26 higher a",
+                b7_lift_text,
+            )
+            self.assertIn(
+                "role_component 7 65063371 use 8 1 42 higher a",
+                b7_lift_text,
+            )
+            self.assertIn(
+                "role_component 7 115396228 root_observe 3 1 50 higher not_outcome",
+                b7_lift_text,
+            )
+            self.assertIn(
+                "same_object_relation 1 lifecycle_event use "
+                "GF_ISOSample.data==GF_BitStream.original via gf_bs_reassign_buffer(buffer)",
+                b7_lift_text,
+            )
+
+            b7_audit_proc = subprocess.run(
+                [str(audit_tool), "--category", "lifecycle", str(b7_lift_spec)],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b7_audit_proc.returncode, 0, b7_audit_proc.stderr)
+            self.assertIn(
+                "1,compound-sequence-lifecycle,B4,true,0x000001e9,11,0,0,ok",
+                b7_audit_proc.stdout,
+            )
+
+            b7_map_proc = subprocess.run(
+                [
+                    str(map_tool),
+                    "--category",
+                    "lifecycle",
+                    "--site-map",
+                    str(site_map),
+                    str(b7_lift_spec),
+                ],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b7_map_proc.returncode, 0, b7_map_proc.stderr)
+            self.assertNotIn("semantic_role_collapse", b7_map_proc.stdout)
+            self.assertIn(
+                "compound-sequence-lifecycle,lifecycle_event,7,3013921722",
+                b7_map_proc.stdout,
+            )
+            self.assertIn(
+                "compound-sequence-lifecycle,use,7,65063371",
+                b7_map_proc.stdout,
             )
 
 
