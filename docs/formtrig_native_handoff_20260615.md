@@ -1137,6 +1137,29 @@ seed replay:
 Remaining limitation before using PHP003 as endpoint evidence: run faithful
 baselines on the same `exif_thumbnail` runner and replicate with longer budgets.
 
+2026-06-19 current-ABI revalidation confirms the same B4 path with the ABI
+guarded AFL++ binary, not the older standalone checkout:
+
+```text
+artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_current_abi_20s_20260619T203504Z/summary.tsv
+validation = artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json
+afl-fuzz = experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz
+diagnosis = triggered
+pretrigger_lift_guidance_ready = true
+accepted/saved non-trigger progress = 2/2
+queued_progress = 7
+terminal _T = 43
+execs_done / reached_execs = 7290 / 1556
+D_F_spec_lifted values = {2,3}
+non-trigger candidate D_F_spec_lifted values = {2,3}
+typed_execs / typed_finds = 124 / 11
+```
+
+This closes the FORMTRIG-side repaired-runner validation under the current
+AFL++ ABI. It is still not a matched endpoint result: the next step remains
+faithful AFL++/CmpLog/Redqueen-family baselines on the same `exif_thumbnail`
+runner, followed by replicated longer FORMTRIG/baseline comparisons.
+
 ### 5. SQL013 不能硬做
 
 除非能绑定 planner internal root 或可信 lifecycle/same-object events。LLM 可以离线生成候选 BindingSpec，但必须经过 deterministic static/dynamic gate。

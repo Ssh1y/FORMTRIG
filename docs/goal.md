@@ -1508,6 +1508,26 @@ PHP003:
   因为还缺 faithful baseline 同 runner 对照和 replicated long-run matched
   endpoint evidence。
 
+  2026-06-19 用 ABI-current AFL++ 重新确认了同一 B4 repaired-runner 路径，
+  避免旧 standalone `experiments/aflplusplus/AFLplusplus/afl-fuzz` 污染证据：
+    artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_current_abi_20s_20260619T203504Z/summary.tsv
+    validation = artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json
+    afl-fuzz = experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz
+    diagnosis = triggered
+    pretrigger_lift_guidance_ready = true
+    accepted/saved non-trigger progress = 2/2
+    queued_progress = 7
+    terminal _T = 43
+    execs_done / reached_execs = 7290 / 1556
+    D_F_spec_lifted constant = false
+    D_F_spec_lifted values = {2,3}
+    non-trigger candidate D_F_spec_lifted values = {2,3}
+    typed_execs / typed_finds = 124 / 11
+  结论边界不变：这证明 PHP003 repaired runner 上 FORMTRIG 侧 R2T
+  validation 已经闭合；进入主结果还必须在同一个 `exif_thumbnail` runner 上跑
+  faithful AFL++/CmpLog/Redqueen-family baselines 和 replicated longer FORMTRIG
+  matched comparison。
+
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance
   痛点例子。2026-06-18 B4/pre-root 复查证明 runtime 和 AFL++ 都能看到 terminal

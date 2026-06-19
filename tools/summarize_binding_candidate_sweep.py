@@ -35,6 +35,17 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def display_path(value: str | Path) -> str:
+    raw = str(value)
+    if not raw:
+        return ""
+    try:
+        resolved = Path(raw).expanduser().resolve(strict=False)
+        return str(resolved.relative_to(Path.cwd().resolve()))
+    except (OSError, ValueError):
+        return raw
+
+
 def boolish(value: Any) -> bool:
     if isinstance(value, bool):
         return value
@@ -128,12 +139,12 @@ def mutation_hook_info(row: dict[str, Any]) -> dict[str, Any]:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        return {"available": False, "path": str(path)}
+        return {"available": False, "path": display_path(path)}
     if not isinstance(payload, dict):
-        return {"available": False, "path": str(path)}
+        return {"available": False, "path": display_path(path)}
     return {
         "available": True,
-        "path": str(path),
+        "path": display_path(path),
         "enabled": boolish(payload.get("enabled")),
         "source": payload.get("source"),
         "sha256": payload.get("sha256"),
@@ -212,8 +223,10 @@ def build_record(
     site_map: str,
     summary_jsonl: Path,
 ) -> dict[str, Any]:
-    resolved_binding_spec = binding_spec or str(row.get("candidate") or "")
+    resolved_binding_spec = display_path(binding_spec or str(row.get("candidate") or ""))
     tc_rooted_static = tc_rooted_static_audit(resolved_binding_spec)
+    if isinstance(tc_rooted_static, dict) and tc_rooted_static.get("source_path"):
+        tc_rooted_static["source_path"] = display_path(str(tc_rooted_static["source_path"]))
     status = status_for(row, tc_rooted_static)
     ready = status == "native_binding_validated"
     exit_code = number(row.get("exit_code"))
@@ -249,7 +262,7 @@ def build_record(
         },
         "tc_rooted_static": tc_rooted_static,
         "native_site_map": {
-            "path": site_map,
+            "path": display_path(site_map),
             "native_runtime_evidence": bool(site_map) and native_static_pass,
         },
         "dynamic_seed_readiness": {
@@ -283,8 +296,8 @@ def build_record(
             "score": number(row.get("score")),
         },
         "source": {
-            "summary_jsonl": str(summary_jsonl),
-            "candidate_out_dir": str(row.get("out_dir") or ""),
+            "summary_jsonl": display_path(summary_jsonl),
+            "candidate_out_dir": display_path(str(row.get("out_dir") or "")),
             "candidate_index": number(row.get("index")),
         },
         "blockers": blockers_for(status, row, tc_rooted_static),

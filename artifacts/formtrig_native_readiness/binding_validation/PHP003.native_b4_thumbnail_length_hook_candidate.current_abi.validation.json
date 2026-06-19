@@ -1,0 +1,120 @@
+{
+  "benefit_readout": {
+    "execs_done": 7290,
+    "has_non_trigger_progress": true,
+    "non_trigger_progress_events": 2,
+    "pretrigger_lift_guidance_ready": true,
+    "saved_non_trigger_progress_events": 2,
+    "saved_triggered_progress_events": 5,
+    "score": 771200,
+    "terminal_triggered": true
+  },
+  "binding_signal": {
+    "accepted_non_trigger_progress_events": 2,
+    "candidate_events": 1381,
+    "diagnosis": "triggered",
+    "semantic_candidate_variable_roles": 1,
+    "status": "pass"
+  },
+  "binding_spec": "artifacts/binding_specs/php003_repair_candidates/PHP003.native_b4_thumbnail_length_hook_candidate.yml",
+  "blockers": [],
+  "checks": {
+    "binding_spec_compile_pass": true,
+    "dynamic_binding_signal_pass": true,
+    "lift_audit_pass": true,
+    "lift_delta_only_on_triggered": false,
+    "native_site_map_validated": true,
+    "non_trigger_candidate_lift_delta": true,
+    "pretrigger_lift_guidance_ready": true,
+    "producer_constant_zero": false,
+    "runtime_event_map_pass": true,
+    "tc_rooted_static_pass": true,
+    "terminal_triggered": true,
+    "tool_compile_pass": true,
+    "typed_mutation_hook_enabled": true
+  },
+  "dynamic_seed_readiness": {
+    "atom_signals": null,
+    "components": null,
+    "diagnosis": "triggered",
+    "reached": 1556,
+    "role_signals": null,
+    "seed_count": null,
+    "spec_lifted": null,
+    "status": "pass",
+    "triggered": 43
+  },
+  "generated_at_utc": "2026-06-19T20:37:05+00:00",
+  "mutation_hook": {
+    "available": true,
+    "enabled": true,
+    "path": "artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_current_abi_20s_20260619T203504Z/candidates/001_PHP003.native_b4_thumbnail_length_hook_candidate.yml/formtrig_mutation_hook.json",
+    "sha256": "50936e199cb44b1700f83a7428629151d11709081161327e5599b11025579d71",
+    "source": "binding_spec"
+  },
+  "native_site_map": {
+    "native_runtime_evidence": true,
+    "path": "artifacts/formtrig_native_readiness/magma_native_builds/PHP003_exif_thumbnail/out/formtrig_native/formtrig_sites.tsv"
+  },
+  "native_site_map_validated": true,
+  "next_action": "run the benefit-first short endpoint screen against faithful AFL++ family baselines",
+  "producer_signal": {
+    "constant_zero_roles": [],
+    "nonzero_roles": [
+      "desired_producer"
+    ],
+    "observed_roles": [
+      "desired_producer"
+    ],
+    "variable_roles": []
+  },
+  "ready_for_short_gate": true,
+  "remaining_limitations": [
+    "candidate sweep is a validation gate, not a matched baseline comparison",
+    "short-gate and long-run endpoint evidence are still required before efficacy claims"
+  ],
+  "schema": "formtrig_binding_candidate_validation_v1",
+  "source": {
+    "candidate_index": 1,
+    "candidate_out_dir": "artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_current_abi_20s_20260619T203504Z/candidates/001_PHP003.native_b4_thumbnail_length_hook_candidate.yml",
+    "summary_jsonl": "artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_current_abi_20s_20260619T203504Z/summary.jsonl"
+  },
+  "status": "native_binding_validated",
+  "target_id": "PHP003",
+  "tc_rooted_static": {
+    "atom_count": 1,
+    "binding_count": 5,
+    "blockers": [],
+    "checks": {
+      "exact_runtime_mapping_pass": true,
+      "negative_role_rejection_pass": true,
+      "semantic_role_coverage_pass": true,
+      "static_root_binding_pass": true
+    },
+    "generated_at_utc": "2026-06-19T20:37:05+00:00",
+    "limitations": [],
+    "normalized_category": "binary-null",
+    "role_counts": {
+      "desired_producer": 1,
+      "guard": 1,
+      "input_influence": 1,
+      "root_observe": 1,
+      "use": 1
+    },
+    "roles_by_atom": {
+      "1": [
+        "desired_producer",
+        "guard",
+        "input_influence",
+        "root_observe",
+        "use"
+      ]
+    },
+    "schema": "formtrig_binding_spec_tc_rooted_audit_v1",
+    "source_path": "artifacts/binding_specs/php003_repair_candidates/PHP003.native_b4_thumbnail_length_hook_candidate.yml",
+    "status": "pass",
+    "tc_category": "binary-state-null",
+    "tc_expression": "MAGMA_AND((bool)data, ImageInfo->Thumbnail.size < 4)",
+    "tc_id": "PHP003"
+  }
+}

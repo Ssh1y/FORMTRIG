@@ -12,7 +12,7 @@ duration="30"
 seed_preflight="require"
 seed_preflight_max="32"
 seed_preflight_timeout="2"
-aflpp_dir="${AFLPP_DIR:-$repo_root/experiments/aflplusplus/AFLplusplus}"
+aflpp_dir="${AFLPP_DIR:-}"
 candidate_kind="auto"
 max_candidates="0"
 target_site_ids=""
@@ -56,6 +56,52 @@ require_path() {
     echo "missing required path: $1" >&2
     exit 2
   fi
+}
+
+formtrig_expected_abi_version() {
+  awk '
+    $1 == "#define" && $2 == "FORMTRIG_SHM_VERSION" {
+      print $3
+      exit
+    }
+  ' "$repo_root/formtrig/include/formtrig/formtrig_abi.h"
+}
+
+aflpp_dir_usable() {
+  local dir="$1"
+  [[ -x "$dir/afl-fuzz" ]]
+}
+
+aflpp_dir_abi_current() {
+  local dir="$1"
+  local expected_abi
+  expected_abi="$(formtrig_expected_abi_version)"
+  [[ -n "$expected_abi" ]] &&
+    aflpp_dir_usable "$dir" &&
+    grep -a -q "FORMTRIG_SHM_ABI_VERSION=$expected_abi" "$dir/afl-fuzz"
+}
+
+default_aflpp_dir() {
+  local candidate
+  for candidate in \
+    "$repo_root/experiments/magma_workspace/magma/fuzzers/formtrig_native/repo" \
+    "$repo_root/experiments/aflplusplus/AFLplusplus"
+  do
+    if aflpp_dir_abi_current "$candidate"; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  for candidate in \
+    "$repo_root/experiments/magma_workspace/magma/fuzzers/formtrig_native/repo" \
+    "$repo_root/experiments/aflplusplus/AFLplusplus"
+  do
+    if aflpp_dir_usable "$candidate"; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  printf '%s\n' "$repo_root/experiments/aflplusplus/AFLplusplus"
 }
 
 json_value() {
@@ -315,6 +361,9 @@ fi
 
 require_path "$seed_dir"
 require_path "$site_map"
+if [[ -z "$aflpp_dir" ]]; then
+  aflpp_dir="$(default_aflpp_dir)"
+fi
 require_path "$aflpp_dir/afl-fuzz"
 if ! command -v jq >/dev/null 2>&1; then
   echo "missing required command: jq" >&2
