@@ -38,6 +38,94 @@ def mp4_box(box_type, payload):
     return (len(payload) + 8).to_bytes(4, "big") + box_type.encode("ascii") + payload
 
 
+class BitWriter:
+    def __init__(self):
+        self.bits = []
+
+    def add_bits(self, value, count):
+        for shift in range(count - 1, -1, -1):
+            self.bits.append((value >> shift) & 1)
+
+    def add_bool(self, value):
+        self.add_bits(1 if value else 0, 1)
+
+    def add_ue(self, value):
+        code_num = value + 1
+        body = f"{code_num:b}"
+        self.bits.extend([0] * (len(body) - 1))
+        self.bits.extend(1 if bit == "1" else 0 for bit in body)
+
+    def to_bytes(self):
+        bits = list(self.bits)
+        bits.append(1)
+        while len(bits) % 8:
+            bits.append(0)
+        out = bytearray()
+        for index in range(0, len(bits), 8):
+            value = 0
+            for bit in bits[index : index + 8]:
+                value = (value << 1) | bit
+            out.append(value)
+        return bytes(out)
+
+
+def add_profile_tier_level(writer):
+    writer.add_bits(0, 96)
+
+
+def vps_payload(vps_id=0, max_layer_id=50):
+    writer = BitWriter()
+    writer.add_bits(vps_id, 4)
+    writer.add_bool(True)
+    writer.add_bool(True)
+    writer.add_bits(3, 6)
+    writer.add_bits(0, 3)
+    writer.add_bool(True)
+    writer.add_bits(0xFFFF, 16)
+    add_profile_tier_level(writer)
+    writer.add_bool(True)
+    writer.add_ue(0)
+    writer.add_ue(0)
+    writer.add_ue(0)
+    writer.add_bits(max_layer_id, 6)
+    writer.add_ue(0)
+    return writer.to_bytes()
+
+
+def sps_payload(vps_id=0, sps_id=0):
+    writer = BitWriter()
+    writer.add_bits(vps_id, 4)
+    writer.add_bits(0, 3)
+    writer.add_bool(True)
+    add_profile_tier_level(writer)
+    writer.add_ue(sps_id)
+    writer.add_ue(1)
+    writer.add_ue(4)
+    writer.add_ue(2)
+    writer.add_bool(False)
+    writer.add_ue(0)
+    writer.add_ue(0)
+    writer.add_ue(4)
+    return writer.to_bytes()
+
+
+def pps_payload(pps_id=0, sps_id=0):
+    writer = BitWriter()
+    writer.add_ue(pps_id)
+    writer.add_ue(sps_id)
+    writer.add_bool(False)
+    return writer.to_bytes()
+
+
+def slice_payload(pps_id=0, irap=True):
+    writer = BitWriter()
+    writer.add_bool(True)
+    if irap:
+        writer.add_bool(False)
+    writer.add_ue(pps_id)
+    return writer.to_bytes()
+
+
 class Gpac3403HevcStructureAuditTest(unittest.TestCase):
     def test_nal_profile_counts_types_layers_and_vps_fields(self):
         audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_profile")
@@ -51,6 +139,40 @@ class Gpac3403HevcStructureAuditTest(unittest.TestCase):
         self.assertEqual(profile["max_layer"], 50)
         self.assertEqual(profile["vps_field_count"], 1)
         self.assertEqual(profile["vps_fields"][0]["vps_max_layers_minus1"], 4)
+
+    def test_semantic_cross_references_report_consistent_parameter_sets(self):
+        audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_semantics_ok")
+        hook = load_module(HOOK_PATH, "hevc_annexb_structure_hook_for_audit_semantics_ok")
+        data = (
+            nalu(hook, 32, 0, vps_payload(vps_id=0))
+            + nalu(hook, 33, 0, sps_payload(vps_id=0, sps_id=0))
+            + nalu(hook, 34, 0, pps_payload(pps_id=0, sps_id=0))
+            + nalu(hook, 16, 0, slice_payload(pps_id=0, irap=True))
+        )
+
+        profile = audit.nal_profile(data, hook)
+        refs = profile["semantics"]["cross_references"]
+
+        self.assertEqual(refs["vps_ids"], [0])
+        self.assertEqual(refs["sps_ids"], [0])
+        self.assertEqual(refs["pps_ids"], [0])
+        self.assertEqual(refs["sps_without_vps_count"], 0)
+        self.assertEqual(refs["pps_without_sps_count"], 0)
+        self.assertEqual(refs["slice_without_pps_count"], 0)
+
+    def test_semantic_cross_references_report_unresolved_ids(self):
+        audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_semantics_bad")
+        hook = load_module(HOOK_PATH, "hevc_annexb_structure_hook_for_audit_semantics_bad")
+        data = nalu(hook, 34, 0, pps_payload(pps_id=7, sps_id=99)) + nalu(
+            hook, 1, 0, slice_payload(pps_id=8, irap=False)
+        )
+
+        profile = audit.nal_profile(data, hook)
+        refs = profile["semantics"]["cross_references"]
+
+        self.assertEqual(refs["pps_ids"], [7])
+        self.assertEqual(refs["pps_without_sps_count"], 1)
+        self.assertEqual(refs["slice_without_pps_count"], 1)
 
     def test_walk_boxes_recurses_into_mp4_containers(self):
         audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_boxes")

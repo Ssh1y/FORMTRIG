@@ -1,0 +1,384 @@
+{
+  "contrast": {
+    "positive_control_files": 1,
+    "positive_control_signatures_absent_from_variants": [
+      "wrong_output_layer_sets",
+      "failed_vps_extensions",
+      "asan"
+    ],
+    "variant_files": 128
+  },
+  "logs_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs",
+  "positive_control": {
+    "files": 1,
+    "signatures": {
+      "asan": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": []
+      },
+      "layers_only_4": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 12,
+        "top_values": [
+          {
+            "count": 10,
+            "value": "47/4"
+          },
+          {
+            "count": 2,
+            "value": "41/4"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 17,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 17,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "25/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": [
+          {
+            "count": 2,
+            "value": "5/4"
+          },
+          {
+            "count": 1,
+            "value": "132/4"
+          },
+          {
+            "count": 1,
+            "value": "221/4"
+          }
+        ]
+      }
+    }
+  },
+  "records": null,
+  "schema": "formtrig_gpac3403_endpoint_signature_audit_v1",
+  "summary": {
+    "d_f_spec_lifted_max": 1.0,
+    "d_f_spec_lifted_min": 1.0,
+    "duration_s": 962.375,
+    "endpoint_native_crashes": 0,
+    "endpoint_replayed_variants": 128,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_timeouts": 0,
+    "generated_variants": 128,
+    "reached": 38,
+    "rnt": 38,
+    "triggered": 0
+  },
+  "variant": {
+    "files": 128,
+    "signatures": {
+      "asan": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "layers_only_4": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 128,
+        "occurrences": 518,
+        "top_values": [
+          {
+            "count": 116,
+            "value": "47/4"
+          },
+          {
+            "count": 115,
+            "value": "5/4"
+          },
+          {
+            "count": 113,
+            "value": "64/4"
+          },
+          {
+            "count": 112,
+            "value": "16/4"
+          },
+          {
+            "count": 11,
+            "value": "37/4"
+          },
+          {
+            "count": 2,
+            "value": "8/4"
+          },
+          {
+            "count": 2,
+            "value": "25/4"
+          },
+          {
+            "count": 2,
+            "value": "42/4"
+          },
+          {
+            "count": 2,
+            "value": "59/4"
+          },
+          {
+            "count": 2,
+            "value": "12/4"
+          },
+          {
+            "count": 2,
+            "value": "29/4"
+          },
+          {
+            "count": 2,
+            "value": "46/4"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 128,
+        "occurrences": 1095,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000009.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000011.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000013.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000015.endpoint_1.stderr"
+        ],
+        "files": 64,
+        "occurrences": 343,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 128,
+        "occurrences": 12985,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 128,
+        "occurrences": 6361,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 128,
+        "occurrences": 128,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 128,
+        "occurrences": 1021,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 128,
+        "occurrences": 503,
+        "top_values": [
+          {
+            "count": 314,
+            "value": "9/4"
+          },
+          {
+            "count": 49,
+            "value": "32/4"
+          },
+          {
+            "count": 30,
+            "value": "63/4"
+          },
+          {
+            "count": 28,
+            "value": "28/4"
+          },
+          {
+            "count": 23,
+            "value": "56/4"
+          },
+          {
+            "count": 20,
+            "value": "60/4"
+          },
+          {
+            "count": 17,
+            "value": "17/4"
+          },
+          {
+            "count": 15,
+            "value": "34/4"
+          },
+          {
+            "count": 3,
+            "value": "6/4"
+          },
+          {
+            "count": 1,
+            "value": "8/4"
+          },
+          {
+            "count": 1,
+            "value": "15/4"
+          },
+          {
+            "count": 1,
+            "value": "30/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      }
+    }
+  }
+}

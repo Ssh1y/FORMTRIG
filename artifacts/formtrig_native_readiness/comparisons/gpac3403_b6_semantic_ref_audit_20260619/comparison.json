@@ -1,0 +1,403 @@
+{
+  "answer_to_current_question": {
+    "meaning": "The current runs do not show a stable _T signal. They show partial positive guidance into the HEVC VPS/layer parser region, followed by a stable last-mile miss.",
+    "not_supported_claim": "This evidence does not support claiming that current FORMTRIG already solves GPAC_3403 by waiting longer.",
+    "supported_claim": "Current lifted guidance is useful enough to reach TC-rooted intermediate parser states, but it is too coarse for the final VPS extension/output-layer-set condition."
+  },
+  "diagnosis": {
+    "next_engineering_step": "Add a GPAC-independent HEVC VPS-extension/output-layer-set frontier/mutator and validate by short endpoint sweeps before starting another long fuzz run.",
+    "root_cause_hypothesis": "The current TC-rooted lift models NAL reachability, same-object flow, and coarse VPS/layer fields, but not the GPAC-specific VPS extension/output-layer-set subcondition that precedes the crash.",
+    "where_guidance_fails": [
+      "0/384 fieldops and 0/128 denseops variant endpoint logs contain Wrong number of output layer sets.",
+      "0/384 fieldops and 0/128 denseops variant endpoint logs contain Failed to parse VPS extensions.",
+      "The positive control contains both signatures and ASAN, so these are missing target-adjacent signatures rather than harmless log differences."
+    ],
+    "where_guidance_works": [
+      "fieldops: 317/384 variants reached the lifted frontier with _T=0.",
+      "denseops: 38/128 variants reached the lifted frontier with D_F=1 and _T=0.",
+      "denseops closed the gross Annex-B type/layer structure gap for reached variants.",
+      "endpoint stderr shows variants consistently exercise GPAC VPS/layer parse failures."
+    ]
+  },
+  "evidence": {
+    "denseops_endpoint_signature_audit": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_semantic_ref_audit_20260619/evidence/denseops_endpoint_signature_audit.json",
+    "denseops_endpoint_signature_audit_sha256": "ef819befe21329a293bd84fb742d67dd2780bdc368443c53c39c2efb5fb467e0",
+    "denseops_semantic_structure_audit": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_semantic_ref_audit_20260619/evidence/denseops_semantic_structure_audit.json",
+    "denseops_semantic_structure_audit_sha256": "5f02b951bade56bee243ef9b3ace6a8ef0c4ad0588ef60e6b20e2c7b2e02297f",
+    "fieldops_endpoint_signature_audit": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_semantic_ref_audit_20260619/evidence/fieldops_endpoint_signature_audit.json",
+    "fieldops_endpoint_signature_audit_sha256": "efb15fd20fb1489069095226a8d82b6286c954beba85a97b94aca133f422e484",
+    "fieldops_semantic_structure_audit": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_semantic_ref_audit_20260619/evidence/fieldops_semantic_structure_audit.json",
+    "fieldops_semantic_structure_audit_sha256": "641b09932cba37e08b3de1e292f9e0a8dadb0e6d4490ec3742269d05a4f94a96"
+  },
+  "generated_date": "2026-06-19",
+  "runs": {
+    "denseops20_23": {
+      "endpoint_signature_counts": {
+        "asan": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "failed_vps_extensions": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "layers_only_4": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 12,
+          "variant_files": 128,
+          "variant_occurrences": 518,
+          "variant_top_values": [
+            {
+              "count": 116,
+              "value": "47/4"
+            },
+            {
+              "count": 115,
+              "value": "5/4"
+            },
+            {
+              "count": 113,
+              "value": "64/4"
+            },
+            {
+              "count": 112,
+              "value": "16/4"
+            },
+            {
+              "count": 11,
+              "value": "37/4"
+            }
+          ]
+        },
+        "nal_type_32_error": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 17,
+          "variant_files": 128,
+          "variant_occurrences": 1095,
+          "variant_top_values": []
+        },
+        "nal_type_49_not_handled": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 64,
+          "variant_occurrences": 343,
+          "variant_top_values": []
+        },
+        "track_importing_hevc": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 1,
+          "variant_files": 128,
+          "variant_occurrences": 128,
+          "variant_top_values": []
+        },
+        "video_param_set_error": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 17,
+          "variant_files": 128,
+          "variant_occurrences": 1021,
+          "variant_top_values": []
+        },
+        "vps_max_layer_id": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 1,
+          "variant_files": 128,
+          "variant_occurrences": 503,
+          "variant_top_values": [
+            {
+              "count": 314,
+              "value": "9/4"
+            },
+            {
+              "count": 49,
+              "value": "32/4"
+            },
+            {
+              "count": 30,
+              "value": "63/4"
+            },
+            {
+              "count": 28,
+              "value": "28/4"
+            },
+            {
+              "count": 23,
+              "value": "56/4"
+            }
+          ]
+        },
+        "wrong_output_layer_sets": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        }
+      },
+      "positive_control_signatures_absent_from_variants": [
+        "wrong_output_layer_sets",
+        "failed_vps_extensions",
+        "asan"
+      ],
+      "summary": {
+        "d_f_spec_lifted_max": 1.0,
+        "d_f_spec_lifted_min": 1.0,
+        "duration_s": 962.375,
+        "endpoint_native_crashes": 0,
+        "endpoint_replayed_variants": 128,
+        "endpoint_sanitizer_crashes": 0,
+        "endpoint_timeouts": 0,
+        "generated_variants": 128,
+        "reached": 38,
+        "rnt": 38,
+        "triggered": 0
+      }
+    },
+    "fieldops14_19": {
+      "endpoint_signature_counts": {
+        "asan": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "failed_vps_extensions": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "layers_only_4": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 12,
+          "variant_files": 250,
+          "variant_occurrences": 450,
+          "variant_top_values": [
+            {
+              "count": 112,
+              "value": "5/4"
+            },
+            {
+              "count": 112,
+              "value": "16/4"
+            },
+            {
+              "count": 112,
+              "value": "47/4"
+            },
+            {
+              "count": 112,
+              "value": "64/4"
+            },
+            {
+              "count": 2,
+              "value": "37/4"
+            }
+          ]
+        },
+        "nal_type_32_error": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 17,
+          "variant_files": 379,
+          "variant_occurrences": 1147,
+          "variant_top_values": []
+        },
+        "nal_type_49_not_handled": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "track_importing_hevc": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 1,
+          "variant_files": 320,
+          "variant_occurrences": 320,
+          "variant_top_values": []
+        },
+        "video_param_set_error": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 17,
+          "variant_files": 344,
+          "variant_occurrences": 1076,
+          "variant_top_values": []
+        },
+        "vps_max_layer_id": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 1,
+          "variant_files": 280,
+          "variant_occurrences": 626,
+          "variant_top_values": [
+            {
+              "count": 376,
+              "value": "9/4"
+            },
+            {
+              "count": 49,
+              "value": "32/4"
+            },
+            {
+              "count": 45,
+              "value": "63/4"
+            },
+            {
+              "count": 24,
+              "value": "17/4"
+            },
+            {
+              "count": 13,
+              "value": "60/4"
+            }
+          ]
+        },
+        "wrong_output_layer_sets": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        }
+      },
+      "positive_control_signatures_absent_from_variants": [
+        "wrong_output_layer_sets",
+        "failed_vps_extensions",
+        "nal_type_49_not_handled",
+        "asan"
+      ],
+      "summary": {
+        "d_f_spec_lifted_max": 2.0,
+        "d_f_spec_lifted_min": 1.0,
+        "duration_s": 174.599,
+        "endpoint_native_crashes": 0,
+        "endpoint_replayed_variants": 384,
+        "endpoint_sanitizer_crashes": 0,
+        "endpoint_timeouts": 0,
+        "generated_variants": 384,
+        "reached": 317,
+        "rnt": 317,
+        "triggered": 0
+      }
+    }
+  },
+  "schema": "formtrig_gpac3403_semantic_endpoint_diagnosis_v1",
+  "structure_semantics": {
+    "dense_best_reached_variants": [
+      {
+        "d_f_spec_lifted": 1.0,
+        "endpoint_sanitizer_crash": false,
+        "index": 0,
+        "missing_reference_layers": [],
+        "missing_reference_types": [],
+        "nalu_count_ratio_to_reference": 0.614078,
+        "op": 20,
+        "reached": true,
+        "total_nalus": 253,
+        "triggered": false
+      },
+      {
+        "d_f_spec_lifted": 1.0,
+        "endpoint_sanitizer_crash": false,
+        "index": 1,
+        "missing_reference_layers": [],
+        "missing_reference_types": [],
+        "nalu_count_ratio_to_reference": 0.711165,
+        "op": 21,
+        "reached": true,
+        "total_nalus": 293,
+        "triggered": false
+      },
+      {
+        "d_f_spec_lifted": 1.0,
+        "endpoint_sanitizer_crash": false,
+        "index": 2,
+        "missing_reference_layers": [],
+        "missing_reference_types": [],
+        "nalu_count_ratio_to_reference": 0.842233,
+        "op": 22,
+        "reached": true,
+        "total_nalus": 347,
+        "triggered": false
+      }
+    ],
+    "diagnostic_caveat": "The HEVC semantic parser is lightweight and diagnostic, not a normative HEVC validator. GPAC endpoint stderr is the authoritative behavioral signal in this report.",
+    "poc_lightweight_parser_profile": {
+      "kind_counts": {
+        "error": 25,
+        "other": 2,
+        "pps": 138,
+        "slice": 201,
+        "sps": 33,
+        "vps": 13
+      },
+      "parse_error_counts_by_type": {
+        "16": 19,
+        "32": 6
+      },
+      "pps_without_sps_count": 128,
+      "slice_without_pps_count": 191,
+      "sps_without_vps_count": 30,
+      "total_nalus": 412,
+      "unique_layers": [
+        0,
+        1,
+        2,
+        4,
+        7,
+        14,
+        16,
+        18,
+        22,
+        31,
+        32,
+        36,
+        37,
+        46,
+        50
+      ],
+      "unique_types": [
+        0,
+        1,
+        5,
+        14,
+        16,
+        21,
+        32,
+        33,
+        34,
+        49
+      ]
+    },
+    "seed_lightweight_parser_profile": {
+      "kind_counts": {
+        "pps": 2,
+        "slice": 1,
+        "sps": 1,
+        "vps": 1
+      },
+      "parse_error_counts_by_type": {},
+      "pps_without_sps_count": 0,
+      "slice_without_pps_count": 0,
+      "sps_without_vps_count": 0,
+      "total_nalus": 5,
+      "unique_layers": [
+        0,
+        2
+      ],
+      "unique_types": [
+        20,
+        32,
+        33,
+        34
+      ]
+    }
+  },
+  "subject": "GPAC_3403 HEVC RNT-but-not-T diagnosis"
+}

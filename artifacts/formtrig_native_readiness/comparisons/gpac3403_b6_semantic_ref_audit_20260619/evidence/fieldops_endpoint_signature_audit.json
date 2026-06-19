@@ -1,0 +1,348 @@
+{
+  "contrast": {
+    "positive_control_files": 1,
+    "positive_control_signatures_absent_from_variants": [
+      "wrong_output_layer_sets",
+      "failed_vps_extensions",
+      "nal_type_49_not_handled",
+      "asan"
+    ],
+    "variant_files": 384
+  },
+  "logs_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs",
+  "positive_control": {
+    "files": 1,
+    "signatures": {
+      "asan": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": []
+      },
+      "layers_only_4": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 12,
+        "top_values": [
+          {
+            "count": 10,
+            "value": "47/4"
+          },
+          {
+            "count": 2,
+            "value": "41/4"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 17,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 2,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 17,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 1,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "25/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr"
+        ],
+        "files": 1,
+        "occurrences": 4,
+        "top_values": [
+          {
+            "count": 2,
+            "value": "5/4"
+          },
+          {
+            "count": 1,
+            "value": "132/4"
+          },
+          {
+            "count": 1,
+            "value": "221/4"
+          }
+        ]
+      }
+    }
+  },
+  "records": null,
+  "schema": "formtrig_gpac3403_endpoint_signature_audit_v1",
+  "summary": {
+    "d_f_spec_lifted_max": 2.0,
+    "d_f_spec_lifted_min": 1.0,
+    "duration_s": 174.599,
+    "endpoint_native_crashes": 0,
+    "endpoint_replayed_variants": 384,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_timeouts": 0,
+    "generated_variants": 384,
+    "reached": 317,
+    "rnt": 317,
+    "triggered": 0
+  },
+  "variant": {
+    "files": 384,
+    "signatures": {
+      "asan": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "layers_only_4": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000015.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000027.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000030.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000032.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000033.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000035.endpoint_1.stderr"
+        ],
+        "files": 250,
+        "occurrences": 450,
+        "top_values": [
+          {
+            "count": 112,
+            "value": "5/4"
+          },
+          {
+            "count": 112,
+            "value": "16/4"
+          },
+          {
+            "count": 112,
+            "value": "47/4"
+          },
+          {
+            "count": 112,
+            "value": "64/4"
+          },
+          {
+            "count": 2,
+            "value": "37/4"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 379,
+        "occurrences": 1147,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stderr"
+        ],
+        "files": 291,
+        "occurrences": 589,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stderr"
+        ],
+        "files": 320,
+        "occurrences": 832,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000009.endpoint_1.stderr"
+        ],
+        "files": 320,
+        "occurrences": 320,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 344,
+        "occurrences": 1076,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 280,
+        "occurrences": 626,
+        "top_values": [
+          {
+            "count": 376,
+            "value": "9/4"
+          },
+          {
+            "count": 49,
+            "value": "32/4"
+          },
+          {
+            "count": 45,
+            "value": "63/4"
+          },
+          {
+            "count": 24,
+            "value": "17/4"
+          },
+          {
+            "count": 13,
+            "value": "60/4"
+          },
+          {
+            "count": 12,
+            "value": "34/4"
+          },
+          {
+            "count": 12,
+            "value": "28/4"
+          },
+          {
+            "count": 12,
+            "value": "56/4"
+          },
+          {
+            "count": 12,
+            "value": "6/4"
+          },
+          {
+            "count": 12,
+            "value": "8/4"
+          },
+          {
+            "count": 12,
+            "value": "15/4"
+          },
+          {
+            "count": 12,
+            "value": "30/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      }
+    }
+  }
+}

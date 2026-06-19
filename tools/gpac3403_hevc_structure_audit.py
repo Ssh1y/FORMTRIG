@@ -38,6 +38,226 @@ CONTAINER_BOXES = {
     "mfra",
 }
 MAX_SEQUENCE_ITEMS = 64
+VCL_NAL_TYPES = set(range(0, 32))
+IRAP_NAL_TYPES = set(range(16, 24))
+
+
+class BitstreamError(ValueError):
+    pass
+
+
+class BitReader:
+    def __init__(self, data: bytes):
+        self.data = data
+        self.bitpos = 0
+
+    @property
+    def remaining(self) -> int:
+        return len(self.data) * 8 - self.bitpos
+
+    def read_bits(self, count: int) -> int:
+        if count < 0:
+            raise BitstreamError("negative bit count")
+        if self.remaining < count:
+            raise BitstreamError("not enough bits")
+        value = 0
+        for _ in range(count):
+            byte_index = self.bitpos // 8
+            shift = 7 - (self.bitpos % 8)
+            value = (value << 1) | ((self.data[byte_index] >> shift) & 1)
+            self.bitpos += 1
+        return value
+
+    def read_bool(self) -> bool:
+        return bool(self.read_bits(1))
+
+    def skip_bits(self, count: int) -> None:
+        self.read_bits(count)
+
+    def read_ue(self) -> int:
+        leading_zero_bits = 0
+        while self.remaining:
+            if self.read_bits(1):
+                break
+            leading_zero_bits += 1
+            if leading_zero_bits > 31:
+                raise BitstreamError("exp-golomb prefix too long")
+        else:
+            raise BitstreamError("unterminated exp-golomb code")
+        suffix = self.read_bits(leading_zero_bits) if leading_zero_bits else 0
+        return (1 << leading_zero_bits) - 1 + suffix
+
+
+def rbsp_from_ebsp(data: bytes) -> bytes:
+    out = bytearray()
+    index = 0
+    while index < len(data):
+        if index + 2 < len(data) and data[index] == 0 and data[index + 1] == 0 and data[index + 2] == 3:
+            out.extend(data[index : index + 2])
+            index += 3
+            continue
+        out.append(data[index])
+        index += 1
+    return bytes(out)
+
+
+def skip_profile_tier_level(reader: BitReader, max_sub_layers_minus1: int) -> None:
+    reader.skip_bits(2 + 1 + 5 + 32 + 48 + 8)
+    sub_layer_profile_present = []
+    sub_layer_level_present = []
+    for _ in range(max_sub_layers_minus1):
+        sub_layer_profile_present.append(reader.read_bool())
+        sub_layer_level_present.append(reader.read_bool())
+    if max_sub_layers_minus1:
+        for _ in range(max_sub_layers_minus1, 8):
+            reader.skip_bits(2)
+    for index in range(max_sub_layers_minus1):
+        if sub_layer_profile_present[index]:
+            reader.skip_bits(2 + 1 + 5 + 32 + 48)
+        if sub_layer_level_present[index]:
+            reader.skip_bits(8)
+
+
+def parse_vps(rbsp: bytes) -> dict[str, Any]:
+    reader = BitReader(rbsp)
+    result: dict[str, Any] = {
+        "kind": "vps",
+        "vps_id": reader.read_bits(4),
+        "base_layer_internal": int(reader.read_bool()),
+        "base_layer_available": int(reader.read_bool()),
+        "max_layers_minus1": reader.read_bits(6),
+        "max_sub_layers_minus1": reader.read_bits(3),
+        "temporal_id_nesting": int(reader.read_bool()),
+    }
+    reader.skip_bits(16)
+    skip_profile_tier_level(reader, result["max_sub_layers_minus1"])
+    ordering_info_present = reader.read_bool()
+    result["sub_layer_ordering_info_present"] = int(ordering_info_present)
+    ordering_start = 0 if ordering_info_present else result["max_sub_layers_minus1"]
+    ordering_count = result["max_sub_layers_minus1"] - ordering_start + 1
+    for _ in range(max(0, ordering_count)):
+        reader.read_ue()
+        reader.read_ue()
+        reader.read_ue()
+    result["max_layer_id"] = reader.read_bits(6)
+    num_layer_sets_minus1 = reader.read_ue()
+    result["num_layer_sets_minus1"] = num_layer_sets_minus1
+    layer_set_bits = num_layer_sets_minus1 * (result["max_layer_id"] + 1)
+    result["layer_id_included_bits"] = layer_set_bits
+    if layer_set_bits > reader.remaining:
+        result["truncated_layer_id_included_bits"] = layer_set_bits - reader.remaining
+        reader.skip_bits(reader.remaining)
+    else:
+        reader.skip_bits(layer_set_bits)
+    if reader.remaining:
+        result["timing_info_present"] = int(reader.read_bool())
+    return result
+
+
+def parse_sps(rbsp: bytes) -> dict[str, Any]:
+    reader = BitReader(rbsp)
+    result: dict[str, Any] = {
+        "kind": "sps",
+        "vps_id": reader.read_bits(4),
+        "max_sub_layers_minus1": reader.read_bits(3),
+        "temporal_id_nesting": int(reader.read_bool()),
+    }
+    skip_profile_tier_level(reader, result["max_sub_layers_minus1"])
+    result["sps_id"] = reader.read_ue()
+    result["chroma_format_idc"] = reader.read_ue()
+    if result["chroma_format_idc"] == 3:
+        result["separate_colour_plane_flag"] = int(reader.read_bool())
+    result["pic_width_in_luma_samples"] = reader.read_ue()
+    result["pic_height_in_luma_samples"] = reader.read_ue()
+    if reader.read_bool():
+        result["conformance_window_flag"] = 1
+        result["conf_win_left_offset"] = reader.read_ue()
+        result["conf_win_right_offset"] = reader.read_ue()
+        result["conf_win_top_offset"] = reader.read_ue()
+        result["conf_win_bottom_offset"] = reader.read_ue()
+    else:
+        result["conformance_window_flag"] = 0
+    result["bit_depth_luma_minus8"] = reader.read_ue()
+    result["bit_depth_chroma_minus8"] = reader.read_ue()
+    result["log2_max_pic_order_cnt_lsb_minus4"] = reader.read_ue()
+    return result
+
+
+def parse_pps(rbsp: bytes) -> dict[str, Any]:
+    reader = BitReader(rbsp)
+    return {
+        "kind": "pps",
+        "pps_id": reader.read_ue(),
+        "sps_id": reader.read_ue(),
+        "dependent_slice_segments_enabled": int(reader.read_bool()) if reader.remaining else None,
+    }
+
+
+def parse_slice_header(rbsp: bytes, nal_type: int) -> dict[str, Any]:
+    reader = BitReader(rbsp)
+    result: dict[str, Any] = {
+        "kind": "slice",
+        "first_slice_segment_in_pic": int(reader.read_bool()),
+    }
+    if nal_type in IRAP_NAL_TYPES:
+        result["no_output_of_prior_pics"] = int(reader.read_bool())
+    result["pps_id"] = reader.read_ue()
+    return result
+
+
+def parse_nalu_semantics(data: bytes, hook: ModuleType, nalu: Any) -> dict[str, Any]:
+    nal_type = hook.nalu_type(data, nalu)
+    rbsp = rbsp_from_ebsp(hook.nalu_body(data, nalu))
+    try:
+        if nal_type == 32:
+            parsed = parse_vps(rbsp)
+        elif nal_type == 33:
+            parsed = parse_sps(rbsp)
+        elif nal_type == 34:
+            parsed = parse_pps(rbsp)
+        elif nal_type in VCL_NAL_TYPES:
+            parsed = parse_slice_header(rbsp, nal_type)
+        else:
+            parsed = {"kind": "other"}
+        parsed["parse_error"] = None
+        return parsed
+    except BitstreamError as exc:
+        return {"kind": "error", "parse_error": str(exc)}
+
+
+def semantic_cross_references(items: list[dict[str, Any]]) -> dict[str, Any]:
+    vps_ids = sorted({item["vps_id"] for item in items if item.get("kind") == "vps" and "vps_id" in item})
+    sps_ids = sorted({item["sps_id"] for item in items if item.get("kind") == "sps" and "sps_id" in item})
+    pps_ids = sorted({item["pps_id"] for item in items if item.get("kind") == "pps" and "pps_id" in item})
+    sps_refs = [
+        {"index": item["index"], "sps_id": item.get("sps_id"), "vps_id": item.get("vps_id")}
+        for item in items
+        if item.get("kind") == "sps"
+    ]
+    pps_refs = [
+        {"index": item["index"], "pps_id": item.get("pps_id"), "sps_id": item.get("sps_id")}
+        for item in items
+        if item.get("kind") == "pps"
+    ]
+    slice_refs = [
+        {"index": item["index"], "nal_type": item.get("nal_type"), "layer": item.get("layer"), "pps_id": item.get("pps_id")}
+        for item in items
+        if item.get("kind") == "slice"
+    ]
+    return {
+        "vps_ids": vps_ids,
+        "sps_ids": sps_ids,
+        "pps_ids": pps_ids,
+        "sps_refs": sps_refs[:64],
+        "pps_refs": pps_refs[:64],
+        "slice_refs": slice_refs[:64],
+        "sps_without_vps": [ref for ref in sps_refs if ref.get("vps_id") not in vps_ids],
+        "pps_without_sps": [ref for ref in pps_refs if ref.get("sps_id") not in sps_ids],
+        "slice_without_pps": [ref for ref in slice_refs if ref.get("pps_id") not in pps_ids],
+        "sps_without_vps_count": sum(1 for ref in sps_refs if ref.get("vps_id") not in vps_ids),
+        "pps_without_sps_count": sum(1 for ref in pps_refs if ref.get("sps_id") not in sps_ids),
+        "slice_without_pps_count": sum(1 for ref in slice_refs if ref.get("pps_id") not in pps_ids),
+    }
 
 
 def load_hook(path: Path) -> ModuleType:
@@ -115,6 +335,9 @@ def nal_profile(data: bytes, hook: ModuleType) -> dict[str, Any]:
     payload_lens: list[int] = []
     sequence: list[dict[str, int]] = []
     vps_fields: list[dict[str, int]] = []
+    semantics: list[dict[str, Any]] = []
+    semantic_kind_counts: Counter[str] = Counter()
+    parse_error_counts: Counter[str] = Counter()
 
     for index, nalu in enumerate(nalus):
         nal_type = hook.nalu_type(data, nalu)
@@ -150,9 +373,23 @@ def nal_profile(data: bytes, hook: ModuleType) -> dict[str, Any]:
                         "payload_len": payload_len,
                     }
                 )
+        semantic = parse_nalu_semantics(data, hook, nalu)
+        semantic.update(
+            {
+                "index": index,
+                "nal_type": nal_type,
+                "layer": layer,
+                "payload_len": payload_len,
+            }
+        )
+        semantics.append(semantic)
+        semantic_kind_counts[semantic.get("kind", "unknown")] += 1
+        if semantic.get("parse_error"):
+            parse_error_counts[str(nal_type)] += 1
 
     first_start = nalus[0].start if nalus else None
     total_payload = sum(payload_lens)
+    cross_refs = semantic_cross_references(semantics)
     return {
         "annexb_detected": bool(nalus),
         "total_nalus": len(nalus),
@@ -170,6 +407,13 @@ def nal_profile(data: bytes, hook: ModuleType) -> dict[str, Any]:
         "sequence_prefix": sequence,
         "vps_fields": vps_fields[:32],
         "vps_field_count": len(vps_fields),
+        "semantics": {
+            "kind_counts": dict(sorted(semantic_kind_counts.items())),
+            "parse_error_counts_by_type": dict(sorted(parse_error_counts.items(), key=lambda kv: int(kv[0]))),
+            "parsed_items": [item for item in semantics if not item.get("parse_error") and item.get("kind") != "other"][:128],
+            "parse_errors": [item for item in semantics if item.get("parse_error")][:64],
+            "cross_references": cross_refs,
+        },
     }
 
 
