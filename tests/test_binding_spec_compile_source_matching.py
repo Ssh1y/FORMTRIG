@@ -203,6 +203,7 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
                         "3232240958\tbranch\tgf_bs_new_cbk_buffer\t34\tbr\tutils/bitstream.c\t296\t6",
                         "3837068185\tbranch\tmdia_box_del\t25\tbr\tisomedia/box_code_base.c\t3310\t6",
                         "65063371\tcmp\tgf_bs_del\t47\ticmp\tutils/bitstream.c\t372\t48",
+                        "14730514\tbranch\tgf_bs_del\t48\tbr\tutils/bitstream.c\t372\t6",
                         "1766076671\tbranch\tgf_isom_nalu_sample_rewrite\t1048\tbr\tisomedia/avc_ext.c\t672\t59",
                         "3299351434\tcmp\tgf_bs_new_cbk_buffer\t30\ticmp\tutils/bitstream.c\t296\t6",
                         "2708309825\tbranch\tcat_isomedia_file\t1178\tbr\tfileimport.c\t3136\t3",
@@ -341,6 +342,55 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
             self.assertIn(
                 "1,compound-sequence-lifecycle,B4,true,0x000001e9,9,0,0,ok",
                 b3_audit_proc.stdout,
+            )
+
+            b5_lift_spec = root / "gpac_b5.lift"
+            b5_compile_proc = subprocess.run(
+                [
+                    str(compile_tool),
+                    "--site-map",
+                    str(site_map),
+                    "--out",
+                    str(b5_lift_spec),
+                    str(
+                        REPO_ROOT
+                        / "artifacts"
+                        / "binding_specs"
+                        / "GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml"
+                    ),
+                ],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b5_compile_proc.returncode, 0, b5_compile_proc.stderr)
+
+            b5_lift_text = b5_lift_spec.read_text(encoding="utf-8")
+            self.assertIn(
+                "role_component 8 14730514 use 6 1 40 higher not_outcome",
+                b5_lift_text,
+            )
+            self.assertIn(
+                "role_component 7 65063371 root_observe 3 1 50 higher not_outcome",
+                b5_lift_text,
+            )
+            self.assertIn(
+                "role_component 7 1549213408 same_object 8 1 60 higher a",
+                b5_lift_text,
+            )
+
+            b5_audit_proc = subprocess.run(
+                [str(audit_tool), "--category", "lifecycle", str(b5_lift_spec)],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(b5_audit_proc.returncode, 0, b5_audit_proc.stderr)
+            self.assertIn(
+                "1,compound-sequence-lifecycle,B4,true,0x000001e9,9,0,0,ok",
+                b5_audit_proc.stdout,
             )
 
 

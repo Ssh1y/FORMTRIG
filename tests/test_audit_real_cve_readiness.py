@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from tools.audit_real_cve_readiness import (
+    binding_validation_has_complete_role_graph,
     binding_validation_limitations,
     harness_admissibility_blocker,
     harness_admissibility_records,
@@ -89,6 +90,26 @@ class RealCveReadinessAuditTest(unittest.TestCase):
         self.assertEqual(len(limitations), 1)
         self.assertIn("alias_role_repaired_cleanup_use_not_captured", limitations[0])
         self.assertIn("cleanup-use observable", limitations[0])
+
+    def test_complete_role_graph_validation_supersedes_prior_limitations(self):
+        records = [
+            {
+                "status": "alias_role_repaired_cleanup_use_not_captured",
+                "_path": "binding/gpac_b3.json",
+                "summary": {
+                    "action": "make cleanup-use observable before matched endpoint long-runs"
+                },
+            },
+            {
+                "status": "complete_role_graph_preabort_verified",
+                "_path": "binding/gpac_b5.json",
+            },
+        ]
+
+        limitations = binding_validation_limitations(records)
+
+        self.assertTrue(binding_validation_has_complete_role_graph(records))
+        self.assertEqual(limitations, [])
 
 
 if __name__ == "__main__":

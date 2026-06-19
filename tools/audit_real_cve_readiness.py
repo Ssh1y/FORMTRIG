@@ -168,8 +168,14 @@ LIMITING_BINDING_VALIDATION_STATUSES = {
     "alias_role_repaired_cleanup_use_not_captured": "alias role is repaired, but cleanup-use is not captured on the aborting path",
 }
 
+RESOLVING_BINDING_VALIDATION_STATUSES = {
+    "complete_role_graph_preabort_verified",
+}
+
 
 def binding_validation_limitations(records: list[dict[str, Any]]) -> list[str]:
+    if binding_validation_has_complete_role_graph(records):
+        return []
     limitations: list[str] = []
     for record in records:
         status = str(record.get("status") or "")
@@ -182,6 +188,13 @@ def binding_validation_limitations(records: list[dict[str, Any]]) -> list[str]:
         location = f"@{path}" if path else ""
         limitations.append(f"{status}{location}: {action}")
     return limitations
+
+
+def binding_validation_has_complete_role_graph(records: list[dict[str, Any]]) -> bool:
+    return any(
+        str(record.get("status") or "") in RESOLVING_BINDING_VALIDATION_STATUSES
+        for record in records
+    )
 
 
 def comparison_records(
@@ -506,6 +519,7 @@ def audit_target(
     binding_spec_validated = binding_validation_pass(validation_records)
     binding_status = binding_validation_status(validation_records)
     binding_limitations = binding_validation_limitations(validation_records)
+    complete_role_graph_validated = binding_validation_has_complete_role_graph(validation_records)
     comparisons = comparison_records(target_id, comparison_root)
     comparison_count = len(comparisons)
     best_speedup = speedup_comparison(comparisons)
@@ -576,10 +590,16 @@ def audit_target(
             priority = 8
         elif best_short_gate:
             readiness = "short_gate_triaged"
-            next_action = (
-                "extend latest short-gate package to matched 10m/2h endpoint "
-                "runs and repair any BindingSpec roles that stayed unobserved"
-            )
+            if complete_role_graph_validated:
+                next_action = (
+                    "rerun latest short-gate package with the complete-role-graph "
+                    "BindingSpec, then extend to matched 10m/2h endpoint runs"
+                )
+            else:
+                next_action = (
+                    "extend latest short-gate package to matched 10m/2h endpoint "
+                    "runs and repair any BindingSpec roles that stayed unobserved"
+                )
             priority = 12
         elif comparison_count:
             readiness = "short_gate_triaged"

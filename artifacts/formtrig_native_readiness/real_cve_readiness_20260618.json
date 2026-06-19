@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-19T02:19:20+00:00",
+  "generated_at_utc": "2026-06-19T02:39:03+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -14,8 +14,8 @@
       "binding_spec_present": true,
       "binding_spec_ready": true,
       "binding_spec_validated": true,
-      "binding_validation_status": "native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; same_object_binding_not_on_crash_path@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json; partial_mechanism_missing_role_coverage@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json; alias_role_repaired_cleanup_use_not_captured@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
-      "blockers": "same_object_binding_not_on_crash_path@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json: Do not promote GPAC_3403 B2 as complete same-object lifecycle evidence. Repair the object-alias role around the actually reached cleanup/free path, or reseed with an input that reaches gf_bs_new_cbk_buffer before long endpoint runs.; partial_mechanism_missing_role_coverage@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json: BindingSpec has partial mechanism coverage with missing role samples; alias_role_repaired_cleanup_use_not_captured@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json: Keep B3 as the current GPAC_3403 candidate. Next repair should focus on making cleanup-use observable on the aborting full PoC, either by binding a pre-call cleanup state that is sampled before gf_bs_del aborts or by improving snapshot-on-abort coverage.",
+      "binding_validation_status": "native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; same_object_binding_not_on_crash_path@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json; partial_mechanism_missing_role_coverage@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json; alias_role_repaired_cleanup_use_not_captured@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json; complete_role_graph_preabort_verified@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
+      "blockers": "",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
       "comparison_count": 1,
@@ -28,19 +28,21 @@
       "harness_admissibility_status": "",
       "harness_source_ready": false,
       "native_dt_values": "1",
-      "next_action": "repair BindingSpec role coverage before matched endpoint long-runs; do not promote mechanism-limited validation as complete evidence",
+      "next_action": "rerun latest short-gate package with the complete-role-graph BindingSpec, then extend to matched 10m/2h endpoint runs",
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [
           "GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml",
           "GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml",
-          "GPAC_3403.native_b3_nalu_reassign_alias_candidate.yml"
+          "GPAC_3403.native_b3_nalu_reassign_alias_candidate.yml",
+          "GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml"
         ],
         "binding_validation_records": [
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json",
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json",
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json",
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json",
+          "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json",
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json"
         ],
         "comparison_records": [
@@ -57,10 +59,10 @@
         "validation_log": "artifacts/cve_validation_logs/GPAC_3403.validation.log"
       },
       "poc_ready": true,
-      "priority": 13,
+      "priority": 12,
       "project": "gpac",
       "rank": 1,
-      "readiness": "needs_binding_role_repair",
+      "readiness": "short_gate_triaged",
       "rnt_ready": true,
       "seed_count": 1,
       "source_locations": "src/utils/bitstream.c:372#gf_bs_del",
