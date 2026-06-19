@@ -1,0 +1,61 @@
+{
+  "schema": "formtrig_gpac3403_typedops36_matched_runner_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T15:05:00Z",
+  "runner": {
+    "path": "scripts/run_gpac3403_typedops36_matched_longrun.sh",
+    "purpose": "Run corrected GPAC_3403 FORMTRIG typedops36 versus AFL++ vanilla, AFL++ CmpLog, and AFL++ Redqueen/CmpLog from the same HEVC RNT seed corpus.",
+    "formtrig_defaults": {
+      "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+      "seed_dir": "/tmp/formtrig_gpac3403_blackwhite_seed",
+      "target_cmd": "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+      "typed_mutation_max": 64,
+      "typed_ops": 36
+    },
+    "baseline_defaults": {
+      "aflplusplus_vanilla": "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+      "aflplusplus_cmplog": "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+      "redqueen_operand": "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+      "asan_options": "abort_on_error=1:detect_leaks=0:symbolize=0"
+    }
+  },
+  "dry_run_verification": {
+    "test": "tests.test_gpac3403_typedops36_matched_runner",
+    "checks": [
+      "run_plan.jsonl contains FORMTRIG plus three AFL++-family baseline arms",
+      "FORMTRIG command includes --typed-ops 36",
+      "FORMTRIG environment includes FORMTRIG_TYPED_MUTATION_MAX=64",
+      "baseline commands use the real MP4Box -cat @@ white.mp4 endpoint",
+      "CmpLog/Redqueen arms include --cmplog-binary"
+    ]
+  },
+  "execute_smoke": {
+    "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_matched_wrapper_smoke_20s_20260619",
+    "duration_s": 20,
+    "reps": 1,
+    "arms": [
+      "formtrig",
+      "aflplusplus_vanilla",
+      "aflplusplus_cmplog",
+      "redqueen_operand"
+    ],
+    "formtrig": {
+      "typed_ops": 36,
+      "formtrig_typed_execs": 21,
+      "formtrig_triggered_execs": 0,
+      "saved_non_trigger_progress_events": 0,
+      "diagnosis": "constant_lift_signal",
+      "interpretation": "Wrapper executes correctly, but 20s is below the budget needed to reach the op32-op35 compact mutator window."
+    },
+    "baselines": {
+      "aflplusplus_vanilla_success": false,
+      "aflplusplus_cmplog_success": false,
+      "redqueen_operand_success": false
+    }
+  },
+  "next_experiment": {
+    "recommended_command": "scripts/run_gpac3403_typedops36_matched_longrun.sh --duration 600 --reps 1 --jobs 4 --continue-on-fail",
+    "minimum_success_condition": "FORMTRIG formtrig_typed_execs reaches at least 64 so op32-op35 are exercised; then evaluate saved non-trigger progress, terminal _T, and baseline saved crashes under matched budget.",
+    "paper_use": "This runner is the corrected GPAC_3403 real-CVE matched experiment entrypoint; the 20s smoke is execution evidence only, not performance evidence."
+  }
+}
