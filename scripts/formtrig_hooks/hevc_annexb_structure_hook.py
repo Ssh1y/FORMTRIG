@@ -26,7 +26,9 @@ OUTPUT_LAYER_SET_TOTALS = [5, 6, 8, 12, 16, 33, 65, 132]
 ACCESS_UNIT_LAYER_IDS = [0, 1, 4, 7, 14, 16, 22, 31, 36, 37, 46, 50]
 ACCESS_UNIT_VCL_TYPES = [0, 1, 5, 14, 16, 21]
 HIGH_VPS_MAX_LAYER_IDS = [4, 7, 9, 16, 31, 50, 63]
-OP_SELECTOR_COUNT = 44
+ENDPOINT_SCALE_LAYER_IDS = [4, 7, 1, 16, 50, 31, 36, 37, 0, 22, 14, 46]
+ENDPOINT_SCALE_VCL_TYPES = [0, 0, 0, 16, 0, 21, 0, 1, 0, 14, 0, 5]
+OP_SELECTOR_COUNT = 48
 
 
 @dataclass(frozen=True)
@@ -488,6 +490,64 @@ def high_max_layer_access_unit_train(
     return b"".join(chunks)
 
 
+def endpoint_scale_access_unit_train(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    units: int,
+    dense_prefix: bool,
+    high_vps_stride: int,
+) -> bytes:
+    chunks = []
+    if dense_prefix:
+        chunks.append(dense_layered_sequence(data, nalus, anchor, sample, cycles=4 + (sample % 3)))
+    chunks.append(
+        access_unit_parameter_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            pps_repeats=8 + (sample % 5),
+            vps_extension=True,
+        )
+    )
+
+    for unit in range(units):
+        local_sample = sample + unit
+        layer = ENDPOINT_SCALE_LAYER_IDS[(local_sample + unit) % len(ENDPOINT_SCALE_LAYER_IDS)]
+        if unit % high_vps_stride == 0:
+            chunks.append(make_nalu(32, high_max_layer_vps_payload(local_sample), layer))
+            chunks.append(make_nalu(33, clone_payload_for_type(data, nalus, 33, anchor, local_sample), 0))
+            chunks.append(make_nalu(34, clone_payload_for_type(data, nalus, 34, anchor, local_sample), layer))
+        elif unit % 4 == 0:
+            chunks.append(make_nalu(34, clone_payload_for_type(data, nalus, 34, anchor, local_sample), layer))
+        if unit % 17 == 0:
+            chunks.append(make_nalu(32, output_layer_set_vps_payload(local_sample), 0))
+        if unit % 23 == 0:
+            chunks.append(make_nalu(49, extractor_payload(local_sample), layer))
+
+        nal_type = ENDPOINT_SCALE_VCL_TYPES[local_sample % len(ENDPOINT_SCALE_VCL_TYPES)]
+        chunks.append(
+            make_nalu(
+                nal_type,
+                access_unit_slice_payload(data, nalus, anchor, local_sample, rewrite_seed=unit % 3 == 0),
+                layer,
+            )
+        )
+        if unit % 5 == 0:
+            aux_type = ENDPOINT_SCALE_VCL_TYPES[(local_sample + 5) % len(ENDPOINT_SCALE_VCL_TYPES)]
+            aux_layer = ENDPOINT_SCALE_LAYER_IDS[(local_sample + 7) % len(ENDPOINT_SCALE_LAYER_IDS)]
+            chunks.append(
+                make_nalu(
+                    aux_type,
+                    access_unit_slice_payload(data, nalus, anchor, local_sample + 3, rewrite_seed=True),
+                    aux_layer,
+                )
+            )
+    return b"".join(chunks)
+
+
 def access_unit_train(
     data: bytes,
     nalus: list[Nalu],
@@ -931,6 +991,31 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
             data, nalus, anchor, sample + 11, units=6 + (sample % 5), dense_prefix=False
         )
         out = data[: anchor.start] + dense + high + data[anchor.start :]
+    elif selector == 44:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = endpoint_scale_access_unit_train(
+            data, nalus, anchor, sample, units=112 + sample * 6, dense_prefix=False, high_vps_stride=10
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 45:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = endpoint_scale_access_unit_train(
+            data, nalus, anchor, sample + 3, units=144 + sample * 5, dense_prefix=True, high_vps_stride=9
+        )
+        out = train + data
+    elif selector == 46:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = endpoint_scale_access_unit_train(
+            data, nalus, anchor, sample + 7, units=172 + sample * 3, dense_prefix=False, high_vps_stride=8
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 47:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        prefix = output_layer_set_train(data, nalus, anchor, sample, repetitions=3 + (sample % 3))
+        train = endpoint_scale_access_unit_train(
+            data, nalus, anchor, sample + 11, units=192 + sample * 2, dense_prefix=True, high_vps_stride=7
+        )
+        out = data[: anchor.start] + prefix + train + data[anchor.start :]
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]

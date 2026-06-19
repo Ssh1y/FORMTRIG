@@ -1388,18 +1388,17 @@ GPAC_3403:
   disposition = needs_lifecycle_alias_repair
   action = repair_real_cve_lifecycle_alias_to_endpoint
   runnable = false
-  current evidence = GPAC typed-retained/frontier diagnostics show TC-rooted
-                     parser-frontier guidance: retained candidates reach
-                     HEVC/L-HEVC parser neighborhoods and match 7 positive-control
-                     parser signatures; matched 600s baselines still have 0
-                     endpoint successes
+  current evidence = GPAC typed mutation now has endpoint-scale parser/import
+                     evidence: op44-op47 variants reach HEVC/L-HEVC import
+                     states, match all positive-control parser/import signatures,
+                     and exceed the positive-control import scale
+                     (221 samples / 550 NALUs vs 172 / 413), while still not
+                     producing ASAN/double-free terminal behavior
   lifecycle audit = artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json
-  blocked claims = same_object relation runtime proof is false; retained endpoint
-                   variants have 0 ASAN/double-free files; top variant imports
-                   only 2 samples / 15 NALUs versus positive control 172 samples
-                   / 413 NALUs; missing signatures include layers_only_4,
-                   vps_max_layer_id, nal_type_49_not_handled, asan,
-                   asan_double_free
+  endpoint-scale repair = artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.json
+  blocked claims = same_object relation runtime proof is false; endpoint-scale
+                   variants still have 0 ASAN/double-free files; remaining
+                   missing signatures are asan and asan_double_free
 
 LIBXML2_1107:
   skipped = harness_admissibility_not_core_evidence
@@ -1410,13 +1409,18 @@ LIBXML2_1107:
 这个更新修正了三个旧调度错误：PHP003 已完成 current-ABI endpoint comparison，
 不再进入主预算 runnable queue；GPAC_3403 也不再是“没有 BindingSpec”，因为
 real-CVE readiness 已经证明 B5/B6/B8/B12 这一线有 BindingSpec、short-gate 和
-typed-retained parser-frontier evidence；但新的 lifecycle gap audit 证明它还不能
-直接进入 7200s x3 endpoint 长测，因为 HEVC/L-HEVC parser neighborhood 尚未变成
-same-object lifecycle alias terminal。下一轮主预算不是继续跑 PHP003，也不是继续把
-LIBXML2_1107 当 core real-CVE 正例；LIBXML2 只能保留为 native pipeline /
-BindingSpec / crash-accounting sanity evidence。主预算应围绕 PDF003 的
-cross-target hard evidence、GPAC_3403 的 lifecycle-alias repair，以及新的自然输入
-驱动 real-CVE target 展开。
+typed-retained parser-frontier evidence；2026-06-19 的 op44-op47 repair 又把
+HEVC/L-HEVC parser neighborhood 推进到 PoC 级 endpoint-scale import：16 个
+variant 全部进入 HEVC/L-HEVC import，最高 221 samples / 550 NALUs，正控制为
+172 / 413；signature audit 只剩 asan 和 asan_double_free 没匹配。因此 GPAC
+现在的 blocker 不再是“样本规模不够”，而是“sample->data 到
+GF_BitStream->original 的 alias/free terminal 关系没有闭合”。它仍不能直接进入
+7200s x3 endpoint 长测，除非先出现 ASAN/double-free 或等价的 lifecycle-alias
+runtime proof。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
+core real-CVE 正例；LIBXML2 只能保留为 native pipeline / BindingSpec /
+crash-accounting sanity evidence。主预算应围绕 PDF003 的 cross-target hard
+evidence、GPAC_3403 的 lifecycle-alias repair，以及新的自然输入驱动 real-CVE
+target 展开。
 
 PDF016 在 2026-06-18 worklist 中也从“未验证”变成明确的 repair/negative target：
 

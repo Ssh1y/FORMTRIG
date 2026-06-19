@@ -1,0 +1,85 @@
+{
+  "best_frontier_variants": [],
+  "best_reached_frontier_variants": [],
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+  "d_f_spec_lifted_max": null,
+  "d_f_spec_lifted_min": null,
+  "d_f_spec_lifted_values": [],
+  "duration_s": 39.932,
+  "endpoint_cmd": [
+    "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "endpoint_d_f_max": 1.0,
+  "endpoint_env_keys": [],
+  "endpoint_exit_code_counts": {
+    "0": 16
+  },
+  "endpoint_filter": "all",
+  "endpoint_native_crashes": 0,
+  "endpoint_positive_control": [
+    {
+      "exit_code": null,
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "kind": "positive_control",
+      "native_crash": false,
+      "rep": 1,
+      "sanitizer_crash": true,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "8f733ad00260354e007dbfc9aa80dc3f140fc410fad70d5b3bc8a64e804b3003",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": true
+    }
+  ],
+  "endpoint_probe_runs": 16,
+  "endpoint_replayed_variants": 16,
+  "endpoint_replays": 1,
+  "endpoint_sanitizer_crashes": 0,
+  "endpoint_sanitizer_exit_code": 86,
+  "endpoint_timeout": 5.0,
+  "endpoint_timeouts": 0,
+  "first_endpoint_native_crash": null,
+  "first_endpoint_sanitizer_crash": null,
+  "first_trigger": null,
+  "generated_variants": 16,
+  "hook": "scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+  "lift_spec": null,
+  "op_start": 44,
+  "ops": 4,
+  "ranges": [
+    [
+      0,
+      2975
+    ]
+  ],
+  "reached": 12,
+  "reached_role_sample_counts": {},
+  "reached_same_object_samples": 0,
+  "replayed_variants": 16,
+  "rnt": 12,
+  "role_sample_counts": {},
+  "runtime_event_map": null,
+  "same_object_samples": 0,
+  "samples": 4,
+  "schedule": "round_robin",
+  "schema": "formtrig_gpac3403_hevc_frontier_sweep_v1",
+  "seed": "/tmp/formtrig_gpac3403_blackwhite_seed/blackwhite_yuv444p-frame.hevc",
+  "seed_sha256": "a120df5b64e812e5b07c672bcb0ba2b712a346fd8d3997ab0d8e838dedc02d25",
+  "spec_lifted": 0,
+  "target_cmd": [
+    "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "target_site_ids": "65063371",
+  "timeouts": 4,
+  "triggered": 0
+}

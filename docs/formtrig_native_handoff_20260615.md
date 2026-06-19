@@ -339,18 +339,17 @@ GPAC_3403:
   disposition = needs_lifecycle_alias_repair
   action = repair_real_cve_lifecycle_alias_to_endpoint
   runnable = false
-  current evidence = GPAC typed-retained/frontier diagnostics show TC-rooted
-                     parser-frontier guidance: retained candidates reach
-                     HEVC/L-HEVC parser neighborhoods and match 7 positive-control
-                     parser signatures; matched 600s baselines still have 0
-                     endpoint successes
+  current evidence = GPAC typed mutation now has endpoint-scale parser/import
+                     evidence: op44-op47 variants reach HEVC/L-HEVC import
+                     states, match all positive-control parser/import signatures,
+                     and exceed the positive-control import scale
+                     (221 samples / 550 NALUs vs 172 / 413), while still not
+                     producing ASAN/double-free terminal behavior
   lifecycle audit = artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json
-  blocked claims = same_object relation runtime proof is false; retained endpoint
-                   variants have 0 ASAN/double-free files; top variant imports
-                   only 2 samples / 15 NALUs versus positive control 172 samples
-                   / 413 NALUs; missing signatures include layers_only_4,
-                   vps_max_layer_id, nal_type_49_not_handled, asan,
-                   asan_double_free
+  endpoint-scale repair = artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.json
+  blocked claims = same_object relation runtime proof is false; endpoint-scale
+                   variants still have 0 ASAN/double-free files; remaining
+                   missing signatures are asan and asan_double_free
 
 LIBXML2_1107:
   skipped = harness_admissibility_not_core_evidence
@@ -362,12 +361,15 @@ This fixes three stale scheduling decisions: PHP003 has completed its current-AB
 endpoint comparison and is now speedup/control plus mechanism evidence, not a
 hard-pain target; GPAC_3403 is no longer a "draft BindingSpec first" target
 because the real-CVE readiness record proves BindingSpec, short-gate, and
-typed-retained parser-frontier evidence; the new lifecycle-gap audit also proves
-GPAC_3403 should not burn 7200s x3 yet because HEVC/L-HEVC parser neighborhood
-progress has not become same-object lifecycle-alias terminal behavior. New
-hard-pain budget should go to cross-target evidence after PDF003, to GPAC_3403
-lifecycle-alias repair, or to a replacement real-CVE target whose input naturally
-drives parser state. Do not spend main budget on another PHP003 rerun or on
+typed-retained parser-frontier evidence. The 2026-06-19 op44-op47 repair also
+proves the format-scale gap is no longer the main blocker: a 16-variant endpoint
+sweep reached 221 samples / 550 NALUs and matched every positive-control
+parser/import signature, leaving only asan and asan_double_free absent. GPAC_3403
+still should not burn 7200s x3 yet because this parser-scale progress has not
+become same-object lifecycle-alias terminal behavior. New hard-pain budget should
+go to cross-target evidence after PDF003, to GPAC_3403 lifecycle-alias repair, or
+to a replacement real-CVE target whose input naturally drives parser state. Do
+not spend main budget on another PHP003 rerun or on
 LIBXML2_1107 as core evidence.
 
 PDF016 现在有正式 validation record：

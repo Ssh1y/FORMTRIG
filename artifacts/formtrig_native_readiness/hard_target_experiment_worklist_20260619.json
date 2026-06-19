@@ -1060,17 +1060,17 @@
       "action": "repair_real_cve_lifecycle_alias_to_endpoint",
       "benefit_to_prove": "Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget.",
       "blocked_claims": [
-        "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; retained endpoint variants have 0 ASAN/double-free files; top variant imports only 2 samples / 15 NALUs versus positive control 172 samples / 413 NALUs; missing signatures include layers_only_4, vps_max_layer_id, nal_type_49_not_handled, asan, asan_double_free"
+        "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free"
       ],
       "blocking_issue": [
-        "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; retained endpoint variants have 0 ASAN/double-free files; top variant imports only 2 samples / 15 NALUs versus positive control 172 samples / 413 NALUs; missing signatures include layers_only_4, vps_max_layer_id, nal_type_49_not_handled, asan, asan_double_free"
+        "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; endpoint-scale op44-op47 variants now match all positive-control parser/import signatures and reach up to 221 samples / 550 NALUs versus positive control 172 samples / 413 NALUs, but retained/endpoint variants still have 0 ASAN/double-free files; remaining missing signatures are asan and asan_double_free"
       ],
       "category": "compound-sequence-lifecycle",
       "claim_boundary": "This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.",
       "command": "",
       "comparison_verdict": "ten_min_single_rep_not_replicated",
       "current_primary_benefits": [
-        "GPAC typed-retained/frontier diagnostics show TC-rooted parser-frontier guidance: retained candidates reach HEVC/L-HEVC parser neighborhoods and match 7 positive-control parser signatures, while matched 600s baselines still have 0 endpoint successes."
+        "GPAC typed mutation now has endpoint-scale parser/import evidence: op44-op47 variants reach HEVC/L-HEVC import states, match all positive-control parser/import signatures, and exceed the positive-control import scale (221 samples / 550 NALUs vs 172 / 413), while still not producing ASAN/double-free terminal behavior."
       ],
       "duration_s": "",
       "evidence_paths": [
@@ -1101,19 +1101,23 @@
         "artifacts/tcir/GPAC_3403.json",
         "artifacts/trigger_graphs/GPAC_3403.json",
         "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
-        "benchmarks/cve_pocs/gpac/GPAC_3403.poc"
+        "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+        "artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.json",
+        "artifacts/formtrig_native_readiness/gpac3403_endpoint_scale_repair_20260619.md",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/summary.json",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/endpoint_signature_audit.json"
       ],
       "lane": "binding_spec_first",
       "main_claim_strength": "",
       "mechanism_evidence_required": [
         "same_object object identity across lifecycle_event and use endpoints",
-        "HEVC/L-HEVC candidate scale moves beyond the current low-sample frontier",
+        "endpoint ASAN/double-free or equivalent alias/free terminal proof",
         "D_F_spec_lifted reaches the replay pre-abort distance and remains non-terminal until endpoint",
-        "typed mutation provenance for VPS/SPS/PPS/slice/access-unit construction"
+        "typed mutation provenance for endpoint-scale VPS/SPS/PPS/slice/access-unit construction"
       ],
       "post_unblock_commands": [
-        "add or tune relation-aware HEVC/lifecycle mutation for GPAC_3403",
-        "rerun a FORMTRIG-only endpoint gate with typed-retained endpoint replay",
+        "bind and score the sample-data to GF_BitStream->original alias/free relation",
+        "rerun a FORMTRIG-only endpoint gate with op44-op47 enabled and typed-retained endpoint replay",
         "only then run matched 600s/7200s faithful baselines"
       ],
       "primary_endpoint_metrics": [

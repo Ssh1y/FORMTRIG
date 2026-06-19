@@ -1,0 +1,100 @@
+{
+  "evidence_paths": [
+    "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/summary.json",
+    "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/endpoint_signature_audit.json"
+  ],
+  "generated_at_utc": "2026-06-19T22:45:23+00:00",
+  "hook_change": {
+    "operator_window": "op44-op47",
+    "purpose": "Generate endpoint-scale HEVC access-unit trains combining high VPS max-layer, output-layer-set, NAL type 49, and layered VCL samples."
+  },
+  "positive_control_metrics": {
+    "asan_double_free_files": 1,
+    "hevc_nalus_max": 413,
+    "hevc_samples_max": 172,
+    "lhevc_import_files": 1
+  },
+  "raw_run": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z",
+  "schema": "formtrig_gpac3403_endpoint_scale_repair_v1",
+  "signature_contrast": {
+    "positive_control_signatures_absent_from_variants": [
+      "asan",
+      "asan_double_free"
+    ],
+    "top_matched_positive_signature_count": 10,
+    "top_missing_positive_signatures": [
+      "asan",
+      "asan_double_free"
+    ],
+    "top_weighted_match_score": 155
+  },
+  "sweep": {
+    "duration_s": 39.932,
+    "endpoint_native_crashes": 0,
+    "endpoint_probe_runs": 16,
+    "endpoint_sanitizer_crashes": 0,
+    "generated_variants": 16,
+    "op_start": 44,
+    "ops": 4,
+    "reached": 12,
+    "replayed_variants": 16,
+    "samples": 4,
+    "triggered": 0
+  },
+  "target_id": "GPAC_3403",
+  "variant_endpoint_metrics": {
+    "asan_double_free_files": 0,
+    "hevc_import_files": 16,
+    "hevc_nalus_max": 550,
+    "hevc_samples_max": 221,
+    "hevc_top_samples": [
+      {
+        "nalus": 550,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/variant_000015.endpoint_1.stderr",
+        "samples": 221
+      },
+      {
+        "nalus": 528,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/variant_000011.endpoint_1.stderr",
+        "samples": 205
+      },
+      {
+        "nalus": 344,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/variant_000006.endpoint_1.stderr",
+        "samples": 193
+      },
+      {
+        "nalus": 536,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/variant_000003.endpoint_1.stderr",
+        "samples": 189
+      },
+      {
+        "nalus": 353,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/variant_000014.endpoint_1.stderr",
+        "samples": 185
+      },
+      {
+        "nalus": 501,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/variant_000007.endpoint_1.stderr",
+        "samples": 179
+      },
+      {
+        "nalus": 339,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/variant_000002.endpoint_1.stderr",
+        "samples": 177
+      },
+      {
+        "nalus": 352,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_op44_47_endpoint_scale_sweep_20260619T224231Z/logs/variant_000010.endpoint_1.stderr",
+        "samples": 165
+      }
+    ],
+    "lhevc_import_files": 16
+  },
+  "verdict": {
+    "endpoint_scale_repaired": true,
+    "interpretation": "New endpoint-scale typed ops move GPAC variants beyond the previous low-sample frontier and match all positive-control parser/import signatures; only ASAN/double-free terminal signatures remain absent.",
+    "remaining_gap": "alias_free_terminal_missing",
+    "terminal_observed": false
+  }
+}
