@@ -1,0 +1,227 @@
+{
+  "baselines": {
+    "endpoint_oracle": "ASAN crash",
+    "runs_tsv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/evidence/baselines/baseline_runs.tsv",
+    "source_comparison": "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json",
+    "summary": [
+      {
+        "baseline": "aflplusplus_vanilla",
+        "endpoint_successes": 0,
+        "median_corpus_count": 58,
+        "median_execs_done": 1467,
+        "valid_reps": 3
+      },
+      {
+        "baseline": "aflplusplus_cmplog",
+        "endpoint_successes": 0,
+        "median_corpus_count": 56,
+        "median_execs_done": 1406,
+        "valid_reps": 3
+      },
+      {
+        "baseline": "redqueen_operand",
+        "endpoint_successes": 0,
+        "invalid_reps": 1,
+        "median_corpus_count": 32.0,
+        "median_execs_done": 1000.5,
+        "valid_reps": 2
+      }
+    ],
+    "validity_rule": "returncode in (0,124), run_time >= 50, execs_done > 0"
+  },
+  "claim_status": "short_gate_only_not_longrun",
+  "comparison_type": "asan_baseline_prescreen",
+  "duration_s": 60,
+  "evidence": {
+    "binding_signal_diagnosis_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_binding_signal_diagnosis.json",
+    "diagnosis_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_diagnosis.json",
+    "diagnosis_sha256": "0fd762e1877c961b3bb52b59475a5143abf703c3132049a5d63ccb521b96bc6e",
+    "lift_audit_csv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_lift_audit.csv",
+    "lift_audit_csv_sha256": "ad74c586ca9c190bf4e0223c6e548765ac0007a39c10f87e8b65445795bb4242",
+    "lift_feature_audit_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_lift_feature_audit.json",
+    "mutation_hook_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_mutation_hook.json",
+    "progress_jsonl_bytes": 6485571,
+    "progress_jsonl_sha256": "5b35f8da9f46a37ef98f56a4f1b4689431b1b96e6dd6d7ecb615234bac486c63",
+    "runtime_event_map": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_runtime_event_map.csv",
+    "seed_readiness_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_seed_readiness.json",
+    "seed_signal_entropy_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_seed_signal_entropy.json",
+    "summary_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_summary.json",
+    "summary_sha256": "762a74f01ef6c57ecf05161a3dfd5679416e86c9b2085994242285bbd1cfd540",
+    "terminal_monitor_json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/evidence/formtrig/formtrig_terminal_monitor.json"
+  },
+  "formtrig": {
+    "accepted_non_trigger_progress_events": 1,
+    "binding_signal_diagnosis": "role_signal_progress_observed",
+    "binding_signal_status": "pass",
+    "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml",
+    "corpus_count": 211,
+    "d_f_spec_lifted_constant": false,
+    "d_f_spec_lifted_max": 6,
+    "d_f_spec_lifted_min": 2,
+    "execs_done": 7158,
+    "lift_feature_audit_status": "pass",
+    "missing_campaign_roles": [
+      "same_object"
+    ],
+    "mutation_hook": {
+      "enabled": true,
+      "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/mp4_box_structure_hook.py",
+      "sha256": "2238d1be6586e8569d50c9e9146ee603f3199f39efc76b3be27f853a87bff4c0",
+      "source": "binding_spec"
+    },
+    "pretrigger_lift_guidance_ready": true,
+    "queued_progress": 1,
+    "role_candidate_values": {
+      "desired_producer": [
+        1
+      ],
+      "input_influence": [
+        1
+      ],
+      "lifecycle_event": [
+        1
+      ],
+      "root_observe": [
+        0,
+        1
+      ],
+      "same_object": [],
+      "use": [
+        0,
+        1
+      ]
+    },
+    "role_sample_counts": {
+      "desired_producer": 1004,
+      "input_influence": 2015,
+      "lifecycle_event": 2015,
+      "root_observe": 4096,
+      "same_object": 0,
+      "use": 4096
+    },
+    "role_values": {
+      "desired_producer": [
+        1
+      ],
+      "input_influence": [
+        1
+      ],
+      "lifecycle_event": [
+        1
+      ],
+      "root_observe": [
+        1,
+        0
+      ],
+      "same_object": [],
+      "use": [
+        1,
+        0
+      ]
+    },
+    "run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_complete_role_graph_60s_20260619",
+    "sampled_roles": [
+      "root_observe",
+      "desired_producer",
+      "use",
+      "lifecycle_event",
+      "input_influence"
+    ],
+    "saved_non_trigger_progress_events": 1,
+    "seed_readiness_status": "pass",
+    "spec_d_f_candidate_values": [
+      6,
+      2,
+      4,
+      5
+    ],
+    "terminal_monitor": {
+      "first_trigger_snapshot": null,
+      "first_trigger_time_s": null,
+      "first_triggered_execs": null,
+      "latest_snapshot": "artifacts/formtrig_native_readiness/raw/gpac3403_b5_complete_role_graph_60s_20260619/formtrig_stats_monitor/final.stats",
+      "latest_time_s": 60,
+      "latest_triggered_execs": 0,
+      "snapshot_count": 7
+    },
+    "terminal_triggered": false,
+    "typed_execs": 109,
+    "typed_finds": 14,
+    "validation_record": "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json",
+    "variable_roles": [
+      "root_observe",
+      "use"
+    ]
+  },
+  "generated_at_utc": "2026-06-19T03:20:00Z",
+  "interpretation": {
+    "does_not_support": [
+      "endpoint speedup or terminal _T success on GPAC_3403",
+      "long-run SOTA-pain proof",
+      "same_object alias sampling during the 60s RNT-seeded campaign; same_object is verified on full-PoC replay but was not reached by this short search"
+    ],
+    "next_action": "Run matched 10m/2h B5 FORMTRIG and ASAN AFL++ family endpoint campaigns; track whether same_object appears during search and whether D_F_spec_lifted moves from distance 2 toward the full-PoC pre-abort distance 1.",
+    "supports": [
+      "B5 runs end-to-end in the AFL++/native FORMTRIG campaign path with exact runtime event-map binding and B4 lift audit.",
+      "The 60s B5 campaign produces strict spec-driven pre-trigger guidance: non-constant D_F_spec_lifted values and a queued non-trigger progress input.",
+      "Compared with the earlier B1 60s validation, B5 exposes variable TC-rooted root/use roles in campaign candidates instead of only constant role values.",
+      "The inherited 60s ASAN AFL++ family baseline pre-screen still has 8 valid baseline repetitions and 0 endpoint successes."
+    ]
+  },
+  "lineage": {
+    "b1_60s": {
+      "accepted_non_trigger_progress_events": 2,
+      "candidate_variable_roles": [],
+      "role_candidate_unique_values": {
+        "desired_producer": 1,
+        "input_influence": 1,
+        "lifecycle_event": 1,
+        "root_observe": 1,
+        "same_object": 0,
+        "use": 1
+      },
+      "same_object_samples": 0,
+      "spec_d_f_candidate_values": [
+        4,
+        2,
+        3
+      ],
+      "typed_execs": 109,
+      "typed_finds": 14,
+      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json"
+    },
+    "b5_60s": {
+      "accepted_non_trigger_progress_events": 1,
+      "candidate_variable_roles": [
+        "root_observe",
+        "use"
+      ],
+      "role_candidate_unique_values": {
+        "desired_producer": 1,
+        "input_influence": 1,
+        "lifecycle_event": 1,
+        "root_observe": 2,
+        "same_object": 0,
+        "use": 2
+      },
+      "same_object_samples": 0,
+      "spec_d_f_candidate_values": [
+        6,
+        2,
+        4,
+        5
+      ],
+      "typed_execs": 109,
+      "typed_finds": 14
+    },
+    "b5_full_poc_replay": {
+      "full_poc_d_f_spec_lifted_last": 1,
+      "full_poc_same_object_samples": 51,
+      "full_poc_use_samples": 1838,
+      "validation_record": "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json"
+    }
+  },
+  "schema": "formtrig_comparison_v1",
+  "seed_corpus": "artifacts/rnt_corpus/GPAC_3403/seeds",
+  "target_id": "GPAC_3403"
+}

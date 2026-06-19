@@ -46,12 +46,15 @@ class RealCveReadinessAuditTest(unittest.TestCase):
         records = [
             {
                 "_path": "artifacts/formtrig_native_readiness/comparisons/example/comparison.json",
+                "generated_at_utc": "2026-06-19T03:00:00Z",
                 "claim_status": "short_gate_only_not_longrun",
                 "comparison_type": "asan_baseline_prescreen",
                 "formtrig": {
                     "pretrigger_lift_guidance_ready": True,
                     "accepted_non_trigger_progress_events": 2,
                     "saved_non_trigger_progress_events": 2,
+                    "variable_roles": ["root_observe", "use"],
+                    "spec_d_f_candidate_values": [6, 4, 2],
                 },
                 "baselines": {
                     "summary": [
@@ -67,8 +70,29 @@ class RealCveReadinessAuditTest(unittest.TestCase):
         self.assertIsNotNone(record)
         benefit = short_gate_benefit(record)
         self.assertIn("pre-trigger lifted guidance", benefit)
+        self.assertIn("variable TC-rooted roles: root_observe,use", benefit)
+        self.assertIn("spec D_F candidate values {6,4,2}", benefit)
         self.assertIn("valid baseline reps 6", benefit)
         self.assertIn("0 endpoint successes", benefit)
+
+    def test_short_gate_comparison_prefers_newer_generated_record(self):
+        records = [
+            {
+                "_path": "artifacts/formtrig_native_readiness/comparisons/old/comparison.json",
+                "claim_status": "short_gate_only_not_longrun",
+                "comparison_type": "asan_baseline_prescreen",
+            },
+            {
+                "_path": "artifacts/formtrig_native_readiness/comparisons/new/comparison.json",
+                "generated_at_utc": "2026-06-19T03:00:00Z",
+                "claim_status": "short_gate_only_not_longrun",
+                "comparison_type": "asan_baseline_prescreen",
+            },
+        ]
+
+        record = short_gate_comparison(records)
+
+        self.assertEqual(record["_path"], "artifacts/formtrig_native_readiness/comparisons/new/comparison.json")
 
     def test_binding_validation_limitations_block_mechanism_promotion(self):
         records = [

@@ -301,7 +301,14 @@ def short_gate_comparison(records: list[dict[str, Any]]) -> dict[str, Any] | Non
     ]
     if not candidates:
         return None
-    candidates.sort(key=lambda record: str(record.get("_path") or ""))
+    candidates.sort(
+        key=lambda record: (
+            1 if record.get("generated_at_utc") else 0,
+            str(record.get("generated_at_utc") or ""),
+            str(record.get("_path") or ""),
+        ),
+        reverse=True,
+    )
     return candidates[0]
 
 
@@ -357,6 +364,20 @@ def short_gate_benefit(record: dict[str, Any] | None) -> str:
             "short-gate pre-screen: FORMTRIG pre-trigger lifted guidance"
             f" with {progress} accepted / {saved} saved non-trigger progress events"
         )
+    variable_roles = formtrig.get("variable_roles")
+    candidate_values = formtrig.get("spec_d_f_candidate_values")
+    if isinstance(variable_roles, list) and variable_roles:
+        parts.append("variable TC-rooted roles: " + ",".join(str(role) for role in variable_roles))
+    if isinstance(candidate_values, list) and candidate_values:
+        try:
+            ordered_values = sorted({float(value) for value in candidate_values}, reverse=True)
+            values = ",".join(
+                str(int(value)) if value.is_integer() else str(value)
+                for value in ordered_values
+            )
+        except (TypeError, ValueError):
+            values = ",".join(str(value) for value in candidate_values)
+        parts.append(f"spec D_F candidate values {{{values}}}")
     if valid_reps:
         parts.append(
             f"ASAN AFL++ family valid baseline reps {valid_reps} with "
@@ -591,10 +612,25 @@ def audit_target(
         elif best_short_gate:
             readiness = "short_gate_triaged"
             if complete_role_graph_validated:
-                next_action = (
-                    "rerun latest short-gate package with the complete-role-graph "
-                    "BindingSpec, then extend to matched 10m/2h endpoint runs"
+                short_gate_formtrig = (
+                    best_short_gate.get("formtrig")
+                    if isinstance(best_short_gate.get("formtrig"), dict)
+                    else {}
                 )
+                short_gate_spec = " ".join(
+                    str(short_gate_formtrig.get(key) or "")
+                    for key in ("binding_spec", "validation_record")
+                )
+                if "native_b5" in short_gate_spec or "complete_role_graph" in short_gate_spec:
+                    next_action = (
+                        "extend latest complete-role-graph short-gate package "
+                        "to matched 10m/2h endpoint runs"
+                    )
+                else:
+                    next_action = (
+                        "rerun latest short-gate package with the complete-role-graph "
+                        "BindingSpec, then extend to matched 10m/2h endpoint runs"
+                    )
             else:
                 next_action = (
                     "extend latest short-gate package to matched 10m/2h endpoint "

@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-19T02:39:03+00:00",
+  "generated_at_utc": "2026-06-19T02:48:59+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -18,9 +18,9 @@
       "blockers": "",
       "build_ready": true,
       "category": "compound-sequence-lifecycle",
-      "comparison_count": 1,
+      "comparison_count": 2,
       "core_evidence_allowed": true,
-      "current_benefit": "short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 2 accepted / 2 saved non-trigger progress events; ASAN AFL++ family valid baseline reps 8 with 0 endpoint successes",
+      "current_benefit": "short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 1 accepted / 1 saved non-trigger progress events; variable TC-rooted roles: root_observe,use; spec D_F candidate values {6,5,4,2}; ASAN AFL++ family valid baseline reps 8 with 0 endpoint successes",
       "current_speedup_package": "",
       "discovery_lane": "binding_spec_first",
       "discovery_rank": 4,
@@ -28,7 +28,7 @@
       "harness_admissibility_status": "",
       "harness_source_ready": false,
       "native_dt_values": "1",
-      "next_action": "rerun latest short-gate package with the complete-role-graph BindingSpec, then extend to matched 10m/2h endpoint runs",
+      "next_action": "extend latest complete-role-graph short-gate package to matched 10m/2h endpoint runs",
       "paths": {
         "atom": "artifacts/atoms/GPAC_3403.json",
         "binding_specs": [
@@ -46,7 +46,8 @@
           "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json"
         ],
         "comparison_records": [
-          "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json"
+          "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json",
+          "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/comparison.json"
         ],
         "harness_admissibility_records": [],
         "harness_sources": [],

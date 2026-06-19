@@ -7,7 +7,7 @@ or terminal validation.
 
 | rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | short-gate packages | next action |
 | ---: | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
-| 1 | GPAC_3403 | compound-sequence-lifecycle | `short_gate_triaged` | yes | yes | yes | yes | yes | 1 | rerun latest short-gate package with the complete-role-graph BindingSpec, then extend to matched 10m/2h endpoint runs |
+| 1 | GPAC_3403 | compound-sequence-lifecycle | `short_gate_triaged` | yes | yes | yes | yes | yes | 2 | extend latest complete-role-graph short-gate package to matched 10m/2h endpoint runs |
 | 2 | LIBARCHIVE_2935 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 3 | LIBARCHIVE_2937 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 4 | LIBARCHIVE_2938 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
@@ -25,9 +25,9 @@ or terminal validation.
 - Native D_T values in RNT metadata: `1`
 - Terminal validation signal: SUMMARY: AddressSanitizer: double-free (/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box+0x194f48a) (BuildId: da5c3e139317cf0e2b8580968246bc6803e86243) in free
 - Binding validation status: native_binding_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json; same_object_binding_not_on_crash_path@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json; partial_mechanism_missing_role_coverage@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json; alias_role_repaired_cleanup_use_not_captured@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json; complete_role_graph_preabort_verified@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json; native_site_map_validated@artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json
-- Short-gate comparison packages: 1
+- Short-gate comparison packages: 2
 - Current speedup package: none
-- Current benefit: short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 2 accepted / 2 saved non-trigger progress events; ASAN AFL++ family valid baseline reps 8 with 0 endpoint successes
+- Current benefit: short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 1 accepted / 1 saved non-trigger progress events; variable TC-rooted roles: root_observe,use; spec D_F candidate values {6,5,4,2}; ASAN AFL++ family valid baseline reps 8 with 0 endpoint successes
 - Blockers: none
 - Program: `benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box`
 - RNT manifest: `artifacts/rnt_corpus/GPAC_3403/manifest.json`
