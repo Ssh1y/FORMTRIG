@@ -1134,8 +1134,27 @@ seed replay:
   terminal _T = 277
 ```
 
-Remaining limitation before using PHP003 as endpoint evidence: run faithful
-baselines on the same `exif_thumbnail` runner and replicate with longer budgets.
+PHP003 is no longer missing same-runner baselines. The 2026-06-18 600s x1
+same-runner package is available:
+
+```text
+comparison = artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.md
+baseline_gap = artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json
+verdict = speedup_but_under_replicated
+FORMTRIG first _T = 1.985s exact queue/progress time
+FORMTRIG terminal _T = 21024
+AFL++ CmpLog = 0/1 _T in 600s
+AFL++ vanilla first _T = 180s, terminal _T = 31
+Redqueen/operand first _T = 330s, terminal _T = 11
+speedup over fastest successful baseline = 90.68x
+baseline pre-trigger binary flatness = pass
+baseline guidance gap status = fail_fast_baseline
+```
+
+Interpretation: PHP003 is same-runner speedup/control evidence, not hard
+SOTA-pain evidence. The baseline-visible binary oracle is flat before `_T`, but
+AFL++ vanilla reaches `_T` within the acceptable 600s threshold. It is also only
+1 rep, so it cannot support a final performance claim.
 
 2026-06-19 current-ABI revalidation confirms the same B4 path with the ABI
 guarded AFL++ binary, not the older standalone checkout:
@@ -1143,6 +1162,7 @@ guarded AFL++ binary, not the older standalone checkout:
 ```text
 artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_current_abi_20s_20260619T203504Z/summary.tsv
 validation = artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json
+readout = artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/current_abi_readout_20260619.md
 afl-fuzz = experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz
 diagnosis = triggered
 pretrigger_lift_guidance_ready = true
@@ -1156,9 +1176,11 @@ typed_execs / typed_finds = 124 / 11
 ```
 
 This closes the FORMTRIG-side repaired-runner validation under the current
-AFL++ ABI. It is still not a matched endpoint result: the next step remains
-faithful AFL++/CmpLog/Redqueen-family baselines on the same `exif_thumbnail`
-runner, followed by replicated longer FORMTRIG/baseline comparisons.
+AFL++ ABI. The remaining PHP003 work is narrower: rerun the 600s FORMTRIG arm
+with the current ABI-selected AFL++ path and collect at least 3 repetitions for
+each matched baseline family on the same `exif_thumbnail` runner. Unless those
+replicated baselines become late, missing, or high-variance, keep PHP003 as
+speedup/control evidence rather than hard SOTA-pain evidence.
 
 ### 5. SQL013 不能硬做
 

@@ -1504,14 +1504,29 @@ PHP003:
       non-trigger candidate D_F_spec_lifted values = {2,3}
       terminal _T = 277
 
-  PHP003 现在可以作为 repaired-runner scalar-D_F smoke；仍不是最终主结果，
-  因为还缺 faithful baseline 同 runner 对照和 replicated long-run matched
-  endpoint evidence。
+  PHP003 已经不是“baseline 同 runner 对照缺失”的状态。2026-06-18 的
+  same-runner 600s x1 package 已经落盘：
+    comparison = artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.md
+    baseline_gap = artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json
+    verdict = speedup_but_under_replicated
+    FORMTRIG first _T = 1.985s exact queue/progress time
+    FORMTRIG terminal _T = 21024
+    AFL++ CmpLog = 0/1 _T in 600s
+    AFL++ vanilla first _T = 180s, terminal _T = 31
+    Redqueen/operand first _T = 330s, terminal _T = 11
+    speedup over fastest successful baseline = 90.68x
+    baseline pre-trigger binary flatness = pass
+    baseline guidance gap status = fail_fast_baseline
+  因此 PHP003 当前只能作为 same-runner speedup/control + mechanism evidence：
+  baseline 的二值 oracle 在 `_T` 前确实 flat，但 vanilla 在 600s 可接受阈值内
+  触发，所以它不能写成 hard SOTA-pain 主证据。它还 under-replicated，只是
+  1 rep。
 
   2026-06-19 用 ABI-current AFL++ 重新确认了同一 B4 repaired-runner 路径，
   避免旧 standalone `experiments/aflplusplus/AFLplusplus/afl-fuzz` 污染证据：
     artifact = artifacts/formtrig_native_readiness/raw/php003_exif_thumbnail_b4_current_abi_20s_20260619T203504Z/summary.tsv
     validation = artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json
+    readout = artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/current_abi_readout_20260619.md
     afl-fuzz = experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz
     diagnosis = triggered
     pretrigger_lift_guidance_ready = true
@@ -1524,9 +1539,11 @@ PHP003:
     non-trigger candidate D_F_spec_lifted values = {2,3}
     typed_execs / typed_finds = 124 / 11
   结论边界不变：这证明 PHP003 repaired runner 上 FORMTRIG 侧 R2T
-  validation 已经闭合；进入主结果还必须在同一个 `exif_thumbnail` runner 上跑
-  faithful AFL++/CmpLog/Redqueen-family baselines 和 replicated longer FORMTRIG
-  matched comparison。
+  validation 已经在 current ABI 下闭合；进入最终主结果还必须用 current ABI
+  重跑 600s FORMTRIG arm，并在同一个 `exif_thumbnail` runner 上做至少 3 rep
+  faithful AFL++/CmpLog/Redqueen-family matched comparison。除非 replicated
+  baselines 变成 late/missing/high-variance，否则 PHP003 保持 speedup/control，
+  不作为 hard SOTA-pain。
 
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance

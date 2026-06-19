@@ -1,0 +1,90 @@
+{
+  "schema": "formtrig_current_abi_comparison_readout_v1",
+  "target_id": "PHP003",
+  "runner": "exif_thumbnail",
+  "date": "2026-06-19",
+  "sources": {
+    "current_abi_validation": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json",
+    "same_runner_comparison": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.json",
+    "same_runner_comparison_md": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.md",
+    "baseline_guidance_gap": "artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json"
+  },
+  "current_abi_formtrig_validation": {
+    "afl_fuzz": "experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz",
+    "budget_s": 20,
+    "diagnosis": "triggered",
+    "terminal_triggered_execs": 43,
+    "pretrigger_lift_guidance_ready": true,
+    "accepted_non_trigger_progress_events": 2,
+    "saved_non_trigger_progress_events": 2,
+    "queued_progress": 7,
+    "execs_done": 7290,
+    "reached_execs": 1556,
+    "d_f_spec_lifted_constant": false,
+    "d_f_spec_lifted_values": [2, 3],
+    "non_trigger_candidate_d_f_spec_lifted_values": [2, 3],
+    "variable_roles": ["use"]
+  },
+  "existing_same_runner_600s_comparison": {
+    "status": "speedup_but_under_replicated",
+    "formtrig_first_t_s": 1.985,
+    "formtrig_terminal_triggered_execs": 21024,
+    "formtrig_accepted_non_trigger_progress_events": 1,
+    "formtrig_saved_non_trigger_progress_events": 1,
+    "formtrig_afl_fuzz_note": "This 600s FORMTRIG arm used the older standalone AFL++ checkout; the current-ABI 20s validation confirms the same B4 path still reaches terminal _T with pre-trigger lift guidance.",
+    "baselines": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget_s": 600,
+        "success": false,
+        "first_t_s": null,
+        "terminal_triggered": 0,
+        "reached": 24946,
+        "execs_done": 73384
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget_s": 600,
+        "success": true,
+        "first_t_s": 180,
+        "terminal_triggered": 31,
+        "reached": 2518,
+        "execs_done": 72343
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget_s": 600,
+        "success": true,
+        "first_t_s": 330,
+        "terminal_triggered": 11,
+        "reached": 24944,
+        "execs_done": 73450
+      }
+    ],
+    "speedup_over_fastest_successful_baseline": 90.6801007556675
+  },
+  "baseline_guidance_gap": {
+    "status": "fail_fast_baseline",
+    "pretrigger_binary_flat_pass": true,
+    "endpoint_cost_pass": false,
+    "fastest_successful_baseline_trigger_time_s": 180,
+    "interpretation": "faithful baselines show flat binary pre-trigger behavior, but vanilla reaches _T within the acceptable 600s threshold; PHP003 is speedup/control evidence, not hard SOTA-pain evidence."
+  },
+  "claim_boundary": {
+    "supported": [
+      "PHP003 repaired exif_thumbnail runner closes the FORMTRIG-side R2T validation under the current AFL++ ABI",
+      "The existing same-runner 600s x1 package supports a strong TTE speedup/control readout",
+      "Baseline-visible binary feedback is flat before _T in the measured baseline runs"
+    ],
+    "not_supported_yet": [
+      "hard SOTA-pain claim for PHP003",
+      "final replicated performance claim",
+      "fully current-ABI 600s matched FORMTRIG/baseline comparison package"
+    ]
+  },
+  "next_actions": [
+    "rerun the PHP003 FORMTRIG 600s arm with the current ABI-selected AFL++ path",
+    "collect at least 3 repetitions per matched baseline family on the same exif_thumbnail runner",
+    "keep PHP003 as speedup/control evidence unless replicated baselines become late, missing, or high-variance"
+  ]
+}

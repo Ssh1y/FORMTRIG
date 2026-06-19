@@ -49,6 +49,13 @@ Design evidence used for attribution:
   - source: `artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json`
   - interpretation: a faithful baseline reaches _T within the acceptable threshold, so this is not hard SOTA-pain evidence
 
+## Current-ABI Follow-Up
+
+- Readout: `artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/current_abi_readout_20260619.md`
+- Current-ABI validation: `artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json`
+- Current-ABI 20s validation confirms the same B4 repaired-runner path still reaches terminal `_T` with accepted non-trigger lift guidance.
+- The 600s FORMTRIG arm in this package used the older standalone AFL++ checkout, so rerun the 600s FORMTRIG arm with the ABI-current AFL++ path before treating PHP003 as final performance evidence.
+
 ## FORMTRIG Runs
 
 | label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |
