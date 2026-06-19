@@ -1175,10 +1175,27 @@ non-trigger candidate D_F_spec_lifted values = {2,3}
 typed_execs / typed_finds = 124 / 11
 ```
 
-This closes the FORMTRIG-side repaired-runner validation under the current
-AFL++ ABI. The remaining PHP003 work is narrower: rerun the 600s FORMTRIG arm
-with the current ABI-selected AFL++ path and collect at least 3 repetitions for
-each matched baseline family on the same `exif_thumbnail` runner. Unless those
+The current-ABI 600s FORMTRIG arm has also been rerun:
+
+```text
+artifact = artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/batch_summary.jsonl
+first _T = 7.595s exact queue time
+first _T queue = id:000083,src:000000,time:7595,execs:1815,op:havoc,rep:1,+cov
+first _T monitor upper bound = 60s
+terminal _T = 70678
+accepted/saved non-trigger progress = 2/2
+saved triggered progress = 7855
+execs_done / reached_execs = 118021 / 71991
+D_F_spec_lifted values = {2,3}
+typed_execs / typed_finds = 242 / 44
+stability_failures = 0
+speedup over fastest successful baseline by exact queue time = 23.70x
+```
+
+This closes both the FORMTRIG-side repaired-runner validation and the 600s
+FORMTRIG arm under the current AFL++ ABI. The remaining PHP003 work is matched
+replication: collect at least 3 repetitions for each baseline family on the
+same `exif_thumbnail` runner and refresh the comparison package. Unless those
 replicated baselines become late, missing, or high-variance, keep PHP003 as
 speedup/control evidence rather than hard SOTA-pain evidence.
 

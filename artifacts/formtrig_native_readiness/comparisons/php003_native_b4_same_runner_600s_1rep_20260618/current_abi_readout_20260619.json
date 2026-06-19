@@ -5,6 +5,7 @@
   "date": "2026-06-19",
   "sources": {
     "current_abi_validation": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json",
+    "current_abi_600s_formtrig": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/batch_summary.jsonl",
     "same_runner_comparison": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.json",
     "same_runner_comparison_md": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.md",
     "baseline_guidance_gap": "artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json"
@@ -25,13 +26,46 @@
     "non_trigger_candidate_d_f_spec_lifted_values": [2, 3],
     "variable_roles": ["use"]
   },
+  "current_abi_formtrig_600s": {
+    "afl_fuzz": "experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz",
+    "budget_s": 600,
+    "run_time_s": 600,
+    "diagnosis": "triggered",
+    "pretrigger_lift_guidance_ready": true,
+    "has_non_trigger_progress": true,
+    "accepted_non_trigger_progress_events": 2,
+    "saved_non_trigger_progress_events": 2,
+    "saved_triggered_progress_events": 7855,
+    "queued_progress": 7857,
+    "terminal_triggered_execs": 70678,
+    "execs_done": 118021,
+    "reached_execs": 71991,
+    "spec_lifted_events": 16167,
+    "first_t_exact_time_s": 7.595,
+    "first_t_queue_file": "id:000083,src:000000,time:7595,execs:1815,op:havoc,rep:1,+cov",
+    "first_t_progress_execs_done": 1822,
+    "first_t_monitor_upper_bound_s": 60,
+    "first_saved_non_trigger_execs_done": 155,
+    "second_saved_non_trigger_execs_done": 669,
+    "d_f_spec_lifted_constant": false,
+    "d_f_spec_lifted_values": [2, 3],
+    "non_trigger_candidate_d_f_spec_lifted_values": [2, 3],
+    "variable_roles": ["use"],
+    "typed_execs": 242,
+    "typed_finds": 44,
+    "stability_checks": 23557,
+    "stability_failures": 0,
+    "progress_log_dropped": 660,
+    "speedup_over_fastest_successful_baseline_by_exact_first_t": 23.69980250164582,
+    "speedup_over_fastest_successful_baseline_by_monitor_upper_bound": 3.0
+  },
   "existing_same_runner_600s_comparison": {
     "status": "speedup_but_under_replicated",
     "formtrig_first_t_s": 1.985,
     "formtrig_terminal_triggered_execs": 21024,
     "formtrig_accepted_non_trigger_progress_events": 1,
     "formtrig_saved_non_trigger_progress_events": 1,
-    "formtrig_afl_fuzz_note": "This 600s FORMTRIG arm used the older standalone AFL++ checkout; the current-ABI 20s validation confirms the same B4 path still reaches terminal _T with pre-trigger lift guidance.",
+    "formtrig_afl_fuzz_note": "This 600s FORMTRIG arm used the older standalone AFL++ checkout; the current-ABI 600s arm above supersedes it for FORMTRIG-side ABI evidence while preserving the same baseline comparison context.",
     "baselines": [
       {
         "baseline": "aflplusplus_cmplog",
@@ -73,18 +107,19 @@
   "claim_boundary": {
     "supported": [
       "PHP003 repaired exif_thumbnail runner closes the FORMTRIG-side R2T validation under the current AFL++ ABI",
+      "The current-ABI 600s FORMTRIG arm reaches terminal _T and preserves accepted non-trigger lift guidance",
       "The existing same-runner 600s x1 package supports a strong TTE speedup/control readout",
       "Baseline-visible binary feedback is flat before _T in the measured baseline runs"
     ],
     "not_supported_yet": [
       "hard SOTA-pain claim for PHP003",
       "final replicated performance claim",
-      "fully current-ABI 600s matched FORMTRIG/baseline comparison package"
+      "fully replicated current-ABI matched FORMTRIG/baseline comparison package"
     ]
   },
   "next_actions": [
-    "rerun the PHP003 FORMTRIG 600s arm with the current ABI-selected AFL++ path",
     "collect at least 3 repetitions per matched baseline family on the same exif_thumbnail runner",
+    "assemble a refreshed comparison package that uses the current-ABI 600s FORMTRIG arm and matched baseline records",
     "keep PHP003 as speedup/control evidence unless replicated baselines become late, missing, or high-variance"
   ]
 }

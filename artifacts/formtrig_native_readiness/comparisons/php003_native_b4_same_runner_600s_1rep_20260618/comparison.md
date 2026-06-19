@@ -54,7 +54,8 @@ Design evidence used for attribution:
 - Readout: `artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/current_abi_readout_20260619.md`
 - Current-ABI validation: `artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json`
 - Current-ABI 20s validation confirms the same B4 repaired-runner path still reaches terminal `_T` with accepted non-trigger lift guidance.
-- The 600s FORMTRIG arm in this package used the older standalone AFL++ checkout, so rerun the 600s FORMTRIG arm with the ABI-current AFL++ path before treating PHP003 as final performance evidence.
+- Current-ABI 600s FORMTRIG arm: first `_T` 7.595s exact queue time, terminal `_T` 70678, accepted/saved non-trigger progress 2/2.
+- The 600s FORMTRIG arm in the original comparison table used the older standalone AFL++ checkout; use the current-ABI readout above for FORMTRIG-side ABI evidence and collect 3rep matched repetitions before treating PHP003 as final performance evidence.
 
 ## FORMTRIG Runs
 

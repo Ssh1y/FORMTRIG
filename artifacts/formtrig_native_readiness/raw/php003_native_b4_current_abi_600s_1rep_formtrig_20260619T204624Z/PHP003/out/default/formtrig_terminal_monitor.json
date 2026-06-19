@@ -1,0 +1,9 @@
+{
+  "snapshot_count": 21,
+  "first_trigger_time_s": 60,
+  "first_triggered_execs": 4956,
+  "first_trigger_snapshot": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/PHP003/out/formtrig_stats_monitor/90.stats",
+  "latest_time_s": 600,
+  "latest_triggered_execs": 70678,
+  "latest_snapshot": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/PHP003/out/formtrig_stats_monitor/final.stats"
+}

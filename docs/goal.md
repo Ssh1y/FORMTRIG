@@ -1538,12 +1538,25 @@ PHP003:
     D_F_spec_lifted values = {2,3}
     non-trigger candidate D_F_spec_lifted values = {2,3}
     typed_execs / typed_finds = 124 / 11
+  同日已经补跑 current-ABI 600s FORMTRIG arm：
+    artifact = artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/batch_summary.jsonl
+    first _T = 7.595s exact queue time
+    first _T queue = id:000083,src:000000,time:7595,execs:1815,op:havoc,rep:1,+cov
+    first _T monitor upper bound = 60s
+    terminal _T = 70678
+    accepted/saved non-trigger progress = 2/2
+    saved triggered progress = 7855
+    execs_done / reached_execs = 118021 / 71991
+    D_F_spec_lifted values = {2,3}
+    typed_execs / typed_finds = 242 / 44
+    stability_failures = 0
+    speedup over fastest successful baseline by exact queue time = 23.70x
   结论边界不变：这证明 PHP003 repaired runner 上 FORMTRIG 侧 R2T
-  validation 已经在 current ABI 下闭合；进入最终主结果还必须用 current ABI
-  重跑 600s FORMTRIG arm，并在同一个 `exif_thumbnail` runner 上做至少 3 rep
-  faithful AFL++/CmpLog/Redqueen-family matched comparison。除非 replicated
-  baselines 变成 late/missing/high-variance，否则 PHP003 保持 speedup/control，
-  不作为 hard SOTA-pain。
+  validation 和 600s FORMTRIG arm 都已经在 current ABI 下闭合；进入最终主结果
+  还必须在同一个 `exif_thumbnail` runner 上做至少 3 rep faithful
+  AFL++/CmpLog/Redqueen-family matched comparison，并刷新 comparison package。
+  除非 replicated baselines 变成 late/missing/high-variance，否则 PHP003 保持
+  speedup/control，不作为 hard SOTA-pain。
 
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance
