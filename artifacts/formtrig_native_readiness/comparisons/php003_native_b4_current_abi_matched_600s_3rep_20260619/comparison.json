@@ -1,0 +1,346 @@
+{
+  "baselines": {
+    "budget_s": 600,
+    "families": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget_s": 600,
+        "execs_done_total": 223740,
+        "max_success_trigger_time_s": 480,
+        "median_success_trigger_time_s": 420,
+        "min_trigger_time_s": 360,
+        "reached_total": 69228,
+        "records": [
+          {
+            "baseline": "aflplusplus_cmplog",
+            "budget": 600,
+            "corpus_count": 136,
+            "execs_done": 73384,
+            "execs_per_sec": "122.91",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": null,
+            "magma_reached": 24946,
+            "magma_snapshot_count": 12,
+            "magma_triggered": 0,
+            "rep": 1,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines/runs/aflplusplus_cmplog_600s/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": false,
+            "target_id": "PHP003",
+            "trigger_time_kind": null,
+            "trigger_time_s": null
+          },
+          {
+            "baseline": "aflplusplus_cmplog",
+            "budget": 600,
+            "corpus_count": 130,
+            "execs_done": 75228,
+            "execs_per_sec": "125.99",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": 360,
+            "magma_reached": 18812,
+            "magma_snapshot_count": 18,
+            "magma_triggered": 10,
+            "rep": 2,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/aflplusplus_cmplog_600s_rep2/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": true,
+            "target_id": "PHP003",
+            "trigger_time_kind": "magma_monitor_upper_bound",
+            "trigger_time_s": 360
+          },
+          {
+            "baseline": "aflplusplus_cmplog",
+            "budget": 600,
+            "corpus_count": 148,
+            "execs_done": 75128,
+            "execs_per_sec": "125.79",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": 480,
+            "magma_reached": 25470,
+            "magma_snapshot_count": 17,
+            "magma_triggered": 9,
+            "rep": 3,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/aflplusplus_cmplog_600s_rep3/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": true,
+            "target_id": "PHP003",
+            "trigger_time_kind": "magma_monitor_upper_bound",
+            "trigger_time_s": 480
+          }
+        ],
+        "reps": 3,
+        "success_rate": 0.6666666666666666,
+        "successes": 2,
+        "terminal_triggered_total": 19,
+        "terminal_triggered_values": [
+          0,
+          10,
+          9
+        ],
+        "trigger_time_s_values": [
+          null,
+          360,
+          480
+        ]
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget_s": 600,
+        "execs_done_total": 221555,
+        "max_success_trigger_time_s": 180,
+        "median_success_trigger_time_s": 150,
+        "min_trigger_time_s": 150,
+        "reached_total": 6462,
+        "records": [
+          {
+            "baseline": "aflplusplus_vanilla",
+            "budget": 600,
+            "corpus_count": 237,
+            "execs_done": 72343,
+            "execs_per_sec": "121.17",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": 180,
+            "magma_reached": 2518,
+            "magma_snapshot_count": 18,
+            "magma_triggered": 31,
+            "rep": 1,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines/runs/aflplusplus_vanilla_600s/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": true,
+            "target_id": "PHP003",
+            "trigger_time_kind": "magma_monitor_upper_bound",
+            "trigger_time_s": 180
+          },
+          {
+            "baseline": "aflplusplus_vanilla",
+            "budget": 600,
+            "corpus_count": 167,
+            "execs_done": 74692,
+            "execs_per_sec": "125.04",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": 150,
+            "magma_reached": 2562,
+            "magma_snapshot_count": 19,
+            "magma_triggered": 32,
+            "rep": 2,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/aflplusplus_vanilla_600s_rep2/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": true,
+            "target_id": "PHP003",
+            "trigger_time_kind": "magma_monitor_upper_bound",
+            "trigger_time_s": 150
+          },
+          {
+            "baseline": "aflplusplus_vanilla",
+            "budget": 600,
+            "corpus_count": 167,
+            "execs_done": 74520,
+            "execs_per_sec": "124.75",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": 150,
+            "magma_reached": 1382,
+            "magma_snapshot_count": 19,
+            "magma_triggered": 23,
+            "rep": 3,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/aflplusplus_vanilla_600s_rep3/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": true,
+            "target_id": "PHP003",
+            "trigger_time_kind": "magma_monitor_upper_bound",
+            "trigger_time_s": 150
+          }
+        ],
+        "reps": 3,
+        "success_rate": 1.0,
+        "successes": 3,
+        "terminal_triggered_total": 86,
+        "terminal_triggered_values": [
+          31,
+          32,
+          23
+        ],
+        "trigger_time_s_values": [
+          180,
+          150,
+          150
+        ]
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget_s": 600,
+        "execs_done_total": 223619,
+        "max_success_trigger_time_s": 330,
+        "median_success_trigger_time_s": 240,
+        "min_trigger_time_s": 240,
+        "reached_total": 74911,
+        "records": [
+          {
+            "baseline": "redqueen_operand",
+            "budget": 600,
+            "corpus_count": 126,
+            "execs_done": 73450,
+            "execs_per_sec": "123.01",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": 330,
+            "magma_reached": 24944,
+            "magma_snapshot_count": 12,
+            "magma_triggered": 11,
+            "rep": 1,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines/runs/redqueen_operand_600s/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": true,
+            "target_id": "PHP003",
+            "trigger_time_kind": "magma_monitor_upper_bound",
+            "trigger_time_s": 330
+          },
+          {
+            "baseline": "redqueen_operand",
+            "budget": 600,
+            "corpus_count": 143,
+            "execs_done": 75191,
+            "execs_per_sec": "125.93",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": 240,
+            "magma_reached": 23749,
+            "magma_snapshot_count": 17,
+            "magma_triggered": 3916,
+            "rep": 2,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/redqueen_operand_600s_rep2/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": true,
+            "target_id": "PHP003",
+            "trigger_time_kind": "magma_monitor_upper_bound",
+            "trigger_time_s": 240
+          },
+          {
+            "baseline": "redqueen_operand",
+            "budget": 600,
+            "corpus_count": 206,
+            "execs_done": 74978,
+            "execs_per_sec": "125.53",
+            "magma_first_reach_time_s": 90,
+            "magma_first_trigger_time_s": 240,
+            "magma_reached": 26218,
+            "magma_snapshot_count": 19,
+            "magma_triggered": 9,
+            "rep": 3,
+            "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/redqueen_operand_600s_rep3/run_record.json",
+            "run_time": 597,
+            "saved_crashes": 0,
+            "saved_hangs": 0,
+            "success": true,
+            "target_id": "PHP003",
+            "trigger_time_kind": "magma_monitor_upper_bound",
+            "trigger_time_s": 240
+          }
+        ],
+        "reps": 3,
+        "success_rate": 1.0,
+        "successes": 3,
+        "terminal_triggered_total": 3936,
+        "terminal_triggered_values": [
+          11,
+          3916,
+          9
+        ],
+        "trigger_time_s_values": [
+          330,
+          240,
+          240
+        ]
+      }
+    ],
+    "fastest_family_by_median_success_tte": "aflplusplus_vanilla",
+    "fastest_family_median_success_tte_s": 150,
+    "fastest_successful_trigger_time_s": 150,
+    "overall_success_rate": 0.8888888888888888,
+    "total_runs": 9,
+    "total_successes": 8
+  },
+  "benefit": {
+    "baseline_fastest_family_median_success_tte_s": 150,
+    "formtrig_median_exact_first_t_s": 1.942,
+    "formtrig_slowest_exact_first_t_s": 7.595,
+    "formtrig_terminal_t_total_vs_baseline_terminal_t_total": {
+      "baselines_total": 4041,
+      "formtrig": 170365
+    },
+    "median_tte_speedup_vs_fastest_baseline_family_median": 77.2399588053553,
+    "slowest_formtrig_tte_speedup_vs_fastest_baseline_family_median": 19.749835418038185
+  },
+  "claim_boundary": {
+    "hard_sota_pain_supported": false,
+    "not_supported": [
+      "PHP003 as a hard SOTA-pain target.",
+      "Claiming baselines can only solve this TC by unacceptable random cost."
+    ],
+    "supported": [
+      "FORMTRIG current-ABI side succeeds in 3/3 runs and preserves TC-rooted non-trigger progress before _T.",
+      "FORMTRIG median exact first _T is 1.942s versus the fastest baseline family median upper-bound first _T of 150s.",
+      "PHP003 is useful as speedup/control and mechanism-attribution evidence."
+    ],
+    "verdict": "replicated_speedup_control_not_hard_sota_pain",
+    "why_not_hard_pain": [
+      "AFL++ vanilla succeeds in 3/3 600s runs with trigger_time_s values [180, 150, 150].",
+      "All three baseline families trigger within 600s in at least 2/3 runs; aggregate baseline success is 8/9.",
+      "The fastest baseline family median trigger time is 150s, well inside the 600s acceptable-cost threshold."
+    ]
+  },
+  "date": "2026-06-19",
+  "formtrig": {
+    "all_pretrigger_lift_guidance_ready": true,
+    "budget_s": 600,
+    "d_f_spec_lifted_values_union": [
+      2,
+      3
+    ],
+    "first_t_exact_time_s_max": 7.595,
+    "first_t_exact_time_s_median": 1.942,
+    "first_t_exact_time_s_min": 1.929,
+    "first_t_exact_time_s_values": [
+      7.595,
+      1.942,
+      1.929
+    ],
+    "repetitions": 3,
+    "saved_non_trigger_progress_events_total": 6,
+    "saved_triggered_progress_events_total": 18936,
+    "spec_lifted_events_total": 46382,
+    "success_rate": 1.0,
+    "successes": 3,
+    "terminal_triggered_execs_total": 170365,
+    "typed_execs_total": 1073,
+    "typed_finds_total": 217
+  },
+  "next_actions": [
+    "Stop spending hard-pain budget on PHP003 unless seed/harness is redesigned to make baseline endpoint cost unacceptable.",
+    "Use PHP003 as speedup/control and mechanism attribution in the paper.",
+    "Move hard SOTA-pain budget to targets where faithful baselines are missing, late, or high-variance after replicated runs."
+  ],
+  "runner": "exif_thumbnail",
+  "schema": "formtrig_php003_current_abi_matched_600s_3rep_v1",
+  "sources": {
+    "baseline_rep1_summary": "artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines/summary.json",
+    "baseline_reps2_3_root": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z",
+    "baseline_reps2_3_summary": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/summary.json",
+    "formtrig_current_abi_readout": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/current_abi_readout_20260619.json"
+  },
+  "target_id": "PHP003"
+}

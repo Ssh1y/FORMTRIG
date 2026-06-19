@@ -1,61 +1,79 @@
 {
-  "schema": "formtrig_current_abi_comparison_readout_v1",
-  "target_id": "PHP003",
-  "runner": "exif_thumbnail",
-  "date": "2026-06-19",
-  "sources": {
+    "schema": "formtrig_current_abi_comparison_readout_v1",
+    "target_id": "PHP003",
+    "runner": "exif_thumbnail",
+    "date": "2026-06-19",
+    "sources": {
         "current_abi_validation": "artifacts/formtrig_native_readiness/binding_validation/PHP003.native_b4_thumbnail_length_hook_candidate.current_abi.validation.json",
         "current_abi_600s_formtrig": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_1rep_formtrig_20260619T204624Z/batch_summary.jsonl",
         "current_abi_600s_formtrig_reps_2_3": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_600s_reps2_3_formtrig_20260619T210244Z/batch_summary.jsonl",
         "same_runner_comparison": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.json",
         "same_runner_comparison_md": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.md",
-        "baseline_guidance_gap": "artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json"
-  },
-  "current_abi_formtrig_validation": {
-    "afl_fuzz": "experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz",
-    "budget_s": 20,
-    "diagnosis": "triggered",
-    "terminal_triggered_execs": 43,
-    "pretrigger_lift_guidance_ready": true,
-    "accepted_non_trigger_progress_events": 2,
-    "saved_non_trigger_progress_events": 2,
-    "queued_progress": 7,
-    "execs_done": 7290,
-    "reached_execs": 1556,
-    "d_f_spec_lifted_constant": false,
-    "d_f_spec_lifted_values": [2, 3],
-    "non_trigger_candidate_d_f_spec_lifted_values": [2, 3],
-    "variable_roles": ["use"]
-  },
-  "current_abi_formtrig_600s": {
-    "afl_fuzz": "experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz",
-    "budget_s": 600,
-    "run_time_s": 600,
-    "diagnosis": "triggered",
-    "pretrigger_lift_guidance_ready": true,
-    "has_non_trigger_progress": true,
-    "accepted_non_trigger_progress_events": 2,
-    "saved_non_trigger_progress_events": 2,
-    "saved_triggered_progress_events": 7855,
-    "queued_progress": 7857,
-    "terminal_triggered_execs": 70678,
-    "execs_done": 118021,
-    "reached_execs": 71991,
-    "spec_lifted_events": 16167,
-    "first_t_exact_time_s": 7.595,
-    "first_t_queue_file": "id:000083,src:000000,time:7595,execs:1815,op:havoc,rep:1,+cov",
-    "first_t_progress_execs_done": 1822,
-    "first_t_monitor_upper_bound_s": 60,
-    "first_saved_non_trigger_execs_done": 155,
-    "second_saved_non_trigger_execs_done": 669,
-    "d_f_spec_lifted_constant": false,
-    "d_f_spec_lifted_values": [2, 3],
-    "non_trigger_candidate_d_f_spec_lifted_values": [2, 3],
-    "variable_roles": ["use"],
-    "typed_execs": 242,
-    "typed_finds": 44,
-    "stability_checks": 23557,
-    "stability_failures": 0,
+        "baseline_guidance_gap": "artifacts/formtrig_native_readiness/baseline_guidance_gap/php003_native_b4_same_runner_600s_1rep_20260618/baseline_guidance_gap.json",
+        "current_abi_600s_baselines_reps_2_3": "artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/summary.json",
+        "current_abi_matched_600s_3rep_comparison": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_current_abi_matched_600s_3rep_20260619/comparison.json"
+    },
+    "current_abi_formtrig_validation": {
+        "afl_fuzz": "experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz",
+        "budget_s": 20,
+        "diagnosis": "triggered",
+        "terminal_triggered_execs": 43,
+        "pretrigger_lift_guidance_ready": true,
+        "accepted_non_trigger_progress_events": 2,
+        "saved_non_trigger_progress_events": 2,
+        "queued_progress": 7,
+        "execs_done": 7290,
+        "reached_execs": 1556,
+        "d_f_spec_lifted_constant": false,
+        "d_f_spec_lifted_values": [
+            2,
+            3
+        ],
+        "non_trigger_candidate_d_f_spec_lifted_values": [
+            2,
+            3
+        ],
+        "variable_roles": [
+            "use"
+        ]
+    },
+    "current_abi_formtrig_600s": {
+        "afl_fuzz": "experiments/magma_workspace/magma/fuzzers/formtrig_native/repo/afl-fuzz",
+        "budget_s": 600,
+        "run_time_s": 600,
+        "diagnosis": "triggered",
+        "pretrigger_lift_guidance_ready": true,
+        "has_non_trigger_progress": true,
+        "accepted_non_trigger_progress_events": 2,
+        "saved_non_trigger_progress_events": 2,
+        "saved_triggered_progress_events": 7855,
+        "queued_progress": 7857,
+        "terminal_triggered_execs": 70678,
+        "execs_done": 118021,
+        "reached_execs": 71991,
+        "spec_lifted_events": 16167,
+        "first_t_exact_time_s": 7.595,
+        "first_t_queue_file": "id:000083,src:000000,time:7595,execs:1815,op:havoc,rep:1,+cov",
+        "first_t_progress_execs_done": 1822,
+        "first_t_monitor_upper_bound_s": 60,
+        "first_saved_non_trigger_execs_done": 155,
+        "second_saved_non_trigger_execs_done": 669,
+        "d_f_spec_lifted_constant": false,
+        "d_f_spec_lifted_values": [
+            2,
+            3
+        ],
+        "non_trigger_candidate_d_f_spec_lifted_values": [
+            2,
+            3
+        ],
+        "variable_roles": [
+            "use"
+        ],
+        "typed_execs": 242,
+        "typed_finds": 44,
+        "stability_checks": 23557,
+        "stability_failures": 0,
         "progress_log_dropped": 660,
         "speedup_over_fastest_successful_baseline_by_exact_first_t": 23.69980250164582,
         "speedup_over_fastest_successful_baseline_by_monitor_upper_bound": 3.0
@@ -156,7 +174,7 @@
             "first_t_exact_time_s_min": 1.929,
             "first_t_exact_time_s_median": 1.942,
             "first_t_exact_time_s_max": 7.595,
-            "speedup_over_fastest_successful_baseline_by_median_exact_first_t": 92.68795056642636,
+            "speedup_over_fastest_successful_baseline_by_median_exact_first_t": 92.68795056642637,
             "speedup_over_fastest_successful_baseline_by_slowest_exact_first_t": 23.69980250164582,
             "terminal_triggered_execs_total": 170365,
             "saved_non_trigger_progress_events_total": 6,
@@ -179,65 +197,348 @@
     "existing_same_runner_600s_comparison": {
         "status": "speedup_but_under_replicated",
         "formtrig_first_t_s": 1.985,
-    "formtrig_terminal_triggered_execs": 21024,
-    "formtrig_accepted_non_trigger_progress_events": 1,
-    "formtrig_saved_non_trigger_progress_events": 1,
-    "formtrig_afl_fuzz_note": "This 600s FORMTRIG arm used the older standalone AFL++ checkout; the current-ABI 600s arm above supersedes it for FORMTRIG-side ABI evidence while preserving the same baseline comparison context.",
-    "baselines": [
-      {
-        "baseline": "aflplusplus_cmplog",
-        "budget_s": 600,
-        "success": false,
-        "first_t_s": null,
-        "terminal_triggered": 0,
-        "reached": 24946,
-        "execs_done": 73384
-      },
-      {
-        "baseline": "aflplusplus_vanilla",
-        "budget_s": 600,
-        "success": true,
-        "first_t_s": 180,
-        "terminal_triggered": 31,
-        "reached": 2518,
-        "execs_done": 72343
-      },
-      {
-        "baseline": "redqueen_operand",
-        "budget_s": 600,
-        "success": true,
-        "first_t_s": 330,
-        "terminal_triggered": 11,
-        "reached": 24944,
-        "execs_done": 73450
-      }
-    ],
-    "speedup_over_fastest_successful_baseline": 90.6801007556675
-  },
-  "baseline_guidance_gap": {
-    "status": "fail_fast_baseline",
-    "pretrigger_binary_flat_pass": true,
-    "endpoint_cost_pass": false,
-    "fastest_successful_baseline_trigger_time_s": 180,
-    "interpretation": "faithful baselines show flat binary pre-trigger behavior, but vanilla reaches _T within the acceptable 600s threshold; PHP003 is speedup/control evidence, not hard SOTA-pain evidence."
-  },
-  "claim_boundary": {
-    "supported": [
+        "formtrig_terminal_triggered_execs": 21024,
+        "formtrig_accepted_non_trigger_progress_events": 1,
+        "formtrig_saved_non_trigger_progress_events": 1,
+        "formtrig_afl_fuzz_note": "This 600s FORMTRIG arm used the older standalone AFL++ checkout; the current-ABI 600s arm above supersedes it for FORMTRIG-side ABI evidence while preserving the same baseline comparison context.",
+        "baselines": [
+            {
+                "baseline": "aflplusplus_cmplog",
+                "budget_s": 600,
+                "success": false,
+                "first_t_s": null,
+                "terminal_triggered": 0,
+                "reached": 24946,
+                "execs_done": 73384
+            },
+            {
+                "baseline": "aflplusplus_vanilla",
+                "budget_s": 600,
+                "success": true,
+                "first_t_s": 180,
+                "terminal_triggered": 31,
+                "reached": 2518,
+                "execs_done": 72343
+            },
+            {
+                "baseline": "redqueen_operand",
+                "budget_s": 600,
+                "success": true,
+                "first_t_s": 330,
+                "terminal_triggered": 11,
+                "reached": 24944,
+                "execs_done": 73450
+            }
+        ],
+        "speedup_over_fastest_successful_baseline": 90.6801007556675
+    },
+    "baseline_guidance_gap": {
+        "status": "fail_fast_baseline_replicated",
+        "pretrigger_binary_flat_pass": true,
+        "endpoint_cost_pass": false,
+        "fastest_successful_baseline_trigger_time_s": 150,
+        "interpretation": "faithful baselines still show a binary pre-trigger limitation in the measured gap audit, but the replicated endpoint runs are too fast for PHP003 to support hard SOTA-pain; AFL++ vanilla is 3/3 within 180s and has median 150s."
+    },
+    "claim_boundary": {
+        "supported": [
             "PHP003 repaired exif_thumbnail runner closes the FORMTRIG-side R2T validation under the current AFL++ ABI",
-            "The current-ABI 600s FORMTRIG arm reaches terminal _T and preserves accepted non-trigger lift guidance",
-            "The current-ABI 600s FORMTRIG side is now 3/3 successful with stable TC-rooted non-trigger progress before _T",
-            "The existing same-runner 600s x1 package supports a strong TTE speedup/control readout",
-            "Baseline-visible binary feedback is flat before _T in the measured baseline runs"
+            "The current-ABI 600s FORMTRIG side is 3/3 successful with stable TC-rooted non-trigger progress before _T",
+            "The matched baseline endpoint side is now replicated: 8/9 baseline runs trigger within 600s",
+            "PHP003 supports replicated speedup/control and mechanism-attribution evidence"
         ],
         "not_supported_yet": [
             "hard SOTA-pain claim for PHP003",
-            "final replicated matched performance claim because baseline reps are still x1",
-            "fully replicated current-ABI matched FORMTRIG/baseline comparison package"
+            "claiming baseline endpoint cost is unacceptable on this repaired runner"
         ]
     },
     "next_actions": [
-        "collect reps 2-3 for each matched baseline family on the same exif_thumbnail runner",
-        "assemble a refreshed comparison package that uses the current-ABI 600s FORMTRIG arm and matched baseline records",
-        "keep PHP003 as speedup/control evidence unless replicated baselines become late, missing, or high-variance"
-    ]
+        "keep PHP003 as replicated speedup/control evidence",
+        "do not use PHP003 as a hard SOTA-pain target unless the harness/seed design is changed and baselines become late, missing, or high-variance",
+        "move hard-pain experiment budget to Magma/real-CVE targets with replicated baseline endpoint gaps"
+    ],
+    "matched_baseline_600s_repetitions": {
+        "budget_s": 600,
+        "families": [
+            {
+                "baseline": "aflplusplus_cmplog",
+                "budget_s": 600,
+                "reps": 3,
+                "successes": 2,
+                "success_rate": 0.6666666666666666,
+                "trigger_time_s_values": [
+                    null,
+                    360,
+                    480
+                ],
+                "min_trigger_time_s": 360,
+                "median_success_trigger_time_s": 420,
+                "max_success_trigger_time_s": 480,
+                "terminal_triggered_total": 19,
+                "terminal_triggered_values": [
+                    0,
+                    10,
+                    9
+                ],
+                "reached_total": 69228,
+                "execs_done_total": 223740,
+                "records": [
+                    {
+                        "baseline": "aflplusplus_cmplog",
+                        "budget": 600,
+                        "corpus_count": 136,
+                        "execs_done": 73384,
+                        "execs_per_sec": "122.91",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": null,
+                        "magma_reached": 24946,
+                        "magma_snapshot_count": 12,
+                        "magma_triggered": 0,
+                        "rep": 1,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines/runs/aflplusplus_cmplog_600s/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": false,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": null,
+                        "trigger_time_s": null
+                    },
+                    {
+                        "baseline": "aflplusplus_cmplog",
+                        "budget": 600,
+                        "corpus_count": 130,
+                        "execs_done": 75228,
+                        "execs_per_sec": "125.99",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": 360,
+                        "magma_reached": 18812,
+                        "magma_snapshot_count": 18,
+                        "magma_triggered": 10,
+                        "rep": 2,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/aflplusplus_cmplog_600s_rep2/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": true,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": "magma_monitor_upper_bound",
+                        "trigger_time_s": 360
+                    },
+                    {
+                        "baseline": "aflplusplus_cmplog",
+                        "budget": 600,
+                        "corpus_count": 148,
+                        "execs_done": 75128,
+                        "execs_per_sec": "125.79",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": 480,
+                        "magma_reached": 25470,
+                        "magma_snapshot_count": 17,
+                        "magma_triggered": 9,
+                        "rep": 3,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/aflplusplus_cmplog_600s_rep3/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": true,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": "magma_monitor_upper_bound",
+                        "trigger_time_s": 480
+                    }
+                ]
+            },
+            {
+                "baseline": "aflplusplus_vanilla",
+                "budget_s": 600,
+                "reps": 3,
+                "successes": 3,
+                "success_rate": 1.0,
+                "trigger_time_s_values": [
+                    180,
+                    150,
+                    150
+                ],
+                "min_trigger_time_s": 150,
+                "median_success_trigger_time_s": 150,
+                "max_success_trigger_time_s": 180,
+                "terminal_triggered_total": 86,
+                "terminal_triggered_values": [
+                    31,
+                    32,
+                    23
+                ],
+                "reached_total": 6462,
+                "execs_done_total": 221555,
+                "records": [
+                    {
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 600,
+                        "corpus_count": 237,
+                        "execs_done": 72343,
+                        "execs_per_sec": "121.17",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": 180,
+                        "magma_reached": 2518,
+                        "magma_snapshot_count": 18,
+                        "magma_triggered": 31,
+                        "rep": 1,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines/runs/aflplusplus_vanilla_600s/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": true,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": "magma_monitor_upper_bound",
+                        "trigger_time_s": 180
+                    },
+                    {
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 600,
+                        "corpus_count": 167,
+                        "execs_done": 74692,
+                        "execs_per_sec": "125.04",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": 150,
+                        "magma_reached": 2562,
+                        "magma_snapshot_count": 19,
+                        "magma_triggered": 32,
+                        "rep": 2,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/aflplusplus_vanilla_600s_rep2/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": true,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": "magma_monitor_upper_bound",
+                        "trigger_time_s": 150
+                    },
+                    {
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 600,
+                        "corpus_count": 167,
+                        "execs_done": 74520,
+                        "execs_per_sec": "124.75",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": 150,
+                        "magma_reached": 1382,
+                        "magma_snapshot_count": 19,
+                        "magma_triggered": 23,
+                        "rep": 3,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/aflplusplus_vanilla_600s_rep3/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": true,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": "magma_monitor_upper_bound",
+                        "trigger_time_s": 150
+                    }
+                ]
+            },
+            {
+                "baseline": "redqueen_operand",
+                "budget_s": 600,
+                "reps": 3,
+                "successes": 3,
+                "success_rate": 1.0,
+                "trigger_time_s_values": [
+                    330,
+                    240,
+                    240
+                ],
+                "min_trigger_time_s": 240,
+                "median_success_trigger_time_s": 240,
+                "max_success_trigger_time_s": 330,
+                "terminal_triggered_total": 3936,
+                "terminal_triggered_values": [
+                    11,
+                    3916,
+                    9
+                ],
+                "reached_total": 74911,
+                "execs_done_total": 223619,
+                "records": [
+                    {
+                        "baseline": "redqueen_operand",
+                        "budget": 600,
+                        "corpus_count": 126,
+                        "execs_done": 73450,
+                        "execs_per_sec": "123.01",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": 330,
+                        "magma_reached": 24944,
+                        "magma_snapshot_count": 12,
+                        "magma_triggered": 11,
+                        "rep": 1,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_thumbnail_length_hook_candidate_validated_short_600s_1rep_baselines/runs/redqueen_operand_600s/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": true,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": "magma_monitor_upper_bound",
+                        "trigger_time_s": 330
+                    },
+                    {
+                        "baseline": "redqueen_operand",
+                        "budget": 600,
+                        "corpus_count": 143,
+                        "execs_done": 75191,
+                        "execs_per_sec": "125.93",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": 240,
+                        "magma_reached": 23749,
+                        "magma_snapshot_count": 17,
+                        "magma_triggered": 3916,
+                        "rep": 2,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/redqueen_operand_600s_rep2/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": true,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": "magma_monitor_upper_bound",
+                        "trigger_time_s": 240
+                    },
+                    {
+                        "baseline": "redqueen_operand",
+                        "budget": 600,
+                        "corpus_count": 206,
+                        "execs_done": 74978,
+                        "execs_per_sec": "125.53",
+                        "magma_first_reach_time_s": 90,
+                        "magma_first_trigger_time_s": 240,
+                        "magma_reached": 26218,
+                        "magma_snapshot_count": 19,
+                        "magma_triggered": 9,
+                        "rep": 3,
+                        "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/runs/redqueen_operand_600s_rep3/run_record.json",
+                        "run_time": 597,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                        "success": true,
+                        "target_id": "PHP003",
+                        "trigger_time_kind": "magma_monitor_upper_bound",
+                        "trigger_time_s": 240
+                    }
+                ]
+            }
+        ],
+        "total_runs": 9,
+        "total_successes": 8,
+        "overall_success_rate": 0.8888888888888888,
+        "fastest_successful_trigger_time_s": 150,
+        "fastest_family_by_median_success_tte": "aflplusplus_vanilla",
+        "fastest_family_median_success_tte_s": 150
+    },
+    "current_abi_matched_600s_3rep_comparison": {
+        "source": "artifacts/formtrig_native_readiness/comparisons/php003_native_b4_current_abi_matched_600s_3rep_20260619/comparison.json",
+        "verdict": "replicated_speedup_control_not_hard_sota_pain",
+        "hard_sota_pain_supported": false,
+        "formtrig_median_exact_first_t_s": 1.942,
+        "fastest_baseline_family_median_success_tte_s": 150,
+        "median_tte_speedup_vs_fastest_baseline_family_median": 77.2399588053553,
+        "baseline_total_successes": 8,
+        "baseline_total_runs": 9
+    }
 }

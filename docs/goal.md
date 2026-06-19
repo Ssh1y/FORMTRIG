@@ -1563,15 +1563,27 @@ PHP003:
     D_F_spec_lifted values = {2,3} in all reps
     typed_execs / typed_finds total = 1073 / 217
     stability_failures total = 1
-    median exact first _T speedup over fastest successful 1-rep baseline
-      reference (AFL++ vanilla at 180s) = 92.69x
-  结论边界不变：这证明 PHP003 repaired runner 上 FORMTRIG 侧 R2T
-  validation 和 600s FORMTRIG arm 都已经在 current ABI 下闭合，且 FORMTRIG
-  侧 endpoint/TC-rooted guidance 目前是 3/3 稳定；进入最终主结果还必须在
-  同一个 `exif_thumbnail` runner 上补齐 faithful AFL++/CmpLog/Redqueen-family
-  baseline reps 2-3，并刷新 comparison package。
-  除非 replicated baselines 变成 late/missing/high-variance，否则 PHP003 保持
-  speedup/control，不作为 hard SOTA-pain。
+  同日已补齐 faithful baseline reps 2-3，并生成 current-ABI matched 3rep
+  comparison package：
+    comparison = artifacts/formtrig_native_readiness/comparisons/php003_native_b4_current_abi_matched_600s_3rep_20260619/comparison.md
+    baseline reps2-3 = artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/summary.tsv
+    verdict = replicated_speedup_control_not_hard_sota_pain
+    FORMTRIG success = 3/3
+    baseline success = 8/9
+    AFL++ CmpLog first _T values = NA, 360s, 480s; success = 2/3
+    AFL++ vanilla first _T values = 180s, 150s, 150s; success = 3/3
+    Redqueen/operand first _T values = 330s, 240s, 240s; success = 3/3
+    fastest baseline family median first _T = AFL++ vanilla at 150s
+    FORMTRIG median exact first _T = 1.942s
+    median exact first _T speedup over fastest baseline family median = 77.24x
+    slowest FORMTRIG exact first _T speedup over fastest baseline family median = 19.75x
+  结论边界已经收敛：PHP003 repaired runner 上 FORMTRIG 侧 R2T validation
+  和 600s FORMTRIG arm 都已经在 current ABI 下闭合，且 FORMTRIG 侧
+  endpoint/TC-rooted guidance 是 3/3 稳定；但 replicated baselines 并没有
+  late/missing/high-variance，反而整体 8/9 成功，vanilla 3/3 且 median 150s。
+  因此 PHP003 只能作为 replicated speedup/control + mechanism evidence，
+  不能作为 hard SOTA-pain 主证据。主痛点预算应转向 faithful baselines
+  在可接受时间内无法稳定触发的 Magma/真实 CVE 目标。
 
 PNG007:
   属于 binary-state-null TC，TrigFuzz 也把它当作 binary triggering-distance

@@ -1,0 +1,7 @@
+target_id	baseline	budget	rep	success	trigger_time_s	trigger_time_kind	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	magma_reached	magma_triggered	magma_first_reach_time_s	magma_first_trigger_time_s	magma_snapshot_count
+PHP003	aflplusplus_cmplog	600	2	true	360	magma_monitor_upper_bound	597	75228	125.99	130	0	0	18812	10	90	360	18
+PHP003	aflplusplus_cmplog	600	3	true	480	magma_monitor_upper_bound	597	75128	125.79	148	0	0	25470	9	90	480	17
+PHP003	aflplusplus_vanilla	600	2	true	150	magma_monitor_upper_bound	597	74692	125.04	167	0	0	2562	32	90	150	19
+PHP003	aflplusplus_vanilla	600	3	true	150	magma_monitor_upper_bound	597	74520	124.75	167	0	0	1382	23	90	150	19
+PHP003	redqueen_operand	600	2	true	240	magma_monitor_upper_bound	597	75191	125.93	143	0	0	23749	3916	90	240	17
+PHP003	redqueen_operand	600	3	true	240	magma_monitor_upper_bound	597	74978	125.53	206	0	0	26218	9	90	240	19

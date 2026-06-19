@@ -1205,17 +1205,31 @@ saved triggered progress total = 18936
 D_F_spec_lifted values = {2,3} in all reps
 typed_execs / typed_finds total = 1073 / 217
 stability_failures total = 1
-median exact first _T speedup over fastest successful 1-rep baseline
-  reference (AFL++ vanilla at 180s) = 92.69x
 ```
 
-This closes both the FORMTRIG-side repaired-runner validation and the 600s
-FORMTRIG arm under the current AFL++ ABI, now with 3/3 FORMTRIG success. The
-remaining PHP003 work is matched baseline replication: collect reps 2-3 for
-each baseline family on the same `exif_thumbnail` runner and refresh the
-comparison package. Unless those replicated baselines become late, missing, or
-high-variance, keep PHP003 as speedup/control evidence rather than hard
-SOTA-pain evidence.
+The matched baseline reps 2-3 were also added on 2026-06-19:
+
+```text
+comparison = artifacts/formtrig_native_readiness/comparisons/php003_native_b4_current_abi_matched_600s_3rep_20260619/comparison.md
+baseline reps2-3 = artifacts/formtrig_native_readiness/raw/php003_native_b4_current_abi_matched_600s_baselines_reps2_3_20260619T212832Z/summary.tsv
+verdict = replicated_speedup_control_not_hard_sota_pain
+FORMTRIG success = 3/3
+baseline success = 8/9
+AFL++ CmpLog first _T values = NA, 360s, 480s; success = 2/3
+AFL++ vanilla first _T values = 180s, 150s, 150s; success = 3/3
+Redqueen/operand first _T values = 330s, 240s, 240s; success = 3/3
+fastest baseline family median first _T = AFL++ vanilla at 150s
+FORMTRIG median exact first _T = 1.942s
+median exact first _T speedup over fastest baseline family median = 77.24x
+slowest FORMTRIG exact first _T speedup over fastest baseline family median = 19.75x
+```
+
+This closes both the FORMTRIG-side repaired-runner validation and the matched
+600s endpoint comparison under the current AFL++ ABI. PHP003 should now be kept
+as replicated speedup/control and mechanism-attribution evidence. It should not
+be used as hard SOTA-pain evidence because faithful baselines are not late,
+missing, or high-variance on this runner; AFL++ vanilla is 3/3 with a 150s
+median first `_T`.
 
 ### 5. SQL013 不能硬做
 

@@ -47,14 +47,31 @@ Aggregate:
 
 - Success rate: 3/3
 - First `_T` exact queue time: min 1.929s, median 1.942s, max 7.595s
-- Median exact first `_T` speedup over the fastest successful 1-rep baseline
-  reference (AFL++ vanilla at 180s): 92.69x
-- Slowest exact first `_T` speedup over the same baseline reference: 23.70x
+- Median exact first `_T` speedup over the fastest 3-rep baseline family
+  median (AFL++ vanilla at 150s): 77.24x
+- Slowest exact first `_T` speedup over the same baseline reference: 19.75x
 - Total terminal `_T`: 170365
 - Total saved non-trigger progress: 6
 - Total spec-lifted events: 46382
 
-## Existing 600s Same-Runner Comparison
+## Current-ABI Matched 600s 3rep Comparison
+
+- Source: `artifacts/formtrig_native_readiness/comparisons/php003_native_b4_current_abi_matched_600s_3rep_20260619/comparison.json`
+- Verdict: `replicated_speedup_control_not_hard_sota_pain`
+- FORMTRIG success: 3/3
+- Baseline success: 8/9
+- Fastest baseline family median first `_T`: AFL++ vanilla at 150s
+- FORMTRIG median exact first `_T`: 1.942s
+- Median TTE speedup over fastest baseline family median: 77.24x
+
+| Arm | Budget | Success | First `_T` values | Median first `_T` | Terminal `_T` total |
+| --- | ---: | ---: | --- | ---: | ---: |
+| FORMTRIG current ABI AFL++ | 600s | 3/3 | 7.595s, 1.942s, 1.929s | 1.942s | 170365 |
+| AFL++ CmpLog | 600s | 2/3 | NA, 360s, 480s | 420s | 19 |
+| AFL++ vanilla | 600s | 3/3 | 180s, 150s, 150s | 150s | 86 |
+| Redqueen/operand | 600s | 3/3 | 330s, 240s, 240s | 240s | 3936 |
+
+## Earlier 600s Same-Runner x1 Comparison
 
 - Source: `artifacts/formtrig_native_readiness/comparisons/php003_native_b4_same_runner_600s_1rep_20260618/comparison.json`
 - Verdict: `speedup_but_under_replicated`
@@ -76,15 +93,16 @@ Aggregate:
 
 ## Claim Boundary
 
-PHP003 is now a same-runner speedup/control candidate, not an unresolved
-baseline-missing case. It still is not hard SOTA-pain evidence: the baseline
-guidance-gap gate is `fail_fast_baseline` because AFL++ vanilla reaches `_T`
-within the acceptable 600s threshold, even though baseline-visible pre-trigger
-binary feedback is flat.
+PHP003 is now replicated same-runner speedup/control evidence, not an
+unresolved baseline-missing case. It still is not hard SOTA-pain evidence: the
+baseline guidance-gap gate is `fail_fast_baseline_replicated` because AFL++
+vanilla reaches `_T` in 3/3 runs within 180s, with a 150s median, even though
+the measured gap audit still shows baseline-visible pre-trigger binary feedback
+is flat.
 
 The original 600s FORMTRIG arm used the older standalone AFL++ checkout. The
 2026-06-19 current-ABI 600s arms remove that ABI doubt for the FORMTRIG side:
 they reach terminal `_T` in 3/3 runs and preserve accepted non-trigger lift
-guidance before `_T`. Before using PHP003 as a final matched performance
-result, collect reps 2-3 for each matched baseline family and assemble a
-refreshed comparison package around the current-ABI FORMTRIG runs.
+guidance before `_T`. The matched baseline reps are now also complete; the
+result is a useful control/mechanism case, but hard-pain budget should move to
+targets where faithful baselines are late, missing, or high-variance.
