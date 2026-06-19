@@ -468,6 +468,7 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
                 b7_audit_proc.stdout,
             )
 
+            b7_normalized_spec = root / "gpac_b7.normalized.lift"
             b7_map_proc = subprocess.run(
                 [
                     str(map_tool),
@@ -475,6 +476,8 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
                     "lifecycle",
                     "--site-map",
                     str(site_map),
+                    "--normalized-spec",
+                    str(b7_normalized_spec),
                     str(b7_lift_spec),
                 ],
                 check=False,
@@ -491,6 +494,12 @@ class BindingSpecCompileSourceMatchingTest(unittest.TestCase):
             self.assertIn(
                 "compound-sequence-lifecycle,use,7,65063371",
                 b7_map_proc.stdout,
+            )
+            b7_normalized_text = b7_normalized_spec.read_text(encoding="utf-8")
+            self.assertIn(
+                "same_object_relation 1 lifecycle_event use "
+                "GF_ISOSample.data==GF_BitStream.original",
+                b7_normalized_text,
             )
 
 

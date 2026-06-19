@@ -1,0 +1,41 @@
+[31mCouldn't find any modules in lib path /tmp/formtrig_gpac3403_src/bin/gcc/gpac
+[0m[33mCouldn't find any modules in HOME path (app path /home/cwh/.gpac/modules)
+[0m[33m[Core] default modules directory not found
+[0m[31mCouldn't find any modules in lib path /tmp/formtrig_gpac3403_src/bin/gcc/gpac
+[0m[33mCouldn't find any modules in HOME path (app path /home/cwh/.gpac/modules)
+[0m[31m[HEVC] VPS max layer ID 63 but GPAC only supports 4
+[0m[31m[HEVC] Error parsing NAL unit type 32
+[0m[31m[HEVC] Error parsing Video Param Set
+[0m[32mTrack Importing HEVC - Width 240 Height 240 FPS 25/1 SAR 1/1
+[0m[33m[HEVC] NAL Unit type 49 not handled - adding
+[0m[31m[HEVC] VPS max layer ID 4 but GPAC only supports 4
+[0m[31m[HEVC] Error parsing NAL unit type 32
+[0m[31m[HEVC] Error parsing Video Param Set
+[0m[33m[HEVC] NAL Unit type 49 not handled - adding
+[0m[33m[HEVC] NAL Unit type 14 not handled - adding
+[0m[31m[HEVC] VPS max layer ID 7 but GPAC only supports 4
+[0m[31m[HEVC] Error parsing NAL unit type 32
+[0m[31m[HEVC] Error parsing Video Param Set
+[0m[33m[HEVC] NAL Unit type 49 not handled - adding
+[0m[31m[HEVC] VPS max layer ID 9 but GPAC only supports 4
+[0m[31m[HEVC] Error parsing NAL unit type 32
+[0m[31m[HEVC] Error parsing Video Param Set
+[0m[33m[HEVC] NAL Unit type 49 not handled - adding
+[0m[31m[HEVC] xPS changed but could not flush frames before signaling state change !
+[0m[31m[HEVC] VPS max layer ID 16 but GPAC only supports 4
+[0m[31m[HEVC] Error parsing NAL unit type 32
+[0m[31m[HEVC] Error parsing Video Param Set
+[0m[33m[HEVC] NAL Unit type 49 not handled - adding
+[0mImport: |====================| (100/100)                                              [31m[HEVC] VPS max layer ID 31 but GPAC only supports 4
+[0m[31m[HEVC] Error parsing NAL unit type 32
+[0m[31m[HEVC] Error parsing Video Param Set
+[0m[33m[HEVC] NAL Unit type 49 not handled - adding
+[0m[32mOpenGOP detected - adjusting file brand
+[0m[32mHEVC Import results: 6 samples (46 NALUs) - Slices: 2 I 0 P 0 B - 0 SEI - 1 IDR - 2 CRA
+[0m[32mHEVC L-HEVC Import results: Slices: 1 I 0 P 3 B
+[0m[32mHEVC Stream uses forward prediction - stream CTS offset: 131 frames
+[0m[32mHEVC Max NALU size is 630 - stream could be optimized by setting nal_length=2
+[0m[37mAppending file /home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z/runs/formtrig_rep1/typed_retained/id:000005,src:000000,stage:000005,op:41,ci:0,ri:0,si:1.bin
+[0m[37mNo suitable destination track found - creating new one (type vide)
+[0mAppending: |                    | (00/100)Appending: |===                 | (16/100)Appending: |======              | (33/100)Appending: |==========          | (50/100)Appending: |=============       | (66/100)Appending: |================    | (83/100)Appending: |====================| (100/100)                                                 [37m0.500 secs Interleaving
+[0mISO File Writing: |===                 | (16/100)ISO File Writing: |======              | (33/100)ISO File Writing: |==========          | (50/100)ISO File Writing: |=============       | (66/100)ISO File Writing: |================    | (83/100)ISO File Writing: |====================| (100/100)                                                        

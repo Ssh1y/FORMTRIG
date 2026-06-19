@@ -1,0 +1,30 @@
+# compiled_from_binding_spec tc_id=GPAC_3403 category=compound-sequence-lifecycle
+# tc_expression=MP4Box concatenation imports an HEVC elementary stream and reaches cleanup where a dynamic GF_BitStream frees the same sample buffer already released by gf_isom_sample_del
+atom_category 1 compound-sequence-lifecycle
+# binding id=gpac_sample_buffer_alloc_producer atom=1 role=desired_producer expr=Media_GetSample allocates the sample data buffer that later becomes the object in the double free
+role_component 11 2074894587 desired_producer 6 1 10 higher hit 1.0 0.8 any
+# binding id=gpac_sample_fetch_lifecycle_event atom=1 role=lifecycle_event expr=cat_isomedia_file reaches the post-fetch guard after obtaining the source sample with gf_isom_get_sample
+role_component 8 2693650777 lifecycle_event 7 1 20 higher hit 1.0 0.8 any
+# binding id=gpac_sample_release_lifecycle_event atom=1 role=lifecycle_event expr=gf_isom_sample_del reaches the branch that releases GF_ISOSample->data
+role_component 8 3030846436 lifecycle_event 7 1 25 higher hit 1.0 0.85 any
+# binding id=gpac_sample_release_data_object_value atom=1 role=lifecycle_event expr=gf_isom_sample_del observes the GF_ISOSample->data pointer immediately before releasing it
+role_component 7 3013921722 lifecycle_event 8 1 26 higher a 1.0 0.9 any
+# binding id=gpac_nalu_out_reassign_fallback_lifecycle_event atom=1 role=lifecycle_event expr=gf_isom_nalu_sample_rewrite reaches the fallback reassign path after decoupling mdia->nalu_out_bs from its prior dynamic buffer
+role_component 8 1766076671 lifecycle_event 7 1 30 higher hit 1.0 0.8 any
+# binding id=gpac_bitstream_original_free_use atom=1 role=use expr=gf_bs_del takes the dynamic-original free branch for the aliased bitstream buffer reached from mdia_box_del cleanup
+role_component 8 14730514 use 6 1 40 higher not_outcome 1.0 0.8 any
+# binding id=gpac_bitstream_original_cleanup_object_value atom=1 role=use expr=gf_bs_del observes the GF_BitStream->original pointer at the dynamic free guard
+role_component 7 65063371 use 8 1 42 higher a 1.0 0.9 any
+# binding id=gpac_bitstream_dynamic_mode_root atom=1 role=root_observe expr=gf_bs_del confirms bsmode is GF_BITSTREAM_WRITE_DYN before checking bs->original
+role_component 7 115396228 root_observe 3 1 50 higher not_outcome 1.0 0.9 any
+# binding id=gpac_dynamic_bitstream_external_buffer_same_object atom=1 role=same_object expr=gf_bs_reassign_buffer observes the external buffer pointer assigned to a dynamic GF_BitStream original field
+role_component 7 1549213408 same_object 8 1 60 higher a 1.0 0.85 any
+same_object_relation 1 lifecycle_event use GF_ISOSample.data==GF_BitStream.original via gf_bs_reassign_buffer(buffer)
+# binding id=gpac_hevc_import_prefix_influence atom=1 role=input_influence expr=Raw Annex-B HEVC NALU structure controls import probing, HEVC sample construction, and NALU rewrite setup
+role_component 8 2708309825 input_influence 4 1 70 higher hit 1.0 0.75 any
+range 8 2708309825 0 4096 0.75 none 0 any
+mutation_hook scripts/formtrig_hooks/hevc_annexb_structure_hook.py
+# binding id=gpac_hevc_sample_body_influence atom=1 role=input_influence expr=HEVC NALU body bytes influence sample payload layout and gf_isom_nalu_sample_rewrite alias behavior
+role_component 11 2074894587 input_influence 4 1 80 higher hit 1.0 0.75 any
+range 11 2074894587 4096 28672 0.75 none 0 any
+mutation_hook scripts/formtrig_hooks/hevc_annexb_structure_hook.py

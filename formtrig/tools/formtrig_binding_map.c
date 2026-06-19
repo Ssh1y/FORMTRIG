@@ -841,6 +841,21 @@ static int write_normalized_spec(const char *path) {
       fputc('\n', f);
     }
   }
+  for (uint32_t i = 0; i < same_object_relation_count; i++) {
+    const same_object_relation_t *rel = &same_object_relations[i];
+    atom_summary_t *atom = atom_slot(rel->atom_id);
+    if (!atom || !atom->lift_allowed) {
+      fclose(f);
+      return 0;
+    }
+    if (rel->from_role == FORMTRIG_ROLE_UNKNOWN ||
+        rel->to_role == FORMTRIG_ROLE_UNKNOWN)
+      continue;
+    fprintf(f, "same_object_relation %u %s %s", rel->atom_id,
+            role_name(rel->from_role), role_name(rel->to_role));
+    if (rel->object_expr[0]) fprintf(f, " %s", rel->object_expr);
+    fputc('\n', f);
+  }
   for (uint32_t i = 0; i < range_row_count; i++)
     fprintf(f, "%s\n", range_rows[i]);
 

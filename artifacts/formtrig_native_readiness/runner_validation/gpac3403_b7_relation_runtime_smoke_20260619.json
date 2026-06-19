@@ -1,0 +1,73 @@
+{
+  "target": "GPAC_3403",
+  "artifact_type": "relation-aware runtime replay smoke",
+  "created_utc": "2026-06-19T19:46:00Z",
+  "purpose": "Validate that the GPAC_3403 b7 lifecycle BindingSpec carries same_object_relation metadata through normalized lift specs and that the native runtime scores relation endpoint mismatch as remaining pre-trigger distance instead of collapsing to a satisfied same_object role.",
+  "code_fix": {
+    "file": "formtrig/tools/formtrig_binding_map.c",
+    "change": "write_normalized_spec now preserves same_object_relation rows after normalized role_component rows",
+    "regression_test": "tests/test_binding_spec_compile_source_matching.py asserts the b7 normalized spec keeps same_object_relation 1 lifecycle_event use GF_ISOSample.data==GF_BitStream.original"
+  },
+  "raw_artifacts": {
+    "directory": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_runtime_smoke_20260619T194029Z",
+    "lift_spec": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_runtime_smoke_20260619T194029Z/b7.lift",
+    "normalized_lift_spec": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_runtime_smoke_20260619T194029Z/b7.normalized.lift",
+    "event_map": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_runtime_smoke_20260619T194029Z/b7_event_map.csv",
+    "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_runtime_smoke_20260619T194029Z/variant_000005.b7.runtime.jsonl",
+    "stderr": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_runtime_smoke_20260619T194029Z/variant_000005.stderr"
+  },
+  "build_context": {
+    "target_binary": "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+    "runtime_archive": "/tmp/formtrig_gpac3403_native_env/libformtrig_runtime.a",
+    "runtime_archive_rebuilt": true,
+    "gpac_relinked_after_runtime_rebuild": true,
+    "mp4box_help_smoke": "pass"
+  },
+  "binding_validation": {
+    "lift_audit_row": "1,compound-sequence-lifecycle,B4,true,0x000001e9,11,0,0,ok",
+    "normalized_spec_preserves_relation": true,
+    "relation_row": "same_object_relation 1 lifecycle_event use GF_ISOSample.data==GF_BitStream.original",
+    "relation_endpoint_bindings": {
+      "lifecycle_event_object": "role_component 7 3013921722 lifecycle_event 8 1 26 higher a",
+      "use_object": "role_component 7 65063371 use 8 1 42 higher a",
+      "same_object": "role_component 7 1549213408 same_object 8 1 60 higher a"
+    }
+  },
+  "replay": {
+    "input": "artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z/runs/formtrig_rep1/typed_retained/id:000005,src:000000,stage:000005,op:41,ci:0,ri:0,si:1.bin",
+    "command_shape": "MP4Box -cat <variant> benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+    "exit_code": 0,
+    "runtime_record_count": 1,
+    "reached": true,
+    "crash_predicate": false,
+    "D_T": 1,
+    "D_F": 2,
+    "D_F_spec_lifted": 2,
+    "uses_spec_lifted": true,
+    "relation_values": {
+      "lifecycle_event_object": 98271827709808,
+      "use_object": 98271827543568,
+      "same_object": 98271827709808,
+      "same_matches_lifecycle": true,
+      "same_matches_use": false,
+      "relation_satisfied": false
+    }
+  },
+  "runtime_smoke": {
+    "same_object_relation_smoke_source_build": "pass",
+    "b7_minimal_repro_with_missing_desired_producer_and_unsatisfied_relation": {
+      "D_F_spec_lifted": 3,
+      "interpretation": "The runtime honors relation metadata in a minimal single-runtime reproduction; the clean GPAC replay scores 2 because desired_producer is present and only the same_object endpoint relation remains unsatisfied."
+    }
+  },
+  "interpretation": {
+    "verdict": "relation_endpoint_mismatch_scored_as_nonterminal_progress",
+    "meaning": "The retained GPAC variant is positive parser/lifecycle progress but not terminal _T: it reaches the relevant sample release and bitstream cleanup path, carries the sample buffer through gf_bs_reassign_buffer, but gf_bs_del observes a different GF_BitStream->original value.",
+    "claim_boundary": "Use as GPAC_3403 BindingSpec/runtime repair evidence. This is not endpoint success, not a long-run result, and not a SOTA baseline comparison."
+  },
+  "verification": {
+    "unit_tests": "python3 -m unittest tests/test_binding_spec_compile_source_matching.py tests/test_gpac3403_lifecycle_gap_audit.py",
+    "unit_tests_status": "pass",
+    "pytest_status": "not run: pytest is not installed in this environment"
+  }
+}

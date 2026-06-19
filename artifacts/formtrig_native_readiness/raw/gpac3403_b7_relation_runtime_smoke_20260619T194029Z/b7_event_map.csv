@@ -1,0 +1,12 @@
+binding_id,atom_id,category,role,event_kind,site_id,event_id,mapping_status,collapsed_with,binding_tier,lift_allowed,reason,component_kind,priority,direction,value_mode,function,file,line,column,opcode,observe_window
+1,1,compound-sequence-lifecycle,desired_producer,11,2074894587,2116ae226dc92bfd,exact,0x00000000,B4,true,ok,6,10,higher,hit,Media_GetSample,isomedia/media.c,633,47,add,any
+2,1,compound-sequence-lifecycle,lifecycle_event,8,2693650777,8820a07a923bb9b3,exact,0x00000000,B4,true,ok,7,20,higher,hit,cat_isomedia_file,fileimport.c,3139,8,br,any
+3,1,compound-sequence-lifecycle,lifecycle_event,8,3030846436,f64759dbe4dca591,exact,0x00000000,B4,true,ok,7,25,higher,hit,gf_isom_sample_del,isomedia/isom_read.c,112,6,br,any
+4,1,compound-sequence-lifecycle,lifecycle_event,7,3013921722,4894deee44af4fee,exact,0x00000000,B4,true,ok,8,26,higher,a,gf_isom_sample_del,isomedia/isom_read.c,112,6,icmp,any
+5,1,compound-sequence-lifecycle,lifecycle_event,8,1766076671,859effc1138fdd44,exact,0x00000000,B4,true,ok,7,30,higher,hit,gf_isom_nalu_sample_rewrite,isomedia/avc_ext.c,672,59,br,any
+6,1,compound-sequence-lifecycle,use,8,14730514,e0c1c3e09dee1236,exact,0x00000000,B4,true,ok,6,40,higher,not_outcome,gf_bs_del,utils/bitstream.c,372,6,br,any
+7,1,compound-sequence-lifecycle,use,7,65063371,ac459c36ec8259d3,exact,0x00000000,B4,true,ok,8,42,higher,a,gf_bs_del,utils/bitstream.c,372,48,icmp,any
+8,1,compound-sequence-lifecycle,root_observe,7,115396228,61fd531dd29e8963,exact,0x00000000,B4,true,ok,3,50,higher,not_outcome,gf_bs_del,utils/bitstream.c,372,18,icmp,any
+9,1,compound-sequence-lifecycle,same_object,7,1549213408,01738ed252f6b7c0,exact,0x00000000,B4,true,ok,8,60,higher,a,gf_bs_reassign_buffer,utils/bitstream.c,122,6,icmp,any
+10,1,compound-sequence-lifecycle,input_influence,8,2708309825,170cb9841055fc00,exact,0x00000000,B4,true,ok,4,70,higher,hit,cat_isomedia_file,fileimport.c,3136,3,br,any
+11,1,compound-sequence-lifecycle,input_influence,11,2074894587,6051e40b3cc07364,exact,0x00000000,B4,true,ok,4,80,higher,hit,Media_GetSample,isomedia/media.c,633,47,add,any
