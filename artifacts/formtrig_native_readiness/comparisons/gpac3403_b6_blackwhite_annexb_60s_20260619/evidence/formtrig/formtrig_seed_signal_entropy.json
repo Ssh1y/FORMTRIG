@@ -1,0 +1,31 @@
+{
+  "status": "fail",
+  "diagnosis": "constant_actionable_lifted_components",
+  "runtime_records": 1,
+  "reached_records": 1,
+  "triggered_records": 0,
+  "rnt_records": 1,
+  "spec_lifted_records": 1,
+  "rnt_spec_lifted_records": 1,
+  "spec_d_f_samples": 1,
+  "spec_d_f_unique": 1,
+  "spec_d_f_constant": false,
+  "spec_d_f_min": 2,
+  "spec_d_f_max": 2,
+  "component_keys": 7,
+  "spec_component_keys": 7,
+  "actionable_component_keys": 5,
+  "constant_components": 0,
+  "variable_components": 0,
+  "constant_actionable_components": 0,
+  "variable_actionable_components": 0,
+  "components": [
+    {"kind":3,"atom_id":1,"role":1,"source_id":10636081515174972418,"samples":1,"spec_lifted_samples":1,"actionable_samples":1,"flags_or":86,"flags_and":86,"max_confidence":0.90000000000000002,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":6,"atom_id":1,"role":6,"source_id":3371495230016879299,"samples":1,"spec_lifted_samples":1,"actionable_samples":1,"flags_or":86,"flags_and":86,"max_confidence":0.80000000000000004,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":4,"atom_id":1,"role":9,"source_id":17615004649949988998,"samples":1,"spec_lifted_samples":1,"actionable_samples":0,"flags_or":118,"flags_and":118,"max_confidence":0.75,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":6,"atom_id":1,"role":4,"source_id":2384284515633277949,"samples":1,"spec_lifted_samples":1,"actionable_samples":1,"flags_or":86,"flags_and":86,"max_confidence":0.80000000000000004,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":4,"atom_id":1,"role":9,"source_id":10116647569281038410,"samples":1,"spec_lifted_samples":1,"actionable_samples":0,"flags_or":118,"flags_and":118,"max_confidence":0.75,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":7,"atom_id":1,"role":7,"source_id":9809016436712782259,"samples":1,"spec_lifted_samples":1,"actionable_samples":1,"flags_or":86,"flags_and":86,"max_confidence":0.80000000000000004,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]},
+    {"kind":7,"atom_id":1,"role":7,"source_id":17746251657649104273,"samples":1,"spec_lifted_samples":1,"actionable_samples":1,"flags_or":86,"flags_and":86,"max_confidence":0.84999999999999998,"unique_values":1,"constant":false,"min":1,"max":1,"values":[1]}
+  ]
+}

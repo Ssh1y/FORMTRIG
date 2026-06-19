@@ -1,0 +1,50 @@
+{
+  "status": "pass",
+  "diagnosis": "role_signal_progress_observed",
+  "progress_events": 87,
+  "candidate_events": 85,
+  "calibration_events": 1,
+  "accepted_progress_events": 1,
+  "accepted_triggered_progress_events": 0,
+  "accepted_non_trigger_progress_events": 1,
+  "triggered_events": 0,
+  "spec_role_samples": 619,
+  "spec_role_candidate_samples": 605,
+  "spec_d_f_samples": 87,
+  "spec_d_f_candidate_samples": 85,
+  "spec_d_f_triggered_candidate_samples": 0,
+  "spec_d_f_non_trigger_candidate_samples": 85,
+  "spec_d_f_calibration_samples": 1,
+  "spec_d_f_candidate_min": 1,
+  "spec_d_f_triggered_candidate_min": null,
+  "spec_d_f_non_trigger_candidate_min": 1,
+  "spec_d_f_calibration_min": 2,
+  "spec_d_f_candidate_values": [2,1],
+  "spec_d_f_triggered_candidate_values": [],
+  "spec_d_f_non_trigger_candidate_values": [2,1],
+  "spec_d_f_calibration_values": [2],
+  "triggered_candidate_lift_delta": false,
+  "non_trigger_candidate_lift_delta": true,
+  "lift_delta_only_on_triggered_candidates": false,
+  "atoms": [
+    {
+      "atom_id": 1,
+      "category": "compound-sequence-lifecycle",
+      "lift_allowed": true,
+      "bound_roles": ["root_observe","desired_producer","use","lifecycle_event","same_object","input_influence"],
+      "sampled_roles": ["root_observe","desired_producer","use","lifecycle_event","same_object","input_influence"],
+      "candidate_sampled_roles": ["root_observe","desired_producer","use","lifecycle_event","same_object","input_influence"],
+      "variable_roles": [],
+      "candidate_variable_roles": [],
+      "diagnosis": "constant_lift_signal",
+      "roles": [
+        {"role":"root_observe","bound":true,"samples":87,"candidate_samples":85,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":0.90000000000000002},
+        {"role":"desired_producer","bound":true,"samples":87,"candidate_samples":85,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":0.80000000000000004},
+        {"role":"use","bound":true,"samples":87,"candidate_samples":85,"calibration_samples":1,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":0.80000000000000004},
+        {"role":"lifecycle_event","bound":true,"samples":174,"candidate_samples":170,"calibration_samples":2,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":86,"max_confidence":0.84999999999999998},
+        {"role":"same_object","bound":true,"samples":10,"candidate_samples":10,"calibration_samples":0,"unique_values":1,"candidate_unique_values":1,"values":[106257223633264],"candidate_values":[106257223633264],"flags_or":86,"max_confidence":0.84999999999999998},
+        {"role":"input_influence","bound":true,"samples":174,"candidate_samples":170,"calibration_samples":2,"unique_values":1,"candidate_unique_values":1,"values":[1],"candidate_values":[1],"flags_or":118,"max_confidence":0.75}
+      ]
+    }
+  ]
+}

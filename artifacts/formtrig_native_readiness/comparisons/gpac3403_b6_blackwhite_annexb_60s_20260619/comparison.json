@@ -1,0 +1,106 @@
+{
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+  "comparison_type": "formtrig_b6_online_short_gate",
+  "duration_s": 60,
+  "evidence": {
+    "formtrig": {
+      "formtrig_binding_signal_diagnosis.json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_binding_signal_diagnosis.json",
+      "formtrig_diagnosis.json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_diagnosis.json",
+      "formtrig_lift_audit.csv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_lift_audit.csv",
+      "formtrig_lift_feature_audit.json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_lift_feature_audit.json",
+      "formtrig_mutation_hook.json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_mutation_hook.json",
+      "formtrig_runtime_event_map.csv": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_runtime_event_map.csv",
+      "formtrig_seed_readiness.json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_seed_readiness.json",
+      "formtrig_seed_signal_entropy.json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_seed_signal_entropy.json",
+      "formtrig_summary.json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_summary.json",
+      "formtrig_terminal_monitor.json": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/formtrig_terminal_monitor.json",
+      "fuzzer_stats": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/evidence/formtrig/fuzzer_stats"
+    },
+    "progress_jsonl_sha256": "2435bd58da4d44ae55b976525ba1e4b720985f8dfe50afbeade098c36d3367ca",
+    "raw_run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619"
+  },
+  "formtrig": {
+    "accepted_non_trigger_progress_events": 1,
+    "binding_signal_diagnosis": "role_signal_progress_observed",
+    "binding_signal_status": "pass",
+    "candidate_sampled_roles": [
+      "root_observe",
+      "desired_producer",
+      "use",
+      "lifecycle_event",
+      "same_object",
+      "input_influence"
+    ],
+    "corpus_count": 38,
+    "d_f_spec_lifted_max": 2,
+    "d_f_spec_lifted_min": 1,
+    "execs_done": 426,
+    "queued_progress": 1,
+    "same_object_candidate_samples": 10,
+    "same_object_samples": 10,
+    "sampled_roles": [
+      "root_observe",
+      "desired_producer",
+      "use",
+      "lifecycle_event",
+      "same_object",
+      "input_influence"
+    ],
+    "saved_non_trigger_progress_events": 1,
+    "seed_readiness_diagnosis": "ready_single_rnt_seed",
+    "seed_readiness_status": "pass",
+    "spec_d_f_candidate_values": [
+      2,
+      1
+    ],
+    "terminal_triggered": false,
+    "terminal_triggered_execs": 0,
+    "typed_execs": 161,
+    "typed_finds": 0
+  },
+  "generated_at_utc": "2026-06-19T08:12:00Z",
+  "interpretation": {
+    "does_not_support": [
+      "Endpoint crash speedup on GPAC_3403; terminal _T remains 0 in this 60s gate.",
+      "A replicated SOTA comparison; this is a FORMTRIG repair gate, not a matched baseline run.",
+      "Generality across all GPAC seeds; this gate uses one public HEVC seed selected to match the parser domain."
+    ],
+    "next_action": "Run matched 10m/2h GPAC_3403 B6 campaigns against AFL++ vanilla/CmpLog/Redqueen using the same public HEVC seed corpus, then add no-hook/generic-hook ablations.",
+    "supports": [
+      "B6 fixes the B5 same_object campaign plateau for the public HEVC seed path: same_object is sampled online in 60s.",
+      "FORMTRIG produces non-trigger R2T progress: candidate D_F_spec_lifted drops from seed/calibration 2 to 1 while terminal _T remains 0.",
+      "The positive transition is attributable to the spec-driven HEVC Annex-B typed hook with layer-id mutation, not to PoC-derived seeds."
+    ]
+  },
+  "lineage": {
+    "b5_600s_plateau": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/comparison.json",
+    "b5_plateau_finding": "B5 reached D_F_spec_lifted min 2 with same_object_samples=0 in campaign search.",
+    "b6_probe_summary": {
+      "offline_d_f_values": [
+        1,
+        2,
+        4
+      ],
+      "offline_hook_variants": 192,
+      "offline_reached_rnt": 180,
+      "offline_same_object_variants": 3,
+      "offline_status": "pass"
+    }
+  },
+  "mutation_hook": {
+    "enabled": true,
+    "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+    "sha256": "8f22730aa4de7e2fcfbcf8df2a343ec84b5dae32a28fed738e1a40075cdcbeef",
+    "source": "binding_spec"
+  },
+  "schema": "formtrig_comparison_v1",
+  "seed_corpus": "/tmp/formtrig_gpac3403_blackwhite_seed",
+  "seed_provenance": {
+    "name": "blackwhite_yuv444p-frame.hevc",
+    "note": "public generic HEVC parser sample; not GPAC_3403 PoC-derived",
+    "sha256": "a120df5b64e812e5b07c672bcb0ba2b712a346fd8d3997ab0d8e838dedc02d25",
+    "source": "Chromium media test data",
+    "source_url": "https://chromium.googlesource.com/chromium/src/+/main/media/test/data/blackwhite_yuv444p-frame.hevc?format=TEXT"
+  },
+  "target_id": "GPAC_3403"
+}

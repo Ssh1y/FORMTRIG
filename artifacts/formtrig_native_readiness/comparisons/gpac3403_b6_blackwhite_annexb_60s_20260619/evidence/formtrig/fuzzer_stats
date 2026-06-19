@@ -1,0 +1,61 @@
+start_time        : 1781856069
+last_update       : 1781856130
+run_time          : 60
+fuzzer_pid        : 2019185
+cycles_done       : 0
+cycles_wo_finds   : 0
+time_wo_finds     : 12
+execs_done        : 426
+execs_per_sec     : 7.00
+execs_ps_last_min : 6.89
+corpus_count      : 38
+corpus_favored    : 1
+corpus_found      : 37
+corpus_imported   : 0
+corpus_variable   : 0
+max_depth         : 2
+cur_item          : 0
+pending_favs      : 1
+pending_total     : 38
+stability         : 100.00%
+bitmap_cvg        : 3.13%
+saved_crashes     : 0
+saved_hangs       : 0
+last_find         : 1781856129
+last_crash        : 0
+last_hang         : 0
+execs_since_crash : 426
+exec_timeout      : 260
+slowest_exec_ms   : 0
+peak_rss_mb       : 141
+cpu_affinity      : -1
+edges_found       : 23038
+total_edges       : 735515
+var_byte_count    : 0
+havoc_expansion   : 0
+auto_dict_entries : 0
+testcache_size    : 113299
+testcache_count   : 38
+testcache_evict   : 0
+afl_banner        : /tmp/formtrig_gpac3403_src/bin/gcc/MP4Box
+afl_version       : ++4.08c
+target_mode       : shmem_testcase default
+command_line      : experiments/aflplusplus/AFLplusplus/afl-fuzz -i /tmp/formtrig_gpac3403_blackwhite_seed -o artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619 -V 60 -- /tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null
+formtrig_seen_execs      : 232
+formtrig_reached_execs   : 232
+formtrig_triggered_execs : 0
+formtrig_queued_progress : 1
+formtrig_frontier_count  : 2
+formtrig_frontier_updates: 2
+formtrig_typed_execs     : 161
+formtrig_typed_finds     : 0
+formtrig_typed_skips     : 0
+formtrig_stability_checks: 2
+formtrig_stability_failures: 0
+formtrig_progress_log_events: 87
+formtrig_saved_progress_log_seen: 1
+formtrig_saved_triggered_log_seen: 0
+formtrig_saved_non_trigger_log_seen: 1
+formtrig_progress_log_dropped: 0
+formtrig_best_df         : 1
+formtrig_best_dt         : 1.0000000000000001e+300

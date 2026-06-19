@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "source": "binding_spec",
+  "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+  "sha256": "8f22730aa4de7e2fcfbcf8df2a343ec84b5dae32a28fed738e1a40075cdcbeef"
+}
