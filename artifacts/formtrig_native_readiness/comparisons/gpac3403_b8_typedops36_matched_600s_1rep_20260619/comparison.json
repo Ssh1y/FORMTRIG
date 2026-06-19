@@ -80,5 +80,33 @@
       "This is one replicate and does not establish stability across seeds or repeated long runs."
     ],
     "next_debug_step": "Replay the five saved_non_trigger queue entries against the GPAC_3403 endpoint and identify which final trigger relation is still missing."
+  },
+  "terminal_gap_analysis": {
+    "tool": "tools/analyze_formtrig_signal_path.py",
+    "raw_analysis": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_matched_600s_1rep_20260619/signal_path_analysis_current/summary.json",
+    "status": "saved_frontier_missing_binding_events",
+    "saved_non_trigger_frontier_events": 5,
+    "saved_trigger_events": 0,
+    "preterminal_non_trigger_d_f_values": [
+      2,
+      4,
+      1
+    ],
+    "latest_saved_non_trigger_queue_id": 249,
+    "missing_binding_events_at_latest_saved": [
+      {
+        "binding_id": "4",
+        "role": "lifecycle_event",
+        "event_id": "944c63fc04584807",
+        "function": "gf_isom_nalu_sample_rewrite",
+        "file": "isomedia/avc_ext.c",
+        "line": 672,
+        "column": 59,
+        "opcode": "br",
+        "priority": 30,
+        "value_mode": "hit"
+      }
+    ],
+    "meaning": "FORMTRIG reached and saved TC-rooted states with root/use/producer/same-object evidence, but the latest frontier still misses the NALU rewrite fallback lifecycle edge needed before terminal _T."
   }
 }

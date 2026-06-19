@@ -10,6 +10,7 @@ progress, spec-lift attribution, and typed mutation activity.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 from collections import Counter
 from datetime import datetime, timezone
@@ -77,6 +78,16 @@ def read_json(path: Path) -> dict[str, Any]:
     except (OSError, json.JSONDecodeError):
         return {}
     return payload if isinstance(payload, dict) else {}
+
+
+def read_runtime_event_map(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    try:
+        with path.open("r", encoding="utf-8", newline="") as handle:
+            return list(csv.DictReader(handle))
+    except OSError:
+        return []
 
 
 def role_bit(role: int) -> int:
@@ -512,6 +523,54 @@ def component_goals_by_atom_role(
     return goals
 
 
+def observed_event_ids_by_atom(event: dict[str, Any]) -> dict[str, set[str]]:
+    observed: dict[str, set[str]] = {}
+    for component in event.get("component_values", []) or []:
+        if not isinstance(component, dict):
+            continue
+        atom_id = component.get("atom_id")
+        context_hash = component.get("context_hash")
+        if atom_id is None or not context_hash:
+            continue
+        observed.setdefault(str(atom_id), set()).add(str(context_hash))
+    return observed
+
+
+def binding_event_gaps_for_event(
+    event: dict[str, Any], runtime_event_map: list[dict[str, Any]]
+) -> dict[str, Any]:
+    observed = observed_event_ids_by_atom(event)
+    gaps: dict[str, list[dict[str, Any]]] = {}
+    for row in runtime_event_map:
+        atom_id = str(row.get("atom_id") or "")
+        role = str(row.get("role") or "")
+        event_id = str(row.get("event_id") or "")
+        if not atom_id or not event_id:
+            continue
+        if role in {"input_influence", "repair_hook"}:
+            continue
+        if str(row.get("lift_allowed") or "").lower() == "false":
+            continue
+        if event_id in observed.get(atom_id, set()):
+            continue
+        gaps.setdefault(atom_id, []).append(
+            {
+                "binding_id": row.get("binding_id"),
+                "role": role,
+                "event_id": event_id,
+                "function": row.get("function"),
+                "file": row.get("file"),
+                "line": int_value(row.get("line")),
+                "column": int_value(row.get("column")),
+                "opcode": row.get("opcode"),
+                "component_kind": int_value(row.get("component_kind")),
+                "priority": int_value(row.get("priority")),
+                "value_mode": row.get("value_mode"),
+            }
+        )
+    return gaps
+
+
 def role_gap_for_event(
     event: dict[str, Any], atoms: dict[str, dict[str, Any]]
 ) -> dict[str, Any]:
@@ -573,8 +632,11 @@ def role_gap_for_event(
 
 
 def summarize_terminal_gap(
-    progress: dict[str, Any], binding_signal: dict[str, Any]
+    progress: dict[str, Any],
+    binding_signal: dict[str, Any],
+    runtime_event_map: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
+    runtime_event_map = runtime_event_map or []
     saved_frontier = progress.get("saved_non_trigger_frontier") or []
     saved_trigger_events = int_value(progress.get("saved_trigger_events"))
     reason_counts = progress.get("reason_counts") or {}
@@ -596,10 +658,16 @@ def summarize_terminal_gap(
                 "queue_file_size": event.get("queue_file_size"),
                 "trace_signature": event.get("trace_signature"),
                 "atom_gaps": role_gap_for_event(event, atoms),
+                "binding_event_gaps": binding_event_gaps_for_event(
+                    event, runtime_event_map
+                ),
             }
         )
 
     latest_atom_gaps = role_gap_for_event(latest_saved or {}, atoms)
+    latest_binding_event_gaps = binding_event_gaps_for_event(
+        latest_saved or {}, runtime_event_map
+    )
     missing_latest = {
         atom_id: gap["missing_bound_roles"]
         for atom_id, gap in latest_atom_gaps.items()
@@ -626,6 +694,8 @@ def summarize_terminal_gap(
         blockers.append("no_terminal_T_after_saved_non_trigger_frontier")
     if missing_latest:
         blockers.append("missing_bound_roles_at_latest_saved_frontier")
+    if latest_binding_event_gaps:
+        blockers.append("missing_binding_events_at_latest_saved_frontier")
     if unsatisfied_producers:
         blockers.append("producer_roles_not_satisfied_at_latest_saved_frontier")
     if unsatisfied_observed_roles:
@@ -641,6 +711,8 @@ def summarize_terminal_gap(
         status = "no_saved_non_trigger_frontier"
     elif unsatisfied_producers or constant_zero_producers:
         status = "saved_frontier_blocked_on_producer"
+    elif latest_binding_event_gaps:
+        status = "saved_frontier_missing_binding_events"
     elif missing_latest:
         status = "saved_frontier_missing_bound_roles"
     else:
@@ -652,6 +724,7 @@ def summarize_terminal_gap(
         "saved_trigger_events": saved_trigger_events,
         "latest_saved_non_trigger": latest_saved,
         "latest_atom_gaps": latest_atom_gaps,
+        "missing_binding_events_at_latest_saved": latest_binding_event_gaps,
         "missing_bound_roles_at_latest_saved": missing_latest,
         "unsatisfied_observed_roles_at_latest_saved": unsatisfied_observed_roles,
         "unsatisfied_producer_roles_at_latest_saved": unsatisfied_producers,
@@ -670,14 +743,15 @@ def summarize_terminal_gap(
     }
 
 
-def summarize_run(run_dir: Path) -> dict[str, Any]:
-    out_dir = run_dir / "out"
+def summarize_run(run_dir: Path, out_dir: Path | None = None) -> dict[str, Any]:
+    out_dir = out_dir or run_dir / "out"
     default_dir = out_dir / "default"
     stats = read_stats(default_dir / "fuzzer_stats")
     progress = summarize_progress(
         default_dir / "formtrig_progress.jsonl", default_dir / "queue"
     )
     binding_signal = read_json(default_dir / "formtrig_binding_signal_diagnosis.json")
+    runtime_event_map = read_runtime_event_map(out_dir / "formtrig_runtime_event_map.csv")
     return {
         "run": run_dir.name,
         "out_dir": str(out_dir),
@@ -698,15 +772,32 @@ def summarize_run(run_dir: Path) -> dict[str, Any]:
         "binding_signal_path": str(
             default_dir / "formtrig_binding_signal_diagnosis.json"
         ),
-        "terminal_gap": summarize_terminal_gap(progress, binding_signal),
+        "terminal_gap": summarize_terminal_gap(
+            progress, binding_signal, runtime_event_map
+        ),
     }
+
+
+def discover_runs(formtrig_dir: Path, target_id: str) -> list[tuple[Path, Path]]:
+    if (formtrig_dir / "default" / "formtrig_progress.jsonl").exists():
+        return [(formtrig_dir, formtrig_dir)]
+    if (formtrig_dir / "fuzzer_out" / "default" / "formtrig_progress.jsonl").exists():
+        return [(formtrig_dir, formtrig_dir / "fuzzer_out")]
+    runs = []
+    for path in sorted(formtrig_dir.glob(f"*_{target_id}")):
+        if not path.is_dir():
+            continue
+        if (path / "out" / "default" / "formtrig_progress.jsonl").exists():
+            runs.append((path, path / "out"))
+        elif (path / "fuzzer_out" / "default" / "formtrig_progress.jsonl").exists():
+            runs.append((path, path / "fuzzer_out"))
+    return runs
 
 
 def summarize(formtrig_dir: Path, target_id: str, run_root: Path | None = None) -> dict[str, Any]:
     runs = [
-        summarize_run(path)
-        for path in sorted(formtrig_dir.glob(f"*_{target_id}"))
-        if path.is_dir()
+        summarize_run(run_dir, out_dir)
+        for run_dir, out_dir in discover_runs(formtrig_dir, target_id)
     ]
     strict_runs = [
         row
@@ -920,10 +1011,15 @@ def to_markdown(payload: dict[str, Any]) -> str:
         blockers = gap.get("blocking_reasons") or []
         lines.append("- blocking reasons: `" + ", ".join(blockers) + "`")
         missing = gap.get("missing_bound_roles_at_latest_saved") or {}
+        missing_events = gap.get("missing_binding_events_at_latest_saved") or {}
         unsatisfied = gap.get("unsatisfied_producer_roles_at_latest_saved") or {}
         unsatisfied_observed = gap.get("unsatisfied_observed_roles_at_latest_saved") or {}
         if missing:
             lines.append(f"- missing bound roles at latest saved frontier: `{missing}`")
+        if missing_events:
+            lines.append(
+                f"- missing binding events at latest saved frontier: `{missing_events}`"
+            )
         if unsatisfied_observed:
             lines.append(
                 f"- observed roles not goal-satisfied at latest saved frontier: `{unsatisfied_observed}`"
@@ -940,16 +1036,25 @@ def to_markdown(payload: dict[str, Any]) -> str:
         if progression:
             lines.extend(
                 [
-                    "| queue | exec | size | missing bound roles | observed unsatisfied roles | unsatisfied producers |",
-                    "| ---: | ---: | ---: | --- | --- | --- |",
+                    "| queue | exec | size | missing bound roles | missing binding events | observed unsatisfied roles | unsatisfied producers |",
+                    "| ---: | ---: | ---: | --- | --- | --- | --- |",
                 ]
             )
             for event in progression:
                 atom_gaps = event.get("atom_gaps") or {}
+                binding_event_gaps = event.get("binding_event_gaps") or {}
                 missing_roles = {
                     atom_id: atom_gap.get("missing_bound_roles", [])
                     for atom_id, atom_gap in atom_gaps.items()
                     if atom_gap.get("missing_bound_roles")
+                }
+                missing_binding_events = {
+                    atom_id: [
+                        f"{item.get('binding_id')}:{item.get('role')}:{item.get('function')}:{item.get('line')}"
+                        for item in items
+                    ]
+                    for atom_id, items in binding_event_gaps.items()
+                    if items
                 }
                 producer_roles = {
                     atom_id: atom_gap.get("unsatisfied_producer_roles", [])
@@ -962,11 +1067,12 @@ def to_markdown(payload: dict[str, Any]) -> str:
                     if atom_gap.get("unsatisfied_observed_roles")
                 }
                 lines.append(
-                    "| {queue} | {execs} | {size} | `{missing}` | `{observed}` | `{producer}` |".format(
+                    "| {queue} | {execs} | {size} | `{missing}` | `{events}` | `{observed}` | `{producer}` |".format(
                         queue=cell(event.get("queue_id")),
                         execs=cell(event.get("execs_done")),
                         size=cell(event.get("queue_file_size")),
                         missing=missing_roles,
+                        events=missing_binding_events,
                         observed=observed_roles,
                         producer=producer_roles,
                     )

@@ -16,6 +16,7 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
         events: list[dict],
         binding_signal: dict | None = None,
         queue_files: dict[int, bytes] | None = None,
+        runtime_event_map: str | None = None,
     ) -> Path:
         default_dir = root / "formtrig" / name / "out" / "default"
         default_dir.mkdir(parents=True)
@@ -52,6 +53,11 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
             queue_dir.mkdir()
             for queue_id, content in queue_files.items():
                 (queue_dir / f"id:{queue_id:06d},src:000000").write_bytes(content)
+        if runtime_event_map is not None:
+            (default_dir.parent / "formtrig_runtime_event_map.csv").write_text(
+                runtime_event_map,
+                encoding="utf-8",
+            )
         return root / "formtrig" / name
 
     def run_tool(self, root: Path) -> dict:
@@ -323,6 +329,118 @@ class AnalyzeFormtrigSignalPathTest(unittest.TestCase):
             gap["latest_saved_non_trigger"]["queue_file_size"],
             3,
         )
+
+    def test_terminal_gap_reports_missing_specific_binding_event(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.write_run(
+                root,
+                "001_TGT",
+                [
+                    {
+                        "event": "saved_progress",
+                        "reason": "root_aligned_state_transition",
+                        "triggered": False,
+                        "execs_done": 17,
+                        "queue_id": 5,
+                        "d_f": 1,
+                        "d_f_spec_lifted": 1,
+                        "lifted": True,
+                        "atom_signal_values": [
+                            {
+                                "atom_id": 1,
+                                "role_bits": 65,
+                                "producer_bits": 0,
+                                "guard_bits": 0,
+                                "use_bits": 0,
+                                "flags": 3,
+                            }
+                        ],
+                        "component_values": [
+                            {
+                                "atom_id": 1,
+                                "role": 1,
+                                "flags": 2,
+                                "value": 1,
+                                "context_hash": "root",
+                            },
+                            {
+                                "atom_id": 1,
+                                "role": 7,
+                                "flags": 2,
+                                "value": 1,
+                                "context_hash": "life_a",
+                            },
+                            {
+                                "atom_id": 1,
+                                "role": 7,
+                                "flags": 2,
+                                "value": 1,
+                                "context_hash": "life_b",
+                            },
+                        ],
+                    }
+                ],
+                binding_signal={
+                    "atoms": [
+                        {
+                            "atom_id": 1,
+                            "category": "compound-sequence-lifecycle",
+                            "bound_roles": ["root_observe", "lifecycle_event"],
+                            "roles": [
+                                {"role": "root_observe", "bound": True},
+                                {"role": "lifecycle_event", "bound": True},
+                            ],
+                        }
+                    ]
+                },
+                runtime_event_map=(
+                    "binding_id,atom_id,role,event_id,lift_allowed,function,file,line,column,opcode,component_kind,priority,value_mode\n"
+                    "1,1,root_observe,root,true,root_fn,a.c,10,1,icmp,3,50,hit\n"
+                    "2,1,lifecycle_event,life_a,true,life_a_fn,a.c,20,1,br,7,20,hit\n"
+                    "3,1,lifecycle_event,life_b,true,life_b_fn,a.c,30,1,br,7,25,hit\n"
+                    "4,1,lifecycle_event,life_c,true,life_c_fn,a.c,40,1,br,7,30,hit\n"
+                ),
+                queue_files={5: b"abc"},
+            )
+
+            payload = self.run_tool(root)
+
+        gap = payload["runs"][0]["terminal_gap"]
+        self.assertEqual(gap["status"], "saved_frontier_missing_binding_events")
+        self.assertEqual(gap["missing_bound_roles_at_latest_saved"], {})
+        self.assertEqual(
+            gap["missing_binding_events_at_latest_saved"]["1"][0]["event_id"],
+            "life_c",
+        )
+        self.assertIn(
+            "missing_binding_events_at_latest_saved_frontier",
+            gap["blocking_reasons"],
+        )
+
+    def test_accepts_direct_fuzzer_out_layout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run = self.write_run(root, "001_TGT", [])
+            out_dir = run / "out"
+            output = subprocess.check_output(
+                [
+                    "python3",
+                    str(REPO_ROOT / "tools" / "analyze_formtrig_signal_path.py"),
+                    "--target-id",
+                    "TGT",
+                    "--formtrig-dir",
+                    str(out_dir),
+                    "--format",
+                    "json",
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+            )
+            payload = json.loads(output)
+
+        self.assertEqual(payload["run_count"], 1)
+        self.assertEqual(payload["runs"][0]["run"], "out")
 
     def test_writes_markdown(self):
         with tempfile.TemporaryDirectory() as tmp:
