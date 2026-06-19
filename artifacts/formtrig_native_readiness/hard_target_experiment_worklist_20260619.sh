@@ -11,9 +11,12 @@ set -euo pipefail
 # post-unblock: prioritize targets where strong baselines have low success or long R2T tails
 # post-unblock: add ablations for any target-specific typed hook before main-claim use
 
-# P0 GPAC_3403 extend_real_cve_short_gate_to_matched_endpoint
-# benefit: Extend the validated real-CVE short gate into endpoint evidence: FORMTRIG must turn TC-rooted lifted guidance into terminal _T/crash under the same matched budget, while faithful baselines expose late/missing/high-variance R2T behavior.
-scripts/run_gpac3403_typedops36_matched_longrun.sh --binding-spec artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml --duration 7200 --reps 3 --jobs 4 --out artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_7200s_3rep_20260619T222535Z --continue-on-fail
+# P0 GPAC_3403 repair_real_cve_lifecycle_alias_to_endpoint
+# benefit: Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget.
+# blocked: lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; retained endpoint variants have 0 ASAN/double-free files; top variant imports only 2 samples / 15 NALUs versus positive control 172 samples / 413 NALUs; missing signatures include layers_only_4, vps_max_layer_id, nal_type_49_not_handled, asan, asan_double_free
+# post-unblock: add or tune relation-aware HEVC/lifecycle mutation for GPAC_3403
+# post-unblock: rerun a FORMTRIG-only endpoint gate with typed-retained endpoint replay
+# post-unblock: only then run matched 600s/7200s faithful baselines
 
 # P1 SQL013 draft_binding_spec_then_short_screen
 # benefit: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.

@@ -1,6 +1,6 @@
 {
   "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
-  "blocked_count": 27,
+  "blocked_count": 28,
   "defaults": {
     "jobs": 4,
     "longrun_duration_s": 7200,
@@ -8,7 +8,7 @@
     "repetitions": 3,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-19T22:25:35+00:00",
+  "generated_at_utc": "2026-06-19T22:33:28+00:00",
   "inputs": {
     "active_runs": "",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
@@ -17,10 +17,10 @@
     "manifest_root": "artifacts/formtrig_native_readiness/manifests",
     "native_build_root": "artifacts/formtrig_native_readiness/magma_native_builds",
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
-    "real_cve_readiness": "artifacts/formtrig_native_readiness/real_cve_readiness_20260618.json",
+    "real_cve_readiness": "artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json",
     "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260619.json"
   },
-  "runnable_now_count": 1,
+  "runnable_now_count": 0,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
   "skipped_control_count": 11,
   "skipped_controls": [
@@ -1057,22 +1057,22 @@
       "target_id": "PDF003"
     },
     {
-      "action": "extend_real_cve_short_gate_to_matched_endpoint",
-      "benefit_to_prove": "Extend the validated real-CVE short gate into endpoint evidence: FORMTRIG must turn TC-rooted lifted guidance into terminal _T/crash under the same matched budget, while faithful baselines expose late/missing/high-variance R2T behavior.",
+      "action": "repair_real_cve_lifecycle_alias_to_endpoint",
+      "benefit_to_prove": "Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget.",
       "blocked_claims": [
-        "current evidence has pre-trigger guidance but no FORMTRIG endpoint _T in the latest 600s GPAC package",
-        "campaign-time same_object sampling is still missing in the latest GPAC search run",
-        "current GPAC endpoint evidence is single-repetition/short-gate only"
+        "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; retained endpoint variants have 0 ASAN/double-free files; top variant imports only 2 samples / 15 NALUs versus positive control 172 samples / 413 NALUs; missing signatures include layers_only_4, vps_max_layer_id, nal_type_49_not_handled, asan, asan_double_free"
       ],
-      "blocking_issue": [],
+      "blocking_issue": [
+        "lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; retained endpoint variants have 0 ASAN/double-free files; top variant imports only 2 samples / 15 NALUs versus positive control 172 samples / 413 NALUs; missing signatures include layers_only_4, vps_max_layer_id, nal_type_49_not_handled, asan, asan_double_free"
+      ],
       "category": "compound-sequence-lifecycle",
-      "claim_boundary": "Current readiness supports real-CVE mechanism and short-gate evidence only. Do not claim endpoint speedup or hard SOTA pain until replicated matched endpoint runs produce terminal outcomes and baseline guidance-gap evidence.",
-      "command": "scripts/run_gpac3403_typedops36_matched_longrun.sh --binding-spec artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml --duration 7200 --reps 3 --jobs 4 --out artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_7200s_3rep_20260619T222535Z --continue-on-fail",
+      "claim_boundary": "This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.",
+      "command": "",
       "comparison_verdict": "ten_min_single_rep_not_replicated",
       "current_primary_benefits": [
-        "600s short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 1 accepted / 1 saved non-trigger progress events; variable TC-rooted roles: root_observe,use; spec D_F candidate values {6,5,4,2}; ASAN AFL++ family valid baseline reps 3 with 0 endpoint successes"
+        "GPAC typed-retained/frontier diagnostics show TC-rooted parser-frontier guidance: retained candidates reach HEVC/L-HEVC parser neighborhoods and match 7 positive-control parser signatures, while matched 600s baselines still have 0 endpoint successes."
       ],
-      "duration_s": 7200,
+      "duration_s": "",
       "evidence_paths": [
         "artifacts/atoms/GPAC_3403.json",
         "artifacts/binding_specs/GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml",
@@ -1088,9 +1088,14 @@
         "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json",
         "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
         "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json",
+        "artifacts/formtrig_native_readiness/comparisons/gpac3403_b12_typedops40_access_unit_preseed_corpus_formtrig_300s_20260619/comparison.json",
         "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/comparison.json",
         "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/comparison.json",
-        "artifacts/formtrig_native_readiness/real_cve_readiness_20260618.json",
+        "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/comparison.json",
+        "artifacts/formtrig_native_readiness/comparisons/gpac3403_b8_typedops36_matched_600s_1rep_20260619/comparison.json",
+        "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json",
+        "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.md",
+        "artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json",
         "artifacts/rnt_corpus/GPAC_3403/manifest.json",
         "artifacts/rnt_corpus/GPAC_3403/metadata.csv",
         "artifacts/tcir/GPAC_3403.json",
@@ -1101,25 +1106,27 @@
       "lane": "binding_spec_first",
       "main_claim_strength": "",
       "mechanism_evidence_required": [
-        "validated complete-role BindingSpec, preferably GPAC B5",
-        "accepted/saved non-trigger D_F progress before endpoint _T",
-        "D_F_spec_lifted movement from campaign distance 2 toward replay pre-abort distance 1",
-        "same_object, root_observe, and use roles observed during campaign",
-        "typed mutation provenance and hot-range/input-influence record"
+        "same_object object identity across lifecycle_event and use endpoints",
+        "HEVC/L-HEVC candidate scale moves beyond the current low-sample frontier",
+        "D_F_spec_lifted reaches the replay pre-abort distance and remains non-terminal until endpoint",
+        "typed mutation provenance for VPS/SPS/PPS/slice/access-unit construction"
       ],
-      "post_unblock_commands": [],
+      "post_unblock_commands": [
+        "add or tune relation-aware HEVC/lifecycle mutation for GPAC_3403",
+        "rerun a FORMTRIG-only endpoint gate with typed-retained endpoint replay",
+        "only then run matched 600s/7200s faithful baselines"
+      ],
       "primary_endpoint_metrics": [
-        "replicated same-budget terminal success rate",
-        "first _T / terminal-crash wall-clock time",
-        "first _T / terminal-crash execution count",
-        "baseline endpoint success and R2T tail under the same seed/oracle",
-        "whether GPAC same_object appears during campaign-time search"
+        "FORMTRIG endpoint ASAN/double-free success after repair",
+        "first _T / terminal-crash wall-clock time after repair",
+        "retained variant endpoint signature overlap with positive control",
+        "same_object lifecycle alias relation observed at runtime"
       ],
       "priority": "P0",
       "project": "gpac",
       "rank": 4,
-      "repetitions": 3,
-      "runnable_now": true,
+      "repetitions": "",
+      "runnable_now": false,
       "sota_pain_class": "not_assessed",
       "sota_pain_evidence": "collect matched FORMTRIG and faithful baseline evidence",
       "source": "real_cve",

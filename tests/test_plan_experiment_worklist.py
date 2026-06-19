@@ -1216,6 +1216,108 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertIn("real_cve_readiness_control_or_negative", skipped["reason"])
             self.assertEqual(skipped["next_action"], "keep as control/sanity evidence")
 
+    def test_real_cve_lifecycle_alias_gap_blocks_gpac_longrun(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            comparison_dir = comparison_root / "gpac3403_b12"
+            readiness_path = root / "real_cve_readiness.json"
+            comparison_dir.mkdir(parents=True)
+            (comparison_dir / "comparison.json").write_text(
+                json.dumps(
+                    {
+                        "target_id": "GPAC_3403",
+                        "interpretation": {
+                            "supported_claims": [
+                                "FORMTRIG preserves strict saved pre-trigger guidance"
+                            ],
+                            "blocked_claims": [
+                                "No GPAC_3403 terminal _T or ASAN double-free is established"
+                            ],
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 4,
+                                "target_id": "GPAC_3403",
+                                "source": "real_cve",
+                                "project": "gpac",
+                                "primary_category": "compound-sequence-lifecycle",
+                                "secondary_category": "",
+                                "lane": "binding_spec_first",
+                                "status": "candidate_after_replay_and_binding",
+                                "existing_disposition": "",
+                                "blockers": "",
+                                "source_evidence": "cve.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            readiness_path.write_text(
+                json.dumps(
+                    {
+                        "targets": {
+                            "GPAC_3403": {
+                                "target_id": "GPAC_3403",
+                                "readiness": "needs_lifecycle_alias_repair",
+                                "core_evidence_allowed": True,
+                                "project": "gpac",
+                                "category": "compound-sequence-lifecycle",
+                                "current_benefit": "typed-retained candidates reach parser-frontier signatures",
+                                "blockers": "same_object relation runtime proof is missing; endpoint ASAN/double-free is absent",
+                                "paths": {
+                                    "comparison_records": [
+                                        "artifacts/formtrig_native_readiness/comparisons/gpac3403_b12_typedops40_access_unit_preseed_corpus_formtrig_300s_20260619/comparison.json"
+                                    ],
+                                    "diagnostics": [
+                                        "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json"
+                                    ],
+                                },
+                            }
+                        }
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                harness_admissibility_root=None,
+                real_cve_readiness_path=readiness_path,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=2,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "repair_real_cve_lifecycle_alias_to_endpoint")
+            self.assertFalse(task["runnable_now"])
+            self.assertEqual(task["command"], "")
+            self.assertIn("same_object relation runtime proof is missing", "; ".join(task["blocking_issue"]))
+            self.assertIn("typed-retained candidates reach parser-frontier signatures", task["current_primary_benefits"])
+            self.assertIn(
+                "artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json",
+                task["evidence_paths"],
+            )
+
     def test_validated_short_screen_reuses_manifest_afl_args_for_baselines(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

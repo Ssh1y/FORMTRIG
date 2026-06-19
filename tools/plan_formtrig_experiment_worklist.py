@@ -1350,6 +1350,67 @@ def real_cve_endpoint_extension_task(
     }
 
 
+def real_cve_lifecycle_repair_task(
+    row: dict[str, Any],
+    comparison: dict[str, Any] | None,
+) -> dict[str, Any]:
+    summary = comparison_summary(comparison)
+    readiness = real_cve_readiness_for(row)
+    blockers = as_list(readiness.get("blockers")) or [
+        "lifecycle alias relation is not proven at runtime",
+        "current typed mutations reach parser neighborhoods but not terminal _T/crash",
+    ]
+    current_benefits = summary["primary_benefits"]
+    if readiness.get("current_benefit"):
+        current_benefits = add_unique(list(current_benefits), [str(readiness["current_benefit"])])
+    return {
+        "priority": priority_for(row),
+        "rank": int(row.get("rank") or readiness.get("discovery_rank") or 0),
+        "target_id": str(row.get("target_id") or readiness.get("target_id") or ""),
+        "source": str(row.get("source") or "real_cve"),
+        "project": str(row.get("project") or readiness.get("project") or ""),
+        "category": category_text(row),
+        "lane": str(row.get("lane") or readiness.get("discovery_lane") or ""),
+        "action": "repair_real_cve_lifecycle_alias_to_endpoint",
+        "duration_s": "",
+        "repetitions": "",
+        "runnable_now": False,
+        "benefit_to_prove": (
+            "Convert existing GPAC TC-rooted parser-frontier guidance into terminal "
+            "endpoint behavior before spending replicated 2h matched-baseline budget."
+        ),
+        "primary_endpoint_metrics": [
+            "FORMTRIG endpoint ASAN/double-free success after repair",
+            "first _T / terminal-crash wall-clock time after repair",
+            "retained variant endpoint signature overlap with positive control",
+            "same_object lifecycle alias relation observed at runtime",
+        ],
+        "mechanism_evidence_required": [
+            "same_object object identity across lifecycle_event and use endpoints",
+            "HEVC/L-HEVC candidate scale moves beyond the current low-sample frontier",
+            "D_F_spec_lifted reaches the replay pre-abort distance and remains non-terminal until endpoint",
+            "typed mutation provenance for VPS/SPS/PPS/slice/access-unit construction",
+        ],
+        "blocking_issue": blockers,
+        "claim_boundary": (
+            "This is a repair target. Existing evidence supports parser-frontier "
+            "guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint "
+            "speedup or hard SOTA-pain until the alias/terminal gap closes."
+        ),
+        "command": "",
+        "post_unblock_commands": [
+            "add or tune relation-aware HEVC/lifecycle mutation for GPAC_3403",
+            "rerun a FORMTRIG-only endpoint gate with typed-retained endpoint replay",
+            "only then run matched 600s/7200s faithful baselines",
+        ],
+        "comparison_verdict": summary["verdict"],
+        "main_claim_strength": summary["main_claim_strength"],
+        "current_primary_benefits": current_benefits,
+        "blocked_claims": add_unique(list(summary["blocked_claims"]), blockers),
+        "evidence_paths": evidence_paths(row, comparison),
+    }
+
+
 def longrun_task(
     row: dict[str, Any],
     comparison: dict[str, Any] | None,
@@ -2047,6 +2108,14 @@ def task_for_row(
     disposition = str(row.get("existing_disposition") or "")
     lane = str(row.get("lane") or "")
     readiness = real_cve_readiness_for(row)
+    if (
+        str(row.get("source") or "") == "real_cve"
+        and str(readiness.get("readiness") or "") == "needs_lifecycle_alias_repair"
+    ):
+        return attach_sota_pain(
+            real_cve_lifecycle_repair_task(row, comparison),
+            triage,
+        )
     if (
         str(row.get("source") or "") == "real_cve"
         and str(readiness.get("readiness") or "") == "short_gate_triaged"

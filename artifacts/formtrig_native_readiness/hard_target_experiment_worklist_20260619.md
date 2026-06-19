@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-19T22:25:35+00:00`
-Tasks: `28`; runnable now: `1`; blocked/gated: `27`; demoted controls skipped: `11`; low-priority skipped: `93`.
+Generated: `2026-06-19T22:33:28+00:00`
+Tasks: `28`; runnable now: `0`; blocked/gated: `28`; demoted controls skipped: `11`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -16,7 +16,7 @@ Tasks: `28`; runnable now: `1`; blocked/gated: `27`; demoted controls skipped: `
 | priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
 | P0 | 1 | PDF003 | magma | visible_hard_speedup_or_reliability | expand_cross_target_hard_evidence | blocked | The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign. |
-| P0 | 4 | GPAC_3403 | real_cve | not_assessed | extend_real_cve_short_gate_to_matched_endpoint | yes | Extend the validated real-CVE short gate into endpoint evidence: FORMTRIG must turn TC-rooted lifted guidance into terminal _T/crash under the same matched budget, while faithful baselines expose late/missing/high-variance R2T behavior. |
+| P0 | 4 | GPAC_3403 | real_cve | not_assessed | repair_real_cve_lifecycle_alias_to_endpoint | blocked | Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget. |
 | P1 | 5 | SQL013 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 6 | SSL009 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 7 | PHP010 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -46,12 +46,7 @@ Tasks: `28`; runnable now: `1`; blocked/gated: `27`; demoted controls skipped: `
 
 ## Runnable Now
 
-### P0 GPAC_3403
-
-- Benefit: Extend the validated real-CVE short gate into endpoint evidence: FORMTRIG must turn TC-rooted lifted guidance into terminal _T/crash under the same matched budget, while faithful baselines expose late/missing/high-variance R2T behavior.
-- SOTA pain: `not_assessed`
-- SOTA pain evidence: collect matched FORMTRIG and faithful baseline evidence
-- Command: `scripts/run_gpac3403_typedops36_matched_longrun.sh --binding-spec artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml --duration 7200 --reps 3 --jobs 4 --out artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_7200s_3rep_20260619T222535Z --continue-on-fail`
+No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 
 ## Gated Tasks
 
@@ -78,6 +73,56 @@ Tasks: `28`; runnable now: `1`; blocked/gated: `27`; demoted controls skipped: `
 - artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z/comparison.json
 - artifacts/magma_canary_inventory.json
 - artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json
+
+### P0 GPAC_3403 - repair_real_cve_lifecycle_alias_to_endpoint
+
+- Benefit to prove: Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget.
+- SOTA pain: `not_assessed`
+- SOTA pain evidence: collect matched FORMTRIG and faithful baseline evidence
+- Endpoint metrics: FORMTRIG endpoint ASAN/double-free success after repair, first _T / terminal-crash wall-clock time after repair, retained variant endpoint signature overlap with positive control, same_object lifecycle alias relation observed at runtime
+- Claim boundary: This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.
+- Blocking issue:
+- lifecycle alias relation is not proven at runtime: same_object relation runtime proof is false; retained endpoint variants have 0 ASAN/double-free files; top variant imports only 2 samples / 15 NALUs versus positive control 172 samples / 413 NALUs; missing signatures include layers_only_4, vps_max_layer_id, nal_type_49_not_handled, asan, asan_double_free
+- Mechanism evidence required after benefit:
+- same_object object identity across lifecycle_event and use endpoints
+- HEVC/L-HEVC candidate scale moves beyond the current low-sample frontier
+- D_F_spec_lifted reaches the replay pre-abort distance and remains non-terminal until endpoint
+- typed mutation provenance for VPS/SPS/PPS/slice/access-unit construction
+- Current primary benefits:
+- GPAC typed-retained/frontier diagnostics show TC-rooted parser-frontier guidance: retained candidates reach HEVC/L-HEVC parser neighborhoods and match 7 positive-control parser signatures, while matched 600s baselines still have 0 endpoint successes.
+- Post-unblock commands or steps:
+- add or tune relation-aware HEVC/lifecycle mutation for GPAC_3403
+- rerun a FORMTRIG-only endpoint gate with typed-retained endpoint replay
+- only then run matched 600s/7200s faithful baselines
+- Evidence paths:
+- artifacts/atoms/GPAC_3403.json
+- artifacts/binding_specs/GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml
+- artifacts/binding_specs/GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml
+- artifacts/binding_specs/GPAC_3403.native_b3_nalu_reassign_alias_candidate.yml
+- artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml
+- artifacts/cve_bench_candidate_audit.json
+- artifacts/cve_validation_logs/GPAC_3403.validation.log
+- artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json
+- artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json
+- artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json
+- artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json
+- artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json
+- artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json
+- artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json
+- artifacts/formtrig_native_readiness/comparisons/gpac3403_b12_typedops40_access_unit_preseed_corpus_formtrig_300s_20260619/comparison.json
+- artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/comparison.json
+- artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/comparison.json
+- artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_blackwhite_annexb_60s_20260619/comparison.json
+- artifacts/formtrig_native_readiness/comparisons/gpac3403_b8_typedops36_matched_600s_1rep_20260619/comparison.json
+- artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.json
+- artifacts/formtrig_native_readiness/gpac3403_lifecycle_gap_audit_20260619.md
+- artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json
+- artifacts/rnt_corpus/GPAC_3403/manifest.json
+- artifacts/rnt_corpus/GPAC_3403/metadata.csv
+- artifacts/tcir/GPAC_3403.json
+- artifacts/trigger_graphs/GPAC_3403.json
+- benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box
+- benchmarks/cve_pocs/gpac/GPAC_3403.poc
 
 ### P1 SQL013 - draft_binding_spec_then_short_screen
 
