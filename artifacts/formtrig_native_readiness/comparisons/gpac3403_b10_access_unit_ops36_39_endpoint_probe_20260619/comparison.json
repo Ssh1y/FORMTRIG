@@ -1,0 +1,106 @@
+{
+  "schema": "formtrig_gpac3403_access_unit_ops_endpoint_probe_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T17:35:00Z",
+  "raw_artifact": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619",
+  "seed": {
+    "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_saved_progress_endpoint_replay_safe_20260619/inputs/q195.hevc",
+    "source": "FORMTRIG typedops36 saved_non_trigger frontier sample"
+  },
+  "mutation_change": {
+    "hook": "scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+    "new_ops": [
+      36,
+      37,
+      38,
+      39
+    ],
+    "semantic_family": "sample_boundary_access_unit",
+    "design": "Reuse Annex-B payloads already present in the current input, force generated VCL NALUs to begin a picture, and arrange repeated VPS/SPS/PPS, layered VCL, and extractor units so GPAC can create multiple HEVC samples and enter L-HEVC import/rewrite paths without embedding PoC bytes."
+  },
+  "previous_platform": {
+    "source": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b8_typedops36_matched_600s_1rep_20260619/comparison.json",
+    "saved_progress_replay": {
+      "variant_files": 5,
+      "hevc_import_files": 2,
+      "hevc_samples_max": 1,
+      "hevc_nalus_max": 11,
+      "lhevc_import_files": 0,
+      "asan_double_free_files": 0
+    },
+    "meaning": "The old typedops36 frontier could reach stable TC-rooted pre-trigger states, but endpoint replay stayed at one imported HEVC sample and never entered L-HEVC import results."
+  },
+  "access_unit_ops_endpoint_probe": {
+    "summary": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/summary.json",
+    "endpoint_signature_audit": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/endpoint_signature_audit.json",
+    "generated_variants": 32,
+    "endpoint_probe_runs": 32,
+    "endpoint_exit_code_counts": {
+      "-11": 5,
+      "0": 27
+    },
+    "endpoint_sanitizer_crashes": 0,
+    "variant_metrics": {
+      "hevc_import_files": 27,
+      "hevc_samples_max": 53,
+      "hevc_nalus_max": 177,
+      "lhevc_import_files": 21,
+      "asan_double_free_files": 0
+    },
+    "top_hevc_imports": [
+      {
+        "variant": "variant_000027",
+        "op": 39,
+        "sample": 6,
+        "samples": 53,
+        "nalus": 177
+      },
+      {
+        "variant": "variant_000031",
+        "op": 39,
+        "sample": 7,
+        "samples": 50,
+        "nalus": 170
+      },
+      {
+        "variant": "variant_000023",
+        "op": 39,
+        "sample": 5,
+        "samples": 47,
+        "nalus": 163
+      }
+    ],
+    "meaning": "The access-unit operators close the previous endpoint import gap: generated candidates now create many HEVC samples and enter L-HEVC import results, which are the endpoint states absent from the stable typedops36 saved frontier."
+  },
+  "positive_control": {
+    "path": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+    "hevc_samples_max": 172,
+    "hevc_nalus_max": 413,
+    "lhevc_import_files": 1,
+    "lhevc_slices": {
+      "i": 30,
+      "p": 2,
+      "b": 87
+    },
+    "asan_double_free_files": 1
+  },
+  "remaining_gap": {
+    "positive_control_signatures_absent_from_variants": [
+      "vps_max_layer_id",
+      "asan",
+      "asan_double_free"
+    ],
+    "meaning": "The new operators reach the multi-sample/L-HEVC rewrite region but do not yet reproduce the terminal double-free. The next long run should enable typed_ops=40 and use the FORMTRIG runtime to test whether lifted scheduling can combine the new sample-boundary operators with the missing gf_isom_nalu_sample_rewrite:672 binding event."
+  },
+  "supported_claims": [
+    "The previous GPAC_3403 stall was not caused by an inability to create more NALUs; it specifically lacked sample-boundary/L-HEVC import structure.",
+    "A spec-linked typed mutation extension can move endpoint behavior from one-sample imports to dozens of samples and L-HEVC import results without hardcoding PoC bytes.",
+    "This is a mechanism repair and endpoint-state improvement, not yet a TTE or terminal success result."
+  ],
+  "blocked_claims": [
+    "No GPAC_3403 terminal _T is established by this endpoint probe.",
+    "The native -11 exits in five endpoint runs have no ASAN marker and are not counted as target-triggering evidence.",
+    "A matched FORMTRIG typedops40 fuzzing run is still required to validate whether the new operators solve the final R2T step under AFL++ scheduling."
+  ],
+  "next_step": "Run matched GPAC_3403 FORMTRIG with typed_ops=40, then compare missing binding events and endpoint import metrics against the typedops36 600s baseline."
+}

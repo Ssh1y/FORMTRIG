@@ -75,6 +75,39 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertIn("AFL_NO_AFFINITY=1", plan)
             self.assertIn("ASAN_OPTIONS=abort_on_error=1", plan)
 
+    def test_typedops40_wrapper_enables_access_unit_ops(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "gpac3403_typedops40"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_gpac3403_typedops40_matched_longrun.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "30",
+                    "--reps",
+                    "1",
+                    "--out",
+                    str(out_dir),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertTrue(records)
+            self.assertTrue(all(record["typed_ops"] == 40 for record in records))
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["typed_ops"], 40)
+
+            plan = (out_dir / "run_plan.sh").read_text(encoding="utf-8")
+            self.assertIn("--typed-ops 40", plan)
+
     def test_dry_run_supports_nohook_ablation(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "gpac3403_nohook"

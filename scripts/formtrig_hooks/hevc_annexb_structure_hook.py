@@ -23,7 +23,9 @@ VPS_MAX_LAYER_ID = [0, 1, 2, 3, 4, 7, 22, 31, 50, 63]
 DENSE_LAYER_IDS = [0, 1, 4, 7, 14, 16, 18, 22, 31, 32, 36, 37, 46, 50]
 DENSE_SEQUENCE_TYPES = [34, 0, 34, 33, 16, 34, 0, 21, 34, 0, 34, 33, 14, 34, 0, 34, 16, 0, 34]
 OUTPUT_LAYER_SET_TOTALS = [5, 6, 8, 12, 16, 33, 65, 132]
-OP_SELECTOR_COUNT = 36
+ACCESS_UNIT_LAYER_IDS = [0, 1, 4, 7, 14, 16, 22, 31, 36, 37, 46, 50]
+ACCESS_UNIT_VCL_TYPES = [0, 1, 5, 14, 16, 21]
+OP_SELECTOR_COUNT = 40
 
 
 @dataclass(frozen=True)
@@ -377,6 +379,103 @@ def output_layer_set_train(data: bytes, nalus: list[Nalu], anchor: Nalu, sample:
     return b"".join(chunks)
 
 
+def vcl_nalus(data: bytes, nalus: list[Nalu]) -> list[Nalu]:
+    return [nalu for nalu in nalus if 0 <= nalu_type(data, nalu) <= 31]
+
+
+def clone_payload_for_type(data: bytes, nalus: list[Nalu], nal_type: int, fallback: Nalu, sample: int) -> bytes:
+    typed = nalus_of_type(data, nalus, nal_type)
+    source = typed[sample % len(typed)] if typed else fallback
+    payload = nalu_body(data, source)
+    if payload:
+        return payload[:512]
+    return parameter_payload(data, nalus, nal_type, fallback, sample)
+
+
+def access_unit_slice_payload(data: bytes, nalus: list[Nalu], anchor: Nalu, sample: int, rewrite_seed: bool) -> bytes:
+    candidates = vcl_nalus(data, nalus)
+    source = candidates[sample % len(candidates)] if candidates else anchor
+    payload = bytearray(nalu_body(data, source) or payload_window(data, source, source.payload_start + 2, sample))
+    if not payload:
+        payload = bytearray(b"\x80")
+    while len(payload) < 24:
+        payload.extend(payload or b"\x80")
+    payload = payload[:192]
+    # HEVC VCL sample splitting depends on the first_slice_segment_in_pic_flag.
+    # Preserve the source slice body, but force generated access units to look
+    # like new picture starts rather than arbitrary NALU bursts.
+    payload[0] |= 0x80
+    if rewrite_seed and len(payload) > 4:
+        for index in range(1, min(5, len(payload))):
+            payload[index] ^= (0x13 + sample * 17 + index * 23) & 0xFF
+    payload[-1] |= 0x80
+    return bytes(payload)
+
+
+def access_unit_parameter_train(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    pps_repeats: int,
+    vps_extension: bool,
+) -> bytes:
+    chunks = []
+    if vps_extension and sample % 3 == 0:
+        vps_payload = output_layer_set_vps_payload(sample)
+    else:
+        vps_payload = clone_payload_for_type(data, nalus, 32, anchor, sample)
+    chunks.append(make_nalu(32, vps_payload, ACCESS_UNIT_LAYER_IDS[sample % len(ACCESS_UNIT_LAYER_IDS)]))
+    chunks.append(make_nalu(33, clone_payload_for_type(data, nalus, 33, anchor, sample + 1), 0))
+    for index in range(pps_repeats):
+        layer = ACCESS_UNIT_LAYER_IDS[(sample + index + 2) % len(ACCESS_UNIT_LAYER_IDS)]
+        chunks.append(make_nalu(34, clone_payload_for_type(data, nalus, 34, anchor, sample + index), layer))
+    return b"".join(chunks)
+
+
+def access_unit_train(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    units: int,
+    layered: bool,
+    include_extractor: bool,
+    include_vps_extension: bool,
+) -> bytes:
+    chunks = []
+    for unit in range(units):
+        local_sample = sample + unit
+        if unit == 0 or unit % 3 == 0:
+            chunks.append(
+                access_unit_parameter_train(
+                    data,
+                    nalus,
+                    anchor,
+                    local_sample,
+                    pps_repeats=2 + (local_sample % 3),
+                    vps_extension=include_vps_extension,
+                )
+            )
+        if include_extractor and (unit % 2 == 0 or layered):
+            layer = ACCESS_UNIT_LAYER_IDS[(local_sample + 5) % len(ACCESS_UNIT_LAYER_IDS)]
+            chunks.append(make_nalu(49, extractor_payload(local_sample), layer))
+
+        slice_count = 1 if not layered else 2 + (unit % 2)
+        for index in range(slice_count):
+            nal_type = ACCESS_UNIT_VCL_TYPES[(local_sample + index) % len(ACCESS_UNIT_VCL_TYPES)]
+            layer = 0 if not layered and index == 0 else ACCESS_UNIT_LAYER_IDS[(local_sample + index) % len(ACCESS_UNIT_LAYER_IDS)]
+            payload = access_unit_slice_payload(
+                data,
+                nalus,
+                anchor,
+                local_sample + index,
+                rewrite_seed=layered and index > 0,
+            )
+            chunks.append(make_nalu(nal_type, payload, layer))
+    return b"".join(chunks)
+
+
 def compact_output_layer_extractor_sequence(
     data: bytes,
     nalus: list[Nalu],
@@ -684,6 +783,66 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
             data, nalus, anchor, sample, cycles=8 + (sample % 2), split=True
         )
         out = data[: anchor.start] + compact + data[anchor.start :]
+    elif selector == 36:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = access_unit_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            units=8 + (sample % 5),
+            layered=False,
+            include_extractor=False,
+            include_vps_extension=False,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 37:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = access_unit_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            units=10 + (sample % 6),
+            layered=True,
+            include_extractor=True,
+            include_vps_extension=False,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 38:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = access_unit_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            units=12 + (sample % 7),
+            layered=True,
+            include_extractor=True,
+            include_vps_extension=True,
+        )
+        out = train + data
+    elif selector == 39:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        prefix = access_unit_parameter_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            pps_repeats=6 + (sample % 4),
+            vps_extension=True,
+        )
+        train = access_unit_train(
+            data,
+            nalus,
+            anchor,
+            sample + 11,
+            units=18 + (sample % 8),
+            layered=True,
+            include_extractor=True,
+            include_vps_extension=True,
+        )
+        out = data[: anchor.start] + prefix + train + data[anchor.start :]
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]

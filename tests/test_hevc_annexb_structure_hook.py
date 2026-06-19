@@ -184,6 +184,36 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
             self.assertTrue(any(item["max_layer_id"] <= 3 for item in parsed_vps))
             self.assertTrue(any(item["num_layer_sets_minus1"] >= 1 for item in parsed_vps))
 
+    def test_access_unit_ops_emit_multiple_first_slice_vcl_units(self):
+        hook = load_hook()
+        audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_for_access_unit_hook_test")
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 43)
+            for op in range(36, 40)
+        ]
+
+        for output in mutated_outputs:
+            nalus = hook.parse_nalus(output)
+            types = [hook.nalu_type(output, nalu) for nalu in nalus]
+            layers = {hook.layer_id(output, nalu) for nalu in nalus}
+            vcl_nalus = [nalu for nalu in nalus if 0 <= hook.nalu_type(output, nalu) <= 31]
+
+            self.assertGreaterEqual(len(nalus), 24)
+            self.assertGreaterEqual(len(vcl_nalus), 8)
+            self.assertIn(32, types)
+            self.assertIn(33, types)
+            self.assertGreaterEqual(types.count(34), 4)
+            self.assertTrue(all(output[nalu.payload_start + 2] & 0x80 for nalu in vcl_nalus[:8]))
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+            self.assertNotEqual(output, original)
+
+        layered_outputs = mutated_outputs[1:]
+        self.assertTrue(any(has_nalu_type(hook, output, 49) for output in layered_outputs))
+        self.assertTrue(any(has_layer_at_least(hook, output, 22) for output in layered_outputs))
+        self.assertTrue(any(parse_vps_items(hook, audit, output) for output in layered_outputs))
+
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()
         original = b"not annex b"

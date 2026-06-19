@@ -1,0 +1,94 @@
+{
+  "best_frontier_variants": [],
+  "best_reached_frontier_variants": [],
+  "binding_spec": null,
+  "d_f_spec_lifted_max": null,
+  "d_f_spec_lifted_min": null,
+  "d_f_spec_lifted_values": [],
+  "duration_s": 17.869,
+  "endpoint_cmd": [
+    "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "endpoint_d_f_max": 1.0,
+  "endpoint_env_keys": [],
+  "endpoint_exit_code_counts": {
+    "-11": 5,
+    "0": 27
+  },
+  "endpoint_filter": "all",
+  "endpoint_native_crashes": 5,
+  "endpoint_positive_control": [
+    {
+      "exit_code": null,
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "kind": "positive_control",
+      "native_crash": false,
+      "rep": 1,
+      "sanitizer_crash": true,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "1323917efc6c6caba63f8de1a0d107d7e7d8cc91c44b43c3a23d2179df8afc49",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": true
+    }
+  ],
+  "endpoint_probe_runs": 32,
+  "endpoint_replayed_variants": 32,
+  "endpoint_replays": 1,
+  "endpoint_sanitizer_crashes": 0,
+  "endpoint_sanitizer_exit_code": 86,
+  "endpoint_timeout": 8.0,
+  "endpoint_timeouts": 0,
+  "first_endpoint_native_crash": {
+    "exit_code": -11,
+    "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/variants/variant_000005.hevc",
+    "kind": "variant",
+    "native_crash": true,
+    "rep": 1,
+    "sanitizer_crash": false,
+    "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/logs/variant_000005.endpoint_1.stderr",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_access_unit_ops36_39_endpoint_probe_20260619/logs/variant_000005.endpoint_1.stdout",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "timed_out": false
+  },
+  "first_endpoint_sanitizer_crash": null,
+  "first_trigger": null,
+  "generated_variants": 32,
+  "hook": "scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+  "lift_spec": null,
+  "op_start": 36,
+  "ops": 4,
+  "ranges": [
+    [
+      0,
+      2949
+    ]
+  ],
+  "reached": 0,
+  "reached_role_sample_counts": {},
+  "reached_same_object_samples": 0,
+  "replayed_variants": 32,
+  "rnt": 0,
+  "role_sample_counts": {},
+  "runtime_event_map": null,
+  "same_object_samples": 0,
+  "samples": 8,
+  "schedule": "round_robin",
+  "schema": "formtrig_gpac3403_hevc_frontier_sweep_v1",
+  "seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_typedops36_saved_progress_endpoint_replay_safe_20260619/inputs/q195.hevc",
+  "seed_sha256": "2bc6f519e89ffdf87ffd94228e1db2bae01d2745f7138bcbd88857f6feaf99a6",
+  "spec_lifted": 0,
+  "target_cmd": [
+    "/bin/true",
+    "@@"
+  ],
+  "target_site_ids": "",
+  "timeouts": 0,
+  "triggered": 0
+}
