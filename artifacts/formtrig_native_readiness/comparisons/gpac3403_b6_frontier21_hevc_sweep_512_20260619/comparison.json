@@ -1,0 +1,112 @@
+{
+  "schema": "formtrig_comparison_v1",
+  "comparison_type": "gpac3403_b6_frontier_last_mile_sweep",
+  "generated_at_utc": "2026-06-19T08:39:00Z",
+  "target_id": "GPAC_3403",
+  "target_class": "real_cve_asan_endpoint",
+  "source_campaign": "gpac3403_b6_blackwhite_annexb_60s_20260619",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619",
+  "sweep": {
+    "seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+    "target_site_ids": "65063371",
+    "generated_variants": 512,
+    "replayed_variants": 512,
+    "reached": 457,
+    "rnt": 457,
+    "triggered": 0,
+    "spec_lifted": 457,
+    "d_f_spec_lifted_values": [
+      1.0,
+      2.0,
+      4.0
+    ],
+    "d_f_spec_lifted_min": 1.0,
+    "d_f_spec_lifted_max": 4.0,
+    "d_f_spec_lifted_eq_1_count": 419,
+    "reached_same_object_samples": 439,
+    "reached_role_sample_counts": {
+      "desired_producer": 439,
+      "input_influence": 439,
+      "lifecycle_event": 439,
+      "opposite_producer": 457,
+      "producer": 439,
+      "root_observe": 457,
+      "same_object": 439,
+      "use": 457
+    },
+    "duration_s": 103.945
+  },
+  "endpoint_probe": {
+    "schema": "formtrig_endpoint_probe_summary_v1",
+    "generated_at_utc": "2026-06-19T08:39:00Z",
+    "target_id": "GPAC_3403",
+    "representative_variant": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+    "validated_asan_oracle": {
+      "binary": "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+      "positive_control": {
+        "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+        "exit_code": 86,
+        "asan_crash": true,
+        "stderr_sha256": "79047c1e94159294e49c5f1c8b504934cbfd5eeff38911bd7e442195ab662fd8",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sanitizer_summary": "AddressSanitizer double-free"
+      },
+      "representative_variant": {
+        "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+        "exit_code": 0,
+        "asan_crash": false,
+        "stderr_sha256": "a993817813ba021a3d1f804c15c1b75dd60a8b5b6fa05f9658a65ce12b5bbee7",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "aflpp_plain_named_asan_build_recheck": [
+      {
+        "kind": "seed",
+        "reps": 3,
+        "exit_codes": [
+          0
+        ],
+        "asan_crashes": [
+          false
+        ],
+        "native_crash_reps": 0
+      },
+      {
+        "kind": "variant",
+        "reps": 5,
+        "exit_codes": [
+          0,
+          139
+        ],
+        "asan_crashes": [
+          false
+        ],
+        "native_crash_reps": 2
+      }
+    ],
+    "caveat": "The /tmp/formtrig_gpac3403_aflpp_plain_asan_src binary name suggests ASAN, but ldd did not show dynamic libasan and repeated probes produced flaky native rc=139 without sanitizer text. This is not acceptance terminal evidence."
+  },
+  "interpretation": {
+    "supports": [
+      "Correct target-site replay produces stable _R/RNT on the GPAC_3403 B6 HEVC frontier.",
+      "Lifted guidance repeatedly reaches the last-mile frontier: 419/512 variants have reached D_F_spec_lifted=1 and 439/512 have reached same_object evidence."
+    ],
+    "does_not_support": [
+      "This package does not demonstrate stable FORMTRIG _T.",
+      "The representative frontier variant does not trigger the validated GPAC_3403 ASAN oracle; the PoC positive control does.",
+      "Flaky rc=139 on the /tmp AFL++ build is not sanitizer-confirmed endpoint evidence."
+    ],
+    "engineering_conclusion": "The problem is not absence of pre-trigger guidance; it is last-mile trigger/oracle coverage. FORMTRIG can park many inputs at D_F=1, but the current Annex-B hook and endpoint plumbing do not yet convert that frontier into a stable _T/ASAN trigger.",
+    "next_actions": [
+      "Run the frontier sweep directly against the validated ASAN oracle or add ASAN replay mode to the sweep tool.",
+      "Expand the HEVC hook beyond generic Annex-B structure toward the PoC-differentiating VPS/SPS/layer-count fields.",
+      "Keep B6 as last-mile diagnostic evidence until stable sanitizer-confirmed endpoint success is available."
+    ]
+  },
+  "evidence": {
+    "compact_summary": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_frontier21_hevc_sweep_512_20260619/evidence/frontier_sweep_summary.json",
+    "endpoint_probe_summary": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_frontier21_hevc_sweep_512_20260619/evidence/endpoint_probe_summary.json",
+    "raw_summary_sha256": "624028e2f80bffd61c93a1f67d24ca0f97cef7969bd8f3dbf44d7d2d0eff561e",
+    "raw_records_sha256": "b0548c2a1e0dd152a3be0b460b026316bbe3841b63a67dd3416ebfe43f1f98b3"
+  }
+}

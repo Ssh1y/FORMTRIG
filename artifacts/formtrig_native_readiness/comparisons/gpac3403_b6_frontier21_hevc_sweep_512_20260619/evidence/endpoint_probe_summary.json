@@ -1,0 +1,50 @@
+{
+  "schema": "formtrig_endpoint_probe_summary_v1",
+  "generated_at_utc": "2026-06-19T08:39:00Z",
+  "target_id": "GPAC_3403",
+  "representative_variant": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+  "validated_asan_oracle": {
+    "binary": "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+    "positive_control": {
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "exit_code": 86,
+      "asan_crash": true,
+      "stderr_sha256": "79047c1e94159294e49c5f1c8b504934cbfd5eeff38911bd7e442195ab662fd8",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sanitizer_summary": "AddressSanitizer double-free"
+    },
+    "representative_variant": {
+      "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+      "exit_code": 0,
+      "asan_crash": false,
+      "stderr_sha256": "a993817813ba021a3d1f804c15c1b75dd60a8b5b6fa05f9658a65ce12b5bbee7",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "aflpp_plain_named_asan_build_recheck": [
+    {
+      "kind": "seed",
+      "reps": 3,
+      "exit_codes": [
+        0
+      ],
+      "asan_crashes": [
+        false
+      ],
+      "native_crash_reps": 0
+    },
+    {
+      "kind": "variant",
+      "reps": 5,
+      "exit_codes": [
+        0,
+        139
+      ],
+      "asan_crashes": [
+        false
+      ],
+      "native_crash_reps": 2
+    }
+  ],
+  "caveat": "The /tmp/formtrig_gpac3403_aflpp_plain_asan_src binary name suggests ASAN, but ldd did not show dynamic libasan and repeated probes produced flaky native rc=139 without sanitizer text. This is not acceptance terminal evidence."
+}

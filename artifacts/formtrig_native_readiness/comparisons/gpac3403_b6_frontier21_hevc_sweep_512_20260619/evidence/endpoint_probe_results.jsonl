@@ -1,0 +1,72 @@
+{
+  "kind": "seed",
+  "input": "/tmp/formtrig_gpac3403_frontier21_seed.hevc",
+  "rep": 1,
+  "exit_code": 0,
+  "asan_crash": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "69d0db88e80ebc04bf82fc29e3da1501bdcb0d17cebf26e2efaf9fe3d9303939"
+}
+{
+  "kind": "seed",
+  "input": "/tmp/formtrig_gpac3403_frontier21_seed.hevc",
+  "rep": 2,
+  "exit_code": 0,
+  "asan_crash": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "69d0db88e80ebc04bf82fc29e3da1501bdcb0d17cebf26e2efaf9fe3d9303939"
+}
+{
+  "kind": "seed",
+  "input": "/tmp/formtrig_gpac3403_frontier21_seed.hevc",
+  "rep": 3,
+  "exit_code": 0,
+  "asan_crash": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "69d0db88e80ebc04bf82fc29e3da1501bdcb0d17cebf26e2efaf9fe3d9303939"
+}
+{
+  "kind": "variant",
+  "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+  "rep": 1,
+  "exit_code": 139,
+  "asan_crash": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "de25f493e2a030af329f5f01121c9f9249da8508936bfa0a119d0a5c8f638731"
+}
+{
+  "kind": "variant",
+  "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+  "rep": 2,
+  "exit_code": 139,
+  "asan_crash": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "de25f493e2a030af329f5f01121c9f9249da8508936bfa0a119d0a5c8f638731"
+}
+{
+  "kind": "variant",
+  "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+  "rep": 3,
+  "exit_code": 0,
+  "asan_crash": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "95142458c233859daf8dc1c6abab024d16dea3abe6fa337c021045af719d1390"
+}
+{
+  "kind": "variant",
+  "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+  "rep": 4,
+  "exit_code": 0,
+  "asan_crash": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "95142458c233859daf8dc1c6abab024d16dea3abe6fa337c021045af719d1390"
+}
+{
+  "kind": "variant",
+  "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_512_20260619/variants/variant_000000.hevc",
+  "rep": 5,
+  "exit_code": 0,
+  "asan_crash": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "95142458c233859daf8dc1c6abab024d16dea3abe6fa337c021045af719d1390"
+}
