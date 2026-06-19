@@ -1,0 +1,246 @@
+{
+  "claim_status": {
+    "current_gap": "ASAN/_T is still absent; the remaining gap is the crash/rewrite condition after VPS extension and type49 are both present.",
+    "stable_T": false,
+    "stable_target_adjacent_endpoint_signatures": true
+  },
+  "engineering_diagnosis": {
+    "fixed": [
+      "Current mutator now controls GPAC VPS extension/output-layer-set fields instead of only coarse max_layers/max_layer_id fields.",
+      "The insertion placement preserves the original parameter-set prefix, preventing type49 NALUs from being consumed before GPAC enters playing state."
+    ],
+    "next_step": "Add a size-bounded type49/output-layer-set mutator or endpoint-signature feedback gate so fuzzing can prefer variants that have both target-adjacent signatures without paying dense timeout cost on every runtime replay.",
+    "not_fixed": [
+      "No endpoint ASAN crash and no FORMTRIG _T in these short sweeps.",
+      "Dense insert variants are expensive for runtime replay: 14/16 timed out at 5 seconds, so long-run use needs scheduling/size control or endpoint-first filtering."
+    ]
+  },
+  "evidence": {
+    "previous_b6_dense_signature_audit": {
+      "path": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_semantic_ref_audit_20260619/evidence/denseops_endpoint_signature_audit.json",
+      "sha256": "ef819befe21329a293bd84fb742d67dd2780bdc368443c53c39c2efb5fb467e0"
+    },
+    "vpsext_dense_insert_ops28_31_endpoint_signature_audit": {
+      "path": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b7_vpsext_frontier_repair_20260619/evidence/vpsext_dense_insert_ops28_31_endpoint_signature_audit.json",
+      "sha256": "709ff97c495e0ba4a185fbe92a5d1178266449ae12a447931d5d361834204ce2"
+    },
+    "vpsext_ops24_27_endpoint_signature_audit": {
+      "path": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b7_vpsext_frontier_repair_20260619/evidence/vpsext_ops24_27_endpoint_signature_audit.json",
+      "sha256": "38db9ff889c8141baf8038aac54dd25c18fb2db371e1f23122186190ee74a8ae"
+    }
+  },
+  "generated_date": "2026-06-19",
+  "progression": {
+    "b6_denseops20_23_before_repair": {
+      "endpoint_signature_counts": {
+        "asan": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "failed_vps_extensions": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "nal_type_49_not_handled": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 64,
+          "variant_occurrences": 343,
+          "variant_top_values": []
+        },
+        "track_importing_hevc": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 1,
+          "variant_files": 128,
+          "variant_occurrences": 128,
+          "variant_top_values": []
+        },
+        "wrong_output_layer_sets": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        }
+      },
+      "interpretation": "Reached dense HEVC structure and type49 for many variants, but missed VPS extension/output-layer-set signatures entirely.",
+      "summary": {
+        "d_f_spec_lifted_max": 1.0,
+        "d_f_spec_lifted_min": 1.0,
+        "duration_s": 962.375,
+        "endpoint_native_crashes": 0,
+        "endpoint_replayed_variants": 128,
+        "endpoint_sanitizer_crashes": 0,
+        "endpoint_timeouts": 0,
+        "generated_variants": 128,
+        "reached": 38,
+        "rnt": 38,
+        "triggered": 0
+      }
+    },
+    "b7_vpsext_dense_insert_ops28_31": {
+      "endpoint_signature_counts": {
+        "asan": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "failed_vps_extensions": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 16,
+          "variant_occurrences": 60,
+          "variant_top_values": []
+        },
+        "nal_type_49_not_handled": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 16,
+          "variant_occurrences": 61,
+          "variant_top_values": []
+        },
+        "track_importing_hevc": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 1,
+          "variant_files": 16,
+          "variant_occurrences": 16,
+          "variant_top_values": []
+        },
+        "wrong_output_layer_sets": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 16,
+          "variant_occurrences": 60,
+          "variant_top_values": [
+            {
+              "count": 11,
+              "value": "12/4"
+            },
+            {
+              "count": 9,
+              "value": "16/4"
+            },
+            {
+              "count": 9,
+              "value": "33/4"
+            },
+            {
+              "count": 7,
+              "value": "6/4"
+            },
+            {
+              "count": 7,
+              "value": "8/4"
+            },
+            {
+              "count": 7,
+              "value": "65/4"
+            }
+          ]
+        }
+      },
+      "interpretation": "Insertion after the seed parameter-set prefix preserves playing/sample state: output-layer-set failure, VPS-extension failure, type49 handling, and Track Importing all appear in every endpoint replay. ASAN remains absent.",
+      "summary": {
+        "d_f_spec_lifted_max": 2.0,
+        "d_f_spec_lifted_min": 1.0,
+        "duration_s": 78.693,
+        "endpoint_native_crashes": 0,
+        "endpoint_replayed_variants": 16,
+        "endpoint_sanitizer_crashes": 0,
+        "endpoint_timeouts": 0,
+        "generated_variants": 16,
+        "reached": 2,
+        "rnt": 2,
+        "triggered": 0
+      }
+    },
+    "b7_vpsext_ops24_27": {
+      "endpoint_signature_counts": {
+        "asan": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "failed_vps_extensions": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 32,
+          "variant_occurrences": 112,
+          "variant_top_values": []
+        },
+        "nal_type_49_not_handled": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 2,
+          "variant_files": 0,
+          "variant_occurrences": 0,
+          "variant_top_values": []
+        },
+        "track_importing_hevc": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 1,
+          "variant_files": 32,
+          "variant_occurrences": 32,
+          "variant_top_values": []
+        },
+        "wrong_output_layer_sets": {
+          "positive_control_files": 1,
+          "positive_control_occurrences": 4,
+          "variant_files": 32,
+          "variant_occurrences": 112,
+          "variant_top_values": [
+            {
+              "count": 15,
+              "value": "6/4"
+            },
+            {
+              "count": 15,
+              "value": "132/4"
+            },
+            {
+              "count": 14,
+              "value": "5/4"
+            },
+            {
+              "count": 14,
+              "value": "12/4"
+            },
+            {
+              "count": 14,
+              "value": "33/4"
+            },
+            {
+              "count": 14,
+              "value": "65/4"
+            }
+          ]
+        }
+      },
+      "interpretation": "The new bounded VPS-extension mutator makes Wrong number of output layer sets and Failed to parse VPS extensions stable across all endpoint replays, but does not preserve type49/extractor handling.",
+      "summary": {
+        "d_f_spec_lifted_max": 2.0,
+        "d_f_spec_lifted_min": 1.0,
+        "duration_s": 12.357,
+        "endpoint_native_crashes": 0,
+        "endpoint_replayed_variants": 32,
+        "endpoint_sanitizer_crashes": 0,
+        "endpoint_timeouts": 0,
+        "generated_variants": 32,
+        "reached": 32,
+        "rnt": 32,
+        "triggered": 0
+      }
+    }
+  },
+  "schema": "formtrig_gpac3403_vpsext_frontier_repair_v1",
+  "subject": "GPAC_3403 repair after RNT-but-not-T VPS extension diagnosis"
+}

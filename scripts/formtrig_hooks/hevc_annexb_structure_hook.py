@@ -22,6 +22,8 @@ VPS_MAX_LAYERS_MINUS1 = [0, 1, 2, 3, 4, 15, 46, 63]
 VPS_MAX_LAYER_ID = [0, 1, 2, 3, 4, 7, 22, 31, 50, 63]
 DENSE_LAYER_IDS = [0, 1, 4, 7, 14, 16, 18, 22, 31, 32, 36, 37, 46, 50]
 DENSE_SEQUENCE_TYPES = [34, 0, 34, 33, 16, 34, 0, 21, 34, 0, 34, 33, 14, 34, 0, 34, 16, 0, 34]
+OUTPUT_LAYER_SET_TOTALS = [5, 6, 8, 12, 16, 33, 65, 132]
+OP_SELECTOR_COUNT = 32
 
 
 @dataclass(frozen=True)
@@ -38,6 +40,42 @@ class Nalu:
     @property
     def payload(self) -> bytes:
         raise AttributeError("payload requires source bytes")
+
+
+class BitWriter:
+    def __init__(self):
+        self.bits: list[int] = []
+
+    def add_bits(self, value: int, count: int) -> None:
+        for shift in range(count - 1, -1, -1):
+            self.bits.append((value >> shift) & 1)
+
+    def add_bool(self, value: bool) -> None:
+        self.add_bits(1 if value else 0, 1)
+
+    def add_ue(self, value: int) -> None:
+        code_num = max(0, value) + 1
+        body = f"{code_num:b}"
+        self.bits.extend([0] * (len(body) - 1))
+        self.bits.extend(1 if bit == "1" else 0 for bit in body)
+
+    def byte_align_zero(self) -> None:
+        while len(self.bits) % 8:
+            self.bits.append(0)
+
+    def to_bytes(self, rbsp_trailing_bits: bool = True) -> bytes:
+        bits = list(self.bits)
+        if rbsp_trailing_bits:
+            bits.append(1)
+        while len(bits) % 8:
+            bits.append(0)
+        out = bytearray()
+        for index in range(0, len(bits), 8):
+            value = 0
+            for bit in bits[index : index + 8]:
+                value = (value << 1) | bit
+            out.append(value)
+        return bytes(out)
 
 
 def find_start_codes(data: bytes) -> list[tuple[int, int]]:
@@ -101,6 +139,21 @@ def make_header(nal_type: int, layer: int = 0, tid_plus_one: int = 1) -> bytes:
 def make_nalu(nal_type: int, payload: bytes = b"\x80", layer: int = 0) -> bytes:
     payload = payload[:1024] or b"\x80"
     return START4 + make_header(nal_type, layer) + payload
+
+
+def ebsp_from_rbsp(rbsp: bytes) -> bytes:
+    out = bytearray()
+    zero_count = 0
+    for byte in rbsp:
+        if zero_count >= 2 and byte <= 3:
+            out.append(3)
+            zero_count = 0
+        out.append(byte)
+        if byte == 0:
+            zero_count += 1
+        else:
+            zero_count = 0
+    return bytes(out)
 
 
 def set_bits(payload: bytes, bit_offset: int, bit_len: int, value: int) -> bytes:
@@ -186,6 +239,55 @@ def vps_field_payload(base_payload: bytes, sample: int) -> bytes:
     return bytes(tail)
 
 
+def output_layer_set_vps_payload(sample: int) -> bytes:
+    writer = BitWriter()
+    max_layers_minus1 = 3
+    max_layers = max_layers_minus1 + 1
+    max_layer_id = 3
+    num_layer_sets_minus1 = 1 + (sample % 3)
+    num_layer_sets = num_layer_sets_minus1 + 1
+    total_output_layer_sets = OUTPUT_LAYER_SET_TOTALS[sample % len(OUTPUT_LAYER_SET_TOTALS)]
+    num_add_olss = max(0, total_output_layer_sets - num_layer_sets)
+
+    writer.add_bits(sample & 0x0F, 4)
+    writer.add_bool(False)
+    writer.add_bool(True)
+    writer.add_bits(max_layers_minus1, 6)
+    writer.add_bits(0, 3)
+    writer.add_bool(True)
+    writer.add_bits(0xFFFF, 16)
+    writer.add_bits(0, 96)
+    writer.add_bool(True)
+    writer.add_ue(0)
+    writer.add_ue(0)
+    writer.add_ue(0)
+    writer.add_bits(max_layer_id, 6)
+    writer.add_ue(num_layer_sets_minus1)
+    for layer_set_index in range(1, num_layer_sets):
+        for layer_id_value in range(max_layer_id + 1):
+            writer.add_bool(layer_id_value == 0 or layer_id_value <= layer_set_index)
+    writer.add_bool(False)
+    writer.add_bool(True)
+    writer.byte_align_zero()
+
+    writer.add_bool(False)
+    writer.add_bits(0, 16)
+    writer.add_bool(False)
+    writer.add_bits(0, 4)
+    for layer_index in range(1, max_layers):
+        for _ in range(layer_index):
+            writer.add_bool(False)
+    writer.add_ue(0)
+    writer.add_bool(False)
+    writer.add_bool(False)
+    writer.add_bool(bool(sample & 1))
+    writer.add_ue(0)
+    writer.add_ue(num_add_olss)
+    writer.add_bits(sample % 3, 2)
+    writer.add_bits(0xA5A5 ^ (sample * 0x1111), 32)
+    return ebsp_from_rbsp(writer.to_bytes())
+
+
 def sps_field_payload(base_payload: bytes, sample: int) -> bytes:
     payload = set_bits(stress_payload(base_payload, sample, min_len=96), 0, 4, sample & 0x0F)
     payload = set_bits(payload, 4, 3, (sample // 2) % 7)
@@ -258,6 +360,20 @@ def dense_layered_sequence(data: bytes, nalus: list[Nalu], anchor: Nalu, sample:
             payload = stress_payload(payload_window(data, anchor, body_start, sample + cycle + 3), sample + cycle + 3, 32)
             chunks.append(make_nalu(5, payload, layer))
 
+    return b"".join(chunks)
+
+
+def output_layer_set_train(data: bytes, nalus: list[Nalu], anchor: Nalu, sample: int, repetitions: int) -> bytes:
+    chunks = []
+    for index in range(repetitions):
+        local_sample = sample + index
+        chunks.append(make_nalu(32, output_layer_set_vps_payload(local_sample), 0))
+        if index % 2 == 0:
+            chunks.append(make_nalu(33, parameter_payload(data, nalus, 33, anchor, local_sample), index % 4))
+            chunks.append(make_nalu(34, parameter_payload(data, nalus, 34, anchor, local_sample), index % 4))
+        if index % 3 == 0:
+            payload = stress_payload(payload_window(data, anchor, anchor.payload_start + 2, local_sample), local_sample, 32)
+            chunks.append(make_nalu(16, payload, index % 4))
     return b"".join(chunks)
 
 
@@ -338,7 +454,7 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
     if not nalus:
         return data
     nalu = choose_nalu(nalus, start, span, off, op, sample)
-    selector = op % 24
+    selector = op % OP_SELECTOR_COUNT
     out = data
 
     if selector == 0:
@@ -488,6 +604,46 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
         dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=18 + (sample % 8))
         insert_at = anchor.start
         out = data[:insert_at] + dense + data[insert_at:anchor.end] + dense[: max(0, len(dense) // 3)] + data[anchor.end:]
+    elif selector == 24:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = output_layer_set_train(data, nalus, anchor, sample, repetitions=2 + (sample % 3))
+        out = train + data
+    elif selector == 25:
+        vps_items = nalus_of_type(data, nalus, 32)
+        target = vps_items[sample % len(vps_items)] if vps_items else nalu
+        out = data[: target.start] + make_nalu(32, output_layer_set_vps_payload(sample), 0) + data[target.end :]
+    elif selector == 26:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = output_layer_set_train(data, nalus, anchor, sample, repetitions=4 + (sample % 4))
+        insert_at = anchor.start
+        out = data[:insert_at] + train + data[insert_at:]
+    elif selector == 27:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = output_layer_set_train(data, nalus, anchor, sample, repetitions=3 + (sample % 5))
+        dense_tail = dense_layered_sequence(data, nalus, anchor, sample, cycles=4 + (sample % 3))
+        out = train + dense_tail + data
+    elif selector == 28:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = output_layer_set_train(data, nalus, anchor, sample, repetitions=2 + (sample % 3))
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=14 + (sample % 6))
+        out = data[: anchor.start] + train + dense + data[anchor.start :]
+    elif selector == 29:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=14 + (sample % 6))
+        train = output_layer_set_train(data, nalus, anchor, sample + 3, repetitions=2 + (sample % 4))
+        out = data[: anchor.start] + dense + train + data[anchor.start :]
+    elif selector == 30:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train_a = output_layer_set_train(data, nalus, anchor, sample, repetitions=2 + (sample % 2))
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=16 + (sample % 7))
+        train_b = output_layer_set_train(data, nalus, anchor, sample + 11, repetitions=1 + (sample % 3))
+        out = data[: anchor.start] + train_a + dense + train_b + data[anchor.start :]
+    elif selector == 31:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=18 + (sample % 8))
+        train = output_layer_set_train(data, nalus, anchor, sample + 17, repetitions=3 + (sample % 4))
+        splice = max(0, len(dense) // 2)
+        out = data[: anchor.start] + dense[:splice] + train + dense[splice:] + data[anchor.start :]
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]

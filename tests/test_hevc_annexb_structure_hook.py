@@ -7,10 +7,20 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 HOOK_PATH = REPO_ROOT / "scripts" / "formtrig_hooks" / "hevc_annexb_structure_hook.py"
+AUDIT_PATH = REPO_ROOT / "tools" / "gpac3403_hevc_structure_audit.py"
 
 
 def load_hook():
     spec = importlib.util.spec_from_file_location("hevc_annexb_structure_hook", HOOK_PATH)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_module(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
@@ -111,6 +121,48 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
             self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
             self.assertNotEqual(output, original)
 
+    def test_output_layer_set_ops_emit_bounded_vps_extension_candidates(self):
+        hook = load_hook()
+        audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_for_hook_test")
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 29)
+            for op in range(24, 28)
+        ]
+
+        for output in mutated_outputs:
+            parsed_vps = parse_vps_items(hook, audit, output)
+
+            self.assertTrue(parsed_vps)
+            self.assertTrue(any(item["max_layers_minus1"] <= 3 for item in parsed_vps))
+            self.assertTrue(any(item["max_layer_id"] <= 3 for item in parsed_vps))
+            self.assertTrue(any(item["num_layer_sets_minus1"] >= 1 for item in parsed_vps))
+            self.assertIn(b"\x00\x00\x00\x01", output)
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+            self.assertNotEqual(output, original)
+
+    def test_output_layer_set_dense_ops_keep_extractor_and_many_nalus(self):
+        hook = load_hook()
+        audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_for_dense_hook_test")
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 37)
+            for op in range(28, 32)
+        ]
+
+        for output in mutated_outputs:
+            parsed_vps = parse_vps_items(hook, audit, output)
+            types = {hook.nalu_type(output, nalu) for nalu in hook.parse_nalus(output)}
+
+            self.assertGreaterEqual(len(hook.parse_nalus(output)), 200)
+            self.assertIn(49, types)
+            self.assertTrue(any(item["max_layers_minus1"] <= 3 for item in parsed_vps))
+            self.assertTrue(any(item["max_layer_id"] <= 3 for item in parsed_vps))
+            self.assertTrue(any(item["num_layer_sets_minus1"] >= 1 for item in parsed_vps))
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()
         original = b"not annex b"
@@ -178,6 +230,18 @@ def first_vps_max_layers_minus1(hook, data):
         if len(body) >= 2:
             return hook.get_bits(body, 6, 6)
     return None
+
+
+def parse_vps_items(hook, audit, data):
+    parsed = []
+    for nalu in hook.parse_nalus(data):
+        if hook.nalu_type(data, nalu) != 32:
+            continue
+        try:
+            parsed.append(audit.parse_vps(audit.rbsp_from_ebsp(hook.nalu_body(data, nalu))))
+        except Exception:
+            continue
+    return parsed
 
 
 if __name__ == "__main__":
