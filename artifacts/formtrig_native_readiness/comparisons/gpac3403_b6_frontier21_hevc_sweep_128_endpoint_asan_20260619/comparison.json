@@ -1,0 +1,86 @@
+{
+  "schema": "formtrig_comparison_v1",
+  "comparison_type": "gpac3403_b6_frontier_endpoint_asan_sweep",
+  "generated_at_utc": "2026-06-19T08:48:30Z",
+  "target_id": "GPAC_3403",
+  "source_campaign": "gpac3403_b6_blackwhite_annexb_60s_20260619",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_128_endpoint_asan_20260619",
+  "sweep": {
+    "seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+    "target_site_ids": "65063371",
+    "generated_variants": 128,
+    "replayed_variants": 128,
+    "reached": 108,
+    "rnt": 108,
+    "triggered": 0,
+    "spec_lifted": 108,
+    "d_f_spec_lifted_values": [
+      1.0,
+      2.0,
+      4.0
+    ],
+    "d_f_spec_lifted_min": 1.0,
+    "d_f_spec_lifted_max": 4.0,
+    "d_f_spec_lifted_eq_1_count": 92,
+    "d_f_spec_lifted_eq_1_endpoint_clean_exit_count": 92,
+    "reached_same_object_samples": 100,
+    "endpoint_replayed_variants": 128,
+    "endpoint_probe_runs": 128,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_exit_code_counts": {
+      "0": 100,
+      "1": 28
+    },
+    "duration_s": 40.29
+  },
+  "endpoint_oracle": {
+    "command": [
+      "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+      "-cat",
+      "@@",
+      "benchmarks/cve_seeds/gpac/white.mp4",
+      "-out",
+      "/dev/null"
+    ],
+    "env_keys": [
+      "ASAN_OPTIONS"
+    ],
+    "sanitizer_exit_code": 86,
+    "positive_control": {
+      "exit_code": 86,
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "kind": "positive_control",
+      "native_crash": false,
+      "rep": 1,
+      "sanitizer_crash": true,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "3a7c0a3d998c3d61d7534b31643f666c3a9fc682dfd9d4dbaa1d790c9e54f37e",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_sweep_128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  },
+  "interpretation": {
+    "supports": [
+      "The GPAC_3403 B6 frontier replay has stable pre-trigger guidance under the correct target-site id.",
+      "The endpoint oracle is live: the GPAC_3403 PoC positive control exits with the sanitizer code and sanitizer_crash=true.",
+      "The tool now records FORMTRIG runtime guidance and sanitizer endpoint outcome in the same per-variant records."
+    ],
+    "does_not_support": [
+      "The current Annex-B hook does not yet convert D_F=1 frontier variants into stable ASAN endpoint triggers.",
+      "This is not FORMTRIG endpoint success evidence; it is last-mile diagnostic evidence."
+    ],
+    "engineering_conclusion": "The current blocker is narrowed: 92 variants reach D_F=1 and cleanly exit the validated ASAN endpoint, so the next implementation work should target PoC-distinguishing HEVC fields rather than more generic Annex-B mutations.",
+    "next_actions": [
+      "Add HEVC VPS/SPS/layer-count-aware mutation operators and rerun the endpoint sweep.",
+      "Promote endpoint replay support into the generic real-CVE experiment runner after GPAC diagnostic stabilizes.",
+      "Use the same per-variant endpoint fields for baseline comparisons where internal FORMTRIG signals are unavailable."
+    ]
+  },
+  "evidence": {
+    "compact_summary": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_frontier21_hevc_sweep_128_endpoint_asan_20260619/evidence/frontier_endpoint_sweep_summary.json",
+    "raw_summary_sha256": "47d727ee0e2e60397890c27a6a46e4228e492c82345d833664909b7e868e9902",
+    "raw_records_sha256": "bd40e0f73a80aead2935b689b86f1dde6956f498b2f6d811eee1dbd7958b0b32"
+  }
+}

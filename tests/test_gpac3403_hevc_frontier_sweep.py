@@ -131,6 +131,85 @@ class Gpac3403HevcFrontierSweepTest(unittest.TestCase):
 
         self.assertEqual(target_site_ids, "222")
 
+    def test_endpoint_probe_detects_sanitizer_exit_and_summary(self):
+        sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_endpoint")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            input_path = Path(tmp) / "input.hevc"
+            input_path.write_bytes(sample_hevc())
+            probes = sweep.run_endpoint_probes(
+                input_path=str(input_path),
+                kind="variant",
+                log_prefix="variant_000000",
+                endpoint_cmd=[
+                    sys.executable,
+                    "-c",
+                    "import sys; sys.stderr.write('SUMMARY: AddressSanitizer: boom\\n'); sys.exit(86)",
+                    "@@",
+                ],
+                out_dir=Path(tmp),
+                endpoint_env={},
+                timeout_s=5.0,
+                reps=1,
+                sanitizer_exit_code=86,
+            )
+
+        self.assertEqual(len(probes), 1)
+        self.assertEqual(probes[0].exit_code, 86)
+        self.assertTrue(probes[0].sanitizer_crash)
+        self.assertFalse(probes[0].native_crash)
+        self.assertTrue(probes[0].stderr_sha256)
+
+    def test_summary_counts_endpoint_crashes(self):
+        sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_endpoint_summary")
+        record = sweep.ReplayRecord(
+            index=0,
+            op=0,
+            sample=0,
+            start=0,
+            span=10,
+            off=0,
+            sha256="a",
+            size=10,
+            path="a",
+            runtime_log="a.log",
+            stdout_log="a.out",
+            stderr_log="a.err",
+            exit_code=0,
+            timed_out=False,
+            reached=True,
+            triggered=False,
+            spec_lifted=True,
+            target_hit_count=1,
+            d_f_spec_lifted=1.0,
+            roles=["root_observe"],
+            role_bits=["root_observe"],
+            trace_signature="1",
+            endpoint_probes=[
+                sweep.EndpointProbe(
+                    kind="variant",
+                    rep=1,
+                    input="a",
+                    stdout_log="a.endpoint.out",
+                    stderr_log="a.endpoint.err",
+                    exit_code=86,
+                    timed_out=False,
+                    sanitizer_crash=True,
+                    native_crash=False,
+                    stdout_sha256="stdout",
+                    stderr_sha256="stderr",
+                )
+            ],
+        )
+
+        summary = sweep.summarize([record], generated=1, seed_sha256="seed")
+
+        self.assertEqual(summary["endpoint_replayed_variants"], 1)
+        self.assertEqual(summary["endpoint_probe_runs"], 1)
+        self.assertEqual(summary["endpoint_sanitizer_crashes"], 1)
+        self.assertEqual(summary["endpoint_native_crashes"], 0)
+        self.assertEqual(summary["endpoint_exit_code_counts"]["86"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -16,10 +16,11 @@ import hashlib
 import importlib.util
 import json
 import os
+import shlex
 import subprocess
 import sys
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from types import ModuleType
 from typing import Any, Iterable
@@ -39,6 +40,14 @@ ROLE_NAMES = {
     10: "repair_hook",
 }
 
+SANITIZER_MARKERS = (
+    b"ERROR: AddressSanitizer",
+    b"AddressSanitizer:",
+    b"SUMMARY: AddressSanitizer",
+    b"ERROR: UndefinedBehaviorSanitizer",
+    b"SUMMARY: UndefinedBehaviorSanitizer",
+)
+
 
 @dataclass(frozen=True)
 class MutationCase:
@@ -51,6 +60,21 @@ class MutationCase:
     sha256: str
     size: int
     path: str
+
+
+@dataclass
+class EndpointProbe:
+    kind: str
+    rep: int
+    input: str
+    stdout_log: str
+    stderr_log: str
+    exit_code: int | None
+    timed_out: bool
+    sanitizer_crash: bool
+    native_crash: bool
+    stdout_sha256: str
+    stderr_sha256: str
 
 
 @dataclass
@@ -77,6 +101,7 @@ class ReplayRecord:
     roles: list[str]
     role_bits: list[str]
     trace_signature: str | None
+    endpoint_probes: list[EndpointProbe] = field(default_factory=list)
 
 
 def load_hook(path: Path) -> ModuleType:
@@ -91,6 +116,14 @@ def load_hook(path: Path) -> ModuleType:
 
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def parse_range_token(token: str) -> tuple[int, int]:
@@ -285,6 +318,19 @@ def command_for_variant(target_cmd: list[str], variant_path: str) -> list[str]:
     return target_cmd
 
 
+def parse_env_pairs(pairs: list[str] | None) -> dict[str, str]:
+    env: dict[str, str] = {}
+    for pair in pairs or []:
+        if "=" not in pair:
+            raise argparse.ArgumentTypeError("--endpoint-env entries must use KEY=VALUE")
+        key, value = pair.split("=", 1)
+        key = key.strip()
+        if not key:
+            raise argparse.ArgumentTypeError("--endpoint-env entries need a non-empty key")
+        env[key] = value
+    return env
+
+
 def lift_spec_pre_reach_enabled(lift_spec: Path | None) -> str:
     if not lift_spec:
         return "0"
@@ -293,12 +339,89 @@ def lift_spec_pre_reach_enabled(lift_spec: Path | None) -> str:
     return "1" if any(marker in text for marker in markers) else "0"
 
 
+def is_native_crash(exit_code: int | None, sanitizer_crash: bool) -> bool:
+    if exit_code is None or sanitizer_crash:
+        return False
+    return exit_code < 0 or 128 <= exit_code <= 159
+
+
+def run_endpoint_probes(
+    input_path: str,
+    kind: str,
+    log_prefix: str,
+    endpoint_cmd: list[str],
+    out_dir: Path,
+    endpoint_env: dict[str, str],
+    timeout_s: float,
+    reps: int,
+    sanitizer_exit_code: int | None,
+) -> list[EndpointProbe]:
+    probes: list[EndpointProbe] = []
+    logs_dir = out_dir / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+
+    for rep in range(1, reps + 1):
+        stdout_log = logs_dir / f"{log_prefix}.endpoint_{rep}.stdout"
+        stderr_log = logs_dir / f"{log_prefix}.endpoint_{rep}.stderr"
+        env = os.environ.copy()
+        env.update(endpoint_env)
+        cmd = command_for_variant(endpoint_cmd, input_path)
+        exit_code: int | None = None
+        timed_out = False
+        try:
+            stdin_handle = None
+            if not any("@@" in arg for arg in endpoint_cmd):
+                stdin_handle = open(input_path, "rb")
+            with stdout_log.open("wb") as stdout, stderr_log.open("wb") as stderr:
+                result = subprocess.run(
+                    cmd,
+                    stdin=stdin_handle,
+                    stdout=stdout,
+                    stderr=stderr,
+                    env=env,
+                    timeout=timeout_s,
+                    check=False,
+                )
+            exit_code = result.returncode
+        except subprocess.TimeoutExpired:
+            timed_out = True
+        finally:
+            if "stdin_handle" in locals() and stdin_handle is not None:
+                stdin_handle.close()
+
+        stderr_bytes = stderr_log.read_bytes() if stderr_log.exists() else b""
+        sanitizer_crash = any(marker in stderr_bytes for marker in SANITIZER_MARKERS)
+        if sanitizer_exit_code is not None and exit_code == sanitizer_exit_code:
+            sanitizer_crash = True
+        probes.append(
+            EndpointProbe(
+                kind=kind,
+                rep=rep,
+                input=input_path,
+                stdout_log=str(stdout_log),
+                stderr_log=str(stderr_log),
+                exit_code=exit_code,
+                timed_out=timed_out,
+                sanitizer_crash=sanitizer_crash,
+                native_crash=is_native_crash(exit_code, sanitizer_crash),
+                stdout_sha256=sha256_file(stdout_log) if stdout_log.exists() else "",
+                stderr_sha256=sha256_file(stderr_log) if stderr_log.exists() else "",
+            )
+        )
+    return probes
+
+
 def replay_variant(
     case: MutationCase,
     target_cmd: list[str],
     out_dir: Path,
     env_base: dict[str, str],
     timeout_s: float,
+    endpoint_cmd: list[str] | None = None,
+    endpoint_env: dict[str, str] | None = None,
+    endpoint_timeout_s: float = 5.0,
+    endpoint_replays: int = 1,
+    endpoint_sanitizer_exit_code: int | None = 86,
 ) -> ReplayRecord:
     runtime_log = out_dir / "logs" / f"variant_{case.index:06d}.runtime.jsonl"
     stdout_log = out_dir / "logs" / f"variant_{case.index:06d}.stdout"
@@ -345,6 +468,19 @@ def replay_variant(
     target_hit_count = 0
     if runtime and isinstance(runtime.get("target_hit_count"), int):
         target_hit_count = int(runtime["target_hit_count"])
+    endpoint_probes: list[EndpointProbe] = []
+    if endpoint_cmd:
+        endpoint_probes = run_endpoint_probes(
+            input_path=case.path,
+            kind="variant",
+            log_prefix=f"variant_{case.index:06d}",
+            endpoint_cmd=endpoint_cmd,
+            out_dir=out_dir,
+            endpoint_env=endpoint_env or {},
+            timeout_s=endpoint_timeout_s,
+            reps=endpoint_replays,
+            sanitizer_exit_code=endpoint_sanitizer_exit_code,
+        )
     return ReplayRecord(
         index=case.index,
         op=case.op,
@@ -368,6 +504,7 @@ def replay_variant(
         roles=roles,
         role_bits=role_bits,
         trace_signature=str(runtime.get("trace_signature")) if runtime and runtime.get("trace_signature") else None,
+        endpoint_probes=endpoint_probes,
     )
 
 
@@ -391,6 +528,11 @@ def summarize(records: list[ReplayRecord], generated: int, seed_sha256: str) -> 
         key=lambda r: (r.d_f_spec_lifted if r.d_f_spec_lifted is not None else 1.0e300, r.index),
     )[:10]
     triggered = [r for r in records if r.triggered]
+    endpoint_records = [probe for record in records for probe in record.endpoint_probes]
+    endpoint_exit_counts: dict[str, int] = {}
+    for probe in endpoint_records:
+        key = "timeout" if probe.timed_out else str(probe.exit_code)
+        endpoint_exit_counts[key] = endpoint_exit_counts.get(key, 0) + 1
     return {
         "schema": "formtrig_gpac3403_hevc_frontier_sweep_v1",
         "seed_sha256": seed_sha256,
@@ -411,6 +553,42 @@ def summarize(records: list[ReplayRecord], generated: int, seed_sha256: str) -> 
         "first_trigger": asdict(triggered[0]) if triggered else None,
         "best_frontier_variants": [asdict(r) for r in best],
         "best_reached_frontier_variants": [asdict(r) for r in best_reached],
+        "endpoint_replayed_variants": sum(1 for r in records if r.endpoint_probes),
+        "endpoint_probe_runs": len(endpoint_records),
+        "endpoint_sanitizer_crashes": sum(
+            1 for r in records if any(probe.sanitizer_crash for probe in r.endpoint_probes)
+        ),
+        "endpoint_native_crashes": sum(
+            1 for r in records if any(probe.native_crash for probe in r.endpoint_probes)
+        ),
+        "endpoint_timeouts": sum(1 for probe in endpoint_records if probe.timed_out),
+        "endpoint_exit_code_counts": dict(sorted(endpoint_exit_counts.items())),
+        "first_endpoint_sanitizer_crash": asdict(
+            next(
+                (
+                    probe
+                    for record in records
+                    for probe in record.endpoint_probes
+                    if probe.sanitizer_crash
+                ),
+                None,
+            )
+        )
+        if any(probe.sanitizer_crash for probe in endpoint_records)
+        else None,
+        "first_endpoint_native_crash": asdict(
+            next(
+                (
+                    probe
+                    for record in records
+                    for probe in record.endpoint_probes
+                    if probe.native_crash
+                ),
+                None,
+            )
+        )
+        if any(probe.native_crash for probe in endpoint_records)
+        else None,
     }
 
 
@@ -430,6 +608,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--ops", type=int, default=16)
     parser.add_argument("--samples", type=int, default=16)
     parser.add_argument("--timeout", type=float, default=5.0)
+    parser.add_argument("--endpoint-cmd", help="Optional shell-like endpoint replay command; use @@ for the variant path.")
+    parser.add_argument("--endpoint-env", action="append", default=[])
+    parser.add_argument("--endpoint-timeout", type=float, default=5.0)
+    parser.add_argument("--endpoint-replays", type=int, default=1)
+    parser.add_argument("--endpoint-sanitizer-exit-code", type=int, default=86)
+    parser.add_argument("--endpoint-positive-control", type=Path)
     parser.add_argument("target_cmd", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
 
@@ -441,6 +625,17 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--max-variants and --max-replays must be positive")
     if args.ops <= 0 or args.samples <= 0:
         parser.error("--ops and --samples must be positive")
+    if args.endpoint_replays <= 0:
+        parser.error("--endpoint-replays must be positive")
+    endpoint_cmd = shlex.split(args.endpoint_cmd) if args.endpoint_cmd else None
+    if args.endpoint_cmd and not endpoint_cmd:
+        parser.error("--endpoint-cmd must not be empty")
+    if args.endpoint_positive_control and not endpoint_cmd:
+        parser.error("--endpoint-positive-control requires --endpoint-cmd")
+    try:
+        endpoint_env = parse_env_pairs(args.endpoint_env)
+    except argparse.ArgumentTypeError as exc:
+        parser.error(str(exc))
 
     seed = args.seed.read_bytes()
     hook = load_hook(args.hook)
@@ -488,10 +683,28 @@ def main(argv: list[str] | None = None) -> int:
                 out_dir=args.out,
                 env_base=env_base,
                 timeout_s=args.timeout,
+                endpoint_cmd=endpoint_cmd,
+                endpoint_env=endpoint_env,
+                endpoint_timeout_s=args.endpoint_timeout,
+                endpoint_replays=args.endpoint_replays,
+                endpoint_sanitizer_exit_code=args.endpoint_sanitizer_exit_code,
             )
         )
 
     summary = summarize(records, len(generated), sha256_bytes(seed))
+    positive_control: list[EndpointProbe] = []
+    if args.endpoint_positive_control and endpoint_cmd:
+        positive_control = run_endpoint_probes(
+            input_path=str(args.endpoint_positive_control),
+            kind="positive_control",
+            log_prefix="positive_control",
+            endpoint_cmd=endpoint_cmd,
+            out_dir=args.out,
+            endpoint_env=endpoint_env,
+            timeout_s=args.endpoint_timeout,
+            reps=args.endpoint_replays,
+            sanitizer_exit_code=args.endpoint_sanitizer_exit_code,
+        )
     summary["duration_s"] = round(time.time() - started, 3)
     summary["seed"] = str(args.seed)
     summary["hook"] = str(args.hook)
@@ -501,6 +714,12 @@ def main(argv: list[str] | None = None) -> int:
     summary["target_site_ids"] = target_site_ids
     summary["target_cmd"] = args.target_cmd
     summary["ranges"] = ranges
+    summary["endpoint_cmd"] = endpoint_cmd
+    summary["endpoint_env_keys"] = sorted(endpoint_env)
+    summary["endpoint_replays"] = args.endpoint_replays if endpoint_cmd else 0
+    summary["endpoint_timeout"] = args.endpoint_timeout if endpoint_cmd else None
+    summary["endpoint_sanitizer_exit_code"] = args.endpoint_sanitizer_exit_code if endpoint_cmd else None
+    summary["endpoint_positive_control"] = [asdict(probe) for probe in positive_control]
 
     with (args.out / "records.jsonl").open("w", encoding="utf-8") as handle:
         for record in records:
