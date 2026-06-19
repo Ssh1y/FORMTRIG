@@ -1,0 +1,437 @@
+{
+  "binding_spec": {
+    "category": "compound-sequence-lifecycle",
+    "expression": "MP4Box concatenation imports an HEVC elementary stream and reaches cleanup where a dynamic GF_BitStream frees the same sample buffer already released by gf_isom_sample_del",
+    "path": "artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+    "role_bindings": [
+      {
+        "component": "producer_use",
+        "direction": "higher",
+        "expr": "Media_GetSample allocates the sample data buffer that later becomes the object in the double free",
+        "id": "gpac_sample_buffer_alloc_producer",
+        "priority": "10",
+        "role": "desired_producer",
+        "site_id": "2074894587",
+        "value_mode": "hit"
+      },
+      {
+        "component": "lifecycle_prefix",
+        "direction": "higher",
+        "expr": "cat_isomedia_file reaches the post-fetch guard after obtaining the source sample with gf_isom_get_sample",
+        "id": "gpac_sample_fetch_lifecycle_event",
+        "priority": "20",
+        "role": "lifecycle_event",
+        "site_id": "2693650777",
+        "value_mode": "hit"
+      },
+      {
+        "component": "lifecycle_prefix",
+        "direction": "higher",
+        "expr": "gf_isom_sample_del releases GF_ISOSample->data while later cleanup can still own an alias",
+        "id": "gpac_sample_release_lifecycle_event",
+        "priority": "25",
+        "role": "lifecycle_event",
+        "site_id": "3030846436",
+        "value_mode": "hit"
+      },
+      {
+        "component": "lifecycle_prefix",
+        "direction": "higher",
+        "expr": "gf_isom_nalu_sample_rewrite reaches the fallback reassign path after decoupling mdia->nalu_out_bs from its prior dynamic buffer",
+        "id": "gpac_nalu_out_reassign_fallback_lifecycle_event",
+        "priority": "30",
+        "role": "lifecycle_event",
+        "site_id": "1766076671",
+        "value_mode": "hit"
+      },
+      {
+        "component": "producer_use",
+        "direction": "higher",
+        "expr": "gf_bs_del takes the dynamic-original free branch for the aliased bitstream buffer reached from mdia_box_del cleanup",
+        "id": "gpac_bitstream_original_free_use",
+        "priority": "40",
+        "role": "use",
+        "site_id": "14730514",
+        "value_mode": "not_outcome"
+      },
+      {
+        "component": "root_state",
+        "direction": "higher",
+        "expr": "gf_bs_del frees bs->original when bsmode is GF_BITSTREAM_WRITE_DYN",
+        "id": "gpac_bitstream_original_free_root",
+        "priority": "50",
+        "role": "root_observe",
+        "site_id": "65063371",
+        "value_mode": "not_outcome"
+      },
+      {
+        "component": "object_identity",
+        "direction": "higher",
+        "expr": "gf_bs_reassign_buffer observes the external buffer pointer assigned to a dynamic GF_BitStream original field",
+        "id": "gpac_dynamic_bitstream_external_buffer_same_object",
+        "object_expr": "GF_ISOSample.data==GF_BitStream.original via gf_bs_reassign_buffer(buffer)",
+        "priority": "60",
+        "relation_from": "lifecycle_event",
+        "relation_to": "use",
+        "role": "same_object",
+        "site_id": "1549213408",
+        "value_mode": "a"
+      },
+      {
+        "component": "input_influence",
+        "direction": "higher",
+        "expr": "Raw Annex-B HEVC NALU structure controls import probing, HEVC sample construction, and NALU rewrite setup",
+        "id": "gpac_hevc_import_prefix_influence",
+        "priority": "70",
+        "role": "input_influence",
+        "site_id": "2708309825",
+        "value_mode": "hit"
+      },
+      {
+        "component": "input_influence",
+        "direction": "higher",
+        "expr": "HEVC NALU body bytes influence sample payload layout and gf_isom_nalu_sample_rewrite alias behavior",
+        "id": "gpac_hevc_sample_body_influence",
+        "priority": "80",
+        "role": "input_influence",
+        "site_id": "2074894587",
+        "value_mode": "hit"
+      }
+    ],
+    "role_counts": {
+      "desired_producer": 1,
+      "input_influence": 2,
+      "lifecycle_event": 3,
+      "root_observe": 1,
+      "same_object": 1,
+      "use": 1
+    },
+    "roles": [
+      "desired_producer",
+      "input_influence",
+      "lifecycle_event",
+      "root_observe",
+      "same_object",
+      "use"
+    ],
+    "same_object_relations": [
+      {
+        "binding_id": "gpac_dynamic_bitstream_external_buffer_same_object",
+        "object_expr": "GF_ISOSample.data==GF_BitStream.original via gf_bs_reassign_buffer(buffer)",
+        "relation_from": "lifecycle_event",
+        "relation_to": "use",
+        "site_id": "1549213408"
+      }
+    ],
+    "tc_id": "GPAC_3403"
+  },
+  "endpoint_evidence": {
+    "available": true,
+    "parser_proximity_observed": true,
+    "positive_control_files": 1,
+    "positive_control_metrics": {
+      "asan_double_free_files": 1,
+      "hevc_import_files": 1,
+      "hevc_nalus_max": 413,
+      "hevc_samples_max": 172,
+      "lhevc_import_files": 1
+    },
+    "positive_control_signatures_absent_from_variants": [
+      "asan",
+      "asan_double_free",
+      "failed_vps_extensions",
+      "layers_only_4",
+      "wrong_output_layer_sets"
+    ],
+    "terminal_observed_in_variants": false,
+    "top_variant": {
+      "matched_positive_signature_count": 7,
+      "matched_positive_signatures": [
+        "vps_max_layer_id",
+        "video_param_set_error",
+        "nal_type_32_error",
+        "nal_type_49_not_handled",
+        "track_importing_hevc",
+        "hevc_import_results",
+        "lhevc_import_results"
+      ],
+      "matched_values": {
+        "hevc_import_results": [
+          "6/46"
+        ],
+        "lhevc_import_results": [
+          "1/0/3"
+        ],
+        "vps_max_layer_id": [
+          "63/4",
+          "4/4",
+          "7/4",
+          "9/4",
+          "16/4",
+          "31/4"
+        ]
+      },
+      "missing_positive_signatures": [
+        "wrong_output_layer_sets",
+        "failed_vps_extensions",
+        "layers_only_4",
+        "asan",
+        "asan_double_free"
+      ],
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z/runs/formtrig_rep1/logs/variant_000005.endpoint_1.stderr",
+      "variant_index": 5,
+      "weighted_match_score": 75,
+      "weighted_missing_score": 280
+    },
+    "variant_files": 24,
+    "variant_metrics": {
+      "asan_double_free_files": 0,
+      "hevc_import_files": 9,
+      "hevc_nalus_max": 46,
+      "hevc_samples_max": 6,
+      "lhevc_import_files": 1
+    }
+  },
+  "inputs": {
+    "binding_diagnosis": "artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_binding_signal_diagnosis.json",
+    "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+    "endpoint_package": "artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z/runs/formtrig_rep1/typed_retained_audit_package.json",
+    "progress_jsonl": "artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_progress.jsonl",
+    "summary_json": "artifacts/formtrig_native_readiness/raw/gpac3403_op40_samplefirst_highvps_hook_retain_smoke_30s_20260619T185208Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_summary.json"
+  },
+  "next_actions": [
+    "Bind relation-aware events for sample->data allocation/release and GF_BitStream->original cleanup.",
+    "Score same_object by matching object identity across lifecycle_event and use endpoints, not by a single pointer observation.",
+    "Keep high-VPS/type49 typed ops as parser-frontier support, but require alias-lifecycle evidence before claiming GPAC_3403 R2T closure."
+  ],
+  "runtime_signal": {
+    "binding_signal": {
+      "atoms": [
+        {
+          "atom_id": 1,
+          "bound_roles": [
+            "root_observe",
+            "desired_producer",
+            "use",
+            "lifecycle_event",
+            "same_object",
+            "input_influence"
+          ],
+          "candidate_sampled_roles": [
+            "root_observe",
+            "desired_producer",
+            "use",
+            "lifecycle_event",
+            "same_object",
+            "input_influence"
+          ],
+          "candidate_variable_roles": [],
+          "category": "compound-sequence-lifecycle",
+          "diagnosis": "constant_lift_signal",
+          "roles": [
+            {
+              "candidate_samples": 10,
+              "candidate_unique_values": 1,
+              "candidate_values": [
+                1
+              ],
+              "role": "root_observe",
+              "samples": 22,
+              "unique_values": 1,
+              "values": [
+                1
+              ]
+            },
+            {
+              "candidate_samples": 10,
+              "candidate_unique_values": 1,
+              "candidate_values": [
+                1
+              ],
+              "role": "desired_producer",
+              "samples": 22,
+              "unique_values": 1,
+              "values": [
+                1
+              ]
+            },
+            {
+              "candidate_samples": 10,
+              "candidate_unique_values": 1,
+              "candidate_values": [
+                1
+              ],
+              "role": "use",
+              "samples": 22,
+              "unique_values": 1,
+              "values": [
+                1
+              ]
+            },
+            {
+              "candidate_samples": 20,
+              "candidate_unique_values": 1,
+              "candidate_values": [
+                1
+              ],
+              "role": "lifecycle_event",
+              "samples": 44,
+              "unique_values": 1,
+              "values": [
+                1
+              ]
+            },
+            {
+              "candidate_samples": 1,
+              "candidate_unique_values": 1,
+              "candidate_values": [
+                108784818279632
+              ],
+              "role": "same_object",
+              "samples": 2,
+              "unique_values": 1,
+              "values": [
+                108784818279632
+              ]
+            },
+            {
+              "candidate_samples": 20,
+              "candidate_unique_values": 1,
+              "candidate_values": [
+                1
+              ],
+              "role": "input_influence",
+              "samples": 44,
+              "unique_values": 1,
+              "values": [
+                1
+              ]
+            }
+          ],
+          "sampled_roles": [
+            "root_observe",
+            "desired_producer",
+            "use",
+            "lifecycle_event",
+            "same_object",
+            "input_influence"
+          ],
+          "variable_roles": []
+        }
+      ],
+      "constant_roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "diagnosis": "role_signal_progress_observed",
+      "non_trigger_candidate_lift_delta": true,
+      "role_sample_totals": {
+        "desired_producer": 22,
+        "input_influence": 44,
+        "lifecycle_event": 44,
+        "root_observe": 22,
+        "same_object": 2,
+        "use": 22
+      },
+      "same_object_roles": [
+        {
+          "candidate_samples": 1,
+          "candidate_unique_values": 1,
+          "candidate_values": [
+            108784818279632
+          ],
+          "role": "same_object",
+          "samples": 2,
+          "unique_values": 1,
+          "values": [
+            108784818279632
+          ]
+        }
+      ],
+      "sparse_roles": [
+        "same_object"
+      ],
+      "spec_d_f_candidate_samples": 10,
+      "spec_d_f_samples": 22,
+      "spec_role_candidate_samples": 71,
+      "spec_role_samples": 156,
+      "status": "pass"
+    },
+    "progress": {
+      "atom_signal_role_counts": {
+        "desired_producer": 22,
+        "input_influence": 22,
+        "lifecycle_event": 22,
+        "root_observe": 22,
+        "same_object": 2,
+        "use": 22
+      },
+      "d_f_spec_lifted_max": 2,
+      "d_f_spec_lifted_min": 1,
+      "d_f_spec_lifted_values": [
+        1,
+        2
+      ],
+      "event_counts": {
+        "calibrated_frontier": 1,
+        "frontier_reject": 9,
+        "saved_progress": 1,
+        "typed_retain": 25,
+        "typed_stage_start": 1
+      },
+      "events": 37,
+      "role_component_counts": {
+        "desired_producer": 22,
+        "input_influence": 44,
+        "lifecycle_event": 44,
+        "root_observe": 22,
+        "same_object": 2,
+        "unknown": 44,
+        "use": 22
+      },
+      "same_object_atom_signal_events": 2,
+      "same_object_component_samples": 2,
+      "same_object_component_unique_values": 1,
+      "same_object_component_value_examples": [
+        108784818279632,
+        108784818279632
+      ],
+      "same_object_object_id_events": 2
+    },
+    "summary": {
+      "d_f_spec_lifted_count": 22,
+      "d_f_spec_lifted_max": 2,
+      "d_f_spec_lifted_min": 1,
+      "execs_done": 212,
+      "formtrig_queued_progress": 1,
+      "formtrig_reached_execs": 93,
+      "formtrig_saved_non_trigger_log_seen": 1,
+      "formtrig_triggered_execs": 0,
+      "has_role_signal": true,
+      "has_tc_rooted_progress": true,
+      "terminal_triggered_execs": 0
+    }
+  },
+  "schema": "formtrig_gpac3403_lifecycle_gap_audit_v1",
+  "verdict": {
+    "guidance_effect": {
+      "d_f_has_non_trigger_delta": true,
+      "r_to_lifecycle_alias_terminal": false,
+      "r_to_parser_neighborhood": true
+    },
+    "interpretation": "Typed mutations and lifted D_F reached GPAC HEVC/LHEVC parser neighborhoods, but the current runtime evidence does not prove the same GF_ISOSample data pointer is later freed through GF_BitStream->original.",
+    "parser_proximity_observed": true,
+    "primary_gap": "same_object_relation_semantics_missing",
+    "same_object_relation_declared": true,
+    "same_object_relation_runtime_proof": false,
+    "same_object_signal_constant": true,
+    "same_object_signal_observed": true,
+    "same_object_signal_sparse": true,
+    "status": "parser_proximity_without_alias_terminal",
+    "terminal_observed_in_variants": false
+  }
+}
