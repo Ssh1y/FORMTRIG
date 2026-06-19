@@ -1,0 +1,1148 @@
+{
+  "best_frontier_variants": [
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000000.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "stderr_sha256": "6b561f17eed92f839238166ec6c7d32b37a8087da3bba4d46467d2d19d2031b9",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 0,
+      "off": 0,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000000.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.runtime.jsonl",
+      "sample": 0,
+      "sha256": "4119df06509b94f02e5b58f3372d1af627e0f64fa1a1a12cbe912015b4f565db",
+      "size": 14245,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x8d2cec41702c9a3e",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000001.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "stderr_sha256": "9f21f0533412ef04cfa084ec40c3d37510a507026f5e129b9d0bd852a732c3ba",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 1,
+      "off": 0,
+      "op": 21,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000001.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.runtime.jsonl",
+      "sample": 0,
+      "sha256": "d501cb71e5ae8951b5c5d54bf87ac287ce98ff98b27ea3f9e4ed4f05e681dd00",
+      "size": 16626,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x0f1a694926fdeb2a",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000002.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "stderr_sha256": "c49938fa1f11040e982a047e29dca0cb21774e2ed3d1bf39f0c4daef66fb4517",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 2,
+      "off": 0,
+      "op": 22,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000002.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.runtime.jsonl",
+      "sample": 0,
+      "sha256": "9b890af1f8febf0e13c855c333f144c28f26d51f78e2b2bcac5f97ff71ae446c",
+      "size": 19787,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xe2a614c1b3b87b5c",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000004.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "stderr_sha256": "1cb6eb50dda35d0ce00a18b53c1d591985626455aa9a4bcd5bedbb99e9aa9835",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 4,
+      "off": 4,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000004.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.runtime.jsonl",
+      "sample": 1,
+      "sha256": "9374be44f178a67e52b0668e3547d83a4f9133bff18ceed3e187389bc3ef041e",
+      "size": 15650,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x31b9fc8d3d982d16",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000006.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "stderr_sha256": "5c5a2934c7f40d4ed528c005a7547af55aa34138d5c5dcb5fcda02b5666e5151",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 6,
+      "off": 4,
+      "op": 22,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000006.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.runtime.jsonl",
+      "sample": 1,
+      "sha256": "1943670f223a3b02db8d65211d838ff6f8fd3445ada902a3da0b0f474d3a6dbd",
+      "size": 21162,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x347c41d742003a9b",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000008.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stderr",
+          "stderr_sha256": "c511826bfa4c0fef78651f1a9d82a83a05939312881664409a1ade7c0f94a0c6",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 8,
+      "off": 6,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000008.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.runtime.jsonl",
+      "sample": 2,
+      "sha256": "40230a0dc0e6bbf56bca30bb0613669d56498bae2bb3e44b765c55821c39e260",
+      "size": 16878,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xc5dc6af1f2cf2247",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000010.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.endpoint_1.stderr",
+          "stderr_sha256": "164b4a969780076db318f91735e84b01e2cf1a71ff363e682b586e92ffd7cd41",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 10,
+      "off": 6,
+      "op": 22,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000010.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.runtime.jsonl",
+      "sample": 2,
+      "sha256": "d686ab05b1dc0a4d102c26249e1cbcc4db1bfa37f197f456f3984d89518a8228",
+      "size": 22462,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x9df7914369a36615",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000012.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.endpoint_1.stderr",
+          "stderr_sha256": "2074cda2f6376e03f5c9ac203e2dba1c7543afa8f95123cfc6a817b271d7e145",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 12,
+      "off": 7,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000012.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.runtime.jsonl",
+      "sample": 3,
+      "sha256": "c6e411b038db8d07d21314bc8b37d88e559c21c8fc4b925b14abda51cda24cfd",
+      "size": 18266,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x163a166928b6c9dc",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000014.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.endpoint_1.stderr",
+          "stderr_sha256": "f1f05a2969adb82f4f2cfe0dfd8c0b80437ef51aa6678066fb6e1be845cac6bb",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 14,
+      "off": 7,
+      "op": 22,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000014.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.runtime.jsonl",
+      "sample": 3,
+      "sha256": "99e98b9fa1a20ccce328d5aa1b6eb33ce7e28dc0fb6381daa61b47e0b09dfc15",
+      "size": 24032,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xb782e28b76b24f55",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000016.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.endpoint_1.stderr",
+          "stderr_sha256": "d0dca83edd4326ed979e6496988ddc4efd1e3ee9f8cfd98cf87e6547c0bd7f64",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 16,
+      "off": 8,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000016.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.runtime.jsonl",
+      "sample": 4,
+      "sha256": "25493a8bc3e917fba01147462fac42b7cad7bd4b2c1a11c6aa442de7a7a962ec",
+      "size": 19669,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x5fb07dece0c4bcd9",
+      "triggered": false
+    }
+  ],
+  "best_reached_frontier_variants": [
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000000.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stderr",
+          "stderr_sha256": "6b561f17eed92f839238166ec6c7d32b37a8087da3bba4d46467d2d19d2031b9",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 0,
+      "off": 0,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000000.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.runtime.jsonl",
+      "sample": 0,
+      "sha256": "4119df06509b94f02e5b58f3372d1af627e0f64fa1a1a12cbe912015b4f565db",
+      "size": 14245,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000000.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x8d2cec41702c9a3e",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000001.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stderr",
+          "stderr_sha256": "9f21f0533412ef04cfa084ec40c3d37510a507026f5e129b9d0bd852a732c3ba",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 1,
+      "off": 0,
+      "op": 21,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000001.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.runtime.jsonl",
+      "sample": 0,
+      "sha256": "d501cb71e5ae8951b5c5d54bf87ac287ce98ff98b27ea3f9e4ed4f05e681dd00",
+      "size": 16626,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000001.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x0f1a694926fdeb2a",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000002.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stderr",
+          "stderr_sha256": "c49938fa1f11040e982a047e29dca0cb21774e2ed3d1bf39f0c4daef66fb4517",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 2,
+      "off": 0,
+      "op": 22,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000002.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.runtime.jsonl",
+      "sample": 0,
+      "sha256": "9b890af1f8febf0e13c855c333f144c28f26d51f78e2b2bcac5f97ff71ae446c",
+      "size": 19787,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000002.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xe2a614c1b3b87b5c",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000004.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stderr",
+          "stderr_sha256": "1cb6eb50dda35d0ce00a18b53c1d591985626455aa9a4bcd5bedbb99e9aa9835",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 4,
+      "off": 4,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000004.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.runtime.jsonl",
+      "sample": 1,
+      "sha256": "9374be44f178a67e52b0668e3547d83a4f9133bff18ceed3e187389bc3ef041e",
+      "size": 15650,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000004.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x31b9fc8d3d982d16",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000006.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stderr",
+          "stderr_sha256": "5c5a2934c7f40d4ed528c005a7547af55aa34138d5c5dcb5fcda02b5666e5151",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 6,
+      "off": 4,
+      "op": 22,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000006.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.runtime.jsonl",
+      "sample": 1,
+      "sha256": "1943670f223a3b02db8d65211d838ff6f8fd3445ada902a3da0b0f474d3a6dbd",
+      "size": 21162,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000006.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x347c41d742003a9b",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000008.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stderr",
+          "stderr_sha256": "c511826bfa4c0fef78651f1a9d82a83a05939312881664409a1ade7c0f94a0c6",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 8,
+      "off": 6,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000008.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.runtime.jsonl",
+      "sample": 2,
+      "sha256": "40230a0dc0e6bbf56bca30bb0613669d56498bae2bb3e44b765c55821c39e260",
+      "size": 16878,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000008.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xc5dc6af1f2cf2247",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000010.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.endpoint_1.stderr",
+          "stderr_sha256": "164b4a969780076db318f91735e84b01e2cf1a71ff363e682b586e92ffd7cd41",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 10,
+      "off": 6,
+      "op": 22,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000010.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.runtime.jsonl",
+      "sample": 2,
+      "sha256": "d686ab05b1dc0a4d102c26249e1cbcc4db1bfa37f197f456f3984d89518a8228",
+      "size": 22462,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000010.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x9df7914369a36615",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000012.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.endpoint_1.stderr",
+          "stderr_sha256": "2074cda2f6376e03f5c9ac203e2dba1c7543afa8f95123cfc6a817b271d7e145",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 12,
+      "off": 7,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000012.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.runtime.jsonl",
+      "sample": 3,
+      "sha256": "c6e411b038db8d07d21314bc8b37d88e559c21c8fc4b925b14abda51cda24cfd",
+      "size": 18266,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000012.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x163a166928b6c9dc",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000014.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.endpoint_1.stderr",
+          "stderr_sha256": "f1f05a2969adb82f4f2cfe0dfd8c0b80437ef51aa6678066fb6e1be845cac6bb",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 14,
+      "off": 7,
+      "op": 22,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000014.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.runtime.jsonl",
+      "sample": 3,
+      "sha256": "99e98b9fa1a20ccce328d5aa1b6eb33ce7e28dc0fb6381daa61b47e0b09dfc15",
+      "size": 24032,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000014.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0xb782e28b76b24f55",
+      "triggered": false
+    },
+    {
+      "d_f_spec_lifted": 1.0,
+      "endpoint_probes": [
+        {
+          "exit_code": 0,
+          "input": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000016.hevc",
+          "kind": "variant",
+          "native_crash": false,
+          "rep": 1,
+          "sanitizer_crash": false,
+          "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.endpoint_1.stderr",
+          "stderr_sha256": "d0dca83edd4326ed979e6496988ddc4efd1e3ee9f8cfd98cf87e6547c0bd7f64",
+          "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.endpoint_1.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "exit_code": 0,
+      "index": 16,
+      "off": 8,
+      "op": 20,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/variants/variant_000016.hevc",
+      "reached": true,
+      "role_bits": [
+        "lifecycle_event",
+        "opposite_producer",
+        "producer",
+        "same_object",
+        "use"
+      ],
+      "roles": [
+        "desired_producer",
+        "input_influence",
+        "lifecycle_event",
+        "root_observe",
+        "same_object",
+        "use"
+      ],
+      "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.runtime.jsonl",
+      "sample": 4,
+      "sha256": "25493a8bc3e917fba01147462fac42b7cad7bd4b2c1a11c6aa442de7a7a962ec",
+      "size": 19669,
+      "span": 729,
+      "spec_lifted": true,
+      "start": 0,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.stderr",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/variant_000016.stdout",
+      "target_hit_count": 1,
+      "timed_out": false,
+      "trace_signature": "0x5fb07dece0c4bcd9",
+      "triggered": false
+    }
+  ],
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b6_hevc_annexb_input_candidate.yml",
+  "d_f_spec_lifted_max": 1.0,
+  "d_f_spec_lifted_min": 1.0,
+  "d_f_spec_lifted_values": [
+    1.0
+  ],
+  "duration_s": 962.375,
+  "endpoint_cmd": [
+    "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "endpoint_env_keys": [
+    "ASAN_OPTIONS"
+  ],
+  "endpoint_exit_code_counts": {
+    "0": 122,
+    "1": 6
+  },
+  "endpoint_native_crashes": 0,
+  "endpoint_positive_control": [
+    {
+      "exit_code": 86,
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "kind": "positive_control",
+      "native_crash": false,
+      "rep": 1,
+      "sanitizer_crash": true,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "e5cd423413c4c926035e5f70261cc17e44755906b7a853a5a7c1c2c07d305cb0",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  ],
+  "endpoint_probe_runs": 128,
+  "endpoint_replayed_variants": 128,
+  "endpoint_replays": 1,
+  "endpoint_sanitizer_crashes": 0,
+  "endpoint_sanitizer_exit_code": 86,
+  "endpoint_timeout": 12.0,
+  "endpoint_timeouts": 0,
+  "first_endpoint_native_crash": null,
+  "first_endpoint_sanitizer_crash": null,
+  "first_trigger": null,
+  "generated_variants": 128,
+  "hook": "scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+  "lift_spec": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/.formtrig/formtrig_binding.lift",
+  "op_start": 20,
+  "ops": 4,
+  "ranges": [
+    [
+      0,
+      729
+    ]
+  ],
+  "reached": 38,
+  "reached_role_sample_counts": {
+    "desired_producer": 38,
+    "input_influence": 38,
+    "lifecycle_event": 38,
+    "opposite_producer": 38,
+    "producer": 38,
+    "root_observe": 38,
+    "same_object": 38,
+    "use": 38
+  },
+  "reached_same_object_samples": 38,
+  "replayed_variants": 128,
+  "rnt": 38,
+  "role_sample_counts": {
+    "desired_producer": 38,
+    "input_influence": 38,
+    "lifecycle_event": 38,
+    "opposite_producer": 38,
+    "producer": 38,
+    "root_observe": 38,
+    "same_object": 38,
+    "use": 38
+  },
+  "runtime_event_map": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/formtrig_runtime_event_map.csv",
+  "same_object_samples": 38,
+  "samples": 32,
+  "schedule": "round_robin",
+  "schema": "formtrig_gpac3403_hevc_frontier_sweep_v1",
+  "seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+  "seed_sha256": "3d0069d0d9b34091d1d86922f9a324aee5af3e06e0c59c701fa771eba67e1189",
+  "spec_lifted": 38,
+  "target_cmd": [
+    "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "target_site_ids": "65063371",
+  "timeouts": 90,
+  "triggered": 0
+}

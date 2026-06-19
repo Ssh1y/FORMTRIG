@@ -20,6 +20,8 @@ LAYER_STRESS_IDS = [0, 1, 2, 4, 7, 14, 22, 31, 36, 46, 50]
 LAYERED_TRAIN_TYPES = [32, 33, 34, 32, 33, 34, 14, 16, 21, 49]
 VPS_MAX_LAYERS_MINUS1 = [0, 1, 2, 3, 4, 15, 46, 63]
 VPS_MAX_LAYER_ID = [0, 1, 2, 3, 4, 7, 22, 31, 50, 63]
+DENSE_LAYER_IDS = [0, 1, 4, 7, 14, 16, 18, 22, 31, 32, 36, 37, 46, 50]
+DENSE_SEQUENCE_TYPES = [34, 0, 34, 33, 16, 34, 0, 21, 34, 0, 34, 33, 14, 34, 0, 34, 16, 0, 34]
 
 
 @dataclass(frozen=True)
@@ -223,6 +225,42 @@ def field_parameter_train(data: bytes, nalus: list[Nalu], anchor: Nalu, sample: 
     return b"".join(chunks)
 
 
+def dense_layered_sequence(data: bytes, nalus: list[Nalu], anchor: Nalu, sample: int, cycles: int) -> bytes:
+    chunks = []
+    body_start = min(anchor.payload_start + 2, max(anchor.payload_start, anchor.end - 1))
+    for cycle in range(cycles):
+        base_layer = DENSE_LAYER_IDS[(sample + cycle) % len(DENSE_LAYER_IDS)]
+        if cycle % 3 == 0:
+            chunks.append(make_nalu(32, parameter_payload(data, nalus, 32, anchor, sample + cycle), base_layer))
+        if cycle % 2 == 0:
+            layer = DENSE_LAYER_IDS[(sample + cycle + 3) % len(DENSE_LAYER_IDS)]
+            chunks.append(make_nalu(33, parameter_payload(data, nalus, 33, anchor, sample + cycle), layer))
+
+        for index, nal_type in enumerate(DENSE_SEQUENCE_TYPES):
+            layer = DENSE_LAYER_IDS[(sample + cycle + index) % len(DENSE_LAYER_IDS)]
+            if nal_type in (32, 33, 34):
+                payload = parameter_payload(data, nalus, nal_type, anchor, sample + cycle + index)
+            else:
+                off = body_start + ((sample + cycle * 11 + index * 7) % max(1, anchor.end - body_start))
+                min_len = 8 + ((sample + cycle + index) % 56)
+                payload = stress_payload(payload_window(data, anchor, off, sample + cycle + index), sample + cycle + index, min_len)
+            chunks.append(make_nalu(nal_type, payload, layer))
+
+        if cycle % 5 == 0:
+            layer = DENSE_LAYER_IDS[(sample + cycle + 5) % len(DENSE_LAYER_IDS)]
+            chunks.append(make_nalu(49, extractor_payload(sample + cycle), layer))
+        if cycle % 7 == 0:
+            layer = DENSE_LAYER_IDS[(sample + cycle + 7) % len(DENSE_LAYER_IDS)]
+            payload = stress_payload(payload_window(data, anchor, body_start, sample + cycle), sample + cycle, 24)
+            chunks.append(make_nalu(1, payload, layer))
+        if cycle % 9 == 0:
+            layer = DENSE_LAYER_IDS[(sample + cycle + 9) % len(DENSE_LAYER_IDS)]
+            payload = stress_payload(payload_window(data, anchor, body_start, sample + cycle + 3), sample + cycle + 3, 32)
+            chunks.append(make_nalu(5, payload, layer))
+
+    return b"".join(chunks)
+
+
 def extractor_payload(sample: int) -> bytes:
     pattern = bytes(
         [
@@ -300,7 +338,7 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
     if not nalus:
         return data
     nalu = choose_nalu(nalus, start, span, off, op, sample)
-    selector = op % 20
+    selector = op % 24
     out = data
 
     if selector == 0:
@@ -425,13 +463,31 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
         payload = vps_field_payload(nalu_body(data, target), sample)
         layer = VPS_MAX_LAYER_ID[(sample // 2) % len(VPS_MAX_LAYER_ID)]
         out = data[: target.start] + make_nalu(32, payload, layer) + data[target.end :]
-    else:
+    elif selector == 19:
         anchor = first_slice_or_anchor(data, nalus, nalu)
         train = field_parameter_train(data, nalus, anchor, sample)
         payload = stress_payload(payload_window(data, anchor, off, sample), sample, 128)
         layer_a = VPS_MAX_LAYER_ID[sample % len(VPS_MAX_LAYER_ID)]
         layer_b = VPS_MAX_LAYER_ID[(sample + 3) % len(VPS_MAX_LAYER_ID)]
         out = train + make_nalu(0, payload, layer_a) + make_nalu(1, payload[::-1], layer_b) + data
+    elif selector == 20:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=12 + (sample % 5))
+        out = dense + data
+    elif selector == 21:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=14 + (sample % 6))
+        out = data[: anchor.start] + dense + data[anchor.start :]
+    elif selector == 22:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=16 + (sample % 7))
+        tail = layered_parameter_train(data, nalus, anchor, sample) + data
+        out = dense + tail
+    elif selector == 23:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        dense = dense_layered_sequence(data, nalus, anchor, sample, cycles=18 + (sample % 8))
+        insert_at = anchor.start
+        out = data[:insert_at] + dense + data[insert_at:anchor.end] + dense[: max(0, len(dense) // 3)] + data[anchor.end:]
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]

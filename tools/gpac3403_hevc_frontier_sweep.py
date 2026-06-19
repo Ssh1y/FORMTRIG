@@ -367,6 +367,16 @@ def is_native_crash(exit_code: int | None, sanitizer_crash: bool) -> bool:
     return exit_code < 0 or 128 <= exit_code <= 159
 
 
+def should_run_endpoint_probe(endpoint_filter: str, reached: bool, d_f: float | None, d_f_max: float) -> bool:
+    if endpoint_filter == "all":
+        return True
+    if endpoint_filter == "reached":
+        return reached
+    if endpoint_filter == "reached-d-f":
+        return reached and d_f is not None and d_f <= d_f_max
+    raise ValueError(f"unknown endpoint filter: {endpoint_filter}")
+
+
 def run_endpoint_probes(
     input_path: str,
     kind: str,
@@ -444,6 +454,8 @@ def replay_variant(
     endpoint_timeout_s: float = 5.0,
     endpoint_replays: int = 1,
     endpoint_sanitizer_exit_code: int | None = 86,
+    endpoint_filter: str = "all",
+    endpoint_d_f_max: float = 1.0,
 ) -> ReplayRecord:
     runtime_log = out_dir / "logs" / f"variant_{case.index:06d}.runtime.jsonl"
     stdout_log = out_dir / "logs" / f"variant_{case.index:06d}.stdout"
@@ -491,7 +503,7 @@ def replay_variant(
     if runtime and isinstance(runtime.get("target_hit_count"), int):
         target_hit_count = int(runtime["target_hit_count"])
     endpoint_probes: list[EndpointProbe] = []
-    if endpoint_cmd:
+    if endpoint_cmd and should_run_endpoint_probe(endpoint_filter, reached, d_f, endpoint_d_f_max):
         endpoint_probes = run_endpoint_probes(
             input_path=case.path,
             kind="variant",
@@ -637,6 +649,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--endpoint-timeout", type=float, default=5.0)
     parser.add_argument("--endpoint-replays", type=int, default=1)
     parser.add_argument("--endpoint-sanitizer-exit-code", type=int, default=86)
+    parser.add_argument("--endpoint-filter", choices=("all", "reached", "reached-d-f"), default="all")
+    parser.add_argument("--endpoint-d-f-max", type=float, default=1.0)
     parser.add_argument("--endpoint-positive-control", type=Path)
     parser.add_argument("target_cmd", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
@@ -716,6 +730,8 @@ def main(argv: list[str] | None = None) -> int:
                 endpoint_timeout_s=args.endpoint_timeout,
                 endpoint_replays=args.endpoint_replays,
                 endpoint_sanitizer_exit_code=args.endpoint_sanitizer_exit_code,
+                endpoint_filter=args.endpoint_filter,
+                endpoint_d_f_max=args.endpoint_d_f_max,
             )
         )
 
@@ -751,6 +767,8 @@ def main(argv: list[str] | None = None) -> int:
     summary["endpoint_replays"] = args.endpoint_replays if endpoint_cmd else 0
     summary["endpoint_timeout"] = args.endpoint_timeout if endpoint_cmd else None
     summary["endpoint_sanitizer_exit_code"] = args.endpoint_sanitizer_exit_code if endpoint_cmd else None
+    summary["endpoint_filter"] = args.endpoint_filter if endpoint_cmd else None
+    summary["endpoint_d_f_max"] = args.endpoint_d_f_max if endpoint_cmd else None
     summary["endpoint_positive_control"] = [asdict(probe) for probe in positive_control]
 
     with (args.out / "records.jsonl").open("w", encoding="utf-8") as handle:

@@ -1,0 +1,133 @@
+{
+  "schema": "formtrig_comparison_v1",
+  "comparison_type": "gpac3403_b6_predense_hevc_structure_gap",
+  "generated_at_utc": "2026-06-19T11:51:13Z",
+  "target_id": "GPAC_3403",
+  "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+  "source_campaign": "gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619",
+  "structure_gap": {
+    "poc_total_nalus": 412,
+    "poc_types": {
+      "0": 163,
+      "1": 2,
+      "14": 3,
+      "16": 35,
+      "21": 14,
+      "32": 19,
+      "33": 33,
+      "34": 138,
+      "49": 2,
+      "5": 3
+    },
+    "poc_layers": {
+      "0": 10,
+      "1": 68,
+      "14": 5,
+      "16": 29,
+      "18": 2,
+      "2": 2,
+      "22": 7,
+      "31": 24,
+      "32": 2,
+      "36": 17,
+      "37": 13,
+      "4": 126,
+      "46": 3,
+      "50": 28,
+      "7": 76
+    },
+    "seed_total_nalus": 5,
+    "seed_nalu_ratio_to_poc": 0.012136,
+    "seed_missing_reference_types": [
+      0,
+      1,
+      5,
+      14,
+      16,
+      21,
+      49
+    ],
+    "seed_missing_reference_layers": [
+      1,
+      4,
+      7,
+      14,
+      16,
+      18,
+      22,
+      31,
+      32,
+      36,
+      37,
+      46,
+      50
+    ],
+    "largest_fieldop_variant": {
+      "index": 105,
+      "op": 17,
+      "sample": 17,
+      "reached": true,
+      "d_f_spec_lifted": 1.0,
+      "total_nalus": 34,
+      "nalu_ratio_to_poc": 0.082524,
+      "missing_reference_types": [
+        1,
+        5,
+        21,
+        49
+      ],
+      "missing_reference_layers": [
+        7,
+        14,
+        16,
+        18,
+        32,
+        37
+      ]
+    },
+    "best_d_f_fieldop_variant": {
+      "index": 0,
+      "op": 14,
+      "sample": 0,
+      "reached": true,
+      "d_f_spec_lifted": 1.0,
+      "total_nalus": 11,
+      "nalu_ratio_to_poc": 0.026699,
+      "missing_reference_types": [
+        0,
+        1,
+        5,
+        14,
+        16,
+        21,
+        49
+      ],
+      "missing_reference_layers": [
+        16,
+        18,
+        22,
+        31,
+        32,
+        36,
+        37,
+        46,
+        50
+      ]
+    }
+  },
+  "interpretation": {
+    "supports": [
+      "Before dense stateful operators, the seed and field-level variants were far below the PoC HEVC structure scale.",
+      "The largest field-op variant had only 34 NAL units, 8.25% of the PoC, and still missed reference NAL types and layers.",
+      "This justifies adding stateful dense HEVC sequence construction rather than continuing to run isolated field edits."
+    ],
+    "does_not_support": [
+      "This is a structure-gap diagnostic, not endpoint success evidence.",
+      "It does not by itself prove which fine-grained HEVC semantic relation is required for _T."
+    ]
+  },
+  "evidence": {
+    "structure_audit": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_structure_gap_20260619/evidence/hevc_structure_audit.json",
+    "structure_audit_sha256": "1c2abddabf16c1719dd916e4fe0c1024bcbdf69dfdc7ba4c0609be2175733ab8"
+  }
+}

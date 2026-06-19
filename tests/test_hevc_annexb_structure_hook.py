@@ -91,6 +91,26 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
             self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
             self.assertNotEqual(output, original)
 
+    def test_dense_sequence_ops_emit_stateful_layered_hevc(self):
+        hook = load_hook()
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 23)
+            for op in range(20, 24)
+        ]
+
+        for output in mutated_outputs:
+            types = {hook.nalu_type(output, nalu) for nalu in hook.parse_nalus(output)}
+            layers = {hook.layer_id(output, nalu) for nalu in hook.parse_nalus(output)}
+
+            self.assertGreaterEqual(len(hook.parse_nalus(output)), 50)
+            self.assertTrue({1, 5, 21, 49}.issubset(types))
+            self.assertTrue({16, 18, 32, 37, 50}.issubset(layers))
+            self.assertIn(b"\x00\x00\x00\x01", output)
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+            self.assertNotEqual(output, original)
+
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()
         original = b"not annex b"

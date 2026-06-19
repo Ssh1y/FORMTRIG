@@ -1,0 +1,212 @@
+{
+  "schema": "formtrig_comparison_v1",
+  "comparison_type": "gpac3403_b6_denseops_endpoint_asan_sweep",
+  "generated_at_utc": "2026-06-19T11:50:36Z",
+  "target_id": "GPAC_3403",
+  "source_campaign": "gpac3403_b6_blackwhite_annexb_60s_20260619",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619",
+  "hook_revision": "hevc_annexb_denseops20_23_stateful_layers",
+  "sweep": {
+    "seed": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+    "target_site_ids": "65063371",
+    "generated_variants": 128,
+    "replayed_variants": 128,
+    "op_start": 20,
+    "ops": 4,
+    "samples": 32,
+    "schedule": "round_robin",
+    "reached": 38,
+    "rnt": 38,
+    "triggered": 0,
+    "spec_lifted": 38,
+    "d_f_spec_lifted_values": [
+      1.0
+    ],
+    "d_f_spec_lifted_min": 1.0,
+    "d_f_spec_lifted_max": 1.0,
+    "same_object_samples": 38,
+    "reached_same_object_samples": 38,
+    "runtime_timeouts": 90,
+    "endpoint_replayed_variants": 128,
+    "endpoint_probe_runs": 128,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_exit_code_counts": {
+      "0": 122,
+      "1": 6
+    },
+    "endpoint_timeouts": 0,
+    "duration_s": 962.375
+  },
+  "structure": {
+    "poc_total_nalus": 412,
+    "poc_reference_types": [
+      0,
+      1,
+      5,
+      14,
+      16,
+      21,
+      32,
+      33,
+      34,
+      49
+    ],
+    "poc_reference_layers": [
+      0,
+      1,
+      2,
+      4,
+      7,
+      14,
+      16,
+      18,
+      22,
+      31,
+      32,
+      36,
+      37,
+      46,
+      50
+    ],
+    "reached_nalu_count_min": 253,
+    "reached_nalu_count_max": 470,
+    "reached_nalu_ratio_min": 0.614078,
+    "reached_nalu_ratio_max": 1.140777,
+    "reached_with_all_reference_types_layers": 38
+  },
+  "op_coverage": [
+    {
+      "op": 20,
+      "count": 32,
+      "reached": 22,
+      "rnt": 22,
+      "timeouts": 10,
+      "d_f_1": 22,
+      "same_object": 22,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "endpoint_exit_codes": [
+        "0"
+      ],
+      "nalu_count_min": 253,
+      "nalu_count_max": 337,
+      "nalu_count_avg": 292.219,
+      "variants_with_all_reference_types": 32,
+      "variants_with_all_reference_layers": 32
+    },
+    {
+      "op": 21,
+      "count": 32,
+      "reached": 1,
+      "rnt": 1,
+      "timeouts": 31,
+      "d_f_1": 1,
+      "same_object": 1,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "endpoint_exit_codes": [
+        "0",
+        "1"
+      ],
+      "nalu_count_min": 293,
+      "nalu_count_max": 397,
+      "nalu_count_avg": 342.719,
+      "variants_with_all_reference_types": 32,
+      "variants_with_all_reference_layers": 32
+    },
+    {
+      "op": 22,
+      "count": 32,
+      "reached": 15,
+      "rnt": 15,
+      "timeouts": 17,
+      "d_f_1": 15,
+      "same_object": 15,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "endpoint_exit_codes": [
+        "0"
+      ],
+      "nalu_count_min": 347,
+      "nalu_count_max": 471,
+      "nalu_count_avg": 404.094,
+      "variants_with_all_reference_types": 32,
+      "variants_with_all_reference_layers": 32
+    },
+    {
+      "op": 23,
+      "count": 32,
+      "reached": 0,
+      "rnt": 0,
+      "timeouts": 32,
+      "d_f_1": 0,
+      "same_object": 0,
+      "endpoint_sanitizer": 0,
+      "endpoint_native": 0,
+      "endpoint_exit_codes": [
+        "0",
+        "1"
+      ],
+      "nalu_count_min": 503,
+      "nalu_count_max": 703,
+      "nalu_count_avg": 600.469,
+      "variants_with_all_reference_types": 32,
+      "variants_with_all_reference_layers": 32
+    }
+  ],
+  "endpoint_oracle": {
+    "command": [
+      "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+      "-cat",
+      "@@",
+      "benchmarks/cve_seeds/gpac/white.mp4",
+      "-out",
+      "/dev/null"
+    ],
+    "env_keys": [
+      "ASAN_OPTIONS"
+    ],
+    "sanitizer_exit_code": 86,
+    "positive_control": {
+      "exit_code": 86,
+      "input": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "kind": "positive_control",
+      "native_crash": false,
+      "rep": 1,
+      "sanitizer_crash": true,
+      "stderr_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "e5cd423413c4c926035e5f70261cc17e44755906b7a853a5a7c1c2c07d305cb0",
+      "stdout_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_denseops20_23_rr128_endpoint_asan_20260619/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  },
+  "interpretation": {
+    "supports": [
+      "Dense stateful HEVC operators close the earlier gross structure gap: reached variants cover all PoC reference NAL types and layers, with 253-470 NAL units versus 412 in the PoC.",
+      "FORMTRIG guidance remains sharply sorted on successful dense replays: all 38 reached variants are RNT, same_object, spec_lifted, and D_F=1.",
+      "The endpoint oracle is live: the GPAC_3403 PoC positive control exits with sanitizer_crash=true."
+    ],
+    "does_not_support": [
+      "Dense type/layer/NAL-count coverage is not sufficient for GPAC_3403 trigger: endpoint sanitizer/native crashes remain 0/128 and _T remains 0.",
+      "Direct all-variant endpoint replay is too slow for dense inputs: 128 variants took 962.375 seconds and 90/128 runtime replays timed out."
+    ],
+    "engineering_conclusion": "The last-mile gap has moved from gross HEVC structure coverage to finer semantic consistency across VPS/SPS/PPS fields and cross-NAL references. Future runs should use endpoint filtering after FORMTRIG reachability/D_F screening.",
+    "next_actions": [
+      "Use --endpoint-filter reached or --endpoint-filter reached-d-f for dense GPAC_3403 sweeps to avoid endpoint replay on non-reached/time-out variants.",
+      "Add a VPS/SPS/PPS cross-reference auditor for layer IDs, parameter-set IDs, output-layer-set counts, and slice-to-parameter-set references.",
+      "Keep GPAC_3403 as a hard last-mile case while running faster real-CVE targets to demonstrate endpoint wins."
+    ]
+  },
+  "evidence": {
+    "compact_summary": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_denseops20_23_rr128_endpoint_asan_20260619/evidence/denseops_endpoint_sweep_summary.json",
+    "op_coverage": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_denseops20_23_rr128_endpoint_asan_20260619/evidence/denseops_op_coverage.json",
+    "structure_audit": "artifacts/formtrig_native_readiness/comparisons/gpac3403_b6_denseops20_23_rr128_endpoint_asan_20260619/evidence/denseops_hevc_structure_audit.json",
+    "raw_summary_sha256": "bfc6e022cb018f3f1b4aa7ae5452d594a5b12bd2e9611031679ff8217b02c2bb",
+    "raw_records_sha256": "03562f52ca00600de77ab05e6fcc5e9a6630f76fc9cb40d8b1806ae739353fc5",
+    "compact_summary_sha256": "bfc6e022cb018f3f1b4aa7ae5452d594a5b12bd2e9611031679ff8217b02c2bb",
+    "op_coverage_sha256": "1019c46e9f729f807e29f383670c5fe0093e1423fb5526f580b7ab5a30bda841",
+    "structure_audit_sha256": "af3976128c9778c48e49bced80e067285b3517e959a5d770868106060c74dedf"
+  }
+}

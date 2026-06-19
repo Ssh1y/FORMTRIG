@@ -1,0 +1,3565 @@
+{
+  "comparisons": [
+    {
+      "bytes_before_first_start_delta": -40,
+      "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+      "candidate_name": "seed",
+      "extra_candidate_layers": [],
+      "extra_candidate_types": [
+        20
+      ],
+      "layer_count_delta": {
+        "0": -6,
+        "1": -68,
+        "14": -5,
+        "16": -29,
+        "18": -2,
+        "2": -1,
+        "22": -7,
+        "31": -24,
+        "32": -2,
+        "36": -17,
+        "37": -13,
+        "4": -126,
+        "46": -3,
+        "50": -28,
+        "7": -76
+      },
+      "missing_reference_layers": [
+        1,
+        4,
+        7,
+        14,
+        16,
+        18,
+        22,
+        31,
+        32,
+        36,
+        37,
+        46,
+        50
+      ],
+      "missing_reference_types": [
+        0,
+        1,
+        5,
+        14,
+        16,
+        21,
+        49
+      ],
+      "nalu_count_delta": -407,
+      "nalu_count_ratio_to_reference": 0.012136,
+      "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "reference_name": "poc",
+      "type_count_delta": {
+        "0": -163,
+        "1": -2,
+        "14": -3,
+        "16": -35,
+        "20": 1,
+        "21": -14,
+        "32": -18,
+        "33": -32,
+        "34": -136,
+        "49": -2,
+        "5": -3
+      },
+      "vps_field_count_delta": -18
+    }
+  ],
+  "hook": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+  "inputs": {
+    "poc": {
+      "annexb": {
+        "annexb_detected": true,
+        "bytes_before_first_start": 40,
+        "layer_counts": {
+          "0": 10,
+          "1": 68,
+          "14": 5,
+          "16": 29,
+          "18": 2,
+          "2": 2,
+          "22": 7,
+          "31": 24,
+          "32": 2,
+          "36": 17,
+          "37": 13,
+          "4": 126,
+          "46": 3,
+          "50": 28,
+          "7": 76
+        },
+        "max_layer": 50,
+        "payload_bytes": 14968,
+        "payload_len_avg": 36.33,
+        "payload_len_max": 1004,
+        "payload_len_min": 2,
+        "sequence_prefix": [
+          {
+            "index": 0,
+            "layer": 22,
+            "offset": 40,
+            "payload_len": 50,
+            "type": 32
+          },
+          {
+            "index": 1,
+            "layer": 4,
+            "offset": 94,
+            "payload_len": 39,
+            "type": 34
+          },
+          {
+            "index": 2,
+            "layer": 1,
+            "offset": 136,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 3,
+            "layer": 4,
+            "offset": 147,
+            "payload_len": 14,
+            "type": 34
+          },
+          {
+            "index": 4,
+            "layer": 36,
+            "offset": 164,
+            "payload_len": 219,
+            "type": 33
+          },
+          {
+            "index": 5,
+            "layer": 0,
+            "offset": 386,
+            "payload_len": 8,
+            "type": 14
+          },
+          {
+            "index": 6,
+            "layer": 0,
+            "offset": 397,
+            "payload_len": 24,
+            "type": 34
+          },
+          {
+            "index": 7,
+            "layer": 0,
+            "offset": 424,
+            "payload_len": 69,
+            "type": 33
+          },
+          {
+            "index": 8,
+            "layer": 46,
+            "offset": 496,
+            "payload_len": 100,
+            "type": 5
+          },
+          {
+            "index": 9,
+            "layer": 1,
+            "offset": 599,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 10,
+            "layer": 4,
+            "offset": 610,
+            "payload_len": 14,
+            "type": 34
+          },
+          {
+            "index": 11,
+            "layer": 36,
+            "offset": 627,
+            "payload_len": 45,
+            "type": 33
+          },
+          {
+            "index": 12,
+            "layer": 31,
+            "offset": 675,
+            "payload_len": 6,
+            "type": 21
+          },
+          {
+            "index": 13,
+            "layer": 4,
+            "offset": 684,
+            "payload_len": 121,
+            "type": 34
+          },
+          {
+            "index": 14,
+            "layer": 37,
+            "offset": 808,
+            "payload_len": 78,
+            "type": 33
+          },
+          {
+            "index": 15,
+            "layer": 1,
+            "offset": 889,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 16,
+            "layer": 4,
+            "offset": 900,
+            "payload_len": 31,
+            "type": 34
+          },
+          {
+            "index": 17,
+            "layer": 7,
+            "offset": 934,
+            "payload_len": 11,
+            "type": 0
+          },
+          {
+            "index": 18,
+            "layer": 4,
+            "offset": 948,
+            "payload_len": 31,
+            "type": 34
+          },
+          {
+            "index": 19,
+            "layer": 50,
+            "offset": 982,
+            "payload_len": 26,
+            "type": 0
+          },
+          {
+            "index": 20,
+            "layer": 1,
+            "offset": 1011,
+            "payload_len": 91,
+            "type": 34
+          },
+          {
+            "index": 21,
+            "layer": 31,
+            "offset": 1105,
+            "payload_len": 43,
+            "type": 32
+          },
+          {
+            "index": 22,
+            "layer": 1,
+            "offset": 1152,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 23,
+            "layer": 4,
+            "offset": 1163,
+            "payload_len": 43,
+            "type": 34
+          },
+          {
+            "index": 24,
+            "layer": 4,
+            "offset": 1209,
+            "payload_len": 50,
+            "type": 34
+          },
+          {
+            "index": 25,
+            "layer": 1,
+            "offset": 1262,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 26,
+            "layer": 4,
+            "offset": 1273,
+            "payload_len": 31,
+            "type": 34
+          },
+          {
+            "index": 27,
+            "layer": 7,
+            "offset": 1307,
+            "payload_len": 9,
+            "type": 0
+          },
+          {
+            "index": 28,
+            "layer": 4,
+            "offset": 1319,
+            "payload_len": 50,
+            "type": 34
+          },
+          {
+            "index": 29,
+            "layer": 4,
+            "offset": 1372,
+            "payload_len": 79,
+            "type": 34
+          },
+          {
+            "index": 30,
+            "layer": 4,
+            "offset": 1454,
+            "payload_len": 39,
+            "type": 34
+          },
+          {
+            "index": 31,
+            "layer": 1,
+            "offset": 1496,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 32,
+            "layer": 4,
+            "offset": 1507,
+            "payload_len": 14,
+            "type": 34
+          },
+          {
+            "index": 33,
+            "layer": 36,
+            "offset": 1524,
+            "payload_len": 107,
+            "type": 33
+          },
+          {
+            "index": 34,
+            "layer": 0,
+            "offset": 1634,
+            "payload_len": 8,
+            "type": 14
+          },
+          {
+            "index": 35,
+            "layer": 0,
+            "offset": 1645,
+            "payload_len": 24,
+            "type": 34
+          },
+          {
+            "index": 36,
+            "layer": 0,
+            "offset": 1672,
+            "payload_len": 69,
+            "type": 33
+          },
+          {
+            "index": 37,
+            "layer": 46,
+            "offset": 1744,
+            "payload_len": 53,
+            "type": 5
+          },
+          {
+            "index": 38,
+            "layer": 50,
+            "offset": 1800,
+            "payload_len": 44,
+            "type": 0
+          },
+          {
+            "index": 39,
+            "layer": 1,
+            "offset": 1847,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 40,
+            "layer": 4,
+            "offset": 1858,
+            "payload_len": 14,
+            "type": 34
+          },
+          {
+            "index": 41,
+            "layer": 36,
+            "offset": 1875,
+            "payload_len": 45,
+            "type": 33
+          },
+          {
+            "index": 42,
+            "layer": 31,
+            "offset": 1923,
+            "payload_len": 6,
+            "type": 21
+          },
+          {
+            "index": 43,
+            "layer": 4,
+            "offset": 1932,
+            "payload_len": 78,
+            "type": 34
+          },
+          {
+            "index": 44,
+            "layer": 4,
+            "offset": 2013,
+            "payload_len": 43,
+            "type": 34
+          },
+          {
+            "index": 45,
+            "layer": 4,
+            "offset": 2059,
+            "payload_len": 50,
+            "type": 34
+          },
+          {
+            "index": 46,
+            "layer": 1,
+            "offset": 2112,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 47,
+            "layer": 4,
+            "offset": 2123,
+            "payload_len": 31,
+            "type": 34
+          },
+          {
+            "index": 48,
+            "layer": 7,
+            "offset": 2157,
+            "payload_len": 9,
+            "type": 0
+          },
+          {
+            "index": 49,
+            "layer": 4,
+            "offset": 2169,
+            "payload_len": 50,
+            "type": 34
+          },
+          {
+            "index": 50,
+            "layer": 4,
+            "offset": 2222,
+            "payload_len": 79,
+            "type": 34
+          },
+          {
+            "index": 51,
+            "layer": 4,
+            "offset": 2304,
+            "payload_len": 39,
+            "type": 34
+          },
+          {
+            "index": 52,
+            "layer": 1,
+            "offset": 2346,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 53,
+            "layer": 4,
+            "offset": 2357,
+            "payload_len": 14,
+            "type": 34
+          },
+          {
+            "index": 54,
+            "layer": 36,
+            "offset": 2374,
+            "payload_len": 107,
+            "type": 33
+          },
+          {
+            "index": 55,
+            "layer": 0,
+            "offset": 2484,
+            "payload_len": 8,
+            "type": 14
+          },
+          {
+            "index": 56,
+            "layer": 0,
+            "offset": 2495,
+            "payload_len": 24,
+            "type": 34
+          },
+          {
+            "index": 57,
+            "layer": 0,
+            "offset": 2522,
+            "payload_len": 69,
+            "type": 33
+          },
+          {
+            "index": 58,
+            "layer": 46,
+            "offset": 2594,
+            "payload_len": 53,
+            "type": 5
+          },
+          {
+            "index": 59,
+            "layer": 50,
+            "offset": 2650,
+            "payload_len": 44,
+            "type": 0
+          },
+          {
+            "index": 60,
+            "layer": 1,
+            "offset": 2697,
+            "payload_len": 7,
+            "type": 0
+          },
+          {
+            "index": 61,
+            "layer": 4,
+            "offset": 2708,
+            "payload_len": 14,
+            "type": 34
+          },
+          {
+            "index": 62,
+            "layer": 36,
+            "offset": 2725,
+            "payload_len": 45,
+            "type": 33
+          },
+          {
+            "index": 63,
+            "layer": 31,
+            "offset": 2773,
+            "payload_len": 6,
+            "type": 21
+          }
+        ],
+        "start_code_prefix_counts": {
+          "3": 327,
+          "4": 85
+        },
+        "total_nalus": 412,
+        "type_counts": {
+          "0": 163,
+          "1": 2,
+          "14": 3,
+          "16": 35,
+          "21": 14,
+          "32": 19,
+          "33": 33,
+          "34": 138,
+          "49": 2,
+          "5": 3
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          7,
+          14,
+          16,
+          18,
+          22,
+          31,
+          32,
+          36,
+          37,
+          46,
+          50
+        ],
+        "unique_types": [
+          0,
+          1,
+          5,
+          14,
+          16,
+          21,
+          32,
+          33,
+          34,
+          49
+        ],
+        "vps_field_count": 19,
+        "vps_fields": [
+          {
+            "index": 0,
+            "layer": 22,
+            "payload_len": 50,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 1,
+            "vps_max_layers_minus1": 3,
+            "vps_max_sub_layers_minus1": 2,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 14
+          },
+          {
+            "index": 21,
+            "layer": 31,
+            "payload_len": 43,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 72,
+            "layer": 31,
+            "payload_len": 43,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 111,
+            "layer": 31,
+            "payload_len": 59,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 128,
+            "layer": 2,
+            "payload_len": 175,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 1,
+            "vps_max_layers_minus1": 2,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 1,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 141,
+            "layer": 31,
+            "payload_len": 11,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 167,
+            "layer": 22,
+            "payload_len": 60,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 1,
+            "vps_max_layers_minus1": 3,
+            "vps_max_sub_layers_minus1": 2,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 14
+          },
+          {
+            "index": 195,
+            "layer": 31,
+            "payload_len": 11,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 225,
+            "layer": 31,
+            "payload_len": 43,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 264,
+            "layer": 31,
+            "payload_len": 59,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 281,
+            "layer": 2,
+            "payload_len": 94,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 1,
+            "vps_max_layers_minus1": 2,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 1,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 282,
+            "layer": 22,
+            "payload_len": 18,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 40,
+            "vps_max_sub_layers_minus1": 7,
+            "vps_temporal_id_nesting_flag": 1,
+            "vps_video_parameter_set_id": 11
+          },
+          {
+            "index": 283,
+            "layer": 22,
+            "payload_len": 45,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 40,
+            "vps_max_sub_layers_minus1": 7,
+            "vps_temporal_id_nesting_flag": 1,
+            "vps_video_parameter_set_id": 11
+          },
+          {
+            "index": 288,
+            "layer": 31,
+            "payload_len": 59,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 324,
+            "layer": 31,
+            "payload_len": 11,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 349,
+            "layer": 22,
+            "payload_len": 60,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 1,
+            "vps_max_layers_minus1": 3,
+            "vps_max_sub_layers_minus1": 2,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 14
+          },
+          {
+            "index": 377,
+            "layer": 31,
+            "payload_len": 11,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 0,
+            "vps_max_layers_minus1": 46,
+            "vps_max_sub_layers_minus1": 4,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 0
+          },
+          {
+            "index": 404,
+            "layer": 22,
+            "payload_len": 71,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 1,
+            "vps_max_layers_minus1": 3,
+            "vps_max_sub_layers_minus1": 2,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 14
+          },
+          {
+            "index": 410,
+            "layer": 22,
+            "payload_len": 59,
+            "vps_base_layer_available_flag": 0,
+            "vps_base_layer_internal_flag": 1,
+            "vps_max_layers_minus1": 3,
+            "vps_max_sub_layers_minus1": 2,
+            "vps_temporal_id_nesting_flag": 0,
+            "vps_video_parameter_set_id": 14
+          }
+        ]
+      },
+      "mp4": {
+        "box_count": 0,
+        "box_type_counts": {},
+        "boxes": []
+      },
+      "path": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+      "sha256": "9257df807f064d3bef04ee07fabd9995c7c485016b369bf786b9e9ccf3798ec1",
+      "size": 16329
+    },
+    "seed": {
+      "annexb": {
+        "annexb_detected": true,
+        "bytes_before_first_start": 0,
+        "layer_counts": {
+          "0": 4,
+          "2": 1
+        },
+        "max_layer": 2,
+        "payload_bytes": 710,
+        "payload_len_avg": 142.0,
+        "payload_len_max": 630,
+        "payload_len_min": 8,
+        "sequence_prefix": [
+          {
+            "index": 0,
+            "layer": 0,
+            "offset": 0,
+            "payload_len": 23,
+            "type": 32
+          },
+          {
+            "index": 1,
+            "layer": 0,
+            "offset": 27,
+            "payload_len": 41,
+            "type": 33
+          },
+          {
+            "index": 2,
+            "layer": 0,
+            "offset": 72,
+            "payload_len": 8,
+            "type": 34
+          },
+          {
+            "index": 3,
+            "layer": 2,
+            "offset": 84,
+            "payload_len": 8,
+            "type": 34
+          },
+          {
+            "index": 4,
+            "layer": 0,
+            "offset": 96,
+            "payload_len": 630,
+            "type": 20
+          }
+        ],
+        "start_code_prefix_counts": {
+          "3": 1,
+          "4": 4
+        },
+        "total_nalus": 5,
+        "type_counts": {
+          "20": 1,
+          "32": 1,
+          "33": 1,
+          "34": 2
+        },
+        "unique_layers": [
+          0,
+          2
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34
+        ],
+        "vps_field_count": 1,
+        "vps_fields": [
+          {
+            "index": 0,
+            "layer": 0,
+            "payload_len": 23,
+            "vps_base_layer_available_flag": 1,
+            "vps_base_layer_internal_flag": 1,
+            "vps_max_layers_minus1": 0,
+            "vps_max_sub_layers_minus1": 0,
+            "vps_temporal_id_nesting_flag": 1,
+            "vps_video_parameter_set_id": 0
+          }
+        ]
+      },
+      "mp4": {
+        "box_count": 0,
+        "box_type_counts": {},
+        "boxes": []
+      },
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_blackwhite_annexb_60s_20260619/default/queue/id:000021,src:000000,time:31124,execs:224,op:ftgtype,pos:23,+cov",
+      "sha256": "3d0069d0d9b34091d1d86922f9a324aee5af3e06e0c59c701fa771eba67e1189",
+      "size": 729
+    }
+  },
+  "reference": "poc",
+  "schema": "formtrig_gpac3403_hevc_structure_audit_v1",
+  "variant_summary": {
+    "best_by_d_f": [
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000000.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -5,
+            "1": -67,
+            "14": -4,
+            "16": -29,
+            "18": -2,
+            "22": -7,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -125,
+            "46": -3,
+            "50": -28,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            22,
+            31,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            14,
+            16,
+            21,
+            49
+          ],
+          "nalu_count_delta": -401,
+          "nalu_count_ratio_to_reference": 0.026699,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -3,
+            "16": -35,
+            "20": 1,
+            "21": -14,
+            "32": -16,
+            "33": -30,
+            "34": -134,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -16
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 0,
+        "layer_counts": {
+          "0": 5,
+          "1": 1,
+          "14": 1,
+          "2": 2,
+          "4": 1,
+          "7": 1
+        },
+        "max_layer": 14,
+        "op": 14,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000000.hevc",
+        "reached": true,
+        "sample": 0,
+        "size": 1277,
+        "total_nalus": 11,
+        "triggered": false,
+        "type_counts": {
+          "20": 1,
+          "32": 3,
+          "33": 3,
+          "34": 4
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          7,
+          14
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000002.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -3,
+            "1": -67,
+            "14": -4,
+            "16": -29,
+            "18": -1,
+            "22": -7,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -125,
+            "46": -3,
+            "50": -28,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            16,
+            22,
+            31,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            14,
+            16,
+            21
+          ],
+          "nalu_count_delta": -398,
+          "nalu_count_ratio_to_reference": 0.033981,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -3,
+            "16": -35,
+            "20": 2,
+            "21": -14,
+            "32": -15,
+            "33": -30,
+            "34": -134,
+            "49": -1,
+            "5": -3
+          },
+          "vps_field_count_delta": -15
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 2,
+        "layer_counts": {
+          "0": 7,
+          "1": 1,
+          "14": 1,
+          "18": 1,
+          "2": 2,
+          "4": 1,
+          "7": 1
+        },
+        "max_layer": 18,
+        "op": 16,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000002.hevc",
+        "reached": true,
+        "sample": 0,
+        "size": 1397,
+        "total_nalus": 14,
+        "triggered": false,
+        "type_counts": {
+          "20": 2,
+          "32": 4,
+          "33": 3,
+          "34": 4,
+          "49": 1
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          7,
+          14,
+          18
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34,
+          49
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000003.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -4,
+            "1": -65,
+            "14": -3,
+            "16": -29,
+            "18": -2,
+            "2": 1,
+            "22": -6,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -124,
+            "46": -3,
+            "50": -28,
+            "7": -74
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            31,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -393,
+          "nalu_count_ratio_to_reference": 0.046117,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -2,
+            "16": -34,
+            "20": 1,
+            "21": -14,
+            "32": -14,
+            "33": -28,
+            "34": -132,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -14
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 3,
+        "layer_counts": {
+          "0": 6,
+          "1": 3,
+          "14": 2,
+          "2": 3,
+          "22": 1,
+          "4": 2,
+          "7": 2
+        },
+        "max_layer": 22,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000003.hevc",
+        "reached": true,
+        "sample": 0,
+        "size": 1933,
+        "total_nalus": 19,
+        "triggered": false,
+        "type_counts": {
+          "14": 1,
+          "16": 1,
+          "20": 1,
+          "32": 5,
+          "33": 5,
+          "34": 6
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          7,
+          14,
+          22
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000004.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -68,
+            "14": -5,
+            "16": -29,
+            "18": -2,
+            "2": -1,
+            "22": -7,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -126,
+            "46": -3,
+            "50": -28,
+            "7": -76
+          },
+          "missing_reference_layers": [
+            1,
+            4,
+            7,
+            14,
+            16,
+            18,
+            22,
+            31,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            14,
+            16,
+            21,
+            49
+          ],
+          "nalu_count_delta": -407,
+          "nalu_count_ratio_to_reference": 0.012136,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -3,
+            "16": -35,
+            "20": 1,
+            "21": -14,
+            "32": -18,
+            "33": -32,
+            "34": -136,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -18
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 4,
+        "layer_counts": {
+          "0": 4,
+          "2": 1
+        },
+        "max_layer": 2,
+        "op": 18,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000004.hevc",
+        "reached": true,
+        "sample": 0,
+        "size": 804,
+        "total_nalus": 5,
+        "triggered": false,
+        "type_counts": {
+          "20": 1,
+          "32": 1,
+          "33": 1,
+          "34": 2
+        },
+        "unique_layers": [
+          0,
+          2
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000005.hevc",
+          "extra_candidate_layers": [
+            3
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -4,
+            "1": -67,
+            "14": -4,
+            "16": -29,
+            "18": -2,
+            "22": -7,
+            "3": 1,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -125,
+            "46": -3,
+            "50": -28,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            22,
+            31,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            5,
+            14,
+            16,
+            21,
+            49
+          ],
+          "nalu_count_delta": -399,
+          "nalu_count_ratio_to_reference": 0.031553,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -162,
+            "1": -1,
+            "14": -3,
+            "16": -35,
+            "20": 1,
+            "21": -14,
+            "32": -16,
+            "33": -30,
+            "34": -134,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -16
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 5,
+        "layer_counts": {
+          "0": 6,
+          "1": 1,
+          "14": 1,
+          "2": 2,
+          "3": 1,
+          "4": 1,
+          "7": 1
+        },
+        "max_layer": 14,
+        "op": 19,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000005.hevc",
+        "reached": true,
+        "sample": 0,
+        "size": 1545,
+        "total_nalus": 13,
+        "triggered": false,
+        "type_counts": {
+          "0": 1,
+          "1": 1,
+          "20": 1,
+          "32": 3,
+          "33": 3,
+          "34": 4
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          7,
+          14
+        ],
+        "unique_types": [
+          0,
+          1,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000006.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -67,
+            "14": -4,
+            "16": -29,
+            "18": -2,
+            "22": -6,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -125,
+            "46": -3,
+            "50": -28,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            31,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            14,
+            16,
+            21,
+            49
+          ],
+          "nalu_count_delta": -401,
+          "nalu_count_ratio_to_reference": 0.026699,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -3,
+            "16": -35,
+            "20": 1,
+            "21": -14,
+            "32": -16,
+            "33": -30,
+            "34": -134,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -16
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 6,
+        "layer_counts": {
+          "0": 4,
+          "1": 1,
+          "14": 1,
+          "2": 2,
+          "22": 1,
+          "4": 1,
+          "7": 1
+        },
+        "max_layer": 22,
+        "op": 14,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000006.hevc",
+        "reached": true,
+        "sample": 1,
+        "size": 1277,
+        "total_nalus": 11,
+        "triggered": false,
+        "type_counts": {
+          "20": 1,
+          "32": 3,
+          "33": 3,
+          "34": 4
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          7,
+          14,
+          22
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000008.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -65,
+            "14": -4,
+            "16": -29,
+            "18": -2,
+            "22": -6,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -125,
+            "46": -3,
+            "50": -27,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            31,
+            32,
+            36,
+            37,
+            46
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            14,
+            16,
+            21
+          ],
+          "nalu_count_delta": -398,
+          "nalu_count_ratio_to_reference": 0.033981,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -3,
+            "16": -35,
+            "20": 2,
+            "21": -14,
+            "32": -15,
+            "33": -30,
+            "34": -134,
+            "49": -1,
+            "5": -3
+          },
+          "vps_field_count_delta": -15
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 8,
+        "layer_counts": {
+          "0": 4,
+          "1": 3,
+          "14": 1,
+          "2": 2,
+          "22": 1,
+          "4": 1,
+          "50": 1,
+          "7": 1
+        },
+        "max_layer": 50,
+        "op": 16,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000008.hevc",
+        "reached": true,
+        "sample": 1,
+        "size": 1397,
+        "total_nalus": 14,
+        "triggered": false,
+        "type_counts": {
+          "20": 2,
+          "32": 4,
+          "33": 3,
+          "34": 4,
+          "49": 1
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          7,
+          14,
+          22,
+          50
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34,
+          49
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000009.hevc",
+          "extra_candidate_layers": [
+            3
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -66,
+            "14": -2,
+            "16": -29,
+            "18": -2,
+            "2": 2,
+            "22": -4,
+            "3": 1,
+            "31": -22,
+            "32": -2,
+            "36": -16,
+            "37": -13,
+            "4": -123,
+            "46": -3,
+            "50": -28,
+            "7": -73
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            32,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -386,
+          "nalu_count_ratio_to_reference": 0.063107,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -34,
+            "20": 1,
+            "21": -14,
+            "32": -12,
+            "33": -26,
+            "34": -130,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -12
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 9,
+        "layer_counts": {
+          "0": 4,
+          "1": 2,
+          "14": 3,
+          "2": 4,
+          "22": 3,
+          "3": 1,
+          "31": 2,
+          "36": 1,
+          "4": 3,
+          "7": 3
+        },
+        "max_layer": 36,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000009.hevc",
+        "reached": true,
+        "sample": 1,
+        "size": 2535,
+        "total_nalus": 26,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 1,
+          "20": 1,
+          "32": 7,
+          "33": 7,
+          "34": 8
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          7,
+          14,
+          22,
+          31,
+          36
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000010.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -68,
+            "14": -5,
+            "16": -29,
+            "18": -2,
+            "2": -1,
+            "22": -7,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -126,
+            "46": -3,
+            "50": -28,
+            "7": -76
+          },
+          "missing_reference_layers": [
+            1,
+            4,
+            7,
+            14,
+            16,
+            18,
+            22,
+            31,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            14,
+            16,
+            21,
+            49
+          ],
+          "nalu_count_delta": -407,
+          "nalu_count_ratio_to_reference": 0.012136,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -3,
+            "16": -35,
+            "20": 1,
+            "21": -14,
+            "32": -18,
+            "33": -32,
+            "34": -136,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -18
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 10,
+        "layer_counts": {
+          "0": 4,
+          "2": 1
+        },
+        "max_layer": 2,
+        "op": 18,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000010.hevc",
+        "reached": true,
+        "sample": 1,
+        "size": 804,
+        "total_nalus": 5,
+        "triggered": false,
+        "type_counts": {
+          "20": 1,
+          "32": 1,
+          "33": 1,
+          "34": 2
+        },
+        "unique_layers": [
+          0,
+          2
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000011.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -66,
+            "14": -4,
+            "16": -29,
+            "18": -2,
+            "22": -6,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -124,
+            "46": -3,
+            "50": -28,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            31,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            5,
+            14,
+            16,
+            21,
+            49
+          ],
+          "nalu_count_delta": -399,
+          "nalu_count_ratio_to_reference": 0.031553,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -162,
+            "1": -1,
+            "14": -3,
+            "16": -35,
+            "20": 1,
+            "21": -14,
+            "32": -16,
+            "33": -30,
+            "34": -134,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -16
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 11,
+        "layer_counts": {
+          "0": 4,
+          "1": 2,
+          "14": 1,
+          "2": 2,
+          "22": 1,
+          "4": 2,
+          "7": 1
+        },
+        "max_layer": 22,
+        "op": 19,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000011.hevc",
+        "reached": true,
+        "sample": 1,
+        "size": 1545,
+        "total_nalus": 13,
+        "triggered": false,
+        "type_counts": {
+          "0": 1,
+          "1": 1,
+          "20": 1,
+          "32": 3,
+          "33": 3,
+          "34": 4
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          7,
+          14,
+          22
+        ],
+        "unique_types": [
+          0,
+          1,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000012.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -68,
+            "14": -4,
+            "16": -29,
+            "18": -2,
+            "22": -6,
+            "31": -23,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -125,
+            "46": -3,
+            "50": -28,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            1,
+            16,
+            18,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            14,
+            16,
+            21,
+            49
+          ],
+          "nalu_count_delta": -401,
+          "nalu_count_ratio_to_reference": 0.026699,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -3,
+            "16": -35,
+            "20": 1,
+            "21": -14,
+            "32": -16,
+            "33": -30,
+            "34": -134,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -16
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 12,
+        "layer_counts": {
+          "0": 4,
+          "14": 1,
+          "2": 2,
+          "22": 1,
+          "31": 1,
+          "4": 1,
+          "7": 1
+        },
+        "max_layer": 31,
+        "op": 14,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000012.hevc",
+        "reached": true,
+        "sample": 2,
+        "size": 1277,
+        "total_nalus": 11,
+        "triggered": false,
+        "type_counts": {
+          "20": 1,
+          "32": 3,
+          "33": 3,
+          "34": 4
+        },
+        "unique_layers": [
+          0,
+          2,
+          4,
+          7,
+          14,
+          22,
+          31
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000014.hevc",
+          "extra_candidate_layers": [],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -68,
+            "14": -4,
+            "16": -29,
+            "18": -1,
+            "2": 2,
+            "22": -6,
+            "31": -23,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -125,
+            "46": -3,
+            "50": -28,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            1,
+            16,
+            32,
+            36,
+            37,
+            46,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            14,
+            16,
+            21
+          ],
+          "nalu_count_delta": -398,
+          "nalu_count_ratio_to_reference": 0.033981,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -3,
+            "16": -35,
+            "20": 2,
+            "21": -14,
+            "32": -16,
+            "33": -29,
+            "34": -134,
+            "49": -1,
+            "5": -3
+          },
+          "vps_field_count_delta": -16
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 14,
+        "layer_counts": {
+          "0": 4,
+          "14": 1,
+          "18": 1,
+          "2": 4,
+          "22": 1,
+          "31": 1,
+          "4": 1,
+          "7": 1
+        },
+        "max_layer": 31,
+        "op": 16,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000014.hevc",
+        "reached": true,
+        "sample": 2,
+        "size": 1397,
+        "total_nalus": 14,
+        "triggered": false,
+        "type_counts": {
+          "20": 2,
+          "32": 3,
+          "33": 4,
+          "34": 4,
+          "49": 1
+        },
+        "unique_layers": [
+          0,
+          2,
+          4,
+          7,
+          14,
+          18,
+          22,
+          31
+        ],
+        "unique_types": [
+          20,
+          32,
+          33,
+          34,
+          49
+        ]
+      }
+    ],
+    "endpoint_sanitizer_crashes": 0,
+    "largest_by_nalus": [
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000105.hevc",
+          "extra_candidate_layers": [
+            63
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "1": -65,
+            "14": -5,
+            "16": -29,
+            "18": -2,
+            "2": 1,
+            "22": -6,
+            "31": -21,
+            "32": -2,
+            "36": -14,
+            "37": -13,
+            "4": -125,
+            "46": 1,
+            "50": -23,
+            "63": 1,
+            "7": -76
+          },
+          "missing_reference_layers": [
+            7,
+            14,
+            16,
+            18,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -378,
+          "nalu_count_ratio_to_reference": 0.082524,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -162,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 105,
+        "layer_counts": {
+          "0": 10,
+          "1": 3,
+          "2": 3,
+          "22": 1,
+          "31": 3,
+          "36": 3,
+          "4": 1,
+          "46": 4,
+          "50": 5,
+          "63": 1
+        },
+        "max_layer": 63,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000105.hevc",
+        "reached": true,
+        "sample": 17,
+        "size": 3137,
+        "total_nalus": 34,
+        "triggered": false,
+        "type_counts": {
+          "0": 1,
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          22,
+          31,
+          36,
+          46,
+          50,
+          63
+        ],
+        "unique_types": [
+          0,
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000123.hevc",
+          "extra_candidate_layers": [
+            3
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -1,
+            "1": -63,
+            "14": -3,
+            "16": -29,
+            "18": -2,
+            "2": 4,
+            "22": -6,
+            "3": 1,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -122,
+            "46": -2,
+            "50": -26,
+            "7": -73
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            31,
+            32,
+            36,
+            37
+          ],
+          "missing_reference_types": [
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -378,
+          "nalu_count_ratio_to_reference": 0.082524,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -162,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 123,
+        "layer_counts": {
+          "0": 9,
+          "1": 5,
+          "14": 2,
+          "2": 6,
+          "22": 1,
+          "3": 1,
+          "4": 4,
+          "46": 1,
+          "50": 2,
+          "7": 3
+        },
+        "max_layer": 50,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000123.hevc",
+        "reached": true,
+        "sample": 20,
+        "size": 3137,
+        "total_nalus": 34,
+        "triggered": false,
+        "type_counts": {
+          "0": 1,
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          7,
+          14,
+          22,
+          46,
+          50
+        ],
+        "unique_types": [
+          0,
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000339.hevc",
+          "extra_candidate_layers": [
+            63
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -67,
+            "14": -1,
+            "16": -29,
+            "18": -2,
+            "2": 1,
+            "22": -2,
+            "31": -20,
+            "32": -2,
+            "36": -15,
+            "37": -13,
+            "4": -123,
+            "46": -2,
+            "50": -27,
+            "63": 1,
+            "7": -72
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 339,
+        "layer_counts": {
+          "0": 4,
+          "1": 1,
+          "14": 4,
+          "2": 3,
+          "22": 5,
+          "31": 4,
+          "36": 2,
+          "4": 3,
+          "46": 1,
+          "50": 1,
+          "63": 1,
+          "7": 4
+        },
+        "max_layer": 63,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000339.hevc",
+        "reached": true,
+        "sample": 56,
+        "size": 3137,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          4,
+          7,
+          14,
+          22,
+          31,
+          36,
+          46,
+          50,
+          63
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000285.hevc",
+          "extra_candidate_layers": [
+            63
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -4,
+            "1": -68,
+            "14": -2,
+            "16": -29,
+            "18": -2,
+            "2": -1,
+            "22": -3,
+            "31": -19,
+            "32": -2,
+            "36": -13,
+            "37": -13,
+            "4": -125,
+            "50": -25,
+            "63": 1,
+            "7": -74
+          },
+          "missing_reference_layers": [
+            1,
+            16,
+            18,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 285,
+        "layer_counts": {
+          "0": 6,
+          "14": 3,
+          "2": 1,
+          "22": 4,
+          "31": 5,
+          "36": 4,
+          "4": 1,
+          "46": 3,
+          "50": 3,
+          "63": 1,
+          "7": 2
+        },
+        "max_layer": 63,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000285.hevc",
+        "reached": true,
+        "sample": 47,
+        "size": 3171,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          2,
+          4,
+          7,
+          14,
+          22,
+          31,
+          36,
+          46,
+          50,
+          63
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000015.hevc",
+          "extra_candidate_layers": [
+            3
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -68,
+            "14": -1,
+            "16": -29,
+            "18": -2,
+            "2": 1,
+            "22": -3,
+            "3": 1,
+            "31": -20,
+            "32": -2,
+            "36": -14,
+            "37": -13,
+            "4": -123,
+            "46": -1,
+            "50": -27,
+            "7": -72
+          },
+          "missing_reference_layers": [
+            1,
+            16,
+            18,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 15,
+        "layer_counts": {
+          "0": 4,
+          "14": 4,
+          "2": 3,
+          "22": 4,
+          "3": 1,
+          "31": 4,
+          "36": 3,
+          "4": 3,
+          "46": 2,
+          "50": 1,
+          "7": 4
+        },
+        "max_layer": 50,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000015.hevc",
+        "reached": true,
+        "sample": 2,
+        "size": 3137,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          2,
+          3,
+          4,
+          7,
+          14,
+          22,
+          31,
+          36,
+          46,
+          50
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000141.hevc",
+          "extra_candidate_layers": [
+            3
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -6,
+            "1": -67,
+            "14": -1,
+            "16": -29,
+            "18": -2,
+            "2": 1,
+            "22": -2,
+            "3": 1,
+            "31": -21,
+            "32": -2,
+            "36": -15,
+            "37": -13,
+            "4": -122,
+            "46": -2,
+            "50": -28,
+            "7": -71
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            32,
+            37,
+            50
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 141,
+        "layer_counts": {
+          "0": 4,
+          "1": 1,
+          "14": 4,
+          "2": 3,
+          "22": 5,
+          "3": 1,
+          "31": 3,
+          "36": 2,
+          "4": 4,
+          "46": 1,
+          "7": 5
+        },
+        "max_layer": 46,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000141.hevc",
+        "reached": true,
+        "sample": 23,
+        "size": 3137,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          7,
+          14,
+          22,
+          31,
+          36,
+          46
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000159.hevc",
+          "extra_candidate_layers": [
+            63
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -4,
+            "1": -67,
+            "14": -3,
+            "16": -29,
+            "18": -2,
+            "2": -1,
+            "22": -3,
+            "31": -19,
+            "32": -2,
+            "36": -13,
+            "37": -13,
+            "4": -126,
+            "46": 1,
+            "50": -24,
+            "63": 1,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            4,
+            16,
+            18,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 159,
+        "layer_counts": {
+          "0": 6,
+          "1": 1,
+          "14": 2,
+          "2": 1,
+          "22": 4,
+          "31": 5,
+          "36": 4,
+          "46": 4,
+          "50": 4,
+          "63": 1,
+          "7": 1
+        },
+        "max_layer": 63,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000159.hevc",
+        "reached": true,
+        "sample": 26,
+        "size": 3137,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          7,
+          14,
+          22,
+          31,
+          36,
+          46,
+          50,
+          63
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000357.hevc",
+          "extra_candidate_layers": [
+            63
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -3,
+            "1": -66,
+            "14": -3,
+            "16": -29,
+            "18": -2,
+            "22": -4,
+            "31": -20,
+            "32": -2,
+            "36": -13,
+            "37": -13,
+            "4": -126,
+            "46": 1,
+            "50": -25,
+            "63": 1,
+            "7": -75
+          },
+          "missing_reference_layers": [
+            4,
+            16,
+            18,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 357,
+        "layer_counts": {
+          "0": 7,
+          "1": 2,
+          "14": 2,
+          "2": 2,
+          "22": 3,
+          "31": 4,
+          "36": 4,
+          "46": 4,
+          "50": 3,
+          "63": 1,
+          "7": 1
+        },
+        "max_layer": 63,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000357.hevc",
+        "reached": true,
+        "sample": 59,
+        "size": 3137,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          7,
+          14,
+          22,
+          31,
+          36,
+          46,
+          50,
+          63
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000303.hevc",
+          "extra_candidate_layers": [
+            3
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -1,
+            "1": -64,
+            "14": -5,
+            "16": -29,
+            "18": -2,
+            "2": 2,
+            "22": -6,
+            "3": 1,
+            "31": -22,
+            "32": -2,
+            "36": -14,
+            "37": -13,
+            "4": -125,
+            "46": 1,
+            "50": -24,
+            "7": -76
+          },
+          "missing_reference_layers": [
+            7,
+            14,
+            16,
+            18,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 303,
+        "layer_counts": {
+          "0": 9,
+          "1": 4,
+          "2": 4,
+          "22": 1,
+          "3": 1,
+          "31": 2,
+          "36": 3,
+          "4": 1,
+          "46": 4,
+          "50": 4
+        },
+        "max_layer": 50,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000303.hevc",
+        "reached": true,
+        "sample": 50,
+        "size": 3183,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          22,
+          31,
+          36,
+          46,
+          50
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000321.hevc",
+          "extra_candidate_layers": [
+            3
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -3,
+            "1": -64,
+            "14": -3,
+            "16": -29,
+            "18": -2,
+            "2": 3,
+            "22": -5,
+            "3": 1,
+            "31": -24,
+            "32": -2,
+            "36": -17,
+            "37": -13,
+            "4": -121,
+            "46": -2,
+            "50": -26,
+            "7": -72
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            31,
+            32,
+            36,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 321,
+        "layer_counts": {
+          "0": 7,
+          "1": 4,
+          "14": 2,
+          "2": 5,
+          "22": 2,
+          "3": 1,
+          "4": 5,
+          "46": 1,
+          "50": 2,
+          "7": 4
+        },
+        "max_layer": 50,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000321.hevc",
+        "reached": true,
+        "sample": 53,
+        "size": 3179,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          7,
+          14,
+          22,
+          46,
+          50
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000249.hevc",
+          "extra_candidate_layers": [
+            3
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -2,
+            "1": -63,
+            "14": -4,
+            "16": -29,
+            "18": -2,
+            "2": 4,
+            "22": -7,
+            "3": 1,
+            "31": -24,
+            "32": -2,
+            "36": -16,
+            "37": -13,
+            "4": -122,
+            "46": -1,
+            "50": -25,
+            "7": -74
+          },
+          "missing_reference_layers": [
+            16,
+            18,
+            22,
+            31,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 249,
+        "layer_counts": {
+          "0": 8,
+          "1": 5,
+          "14": 1,
+          "2": 6,
+          "3": 1,
+          "36": 1,
+          "4": 4,
+          "46": 2,
+          "50": 3,
+          "7": 2
+        },
+        "max_layer": 50,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000249.hevc",
+        "reached": true,
+        "sample": 41,
+        "size": 3147,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          7,
+          14,
+          36,
+          46,
+          50
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      },
+      {
+        "comparison_to_reference": {
+          "bytes_before_first_start_delta": -40,
+          "candidate": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000231.hevc",
+          "extra_candidate_layers": [
+            63
+          ],
+          "extra_candidate_types": [
+            20
+          ],
+          "layer_count_delta": {
+            "0": -2,
+            "1": -65,
+            "14": -4,
+            "16": -29,
+            "18": -2,
+            "22": -5,
+            "31": -21,
+            "32": -2,
+            "36": -13,
+            "37": -13,
+            "4": -126,
+            "46": 1,
+            "50": -23,
+            "63": 1,
+            "7": -76
+          },
+          "missing_reference_layers": [
+            4,
+            7,
+            16,
+            18,
+            32,
+            37
+          ],
+          "missing_reference_types": [
+            0,
+            1,
+            5,
+            21,
+            49
+          ],
+          "nalu_count_delta": -379,
+          "nalu_count_ratio_to_reference": 0.080097,
+          "reference": "benchmarks/cve_pocs/gpac/GPAC_3403.poc",
+          "type_count_delta": {
+            "0": -163,
+            "1": -2,
+            "14": -1,
+            "16": -33,
+            "20": 1,
+            "21": -14,
+            "32": -10,
+            "33": -24,
+            "34": -128,
+            "49": -2,
+            "5": -3
+          },
+          "vps_field_count_delta": -10
+        },
+        "d_f_spec_lifted": 1.0,
+        "endpoint_exit_code": 0,
+        "endpoint_sanitizer_crash": false,
+        "index": 231,
+        "layer_counts": {
+          "0": 8,
+          "1": 3,
+          "14": 1,
+          "2": 2,
+          "22": 2,
+          "31": 3,
+          "36": 4,
+          "46": 4,
+          "50": 5,
+          "63": 1
+        },
+        "max_layer": 63,
+        "op": 17,
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/variants/variant_000231.hevc",
+        "reached": true,
+        "sample": 38,
+        "size": 3138,
+        "total_nalus": 33,
+        "triggered": false,
+        "type_counts": {
+          "14": 2,
+          "16": 2,
+          "20": 1,
+          "32": 9,
+          "33": 9,
+          "34": 10
+        },
+        "unique_layers": [
+          0,
+          1,
+          2,
+          14,
+          22,
+          31,
+          36,
+          46,
+          50,
+          63
+        ],
+        "unique_types": [
+          14,
+          16,
+          20,
+          32,
+          33,
+          34
+        ]
+      }
+    ],
+    "profiled_count": 384,
+    "record_count": 384,
+    "records_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b6_frontier21_hevc_fieldops14_19_rr384_endpoint_asan_20260619/records.jsonl"
+  }
+}

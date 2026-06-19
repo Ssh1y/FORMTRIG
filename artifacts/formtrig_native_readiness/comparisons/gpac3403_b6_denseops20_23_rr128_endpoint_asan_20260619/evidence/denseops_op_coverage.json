@@ -1,0 +1,80 @@
+[
+  {
+    "op": 20,
+    "count": 32,
+    "reached": 22,
+    "rnt": 22,
+    "timeouts": 10,
+    "d_f_1": 22,
+    "same_object": 22,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "endpoint_exit_codes": [
+      "0"
+    ],
+    "nalu_count_min": 253,
+    "nalu_count_max": 337,
+    "nalu_count_avg": 292.219,
+    "variants_with_all_reference_types": 32,
+    "variants_with_all_reference_layers": 32
+  },
+  {
+    "op": 21,
+    "count": 32,
+    "reached": 1,
+    "rnt": 1,
+    "timeouts": 31,
+    "d_f_1": 1,
+    "same_object": 1,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "endpoint_exit_codes": [
+      "0",
+      "1"
+    ],
+    "nalu_count_min": 293,
+    "nalu_count_max": 397,
+    "nalu_count_avg": 342.719,
+    "variants_with_all_reference_types": 32,
+    "variants_with_all_reference_layers": 32
+  },
+  {
+    "op": 22,
+    "count": 32,
+    "reached": 15,
+    "rnt": 15,
+    "timeouts": 17,
+    "d_f_1": 15,
+    "same_object": 15,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "endpoint_exit_codes": [
+      "0"
+    ],
+    "nalu_count_min": 347,
+    "nalu_count_max": 471,
+    "nalu_count_avg": 404.094,
+    "variants_with_all_reference_types": 32,
+    "variants_with_all_reference_layers": 32
+  },
+  {
+    "op": 23,
+    "count": 32,
+    "reached": 0,
+    "rnt": 0,
+    "timeouts": 32,
+    "d_f_1": 0,
+    "same_object": 0,
+    "endpoint_sanitizer": 0,
+    "endpoint_native": 0,
+    "endpoint_exit_codes": [
+      "0",
+      "1"
+    ],
+    "nalu_count_min": 503,
+    "nalu_count_max": 703,
+    "nalu_count_avg": 600.469,
+    "variants_with_all_reference_types": 32,
+    "variants_with_all_reference_layers": 32
+  }
+]

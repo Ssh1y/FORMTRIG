@@ -204,6 +204,15 @@ class Gpac3403HevcFrontierSweepTest(unittest.TestCase):
         self.assertFalse(probes[0].native_crash)
         self.assertTrue(probes[0].stderr_sha256)
 
+    def test_endpoint_filter_can_skip_unreached_or_large_distance_inputs(self):
+        sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_endpoint_filter")
+
+        self.assertTrue(sweep.should_run_endpoint_probe("all", reached=False, d_f=None, d_f_max=1.0))
+        self.assertFalse(sweep.should_run_endpoint_probe("reached", reached=False, d_f=1.0, d_f_max=1.0))
+        self.assertTrue(sweep.should_run_endpoint_probe("reached", reached=True, d_f=10.0, d_f_max=1.0))
+        self.assertFalse(sweep.should_run_endpoint_probe("reached-d-f", reached=True, d_f=2.0, d_f_max=1.0))
+        self.assertTrue(sweep.should_run_endpoint_probe("reached-d-f", reached=True, d_f=1.0, d_f_max=1.0))
+
     def test_summary_counts_endpoint_crashes(self):
         sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_endpoint_summary")
         record = sweep.ReplayRecord(
