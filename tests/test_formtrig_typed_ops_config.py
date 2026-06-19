@@ -43,8 +43,14 @@ class FormtrigTypedOpsConfigTest(unittest.TestCase):
             "FORMTRIG_TYPED_RANGE_WINDOW",
             "FORMTRIG_TYPED_RETAIN_DIR",
             "FORMTRIG_TYPED_RETAIN_MAX",
+            "FORMTRIG_TYPED_RETAIN_MODE",
         ]:
             self.assertIn(f'"{env_name}"', patch)
+
+        self.assertIn("FORMTRIG_TYPED_RETAIN_MODE_HOOK", patch)
+        self.assertIn("formtrig_typed_retain_mode", patch)
+        self.assertIn("formtrig_typed_retain_eligible", patch)
+        self.assertIn("retain_queued_candidate", patch)
 
     def test_campaign_runner_exports_typed_ops_when_requested(self):
         runner = (

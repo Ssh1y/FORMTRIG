@@ -124,6 +124,62 @@ class ReplayGpac3403TypedRetainedEndpointTest(unittest.TestCase):
         self.assertTrue(variant_stderr_exists)
         self.assertTrue(positive_stderr_exists)
 
+    def test_op_diverse_selection_spreads_across_retained_operator_ids(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = Path(tmp) / "run"
+            run_dir.mkdir()
+            records = run_dir / "typed_retained_records.jsonl"
+            with records.open("w", encoding="utf-8") as handle:
+                for index in range(10):
+                    candidate = run_dir / f"candidate_{index}.hevc"
+                    candidate.write_bytes(f"candidate {index}".encode("ascii"))
+                    handle.write(
+                        json.dumps(
+                            {
+                                "index": index,
+                                "path": str(candidate),
+                                "d_f_spec_lifted": None,
+                                "op": index,
+                                "sample": 0,
+                            }
+                        )
+                        + "\n"
+                    )
+            endpoint_code = "import sys; sys.exit(0)"
+            endpoint_cmd = f"{shlex.quote(sys.executable)} -c {shlex.quote(endpoint_code)} @@"
+            summary = run_dir / "summary.json"
+            enriched = run_dir / "endpoint_records.jsonl"
+
+            subprocess.run(
+                [
+                    "python3",
+                    str(TOOL),
+                    "--run-dir",
+                    str(run_dir),
+                    "--endpoint-cmd",
+                    endpoint_cmd,
+                    "--selection",
+                    "op-diverse",
+                    "--max-records",
+                    "4",
+                    "--out-summary",
+                    str(summary),
+                    "--out-records-jsonl",
+                    str(enriched),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+
+            report = json.loads(summary.read_text(encoding="utf-8"))
+            rows = [json.loads(line) for line in enriched.read_text(encoding="utf-8").splitlines()]
+
+        self.assertEqual(report["selection"], "op-diverse")
+        self.assertEqual(report["replayed_records"], 4)
+        self.assertEqual([row["op"] for row in rows], [0, 3, 6, 9])
+
 
 if __name__ == "__main__":
     unittest.main()

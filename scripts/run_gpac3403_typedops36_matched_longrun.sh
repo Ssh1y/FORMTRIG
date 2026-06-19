@@ -15,6 +15,7 @@ monitor_poll="${FORMTRIG_STATS_MONITOR_POLL:-10}"
 typed_ops="36"
 typed_mutation_max="64"
 typed_retain_max="0"
+typed_retain_mode="signal"
 typed_retain_endpoint_replay="off"
 typed_retain_endpoint_timeout="5"
 typed_retain_endpoint_replays="1"
@@ -57,8 +58,12 @@ options:
   --timeout AFL_T         AFL++ -t value, default 5000+
   --typed-ops N           FORMTRIG typed op count, default 36
   --typed-mutation-max N  FORMTRIG_TYPED_MUTATION_MAX, default 64
-  --typed-retain-max N    retain up to N non-queued typed candidates per rep,
-                          default 0/off
+  --typed-retain-max N    retain up to N typed candidates per rep, default 0/off.
+                          signal mode keeps old non-queued signal candidates;
+                          hook/all modes also retain queued hook candidates.
+  --typed-retain-mode MODE
+                          signal|hook|all, default signal. hook also retains
+                          hook-generated candidates without immediate D_F
   --typed-retain-endpoint-replay MODE
                           off|on, replay retained candidates through endpoint
                           before packaging, default off
@@ -71,7 +76,7 @@ options:
                           max retained records to endpoint replay, 0 means all,
                           default 0
   --typed-retain-endpoint-selection MODE
-                          input-order|best-d-f, default best-d-f
+                          input-order|best-d-f|op-diverse, default best-d-f
   --typed-retain-endpoint-cmd CMD
                           endpoint replay command; use @@ for retained input,
                           default FORMTRIG MP4Box -cat @@ white.mp4 -out /dev/null
@@ -179,7 +184,9 @@ record_plan() {
     json_escape "$kind"
     printf ',"duration_s":%s,"typed_ops":%s,"typed_mutation_max":%s,' \
       "$duration" "$typed_ops" "$typed_mutation_max"
-    printf '"typed_retain_max":%s,"command":' "$typed_retain_max"
+    printf '"typed_retain_max":%s,"typed_retain_mode":' "$typed_retain_max"
+    json_escape "$typed_retain_mode"
+    printf ',"command":'
     json_escape "$command"
     printf '}\n'
   } >> "$plan_jsonl"
@@ -301,6 +308,7 @@ run_formtrig_one() {
     env_args+=(
       "FORMTRIG_TYPED_RETAIN_MAX=$typed_retain_max"
       "FORMTRIG_TYPED_RETAIN_DIR=$retain_dir"
+      "FORMTRIG_TYPED_RETAIN_MODE=$typed_retain_mode"
     )
   fi
   local rendered
@@ -387,6 +395,7 @@ write_metadata() {
   "timeout_oracle": "-t $timeout_arg",
   "typed_mutation_max": $typed_mutation_max,
   "typed_retain_max": $typed_retain_max,
+  "typed_retain_mode": "$typed_retain_mode",
   "typed_retain_endpoint_replay": "$typed_retain_endpoint_replay",
   "typed_retain_endpoint_timeout": $typed_retain_endpoint_timeout,
   "typed_retain_endpoint_replays": $typed_retain_endpoint_replays,
@@ -444,6 +453,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --typed-retain-max)
       typed_retain_max="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-mode)
+      typed_retain_mode="${2:-}"
       shift 2
       ;;
     --typed-retain-endpoint-replay)
@@ -566,6 +579,14 @@ if ! [[ "$typed_retain_max" =~ ^[0-9]+$ ]]; then
   echo "typed retain max must be a non-negative integer" >&2
   exit 2
 fi
+case "$typed_retain_mode" in
+  signal|hook|all)
+    ;;
+  *)
+    echo "--typed-retain-mode must be signal, hook, or all: $typed_retain_mode" >&2
+    exit 2
+    ;;
+esac
 if ! [[ "$typed_retain_endpoint_max_records" =~ ^[0-9]+$ ]]; then
   echo "typed retain endpoint max records must be a non-negative integer" >&2
   exit 2
@@ -579,10 +600,10 @@ case "$typed_retain_endpoint_replay" in
     ;;
 esac
 case "$typed_retain_endpoint_selection" in
-  input-order|best-d-f)
+  input-order|best-d-f|op-diverse)
     ;;
   *)
-    echo "--typed-retain-endpoint-selection must be input-order or best-d-f: $typed_retain_endpoint_selection" >&2
+    echo "--typed-retain-endpoint-selection must be input-order, best-d-f, or op-diverse: $typed_retain_endpoint_selection" >&2
     exit 2
     ;;
 esac

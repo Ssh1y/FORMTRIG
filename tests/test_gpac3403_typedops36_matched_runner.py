@@ -53,6 +53,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
                 self.assertEqual(record["typed_ops"], 36)
                 self.assertEqual(record["typed_mutation_max"], 64)
                 self.assertEqual(record["typed_retain_max"], 0)
+                self.assertEqual(record["typed_retain_mode"], "signal")
                 self.assertEqual(record["duration_s"], 60)
 
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
@@ -60,6 +61,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertEqual(metadata["typed_ops"], 36)
             self.assertEqual(metadata["typed_mutation_max"], 64)
             self.assertEqual(metadata["typed_retain_max"], 0)
+            self.assertEqual(metadata["typed_retain_mode"], "signal")
             self.assertIn("MP4Box", metadata["target_cmd"])
             self.assertIn("-cat @@ ", metadata["target_cmd"])
             self.assertIn("white.mp4", metadata["target_cmd"])
@@ -158,6 +160,8 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
                     "formtrig,aflplusplus_vanilla",
                     "--typed-retain-max",
                     "32",
+                    "--typed-retain-mode",
+                    "hook",
                     "--typed-retain-endpoint-replay",
                     "on",
                     "--typed-retain-endpoint-timeout",
@@ -167,7 +171,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
                     "--typed-retain-endpoint-max-records",
                     "5",
                     "--typed-retain-endpoint-selection",
-                    "input-order",
+                    "op-diverse",
                     "--typed-retain-endpoint-cmd",
                     "python3 endpoint.py @@",
                     "--out",
@@ -183,20 +187,24 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             ]
             self.assertEqual(len(records), 2)
             self.assertTrue(all(record["typed_retain_max"] == 32 for record in records))
+            self.assertTrue(all(record["typed_retain_mode"] == "hook" for record in records))
             commands = {record["arm"]: record["command"] for record in records}
             self.assertIn("FORMTRIG_TYPED_RETAIN_MAX=32", commands["formtrig"])
             self.assertIn("FORMTRIG_TYPED_RETAIN_DIR=", commands["formtrig"])
+            self.assertIn("FORMTRIG_TYPED_RETAIN_MODE=hook", commands["formtrig"])
             self.assertIn("typed_retained", commands["formtrig"])
             self.assertNotIn("FORMTRIG_TYPED_RETAIN_MAX", commands["aflplusplus_vanilla"])
             self.assertNotIn("FORMTRIG_TYPED_RETAIN_DIR", commands["aflplusplus_vanilla"])
+            self.assertNotIn("FORMTRIG_TYPED_RETAIN_MODE", commands["aflplusplus_vanilla"])
 
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["typed_retain_max"], 32)
+            self.assertEqual(metadata["typed_retain_mode"], "hook")
             self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")
             self.assertEqual(metadata["typed_retain_endpoint_timeout"], 3)
             self.assertEqual(metadata["typed_retain_endpoint_replays"], 2)
             self.assertEqual(metadata["typed_retain_endpoint_max_records"], 5)
-            self.assertEqual(metadata["typed_retain_endpoint_selection"], "input-order")
+            self.assertEqual(metadata["typed_retain_endpoint_selection"], "op-diverse")
             self.assertEqual(metadata["typed_retain_endpoint_cmd"], "python3 endpoint.py @@")
 
             runner = (

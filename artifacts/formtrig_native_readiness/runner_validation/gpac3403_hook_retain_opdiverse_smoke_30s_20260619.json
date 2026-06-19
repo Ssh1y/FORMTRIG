@@ -1,0 +1,114 @@
+{
+  "validation_id": "gpac3403_hook_retain_opdiverse_smoke_30s_20260619",
+  "date_utc": "2026-06-19",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_hook_retain_opdiverse_smoke_30s_20260619T183045Z",
+  "purpose": "Validate FORMTRIG_TYPED_RETAIN_MODE=hook plus op-diverse endpoint replay so GPAC_3403 typed hook candidates retain operator provenance even when they are queued or do not immediately improve D_F.",
+  "fuzz_command": "bash scripts/run_gpac3403_typedops40_matched_longrun.sh --mode execute --duration 30 --reps 1 --jobs 1 --arms formtrig --baselines \"\" --typed-mutation-max 64 --typed-retain-max 96 --typed-retain-mode hook --typed-retain-endpoint-replay on --typed-retain-endpoint-timeout 5 --typed-retain-endpoint-replays 1 --typed-retain-endpoint-max-records 24 --typed-retain-endpoint-selection op-diverse --typed-retain-endpoint-cmd \"/home/cwh/FORMTRIG/benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box -cat @@ /home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null\" --typed-retain-endpoint-positive-control /home/cwh/FORMTRIG/benchmarks/cve_pocs/gpac/GPAC_3403.poc --out artifacts/formtrig_native_readiness/raw/gpac3403_hook_retain_opdiverse_smoke_30s_20260619T183045Z --continue-on-fail",
+  "build_command": "make -C experiments/aflplusplus/AFLplusplus NO_PYTHON=1 -j$(nproc) afl-fuzz",
+  "test_commands": [
+    "python3 -m unittest tests.test_formtrig_typed_ops_config tests.test_gpac3403_typedops36_matched_runner tests.test_replay_gpac3403_typed_retained_endpoint",
+    "bash -n scripts/run_gpac3403_typedops36_matched_longrun.sh scripts/run_gpac3403_typedops40_matched_longrun.sh"
+  ],
+  "retained_summary": {
+    "retained_records": 27,
+    "existing_inputs": 27,
+    "hook_used_records": 27,
+    "ops": {
+      "0": 1,
+      "1": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "19": 1,
+      "20": 1,
+      "21": 1,
+      "23": 1,
+      "24": 1,
+      "25": 1,
+      "26": 1,
+      "27": 1,
+      "28": 1,
+      "29": 1,
+      "30": 1
+    },
+    "d_f_spec_lifted_count": 10,
+    "d_f_spec_lifted_unique": [
+      2.0
+    ]
+  },
+  "endpoint_replay": {
+    "selection": "op-diverse",
+    "selected_records": 24,
+    "replayed_records": 24,
+    "endpoint_exit_code_counts": {
+      "0": 9,
+      "1": 15
+    },
+    "endpoint_sanitizer_crashes": 0,
+    "positive_control_sanitizer_crashes": 1,
+    "selected_ops": [
+      0,
+      1,
+      3,
+      4,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      17,
+      19,
+      20,
+      21,
+      23,
+      24,
+      25,
+      27,
+      28,
+      29,
+      30
+    ],
+    "marker_counts": {
+      "Track Importing HEVC": 9,
+      "layers in VPS": 1,
+      "VPS max layer ID": 3,
+      "Wrong number of output layer sets": 1,
+      "Failed to parse VPS extensions": 1
+    },
+    "poc_near_record": {
+      "index": 20,
+      "op": 24,
+      "sample": 0,
+      "markers": [
+        "Wrong number of output layer sets",
+        "Failed to parse VPS extensions",
+        "Track Importing HEVC"
+      ]
+    }
+  },
+  "formtrig_gate": {
+    "status": "fail",
+    "reached": 87,
+    "terminal_triggered": 0,
+    "spec_lifted": 22,
+    "binding_signal_status": "fail",
+    "binding_signal_diagnosis": "constant_lift_signal"
+  },
+  "interpretation": "This is not terminal _T evidence. It validates that hook-retain mode and op-diverse endpoint replay expose GPAC_3403 typed mutation operator provenance and recover a PoC-near VPS extension signature that the prior best-d-f retained replay missed.",
+  "claim_boundary": "Use as runner/tooling validation and GPAC R2T repair evidence only. It does not prove ASAN trigger, FORMTRIG endpoint benefit, or a SOTA baseline gap."
+}

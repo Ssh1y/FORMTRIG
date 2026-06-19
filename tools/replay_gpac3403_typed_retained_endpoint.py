@@ -61,6 +61,70 @@ def record_d_f(record: dict[str, Any]) -> float | None:
     return float(value)
 
 
+def record_op(record: dict[str, Any]) -> int:
+    value = record.get("op")
+    if value is None:
+        return -1
+    return int(value)
+
+
+def d_f_sort_key(record: dict[str, Any]) -> tuple[float, int]:
+    d_f = record_d_f(record)
+    return (
+        d_f if d_f is not None else 1.0e300,
+        int(record.get("index") or 0),
+    )
+
+
+def evenly_spaced_values(values: list[int], count: int) -> list[int]:
+    if count <= 0 or count >= len(values):
+        return values
+    if count == 1:
+        return [values[0]]
+    chosen: list[int] = []
+    seen: set[int] = set()
+    last = len(values) - 1
+    for index in range(count):
+        value = values[round(index * last / (count - 1))]
+        if value in seen:
+            continue
+        chosen.append(value)
+        seen.add(value)
+    for value in values:
+        if len(chosen) >= count:
+            break
+        if value not in seen:
+            chosen.append(value)
+            seen.add(value)
+    return chosen
+
+
+def select_op_diverse(records: list[dict[str, Any]], max_records: int) -> list[dict[str, Any]]:
+    groups: dict[int, list[dict[str, Any]]] = {}
+    for record in records:
+        groups.setdefault(record_op(record), []).append(record)
+    for group in groups.values():
+        group.sort(key=d_f_sort_key)
+    ops = sorted(groups)
+    if max_records > 0:
+        ops = evenly_spaced_values(ops, min(max_records, len(ops)))
+    selected: list[dict[str, Any]] = []
+    depth = 0
+    while True:
+        added = False
+        for op in ops:
+            group = groups[op]
+            if depth >= len(group):
+                continue
+            selected.append(group[depth])
+            added = True
+            if max_records > 0 and len(selected) >= max_records:
+                return selected
+        if not added:
+            return selected
+        depth += 1
+
+
 def select_records(
     records: list[dict[str, Any]],
     max_records: int,
@@ -83,6 +147,9 @@ def select_records(
                 int(record.get("index") or 0),
             )
         )
+    elif selection == "op-diverse":
+        selected = select_op_diverse(selected, max_records)
+        return selected
     elif selection != "input-order":
         raise ValueError(f"unknown selection policy: {selection}")
     if max_records > 0:
@@ -242,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--endpoint-positive-control", type=Path)
     parser.add_argument("--max-records", type=int, default=0, help="0 means replay every selected record.")
     parser.add_argument("--d-f-max", type=float)
-    parser.add_argument("--selection", choices=("input-order", "best-d-f"), default="input-order")
+    parser.add_argument("--selection", choices=("input-order", "best-d-f", "op-diverse"), default="input-order")
     parser.add_argument("--out-summary", type=Path)
     parser.add_argument("--out-records-jsonl", type=Path)
     args = parser.parse_args(argv)

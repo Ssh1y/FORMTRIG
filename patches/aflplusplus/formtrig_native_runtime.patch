@@ -156,6 +156,7 @@ index 0007d5a..3a2d1e1 100644
 +    "FORMTRIG_TYPED_RANGE_WINDOW",
 +    "FORMTRIG_TYPED_RETAIN_DIR",
 +    "FORMTRIG_TYPED_RETAIN_MAX",
++    "FORMTRIG_TYPED_RETAIN_MODE",
      "AFL_NOOPT",
      "AFL_NYX_AUX_SIZE",
      "AFL_NYX_DISABLE_SNAPSHOT_MODE",
@@ -399,6 +400,9 @@ index 2ad4697..4882862 100644
 +#define FORMTRIG_TYPED_FALLBACK_RANGES_HARD_MAX 64u
 +#define FORMTRIG_TYPED_RETAIN_DEFAULT_MAX 0u
 +#define FORMTRIG_TYPED_RETAIN_HARD_MAX 4096u
++#define FORMTRIG_TYPED_RETAIN_MODE_SIGNAL 0u
++#define FORMTRIG_TYPED_RETAIN_MODE_HOOK 1u
++#define FORMTRIG_TYPED_RETAIN_MODE_ALL 2u
 +
 +static u8 formtrig_fuzz_one_finite(double v) {
 +
@@ -486,6 +490,24 @@ index 2ad4697..4882862 100644
 +  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_RETAIN_MAX",
 +                                   FORMTRIG_TYPED_RETAIN_DEFAULT_MAX, 0u,
 +                                   FORMTRIG_TYPED_RETAIN_HARD_MAX);
++
++}
++
++static u32 formtrig_typed_retain_mode(void) {
++
++  const char *mode = getenv("FORMTRIG_TYPED_RETAIN_MODE");
++  if (!mode || !mode[0] || !strcmp(mode, "signal")) {
++
++    return FORMTRIG_TYPED_RETAIN_MODE_SIGNAL;
++
++  }
++  if (!strcmp(mode, "hook") || !strcmp(mode, "hooked")) {
++
++    return FORMTRIG_TYPED_RETAIN_MODE_HOOK;
++
++  }
++  if (!strcmp(mode, "all")) { return FORMTRIG_TYPED_RETAIN_MODE_ALL; }
++  return FORMTRIG_TYPED_RETAIN_MODE_SIGNAL;
 +
 +}
 +
@@ -796,6 +818,20 @@ index 2ad4697..4882862 100644
 +
 +}
 +
++static u8 formtrig_typed_retain_eligible(const formtrig_queue_meta_t *m,
++                                         u8 hook_used, u32 retain_mode) {
++
++  if (formtrig_typed_retain_signal_eligible(m)) { return 1; }
++  if (retain_mode == FORMTRIG_TYPED_RETAIN_MODE_HOOK) {
++
++    return hook_used ? 1 : 0;
++
++  }
++  if (retain_mode == FORMTRIG_TYPED_RETAIN_MODE_ALL) { return 1; }
++  return 0;
++
++}
++
 +static u8 formtrig_typed_retain_append_record(
 +    const char *record_path, const char *input_path, u32 source_queue_id,
 +    u32 stage_cur, u32 op, u32 component_index, u32 range_index,
@@ -859,10 +895,11 @@ index 2ad4697..4882862 100644
 +    const formtrig_progress_component_t *component, u32 source_queue_id,
 +    u32 stage_cur, u32 op, u32 component_index, u32 range_index,
 +    u32 sample_index, u32 start, u32 span, u32 off, u32 retained_count,
-+    u8 hook_used) {
++    u8 hook_used, u32 retain_mode) {
 +
 +  if (!retain_dir || !retain_dir[0] || !buf || !len) { return 0; }
-+  if (!formtrig_typed_retain_signal_eligible(&afl->formtrig_last)) {
++  if (!formtrig_typed_retain_eligible(&afl->formtrig_last, hook_used,
++                                      retain_mode)) {
 +
 +    return 0;
 +
@@ -1491,6 +1528,7 @@ index 2ad4697..4882862 100644
 +  u32         typed_retain_max = formtrig_typed_retain_max();
 +  const char *typed_retain_dir =
 +      typed_retain_max ? formtrig_typed_retain_dir() : NULL;
++  u32 typed_retain_mode = formtrig_typed_retain_mode();
 +  u32 typed_retained = 0;
 +  u64 orig_hit_cnt = afl->queued_items + afl->saved_crashes;
 +
@@ -1575,12 +1613,14 @@ index 2ad4697..4882862 100644
 +    ++afl->formtrig_typed_execs;
 +    u8 stop = common_fuzz_stuff(afl, exec_buf, exec_len);
 +    u64 after_hit_cnt = afl->queued_items + afl->saved_crashes;
++    u8 retain_queued_candidate =
++        typed_retain_mode != FORMTRIG_TYPED_RETAIN_MODE_SIGNAL;
 +    if (!stop && typed_retain_dir && typed_retained < typed_retain_max &&
-+        after_hit_cnt == before_hit_cnt &&
++        (retain_queued_candidate || after_hit_cnt == before_hit_cnt) &&
 +        formtrig_typed_retain_candidate(
 +            afl, typed_retain_dir, exec_buf, exec_len, component, queue_id,
 +            afl->stage_cur, op, component_index, range_index, sample_index,
-+            start, span, off, typed_retained, hook_used)) {
++            start, span, off, typed_retained, hook_used, typed_retain_mode)) {
 +
 +      ++typed_retained;
 +      formtrig_log_progress(afl, "typed_retain", "candidate_not_queued",
