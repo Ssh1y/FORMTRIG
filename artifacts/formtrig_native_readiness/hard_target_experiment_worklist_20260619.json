@@ -1,6 +1,6 @@
 {
   "benefit_first_rule": "Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.",
-  "blocked_count": 28,
+  "blocked_count": 27,
   "defaults": {
     "jobs": 4,
     "longrun_duration_s": 7200,
@@ -8,7 +8,7 @@
     "repetitions": 3,
     "short_duration_s": 600
   },
-  "generated_at_utc": "2026-06-19T22:10:25+00:00",
+  "generated_at_utc": "2026-06-19T22:25:35+00:00",
   "inputs": {
     "active_runs": "",
     "binding_validation_root": "artifacts/formtrig_native_readiness/binding_validation",
@@ -17,9 +17,10 @@
     "manifest_root": "artifacts/formtrig_native_readiness/manifests",
     "native_build_root": "artifacts/formtrig_native_readiness/magma_native_builds",
     "queue": "artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json",
+    "real_cve_readiness": "artifacts/formtrig_native_readiness/real_cve_readiness_20260618.json",
     "triage": "artifacts/formtrig_native_readiness/hard_target_triage_20260619.json"
   },
-  "runnable_now_count": 0,
+  "runnable_now_count": 1,
   "schema": "formtrig_benefit_first_experiment_worklist_v1",
   "skipped_control_count": 11,
   "skipped_controls": [
@@ -54,7 +55,7 @@
       "harness_admissibility_evidence": "artifacts/formtrig_native_readiness/comparisons/libarchive_2936_matched_7200s_3rep_20260617/harness_admissibility.json",
       "harness_admissibility_status": "admissible",
       "lane": "control_or_negative",
-      "next_action": "keep as control or negative evidence; do not spend main long-run budget",
+      "next_action": "keep as control/sanity evidence; do not spend main real-CVE long-run budget",
       "rank": 139,
       "reason": "sota_pain_triage_not_main_budget",
       "sota_pain_class": "not_visible_baseline_time_cost_acceptable",
@@ -1056,45 +1057,69 @@
       "target_id": "PDF003"
     },
     {
-      "action": "validate_replay_then_draft_binding_spec",
-      "benefit_to_prove": "Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.",
-      "blocked_claims": [],
-      "blocking_issue": [
-        "no BindingSpec candidate exists yet"
+      "action": "extend_real_cve_short_gate_to_matched_endpoint",
+      "benefit_to_prove": "Extend the validated real-CVE short gate into endpoint evidence: FORMTRIG must turn TC-rooted lifted guidance into terminal _T/crash under the same matched budget, while faithful baselines expose late/missing/high-variance R2T behavior.",
+      "blocked_claims": [
+        "current evidence has pre-trigger guidance but no FORMTRIG endpoint _T in the latest 600s GPAC package",
+        "campaign-time same_object sampling is still missing in the latest GPAC search run",
+        "current GPAC endpoint evidence is single-repetition/short-gate only"
       ],
+      "blocking_issue": [],
       "category": "compound-sequence-lifecycle",
-      "claim_boundary": "Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.",
-      "command": "",
-      "comparison_verdict": "",
-      "current_primary_benefits": [],
-      "duration_s": 600,
+      "claim_boundary": "Current readiness supports real-CVE mechanism and short-gate evidence only. Do not claim endpoint speedup or hard SOTA pain until replicated matched endpoint runs produce terminal outcomes and baseline guidance-gap evidence.",
+      "command": "scripts/run_gpac3403_typedops36_matched_longrun.sh --binding-spec artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml --duration 7200 --reps 3 --jobs 4 --out artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_7200s_3rep_20260619T222535Z --continue-on-fail",
+      "comparison_verdict": "ten_min_single_rep_not_replicated",
+      "current_primary_benefits": [
+        "600s short-gate pre-screen: FORMTRIG pre-trigger lifted guidance with 1 accepted / 1 saved non-trigger progress events; variable TC-rooted roles: root_observe,use; spec D_F candidate values {6,5,4,2}; ASAN AFL++ family valid baseline reps 3 with 0 endpoint successes"
+      ],
+      "duration_s": 7200,
       "evidence_paths": [
+        "artifacts/atoms/GPAC_3403.json",
+        "artifacts/binding_specs/GPAC_3403.native_b1_bitstream_lifecycle_candidate.yml",
+        "artifacts/binding_specs/GPAC_3403.native_b2_bitstream_lifecycle_candidate.yml",
+        "artifacts/binding_specs/GPAC_3403.native_b3_nalu_reassign_alias_candidate.yml",
+        "artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml",
         "artifacts/cve_bench_candidate_audit.json",
-        "artifacts/formtrig_native_readiness/comparisons/gpac3403_b8_typedops36_runner_fix_20260619/comparison.json"
+        "artifacts/cve_validation_logs/GPAC_3403.validation.log",
+        "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.binding_validation_60s_20260618.json",
+        "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_poc_snapshot_triage_20260619.validation.json",
+        "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b2_same_object_repair_60s_20260618.validation.json",
+        "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b3_nalu_reassign_alias_20260619.validation.json",
+        "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json",
+        "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_site_map_validation_20260618.json",
+        "artifacts/formtrig_native_readiness/comparisons/gpac3403_asan_baseline_prescreen_60s_20260618/comparison.json",
+        "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_complete_role_graph_prescreen_60s_20260619/comparison.json",
+        "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/comparison.json",
+        "artifacts/formtrig_native_readiness/real_cve_readiness_20260618.json",
+        "artifacts/rnt_corpus/GPAC_3403/manifest.json",
+        "artifacts/rnt_corpus/GPAC_3403/metadata.csv",
+        "artifacts/tcir/GPAC_3403.json",
+        "artifacts/trigger_graphs/GPAC_3403.json",
+        "benchmarks/cve_build/gpac-3403-src/bin/gcc/MP4Box",
+        "benchmarks/cve_pocs/gpac/GPAC_3403.poc"
       ],
       "lane": "binding_spec_first",
+      "main_claim_strength": "",
       "mechanism_evidence_required": [
-        "BindingSpec compiles against native site ids",
-        "D_F_spec_lifted is non-constant before _T",
-        "saved non-trigger progress is replay-stable",
-        "typed mutation, if used, is BindingSpec-provenance tagged"
+        "validated complete-role BindingSpec, preferably GPAC B5",
+        "accepted/saved non-trigger D_F progress before endpoint _T",
+        "D_F_spec_lifted movement from campaign distance 2 toward replay pre-abort distance 1",
+        "same_object, root_observe, and use roles observed during campaign",
+        "typed mutation provenance and hot-range/input-influence record"
       ],
-      "post_unblock_commands": [
-        "validate vulnerable build and PoC replay",
-        "write harness admissibility note",
-        "draft BindingSpec and run binding-signal sweep"
-      ],
+      "post_unblock_commands": [],
       "primary_endpoint_metrics": [
-        "10m same-budget terminal success rate",
+        "replicated same-budget terminal success rate",
         "first _T / terminal-crash wall-clock time",
         "first _T / terminal-crash execution count",
-        "baseline-visible vs FORMTRIG-only endpoint behavior"
+        "baseline endpoint success and R2T tail under the same seed/oracle",
+        "whether GPAC same_object appears during campaign-time search"
       ],
       "priority": "P0",
       "project": "gpac",
       "rank": 4,
       "repetitions": 3,
-      "runnable_now": false,
+      "runnable_now": true,
       "sota_pain_class": "not_assessed",
       "sota_pain_evidence": "collect matched FORMTRIG and faithful baseline evidence",
       "source": "real_cve",

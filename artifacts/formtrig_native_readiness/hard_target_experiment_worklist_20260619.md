@@ -2,8 +2,8 @@
 
 Endpoint benefit and cost come first; D_F, BindingSpec, dominance frontier, and typed mutation are attribution gates, not cross-tool performance metrics.
 
-Generated: `2026-06-19T22:10:25+00:00`
-Tasks: `28`; runnable now: `0`; blocked/gated: `28`; demoted controls skipped: `11`; low-priority skipped: `93`.
+Generated: `2026-06-19T22:25:35+00:00`
+Tasks: `28`; runnable now: `1`; blocked/gated: `27`; demoted controls skipped: `11`; low-priority skipped: `93`.
 
 ## Budget Order
 
@@ -16,7 +16,7 @@ Tasks: `28`; runnable now: `0`; blocked/gated: `28`; demoted controls skipped: `
 | priority | rank | target | source | SOTA pain | action | runnable | benefit to prove |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
 | P0 | 1 | PDF003 | magma | visible_hard_speedup_or_reliability | expand_cross_target_hard_evidence | blocked | The matched long-run budget is already complete for this target; spend new budget on cross-target hard evidence instead of rerunning the same campaign. |
-| P0 | 4 | GPAC_3403 | real_cve | not_assessed | validate_replay_then_draft_binding_spec | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
+| P0 | 4 | GPAC_3403 | real_cve | not_assessed | extend_real_cve_short_gate_to_matched_endpoint | yes | Extend the validated real-CVE short gate into endpoint evidence: FORMTRIG must turn TC-rooted lifted guidance into terminal _T/crash under the same matched budget, while faithful baselines expose late/missing/high-variance R2T behavior. |
 | P1 | 5 | SQL013 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 6 | SSL009 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
 | P1 | 7 | PHP010 | magma |  | draft_binding_spec_then_short_screen | blocked | Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines. |
@@ -46,7 +46,12 @@ Tasks: `28`; runnable now: `0`; blocked/gated: `28`; demoted controls skipped: `
 
 ## Runnable Now
 
-No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
+### P0 GPAC_3403
+
+- Benefit: Extend the validated real-CVE short gate into endpoint evidence: FORMTRIG must turn TC-rooted lifted guidance into terminal _T/crash under the same matched budget, while faithful baselines expose late/missing/high-variance R2T behavior.
+- SOTA pain: `not_assessed`
+- SOTA pain evidence: collect matched FORMTRIG and faithful baseline evidence
+- Command: `scripts/run_gpac3403_typedops36_matched_longrun.sh --binding-spec artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml --duration 7200 --reps 3 --jobs 4 --out artifacts/formtrig_native_readiness/raw/gpac3403_b5_matched_7200s_3rep_20260619T222535Z --continue-on-fail`
 
 ## Gated Tasks
 
@@ -73,28 +78,6 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/comparisons/pdf003_matched_7200s_3rep_20260617T224500Z/comparison.json
 - artifacts/magma_canary_inventory.json
 - artifacts/formtrig_native_readiness/magma_native_builds/PDF003/build_plan.json
-
-### P0 GPAC_3403 - validate_replay_then_draft_binding_spec
-
-- Benefit to prove: Find whether a binary or lifecycle TC can be converted into accepted non-trigger progress and then a faster terminal outcome than faithful baselines.
-- SOTA pain: `not_assessed`
-- SOTA pain evidence: collect matched FORMTRIG and faithful baseline evidence
-- Endpoint metrics: 10m same-budget terminal success rate, first _T / terminal-crash wall-clock time, first _T / terminal-crash execution count, baseline-visible vs FORMTRIG-only endpoint behavior
-- Claim boundary: Do not spend 2h budget or make performance claims until the short screen has endpoint benefit; use failed screens as negative/control evidence.
-- Blocking issue:
-- no BindingSpec candidate exists yet
-- Mechanism evidence required after benefit:
-- BindingSpec compiles against native site ids
-- D_F_spec_lifted is non-constant before _T
-- saved non-trigger progress is replay-stable
-- typed mutation, if used, is BindingSpec-provenance tagged
-- Post-unblock commands or steps:
-- validate vulnerable build and PoC replay
-- write harness admissibility note
-- draft BindingSpec and run binding-signal sweep
-- Evidence paths:
-- artifacts/cve_bench_candidate_audit.json
-- artifacts/formtrig_native_readiness/comparisons/gpac3403_b8_typedops36_runner_fix_20260619/comparison.json
 
 ### P1 SQL013 - draft_binding_spec_then_short_screen
 

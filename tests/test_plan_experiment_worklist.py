@@ -1038,6 +1038,184 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertIn(str(validation_path), task["evidence_paths"])
             self.assertIn(str(summary_path), task["evidence_paths"])
 
+    def test_real_cve_readiness_overrides_stale_gpac_binding_lane(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            comparison_dir = comparison_root / "gpac3403_b5"
+            readiness_path = root / "real_cve_readiness.json"
+            gpac_spec = root / "GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml"
+            gpac_spec.write_text("target_id: GPAC_3403\n", encoding="utf-8")
+            comparison_dir.mkdir(parents=True)
+            (comparison_dir / "comparison.json").write_text(
+                json.dumps(
+                    {
+                        "target_id": "GPAC_3403",
+                        "claim_status": "ten_min_single_rep_not_replicated",
+                        "duration_s": 600,
+                        "rep_count": 1,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 4,
+                                "target_id": "GPAC_3403",
+                                "source": "real_cve",
+                                "project": "gpac",
+                                "primary_category": "compound-sequence-lifecycle",
+                                "secondary_category": "",
+                                "lane": "binding_spec_first",
+                                "status": "candidate_after_replay_and_binding",
+                                "existing_disposition": "",
+                                "blockers": "no BindingSpec candidate exists yet",
+                                "source_evidence": "cve.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            readiness_path.write_text(
+                json.dumps(
+                    {
+                        "targets": {
+                            "GPAC_3403": {
+                                "target_id": "GPAC_3403",
+                                "readiness": "short_gate_triaged",
+                                "core_evidence_allowed": True,
+                                "project": "gpac",
+                                "category": "compound-sequence-lifecycle",
+                                "current_benefit": "600s short-gate pre-trigger guidance observed",
+                                "next_action": "extend latest complete-role-graph short-gate package to matched 10m/2h endpoint runs",
+                                "paths": {
+                                    "binding_specs": [
+                                        str(gpac_spec)
+                                    ],
+                                    "binding_validation_records": [
+                                        "artifacts/formtrig_native_readiness/binding_validation/GPAC_3403.native_b5_gfbsdel_use_root_polarity_20260619.validation.json"
+                                    ],
+                                    "comparison_records": [
+                                        "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/comparison.json"
+                                    ],
+                                },
+                            }
+                        }
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                harness_admissibility_root=None,
+                real_cve_readiness_path=readiness_path,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=2,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["action"], "extend_real_cve_short_gate_to_matched_endpoint")
+            self.assertEqual(task["priority"], "P0")
+            self.assertTrue(task["runnable_now"])
+            self.assertEqual(task["blocking_issue"], [])
+            self.assertIn("scripts/run_gpac3403_typedops36_matched_longrun.sh", task["command"])
+            self.assertIn("--duration 7200", task["command"])
+            self.assertIn("--reps 3", task["command"])
+            self.assertIn(str(gpac_spec), task["command"])
+            self.assertNotIn("no BindingSpec candidate exists yet", " ".join(task["blocking_issue"]))
+            self.assertIn(str(readiness_path), task["evidence_paths"])
+            self.assertIn(
+                "artifacts/formtrig_native_readiness/comparisons/gpac3403_b5_matched_600s_1rep_20260619/comparison.json",
+                task["evidence_paths"],
+            )
+            self.assertIn("ten_min_single_rep_not_replicated", task["comparison_verdict"])
+
+    def test_real_cve_readiness_control_is_skipped_from_main_budget(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            readiness_path = root / "real_cve_readiness.json"
+            comparison_root.mkdir()
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 3,
+                                "target_id": "LIBXML2_1107",
+                                "source": "real_cve",
+                                "project": "libxml2",
+                                "primary_category": "binary-state-null",
+                                "secondary_category": "",
+                                "lane": "binding_validation_first",
+                                "status": "needs_binding_validation",
+                                "existing_disposition": "",
+                                "blockers": "BindingSpec candidate is not native-site-map validated",
+                                "source_evidence": "cve.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            readiness_path.write_text(
+                json.dumps(
+                    {
+                        "targets": {
+                            "LIBXML2_1107": {
+                                "target_id": "LIBXML2_1107",
+                                "readiness": "control_or_negative",
+                                "core_evidence_allowed": False,
+                                "blockers": "harness admissibility rejects core evidence",
+                                "next_action": "keep as control/sanity evidence",
+                            }
+                        }
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                harness_admissibility_root=None,
+                real_cve_readiness_path=readiness_path,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=2,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            self.assertEqual(payload["task_count"], 0)
+            self.assertEqual(payload["skipped_control_count"], 1)
+            skipped = payload["skipped_controls"][0]
+            self.assertEqual(skipped["target_id"], "LIBXML2_1107")
+            self.assertIn("real_cve_readiness_control_or_negative", skipped["reason"])
+            self.assertEqual(skipped["next_action"], "keep as control/sanity evidence")
+
     def test_validated_short_screen_reuses_manifest_afl_args_for_baselines(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

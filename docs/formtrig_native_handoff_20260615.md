@@ -316,7 +316,7 @@ artifacts/formtrig_native_readiness/hard_target_triage_20260619.*
 artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260619.*
 
 promoted hard-target candidates = 1
-worklist runnable_now = 0
+worklist runnable_now = 1
 
 PDF003:
   disposition = candidate_extend_longruns
@@ -336,8 +336,19 @@ PHP003:
   baseline success = 8/9; AFL++ vanilla = 3/3
 
 GPAC_3403:
-  disposition = insufficient_evidence
-  next = validate replay / draft BindingSpec before any main-budget claim
+  disposition = short_gate_triaged real-CVE candidate
+  action = extend_real_cve_short_gate_to_matched_endpoint
+  runnable = true
+  command = scripts/run_gpac3403_typedops36_matched_longrun.sh
+            --binding-spec artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml
+            --duration 7200 --reps 3 --jobs 4 --continue-on-fail
+  current evidence = B5 complete-role BindingSpec validated; 600s single-rep
+                     matched package has TC-rooted pre-trigger guidance
+                     (accepted/saved non-trigger = 1/1, D_F values {6,5,4,2})
+                     and valid ASAN AFL++ baseline reps with 0 endpoint successes
+  blocked claims = no FORMTRIG endpoint _T in the 600s GPAC package yet;
+                   campaign-time same_object sampling still missing; endpoint
+                   evidence is not replicated
 
 LIBXML2_1107:
   skipped = harness_admissibility_not_core_evidence
@@ -345,13 +356,14 @@ LIBXML2_1107:
   reason = harness exposes an artificial allocation-failure trigger-control knob
 ```
 
-This fixes the stale 2026-06-18 runnable queue: PHP003 has completed its
-current-ABI endpoint comparison and is now speedup/control plus mechanism
-evidence, not a hard-pain target and not a runnable main-budget screen. New
-hard-pain budget should go to cross-target evidence after PDF003, to
-GPAC_3403 validation, or to a replacement real-CVE target whose input naturally
-drives parser state. Do not spend main budget on another PHP003 rerun or on
-LIBXML2_1107 as core evidence.
+This fixes two stale scheduling decisions: PHP003 has completed its current-ABI
+endpoint comparison and is now speedup/control plus mechanism evidence, not a
+hard-pain target; GPAC_3403 is no longer a "draft BindingSpec first" target
+because the real-CVE readiness record proves B5 BindingSpec validation and 600s
+short-gate evidence. New hard-pain budget should go to cross-target evidence
+after PDF003, to the GPAC_3403 7200s x3 matched endpoint run, or to a replacement
+real-CVE target whose input naturally drives parser state. Do not spend main
+budget on another PHP003 rerun or on LIBXML2_1107 as core evidence.
 
 PDF016 现在有正式 validation record：
 
@@ -1334,6 +1346,7 @@ pNew->nLTerm
 FORMTRIG native 已经有 PDF003 这一条 hard Magma endpoint speedup/no-guidance
 候选，也有 PHP003/PHP009/TIF012/LIBARCHIVE/LIBXML2 等 speedup、control、pipeline
 或机制归因证据；但还没有完成最终实验级闭环。真实 CVE 侧不能再把
-LIBXML2_1107 当主正例，因为它的 harness 暴露了 allocation-failure knob。下一步必须
-推进 GPAC_3403 或新的 admissible real-CVE target，让输入自然驱动 parser state /
+LIBXML2_1107 当主正例，因为它的 harness 暴露了 allocation-failure knob。当前
+worklist 已把 GPAC_3403 提升为唯一 runnable main-budget real-CVE 任务：用 B5
+BindingSpec 跑 7200s x3 matched endpoint。下一步必须让输入自然驱动 parser state /
 lifecycle / structure，并在 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。

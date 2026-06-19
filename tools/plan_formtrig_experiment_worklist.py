@@ -99,6 +99,7 @@ DEFAULT_NATIVE_BUILD_ROOT = Path("artifacts/formtrig_native_readiness/magma_nati
 DEFAULT_BINDING_VALIDATION_ROOT = Path("artifacts/formtrig_native_readiness/binding_validation")
 DEFAULT_MANIFEST_ROOT = Path("artifacts/formtrig_native_readiness/manifests")
 DEFAULT_HARNESS_ADMISSIBILITY_ROOT = Path("artifacts/formtrig_native_readiness")
+DEFAULT_BINDING_SPEC_ROOT = Path("artifacts/binding_specs")
 
 
 def read_json(path: Path) -> Any:
@@ -161,6 +162,44 @@ def triage_map(path: Path | None) -> dict[str, dict[str, Any]]:
         for row in rows
         if isinstance(row, dict) and row.get("target_id")
     }
+
+
+def real_cve_readiness_map(path: Path | None) -> dict[str, dict[str, Any]]:
+    if path is None or not path.exists():
+        return {}
+    try:
+        payload = read_json(path)
+    except (OSError, json.JSONDecodeError):
+        return {}
+    raw_rows = payload.get("targets") if isinstance(payload, dict) else None
+    if isinstance(raw_rows, dict):
+        rows = raw_rows.values()
+    elif isinstance(raw_rows, list):
+        rows = raw_rows
+    else:
+        rows = []
+    out: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        if not isinstance(row, dict) or not row.get("target_id"):
+            continue
+        copied = dict(row)
+        copied["_real_cve_readiness_path"] = str(path)
+        out[str(row["target_id"])] = copied
+    return out
+
+
+def attach_real_cve_readiness(
+    rows: list[dict[str, Any]],
+    readiness: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for row in rows:
+        copied = dict(row)
+        record = readiness.get(target_id_for(copied))
+        if record:
+            copied["_real_cve_readiness"] = record
+        out.append(copied)
+    return out
 
 
 def active_run_rows(path: Path | None) -> list[dict[str, Any]]:
@@ -447,7 +486,7 @@ def comparison_verdict(comparison: dict[str, Any] | None) -> str:
     if not comparison:
         return ""
     analysis = comparison.get("analysis") if isinstance(comparison.get("analysis"), dict) else {}
-    return str(analysis.get("verdict") or comparison.get("verdict") or "")
+    return str(analysis.get("verdict") or comparison.get("verdict") or comparison.get("claim_status") or "")
 
 
 def comparison_main_claim_strength(comparison: dict[str, Any] | None) -> str:
@@ -477,6 +516,12 @@ def comparison_max_budget(comparison: dict[str, Any] | None) -> int:
         if int_value(row.get("budget")) > 0
     )
     return max(budgets) if budgets else 0
+
+
+def comparison_budget_score(comparison: dict[str, Any] | None) -> int:
+    if not comparison:
+        return 0
+    return comparison_max_budget(comparison) or int_value(comparison.get("duration_s"))
 
 
 def comparison_min_baseline_reps(comparison: dict[str, Any] | None) -> int:
@@ -539,8 +584,12 @@ def strongest_comparison(comparisons: list[dict[str, Any]]) -> dict[str, Any] | 
             verdict_score = 4
         elif verdict in COMPLETE_REPS_VERDICTS:
             verdict_score = 3
+        elif verdict == "ten_min_single_rep_not_replicated":
+            verdict_score = 2
         elif "positive" in verdict:
             verdict_score = 2
+        elif verdict == "short_gate_only_not_longrun":
+            verdict_score = 1
         else:
             verdict_score = 0
         has_longrun = int(bool(analysis.get("longrun_10m_confirmation") or payload.get("longrun_10m_confirmation")))
@@ -549,7 +598,7 @@ def strongest_comparison(comparisons: list[dict[str, Any]]) -> dict[str, Any] | 
         return (
             verdict_score,
             has_longrun,
-            comparison_max_budget(payload),
+            comparison_budget_score(payload),
             matched_baselines,
             benefit_count,
             str(payload.get("_comparison_path") or ""),
@@ -601,6 +650,9 @@ def is_sota_pain_skip(
 
 
 def priority_for(row: dict[str, Any]) -> str:
+    readiness = real_cve_readiness_for(row)
+    if str(readiness.get("readiness") or "") == "short_gate_triaged":
+        return "P0"
     if str(row.get("existing_disposition") or "") == "candidate_extend_longruns":
         return "P0"
     rank = int(row.get("rank") or 999)
@@ -614,6 +666,9 @@ def priority_for(row: dict[str, Any]) -> str:
 
 
 def category_text(row: dict[str, Any]) -> str:
+    readiness = real_cve_readiness_for(row)
+    if readiness.get("category"):
+        return str(readiness["category"])
     primary = str(row.get("primary_category") or "")
     secondary = str(row.get("secondary_category") or "")
     return "+".join([part for part in [primary, secondary] if part])
@@ -627,10 +682,55 @@ def as_list(value: Any) -> list[str]:
     return [str(value)]
 
 
+def real_cve_readiness_for(row: dict[str, Any]) -> dict[str, Any]:
+    readiness = row.get("_real_cve_readiness")
+    return readiness if isinstance(readiness, dict) else {}
+
+
+def real_cve_readiness_rejects(row: dict[str, Any]) -> bool:
+    readiness = real_cve_readiness_for(row)
+    if not readiness:
+        return False
+    return (
+        str(readiness.get("readiness") or "") == "control_or_negative"
+        or readiness.get("core_evidence_allowed") is False
+    )
+
+
+def real_cve_readiness_skip_reason(row: dict[str, Any]) -> str:
+    readiness = real_cve_readiness_for(row)
+    status = str(readiness.get("readiness") or "unknown")
+    blockers = str(readiness.get("blockers") or readiness.get("next_action") or "")
+    return f"real_cve_readiness_{status}: {blockers}".rstrip(": ")
+
+
+def real_cve_readiness_paths(row: dict[str, Any]) -> list[str]:
+    readiness = real_cve_readiness_for(row)
+    if not readiness:
+        return []
+    paths: list[str] = []
+    if readiness.get("_real_cve_readiness_path"):
+        paths.append(str(readiness["_real_cve_readiness_path"]))
+    nested = readiness.get("paths") if isinstance(readiness.get("paths"), dict) else {}
+    for key, value in nested.items():
+        if isinstance(value, list):
+            for item in value:
+                if not str(item):
+                    continue
+                path = Path(str(item))
+                if key == "binding_specs" and not path.exists() and not path.is_absolute():
+                    path = DEFAULT_BINDING_SPEC_ROOT / path
+                paths.append(str(path))
+        elif value:
+            paths.append(str(value))
+    return sorted(dict.fromkeys(paths))
+
+
 def evidence_paths(row: dict[str, Any], comparison: dict[str, Any] | None) -> list[str]:
     paths: list[str] = []
     if row.get("source_evidence"):
         paths.append(str(row.get("source_evidence")))
+    paths.extend(real_cve_readiness_paths(row))
     if comparison and comparison.get("_comparison_path"):
         paths.append(str(comparison["_comparison_path"]))
         analysis = comparison.get("analysis") if isinstance(comparison.get("analysis"), dict) else {}
@@ -746,7 +846,7 @@ def comparison_summary(comparison: dict[str, Any] | None) -> dict[str, Any]:
         else {}
     )
     return {
-        "verdict": str(analysis.get("verdict") or ""),
+        "verdict": str(analysis.get("verdict") or comparison.get("verdict") or comparison.get("claim_status") or ""),
         "primary_benefits": as_list(benefit.get("primary_benefits"))[:4],
         "design_evidence": as_list(benefit.get("design_evidence"))[:6],
         "blocked_claims": as_list(benefit.get("blocked_claims"))[:4],
@@ -1103,6 +1203,151 @@ def magma_matched_longrun_steps(
             ]
         ),
     ]
+
+
+def real_cve_binding_spec_path(readiness: dict[str, Any]) -> str:
+    paths = readiness.get("paths") if isinstance(readiness.get("paths"), dict) else {}
+    candidates = [str(item) for item in paths.get("binding_specs") or [] if str(item)]
+    preferred = [item for item in candidates if "b5" in item.lower()]
+    for raw in preferred + candidates:
+        path = Path(raw)
+        if not path.exists() and not path.is_absolute():
+            path = DEFAULT_BINDING_SPEC_ROOT / path
+        if path.exists():
+            return str(path)
+    return ""
+
+
+def gpac3403_matched_endpoint_command(
+    readiness: dict[str, Any],
+    *,
+    duration_s: int,
+    reps: int,
+    jobs: int,
+) -> str:
+    runner = Path("scripts/run_gpac3403_typedops36_matched_longrun.sh")
+    binding_spec = real_cve_binding_spec_path(readiness)
+    if not runner.exists() or not binding_spec:
+        return ""
+    utc_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_tag = f"gpac3403_b5_matched_{duration_s}s_{reps}rep_{utc_stamp}"
+    return shell_join(
+        [
+            str(runner),
+            "--binding-spec",
+            binding_spec,
+            "--duration",
+            str(duration_s),
+            "--reps",
+            str(reps),
+            "--jobs",
+            str(jobs),
+            "--out",
+            f"artifacts/formtrig_native_readiness/raw/{run_tag}",
+            "--continue-on-fail",
+        ]
+    )
+
+
+def real_cve_endpoint_extension_task(
+    row: dict[str, Any],
+    comparison: dict[str, Any] | None,
+    *,
+    duration_s: int,
+    reps: int,
+    jobs: int,
+) -> dict[str, Any]:
+    summary = comparison_summary(comparison)
+    readiness = real_cve_readiness_for(row)
+    target_id = str(row.get("target_id") or readiness.get("target_id") or "")
+    command = ""
+    blocking_issue: list[str] = []
+    post_unblock_commands: list[str] = []
+    if target_id == "GPAC_3403":
+        command = gpac3403_matched_endpoint_command(
+            readiness,
+            duration_s=duration_s,
+            reps=reps,
+            jobs=jobs,
+        )
+        if not command:
+            blocking_issue = [
+                "GPAC matched runner or validated B5 BindingSpec path is missing",
+            ]
+            post_unblock_commands = [
+                "restore scripts/run_gpac3403_typedops36_matched_longrun.sh",
+                "restore artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml",
+            ]
+    else:
+        blocking_issue = [
+            "no reusable matched endpoint runner is recorded for this real-CVE target",
+        ]
+        post_unblock_commands = [
+            "create a target-specific matched FORMTRIG/AFL++ runner from the readiness record",
+            "then rebuild the comparison package with tools/compare_formtrig_baselines.py",
+        ]
+
+    claim_blockers = as_list(readiness.get("blockers"))
+    if not claim_blockers:
+        claim_blockers = [
+            "current evidence has pre-trigger guidance but no FORMTRIG endpoint _T in the latest 600s GPAC package",
+            "campaign-time same_object sampling is still missing in the latest GPAC search run",
+            "current GPAC endpoint evidence is single-repetition/short-gate only",
+        ]
+
+    current_benefits = summary["primary_benefits"]
+    if readiness.get("current_benefit"):
+        current_benefits = add_unique(
+            list(current_benefits),
+            [str(readiness["current_benefit"])],
+        )
+
+    return {
+        "priority": priority_for(row),
+        "rank": int(row.get("rank") or readiness.get("discovery_rank") or 0),
+        "target_id": target_id,
+        "source": str(row.get("source") or "real_cve"),
+        "project": str(row.get("project") or readiness.get("project") or ""),
+        "category": category_text(row),
+        "lane": str(row.get("lane") or readiness.get("discovery_lane") or ""),
+        "action": "extend_real_cve_short_gate_to_matched_endpoint",
+        "duration_s": duration_s,
+        "repetitions": reps,
+        "runnable_now": bool(command),
+        "benefit_to_prove": (
+            "Extend the validated real-CVE short gate into endpoint evidence: "
+            "FORMTRIG must turn TC-rooted lifted guidance into terminal _T/crash "
+            "under the same matched budget, while faithful baselines expose "
+            "late/missing/high-variance R2T behavior."
+        ),
+        "primary_endpoint_metrics": [
+            "replicated same-budget terminal success rate",
+            "first _T / terminal-crash wall-clock time",
+            "first _T / terminal-crash execution count",
+            "baseline endpoint success and R2T tail under the same seed/oracle",
+            "whether GPAC same_object appears during campaign-time search",
+        ],
+        "mechanism_evidence_required": [
+            "validated complete-role BindingSpec, preferably GPAC B5",
+            "accepted/saved non-trigger D_F progress before endpoint _T",
+            "D_F_spec_lifted movement from campaign distance 2 toward replay pre-abort distance 1",
+            "same_object, root_observe, and use roles observed during campaign",
+            "typed mutation provenance and hot-range/input-influence record",
+        ],
+        "blocking_issue": blocking_issue,
+        "claim_boundary": (
+            "Current readiness supports real-CVE mechanism and short-gate evidence only. "
+            "Do not claim endpoint speedup or hard SOTA pain until replicated matched "
+            "endpoint runs produce terminal outcomes and baseline guidance-gap evidence."
+        ),
+        "command": command,
+        "post_unblock_commands": post_unblock_commands,
+        "comparison_verdict": summary["verdict"],
+        "main_claim_strength": summary["main_claim_strength"],
+        "current_primary_benefits": current_benefits,
+        "blocked_claims": add_unique(list(summary["blocked_claims"]), claim_blockers),
+        "evidence_paths": evidence_paths(row, comparison),
+    }
 
 
 def longrun_task(
@@ -1801,6 +2046,21 @@ def task_for_row(
     comparison = weak_comparison or strongest_comparison(target_comparisons)
     disposition = str(row.get("existing_disposition") or "")
     lane = str(row.get("lane") or "")
+    readiness = real_cve_readiness_for(row)
+    if (
+        str(row.get("source") or "") == "real_cve"
+        and str(readiness.get("readiness") or "") == "short_gate_triaged"
+    ):
+        return attach_sota_pain(
+            real_cve_endpoint_extension_task(
+                row,
+                comparison,
+                duration_s=longrun_duration_s,
+                reps=longrun_reps,
+                jobs=jobs,
+            ),
+            triage,
+        )
     if sota_pain_class(triage) in SOTA_PAIN_DESIGN_CLASSES:
         return attach_sota_pain(improve_experiment_design_task(row, comparison), triage)
     if weak_comparison or comparison_main_claim_strength(comparison) in WEAK_MAIN_CLAIM_STRENGTHS:
@@ -1918,6 +2178,7 @@ def build_worklist(
     native_build_root: Path | None = None,
     binding_validation_root: Path | None = None,
     harness_admissibility_root: Path | None = DEFAULT_HARNESS_ADMISSIBILITY_ROOT,
+    real_cve_readiness_path: Path | None = None,
     active_runs_path: Path | None = None,
     manifest_root: Path = DEFAULT_MANIFEST_ROOT,
     limit: int,
@@ -1929,8 +2190,15 @@ def build_worklist(
     longrun_reps: int,
 ) -> dict[str, Any]:
     queue = read_json(queue_path)
-    rows = queue_rows(queue, use_all_targets=use_all_targets)
-    all_rows = queue_rows(queue, use_all_targets=True)
+    real_cve_readiness = real_cve_readiness_map(real_cve_readiness_path)
+    rows = attach_real_cve_readiness(
+        queue_rows(queue, use_all_targets=use_all_targets),
+        real_cve_readiness,
+    )
+    all_rows = attach_real_cve_readiness(
+        queue_rows(queue, use_all_targets=True),
+        real_cve_readiness,
+    )
     comparisons = comparison_map(comparison_root)
     target_triage = triage_map(triage_path)
     build_plans = native_build_plan_map(native_build_root)
@@ -1954,6 +2222,8 @@ def build_worklist(
                 if harness_admissibility_rejects(
                     harness_admissibilities.get(target_id_for(row))
                 )
+                else real_cve_readiness_skip_reason(row)
+                if real_cve_readiness_rejects(row)
                 else "control_or_negative_not_main_budget"
             ),
             "sota_pain_class": sota_pain_class(
@@ -1968,6 +2238,8 @@ def build_worklist(
             if harness_admissibility_rejects(
                 harness_admissibilities.get(target_id_for(row))
             )
+            else (real_cve_readiness_for(row).get("next_action") or row.get("next_action"))
+            if real_cve_readiness_rejects(row)
             else row.get("next_action"),
             "harness_admissibility_status": str(
                 (
@@ -1989,6 +2261,7 @@ def build_worklist(
             or harness_admissibility_rejects(
                 harness_admissibilities.get(target_id_for(row))
             )
+            or real_cve_readiness_rejects(row)
         )
     ]
     skipped_low_priority: list[dict[str, Any]] = [
@@ -2011,6 +2284,7 @@ def build_worklist(
             or harness_admissibility_rejects(
                 harness_admissibilities.get(target_id_for(row))
             )
+            or real_cve_readiness_rejects(row)
         ):
             continue
         task = task_for_row(
@@ -2047,6 +2321,7 @@ def build_worklist(
             "native_build_root": str(native_build_root) if native_build_root else "",
             "binding_validation_root": str(binding_validation_root) if binding_validation_root else "",
             "harness_admissibility_root": str(harness_admissibility_root) if harness_admissibility_root else "",
+            "real_cve_readiness": str(real_cve_readiness_path) if real_cve_readiness_path else "",
             "active_runs": str(active_runs_path) if active_runs_path else "",
             "manifest_root": str(manifest_root),
         },
@@ -2272,6 +2547,12 @@ def parse_args() -> argparse.Namespace:
         help="root scanned for *harness_admissibility*.json records that can demote inadmissible real-CVE harnesses",
     )
     parser.add_argument(
+        "--real-cve-readiness",
+        type=Path,
+        default=None,
+        help="optional real-CVE readiness JSON that overrides stale discovery queue lanes",
+    )
+    parser.add_argument(
         "--active-runs",
         type=Path,
         default=None,
@@ -2306,6 +2587,7 @@ def main() -> int:
         native_build_root=args.native_build_root,
         binding_validation_root=args.binding_validation_root,
         harness_admissibility_root=args.harness_admissibility_root,
+        real_cve_readiness_path=args.real_cve_readiness,
         active_runs_path=args.active_runs,
         manifest_root=args.manifest_root,
         limit=args.limit,

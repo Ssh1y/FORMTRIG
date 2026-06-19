@@ -1363,7 +1363,7 @@ artifacts/formtrig_native_readiness/hard_target_triage_20260619.*
 artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260619.*
 
 promoted hard-target candidates = 1
-worklist runnable_now = 0
+worklist runnable_now = 1
 
 PDF003:
   disposition = candidate_extend_longruns
@@ -1385,8 +1385,19 @@ PHP003:
   next = keep as speedup/control + mechanism evidence, not hard SOTA-pain
 
 GPAC_3403:
-  disposition = insufficient_evidence
-  next = validate replay / draft BindingSpec before any main-budget claim
+  disposition = short_gate_triaged real-CVE candidate
+  action = extend_real_cve_short_gate_to_matched_endpoint
+  runnable = true
+  command = scripts/run_gpac3403_typedops36_matched_longrun.sh
+            --binding-spec artifacts/binding_specs/GPAC_3403.native_b5_gfbsdel_use_root_polarity_candidate.yml
+            --duration 7200 --reps 3 --jobs 4 --continue-on-fail
+  current evidence = B5 complete-role BindingSpec validated; 600s single-rep
+                     matched package has TC-rooted pre-trigger guidance
+                     (accepted/saved non-trigger = 1/1, D_F values {6,5,4,2})
+                     and valid ASAN AFL++ baseline reps with 0 endpoint successes
+  blocked claims = no FORMTRIG endpoint _T in the 600s GPAC package yet;
+                   campaign-time same_object sampling still missing; endpoint
+                   evidence is not replicated
 
 LIBXML2_1107:
   skipped = harness_admissibility_not_core_evidence
@@ -1394,12 +1405,14 @@ LIBXML2_1107:
   reason = harness exposes an artificial allocation-failure trigger-control knob
 ```
 
-这个更新修正了 2026-06-18 worklist 的过期 runnable 项：PHP003 已完成
-current-ABI endpoint comparison，不再进入主预算 runnable queue。下一轮主预算不是
-继续跑 PHP003，也不是继续把 LIBXML2_1107 当 core real-CVE 正例；LIBXML2 只能保留
-为 native pipeline / BindingSpec / crash-accounting sanity evidence。主预算应围绕
-PDF003 的 cross-target hard evidence、GPAC_3403 的 admissible real-CVE validation，
-以及新的自然输入驱动 real-CVE target 展开。
+这个更新修正了两个旧调度错误：PHP003 已完成 current-ABI endpoint comparison，
+不再进入主预算 runnable queue；GPAC_3403 也不再是“没有 BindingSpec”，因为
+real-CVE readiness 已经证明 B5 complete-role BindingSpec 和 600s short-gate
+evidence 存在。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
+core real-CVE 正例；LIBXML2 只能保留为 native pipeline / BindingSpec /
+crash-accounting sanity evidence。主预算应围绕 PDF003 的 cross-target hard
+evidence、GPAC_3403 的 7200s x3 matched endpoint run，以及新的自然输入驱动
+real-CVE target 展开。
 
 PDF016 在 2026-06-18 worklist 中也从“未验证”变成明确的 repair/negative target：
 
