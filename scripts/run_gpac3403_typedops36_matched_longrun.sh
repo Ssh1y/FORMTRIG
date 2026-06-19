@@ -14,6 +14,7 @@ timeout_arg="5000+"
 monitor_poll="${FORMTRIG_STATS_MONITOR_POLL:-10}"
 typed_ops="36"
 typed_mutation_max="64"
+typed_retain_max="0"
 seed_preflight="require"
 seed_preflight_max="1"
 seed_preflight_timeout="2"
@@ -49,6 +50,8 @@ options:
   --timeout AFL_T         AFL++ -t value, default 5000+
   --typed-ops N           FORMTRIG typed op count, default 36
   --typed-mutation-max N  FORMTRIG_TYPED_MUTATION_MAX, default 64
+  --typed-retain-max N    retain up to N non-queued typed candidates per rep,
+                          default 0/off
   --seed-dir DIR          HEVC RNT seed corpus
   --binding-spec FILE     FORMTRIG BindingSpec
   --site-map FILE         FORMTRIG native site map
@@ -148,8 +151,9 @@ record_plan() {
     json_escape "$arm"
     printf ',"rep":%s,"kind":' "$rep"
     json_escape "$kind"
-    printf ',"duration_s":%s,"typed_ops":%s,"typed_mutation_max":%s,"command":' \
+    printf ',"duration_s":%s,"typed_ops":%s,"typed_mutation_max":%s,' \
       "$duration" "$typed_ops" "$typed_mutation_max"
+    printf '"typed_retain_max":%s,"command":' "$typed_retain_max"
     json_escape "$command"
     printf '}\n'
   } >> "$plan_jsonl"
@@ -262,8 +266,19 @@ run_formtrig_one() {
   local run_out="$out_dir/runs/${arm}_rep${rep}"
   mkdir -p "$run_out"
   formtrig_command_array "$arm" "$rep" "$run_out"
+  local retain_dir="$run_out/typed_retained"
+  local -a env_args=(
+    "FORMTRIG_TYPED_MUTATION_MAX=$typed_mutation_max"
+    "FORMTRIG_STATS_MONITOR_POLL=$monitor_poll"
+  )
+  if [[ "$typed_retain_max" != "0" ]]; then
+    env_args+=(
+      "FORMTRIG_TYPED_RETAIN_MAX=$typed_retain_max"
+      "FORMTRIG_TYPED_RETAIN_DIR=$retain_dir"
+    )
+  fi
   local rendered
-  rendered="FORMTRIG_TYPED_MUTATION_MAX=$typed_mutation_max FORMTRIG_STATS_MONITOR_POLL=$monitor_poll $(quote_cmd "${FORMTRIG_CMD[@]}")"
+  rendered="$(quote_cmd "${env_args[@]}") $(quote_cmd "${FORMTRIG_CMD[@]}")"
   record_plan "$arm" "$rep" "formtrig" "$rendered"
   if [[ "$mode" == "dry-run" ]]; then
     return 0
@@ -271,8 +286,10 @@ run_formtrig_one() {
   {
     printf 'running %s rep%s at %s\n' "$arm" "$rep" "$(date -u +%FT%TZ)"
     printf '%s\n' "$rendered"
-    FORMTRIG_TYPED_MUTATION_MAX="$typed_mutation_max" \
-      FORMTRIG_STATS_MONITOR_POLL="$monitor_poll" "${FORMTRIG_CMD[@]}"
+    if [[ "$typed_retain_max" != "0" ]]; then
+      mkdir -p "$retain_dir"
+    fi
+    env "${env_args[@]}" "${FORMTRIG_CMD[@]}"
   } > "$run_out/run.log" 2>&1
 }
 
@@ -294,6 +311,7 @@ write_metadata() {
   "time_utc": "$(date -u +%FT%TZ)",
   "timeout_oracle": "-t $timeout_arg",
   "typed_mutation_max": $typed_mutation_max,
+  "typed_retain_max": $typed_retain_max,
   "typed_ops": $typed_ops,
   "white_mp4": "$white_mp4"
 }
@@ -340,6 +358,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --typed-mutation-max)
       typed_mutation_max="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-max)
+      typed_retain_max="${2:-}"
       shift 2
       ;;
     --seed-dir)
@@ -429,6 +451,10 @@ for numeric in "$duration" "$reps" "$jobs" "$monitor_poll" "$typed_ops" \
     exit 2
   fi
 done
+if ! [[ "$typed_retain_max" =~ ^[0-9]+$ ]]; then
+  echo "typed retain max must be a non-negative integer" >&2
+  exit 2
+fi
 
 seed_dir="$(abs_path "$seed_dir")"
 binding_spec="$(abs_path "$binding_spec")"
@@ -500,7 +526,7 @@ done
 wait_for_all_jobs
 
 if [[ "$mode" == "dry-run" ]]; then
-  echo "GPAC_3403 typedops36 matched long-run dry-run complete"
+  echo "GPAC_3403 typedops${typed_ops} matched long-run dry-run complete"
   echo "  out=$out_dir"
   echo "  plan=$plan_sh"
   exit 0
@@ -554,7 +580,7 @@ if [[ -s "$out_dir/formtrig_gate/gate_summary.csv" &&
     --required-baselines "$baselines"
 fi
 
-echo "GPAC_3403 typedops36 matched long-run complete"
+echo "GPAC_3403 typedops${typed_ops} matched long-run complete"
 echo "  out=$out_dir"
 echo "  plan=$plan_sh"
 echo "  gate=$out_dir/formtrig_gate/gate_summary.csv"

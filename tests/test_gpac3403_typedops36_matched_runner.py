@@ -52,12 +52,14 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             for record in records:
                 self.assertEqual(record["typed_ops"], 36)
                 self.assertEqual(record["typed_mutation_max"], 64)
+                self.assertEqual(record["typed_retain_max"], 0)
                 self.assertEqual(record["duration_s"], 60)
 
             metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["target_id"], "GPAC_3403")
             self.assertEqual(metadata["typed_ops"], 36)
             self.assertEqual(metadata["typed_mutation_max"], 64)
+            self.assertEqual(metadata["typed_retain_max"], 0)
             self.assertIn("MP4Box", metadata["target_cmd"])
             self.assertIn("-cat @@ ", metadata["target_cmd"])
             self.assertIn("white.mp4", metadata["target_cmd"])
@@ -138,6 +140,46 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             commands = {record["arm"]: record["command"] for record in records}
             self.assertNotIn("--no-mutation-hook", commands["formtrig"])
             self.assertIn("--no-mutation-hook", commands["formtrig_nohook"])
+
+    def test_dry_run_can_enable_typed_candidate_retention(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "gpac3403_retain"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_gpac3403_typedops36_matched_longrun.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "30",
+                    "--reps",
+                    "1",
+                    "--arms",
+                    "formtrig,aflplusplus_vanilla",
+                    "--typed-retain-max",
+                    "32",
+                    "--out",
+                    str(out_dir),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual(len(records), 2)
+            self.assertTrue(all(record["typed_retain_max"] == 32 for record in records))
+            commands = {record["arm"]: record["command"] for record in records}
+            self.assertIn("FORMTRIG_TYPED_RETAIN_MAX=32", commands["formtrig"])
+            self.assertIn("FORMTRIG_TYPED_RETAIN_DIR=", commands["formtrig"])
+            self.assertIn("typed_retained", commands["formtrig"])
+            self.assertNotIn("FORMTRIG_TYPED_RETAIN_MAX", commands["aflplusplus_vanilla"])
+            self.assertNotIn("FORMTRIG_TYPED_RETAIN_DIR", commands["aflplusplus_vanilla"])
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["typed_retain_max"], 32)
 
 
 if __name__ == "__main__":

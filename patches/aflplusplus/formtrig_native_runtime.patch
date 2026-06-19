@@ -364,10 +364,10 @@ index 87157ca..508b19b 100644
  }
 -
 diff --git a/src/afl-fuzz-one.c b/src/afl-fuzz-one.c
-index 2ad4697..771bd79 100644
+index 2ad4697..4882862 100644
 --- a/src/afl-fuzz-one.c
 +++ b/src/afl-fuzz-one.c
-@@ -71,6 +71,1075 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
+@@ -71,6 +71,1230 @@ static int select_algorithm(afl_state_t *afl, u32 max_algorithm) {
 
  }
 
@@ -382,6 +382,8 @@ index 2ad4697..771bd79 100644
 +#define FORMTRIG_TYPED_RANGE_SAMPLES_HARD_MAX 64u
 +#define FORMTRIG_TYPED_FALLBACK_RANGES_DEFAULT 8u
 +#define FORMTRIG_TYPED_FALLBACK_RANGES_HARD_MAX 64u
++#define FORMTRIG_TYPED_RETAIN_DEFAULT_MAX 0u
++#define FORMTRIG_TYPED_RETAIN_HARD_MAX 4096u
 +
 +static u8 formtrig_fuzz_one_finite(double v) {
 +
@@ -457,30 +459,53 @@ index 2ad4697..771bd79 100644
 +
 +}
 +
++static const char *formtrig_typed_retain_dir(void) {
++
++  const char *dir = getenv("FORMTRIG_TYPED_RETAIN_DIR");
++  return dir && dir[0] ? dir : NULL;
++
++}
++
++static u32 formtrig_typed_retain_max(void) {
++
++  return formtrig_fuzz_one_env_u32("FORMTRIG_TYPED_RETAIN_MAX",
++                                   FORMTRIG_TYPED_RETAIN_DEFAULT_MAX, 0u,
++                                   FORMTRIG_TYPED_RETAIN_HARD_MAX);
++
++}
++
++static u8 formtrig_write_all_fd(int fd, const void *buf, size_t len) {
++
++  const u8 *bytes = (const u8 *)buf;
++  size_t    written = 0;
++  while (written < len) {
++
++    ssize_t ret = write(fd, bytes + written, len - written);
++    if (ret < 0) {
++
++      if (errno == EINTR) { continue; }
++      return 0;
++
++    }
++    if (!ret) { return 0; }
++    written += (size_t)ret;
++
++  }
++
++  return 1;
++
++}
++
 +static u8 formtrig_write_all_to_file(const char *path, const u8 *buf,
 +                                     u32 len) {
 +
 +  int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 +  if (fd < 0) { return 0; }
 +
-+  u32 written = 0;
-+  while (written < len) {
++  if (!formtrig_write_all_fd(fd, buf, len)) {
 +
-+    ssize_t ret = write(fd, buf + written, len - written);
-+    if (ret < 0) {
-+
-+      if (errno == EINTR) { continue; }
-+      close(fd);
-+      return 0;
-+
-+    }
-+    if (!ret) {
-+
-+      close(fd);
-+      return 0;
-+
-+    }
-+    written += (u32)ret;
++    close(fd);
++    return 0;
 +
 +  }
 +
@@ -739,6 +764,116 @@ index 2ad4697..771bd79 100644
 +  }
 +
 +  return NULL;
++
++}
++
++static u8 formtrig_typed_retain_signal_eligible(
++    const formtrig_queue_meta_t *m) {
++
++  if (!m || !m->seen || !m->reached || m->triggered) { return 0; }
++  if (!(m->source_flags & FORMTRIG_SOURCE_SPEC_LIFTED) &&
++      !(m->observed_source_flags & FORMTRIG_SOURCE_SPEC_LIFTED)) {
++
++    return 0;
++
++  }
++  return formtrig_typed_actionable_count(m) ? 1 : 0;
++
++}
++
++static u8 formtrig_typed_retain_append_record(
++    const char *record_path, const char *input_path, u32 source_queue_id,
++    u32 stage_cur, u32 op, u32 component_index, u32 range_index,
++    u32 sample_index, u32 start, u32 span, u32 off, u32 len, u8 hook_used,
++    const formtrig_progress_component_t *component,
++    const formtrig_queue_meta_t *signal) {
++
++  int fd = open(record_path, O_WRONLY | O_CREAT | O_APPEND, 0600);
++  if (fd < 0) { return 0; }
++
++  struct stat st;
++  if (!fstat(fd, &st) && st.st_size == 0) {
++
++    const char *header =
++        "path\tsource_queue_id\tstage_cur\top\tcomponent_index\t"
++        "range_index\tsample_index\tstart\tspan\toffset\tlen\thook_used\t"
++        "d_t\td_f_spec_lifted\ttrace_signature\tcomponent_kind\tatom_id\t"
++        "role\tcomponent_flags\tcomponent_value\thint_kind\thint_value\n";
++    if (!formtrig_write_all_fd(fd, header, strlen(header))) {
++
++      close(fd);
++      return 0;
++
++    }
++
++  }
++
++  char line[2048];
++  int  line_len = snprintf(
++      line, sizeof(line),
++      "%s\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%.17g\t%.17g\t"
++      "%016llx\t%u\t%u\t%u\t%u\t%.17g\t%u\t%u\n",
++      input_path, source_queue_id, stage_cur, op, component_index,
++      range_index, sample_index, start, span, off, len, hook_used,
++      signal && signal->seen ? signal->d_t : FORMTRIG_INF,
++      signal && signal->seen ? signal->d_f_spec_lifted : FORMTRIG_INF,
++      (unsigned long long)(signal && signal->seen ? signal->trace_signature
++                                                  : 0),
++      component ? component->kind : 0, component ? component->atom_id : 0,
++      component ? component->role : 0, component ? component->flags : 0,
++      component ? component->value : 0.0,
++      signal && signal->hot_range_count ? signal->hot_ranges[0].hint_kind : 0,
++      signal && signal->hot_range_count ? signal->hot_ranges[0].hint_value
++                                        : 0);
++
++  if (line_len <= 0 || (size_t)line_len >= sizeof(line)) {
++
++    close(fd);
++    return 0;
++
++  }
++
++  u8 ok = formtrig_write_all_fd(fd, line, (size_t)line_len);
++  if (close(fd)) { return 0; }
++  return ok;
++
++}
++
++static u8 formtrig_typed_retain_candidate(
++    afl_state_t *afl, const char *retain_dir, const u8 *buf, u32 len,
++    const formtrig_progress_component_t *component, u32 source_queue_id,
++    u32 stage_cur, u32 op, u32 component_index, u32 range_index,
++    u32 sample_index, u32 start, u32 span, u32 off, u32 retained_count,
++    u8 hook_used) {
++
++  if (!retain_dir || !retain_dir[0] || !buf || !len) { return 0; }
++  if (!formtrig_typed_retain_signal_eligible(&afl->formtrig_last)) {
++
++    return 0;
++
++  }
++  if (mkdir(retain_dir, 0700) && errno != EEXIST) { return 0; }
++
++  char input_path[PATH_MAX];
++  int  path_len = snprintf(input_path, sizeof(input_path),
++                           "%s/id:%06u,src:%06u,stage:%06u,op:%u,ci:%u,"
++                           "ri:%u,si:%u.bin",
++                           retain_dir, retained_count, source_queue_id,
++                           stage_cur, op, component_index, range_index,
++                           sample_index);
++  if (path_len <= 0 || path_len >= (int)sizeof(input_path)) { return 0; }
++
++  if (!formtrig_write_all_to_file(input_path, buf, len)) { return 0; }
++
++  char record_path[PATH_MAX];
++  path_len = snprintf(record_path, sizeof(record_path), "%s/records.tsv",
++                      retain_dir);
++  if (path_len <= 0 || path_len >= (int)sizeof(record_path)) { return 0; }
++
++  return formtrig_typed_retain_append_record(
++      record_path, input_path, source_queue_id, stage_cur, op, component_index,
++      range_index, sample_index, start, span, off, len, hook_used, component,
++      &afl->formtrig_last);
 +
 +}
 +
@@ -1338,6 +1473,10 @@ index 2ad4697..771bd79 100644
 +      native_range_count ? "planned" : "fallback_no_hot_range", m, queue_id,
 +      stage_max);
 +
++  u32         typed_retain_max = formtrig_typed_retain_max();
++  const char *typed_retain_dir =
++      typed_retain_max ? formtrig_typed_retain_dir() : NULL;
++  u32 typed_retained = 0;
 +  u64 orig_hit_cnt = afl->queued_items + afl->saved_crashes;
 +
 +  for (afl->stage_cur = 0; afl->stage_cur < afl->stage_max;
@@ -1416,8 +1555,24 @@ index 2ad4697..771bd79 100644
 +             component->role, afl->stage_cur_byte);
 +#endif
 +
++    u8  hook_used = hook_buf ? 1 : 0;
++    u64 before_hit_cnt = afl->queued_items + afl->saved_crashes;
 +    ++afl->formtrig_typed_execs;
-+    if (common_fuzz_stuff(afl, exec_buf, exec_len)) {
++    u8 stop = common_fuzz_stuff(afl, exec_buf, exec_len);
++    u64 after_hit_cnt = afl->queued_items + afl->saved_crashes;
++    if (!stop && typed_retain_dir && typed_retained < typed_retain_max &&
++        after_hit_cnt == before_hit_cnt &&
++        formtrig_typed_retain_candidate(
++            afl, typed_retain_dir, exec_buf, exec_len, component, queue_id,
++            afl->stage_cur, op, component_index, range_index, sample_index,
++            start, span, off, typed_retained, hook_used)) {
++
++      ++typed_retained;
++      formtrig_log_progress(afl, "typed_retain", "candidate_not_queued",
++                            &afl->formtrig_last, queue_id, typed_retained);
++
++    }
++    if (stop) {
 +
 +      if (hook_buf) { ck_free(hook_buf); }
 +      return 1;
@@ -1443,7 +1598,7 @@ index 2ad4697..771bd79 100644
  /* Helper function to see if a particular change (xor_val = old ^ new) could
     be a product of deterministic bit flips with the lengths and stepovers
     attempted by afl-fuzz. This is used to avoid dupes in some of the
-@@ -545,6 +1614,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
+@@ -545,6 +1769,12 @@ u8 fuzz_one_original(afl_state_t *afl) {
 
    }
 
@@ -1456,7 +1611,7 @@ index 2ad4697..771bd79 100644
    /* Skip right away if -d is given, if it has not been chosen sufficiently
       often to warrant the expensive deterministic stage (fuzz_level), or
       if it has gone through deterministic testing in earlier, resumed runs
-@@ -3656,6 +4731,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
+@@ -3656,6 +4886,12 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
 
    }
 
@@ -1469,7 +1624,7 @@ index 2ad4697..771bd79 100644
    /* Go to pacemker fuzzing if MOpt is doing well */
 
    cur_ms_lv = get_cur_time();
-@@ -6213,4 +7294,3 @@ u8 fuzz_one(afl_state_t *afl) {
+@@ -6213,4 +7449,3 @@ u8 fuzz_one(afl_state_t *afl) {
    return (key_val_lv_1 | key_val_lv_2);
 
  }
