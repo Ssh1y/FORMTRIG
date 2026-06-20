@@ -1,0 +1,133 @@
+{
+  "schema": "formtrig_native_readiness_result_v1",
+  "target_id": "GPAC_3403",
+  "artifact_id": "gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_repaired_baselines_20260620",
+  "created_utc": "2026-06-20T03:49:36Z",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_repaired_baselines_20260620",
+  "source_runs": {
+    "formtrig_and_vanilla": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z",
+    "cmplog_redqueen_retry": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_cmplog_redqueen_retry_60s3rep_20260620T034936Z"
+  },
+  "campaign": {
+    "duration_s": 60,
+    "formtrig_reps": 3,
+    "required_baseline_valid_reps": 3,
+    "timeout_oracle": "-t 5000+",
+    "typed_ops": 64,
+    "typed_op_start": 52,
+    "typed_schedule": "op-first",
+    "cmplog_map_size": 10000000,
+    "baseline_startup_retries": 2
+  },
+  "comparison": {
+    "verdict": "positive_endpoint_matched_comparison",
+    "main_claim_strength": "hard_endpoint_gap_candidate",
+    "matched_valid_baseline_runs": 9,
+    "missing_required_baselines": [],
+    "baseline_no_guidance_proof_status": "not_measured"
+  },
+  "formtrig_hook": {
+    "successes": 3,
+    "reps": 3,
+    "first_terminal_time_s": [
+      2.39,
+      2.422,
+      2.605
+    ],
+    "first_terminal_execs": [
+      8,
+      8,
+      8
+    ],
+    "terminal_triggered_counts": [
+      2,
+      2,
+      2
+    ],
+    "accepted_non_trigger": [
+      5,
+      5,
+      5
+    ],
+    "saved_non_trigger": [
+      5,
+      5,
+      5
+    ],
+    "spec_lifted": [
+      70,
+      70,
+      70
+    ]
+  },
+  "formtrig_nohook": {
+    "successes": 2,
+    "reps": 3,
+    "first_terminal_time_s": [
+      29.633,
+      49.938,
+      null
+    ],
+    "first_terminal_execs": [
+      720,
+      1801,
+      null
+    ],
+    "terminal_triggered_counts": [
+      4,
+      1,
+      0
+    ]
+  },
+  "baselines": {
+    "aflplusplus_vanilla": {
+      "valid_reps": 3,
+      "attempted_reps": 3,
+      "successes": 0,
+      "execs_done": [
+        1174,
+        971,
+        940
+      ]
+    },
+    "aflplusplus_cmplog": {
+      "valid_reps": 3,
+      "attempted_reps": 4,
+      "invalid_startup_reps": 1,
+      "successes": 0,
+      "execs_done": [
+        1403,
+        1409,
+        1411
+      ]
+    },
+    "redqueen_operand": {
+      "valid_reps": 3,
+      "attempted_reps": 3,
+      "successes": 0,
+      "execs_done": [
+        1421,
+        1409,
+        1401
+      ]
+    }
+  },
+  "evidence_assessment": {
+    "supported": [
+      "FORMTRIG with the GPAC payload hook reaches endpoint _T in 3/3 reps within about 2.4-2.6s and 8 execs",
+      "all three required baseline families have 3 valid 60s reps and 0 endpoint triggers",
+      "nohook FORMTRIG is slower and less reliable than the hook arm in this screen",
+      "startup-only baseline failures are filtered and retried rather than counted as no-trigger evidence"
+    ],
+    "not_supported": [
+      "baseline-visible pre-_T flatness/no-guidance proof",
+      "hard SOTA-pain final claim",
+      "target-independent FORMTRIG generality"
+    ],
+    "required_next": [
+      "measure baseline-visible pre-_T binary flatness and accepted non-trigger absence",
+      "repeat at longer budget or on additional targets to check whether baselines eventually catch up",
+      "add generic-hook/nohook attribution before presenting the GPAC payload hook as a general FORMTRIG mechanism"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "formtrig_combined_comparison_source_manifest_v1",
+  "target_id": "GPAC_3403",
+  "formtrig_source": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z",
+  "vanilla_source": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/baseline_summary.json",
+  "cmplog_redqueen_repair_source": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_cmplog_redqueen_retry_60s3rep_20260620T034936Z/baseline_summary.json",
+  "combined_baseline_summary": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_repaired_baselines_20260620/baseline_summary.json",
+  "comparison": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_repaired_baselines_20260620/comparison/comparison.json"
+}

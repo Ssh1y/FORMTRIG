@@ -491,6 +491,18 @@ def build_command(args: argparse.Namespace, tool: Path, fuzzer_out: Path) -> lis
     return cmd
 
 
+def attempt_fuzzer_out(args: argparse.Namespace, attempt: int) -> Path:
+    if args.startup_retries <= 0:
+        return Path(args.out_dir) / "fuzzer_out"
+    return Path(args.out_dir) / f"fuzzer_out_attempt{attempt}"
+
+
+def attempt_log_path(args: argparse.Namespace, stem: str, attempt: int) -> Path:
+    if args.startup_retries <= 0:
+        return Path(args.out_dir) / f"{stem}.log"
+    return Path(args.out_dir) / f"{stem}_attempt{attempt}.log"
+
+
 def infer_run_record(
     args: argparse.Namespace,
     cmd: list[str],
@@ -580,6 +592,21 @@ def infer_run_record(
     }
 
 
+def startup_retryable_failure(
+    returncode: int | None,
+    elapsed_s: float,
+    fuzzer_out: Path,
+    budget_sec: int,
+) -> bool:
+    if returncode in (0, 124, None):
+        return False
+    stats_path = find_fuzzer_stats(fuzzer_out)
+    stats = parse_fuzzer_stats(stats_path) if stats_path else {}
+    execs_done = first_int_stat(stats, ("execs_done",), 0)
+    run_time = first_int_stat(stats, ("run_time",), 0)
+    return execs_done == 0 and (run_time == 0 or elapsed_s < budget_sec)
+
+
 def run_execute(args: argparse.Namespace, events_path: Path) -> int:
     refusal = refuse_unaccepted_baseline(args, events_path)
     if refusal is not None:
@@ -595,7 +622,7 @@ def run_execute(args: argparse.Namespace, events_path: Path) -> int:
     if args.cmplog_binary and not Path(args.cmplog_binary).exists():
         raise SystemExit(f"cmplog binary not found: {args.cmplog_binary}")
 
-    fuzzer_out = Path(args.out_dir) / "fuzzer_out"
+    fuzzer_out = attempt_fuzzer_out(args, 1)
     fuzzer_out.mkdir(parents=True, exist_ok=True)
     cmd = build_command(args, tool, fuzzer_out)
     env = os.environ.copy()
@@ -619,50 +646,91 @@ def run_execute(args: argparse.Namespace, events_path: Path) -> int:
             "tool": str(tool),
         },
     )
-    append_event(events_path, args.baseline, args.target_id, args.rep, "fuzzer_start", {"cmd": cmd})
+    attempts: list[dict[str, Any]] = []
+    elapsed_s = 0.0
+    returncode: int | None = None
+    max_attempts = args.startup_retries + 1
+    for attempt in range(1, max_attempts + 1):
+        fuzzer_out = attempt_fuzzer_out(args, attempt)
+        fuzzer_out.mkdir(parents=True, exist_ok=True)
+        cmd = build_command(args, tool, fuzzer_out)
+        append_event(
+            events_path,
+            args.baseline,
+            args.target_id,
+            args.rep,
+            "fuzzer_start",
+            {"attempt": attempt, "cmd": cmd},
+        )
 
-    stdout_path = Path(args.out_dir) / "fuzzer_stdout.log"
-    stderr_path = Path(args.out_dir) / "fuzzer_stderr.log"
-    start = time.monotonic()
-    proc: subprocess.Popen[str] | None = None
-    returncode: int | None
-    try:
-        with stdout_path.open("w", encoding="utf-8") as stdout, stderr_path.open("w", encoding="utf-8") as stderr:
-            proc = subprocess.Popen(
-                cmd,
-                env=env,
-                stdout=stdout,
-                stderr=stderr,
-                text=True,
-                preexec_fn=os.setsid,
-            )
-            try:
-                returncode = proc.wait(timeout=args.budget_sec + args.timeout_grace_sec)
-            except subprocess.TimeoutExpired:
-                os.killpg(proc.pid, signal.SIGTERM)
+        stdout_path = attempt_log_path(args, "fuzzer_stdout", attempt)
+        stderr_path = attempt_log_path(args, "fuzzer_stderr", attempt)
+        start = time.monotonic()
+        proc: subprocess.Popen[str] | None = None
+        try:
+            with stdout_path.open("w", encoding="utf-8") as stdout, stderr_path.open("w", encoding="utf-8") as stderr:
+                proc = subprocess.Popen(
+                    cmd,
+                    env=env,
+                    stdout=stdout,
+                    stderr=stderr,
+                    text=True,
+                    preexec_fn=os.setsid,
+                )
                 try:
-                    returncode = proc.wait(timeout=5)
+                    returncode = proc.wait(timeout=args.budget_sec + args.timeout_grace_sec)
                 except subprocess.TimeoutExpired:
-                    os.killpg(proc.pid, signal.SIGKILL)
-                    returncode = proc.wait()
-                returncode = 124
-    finally:
-        elapsed_s = time.monotonic() - start
+                    os.killpg(proc.pid, signal.SIGTERM)
+                    try:
+                        returncode = proc.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        os.killpg(proc.pid, signal.SIGKILL)
+                        returncode = proc.wait()
+                    returncode = 124
+        finally:
+            elapsed_s = time.monotonic() - start
 
-    append_event(
-        events_path,
-        args.baseline,
-        args.target_id,
-        args.rep,
-        "fuzzer_exit",
-        {"elapsed_s": elapsed_s, "returncode": returncode},
-    )
+        retryable = startup_retryable_failure(
+            returncode,
+            elapsed_s,
+            fuzzer_out,
+            args.budget_sec,
+        )
+        attempt_detail = {
+            "attempt": attempt,
+            "elapsed_s": elapsed_s,
+            "fuzzer_out": str(fuzzer_out),
+            "returncode": returncode,
+            "retryable_startup_failure": retryable,
+            "stdout": str(stdout_path),
+            "stderr": str(stderr_path),
+        }
+        attempts.append(attempt_detail)
+        append_event(
+            events_path,
+            args.baseline,
+            args.target_id,
+            args.rep,
+            "fuzzer_exit",
+            attempt_detail,
+        )
+        if not retryable or attempt >= max_attempts:
+            break
+        append_event(
+            events_path,
+            args.baseline,
+            args.target_id,
+            args.rep,
+            "startup_retry",
+            {"attempt": attempt, "next_attempt": attempt + 1},
+        )
 
     run_record = infer_run_record(args, cmd, returncode, elapsed_s, fuzzer_out, "complete")
     write_json(Path(args.out_dir) / "run_record.json", run_record)
     status = {
         "baseline_contract": baseline_contract(args.baseline),
         "elapsed_s": elapsed_s,
+        "attempts": attempts,
         "resolved_cmd": cmd,
         "returncode": returncode,
         "run_record": str(Path(args.out_dir) / "run_record.json"),
@@ -757,6 +825,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--existing-fuzzer-out", default="")
     parser.add_argument("--memory-limit", default="none")
     parser.add_argument("--timeout-grace-sec", type=int, default=5)
+    parser.add_argument(
+        "--startup-retries",
+        type=int,
+        default=0,
+        help="retry AFL++ startup-only failures before recording the final run",
+    )
     parser.add_argument("--mode", choices=["dry-run", "execute", "harvest"], default="execute")
     parser.add_argument("--afl-arg", action="append", default=[])
     parser.add_argument("--env", action="append", default=[], help="extra environment KEY=VALUE for the fuzzer")
@@ -765,6 +839,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    if args.startup_retries < 0:
+        raise SystemExit("--startup-retries must be non-negative")
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     events_path = out_dir / "events.jsonl"

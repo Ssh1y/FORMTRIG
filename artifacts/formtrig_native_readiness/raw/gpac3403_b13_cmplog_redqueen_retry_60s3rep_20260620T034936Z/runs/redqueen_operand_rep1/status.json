@@ -1,0 +1,57 @@
+{
+  "attempts": [
+    {
+      "attempt": 1,
+      "elapsed_s": 61.410033568012295,
+      "fuzzer_out": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_cmplog_redqueen_retry_60s3rep_20260620T034936Z/runs/redqueen_operand_rep1/fuzzer_out_attempt1",
+      "retryable_startup_failure": false,
+      "returncode": 0,
+      "stderr": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_cmplog_redqueen_retry_60s3rep_20260620T034936Z/runs/redqueen_operand_rep1/fuzzer_stderr_attempt1.log",
+      "stdout": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_cmplog_redqueen_retry_60s3rep_20260620T034936Z/runs/redqueen_operand_rep1/fuzzer_stdout_attempt1.log"
+    }
+  ],
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "elapsed_s": 61.410033568012295,
+  "resolved_cmd": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T034936Z/corpus",
+    "-o",
+    "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_cmplog_redqueen_retry_60s3rep_20260620T034936Z/runs/redqueen_operand_rep1/fuzzer_out_attempt1",
+    "-m",
+    "none",
+    "-V",
+    "60",
+    "-c",
+    "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "returncode": 0,
+  "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_cmplog_redqueen_retry_60s3rep_20260620T034936Z/runs/redqueen_operand_rep1/run_record.json",
+  "status": "complete"
+}

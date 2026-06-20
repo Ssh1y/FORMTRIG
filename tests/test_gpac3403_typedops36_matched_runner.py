@@ -82,6 +82,8 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertIn("aflplusplus_cmplog", plan)
             self.assertIn("redqueen_operand", plan)
             self.assertIn("--cmplog-binary", plan)
+            self.assertIn("--startup-retries 2", plan)
+            self.assertIn("AFL_MAP_SIZE=10000000", plan)
             self.assertIn("AFL_NO_AFFINITY=1", plan)
             self.assertIn("ASAN_OPTIONS=abort_on_error=1", plan)
 
@@ -89,6 +91,13 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
                 REPO_ROOT / "scripts" / "run_gpac3403_typedops36_matched_longrun.sh"
             ).read_text(encoding="utf-8")
             self.assertIn('--budget-sec "$duration"', runner)
+
+            commands = {record["arm"]: record["command"] for record in records}
+            self.assertIn("--startup-retries 2", commands["aflplusplus_cmplog"])
+            self.assertIn("AFL_MAP_SIZE=10000000", commands["aflplusplus_cmplog"])
+            self.assertIn("--startup-retries 2", commands["redqueen_operand"])
+            self.assertIn("AFL_MAP_SIZE=10000000", commands["redqueen_operand"])
+            self.assertNotIn("AFL_MAP_SIZE=10000000", commands["aflplusplus_vanilla"])
 
     def test_typedops40_wrapper_enables_access_unit_ops(self):
         with tempfile.TemporaryDirectory() as tmp:

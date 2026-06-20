@@ -39,6 +39,8 @@ formtrig_binary="/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box"
 plain_binary="/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box"
 cmplog_binary="/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box"
 afl_fuzz="$repo_root/experiments/aflplusplus/AFLplusplus/afl-fuzz"
+baseline_startup_retries="${FORMTRIG_BASELINE_STARTUP_RETRIES:-2}"
+cmplog_map_size="${FORMTRIG_CMPLOG_MAP_SIZE:-10000000}"
 baselines="aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 arms="formtrig,aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand"
 out_dir=""
@@ -103,6 +105,11 @@ options:
   --formtrig-binary F     FORMTRIG-instrumented MP4Box
   --plain-binary F        plain AFL++/ASAN MP4Box
   --cmplog-binary F       AFL++ CmpLog/ASAN MP4Box
+  --cmplog-map-size N     AFL_MAP_SIZE for CmpLog/Redqueen baselines,
+                          default FORMTRIG_CMPLOG_MAP_SIZE or 10000000
+  --baseline-startup-retries N
+                          retry startup-only AFL++ baseline failures, default
+                          FORMTRIG_BASELINE_STARTUP_RETRIES or 2
   --afl-fuzz FILE         AFL++ afl-fuzz
   --monitor-poll SEC      FORMTRIG stats monitor poll, default 10
   --seed-preflight MODE   off|warn|require, default require
@@ -256,7 +263,11 @@ baseline_command_array() {
     --afl-arg="$timeout_arg"
   )
   if baseline_needs_cmplog "$baseline"; then
-    BASELINE_CMD+=(--cmplog-binary "$cmplog_binary")
+    BASELINE_CMD+=(
+      --cmplog-binary "$cmplog_binary"
+      --env "AFL_MAP_SIZE=$cmplog_map_size"
+      --startup-retries "$baseline_startup_retries"
+    )
   fi
 }
 
@@ -448,6 +459,8 @@ write_metadata() {
   "typed_retain_endpoint_cmd": $(json_escape "$typed_retain_endpoint_cmd"),
   "typed_retain_endpoint_positive_control": $(json_escape "$typed_retain_endpoint_positive_control"),
   "mutation_hook_override": $(json_escape "$mutation_hook_override"),
+  "baseline_startup_retries": $baseline_startup_retries,
+  "cmplog_map_size": $cmplog_map_size,
   "typed_ops": $typed_ops,
   "white_mp4": "$white_mp4"
 }
@@ -580,6 +593,14 @@ while [[ $# -gt 0 ]]; do
       cmplog_binary="${2:-}"
       shift 2
       ;;
+    --cmplog-map-size)
+      cmplog_map_size="${2:-}"
+      shift 2
+      ;;
+    --baseline-startup-retries)
+      baseline_startup_retries="${2:-}"
+      shift 2
+      ;;
     --afl-fuzz)
       afl_fuzz="${2:-}"
       shift 2
@@ -642,6 +663,14 @@ for numeric in "$duration" "$reps" "$jobs" "$monitor_poll" "$typed_ops" \
 done
 if ! [[ "$typed_retain_max" =~ ^[0-9]+$ ]]; then
   echo "typed retain max must be a non-negative integer" >&2
+  exit 2
+fi
+if ! [[ "$baseline_startup_retries" =~ ^[0-9]+$ ]]; then
+  echo "baseline startup retries must be a non-negative integer" >&2
+  exit 2
+fi
+if ! [[ "$cmplog_map_size" =~ ^[0-9]+$ ]] || [[ "$cmplog_map_size" -lt 1 ]]; then
+  echo "cmplog map size must be a positive integer" >&2
   exit 2
 fi
 if ! [[ "$typed_op_start" =~ ^[0-9]+$ ]]; then
