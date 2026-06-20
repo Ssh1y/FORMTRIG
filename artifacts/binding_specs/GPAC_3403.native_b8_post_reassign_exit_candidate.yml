@@ -1,0 +1,304 @@
+tc_id: 'GPAC_3403'
+target:
+  project: 'gpac'
+  binary: 'MP4Box'
+  command: 'MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null'
+tc:
+  category: 'compound-sequence-lifecycle'
+  expression: 'MP4Box concatenation imports an HEVC elementary stream, reassigns the sample buffer into the dynamic NALU output bitstream, then exits before normal get_content detaches that object so cleanup can free the released sample buffer'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'GF_BitStream->original aliases GF_ISOSample->data after the sample buffer has been released and the rewrite path exits before normal output detachment'
+    kind: 'compound-sequence-lifecycle'
+    root: 'GF_ISOSample->data / GF_BitStream->original pre-detach ownership'
+bindings:
+  - id: 'gpac_sample_buffer_alloc_producer'
+    atom: 1
+    role: 'desired_producer'
+    expr: 'Media_GetSample allocates the sample data buffer that later becomes the object in the double free'
+    site_id: 2074894587
+    observe_at:
+      kind: 'binary'
+      function: 'Media_GetSample'
+      file: 'isomedia/media.c'
+      line: 633
+      inst_no: 795
+      opcode: 'add'
+      column: 47
+    component: 'producer_use'
+    priority: 10
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'gpac_sample_fetch_lifecycle_event'
+    atom: 1
+    role: 'lifecycle_event'
+    expr: 'cat_isomedia_file reaches the post-fetch guard after obtaining the source sample with gf_isom_get_sample'
+    site_id: 2693650777
+    observe_at:
+      kind: 'branch'
+      function: 'cat_isomedia_file'
+      file: 'fileimport.c'
+      line: 3139
+      inst_no: 1189
+      opcode: 'br'
+      column: 8
+    component: 'lifecycle_prefix'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'gpac_sample_release_lifecycle_event'
+    atom: 1
+    role: 'lifecycle_event'
+    expr: 'gf_isom_sample_del reaches the branch that releases GF_ISOSample->data'
+    site_id: 3030846436
+    observe_at:
+      kind: 'branch'
+      function: 'gf_isom_sample_del'
+      file: 'isomedia/isom_read.c'
+      line: 112
+      inst_no: 22
+      opcode: 'br'
+      column: 6
+    component: 'lifecycle_prefix'
+    priority: 25
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+  - id: 'gpac_sample_release_data_object_value'
+    atom: 1
+    role: 'lifecycle_event'
+    expr: 'gf_isom_sample_del observes the GF_ISOSample->data pointer immediately before releasing it'
+    site_id: 3013921722
+    observe_at:
+      kind: 'cmp'
+      function: 'gf_isom_sample_del'
+      file: 'isomedia/isom_read.c'
+      line: 112
+      inst_no: 15
+      opcode: 'icmp'
+      column: 6
+    component: 'object_identity'
+    priority: 26
+    direction: 'higher'
+    value_mode: 'a'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'gpac_nalu_out_reassign_fallback_lifecycle_event'
+    atom: 1
+    role: 'lifecycle_event'
+    expr: 'gf_isom_nalu_sample_rewrite reaches the fallback reassign path after decoupling mdia->nalu_out_bs from its prior dynamic buffer'
+    site_id: 1766076671
+    observe_at:
+      kind: 'branch'
+      function: 'gf_isom_nalu_sample_rewrite'
+      file: 'isomedia/avc_ext.c'
+      line: 672
+      inst_no: 1048
+      opcode: 'br'
+      column: 59
+    component: 'lifecycle_prefix'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'gpac_hevc_extractor_error_pre_detach_producer'
+    atom: 1
+    role: 'guard'
+    expr: 'HEVC extractor processing returns an error after sample-buffer reassign and before the normal gf_bs_get_content_no_truncate detaches bs->original'
+    site_id: 3035684152
+    observe_at:
+      kind: 'branch'
+      function: 'gf_isom_nalu_sample_rewrite'
+      file: 'isomedia/avc_ext.c'
+      line: 809
+      inst_no: 1517
+      opcode: 'br'
+      column: 9
+    component: 'guard'
+    priority: 32
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+  - id: 'gpac_invalid_nal_size_pre_detach_producer'
+    atom: 1
+    role: 'guard'
+    expr: 'HEVC rewrite observes nal_size < 2 and exits before the normal gf_bs_get_content_no_truncate detaches bs->original'
+    site_id: 4008811561
+    observe_at:
+      kind: 'branch'
+      function: 'gf_isom_nalu_sample_rewrite'
+      file: 'isomedia/avc_ext.c'
+      line: 844
+      inst_no: 1604
+      opcode: 'br'
+      column: 9
+    component: 'guard'
+    priority: 34
+    direction: 'higher'
+    value_mode: 'outcome'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+  - id: 'gpac_final_normal_get_content_absent'
+    atom: 1
+    role: 'opposite_producer'
+    expr: 'normal end-of-rewrite path after gf_bs_get_content_no_truncate is absent, preserving the reassign-owned sample buffer for cleanup'
+    site_id: 224520426
+    observe_at:
+      kind: 'branch'
+      function: 'gf_isom_nalu_sample_rewrite'
+      file: 'isomedia/avc_ext.c'
+      line: 912
+      inst_no: 1779
+      opcode: 'br'
+      column: 6
+    component: 'producer_use'
+    priority: 36
+    direction: 'higher'
+    value_mode: 'absent'
+    value: 1.0
+    confidence: 0.7
+    observe_window: 'any'
+  - id: 'gpac_bitstream_original_free_use'
+    atom: 1
+    role: 'use'
+    expr: 'gf_bs_del takes the dynamic-original free branch for the aliased bitstream buffer reached from mdia_box_del cleanup'
+    site_id: 14730514
+    observe_at:
+      kind: 'branch'
+      function: 'gf_bs_del'
+      file: 'utils/bitstream.c'
+      line: 372
+      inst_no: 48
+      opcode: 'br'
+      column: 6
+    component: 'producer_use'
+    priority: 40
+    direction: 'higher'
+    value_mode: 'not_outcome'
+    value: 1.0
+    confidence: 0.8
+    observe_window: 'any'
+  - id: 'gpac_bitstream_original_cleanup_object_value'
+    atom: 1
+    role: 'use'
+    expr: 'gf_bs_del observes the GF_BitStream->original pointer at the dynamic free guard'
+    site_id: 65063371
+    observe_at:
+      kind: 'cmp'
+      function: 'gf_bs_del'
+      file: 'utils/bitstream.c'
+      line: 372
+      inst_no: 47
+      opcode: 'icmp'
+      column: 48
+    component: 'object_identity'
+    priority: 42
+    direction: 'higher'
+    value_mode: 'a'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'gpac_bitstream_dynamic_mode_root'
+    atom: 1
+    role: 'root_observe'
+    expr: 'gf_bs_del confirms bsmode is GF_BITSTREAM_WRITE_DYN before checking bs->original'
+    site_id: 115396228
+    observe_at:
+      kind: 'cmp'
+      function: 'gf_bs_del'
+      file: 'utils/bitstream.c'
+      line: 372
+      inst_no: 42
+      opcode: 'icmp'
+      column: 18
+    component: 'root_state'
+    priority: 50
+    direction: 'higher'
+    value_mode: 'not_outcome'
+    value: 1.0
+    confidence: 0.9
+    observe_window: 'any'
+  - id: 'gpac_dynamic_bitstream_external_buffer_same_object'
+    atom: 1
+    role: 'same_object'
+    expr: 'gf_bs_reassign_buffer observes the external buffer pointer assigned to a dynamic GF_BitStream original field'
+    site_id: 1549213408
+    observe_at:
+      kind: 'cmp'
+      function: 'gf_bs_reassign_buffer'
+      file: 'utils/bitstream.c'
+      line: 122
+      inst_no: 123
+      opcode: 'icmp'
+      column: 6
+    component: 'object_identity'
+    priority: 60
+    direction: 'higher'
+    value_mode: 'a'
+    value: 1.0
+    confidence: 0.85
+    observe_window: 'any'
+    relation_from: 'lifecycle_event'
+    relation_to: 'use'
+    object_expr: 'GF_ISOSample.data==GF_BitStream.original via gf_bs_reassign_buffer(buffer)'
+  - id: 'gpac_hevc_import_prefix_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'Raw Annex-B HEVC NALU structure controls import probing, HEVC sample construction, and NALU rewrite setup'
+    site_id: 2708309825
+    observe_at:
+      kind: 'branch'
+      function: 'cat_isomedia_file'
+      file: 'fileimport.c'
+      line: 3136
+      inst_no: 1178
+      opcode: 'br'
+      column: 3
+    component: 'input_influence'
+    priority: 70
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+    range_start: 0
+    range_len: 4096
+    mutation_hook: 'scripts/formtrig_hooks/hevc_annexb_structure_hook.py'
+  - id: 'gpac_hevc_sample_body_influence'
+    atom: 1
+    role: 'input_influence'
+    expr: 'HEVC NALU body bytes influence sample payload layout and gf_isom_nalu_sample_rewrite alias behavior'
+    site_id: 2074894587
+    observe_at:
+      kind: 'binary'
+      function: 'Media_GetSample'
+      file: 'isomedia/media.c'
+      line: 633
+      inst_no: 795
+      opcode: 'add'
+      column: 47
+    component: 'input_influence'
+    priority: 80
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+    range_start: 4096
+    range_len: 28672
+    mutation_hook: 'scripts/formtrig_hooks/hevc_annexb_structure_hook.py'

@@ -34,7 +34,7 @@ POC_SHAPE_TYPES = (
     + [0, 34, 0, 16, 0, 34]
 )
 POC_SHAPE_LAYERS = [22, 4, 1, 4, 36, 0, 0, 0, 46, 1, 4, 36, 31, 4, 37, 1, 4, 7, 16, 4, 50, 16, 4, 31, 0, 4, 16, 0, 4, 50]
-OP_SELECTOR_COUNT = 56
+OP_SELECTOR_COUNT = 60
 
 
 @dataclass(frozen=True)
@@ -770,6 +770,108 @@ def extractor_payload(sample: int) -> bytes:
     return pattern
 
 
+def malformed_extractor_payload(sample: int, mode: int) -> bytes:
+    ref_index = 1 + (sample % 3)
+    if mode % 4 == 0:
+        return bytes(
+            [
+                0x00,
+                ref_index,
+                0x80,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x01,
+                0x80,
+            ]
+        )
+    if mode % 4 == 1:
+        return bytes(
+            [
+                0x00,
+                ref_index,
+                0x7F,
+                0x7F,
+                0xFF,
+                0xFF,
+                0xF0 | (sample & 0x0F),
+                0x7F,
+                0xFF,
+                0xFF,
+                0xF0 | ((sample >> 1) & 0x0F),
+            ]
+        )
+    if mode % 4 == 2:
+        return bytes([0x01, 0xF0 | (sample & 0x0F), 0x00, 0x01, 0x02, 0x03, 0x80])
+    return bytes(
+        [
+            0x01,
+            0x04,
+            0x00,
+            0x00,
+            0x00,
+            0x01,
+            0x00,
+            ref_index,
+            0x80,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x7F,
+            0xFF,
+            0xFF,
+            0xFF,
+        ]
+    )
+
+
+def malformed_extractor_train(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    base_units: int,
+    mode: int,
+    extractor_count: int,
+    dense_prefix: bool,
+) -> bytes:
+    chunks = [
+        sample_preserving_poc_shape_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            base_units=base_units,
+            tail_cycles=3,
+            malformed_parameters=True,
+            dense_prefix=dense_prefix,
+            high_vps_stride=7 + (sample % 5),
+        )
+    ]
+    for index in range(extractor_count):
+        local_sample = sample + index
+        layer = ENDPOINT_SCALE_LAYER_IDS[(local_sample + 5) % len(ENDPOINT_SCALE_LAYER_IDS)]
+        if index % 3 == 0:
+            chunks.append(make_nalu(32, high_max_layer_vps_payload(local_sample), layer))
+            chunks.append(make_nalu(33, clone_payload_for_type(data, nalus, 33, anchor, local_sample), 0))
+            chunks.append(make_nalu(34, clone_payload_for_type(data, nalus, 34, anchor, local_sample), layer))
+        chunks.append(make_nalu(49, malformed_extractor_payload(local_sample, mode + index), layer))
+        nal_type = ENDPOINT_SCALE_VCL_TYPES[(local_sample + 2) % len(ENDPOINT_SCALE_VCL_TYPES)]
+        chunks.append(
+            make_nalu(
+                nal_type,
+                access_unit_slice_payload(data, nalus, anchor, local_sample, rewrite_seed=True),
+                layer,
+            )
+        )
+    return b"".join(chunks)
+
+
 def layered_parameter_train(data: bytes, nalus: list[Nalu], anchor: Nalu, sample: int) -> bytes:
     chunks = []
     for index, nal_type in enumerate(LAYERED_TRAIN_TYPES):
@@ -1261,6 +1363,58 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
             malformed_parameters=False,
             dense_prefix=True,
             high_vps_stride=10,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 56:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = malformed_extractor_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            base_units=112,
+            mode=0,
+            extractor_count=24 + (sample % 5),
+            dense_prefix=False,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 57:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = malformed_extractor_train(
+            data,
+            nalus,
+            anchor,
+            sample + 5,
+            base_units=128,
+            mode=1,
+            extractor_count=28 + (sample % 7),
+            dense_prefix=False,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 58:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = malformed_extractor_train(
+            data,
+            nalus,
+            anchor,
+            sample + 9,
+            base_units=144,
+            mode=2,
+            extractor_count=32 + (sample % 9),
+            dense_prefix=True,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 59:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = malformed_extractor_train(
+            data,
+            nalus,
+            anchor,
+            sample + 13,
+            base_units=176,
+            mode=3,
+            extractor_count=36 + (sample % 11),
+            dense_prefix=True,
         )
         out = data[: anchor.start] + train + data[anchor.start :]
 

@@ -1,0 +1,430 @@
+{
+  "observed_binding_counts_top_records": {
+    "1": 9,
+    "11": 9,
+    "13": 9,
+    "14": 9,
+    "2": 9,
+    "3": 9,
+    "9": 9,
+    "gpac_bitstream_original_cleanup_object_value": 9,
+    "gpac_dynamic_bitstream_external_buffer_same_object": 9,
+    "gpac_final_normal_get_content_absent": 9,
+    "gpac_hevc_extractor_error_pre_detach_producer": 1,
+    "gpac_invalid_nal_size_pre_detach_producer": 1,
+    "gpac_nalu_out_reassign_fallback_lifecycle_event": 1,
+    "gpac_sample_release_data_object_value": 9
+  },
+  "records": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/records.jsonl",
+  "runtime_event_map": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_spec_compile_20260620/formtrig_runtime_event_map.csv",
+  "runtimes": [
+    {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 1,
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.runtime.jsonl",
+      "pre_detach_error_observed_records": 0,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 0,
+      "top_records": [
+        {
+          "cleanup_value": 107384824639952,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": false,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [],
+          "reassign_cleanup_same": false,
+          "reassign_value": 107384825027840,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 107384825027840,
+          "trace_signature": "0xf734a80395b0ec82"
+        }
+      ],
+      "variant_index": 0,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000000.hevc"
+    },
+    {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 1,
+      "op": 53,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.runtime.jsonl",
+      "pre_detach_error_observed_records": 0,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 0,
+      "top_records": [
+        {
+          "cleanup_value": 97290858041248,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": false,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [],
+          "reassign_cleanup_same": false,
+          "reassign_value": 97290858130688,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 97290858130688,
+          "trace_signature": "0x3e5bb9b87562418a"
+        }
+      ],
+      "variant_index": 1,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000001.hevc"
+    },
+    {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 1,
+      "op": 54,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.runtime.jsonl",
+      "pre_detach_error_observed_records": 0,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 0,
+      "top_records": [
+        {
+          "cleanup_value": 93857987240336,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": false,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [],
+          "reassign_cleanup_same": false,
+          "reassign_value": 93857987596208,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 93857987596208,
+          "trace_signature": "0xafeb4861be2ede48"
+        }
+      ],
+      "variant_index": 2,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000002.hevc"
+    },
+    {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 1,
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.runtime.jsonl",
+      "pre_detach_error_observed_records": 0,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 1,
+      "top_records": [
+        {
+          "cleanup_value": 98155261152448,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": false,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [],
+          "reassign_cleanup_same": false,
+          "reassign_value": 98155261558016,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 98155261558016,
+          "trace_signature": "0xe5e1a0230e41c860"
+        }
+      ],
+      "variant_index": 4,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000004.hevc"
+    },
+    {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 1,
+      "op": 53,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.runtime.jsonl",
+      "pre_detach_error_observed_records": 0,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 1,
+      "top_records": [
+        {
+          "cleanup_value": 101006343058304,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": false,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [],
+          "reassign_cleanup_same": false,
+          "reassign_value": 101006343396608,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 101006343396608,
+          "trace_signature": "0xe65a2ef5dec8d340"
+        }
+      ],
+      "variant_index": 5,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000005.hevc"
+    },
+    {
+      "fallback_reassign_records": 1,
+      "normal_detach_absent_records": 1,
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000008.runtime.jsonl",
+      "pre_detach_error_observed_records": 1,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 2,
+      "top_records": [
+        {
+          "cleanup_value": 96488943262064,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": true,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_hevc_extractor_error_pre_detach_producer",
+            "gpac_invalid_nal_size_pre_detach_producer",
+            "gpac_nalu_out_reassign_fallback_lifecycle_event",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [
+            "gpac_hevc_extractor_error_pre_detach_producer",
+            "gpac_invalid_nal_size_pre_detach_producer"
+          ],
+          "reassign_cleanup_same": false,
+          "reassign_value": 96488943617536,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 96488943617536,
+          "trace_signature": "0x9f2d6f69ad7d6b30"
+        }
+      ],
+      "variant_index": 8,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000008.hevc"
+    },
+    {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 1,
+      "op": 53,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000009.runtime.jsonl",
+      "pre_detach_error_observed_records": 0,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 2,
+      "top_records": [
+        {
+          "cleanup_value": 95010794833840,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": false,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [],
+          "reassign_cleanup_same": false,
+          "reassign_value": 95010795265280,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 95010795265280,
+          "trace_signature": "0x8a4f40fdf83e6242"
+        }
+      ],
+      "variant_index": 9,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000009.hevc"
+    },
+    {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 1,
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000012.runtime.jsonl",
+      "pre_detach_error_observed_records": 0,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 3,
+      "top_records": [
+        {
+          "cleanup_value": 103513504669184,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": false,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [],
+          "reassign_cleanup_same": false,
+          "reassign_value": 103513504791808,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 103513504791808,
+          "trace_signature": "0xfbc89e7f845ad9c7"
+        }
+      ],
+      "variant_index": 12,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000012.hevc"
+    },
+    {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 1,
+      "op": 53,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000013.runtime.jsonl",
+      "pre_detach_error_observed_records": 0,
+      "pre_detach_error_records": 0,
+      "reached_records": 1,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 1,
+      "sample": 3,
+      "top_records": [
+        {
+          "cleanup_value": 93911674447248,
+          "d_f_spec_lifted": 3,
+          "fallback_reassign_seen": false,
+          "normal_detach_absent_satisfied": true,
+          "observed_bindings": [
+            "1",
+            "11",
+            "13",
+            "14",
+            "2",
+            "3",
+            "9",
+            "gpac_bitstream_original_cleanup_object_value",
+            "gpac_dynamic_bitstream_external_buffer_same_object",
+            "gpac_final_normal_get_content_absent",
+            "gpac_sample_release_data_object_value"
+          ],
+          "pre_detach_errors": [],
+          "pre_detach_errors_observed": [],
+          "reassign_cleanup_same": false,
+          "reassign_value": 93911674785024,
+          "record_index": 0,
+          "release_reassign_same": true,
+          "release_value": 93911674785024,
+          "trace_signature": "0xb5913dfa4522427d"
+        }
+      ],
+      "variant_index": 13,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/variants/variant_000013.hevc"
+    }
+  ],
+  "schema": "formtrig_gpac3403_post_reassign_path_audit_v1",
+  "totals": {
+    "fallback_reassign_records": 1,
+    "normal_detach_absent_records": 9,
+    "pre_detach_error_observed_records": 1,
+    "pre_detach_error_records": 0,
+    "reached_records": 9,
+    "reassign_cleanup_same_records": 0,
+    "release_reassign_same_records": 9
+  },
+  "verdict": {
+    "interpretation": "Inputs reach the lifecycle neighborhood but do not hit the modeled pre-detach HEVC error paths at avc_ext.c:809 or avc_ext.c:844.",
+    "next_action": "Bias typed mutation toward malformed HEVC extractor or nal_size<2 cases that remain parseable long enough to occur after sample-buffer reassign.",
+    "status": "pre_detach_error_missing"
+  }
+}

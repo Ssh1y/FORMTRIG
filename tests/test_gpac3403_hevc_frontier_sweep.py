@@ -161,6 +161,46 @@ class Gpac3403HevcFrontierSweepTest(unittest.TestCase):
         self.assertGreaterEqual(max(profile[4] for profile in profiles), 2)
         self.assertGreaterEqual(max(profile[5] for profile in profiles), 50)
 
+    def test_malformed_extractor_operator_window_generates_type49_stress(self):
+        sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_malformed_extractor")
+        hook = load_module(HOOK_PATH, "hevc_annexb_structure_hook_for_malformed_extractor")
+        seed = sample_hevc()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            variants = sweep.generate_variants(
+                hook=hook,
+                seed=seed,
+                ranges=[(0, len(seed))],
+                max_variants=8,
+                op_start=56,
+                op_count=4,
+                sample_count=2,
+                variants_dir=Path(tmp),
+                schedule="round_robin",
+            )
+
+            profiles = []
+            for variant in variants:
+                data = Path(variant.path).read_bytes()
+                nalus = hook.parse_nalus(data)
+                types = [hook.nalu_type(data, nalu) for nalu in nalus]
+                extractor_bodies = [
+                    hook.nalu_body(data, nalu)
+                    for nalu in nalus
+                    if hook.nalu_type(data, nalu) == 49
+                ]
+                malformed_refs = sum(
+                    1
+                    for body in extractor_bodies
+                    if len(body) >= 10 and body.startswith(b"\x00") and body[2] in (0x7F, 0x80)
+                )
+                profiles.append((variant.op, len(nalus), types.count(49), malformed_refs))
+
+        self.assertEqual({56, 57, 58, 59}, {profile[0] for profile in profiles})
+        self.assertGreaterEqual(max(profile[1] for profile in profiles), 390)
+        self.assertGreaterEqual(max(profile[2] for profile in profiles), 20)
+        self.assertGreaterEqual(max(profile[3] for profile in profiles), 4)
+
     def test_summary_counts_trigger_and_same_object(self):
         sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_summary")
         records = [

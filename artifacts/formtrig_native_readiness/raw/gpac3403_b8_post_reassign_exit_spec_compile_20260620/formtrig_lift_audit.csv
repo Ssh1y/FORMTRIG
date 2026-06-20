@@ -1,0 +1,2 @@
+atom_id,category,binding_tier,lift_allowed,roles,event_count,location_only_count,collapsed,reason
+1,compound-sequence-lifecycle,B4,true,0x000001fb,14,0,0,ok

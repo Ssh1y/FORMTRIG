@@ -1,0 +1,1293 @@
+{
+  "contrast": {
+    "positive_control_files": 0,
+    "positive_control_signatures_absent_from_variants": [],
+    "positive_signatures": [],
+    "top_variants_by_positive_overlap": [
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "138/434"
+          ],
+          "layers_only_4": [
+            "37/4"
+          ],
+          "lhevc_import_results": [
+            "47/1/131"
+          ],
+          "vps_max_layer_id": [
+            "4/4",
+            "7/4",
+            "9/4",
+            "16/4",
+            "31/4",
+            "50/4",
+            "63/4",
+            "4/4"
+          ],
+          "wrong_output_layer_sets": [
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "5/4",
+            "5/4",
+            "6/4",
+            "8/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 0,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "137/418"
+          ],
+          "lhevc_import_results": [
+            "44/0/132"
+          ],
+          "vps_max_layer_id": [
+            "50/4",
+            "4/4",
+            "9/4",
+            "31/4",
+            "63/4",
+            "7/4",
+            "16/4",
+            "50/4"
+          ],
+          "wrong_output_layer_sets": [
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "33/4",
+            "65/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 1,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "163/471"
+          ],
+          "layers_only_4": [
+            "5/4",
+            "47/4"
+          ],
+          "lhevc_import_results": [
+            "45/6/163"
+          ],
+          "vps_max_layer_id": [
+            "9/4",
+            "63/4",
+            "16/4",
+            "4/4",
+            "31/4",
+            "7/4",
+            "50/4",
+            "9/4"
+          ],
+          "wrong_output_layer_sets": [
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4",
+            "6/4",
+            "6/4",
+            "8/4",
+            "12/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 2,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "214/569"
+          ],
+          "layers_only_4": [
+            "47/4",
+            "37/4"
+          ],
+          "lhevc_import_results": [
+            "49/4/211"
+          ],
+          "vps_max_layer_id": [
+            "12/4",
+            "63/4",
+            "9/4",
+            "50/4",
+            "7/4",
+            "31/4",
+            "4/4",
+            "16/4"
+          ],
+          "wrong_output_layer_sets": [
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 3,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "168/440"
+          ],
+          "layers_only_4": [
+            "37/4"
+          ],
+          "lhevc_import_results": [
+            "47/0/150"
+          ],
+          "vps_max_layer_id": [
+            "7/4",
+            "9/4",
+            "16/4",
+            "31/4",
+            "50/4",
+            "63/4",
+            "4/4",
+            "7/4"
+          ],
+          "wrong_output_layer_sets": [
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 4,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "114/413"
+          ],
+          "lhevc_import_results": [
+            "47/0/117"
+          ],
+          "vps_max_layer_id": [
+            "63/4",
+            "7/4",
+            "16/4",
+            "50/4",
+            "4/4",
+            "9/4",
+            "31/4",
+            "63/4"
+          ],
+          "wrong_output_layer_sets": [
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "65/4",
+            "65/4",
+            "132/4",
+            "5/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 5,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "185/488"
+          ],
+          "layers_only_4": [
+            "16/4",
+            "47/4"
+          ],
+          "lhevc_import_results": [
+            "28/5/172"
+          ],
+          "vps_max_layer_id": [
+            "16/4",
+            "4/4",
+            "31/4",
+            "7/4",
+            "50/4",
+            "9/4",
+            "63/4",
+            "16/4"
+          ],
+          "wrong_output_layer_sets": [
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 6,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "223/581"
+          ],
+          "layers_only_4": [
+            "64/4",
+            "37/4"
+          ],
+          "lhevc_import_results": [
+            "32/8/194"
+          ],
+          "vps_max_layer_id": [
+            "57/4",
+            "4/4",
+            "16/4",
+            "63/4",
+            "9/4",
+            "50/4",
+            "7/4",
+            "31/4"
+          ],
+          "wrong_output_layer_sets": [
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "65/4",
+            "132/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 7,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "203/440"
+          ],
+          "lhevc_import_results": [
+            "38/0/142"
+          ],
+          "vps_max_layer_id": [
+            "9/4",
+            "16/4",
+            "31/4",
+            "50/4",
+            "63/4",
+            "4/4",
+            "7/4",
+            "9/4"
+          ],
+          "wrong_output_layer_sets": [
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4",
+            "8/4",
+            "8/4",
+            "12/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000008.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 8,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "154/419"
+          ],
+          "lhevc_import_results": [
+            "47/0/132"
+          ],
+          "vps_max_layer_id": [
+            "4/4",
+            "9/4",
+            "31/4",
+            "63/4",
+            "7/4",
+            "16/4",
+            "50/4",
+            "4/4"
+          ],
+          "wrong_output_layer_sets": [
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000009.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 9,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "161/513"
+          ],
+          "layers_only_4": [
+            "16/4",
+            "64/4"
+          ],
+          "lhevc_import_results": [
+            "44/4/170"
+          ],
+          "vps_max_layer_id": [
+            "31/4",
+            "7/4",
+            "50/4",
+            "9/4",
+            "63/4",
+            "16/4",
+            "4/4",
+            "31/4"
+          ],
+          "wrong_output_layer_sets": [
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4",
+            "12/4",
+            "16/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000010.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 10,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "223/556"
+          ],
+          "layers_only_4": [
+            "64/4"
+          ],
+          "lhevc_import_results": [
+            "55/4/204"
+          ],
+          "vps_max_layer_id": [
+            "7/4",
+            "31/4",
+            "4/4",
+            "16/4",
+            "63/4",
+            "9/4",
+            "50/4",
+            "7/4"
+          ],
+          "wrong_output_layer_sets": [
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "132/4",
+            "132/4",
+            "5/4",
+            "6/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000011.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 11,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      }
+    ],
+    "variant_files": 16,
+    "weighted_positive_signature_total": 0
+  },
+  "logs_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs",
+  "positive_control": {
+    "files": 0,
+    "metrics": {
+      "asan_double_free_examples": [],
+      "asan_double_free_files": 0,
+      "hevc_import_files": 0,
+      "hevc_import_observations": 0,
+      "hevc_nalus_max": null,
+      "hevc_samples_max": null,
+      "hevc_top_samples": [],
+      "lhevc_import_files": 0,
+      "lhevc_import_observations": 0,
+      "lhevc_top_slices": []
+    },
+    "signatures": {
+      "asan": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "asan_double_free": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "hevc_import_results": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "layers_only_4": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "lhevc_import_results": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "nal_type_32_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "wrong_output_layer_sets": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      }
+    }
+  },
+  "records": null,
+  "schema": "formtrig_gpac3403_endpoint_signature_audit_v2",
+  "summary": {
+    "d_f_spec_lifted_max": 3.0,
+    "d_f_spec_lifted_min": 3.0,
+    "duration_s": 102.611,
+    "endpoint_native_crashes": 0,
+    "endpoint_replayed_variants": 16,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_timeouts": 0,
+    "generated_variants": 16,
+    "reached": 9,
+    "rnt": 9,
+    "triggered": 0
+  },
+  "variant": {
+    "files": 16,
+    "metrics": {
+      "asan_double_free_examples": [],
+      "asan_double_free_files": 0,
+      "hevc_import_files": 16,
+      "hevc_import_observations": 16,
+      "hevc_nalus_max": 581,
+      "hevc_samples_max": 223,
+      "hevc_top_samples": [
+        {
+          "nalus": 581,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr",
+          "samples": 223
+        },
+        {
+          "nalus": 556,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000011.endpoint_1.stderr",
+          "samples": 223
+        },
+        {
+          "nalus": 564,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000015.endpoint_1.stderr",
+          "samples": 219
+        },
+        {
+          "nalus": 569,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "samples": 214
+        },
+        {
+          "nalus": 440,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000008.endpoint_1.stderr",
+          "samples": 203
+        },
+        {
+          "nalus": 467,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000014.endpoint_1.stderr",
+          "samples": 194
+        },
+        {
+          "nalus": 488,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "samples": 185
+        },
+        {
+          "nalus": 440,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "samples": 168
+        }
+      ],
+      "lhevc_import_files": 16,
+      "lhevc_import_observations": 16,
+      "lhevc_top_slices": [
+        {
+          "b_slices": 211,
+          "i_slices": 49,
+          "p_slices": 4,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 204,
+          "i_slices": 55,
+          "p_slices": 4,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000011.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 194,
+          "i_slices": 32,
+          "p_slices": 8,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 171,
+          "i_slices": 54,
+          "p_slices": 5,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000015.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 170,
+          "i_slices": 44,
+          "p_slices": 4,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000010.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 163,
+          "i_slices": 45,
+          "p_slices": 6,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 172,
+          "i_slices": 28,
+          "p_slices": 5,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 151,
+          "i_slices": 46,
+          "p_slices": 0,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000012.endpoint_1.stderr"
+        }
+      ]
+    },
+    "signatures": {
+      "asan": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "asan_double_free": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 264,
+        "top_values": []
+      },
+      "hevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 16,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "138/434"
+          },
+          {
+            "count": 1,
+            "value": "137/418"
+          },
+          {
+            "count": 1,
+            "value": "163/471"
+          },
+          {
+            "count": 1,
+            "value": "214/569"
+          },
+          {
+            "count": 1,
+            "value": "168/440"
+          },
+          {
+            "count": 1,
+            "value": "114/413"
+          },
+          {
+            "count": 1,
+            "value": "185/488"
+          },
+          {
+            "count": 1,
+            "value": "223/581"
+          },
+          {
+            "count": 1,
+            "value": "203/440"
+          },
+          {
+            "count": 1,
+            "value": "154/419"
+          },
+          {
+            "count": 1,
+            "value": "161/513"
+          },
+          {
+            "count": 1,
+            "value": "223/556"
+          }
+        ]
+      },
+      "layers_only_4": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000010.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000011.endpoint_1.stderr"
+        ],
+        "files": 10,
+        "occurrences": 16,
+        "top_values": [
+          {
+            "count": 5,
+            "value": "37/4"
+          },
+          {
+            "count": 4,
+            "value": "47/4"
+          },
+          {
+            "count": 4,
+            "value": "64/4"
+          },
+          {
+            "count": 2,
+            "value": "16/4"
+          },
+          {
+            "count": 1,
+            "value": "5/4"
+          }
+        ]
+      },
+      "lhevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 16,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "47/1/131"
+          },
+          {
+            "count": 1,
+            "value": "44/0/132"
+          },
+          {
+            "count": 1,
+            "value": "45/6/163"
+          },
+          {
+            "count": 1,
+            "value": "49/4/211"
+          },
+          {
+            "count": 1,
+            "value": "47/0/150"
+          },
+          {
+            "count": 1,
+            "value": "47/0/117"
+          },
+          {
+            "count": 1,
+            "value": "28/5/172"
+          },
+          {
+            "count": 1,
+            "value": "32/8/194"
+          },
+          {
+            "count": 1,
+            "value": "38/0/142"
+          },
+          {
+            "count": 1,
+            "value": "47/0/132"
+          },
+          {
+            "count": 1,
+            "value": "44/4/170"
+          },
+          {
+            "count": 1,
+            "value": "55/4/204"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 565,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 235,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 523,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 305,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 16,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 565,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 285,
+        "top_values": [
+          {
+            "count": 45,
+            "value": "4/4"
+          },
+          {
+            "count": 42,
+            "value": "50/4"
+          },
+          {
+            "count": 41,
+            "value": "9/4"
+          },
+          {
+            "count": 39,
+            "value": "16/4"
+          },
+          {
+            "count": 38,
+            "value": "7/4"
+          },
+          {
+            "count": 38,
+            "value": "31/4"
+          },
+          {
+            "count": 38,
+            "value": "63/4"
+          },
+          {
+            "count": 2,
+            "value": "12/4"
+          },
+          {
+            "count": 1,
+            "value": "57/4"
+          },
+          {
+            "count": 1,
+            "value": "35/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 264,
+        "top_values": [
+          {
+            "count": 35,
+            "value": "5/4"
+          },
+          {
+            "count": 33,
+            "value": "12/4"
+          },
+          {
+            "count": 33,
+            "value": "16/4"
+          },
+          {
+            "count": 33,
+            "value": "33/4"
+          },
+          {
+            "count": 33,
+            "value": "6/4"
+          },
+          {
+            "count": 33,
+            "value": "8/4"
+          },
+          {
+            "count": 32,
+            "value": "65/4"
+          },
+          {
+            "count": 32,
+            "value": "132/4"
+          }
+        ]
+      }
+    }
+  }
+}

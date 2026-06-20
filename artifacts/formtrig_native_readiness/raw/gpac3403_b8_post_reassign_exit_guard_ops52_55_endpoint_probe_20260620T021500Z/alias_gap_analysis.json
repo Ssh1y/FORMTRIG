@@ -1,0 +1,1043 @@
+{
+  "binding_count": 14,
+  "lift_spec": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_spec_compile_20260620/.formtrig/formtrig_lift.normalized",
+  "runtime_count": 9,
+  "runtimes": [
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 107384824639952
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -387888
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000000.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 107384825027840
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -387888,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -387888
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            107384824639952
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 11,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 387888,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            107384825027840
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            107384825027840
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            107384825027840
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0xf734a80395b0ec82"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    },
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 97290858041248
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -89440
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000001.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 97290858130688
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -89440,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -89440
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            97290858041248
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 11,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 89440,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            97290858130688
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97290858130688
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            97290858130688
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0x3e5bb9b87562418a"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    },
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 93857987240336
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -355872
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000002.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 93857987596208
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -355872,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -355872
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            93857987240336
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 11,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 355872,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            93857987596208
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            93857987596208
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            93857987596208
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0xafeb4861be2ede48"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    },
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 98155261152448
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -405568
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000004.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 98155261558016
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -405568,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -405568
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            98155261152448
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 11,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 405568,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            98155261558016
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            98155261558016
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            98155261558016
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0xe5e1a0230e41c860"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    },
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 101006343058304
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -338304
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000005.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 101006343396608
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -338304,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -338304
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            101006343058304
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 11,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 338304,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            101006343396608
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            101006343396608
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            101006343396608
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0xe65a2ef5dec8d340"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    },
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 96488943262064
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -355472
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000008.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 96488943617536
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -355472,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -355472
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            96488943262064
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 14,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 355472,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            96488943617536
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            96488943617536
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            96488943617536
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0x9f2d6f69ad7d6b30"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    },
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 95010794833840
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -431440
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000009.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 95010795265280
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -431440,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -431440
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            95010794833840
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 11,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 431440,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            95010795265280
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            95010795265280
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            95010795265280
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0x8a4f40fdf83e6242"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    },
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 103513504669184
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -122624
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000012.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 103513504791808
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -122624,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -122624
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            103513504669184
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 11,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 122624,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            103513504791808
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            103513504791808
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            103513504791808
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0xfbc89e7f845ad9c7"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    },
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 1,
+          "value": 93911674447248
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 1,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 1,
+          "value": -337776
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z/logs/variant_000013.runtime.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1,
+          "value": null
+        }
+      ],
+      "record_count": 1,
+      "record_status_distribution": [
+        {
+          "count": 1,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 1,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 1,
+        "release_reassign_alias_records": 1,
+        "release_reassign_with_cleanup_records": 1
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 1,
+          "value": 93911674785024
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -337776,
+        "present": true,
+        "records": 1
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": null,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -337776
+          ],
+          "cleanup_value_sources": [
+            12340053380724732480
+          ],
+          "cleanup_values": [
+            93911674447248
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 11,
+          "d_f_lifted": null,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": null,
+          "execs_done": null,
+          "hot_ranges": null,
+          "min_abs_cleanup_delta": 337776,
+          "observed_source_flags": null,
+          "queue_id": null,
+          "queued_items": null,
+          "reason": null,
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            93911674785024
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            93911674785024
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            8652838401714439487
+          ],
+          "same_object_values": [
+            93911674785024
+          ],
+          "source_flags": null,
+          "stable": null,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "0xb5913dfa4522427d"
+        }
+      ],
+      "unique_cleanup_values": 1,
+      "unique_release_same_object_values": 1
+    }
+  ],
+  "schema": "formtrig_gpac3403_alias_gap_analysis_v1",
+  "verdict": {
+    "claim_boundary": "Pointer deltas are runtime diagnostics only. They must not be used as input-level optimization objectives because allocator addresses are not stable semantic trigger-state features.",
+    "complete_alias_free_relation": false,
+    "interpretation": "Release and reassign-buffer pointers match, but cleanup consistently frees a different dynamic bitstream buffer. This narrows the blocker to lifecycle ownership closure, not HEVC importer routing or retained-candidate selection.",
+    "next_action": "Repair typed mutation or BindingSpec correlation so the final GF_BitStream cleanup object is the same sample buffer that gf_isom_sample_del releases.",
+    "stable_nonzero_cleanup_offsets": [
+      -431440,
+      -405568,
+      -387888,
+      -355872,
+      -355472,
+      -338304,
+      -337776,
+      -122624,
+      -89440
+    ],
+    "status": "stable_nonzero_cleanup_offset"
+  }
+}

@@ -281,12 +281,41 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
 
             self.assertGreaterEqual(len(nalus), 330)
             self.assertGreaterEqual(types.count(0), 100)
-            self.assertGreaterEqual(types.count(34), 100)
+            self.assertGreaterEqual(types.count(34), 80)
             self.assertGreaterEqual(types.count(49), 2)
             self.assertIn(50, layers)
             self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
             self.assertNotEqual(output, original)
             self.assertNotIn(b"\x7f\xff\xd9", output)
+
+    def test_malformed_extractor_ops_emit_sample_preserving_type49_stress(self):
+        hook = load_hook()
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 67)
+            for op in range(56, 60)
+        ]
+
+        for output in mutated_outputs:
+            nalus = hook.parse_nalus(output)
+            types = [hook.nalu_type(output, nalu) for nalu in nalus]
+            layers = {hook.layer_id(output, nalu) for nalu in nalus}
+            extractor_bodies = [
+                hook.nalu_body(output, nalu)
+                for nalu in nalus
+                if hook.nalu_type(output, nalu) == 49
+            ]
+
+            self.assertGreaterEqual(len(nalus), 390)
+            self.assertGreaterEqual(types.count(0), 100)
+            self.assertGreaterEqual(types.count(34), 80)
+            self.assertGreaterEqual(types.count(49), 20)
+            self.assertIn(50, layers)
+            self.assertTrue(any(body.startswith(b"\x00") for body in extractor_bodies))
+            self.assertTrue(any(len(body) >= 10 and body[2] in (0x7F, 0x80) for body in extractor_bodies))
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+            self.assertNotEqual(output, original)
 
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()

@@ -1,0 +1,74 @@
+{
+  "schema": "formtrig_gpac3403_b8_post_reassign_exit_probe_summary_v1",
+  "target": "GPAC_3403",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b8_post_reassign_exit_candidate.yml",
+  "static_gate": {
+    "binding_tier": "B4",
+    "lift_allowed": true,
+    "event_count": 14,
+    "location_only_count": 0,
+    "collapsed": 0,
+    "guard_rows": [
+      "gf_isom_nalu_sample_rewrite:isomedia/avc_ext.c:809",
+      "gf_isom_nalu_sample_rewrite:isomedia/avc_ext.c:844"
+    ]
+  },
+  "probes": [
+    {
+      "name": "sample_preserving_poc_shape_ops52_55_guard",
+      "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_post_reassign_exit_guard_ops52_55_endpoint_probe_20260620T021500Z",
+      "generated_variants": 16,
+      "replayed_variants": 16,
+      "reached": 9,
+      "spec_lifted": 9,
+      "triggered": 0,
+      "d_f_spec_lifted_values": [3.0],
+      "endpoint_exit_code_counts": {"0": 15, "1": 1},
+      "endpoint_sanitizer_crashes": 0,
+      "hevc_import_files": 16,
+      "lhevc_import_files": 16,
+      "hevc_samples_max": 223,
+      "post_reassign_path": {
+        "status": "pre_detach_error_missing",
+        "fallback_reassign_records": 1,
+        "pre_detach_error_observed_records": 1,
+        "pre_detach_error_satisfied_records": 0,
+        "normal_detach_absent_records": 9,
+        "release_reassign_same_records": 9,
+        "reassign_cleanup_same_records": 0
+      },
+      "alias_gap_status": "stable_nonzero_cleanup_offset"
+    },
+    {
+      "name": "malformed_extractor_ops56_59",
+      "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z",
+      "generated_variants": 16,
+      "replayed_variants": 16,
+      "reached": 9,
+      "spec_lifted": 9,
+      "triggered": 0,
+      "d_f_spec_lifted_values": [3.0],
+      "endpoint_exit_code_counts": {"0": 16},
+      "endpoint_sanitizer_crashes": 0,
+      "hevc_import_files": 16,
+      "lhevc_import_files": 16,
+      "hevc_samples_max": 230,
+      "post_reassign_path": {
+        "status": "pre_detach_error_missing",
+        "fallback_reassign_records": 0,
+        "pre_detach_error_observed_records": 0,
+        "pre_detach_error_satisfied_records": 0,
+        "normal_detach_absent_records": 9,
+        "release_reassign_same_records": 9,
+        "reassign_cleanup_same_records": 0
+      },
+      "alias_gap_status": "stable_nonzero_cleanup_offset"
+    }
+  ],
+  "interpretation": {
+    "positive": "B8 keeps GPAC_3403 candidates in the HEVC/L-HEVC import and lifecycle neighborhood and proves release->reassign object equality on reached records.",
+    "negative": "Neither probe satisfies the modeled post-reassign pre-detach error branch. The op52-55 window reaches the guard sites once but both guard outcomes remain false; op56-59 does not preserve malformed extractor payloads into the process_extractor guard sites.",
+    "claim_boundary": "The avc_ext.c:912 absence binding is only a weak proxy and must not be claimed as proof that gf_bs_get_content_no_truncate was skipped, because the final get_content call occurs before that branch.",
+    "next_action": "Add a stronger detach/no-detach observable or a typed mutation family that preserves malformed extractor references into gf_isom_nalu_sample_rewrite after sample-buffer reassign, then require guard outcome=1 before treating candidates as closer to _T."
+  }
+}

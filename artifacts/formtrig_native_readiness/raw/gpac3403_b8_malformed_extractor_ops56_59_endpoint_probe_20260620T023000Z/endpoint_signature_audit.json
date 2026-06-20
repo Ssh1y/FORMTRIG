@@ -1,0 +1,1293 @@
+{
+  "contrast": {
+    "positive_control_files": 0,
+    "positive_control_signatures_absent_from_variants": [],
+    "positive_signatures": [],
+    "top_variants_by_positive_overlap": [
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "148/451"
+          ],
+          "layers_only_4": [
+            "37/4"
+          ],
+          "lhevc_import_results": [
+            "41/1/129"
+          ],
+          "vps_max_layer_id": [
+            "4/4",
+            "4/4",
+            "4/4",
+            "4/4",
+            "4/4",
+            "4/4",
+            "4/4",
+            "4/4"
+          ],
+          "wrong_output_layer_sets": [
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "5/4",
+            "5/4",
+            "6/4",
+            "8/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 0,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "182/506"
+          ],
+          "lhevc_import_results": [
+            "44/0/164"
+          ],
+          "vps_max_layer_id": [
+            "50/4",
+            "50/4",
+            "50/4",
+            "50/4",
+            "50/4",
+            "50/4",
+            "50/4",
+            "50/4"
+          ],
+          "wrong_output_layer_sets": [
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "33/4",
+            "65/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 1,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "208/614"
+          ],
+          "layers_only_4": [
+            "5/4",
+            "47/4"
+          ],
+          "lhevc_import_results": [
+            "54/6/195"
+          ],
+          "vps_max_layer_id": [
+            "9/4",
+            "63/4",
+            "16/4",
+            "4/4",
+            "31/4",
+            "7/4",
+            "50/4",
+            "9/4"
+          ],
+          "wrong_output_layer_sets": [
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4",
+            "6/4",
+            "6/4",
+            "8/4",
+            "12/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 2,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "206/575"
+          ],
+          "layers_only_4": [
+            "47/4",
+            "37/4"
+          ],
+          "lhevc_import_results": [
+            "50/5/208"
+          ],
+          "vps_max_layer_id": [
+            "12/4",
+            "63/4",
+            "9/4",
+            "50/4",
+            "7/4",
+            "31/4",
+            "4/4",
+            "16/4"
+          ],
+          "wrong_output_layer_sets": [
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 3,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "180/446"
+          ],
+          "layers_only_4": [
+            "37/4"
+          ],
+          "lhevc_import_results": [
+            "40/1/150"
+          ],
+          "vps_max_layer_id": [
+            "7/4",
+            "9/4",
+            "16/4",
+            "31/4",
+            "50/4",
+            "63/4",
+            "4/4",
+            "7/4"
+          ],
+          "wrong_output_layer_sets": [
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 4,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "189/483"
+          ],
+          "lhevc_import_results": [
+            "43/0/144"
+          ],
+          "vps_max_layer_id": [
+            "63/4",
+            "4/4",
+            "7/4",
+            "9/4",
+            "16/4",
+            "31/4",
+            "50/4",
+            "63/4"
+          ],
+          "wrong_output_layer_sets": [
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "65/4",
+            "65/4",
+            "132/4",
+            "5/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 5,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "225/632"
+          ],
+          "layers_only_4": [
+            "16/4",
+            "47/4"
+          ],
+          "lhevc_import_results": [
+            "35/5/203"
+          ],
+          "vps_max_layer_id": [
+            "16/4",
+            "16/4",
+            "16/4",
+            "16/4",
+            "16/4",
+            "16/4",
+            "16/4",
+            "16/4"
+          ],
+          "wrong_output_layer_sets": [
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 6,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "204/589"
+          ],
+          "layers_only_4": [
+            "64/4",
+            "37/4"
+          ],
+          "lhevc_import_results": [
+            "37/8/191"
+          ],
+          "vps_max_layer_id": [
+            "57/4",
+            "4/4",
+            "31/4",
+            "7/4",
+            "50/4",
+            "9/4",
+            "63/4",
+            "16/4"
+          ],
+          "wrong_output_layer_sets": [
+            "6/4",
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "65/4",
+            "132/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 7,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "165/455"
+          ],
+          "lhevc_import_results": [
+            "29/0/142"
+          ],
+          "vps_max_layer_id": [
+            "9/4",
+            "31/4",
+            "63/4",
+            "7/4",
+            "16/4",
+            "50/4",
+            "4/4",
+            "9/4"
+          ],
+          "wrong_output_layer_sets": [
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4",
+            "8/4",
+            "8/4",
+            "12/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000008.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 8,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "183/500"
+          ],
+          "lhevc_import_results": [
+            "43/0/166"
+          ],
+          "vps_max_layer_id": [
+            "4/4",
+            "9/4",
+            "31/4",
+            "63/4",
+            "7/4",
+            "16/4",
+            "50/4",
+            "4/4"
+          ],
+          "wrong_output_layer_sets": [
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000009.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 9,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "185/626"
+          ],
+          "layers_only_4": [
+            "16/4",
+            "64/4"
+          ],
+          "lhevc_import_results": [
+            "49/4/198"
+          ],
+          "vps_max_layer_id": [
+            "31/4",
+            "50/4",
+            "63/4",
+            "4/4",
+            "7/4",
+            "9/4",
+            "16/4",
+            "31/4"
+          ],
+          "wrong_output_layer_sets": [
+            "65/4",
+            "132/4",
+            "5/4",
+            "6/4",
+            "8/4",
+            "12/4",
+            "12/4",
+            "16/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000010.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 10,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      },
+      {
+        "extra_values": {
+          "hevc_import_results": [
+            "208/584"
+          ],
+          "layers_only_4": [
+            "64/4"
+          ],
+          "lhevc_import_results": [
+            "57/4/197"
+          ],
+          "vps_max_layer_id": [
+            "7/4",
+            "7/4",
+            "7/4",
+            "7/4",
+            "7/4",
+            "7/4",
+            "7/4",
+            "7/4"
+          ],
+          "wrong_output_layer_sets": [
+            "8/4",
+            "12/4",
+            "16/4",
+            "33/4",
+            "132/4",
+            "132/4",
+            "5/4",
+            "6/4"
+          ]
+        },
+        "extra_variant_signatures": [
+          "wrong_output_layer_sets",
+          "failed_vps_extensions",
+          "layers_only_4",
+          "vps_max_layer_id",
+          "video_param_set_error",
+          "sequence_param_set_error",
+          "picture_param_set_error",
+          "nal_type_32_error",
+          "nal_type_49_not_handled",
+          "track_importing_hevc",
+          "hevc_import_results",
+          "lhevc_import_results"
+        ],
+        "matched_positive_signature_count": 0,
+        "matched_positive_signatures": [],
+        "matched_values": {},
+        "missing_positive_signature_count": 0,
+        "missing_positive_signatures": [],
+        "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000011.endpoint_1.stderr",
+        "rep": 1,
+        "variant_index": 11,
+        "weighted_match_score": 0,
+        "weighted_missing_score": 0
+      }
+    ],
+    "variant_files": 16,
+    "weighted_positive_signature_total": 0
+  },
+  "logs_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs",
+  "positive_control": {
+    "files": 0,
+    "metrics": {
+      "asan_double_free_examples": [],
+      "asan_double_free_files": 0,
+      "hevc_import_files": 0,
+      "hevc_import_observations": 0,
+      "hevc_nalus_max": null,
+      "hevc_samples_max": null,
+      "hevc_top_samples": [],
+      "lhevc_import_files": 0,
+      "lhevc_import_observations": 0,
+      "lhevc_top_slices": []
+    },
+    "signatures": {
+      "asan": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "asan_double_free": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "hevc_import_results": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "layers_only_4": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "lhevc_import_results": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "nal_type_32_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "wrong_output_layer_sets": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      }
+    }
+  },
+  "records": null,
+  "schema": "formtrig_gpac3403_endpoint_signature_audit_v2",
+  "summary": {
+    "d_f_spec_lifted_max": 3.0,
+    "d_f_spec_lifted_min": 3.0,
+    "duration_s": 105.532,
+    "endpoint_native_crashes": 0,
+    "endpoint_replayed_variants": 16,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_timeouts": 0,
+    "generated_variants": 16,
+    "reached": 9,
+    "rnt": 9,
+    "triggered": 0
+  },
+  "variant": {
+    "files": 16,
+    "metrics": {
+      "asan_double_free_examples": [],
+      "asan_double_free_files": 0,
+      "hevc_import_files": 16,
+      "hevc_import_observations": 16,
+      "hevc_nalus_max": 632,
+      "hevc_samples_max": 230,
+      "hevc_top_samples": [
+        {
+          "nalus": 623,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000014.endpoint_1.stderr",
+          "samples": 230
+        },
+        {
+          "nalus": 632,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "samples": 225
+        },
+        {
+          "nalus": 569,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000015.endpoint_1.stderr",
+          "samples": 211
+        },
+        {
+          "nalus": 614,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "samples": 208
+        },
+        {
+          "nalus": 584,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000011.endpoint_1.stderr",
+          "samples": 208
+        },
+        {
+          "nalus": 575,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "samples": 206
+        },
+        {
+          "nalus": 589,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr",
+          "samples": 204
+        },
+        {
+          "nalus": 497,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000013.endpoint_1.stderr",
+          "samples": 192
+        }
+      ],
+      "lhevc_import_files": 16,
+      "lhevc_import_observations": 16,
+      "lhevc_top_slices": [
+        {
+          "b_slices": 208,
+          "i_slices": 50,
+          "p_slices": 5,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 197,
+          "i_slices": 57,
+          "p_slices": 4,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000011.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 195,
+          "i_slices": 54,
+          "p_slices": 6,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 198,
+          "i_slices": 49,
+          "p_slices": 4,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000010.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 203,
+          "i_slices": 35,
+          "p_slices": 5,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 191,
+          "i_slices": 37,
+          "p_slices": 8,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 172,
+          "i_slices": 53,
+          "p_slices": 6,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000015.endpoint_1.stderr"
+        },
+        {
+          "b_slices": 174,
+          "i_slices": 51,
+          "p_slices": 2,
+          "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000014.endpoint_1.stderr"
+        }
+      ]
+    },
+    "signatures": {
+      "asan": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "asan_double_free": {
+        "examples": [],
+        "files": 0,
+        "occurrences": 0,
+        "top_values": []
+      },
+      "failed_vps_extensions": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 261,
+        "top_values": []
+      },
+      "hevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 16,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "148/451"
+          },
+          {
+            "count": 1,
+            "value": "182/506"
+          },
+          {
+            "count": 1,
+            "value": "208/614"
+          },
+          {
+            "count": 1,
+            "value": "206/575"
+          },
+          {
+            "count": 1,
+            "value": "180/446"
+          },
+          {
+            "count": 1,
+            "value": "189/483"
+          },
+          {
+            "count": 1,
+            "value": "225/632"
+          },
+          {
+            "count": 1,
+            "value": "204/589"
+          },
+          {
+            "count": 1,
+            "value": "165/455"
+          },
+          {
+            "count": 1,
+            "value": "183/500"
+          },
+          {
+            "count": 1,
+            "value": "185/626"
+          },
+          {
+            "count": 1,
+            "value": "208/584"
+          }
+        ]
+      },
+      "layers_only_4": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000010.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000011.endpoint_1.stderr"
+        ],
+        "files": 9,
+        "occurrences": 15,
+        "top_values": [
+          {
+            "count": 4,
+            "value": "37/4"
+          },
+          {
+            "count": 4,
+            "value": "47/4"
+          },
+          {
+            "count": 4,
+            "value": "64/4"
+          },
+          {
+            "count": 2,
+            "value": "16/4"
+          },
+          {
+            "count": 1,
+            "value": "5/4"
+          }
+        ]
+      },
+      "lhevc_import_results": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 16,
+        "top_values": [
+          {
+            "count": 1,
+            "value": "41/1/129"
+          },
+          {
+            "count": 1,
+            "value": "44/0/164"
+          },
+          {
+            "count": 1,
+            "value": "54/6/195"
+          },
+          {
+            "count": 1,
+            "value": "50/5/208"
+          },
+          {
+            "count": 1,
+            "value": "40/1/150"
+          },
+          {
+            "count": 1,
+            "value": "43/0/144"
+          },
+          {
+            "count": 1,
+            "value": "35/5/203"
+          },
+          {
+            "count": 1,
+            "value": "37/8/191"
+          },
+          {
+            "count": 1,
+            "value": "29/0/142"
+          },
+          {
+            "count": 1,
+            "value": "43/0/166"
+          },
+          {
+            "count": 1,
+            "value": "49/4/198"
+          },
+          {
+            "count": 1,
+            "value": "57/4/197"
+          }
+        ]
+      },
+      "nal_type_32_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 705,
+        "top_values": []
+      },
+      "nal_type_49_not_handled": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 556,
+        "top_values": []
+      },
+      "picture_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 724,
+        "top_values": []
+      },
+      "sequence_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 291,
+        "top_values": []
+      },
+      "track_importing_hevc": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 16,
+        "top_values": []
+      },
+      "video_param_set_error": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 705,
+        "top_values": []
+      },
+      "vps_max_layer_id": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 429,
+        "top_values": [
+          {
+            "count": 73,
+            "value": "7/4"
+          },
+          {
+            "count": 71,
+            "value": "50/4"
+          },
+          {
+            "count": 68,
+            "value": "4/4"
+          },
+          {
+            "count": 68,
+            "value": "16/4"
+          },
+          {
+            "count": 49,
+            "value": "63/4"
+          },
+          {
+            "count": 48,
+            "value": "31/4"
+          },
+          {
+            "count": 47,
+            "value": "9/4"
+          },
+          {
+            "count": 2,
+            "value": "12/4"
+          },
+          {
+            "count": 1,
+            "value": "57/4"
+          },
+          {
+            "count": 1,
+            "value": "35/4"
+          }
+        ]
+      },
+      "wrong_output_layer_sets": {
+        "examples": [
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000000.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000001.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000002.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000003.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000004.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000005.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000006.endpoint_1.stderr",
+          "artifacts/formtrig_native_readiness/raw/gpac3403_b8_malformed_extractor_ops56_59_endpoint_probe_20260620T023000Z/logs/variant_000007.endpoint_1.stderr"
+        ],
+        "files": 16,
+        "occurrences": 261,
+        "top_values": [
+          {
+            "count": 34,
+            "value": "16/4"
+          },
+          {
+            "count": 34,
+            "value": "65/4"
+          },
+          {
+            "count": 33,
+            "value": "33/4"
+          },
+          {
+            "count": 33,
+            "value": "132/4"
+          },
+          {
+            "count": 32,
+            "value": "12/4"
+          },
+          {
+            "count": 32,
+            "value": "5/4"
+          },
+          {
+            "count": 32,
+            "value": "6/4"
+          },
+          {
+            "count": 31,
+            "value": "8/4"
+          }
+        ]
+      }
+    }
+  }
+}
