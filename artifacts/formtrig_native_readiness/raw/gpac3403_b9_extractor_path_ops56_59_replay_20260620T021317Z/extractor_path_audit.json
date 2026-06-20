@@ -1,0 +1,105 @@
+{
+  "records": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/records.jsonl",
+  "runtime_event_map": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_spec_compile_20260620/formtrig_runtime_event_map.csv",
+  "runtimes": [
+    {
+      "op": 56,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000000.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 0,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 0,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000000.hevc"
+    },
+    {
+      "op": 57,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000001.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 0,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 1,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000001.hevc"
+    },
+    {
+      "op": 58,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000002.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 0,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 2,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000002.hevc"
+    },
+    {
+      "op": 56,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000004.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 1,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 4,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000004.hevc"
+    },
+    {
+      "op": 57,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000005.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 1,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 5,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000005.hevc"
+    },
+    {
+      "op": 56,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000008.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 2,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 8,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000008.hevc"
+    },
+    {
+      "op": 57,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000009.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 2,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 9,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000009.hevc"
+    },
+    {
+      "op": 56,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000012.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 3,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 12,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000012.hevc"
+    },
+    {
+      "op": 57,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/logs/variant_000013.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 3,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 13,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z/variants/variant_000013.hevc"
+    }
+  ],
+  "schema": "formtrig_gpac3403_extractor_path_audit_v1",
+  "totals": {
+    "records_with_extractor_components": 0
+  },
+  "verdict": {
+    "interpretation": "Reached lifecycle records did not enter process_extractor.",
+    "next_action": "Preserve HEVC type49 NALUs through import into gf_isom_nalu_sample_rewrite.",
+    "status": "extractor_not_reached"
+  }
+}

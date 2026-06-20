@@ -1,0 +1,106 @@
+{
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b9_extractor_path_candidate.yml",
+  "cases": {
+    "ops52_55": {
+      "extractor_path": {
+        "interpretation": "process_extractor is partially observed, but no modeled OK barrier or error path explains the return.",
+        "next_action": "Add the next internal return point or operand-distance binding on the observed extractor path.",
+        "status": "extractor_path_incomplete",
+        "totals": {
+          "constructor_mode_observed_records": 1,
+          "extractor_loop_entry_observed_records": 1,
+          "extractor_loop_entry_satisfied_records": 1,
+          "no_reference_track_ok_return_observed_records": 1,
+          "outer_hevc_extractor_error_observed_records": 1,
+          "outer_invalid_nal_size_observed_records": 1,
+          "records_with_extractor_components": 1
+        }
+      },
+      "post_reassign_path": {
+        "interpretation": "Inputs reach the lifecycle neighborhood but do not hit the modeled pre-detach HEVC error paths at avc_ext.c:809 or avc_ext.c:844.",
+        "next_action": "Bias typed mutation toward malformed HEVC extractor or nal_size<2 cases that remain parseable long enough to occur after sample-buffer reassign.",
+        "status": "pre_detach_error_missing",
+        "totals": {
+          "fallback_reassign_records": 0,
+          "normal_detach_absent_records": 9,
+          "pre_detach_error_observed_records": 1,
+          "pre_detach_error_records": 0,
+          "reached_records": 9,
+          "reassign_cleanup_same_records": 0,
+          "release_reassign_same_records": 9
+        }
+      },
+      "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z",
+      "sweep": {
+        "d_f_spec_lifted_values": [
+          3.0
+        ],
+        "duration_s": 89.349,
+        "generated_variants": 16,
+        "reached": 9,
+        "replayed_variants": 16,
+        "spec_lifted": 9,
+        "timeouts": 7,
+        "triggered": 0
+      }
+    },
+    "ops56_59": {
+      "extractor_path": {
+        "interpretation": "Reached lifecycle records did not enter process_extractor.",
+        "next_action": "Preserve HEVC type49 NALUs through import into gf_isom_nalu_sample_rewrite.",
+        "status": "extractor_not_reached",
+        "totals": {
+          "records_with_extractor_components": 0
+        }
+      },
+      "post_reassign_path": {
+        "interpretation": "Inputs reach the lifecycle neighborhood but do not hit the modeled pre-detach HEVC error paths at avc_ext.c:809 or avc_ext.c:844.",
+        "next_action": "Bias typed mutation toward malformed HEVC extractor or nal_size<2 cases that remain parseable long enough to occur after sample-buffer reassign.",
+        "status": "pre_detach_error_missing",
+        "totals": {
+          "fallback_reassign_records": 0,
+          "normal_detach_absent_records": 9,
+          "pre_detach_error_observed_records": 0,
+          "pre_detach_error_records": 0,
+          "reached_records": 9,
+          "reassign_cleanup_same_records": 0,
+          "release_reassign_same_records": 9
+        }
+      },
+      "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops56_59_replay_20260620T021317Z",
+      "sweep": {
+        "d_f_spec_lifted_values": [
+          3.0
+        ],
+        "duration_s": 91.718,
+        "generated_variants": 16,
+        "reached": 9,
+        "replayed_variants": 16,
+        "spec_lifted": 9,
+        "timeouts": 7,
+        "triggered": 0
+      }
+    }
+  },
+  "compile_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_spec_compile_20260620",
+  "date_utc": "2026-06-20",
+  "schema": "formtrig_gpac3403_b9_extractor_path_probe_v1",
+  "static_lift_audit": {
+    "atom_id": "1",
+    "binding_tier": "B4",
+    "category": "compound-sequence-lifecycle",
+    "collapsed": "0",
+    "event_count": "22",
+    "lift_allowed": "true",
+    "location_only_count": "0",
+    "reason": "ok",
+    "roles": "0x000001fb"
+  },
+  "target": "GPAC_3403",
+  "verdict": {
+    "claim_boundary": "This is repair/diagnostic evidence, not endpoint benefit evidence. The line-912 normal-detach absence probe remains weak because gf_bs_get_content_no_truncate is called before that line; B9 should be read as narrowing the missing R2T transition, not proving final double-free closure.",
+    "next_action": "Add the next internal process_extractor return/operand-distance binding for the observed op52 path, and separately repair malformed type49 preservation for ops56-59 before spending long-run endpoint budget.",
+    "status": "diagnostic_progress_no_terminal_T",
+    "summary": "B9 keeps the GPAC_3403 lifecycle/alias signal exact at B4 and adds process_extractor subpath events. Both typed windows still replay 9/16 reached/spec_lifted variants with D_F=3 and no _T. ops52-55 produces one process_extractor loop-entry record, but no modeled error or OK barrier is satisfied. ops56-59 reaches the outer lifecycle/alias neighborhood but never enters process_extractor."
+  }
+}

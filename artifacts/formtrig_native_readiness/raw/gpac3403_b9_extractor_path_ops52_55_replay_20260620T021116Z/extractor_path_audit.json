@@ -1,0 +1,136 @@
+{
+  "records": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/records.jsonl",
+  "runtime_event_map": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_spec_compile_20260620/formtrig_runtime_event_map.csv",
+  "runtimes": [
+    {
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000000.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 0,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 0,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000000.hevc"
+    },
+    {
+      "op": 53,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000001.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 0,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 1,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000001.hevc"
+    },
+    {
+      "op": 54,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000002.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 0,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 2,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000002.hevc"
+    },
+    {
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000004.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 1,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 4,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000004.hevc"
+    },
+    {
+      "op": 53,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000005.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 1,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 5,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000005.hevc"
+    },
+    {
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000008.runtime.jsonl",
+      "records_with_extractor_components": 1,
+      "sample": 2,
+      "top_records": [
+        {
+          "d_f_spec_lifted": 3,
+          "error_semantics_satisfied": [],
+          "observed": [
+            "constructor_mode",
+            "extractor_loop_entry",
+            "no_reference_track_ok_return",
+            "outer_hevc_extractor_error",
+            "outer_invalid_nal_size"
+          ],
+          "ok_barriers_satisfied": [],
+          "record_index": 0,
+          "satisfied": [
+            "extractor_loop_entry"
+          ],
+          "trace_signature": "0x03da421585f11ae6"
+        }
+      ],
+      "totals": {
+        "constructor_mode_observed_records": 1,
+        "extractor_loop_entry_observed_records": 1,
+        "extractor_loop_entry_satisfied_records": 1,
+        "no_reference_track_ok_return_observed_records": 1,
+        "outer_hevc_extractor_error_observed_records": 1,
+        "outer_invalid_nal_size_observed_records": 1
+      },
+      "variant_index": 8,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000008.hevc"
+    },
+    {
+      "op": 53,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000009.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 2,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 9,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000009.hevc"
+    },
+    {
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000012.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 3,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 12,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000012.hevc"
+    },
+    {
+      "op": 53,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/logs/variant_000013.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 3,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 13,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b9_extractor_path_ops52_55_replay_20260620T021116Z/variants/variant_000013.hevc"
+    }
+  ],
+  "schema": "formtrig_gpac3403_extractor_path_audit_v1",
+  "totals": {
+    "constructor_mode_observed_records": 1,
+    "extractor_loop_entry_observed_records": 1,
+    "extractor_loop_entry_satisfied_records": 1,
+    "no_reference_track_ok_return_observed_records": 1,
+    "outer_hevc_extractor_error_observed_records": 1,
+    "outer_invalid_nal_size_observed_records": 1,
+    "records_with_extractor_components": 1
+  },
+  "verdict": {
+    "interpretation": "process_extractor is partially observed, but no modeled OK barrier or error path explains the return.",
+    "next_action": "Add the next internal return point or operand-distance binding on the observed extractor path.",
+    "status": "extractor_path_incomplete"
+  }
+}
