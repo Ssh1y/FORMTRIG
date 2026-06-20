@@ -59,6 +59,16 @@ NON_MAIN_BUDGET_LANES = {
     "real_cve_control_or_audit",
 }
 
+ACTIONABLE_REAL_CVE_READINESS = {
+    "ready_for_binding_spec",
+    "needs_binding_validation",
+    "ready_for_formtrig_short_gate",
+    "needs_binding_role_repair",
+    "short_gate_triaged",
+    "short_run_replicated_speedup",
+    "ten_min_matched_speedup_confirmed",
+}
+
 CONTROL_STATUSES = {
     "do_not_promote",
 }
@@ -340,7 +350,7 @@ def binding_validation_blockers(
     if not validation:
         return [
             item.strip()
-            for item in str(row.get("blockers") or "").split(";")
+            for item in row_blockers(row).split(";")
             if item.strip()
         ] or ["BindingSpec is present but not validated"]
 
@@ -635,11 +645,20 @@ def is_demoted_control(row: dict[str, Any]) -> bool:
 
 def is_non_main_budget(row: dict[str, Any]) -> bool:
     lane = str(row.get("lane") or "")
+    if actionable_real_cve_readiness(row):
+        return is_demoted_control(row)
     return is_demoted_control(row) or lane in NON_MAIN_BUDGET_LANES
 
 
 def target_id_for(row: dict[str, Any]) -> str:
     return str(row.get("target_id") or "")
+
+
+def actionable_real_cve_readiness(row: dict[str, Any]) -> bool:
+    readiness = real_cve_readiness_for(row)
+    if not readiness or str(row.get("source") or "") != "real_cve":
+        return False
+    return str(readiness.get("readiness") or "") in ACTIONABLE_REAL_CVE_READINESS
 
 
 def is_sota_pain_skip(
@@ -651,8 +670,17 @@ def is_sota_pain_skip(
 
 def priority_for(row: dict[str, Any]) -> str:
     readiness = real_cve_readiness_for(row)
-    if str(readiness.get("readiness") or "") == "short_gate_triaged":
+    readiness_status = str(readiness.get("readiness") or "")
+    if readiness_status == "short_gate_triaged":
         return "P0"
+    if readiness_status in {"ten_min_matched_speedup_confirmed", "short_run_replicated_speedup"}:
+        return "P0"
+    if readiness_status in {"ready_for_formtrig_short_gate", "needs_binding_role_repair"}:
+        return "P1"
+    if readiness_status == "needs_binding_validation":
+        return "P1"
+    if readiness_status == "ready_for_binding_spec":
+        return "P2"
     if str(row.get("existing_disposition") or "") == "candidate_extend_longruns":
         return "P0"
     rank = int(row.get("rank") or 999)
@@ -685,6 +713,24 @@ def as_list(value: Any) -> list[str]:
 def real_cve_readiness_for(row: dict[str, Any]) -> dict[str, Any]:
     readiness = row.get("_real_cve_readiness")
     return readiness if isinstance(readiness, dict) else {}
+
+
+def row_blockers(row: dict[str, Any]) -> str:
+    readiness = real_cve_readiness_for(row)
+    if readiness.get("blockers"):
+        return str(readiness["blockers"])
+    return str(row.get("blockers") or "")
+
+
+def worklist_row_sort_key(row: dict[str, Any]) -> tuple[int, int, int, str]:
+    priority_order = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
+    readiness = real_cve_readiness_for(row)
+    return (
+        priority_order.get(priority_for(row), 9),
+        int_value(readiness.get("priority"), 999) if readiness else 999,
+        int_value(row.get("rank"), 999),
+        target_id_for(row),
+    )
 
 
 def real_cve_readiness_rejects(row: dict[str, Any]) -> bool:
@@ -1883,7 +1929,7 @@ def binding_spec_first_task(
             "saved non-trigger progress is replay-stable",
             "typed mutation, if used, is BindingSpec-provenance tagged",
         ],
-        "blocking_issue": [item.strip() for item in str(row.get("blockers") or "").split(";") if item.strip()]
+        "blocking_issue": [item.strip() for item in row_blockers(row).split(";") if item.strip()]
         or ["no validated BindingSpec gate has been recorded"],
         "claim_boundary": (
             "Do not spend 2h budget or make performance claims until the short "
@@ -2159,6 +2205,35 @@ def task_for_row(
             ),
             triage,
         )
+    if (
+        str(row.get("source") or "") == "real_cve"
+        and str(readiness.get("readiness") or "") == "needs_binding_validation"
+    ):
+        return attach_sota_pain(
+            validation_first_task(
+                row,
+                comparison,
+                validation,
+                short_duration_s=short_duration_s,
+                jobs=jobs,
+                reps=reps,
+            ),
+            triage,
+        )
+    if (
+        str(row.get("source") or "") == "real_cve"
+        and str(readiness.get("readiness") or "") == "ready_for_binding_spec"
+    ):
+        return attach_sota_pain(
+            binding_spec_first_task(
+                row,
+                comparison,
+                short_duration_s=short_duration_s,
+                jobs=jobs,
+                reps=reps,
+            ),
+            triage,
+        )
     if sota_pain_class(triage) in SOTA_PAIN_DESIGN_CLASSES:
         return attach_sota_pain(improve_experiment_design_task(row, comparison), triage)
     if weak_comparison or comparison_main_claim_strength(comparison) in WEAK_MAIN_CLAIM_STRENGTHS:
@@ -2289,9 +2364,12 @@ def build_worklist(
 ) -> dict[str, Any]:
     queue = read_json(queue_path)
     real_cve_readiness = real_cve_readiness_map(real_cve_readiness_path)
-    rows = attach_real_cve_readiness(
-        queue_rows(queue, use_all_targets=use_all_targets),
-        real_cve_readiness,
+    rows = sorted(
+        attach_real_cve_readiness(
+            queue_rows(queue, use_all_targets=use_all_targets),
+            real_cve_readiness,
+        ),
+        key=worklist_row_sort_key,
     )
     all_rows = attach_real_cve_readiness(
         queue_rows(queue, use_all_targets=True),

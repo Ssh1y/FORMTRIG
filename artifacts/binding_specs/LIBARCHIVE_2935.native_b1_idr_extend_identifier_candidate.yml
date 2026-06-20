@@ -1,0 +1,105 @@
+# Conservative draft generated from a real-CVE trigger graph.
+# Validate native site-map compilation and dynamic binding signal before benefit claims.
+tc_id: 'LIBARCHIVE_2935'
+target:
+  project: 'libarchive'
+  binary: 'libarchive_write_replay'
+  command: 'benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay @@'
+tc:
+  category: 'numeric-margin'
+  expression: 'Joliet identifier extension copies extension bytes beyond the allocated identifier buffer when rename offset and extension length exceed the allocation.'
+  composition: 'all_of'
+atoms:
+  - id: 1
+    expr: 'Joliet identifier extension copies extension bytes beyond the allocated identifier buffer when rename offset and extension length exceed the allocation.'
+    kind: 'numeric-margin'
+    root: 'Joliet identifier extension copies bytes beyond'
+bindings:
+  - id: 'trigger_graph_root_observe'
+    atom: 1
+    role: 'root_observe'
+    expr: 'TC-rooted target site observation from trigger graph'
+    observe_at:
+      kind: 'binary'
+      function: 'idr_extend_identifier'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 5913
+    component: 'boundary_margin'
+    priority: 10
+    direction: 'lower'
+    value_mode: 'distance'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+  - id: 'trigger_graph_guard'
+    atom: 1
+    role: 'guard'
+    expr: 'Trigger-graph guard context for the target condition'
+    observe_at:
+      kind: 'branch'
+      function: 'idr_extend_identifier'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 5913
+    component: 'guard_progress'
+    priority: 20
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.70
+    observe_window: 'any'
+  - id: 'trigger_graph_use'
+    atom: 1
+    role: 'use'
+    expr: 'Trigger-graph use context that observes the target state'
+    observe_at:
+      kind: 'binary'
+      function: 'idr_extend_identifier'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 5913
+    component: 'producer_use'
+    priority: 30
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.70
+    observe_window: 'any'
+  - id: 'input_range_01_binary_length_prefix'
+    atom: 1
+    role: 'input_influence'
+    expr: 'id:000000,sha256:6655599f21bf054f[16:17] influences the trigger guard'
+    observe_at:
+      kind: 'branch'
+      function: 'idr_extend_identifier'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 5913
+    component: 'input_influence'
+    priority: 41
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.75
+    observe_window: 'any'
+    range_start: 16
+    range_len: 1
+    mutation_hint: 'set_byte'
+    mutation_value: 255
+  - id: 'input_range_02_binary_length_payload'
+    atom: 1
+    role: 'input_influence'
+    expr: 'id:000000,sha256:6655599f21bf054f[17:21] influences the trigger guard'
+    observe_at:
+      kind: 'branch'
+      function: 'idr_extend_identifier'
+      file: 'archive_write_set_format_iso9660.c'
+      line: 5913
+    component: 'input_influence'
+    priority: 42
+    direction: 'higher'
+    value_mode: 'hit'
+    value: 1.0
+    confidence: 0.55
+    observe_window: 'any'
+    range_start: 17
+    range_len: 4
+    mutation_hint: 'set_byte'
+    mutation_value: 65

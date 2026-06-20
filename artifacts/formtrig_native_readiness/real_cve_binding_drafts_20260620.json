@@ -1,0 +1,31 @@
+{
+  "draft_count": 1,
+  "drafts": [
+    {
+      "binding_spec": "artifacts/binding_specs/LIBARCHIVE_2935.native_b1_idr_extend_identifier_candidate.yml",
+      "category": "numeric-margin",
+      "input_range_count": 2,
+      "limitations": [
+        "producer_context has no source_location; desired_producer binding was not emitted",
+        "repair_hook exists but is not configured; repair_hook binding was not emitted"
+      ],
+      "target_id": "LIBARCHIVE_2935",
+      "tcir": "artifacts/tcir/LIBARCHIVE_2935.json",
+      "trigger_graph": "artifacts/trigger_graphs/LIBARCHIVE_2935.json"
+    }
+  ],
+  "generated_at_utc": "2026-06-20T04:56:25+00:00",
+  "inputs": {
+    "cve_inventory": "artifacts/cve_bench_inventory.json",
+    "overwrite": false,
+    "spec_dir": "artifacts/binding_specs",
+    "target_ids": [
+      "LIBARCHIVE_2935"
+    ],
+    "tcir_dir": "artifacts/tcir",
+    "trigger_graph_dir": "artifacts/trigger_graphs"
+  },
+  "schema": "formtrig_real_cve_binding_drafts_v1",
+  "skipped": [],
+  "skipped_count": 0
+}

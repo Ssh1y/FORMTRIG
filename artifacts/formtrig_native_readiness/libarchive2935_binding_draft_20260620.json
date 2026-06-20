@@ -1,0 +1,36 @@
+{
+  "audit": {
+    "path": "artifacts/formtrig_native_readiness/binding_validation/LIBARCHIVE_2935.native_b1_idr_extend_identifier_candidate.tc_rooted_audit.json",
+    "role_counts": {
+      "guard": 1,
+      "input_influence": 2,
+      "root_observe": 1,
+      "use": 1
+    },
+    "status": "pass"
+  },
+  "created_utc": "2026-06-20T05:02:15Z",
+  "evidence": {
+    "binding_spec": "artifacts/binding_specs/LIBARCHIVE_2935.native_b1_idr_extend_identifier_candidate.yml",
+    "binding_spec_draft_report": "artifacts/formtrig_native_readiness/real_cve_binding_drafts_20260620.json",
+    "readiness": "artifacts/formtrig_native_readiness/real_cve_readiness_20260620.json",
+    "tcir": "artifacts/tcir/LIBARCHIVE_2935.json",
+    "trigger_graph": "artifacts/trigger_graphs/LIBARCHIVE_2935.json",
+    "worklist": "artifacts/formtrig_native_readiness/hard_target_experiment_worklist_20260620.json"
+  },
+  "limitations": [
+    "This is a static TC-rooted BindingSpec audit, not dynamic binding-signal validation.",
+    "The trigger_graph producer_context has no source_location, so no producer binding was emitted.",
+    "The repair_hook node is not configured, so no repair_hook binding was emitted.",
+    "Endpoint benefit, SOTA pain, and FORMTRIG speedup remain unclaimed until native site-map validation, lift audit, frontier diagnosis, and matched endpoint runs pass."
+  ],
+  "next_action": "Build or locate a FORMTRIG-instrumented libarchive target/site map, compile LIBARCHIVE_2935.native_b1_idr_extend_identifier_candidate.yml, then run binding-signal validation before any endpoint comparison.",
+  "readiness_delta": {
+    "after": "needs_binding_validation",
+    "before": "ready_for_binding_spec",
+    "worklist_action": "validate_binding_spec_then_short_screen",
+    "worklist_priority": "P1"
+  },
+  "schema": "formtrig_real_cve_binding_draft_delta_v1",
+  "target_id": "LIBARCHIVE_2935"
+}

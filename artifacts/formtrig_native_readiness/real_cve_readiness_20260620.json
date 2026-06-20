@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-20T04:42:04+00:00",
+  "generated_at_utc": "2026-06-20T04:57:22+00:00",
   "inputs": {
     "binding_spec_dir": "artifacts/binding_specs",
     "comparison_root": "artifacts/formtrig_native_readiness/comparisons",
@@ -103,11 +103,11 @@
     {
       "atom_ready": true,
       "binary_dt_gap": true,
-      "binding_spec_present": false,
+      "binding_spec_present": true,
       "binding_spec_ready": false,
       "binding_spec_validated": false,
       "binding_validation_status": "",
-      "blockers": "no executable BindingSpec candidate",
+      "blockers": "BindingSpec candidate is not native-site-map validated",
       "build_ready": true,
       "category": "numeric-margin",
       "comparison_count": 0,
@@ -120,10 +120,12 @@
       "harness_admissibility_status": "",
       "harness_source_ready": true,
       "native_dt_values": "1",
-      "next_action": "draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal",
+      "next_action": "build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility",
       "paths": {
         "atom": "artifacts/atoms/LIBARCHIVE_2935.json",
-        "binding_specs": [],
+        "binding_specs": [
+          "LIBARCHIVE_2935.native_b1_idr_extend_identifier_candidate.yml"
+        ],
         "binding_validation_records": [],
         "comparison_records": [],
         "harness_admissibility_records": [],
@@ -141,10 +143,10 @@
         "validation_log": "artifacts/cve_validation_logs/LIBARCHIVE_2935.validation.log"
       },
       "poc_ready": true,
-      "priority": 20,
+      "priority": 15,
       "project": "libarchive",
       "rank": 2,
-      "readiness": "ready_for_binding_spec",
+      "readiness": "needs_binding_validation",
       "readiness_delta_evidence": "",
       "readiness_delta_status": "",
       "rnt_ready": true,

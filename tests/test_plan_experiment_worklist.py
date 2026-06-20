@@ -433,6 +433,102 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertIn("sudo apt-get install -y bison re2c", task["post_unblock_commands"])
             self.assertIn(str(php_plan), task["evidence_paths"])
 
+    def test_real_cve_readiness_overrides_stale_control_audit_lane(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            readiness_path = root / "real_cve_readiness.json"
+            comparison_root.mkdir()
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "all_targets": [
+                            {
+                                "rank": 1,
+                                "target_id": "SQL013",
+                                "source": "magma",
+                                "project": "sqlite3",
+                                "primary_category": "binary-state-null",
+                                "secondary_category": "",
+                                "lane": "binding_spec_first",
+                                "status": "needs_short_discovery",
+                                "existing_disposition": "",
+                                "blockers": "no BindingSpec candidate exists yet",
+                                "source_evidence": "magma.json",
+                            },
+                            {
+                                "rank": 47,
+                                "target_id": "LIBARCHIVE_2935",
+                                "source": "real_cve",
+                                "project": "libarchive",
+                                "primary_category": "numeric-margin",
+                                "secondary_category": "",
+                                "lane": "real_cve_control_or_audit",
+                                "status": "needs_dt_degeneracy_audit",
+                                "existing_disposition": "",
+                                "blockers": "stale discovery blocker",
+                                "source_evidence": "cve.json",
+                            },
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            readiness_path.write_text(
+                json.dumps(
+                    {
+                        "targets": [
+                            {
+                                "target_id": "LIBARCHIVE_2935",
+                                "project": "libarchive",
+                                "category": "numeric-margin",
+                                "priority": 15,
+                                "readiness": "needs_binding_validation",
+                                "blockers": "BindingSpec candidate is not native-site-map validated",
+                                "next_action": "build a FORMTRIG-instrumented target/site map",
+                                "paths": {
+                                    "binding_specs": [
+                                        "LIBARCHIVE_2935.native_b1_idr_extend_identifier_candidate.yml"
+                                    ],
+                                    "trigger_graph": "artifacts/trigger_graphs/LIBARCHIVE_2935.json",
+                                },
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                real_cve_readiness_path=readiness_path,
+                limit=1,
+                use_all_targets=True,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=4,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            task = payload["tasks"][0]
+            self.assertEqual(task["target_id"], "LIBARCHIVE_2935")
+            self.assertEqual(task["priority"], "P1")
+            self.assertEqual(task["action"], "validate_binding_spec_then_short_screen")
+            self.assertEqual(
+                task["blocking_issue"],
+                ["BindingSpec candidate is not native-site-map validated"],
+            )
+            self.assertTrue(
+                any("LIBARCHIVE_2935.native_b1_idr_extend_identifier_candidate.yml" in path for path in task["evidence_paths"])
+            )
+            self.assertEqual(payload["skipped_low_priority_count"], 0)
+
     def test_ready_binding_validation_routes_to_matched_short_screen(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

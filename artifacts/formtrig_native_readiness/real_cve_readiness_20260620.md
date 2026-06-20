@@ -8,7 +8,7 @@ or terminal validation.
 | rank | target | category | readiness | RNT | binary `D_T` gap | terminal | BindingSpec candidate | BindingSpec validated | short-gate packages | next action |
 | ---: | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
 | 1 | GPAC_3403 | compound-sequence-lifecycle | `endpoint_closure_demoted_control` | yes | yes | yes | yes | yes | 17 | Keep B13 out of the main hard-pain budget unless a farther seedbank or less endpoint-revealing harness is constructed. For GPAC_3403 main real-CVE evidence, either repair the generic B7/B10 lifecycle alias path to terminal endpoint without a target-specific payload shortcut, or use B13 only as a control/ablation case. |
-| 2 | LIBARCHIVE_2935 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
+| 2 | LIBARCHIVE_2935 | numeric-margin | `needs_binding_validation` | yes | yes | yes | yes | no | 0 | build a FORMTRIG-instrumented target/site map, compile BindingSpec, run lift audit and harness admissibility |
 | 3 | LIBARCHIVE_2937 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 4 | LIBARCHIVE_2938 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
 | 5 | LIBARCHIVE_2925 | numeric-margin | `ready_for_binding_spec` | yes | yes | yes | no | no | 0 | draft BindingSpec from TCIR/atoms and validate static/dynamic binding signal |
@@ -42,7 +42,7 @@ or terminal validation.
 - Short-gate comparison packages: 0
 - Current speedup package: none
 - Current benefit: none
-- Blockers: no executable BindingSpec candidate
+- Blockers: BindingSpec candidate is not native-site-map validated
 - Program: `benchmarks/cve_build/libarchive-a819-asan/libarchive_write_replay`
 - RNT manifest: `artifacts/rnt_corpus/LIBARCHIVE_2935/manifest.json`
 

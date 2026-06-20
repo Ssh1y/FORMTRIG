@@ -1,0 +1,34 @@
+{
+  "atom_count": 1,
+  "binding_count": 5,
+  "blockers": [],
+  "checks": {
+    "exact_runtime_mapping_pass": true,
+    "negative_role_rejection_pass": true,
+    "semantic_role_coverage_pass": true,
+    "static_root_binding_pass": true
+  },
+  "generated_at_utc": "2026-06-20T04:56:37+00:00",
+  "limitations": [],
+  "normalized_category": "numeric",
+  "role_counts": {
+    "guard": 1,
+    "input_influence": 2,
+    "root_observe": 1,
+    "use": 1
+  },
+  "roles_by_atom": {
+    "1": [
+      "guard",
+      "input_influence",
+      "root_observe",
+      "use"
+    ]
+  },
+  "schema": "formtrig_binding_spec_tc_rooted_audit_v1",
+  "source_path": "artifacts/binding_specs/LIBARCHIVE_2935.native_b1_idr_extend_identifier_candidate.yml",
+  "status": "pass",
+  "tc_category": "numeric-margin",
+  "tc_expression": "Joliet identifier extension copies extension bytes beyond the allocated identifier buffer when rename offset and extension length exceed the allocation.",
+  "tc_id": "LIBARCHIVE_2935"
+}
