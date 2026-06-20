@@ -233,6 +233,52 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertIn(metadata["seed_dir"], commands["formtrig"])
             self.assertIn(metadata["seed_dir"], commands["aflplusplus_vanilla"])
 
+    def test_b12_scal_ref_endpoint_gate_enables_endpoint_replay(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "gpac3403_b12_endpoint"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_gpac3403_b12_scal_ref_endpoint_gate.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "15",
+                    "--out",
+                    str(out_dir),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual([record["arm"] for record in records], ["formtrig"])
+            self.assertTrue(all(record["seed_format"] == "mp4-scal-ref-scaffold" for record in records))
+            self.assertTrue(all(record["typed_retain_max"] == 128 for record in records))
+            self.assertEqual(records[0]["duration_s"], 15)
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["arms"], "formtrig")
+            self.assertEqual(metadata["baselines"], "")
+            self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")
+            self.assertEqual(metadata["typed_retain_endpoint_selection"], "best-d-f")
+            self.assertEqual(metadata["typed_retain_endpoint_timeout"], 5)
+            self.assertEqual(metadata["typed_retain_endpoint_replays"], 1)
+            self.assertEqual(metadata["typed_retain_endpoint_max_records"], 32)
+            self.assertIn("gpac3403_b12_scal_ref_scaffold_20260620/corpus", metadata["seed_dir"])
+            self.assertIn("gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z", metadata["typed_retain_endpoint_positive_control"])
+
+            runner = (
+                REPO_ROOT / "scripts" / "run_gpac3403_b12_scal_ref_endpoint_gate.sh"
+            ).read_text(encoding="utf-8")
+            self.assertIn("--enhanced-mode copy-base", runner)
+            self.assertIn("--enhanced-mode mutated", runner)
+            self.assertIn("--typed-retain-endpoint-replay on", runner)
+            self.assertIn("--typed-retain-endpoint-selection best-d-f", runner)
+
     def test_dry_run_supports_nohook_ablation(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "gpac3403_nohook"

@@ -1,0 +1,1699 @@
+{
+  "alias_relation_audit": {
+    "available": true,
+    "lift_spec": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/fuzzer_out/.formtrig/formtrig_lift.normalized",
+    "report": {
+      "binding_count": 34,
+      "lift_spec": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/fuzzer_out/.formtrig/formtrig_lift.normalized",
+      "runtime_count": 1,
+      "runtimes": [
+        {
+          "best_record": {
+            "cleanup_branch_observed": true,
+            "cleanup_values": [
+              100974805063712
+            ],
+            "complete_alias_free_relation": false,
+            "component_count": 14,
+            "d_f_spec_lifted": 3,
+            "dynamic_root_observed": true,
+            "reached": true,
+            "release_branch_observed": true,
+            "release_cleanup_matches": [],
+            "release_same_object_matches": [
+              100974805069056
+            ],
+            "release_values": [
+              100974805069056
+            ],
+            "same_object_cleanup_matches": [],
+            "same_object_values": [
+              100974805069056
+            ],
+            "status": "release_reassign_alias_without_cleanup_free_alias",
+            "target_hit_count": 1
+          },
+          "cleanup_value_records": 35,
+          "complete_alias_free_relation_records": 0,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_progress.jsonl",
+          "record_count": 40,
+          "record_statuses": [
+            "missing_same_object_value",
+            "release_reassign_alias_without_cleanup_free_alias"
+          ],
+          "release_reassign_alias_records": 7,
+          "status": "release_reassign_alias_observed_cleanup_differs"
+        }
+      ],
+      "schema": "formtrig_gpac3403_alias_relation_audit_v1",
+      "verdict": {
+        "complete_alias_free_relation": false,
+        "interpretation": "The sample release and reassign-buffer values match, but no runtime record proves the later GF_BitStream->original cleanup free uses the same pointer.",
+        "release_reassign_alias_observed": true,
+        "status": "release_reassign_alias_observed_terminal_cleanup_missing"
+      }
+    },
+    "runtime_jsonl": [
+      "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_progress.jsonl"
+    ]
+  },
+  "endpoint_audit": {
+    "available": true,
+    "logs_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs",
+    "report": {
+      "contrast": {
+        "positive_control_files": 1,
+        "positive_control_signatures_absent_from_variants": [
+          "asan_double_free"
+        ],
+        "positive_signatures": [
+          "asan_double_free"
+        ],
+        "top_variants_by_positive_overlap": [
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000000.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 0,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000001.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 1,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000002.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 2,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000003.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 3,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000004.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 4,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000005.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 5,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000006.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 6,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000007.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 7,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000008.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 8,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000009.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 9,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000010.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 10,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/variant_000011.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 11,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          }
+        ],
+        "variant_files": 15,
+        "weighted_positive_signature_total": 100
+      },
+      "logs_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs",
+      "positive_control": {
+        "files": 1,
+        "metrics": {
+          "asan_double_free_examples": [
+            "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/positive_control.endpoint_1.stderr"
+          ],
+          "asan_double_free_files": 1,
+          "hevc_import_files": 0,
+          "hevc_import_observations": 0,
+          "hevc_nalus_max": null,
+          "hevc_samples_max": null,
+          "hevc_top_samples": [],
+          "lhevc_import_files": 0,
+          "lhevc_import_observations": 0,
+          "lhevc_top_slices": []
+        },
+        "signatures": {
+          "asan": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "asan_double_free": {
+            "examples": [
+              "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/logs/positive_control.endpoint_1.stderr"
+            ],
+            "files": 1,
+            "occurrences": 1,
+            "top_values": []
+          },
+          "failed_vps_extensions": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "hevc_import_results": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "layers_only_4": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "lhevc_import_results": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "nal_type_32_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "nal_type_49_not_handled": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "picture_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "sequence_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "track_importing_hevc": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "video_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "vps_max_layer_id": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "wrong_output_layer_sets": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          }
+        }
+      },
+      "records": null,
+      "schema": "formtrig_gpac3403_endpoint_signature_audit_v2",
+      "summary": {
+        "d_f_spec_lifted_max": 6.0,
+        "d_f_spec_lifted_min": 3.0,
+        "duration_s": 1.768,
+        "endpoint_native_crashes": 0,
+        "endpoint_replayed_variants": 15,
+        "endpoint_sanitizer_crashes": 0,
+        "endpoint_timeouts": 0
+      },
+      "variant": {
+        "files": 15,
+        "metrics": {
+          "asan_double_free_examples": [],
+          "asan_double_free_files": 0,
+          "hevc_import_files": 0,
+          "hevc_import_observations": 0,
+          "hevc_nalus_max": null,
+          "hevc_samples_max": null,
+          "hevc_top_samples": [],
+          "lhevc_import_files": 0,
+          "lhevc_import_observations": 0,
+          "lhevc_top_slices": []
+        },
+        "signatures": {
+          "asan": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "asan_double_free": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "failed_vps_extensions": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "hevc_import_results": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "layers_only_4": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "lhevc_import_results": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "nal_type_32_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "nal_type_49_not_handled": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "picture_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "sequence_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "track_importing_hevc": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "video_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "vps_max_layer_id": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "wrong_output_layer_sets": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          }
+        }
+      }
+    },
+    "stderr_files": 16
+  },
+  "evidence_assessment": {
+    "alias_relation_complete": false,
+    "alias_relation_status": "release_reassign_alias_observed_terminal_cleanup_missing",
+    "alias_release_reassign_observed": true,
+    "claim_boundary": "Typed-retained candidates have structure and endpoint evidence; compare variant signatures against positive-control gaps before claiming R2T progress. Alias/free relation audit is not terminal-complete; do not claim GPAC_3403 endpoint R2T closure from this package.",
+    "d_f_spec_lifted_count": 15,
+    "d_f_spec_lifted_max": 6.0,
+    "d_f_spec_lifted_min": 3.0,
+    "endpoint_positive_control_files": 1,
+    "endpoint_variant_files": 15,
+    "existing_inputs": 15,
+    "positive_control_signatures_absent_from_variants": [
+      "asan_double_free"
+    ],
+    "records_jsonl_lines": 15,
+    "retained_records": 15,
+    "structure_profiled_candidates": 15
+  },
+  "records_jsonl_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained_endpoint_records.jsonl",
+  "run_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1",
+  "schema": "formtrig_gpac3403_typed_retained_audit_package_v1",
+  "structure_audit": {
+    "available": true,
+    "mode": "records_only",
+    "variant_summary": {
+      "best_by_d_f": [
+        {
+          "d_f_spec_lifted": 3.0,
+          "endpoint_exit_code": 0,
+          "endpoint_sanitizer_crash": false,
+          "index": 2,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 3,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000003,op:3,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7359,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 3.0,
+          "endpoint_exit_code": 0,
+          "endpoint_sanitizer_crash": false,
+          "index": 8,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 11,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000008,src:000000,stage:000011,op:11,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7359,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 0,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 0,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000000,src:000000,stage:000000,op:0,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7347,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 1,
+          "layer_counts": {
+            "0": 58,
+            "13": 8,
+            "14": 4,
+            "46": 1,
+            "56": 4
+          },
+          "max_layer": 56,
+          "op": 1,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:1,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 8812,
+          "total_nalus": 75,
+          "triggered": null,
+          "type_counts": {
+            "0": 58,
+            "40": 4,
+            "42": 4,
+            "52": 1,
+            "58": 4,
+            "8": 4
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 4,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 5,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000004,src:000000,stage:000005,op:5,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7348,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 5,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 8,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000005,src:000000,stage:000008,op:8,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7347,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 6,
+          "layer_counts": {
+            "0": 58,
+            "13": 8,
+            "14": 4,
+            "46": 1,
+            "56": 4
+          },
+          "max_layer": 56,
+          "op": 9,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000006,src:000000,stage:000009,op:9,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 8812,
+          "total_nalus": 75,
+          "triggered": null,
+          "type_counts": {
+            "0": 58,
+            "40": 4,
+            "42": 4,
+            "52": 1,
+            "58": 4,
+            "8": 4
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 7,
+          "layer_counts": {
+            "46": 1
+          },
+          "max_layer": 46,
+          "op": 10,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000007,src:000000,stage:000010,op:10,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 5882,
+          "total_nalus": 1,
+          "triggered": null,
+          "type_counts": {
+            "52": 1
+          },
+          "unique_layers": [
+            46
+          ],
+          "unique_types": [
+            52
+          ]
+        }
+      ],
+      "endpoint_sanitizer_crashes": 0,
+      "largest_by_nalus": [
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 1,
+          "layer_counts": {
+            "0": 58,
+            "13": 8,
+            "14": 4,
+            "46": 1,
+            "56": 4
+          },
+          "max_layer": 56,
+          "op": 1,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:1,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 8812,
+          "total_nalus": 75,
+          "triggered": null,
+          "type_counts": {
+            "0": 58,
+            "40": 4,
+            "42": 4,
+            "52": 1,
+            "58": 4,
+            "8": 4
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 6,
+          "layer_counts": {
+            "0": 58,
+            "13": 8,
+            "14": 4,
+            "46": 1,
+            "56": 4
+          },
+          "max_layer": 56,
+          "op": 9,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000006,src:000000,stage:000009,op:9,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 8812,
+          "total_nalus": 75,
+          "triggered": null,
+          "type_counts": {
+            "0": 58,
+            "40": 4,
+            "42": 4,
+            "52": 1,
+            "58": 4,
+            "8": 4
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 14,
+          "layer_counts": {
+            "0": 58,
+            "13": 8,
+            "14": 4,
+            "46": 1,
+            "56": 4
+          },
+          "max_layer": 56,
+          "op": 17,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000014,src:000000,stage:000017,op:17,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 8812,
+          "total_nalus": 75,
+          "triggered": null,
+          "type_counts": {
+            "0": 58,
+            "40": 4,
+            "42": 4,
+            "52": 1,
+            "58": 4,
+            "8": 4
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 12,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 15,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000012,src:000000,stage:000015,op:15,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7387,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 3.0,
+          "endpoint_exit_code": 0,
+          "endpoint_sanitizer_crash": false,
+          "index": 2,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 3,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000003,op:3,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7359,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 3.0,
+          "endpoint_exit_code": 0,
+          "endpoint_sanitizer_crash": false,
+          "index": 8,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 11,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000008,src:000000,stage:000011,op:11,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7359,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 4,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 5,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000004,src:000000,stage:000005,op:5,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7348,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 5.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 10,
+          "layer_counts": {
+            "0": 29,
+            "13": 4,
+            "14": 2,
+            "46": 1,
+            "56": 2
+          },
+          "max_layer": 56,
+          "op": 13,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000010,src:000000,stage:000013,op:13,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 7348,
+          "total_nalus": 38,
+          "triggered": null,
+          "type_counts": {
+            "0": 29,
+            "40": 2,
+            "42": 2,
+            "52": 1,
+            "58": 2,
+            "8": 2
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            8,
+            40,
+            42,
+            52,
+            58
+          ]
+        }
+      ],
+      "profiled_count": 15,
+      "record_count": 15,
+      "records_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained_endpoint_records.jsonl"
+    }
+  },
+  "typed_retained": {
+    "available": true,
+    "best_by_d_f": [
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 3.0,
+        "hook_used": true,
+        "index": 2,
+        "off": 0,
+        "op": 3,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000003,op:3,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "9a85ef4d37d66d2cffa5b3f3c0de0b38f6015f4cb930d47782a6bfe39cf2b21b",
+        "size": 7359,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 3,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 3.0,
+        "hook_used": true,
+        "index": 8,
+        "off": 0,
+        "op": 11,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000008,src:000000,stage:000011,op:11,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "9a85ef4d37d66d2cffa5b3f3c0de0b38f6015f4cb930d47782a6bfe39cf2b21b",
+        "size": 7359,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 11,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 0,
+        "off": 0,
+        "op": 0,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000000,src:000000,stage:000000,op:0,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "1a6aea6d5178efd4f669e6deaaf63e9265838c4d24680fb63b2076ab089284fe",
+        "size": 7347,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 0,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 1,
+        "off": 0,
+        "op": 1,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:1,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "a8cee437848e6c43de411f33c3279d065308565e0b8d24adbc8e98515372b1bc",
+        "size": 8812,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 1,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 4,
+        "off": 0,
+        "op": 5,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000004,src:000000,stage:000005,op:5,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "4e68d01475233091472880cd02d43aceefbbba63add295226e91c7918be3b436",
+        "size": 7348,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 5,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 5,
+        "off": 0,
+        "op": 8,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000005,src:000000,stage:000008,op:8,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "583f4c5c99204a2bf0a75cc3f8caab8218d1b13d963dade06be66ef44bcf47be",
+        "size": 7347,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 8,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 6,
+        "off": 0,
+        "op": 9,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000006,src:000000,stage:000009,op:9,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "a8cee437848e6c43de411f33c3279d065308565e0b8d24adbc8e98515372b1bc",
+        "size": 8812,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 9,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 7,
+        "off": 0,
+        "op": 10,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000007,src:000000,stage:000010,op:10,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "1b2ced2ca6ec2986af79158194bef98a56972f934c31e0003ba719a886dcd8a3",
+        "size": 5882,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 10,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 10,
+        "off": 0,
+        "op": 13,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000010,src:000000,stage:000013,op:13,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "4e68d01475233091472880cd02d43aceefbbba63add295226e91c7918be3b436",
+        "size": 7348,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 13,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 11,
+        "off": 0,
+        "op": 14,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000011,src:000000,stage:000014,op:14,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "44bd9435b8380bd0a8a8f9ebd71a94f6e5e0e628e5d9dbccb16b76d1de3fd9f7",
+        "size": 7346,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 14,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 12,
+        "off": 0,
+        "op": 15,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000012,src:000000,stage:000015,op:15,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "6350aa4f5de243c1318ef229f1c65120166d8482735428166108f6f7b23eacd7",
+        "size": 7387,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 15,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 13,
+        "off": 0,
+        "op": 16,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000013,src:000000,stage:000016,op:16,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "1a6aea6d5178efd4f669e6deaaf63e9265838c4d24680fb63b2076ab089284fe",
+        "size": 7347,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 16,
+        "start": 0
+      }
+    ],
+    "component_kinds": {
+      "3": 15
+    },
+    "d_f_spec_lifted": {
+      "count": 15,
+      "max": 6.0,
+      "min": 3.0,
+      "unique": [
+        3.0,
+        5.0,
+        6.0
+      ]
+    },
+    "existing_inputs": 15,
+    "hook_used_records": 15,
+    "largest_by_size": [
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 14,
+        "off": 0,
+        "op": 17,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000014,src:000000,stage:000017,op:17,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "a8cee437848e6c43de411f33c3279d065308565e0b8d24adbc8e98515372b1bc",
+        "size": 8812,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 17,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 6,
+        "off": 0,
+        "op": 9,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000006,src:000000,stage:000009,op:9,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "a8cee437848e6c43de411f33c3279d065308565e0b8d24adbc8e98515372b1bc",
+        "size": 8812,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 9,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 1,
+        "off": 0,
+        "op": 1,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:1,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "a8cee437848e6c43de411f33c3279d065308565e0b8d24adbc8e98515372b1bc",
+        "size": 8812,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 1,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 12,
+        "off": 0,
+        "op": 15,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000012,src:000000,stage:000015,op:15,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "6350aa4f5de243c1318ef229f1c65120166d8482735428166108f6f7b23eacd7",
+        "size": 7387,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 15,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 3.0,
+        "hook_used": true,
+        "index": 8,
+        "off": 0,
+        "op": 11,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000008,src:000000,stage:000011,op:11,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "9a85ef4d37d66d2cffa5b3f3c0de0b38f6015f4cb930d47782a6bfe39cf2b21b",
+        "size": 7359,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 11,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 3.0,
+        "hook_used": true,
+        "index": 2,
+        "off": 0,
+        "op": 3,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000003,op:3,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "9a85ef4d37d66d2cffa5b3f3c0de0b38f6015f4cb930d47782a6bfe39cf2b21b",
+        "size": 7359,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 3,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 10,
+        "off": 0,
+        "op": 13,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000010,src:000000,stage:000013,op:13,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "4e68d01475233091472880cd02d43aceefbbba63add295226e91c7918be3b436",
+        "size": 7348,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 13,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 4,
+        "off": 0,
+        "op": 5,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000004,src:000000,stage:000005,op:5,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "4e68d01475233091472880cd02d43aceefbbba63add295226e91c7918be3b436",
+        "size": 7348,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 5,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 13,
+        "off": 0,
+        "op": 16,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000013,src:000000,stage:000016,op:16,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "1a6aea6d5178efd4f669e6deaaf63e9265838c4d24680fb63b2076ab089284fe",
+        "size": 7347,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 16,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 6.0,
+        "hook_used": true,
+        "index": 9,
+        "off": 0,
+        "op": 12,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000009,src:000000,stage:000012,op:12,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "64c113316b4fc1c57b6b0f2db2b819005ebd3bd0d624b4b2cf48289e405dfe0b",
+        "size": 7347,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 12,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 5.0,
+        "hook_used": true,
+        "index": 5,
+        "off": 0,
+        "op": 8,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000005,src:000000,stage:000008,op:8,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "583f4c5c99204a2bf0a75cc3f8caab8218d1b13d963dade06be66ef44bcf47be",
+        "size": 7347,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 8,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 6.0,
+        "hook_used": true,
+        "index": 3,
+        "off": 0,
+        "op": 4,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/id:000003,src:000000,stage:000004,op:4,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "64c113316b4fc1c57b6b0f2db2b819005ebd3bd0d624b4b2cf48289e405dfe0b",
+        "size": 7347,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 4,
+        "start": 0
+      }
+    ],
+    "missing_examples": [],
+    "missing_inputs": 0,
+    "missing_records_tsv": [],
+    "ops": {
+      "0": 1,
+      "1": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "8": 1,
+      "9": 1
+    },
+    "records_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained_records.jsonl",
+    "records_tsv": [
+      "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained/records.tsv"
+    ],
+    "retained_records": 15,
+    "roles": {
+      "root_observe": 15
+    },
+    "schema": "formtrig_typed_retained_candidates_v1",
+    "source_queue_ids": {
+      "0": 15
+    },
+    "total_existing_bytes": 113200
+  },
+  "typed_summary_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z/runs/formtrig_rep1/typed_retained_summary.json"
+}

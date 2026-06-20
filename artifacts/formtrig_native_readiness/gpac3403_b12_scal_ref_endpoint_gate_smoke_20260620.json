@@ -1,0 +1,79 @@
+{
+  "schema": "formtrig_gpac3403_b12_scal_ref_endpoint_gate_smoke_v1",
+  "target": "GPAC_3403",
+  "date_utc": "2026-06-20",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_endpoint_gate_smoke_20260620T025307Z",
+  "runner": "scripts/run_gpac3403_b12_scal_ref_endpoint_gate.sh",
+  "status": "endpoint_replay_gate_executed",
+  "configuration": {
+    "mode": "execute",
+    "duration_s": 5,
+    "arms": "formtrig",
+    "baselines": "",
+    "seed_format": "mp4-scal-ref-scaffold",
+    "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b10_extractor_return_candidate.yml",
+    "mutation_hook_override": "scripts/formtrig_hooks/mp4_box_structure_hook.py",
+    "typed_ops": 64,
+    "typed_mutation_max": 256,
+    "typed_retain_max": 128,
+    "typed_retain_mode": "all",
+    "typed_retain_endpoint_replay": "on",
+    "typed_retain_endpoint_selection": "best-d-f",
+    "typed_retain_endpoint_max_records": 32
+  },
+  "gate": {
+    "status": "pass",
+    "run_time": 5,
+    "execs_done": 78,
+    "execs_per_sec": 15.32,
+    "reached": 79,
+    "terminal_triggered": 0,
+    "queued_progress": 3,
+    "accepted_non_trigger": 3,
+    "saved_non_trigger": 3,
+    "saved_triggered": 0,
+    "spec_lifted": 40,
+    "pretrigger_lift_guidance_ready": true,
+    "non_trigger_candidate_lift_delta": true,
+    "lift_delta_only_on_triggered": false,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed"
+  },
+  "endpoint_replay": {
+    "selected_records": 15,
+    "endpoint_replayed_variants": 15,
+    "endpoint_probe_runs": 15,
+    "endpoint_native_crashes": 0,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_timeouts": 0,
+    "endpoint_exit_code_counts": {
+      "0": 2,
+      "1": 13
+    },
+    "positive_control_probe_runs": 1,
+    "positive_control_native_crashes": 1,
+    "positive_control_sanitizer_crashes": 0,
+    "positive_control_exit_code": -6
+  },
+  "typed_retained_audit": {
+    "retained_records": 15,
+    "d_f_spec_lifted_count": 15,
+    "d_f_spec_lifted_min": 3.0,
+    "d_f_spec_lifted_max": 6.0,
+    "endpoint_positive_control_files": 1,
+    "endpoint_variant_files": 15,
+    "positive_control_signatures_absent_from_variants": [
+      "asan_double_free"
+    ],
+    "alias_release_reassign_observed": true,
+    "alias_relation_complete": false,
+    "alias_relation_status": "release_reassign_alias_observed_terminal_cleanup_missing"
+  },
+  "verdict": {
+    "summary": "The B12 endpoint gate generated a non-terminal SCAL-reference scaffold corpus, generated a B11 terminal positive-control MP4, ran a 5s FORMTRIG campaign, replayed 15 retained variants through the GPAC endpoint, and replayed the positive control through the same endpoint command.",
+    "positive_evidence": "The endpoint replay loop is now executable and calibrated: the B11 positive control crashes natively with exit code -6 while the B12 scaffold campaign still produces strict pre-trigger non-trigger progress.",
+    "negative_evidence": "No retained variant triggered the endpoint in this 5s smoke. The audit reports the positive-control double-free signature absent from variants and the alias/free relation still terminal-cleanup-missing.",
+    "claim_boundary": "This is endpoint-gate readiness plus a short negative endpoint result, not a FORMTRIG endpoint success campaign. It supports the next repair step: strengthen GPAC scaffold-to-terminal typed mutation beyond the generic MP4 box hook.",
+    "next_action": "Add a GPAC-specific MP4/SCAL sample mutation hook or longer endpoint replay campaign that can mutate the enhanced track payload toward the B11 op52/sample2 terminal shape while preserving the B12 SCAL reference scaffold."
+  }
+}

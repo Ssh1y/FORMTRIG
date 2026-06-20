@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "source": "cli_override",
+  "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/mp4_box_structure_hook.py",
+  "sha256": "2238d1be6586e8569d50c9e9146ee603f3199f39efc76b3be27f853a87bff4c0"
+}
