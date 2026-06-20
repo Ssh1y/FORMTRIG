@@ -389,6 +389,12 @@ at `artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_dfstr
 it preserves strict pre-trigger guidance, raises saved non-trigger progress to
 41, and confirms the 60/11 HEVC/L-HEVC import-file coverage inside the standard
 gate.
+The next endpoint-signature repair is also in place as a direct probe:
+`artifacts/formtrig_native_readiness/gpac3403_b7_import_safe_extractor_ops_probe_20260620.json`.
+It adds bounded import-safe extractor typed ops 48..51; direct MP4Box replay
+keeps HEVC import in 16/16 variants, L-HEVC import in 12/16, and reaches
+`nal_type_49_not_handled` in 12/16, but ASAN/double-free remains 0. The required
+next evidence is a full B7 typedops52 gate before any matched baselines.
 Typed-retained endpoint packages now embed the alias relation audit verdict, so
 future GPAC evidence packages cannot claim endpoint closure from parser/import
 signatures alone. New hard-pain budget should
@@ -1387,7 +1393,10 @@ GF_BitStream->original 尚未同指针，retained replay 的最大 import scale 
 ownership mutation，再进入 matched baselines。完整 B7 `df-structure` gate 已经
 把 saved non-trigger progress 从 35 提高到 41，并把 retained endpoint replay 覆盖
 从 38/6 提高到 60/11 HEVC/L-HEVC import files，但没有触发 ASAN/double-free，
-所以这只是 selection 侧正向修复。GPAC retained endpoint package 会自动
+所以这只是 selection 侧正向修复。随后新增的 import-safe extractor typed ops
+48..51 在 direct endpoint probe 中达到 16/16 HEVC import、12/16 L-HEVC import、
+12/16 `nal_type_49_not_handled`，但 ASAN/double-free 仍为 0；下一步要跑完整 B7
+typedops52 gate 验证这些 ops 能否进入 FORMTRIG retained loop。GPAC retained endpoint package 会自动
 嵌入 alias relation audit，避免把 parser/import 近邻当作 endpoint 闭环。
 最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。

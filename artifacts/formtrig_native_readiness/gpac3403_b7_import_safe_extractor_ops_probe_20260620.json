@@ -1,0 +1,30 @@
+{
+  "schema": "formtrig_gpac3403_b7_import_safe_extractor_ops_probe_summary_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-20T00:16:00Z",
+  "raw_probe_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_import_safe_extractor_ops_probe_20260620T001443Z",
+  "changed_components": [
+    "scripts/formtrig_hooks/hevc_annexb_structure_hook.py",
+    "scripts/run_gpac3403_b7_relation_endpoint_gate.sh"
+  ],
+  "new_typed_ops": [
+    48,
+    49,
+    50,
+    51
+  ],
+  "probe_input": "/tmp/formtrig_gpac3403_blackwhite_seed/blackwhite_yuv444p-frame.hevc",
+  "endpoint_cmd": "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box -cat @@ benchmarks/cve_seeds/gpac/white.mp4 -out /dev/null",
+  "variant_count": 16,
+  "type49_structural_variants": 16,
+  "track_importing_hevc_files": 16,
+  "hevc_import_files": 16,
+  "lhevc_import_files": 12,
+  "nal_type_49_not_handled_files": 12,
+  "asan_double_free_files": 0,
+  "wrong_output_layer_sets_files": 16,
+  "layers_only_4_files": 2,
+  "vps_max_layer_id_files": 0,
+  "interpretation": "The new bounded import-safe extractor typed ops preserve HEVC import while adding reachable type49 extractor behavior. This directly repairs the prior B7 df-structure endpoint-signature gap where selected variants contained structural type49 NALUs but endpoint logs never reached 'NAL Unit type 49 not handled'.",
+  "claim_boundary": "This is a direct endpoint probe for newly added typed ops, not a FORMTRIG full-gate result and not endpoint closure. ASAN/double-free remains 0; the next required evidence is a full B7 typedops52 gate showing the new ops appear in retained candidates and improve endpoint signatures under the standard FORMTRIG loop."
+}

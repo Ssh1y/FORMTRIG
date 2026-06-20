@@ -141,7 +141,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertEqual(len(records), 1)
             self.assertEqual(records[0]["arm"], "formtrig")
             self.assertEqual(records[0]["duration_s"], 600)
-            self.assertEqual(records[0]["typed_ops"], 48)
+            self.assertEqual(records[0]["typed_ops"], 52)
             self.assertEqual(records[0]["typed_op_start"], 44)
             self.assertEqual(records[0]["typed_schedule"], "op-first")
             self.assertEqual(records[0]["typed_mutation_max"], 256)
@@ -156,7 +156,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
                 "GPAC_3403.native_b7_relation_value_candidate.yml",
                 metadata["binding_spec"],
             )
-            self.assertEqual(metadata["typed_ops"], 48)
+            self.assertEqual(metadata["typed_ops"], 52)
             self.assertEqual(metadata["typed_op_start"], 44)
             self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")
             self.assertEqual(metadata["typed_retain_endpoint_selection"], "df-structure")

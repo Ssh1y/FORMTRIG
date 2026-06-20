@@ -238,6 +238,33 @@ class HevcAnnexBStructureHookTest(unittest.TestCase):
             self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
             self.assertNotEqual(output, original)
 
+    def test_import_safe_extractor_ops_keep_type49_with_bounded_import_shape(self):
+        hook = load_hook()
+        audit = load_module(AUDIT_PATH, "gpac3403_hevc_structure_audit_for_import_safe_extractor_test")
+        original = sample_hevc()
+
+        mutated_outputs = [
+            hook.mutate(original, start=0, span=len(original), off=8, op=op, sample=op + 53)
+            for op in range(48, 52)
+        ]
+
+        for output in mutated_outputs:
+            nalus = hook.parse_nalus(output)
+            types = [hook.nalu_type(output, nalu) for nalu in nalus]
+            vcl_nalus = [nalu for nalu in nalus if 0 <= hook.nalu_type(output, nalu) <= 31]
+            parsed_vps = parse_vps_items(hook, audit, output)
+
+            self.assertGreaterEqual(len(nalus), 18)
+            self.assertIn(32, types)
+            self.assertIn(33, types)
+            self.assertIn(34, types)
+            self.assertIn(49, types)
+            self.assertTrue(vcl_nalus)
+            self.assertTrue(parsed_vps)
+            self.assertLess(len(output), 20000)
+            self.assertLessEqual(len(output), hook.MAX_OUTPUT_LEN)
+            self.assertNotEqual(output, original)
+
     def test_cli_prefers_mutated_annexb_when_available(self):
         hook = load_hook()
         original = b"not annex b"

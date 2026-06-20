@@ -1434,7 +1434,13 @@ repair 已完成并在完整 B7 gate 中确认：`artifacts/formtrig_native_read
 证明 `df-structure` 保持 `D_F_spec_lifted` 优先、结构作为同层 tie-breaker，在完整
 gate 中把 retained endpoint replay 覆盖提升到 60 个 HEVC import files / 11 个
 L-HEVC import files，saved non-trigger progress 也从 35 增加到 41；但仍没有
-ASAN/double-free。typed-retained endpoint package 现在会自动嵌入 alias
+ASAN/double-free。第二步 endpoint-signature repair 已开始：
+`artifacts/formtrig_native_readiness/gpac3403_b7_import_safe_extractor_ops_probe_20260620.json`
+新增 bounded import-safe extractor typed ops 48..51，在 direct MP4Box endpoint
+probe 中 16/16 保持 HEVC import，12/16 保持 L-HEVC import，12/16 达到
+`nal_type_49_not_handled`，但 ASAN/double-free 仍为 0。下一步必须跑完整 B7
+typedops52 gate 验证这些 ops 是否在 FORMTRIG retained loop 内自然产生同样收益；
+若仍无 ASAN，再继续修 cleanup ownership/free closure。typed-retained endpoint package 现在会自动嵌入 alias
 relation audit verdict，防止只凭 parser/import signature 误判 GPAC endpoint 闭环。
 只有 B7 gate 出现 ASAN/double-free 或等价 alias/free proof 后，GPAC 才能升到 matched baselines。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
 core real-CVE 正例；LIBXML2 只能保留为 native pipeline / BindingSpec /

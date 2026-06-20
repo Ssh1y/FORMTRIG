@@ -28,7 +28,7 @@ ACCESS_UNIT_VCL_TYPES = [0, 1, 5, 14, 16, 21]
 HIGH_VPS_MAX_LAYER_IDS = [4, 7, 9, 16, 31, 50, 63]
 ENDPOINT_SCALE_LAYER_IDS = [4, 7, 1, 16, 50, 31, 36, 37, 0, 22, 14, 46]
 ENDPOINT_SCALE_VCL_TYPES = [0, 0, 0, 16, 0, 21, 0, 1, 0, 14, 0, 5]
-OP_SELECTOR_COUNT = 48
+OP_SELECTOR_COUNT = 52
 
 
 @dataclass(frozen=True)
@@ -607,6 +607,42 @@ def compact_output_layer_extractor_sequence(
     return dense + train
 
 
+def import_safe_extractor_train(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    repetitions: int,
+    extractor_count: int,
+    vcl_count: int,
+) -> bytes:
+    chunks = [
+        output_layer_set_train(data, nalus, anchor, sample, repetitions=repetitions)
+    ]
+    for index in range(extractor_count):
+        local_sample = sample + index
+        layer = ACCESS_UNIT_LAYER_IDS[(local_sample + 5) % len(ACCESS_UNIT_LAYER_IDS)]
+        chunks.append(make_nalu(49, extractor_payload(local_sample), layer))
+    for index in range(vcl_count):
+        local_sample = sample + index
+        nal_type = ACCESS_UNIT_VCL_TYPES[local_sample % len(ACCESS_UNIT_VCL_TYPES)]
+        layer = ACCESS_UNIT_LAYER_IDS[local_sample % len(ACCESS_UNIT_LAYER_IDS)]
+        chunks.append(
+            make_nalu(
+                nal_type,
+                access_unit_slice_payload(
+                    data,
+                    nalus,
+                    anchor,
+                    local_sample,
+                    rewrite_seed=index % 2 == 0,
+                ),
+                layer,
+            )
+        )
+    return b"".join(chunks)
+
+
 def extractor_payload(sample: int) -> bytes:
     pattern = bytes(
         [
@@ -1016,6 +1052,54 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
             data, nalus, anchor, sample + 11, units=192 + sample * 2, dense_prefix=True, high_vps_stride=7
         )
         out = data[: anchor.start] + prefix + train + data[anchor.start :]
+    elif selector == 48:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = import_safe_extractor_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            repetitions=4 + (sample % 4),
+            extractor_count=1 + (sample % 2),
+            vcl_count=2,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 49:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = import_safe_extractor_train(
+            data,
+            nalus,
+            anchor,
+            sample + 3,
+            repetitions=5 + (sample % 3),
+            extractor_count=2 + (sample % 2),
+            vcl_count=3,
+        )
+        out = train + data
+    elif selector == 50:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = import_safe_extractor_train(
+            data,
+            nalus,
+            anchor,
+            sample + 7,
+            repetitions=6 + (sample % 3),
+            extractor_count=2,
+            vcl_count=4,
+        )
+        out = data[: anchor.end] + train + data[anchor.end :]
+    elif selector == 51:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = import_safe_extractor_train(
+            data,
+            nalus,
+            anchor,
+            sample + 11,
+            repetitions=4 + (sample % 5),
+            extractor_count=3,
+            vcl_count=4,
+        )
+        out = data[: anchor.start] + train + data[anchor.start : anchor.end] + data[anchor.start :]
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]
