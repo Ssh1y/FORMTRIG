@@ -97,6 +97,7 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertIn("AFL_MAP_SIZE=10000000", commands["aflplusplus_cmplog"])
             self.assertIn("--startup-retries 2", commands["redqueen_operand"])
             self.assertIn("AFL_MAP_SIZE=10000000", commands["redqueen_operand"])
+            self.assertIn("--startup-retries 2", commands["aflplusplus_vanilla"])
             self.assertNotIn("AFL_MAP_SIZE=10000000", commands["aflplusplus_vanilla"])
 
     def test_typedops40_wrapper_enables_access_unit_ops(self):

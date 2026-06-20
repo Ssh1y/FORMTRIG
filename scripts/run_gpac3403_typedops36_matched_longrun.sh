@@ -261,12 +261,12 @@ baseline_command_array() {
     --env "UBSAN_OPTIONS=halt_on_error=1:abort_on_error=1:print_stacktrace=0"
     --afl-arg=-t
     --afl-arg="$timeout_arg"
+    --startup-retries "$baseline_startup_retries"
   )
   if baseline_needs_cmplog "$baseline"; then
     BASELINE_CMD+=(
       --cmplog-binary "$cmplog_binary"
       --env "AFL_MAP_SIZE=$cmplog_map_size"
-      --startup-retries "$baseline_startup_retries"
     )
   fi
 }

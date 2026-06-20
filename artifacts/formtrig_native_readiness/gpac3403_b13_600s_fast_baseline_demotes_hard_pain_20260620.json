@@ -1,0 +1,145 @@
+{
+  "schema": "formtrig_native_readiness_result_v1",
+  "target_id": "GPAC_3403",
+  "artifact_id": "gpac3403_b13_600s_fast_baseline_demotes_hard_pain_20260620",
+  "created_utc": "2026-06-20T04:50:00Z",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620",
+  "source_run": {
+    "kind": "early_stopped_partial_matched_screen",
+    "status": "early_stopped_after_fast_baseline",
+    "run_metadata": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/run_metadata.json",
+    "run_plan": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/run_plan.jsonl",
+    "baseline_summary": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/baseline_summary.json",
+    "early_stop_reason": "fast_successful_baseline_within_acceptable_threshold",
+    "claim_boundary": "This run is not a complete 3-rep matched comparison and must not be used as FORMTRIG endpoint-performance evidence."
+  },
+  "campaign": {
+    "planned_duration_s": 600,
+    "planned_reps": 3,
+    "acceptable_trigger_threshold_s": 600,
+    "timeout_oracle": "-t 5000+",
+    "seed_format": "mp4-scal-ref-scaffold",
+    "seed_preflight": "require",
+    "category": "compound-sequence-lifecycle",
+    "typed_ops": 64,
+    "typed_op_start": 52,
+    "typed_schedule": "op-first",
+    "typed_mutation_max": 256,
+    "typed_retain_mode": "all",
+    "typed_retain_endpoint_replay": "on",
+    "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b10_extractor_return_candidate.yml",
+    "mutation_hook_override": "scripts/formtrig_hooks/gpac_scal_ref_mp4_hook.py",
+    "baseline_startup_retries_planned": 2,
+    "cmplog_map_size": 10000000
+  },
+  "completed_baseline_evidence": {
+    "aflplusplus_cmplog": {
+      "valid_reps": 1,
+      "successes": 1,
+      "first_trigger_time_s": 207.984,
+      "first_trigger_execs": 3073,
+      "run_time_s": 600,
+      "execs_done": 6662,
+      "execs_per_sec": 11.1,
+      "corpus_count": 193,
+      "saved_crashes": 7,
+      "saved_hangs": 1,
+      "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/aflplusplus_cmplog_rep1/run_record.json",
+      "status": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/aflplusplus_cmplog_rep1/status.json"
+    },
+    "redqueen_operand": {
+      "valid_reps": 1,
+      "successes": 1,
+      "first_trigger_time_s": 203.212,
+      "first_trigger_execs": 3045,
+      "run_time_s": 600,
+      "execs_done": 6687,
+      "execs_per_sec": 11.14,
+      "corpus_count": 194,
+      "saved_crashes": 4,
+      "saved_hangs": 1,
+      "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/redqueen_operand_rep1/run_record.json",
+      "status": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/redqueen_operand_rep1/status.json"
+    },
+    "aflplusplus_vanilla": {
+      "valid_reps": 0,
+      "attempted_reps": 2,
+      "invalid_startup_only_reps": 2,
+      "startup_retry_bug_observed": true,
+      "run_records": [
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/aflplusplus_vanilla_rep1/run_record.json",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/aflplusplus_vanilla_rep2/run_record.json"
+      ],
+      "statuses": [
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/aflplusplus_vanilla_rep1/status.json",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/aflplusplus_vanilla_rep2/status.json"
+      ]
+    }
+  },
+  "partial_formtrig_context": {
+    "formal_comparison_status": "not_available_interrupted_before_gate_summary",
+    "use_for_performance_claim": false,
+    "observed_fuzzer_stats": {
+      "formtrig_rep1": {
+        "run_time_s": 621,
+        "execs_done": 363,
+        "execs_per_sec": 0.58,
+        "corpus_count": 30,
+        "saved_crashes": 7,
+        "saved_hangs": 0
+      },
+      "formtrig_rep2": {
+        "run_time_s": 624,
+        "execs_done": 363,
+        "execs_per_sec": 0.58,
+        "corpus_count": 30,
+        "saved_crashes": 7,
+        "saved_hangs": 0
+      },
+      "formtrig_rep3": {
+        "run_time_s": 39,
+        "execs_done": 48,
+        "execs_per_sec": 1.22,
+        "corpus_count": 6,
+        "saved_crashes": 1,
+        "saved_hangs": 0
+      },
+      "formtrig_nohook_rep1": {
+        "run_time_s": 600,
+        "execs_done": 15869,
+        "execs_per_sec": 26.44,
+        "corpus_count": 346,
+        "saved_crashes": 9,
+        "saved_hangs": 0
+      }
+    }
+  },
+  "evidence_assessment": {
+    "hard_sota_pain_status": "demoted",
+    "demotion_reason": "At least two strong faithful baselines triggered within the 600s acceptable threshold on the first completed repetition.",
+    "supported": [
+      "B13 remains a useful native-readiness, speedup/control, and runner-regression target.",
+      "AFL++ CmpLog produced a valid terminal crash at 207.984s / 3073 execs under the same seed corpus and timeout oracle.",
+      "Redqueen/operand produced a valid terminal crash at 203.212s / 3045 execs under the same seed corpus and timeout oracle.",
+      "The vanilla arm exposed a runner fairness bug: startup retries were only applied to CmpLog/Redqueen before this patch."
+    ],
+    "not_supported": [
+      "B13 as hard SOTA-pain main evidence under the current seed/harness.",
+      "A complete 600s x3 matched endpoint comparison from this interrupted run.",
+      "A FORMTRIG 600s performance claim from this partial run."
+    ],
+    "required_next": [
+      "Use the fixed runner for future GPAC baseline screens so startup-only failures are retried for all baseline families.",
+      "Move hard-pain budget to targets where faithful baselines show flat/binary pre-_T guidance and late/missing/high-variance endpoint behavior.",
+      "Do not rerun B13 as the main hard-gap target unless the seedbank or harness is made materially farther from the terminal state."
+    ]
+  },
+  "runner_fix": {
+    "status": "implemented_in_same_change",
+    "files": [
+      "scripts/run_gpac3403_typedops36_matched_longrun.sh",
+      "tests/test_gpac3403_typedops36_matched_runner.py"
+    ],
+    "fix": "Pass --startup-retries to all baseline commands, not only baselines that need CmpLog binaries."
+  }
+}

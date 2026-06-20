@@ -1,0 +1,5 @@
+target_id	baseline	budget	rep	valid_run	returncode	success	trigger_time_s	trigger_time_kind	run_time	execs_done	execs_per_sec	corpus_count	saved_crashes	saved_hangs	magma_reached	magma_triggered	magma_first_reach_time_s	magma_first_trigger_time_s	magma_snapshot_count
+GPAC_3403	aflplusplus_cmplog	600	1	true	0	true	207.984	exact	600	6662	11.10	193	7	1	0	0	NA	NA	NA
+GPAC_3403	aflplusplus_vanilla	600	1	false	1	false	NA	NA	1	0	NA	0	0	0	0	0	NA	NA	NA
+GPAC_3403	aflplusplus_vanilla	600	2	false	1	false	NA	NA	6	0	NA	0	0	0	0	0	NA	NA	NA
+GPAC_3403	redqueen_operand	600	1	true	0	true	203.212	exact	600	6687	11.14	194	4	1	0	0	NA	NA	NA

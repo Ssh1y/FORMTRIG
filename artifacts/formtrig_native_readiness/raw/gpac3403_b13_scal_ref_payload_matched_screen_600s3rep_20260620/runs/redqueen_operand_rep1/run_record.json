@@ -1,0 +1,78 @@
+{
+  "baseline": "redqueen_operand",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "budget": 600,
+  "command_line": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T041709Z/corpus",
+    "-o",
+    "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/redqueen_operand_rep1/fuzzer_out_attempt1",
+    "-m",
+    "none",
+    "-V",
+    "600",
+    "-c",
+    "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "config_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/redqueen_operand_rep1/run_config.json",
+  "first_crash": {
+    "execs": 3045,
+    "file": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/redqueen_operand_rep1/fuzzer_out_attempt1/default/crashes/id:000000,sig:06,src:000000,time:203212,execs:3045,op:colorization,pos:0",
+    "id": "000000",
+    "op": "colorization",
+    "pos": "0",
+    "sig": "06",
+    "src": "000000",
+    "time": 203212,
+    "time_s": 203.212
+  },
+  "fuzzer_stats": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620/runs/redqueen_operand_rep1/fuzzer_out_attempt1/default/fuzzer_stats",
+  "last_crash_time_s": 417,
+  "magma_monitor": null,
+  "run_id": "GPAC_3403:redqueen_operand:rep1",
+  "seed_set_id": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T041709Z/corpus",
+  "stats": {
+    "corpus_count": 194,
+    "execs_done": 6687,
+    "execs_per_sec": "11.14",
+    "magma_reached": 0,
+    "magma_triggered": 0,
+    "run_time": 600,
+    "saved_crashes": 4,
+    "saved_hangs": 1
+  },
+  "success": true,
+  "target_id": "GPAC_3403",
+  "tc_category": "compound-sequence-lifecycle",
+  "timeout": false,
+  "trigger_execs": 3045,
+  "trigger_time_kind": "exact",
+  "trigger_time_s": 203.212
+}
