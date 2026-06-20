@@ -1434,13 +1434,24 @@ repair 已完成并在完整 B7 gate 中确认：`artifacts/formtrig_native_read
 证明 `df-structure` 保持 `D_F_spec_lifted` 优先、结构作为同层 tie-breaker，在完整
 gate 中把 retained endpoint replay 覆盖提升到 60 个 HEVC import files / 11 个
 L-HEVC import files，saved non-trigger progress 也从 35 增加到 41；但仍没有
-ASAN/double-free。第二步 endpoint-signature repair 已开始：
+ASAN/double-free。第二步 endpoint-signature repair 已经进入完整 gate：
 `artifacts/formtrig_native_readiness/gpac3403_b7_import_safe_extractor_ops_probe_20260620.json`
 新增 bounded import-safe extractor typed ops 48..51，在 direct MP4Box endpoint
 probe 中 16/16 保持 HEVC import，12/16 保持 L-HEVC import，12/16 达到
-`nal_type_49_not_handled`，但 ASAN/double-free 仍为 0。下一步必须跑完整 B7
-typedops52 gate 验证这些 ops 是否在 FORMTRIG retained loop 内自然产生同样收益；
-若仍无 ASAN，再继续修 cleanup ownership/free closure。typed-retained endpoint package 现在会自动嵌入 alias
+`nal_type_49_not_handled`。随后
+`artifacts/formtrig_native_readiness/gpac3403_b7_typedops52_selection_gap_20260620.json`
+记录了 typedops52 full gate 的真实失败：op48/op49/op51 已 retained，但旧
+`df-structure` endpoint selection 没选中它们，而且 `.bin` retained path 让 GPAC
+大量落到 `Filter not found`。修复后的
+`artifacts/formtrig_native_readiness/gpac3403_b7_endpoint_selection_suffix_repair_20260620.json`
+和完整 gate
+`artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620.json`
+证明 `df-structure-op-diverse + .hevc` staging 已在标准 600s loop 中生效：
+selected op48/op49/op51 = 1/1/1，128/128 HEVC import，71/128 L-HEVC import，
+59/128 `nal_type_49_not_handled`，`Filter not found=0`。但 `_T=0`、
+ASAN/double-free=0，positive-control 唯一缺失签名仍是 `asan_double_free`。
+因此下一步不是 selection 或 importer routing，而是 cleanup ownership/free
+closure。typed-retained endpoint package 现在会自动嵌入 alias
 relation audit verdict，防止只凭 parser/import signature 误判 GPAC endpoint 闭环。
 只有 B7 gate 出现 ASAN/double-free 或等价 alias/free proof 后，GPAC 才能升到 matched baselines。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
 core real-CVE 正例；LIBXML2 只能保留为 native pipeline / BindingSpec /

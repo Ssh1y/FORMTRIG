@@ -1060,17 +1060,17 @@
       "action": "repair_real_cve_lifecycle_alias_to_endpoint",
       "benefit_to_prove": "Convert existing GPAC TC-rooted parser-frontier guidance into terminal endpoint behavior before spending replicated 2h matched-baseline budget.",
       "blocked_claims": [
-        "latest B7 relation endpoint gate with df-structure still produced terminal _T=0 and ASAN/double-free=0; release->reassign same-object equality is observed, but cleanup GF_BitStream->original points to a different value. The new import-safe extractor typed ops repair the prior nal_type_49 endpoint-signature gap in direct probes (12/16 files reached nal_type_49_not_handled), so the next evidence is a full typedops52 B7 gate before matched baselines; if ASAN/double-free remains 0, remaining work is cleanup ownership/free closure."
+        "latest B7 relation endpoint gate with df-structure-op-diverse plus .hevc endpoint staging still produced terminal _T=0 and ASAN/double-free=0; release->reassign same-object equality is observed, but cleanup GF_BitStream->original points to a different value. Endpoint replay now carries op48/op49/op51 into the standard gate and restores HEVC/type49 proximity, so the remaining blocker is cleanup ownership/free closure, not retained selection or importer routing."
       ],
       "blocking_issue": [
-        "latest B7 relation endpoint gate with df-structure still produced terminal _T=0 and ASAN/double-free=0; release->reassign same-object equality is observed, but cleanup GF_BitStream->original points to a different value. The new import-safe extractor typed ops repair the prior nal_type_49 endpoint-signature gap in direct probes (12/16 files reached nal_type_49_not_handled), so the next evidence is a full typedops52 B7 gate before matched baselines; if ASAN/double-free remains 0, remaining work is cleanup ownership/free closure."
+        "latest B7 relation endpoint gate with df-structure-op-diverse plus .hevc endpoint staging still produced terminal _T=0 and ASAN/double-free=0; release->reassign same-object equality is observed, but cleanup GF_BitStream->original points to a different value. Endpoint replay now carries op48/op49/op51 into the standard gate and restores HEVC/type49 proximity, so the remaining blocker is cleanup ownership/free closure, not retained selection or importer routing."
       ],
       "category": "compound-sequence-lifecycle",
       "claim_boundary": "This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.",
-      "command": "scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1 --out artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_dfstructure_<UTC>",
+      "command": "after cleanup/free alias repair, rerun scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1 --out artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_cleanup_repair_<UTC>",
       "comparison_verdict": "ten_min_single_rep_not_replicated",
       "current_primary_benefits": [
-        "GPAC now has stable TC-rooted pre-trigger guidance, typed-retained endpoint packaging, a positive retained-selection repair, and a concrete endpoint-signature repair. The full df-structure B7 gate saved 41 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 224 typed candidates, and improved retained replay coverage from 38 to 60 HEVC-import files and from 6 to 11 L-HEVC import files. The follow-up import-safe extractor ops probe produced HEVC import in 16/16 files, L-HEVC import in 12/16, and nal_type_49_not_handled in 12/16. This is still mechanism/selection/probe evidence only; endpoint closure is missing."
+        "GPAC now has stable TC-rooted pre-trigger guidance, typed-retained endpoint packaging, retained-selection repair, and endpoint importer-routing repair. The latest full B7 gate saved 22 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 221 typed candidates, selected op48/op49/op51 under df-structure-op-diverse, and replayed 128/128 HEVC-import files with 71 L-HEVC files and 59 nal_type_49_not_handled files. This is stronger mechanism/proximity evidence, but endpoint closure is still missing because ASAN/double-free remains 0."
       ],
       "duration_s": "",
       "evidence_paths": [
@@ -1124,7 +1124,15 @@
         "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_dfstructure_20260619T234925Z/runs/formtrig_rep1/typed_retained_audit_package.json",
         "artifacts/formtrig_native_readiness/gpac3403_b7_import_safe_extractor_ops_probe_20260620.json",
         "artifacts/formtrig_native_readiness/gpac3403_b7_import_safe_extractor_ops_probe_20260620.md",
-        "artifacts/formtrig_native_readiness/raw/gpac3403_b7_import_safe_extractor_ops_probe_20260620T001443Z/summary.json"
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b7_import_safe_extractor_ops_probe_20260620T001443Z/summary.json",
+        "artifacts/formtrig_native_readiness/gpac3403_b7_typedops52_selection_gap_20260620.json",
+        "artifacts/formtrig_native_readiness/gpac3403_b7_typedops52_selection_gap_20260620.md",
+        "artifacts/formtrig_native_readiness/gpac3403_b7_endpoint_selection_suffix_repair_20260620.json",
+        "artifacts/formtrig_native_readiness/gpac3403_b7_endpoint_selection_suffix_repair_20260620.md",
+        "artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620.json",
+        "artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620.md",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620T004121Z/runs/formtrig_rep1/typed_retained_endpoint_replay_summary.json",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620T004121Z/runs/formtrig_rep1/typed_retained_audit_package.json"
       ],
       "lane": "binding_spec_first",
       "main_claim_strength": "",
@@ -1135,9 +1143,8 @@
         "typed mutation provenance for endpoint-scale VPS/SPS/PPS/slice/access-unit construction"
       ],
       "post_unblock_commands": [
-        "rerun scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1 with typedops52 import-safe extractor ops",
         "repair cleanup GF_BitStream->original ownership so it equals the release/reassign sample-data pointer",
-        "repair double-free closure if the typedops52 gate reaches nal_type_49 but still does not trigger ASAN",
+        "rerun scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1 after cleanup/free alias repair",
         "require ASAN/double-free or equivalent alias/free proof before matched baselines",
         "only then run matched 600s/7200s faithful baselines"
       ],

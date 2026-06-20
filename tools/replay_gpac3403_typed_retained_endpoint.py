@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import shutil
 import shlex
 import sys
 import time
@@ -27,6 +28,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 FRONTIER_SWEEP = REPO_ROOT / "tools" / "gpac3403_hevc_frontier_sweep.py"
 DEFAULT_STRUCTURE_HOOK = REPO_ROOT / "scripts" / "formtrig_hooks" / "hevc_annexb_structure_hook.py"
 ENDPOINT_RELEVANT_TYPES = {0, 1, 5, 14, 16, 19, 20, 21, 32, 33, 34, 49}
+STRUCTURE_SELECTIONS = {"structure-best", "df-structure", "df-structure-op-diverse"}
 
 
 def load_frontier_sweep() -> ModuleType:
@@ -227,6 +229,77 @@ def select_structure_best(
     return scored
 
 
+def structure_sort_key(record: dict[str, Any]) -> tuple[int, int, int, float, int]:
+    profile = record.get("endpoint_selection_profile") or {}
+    return (
+        -int(profile.get("score") or 0),
+        -int(profile.get("nalu_count") or 0),
+        -int(profile.get("size") or 0),
+        record_d_f(record) if record_d_f(record) is not None else 1.0e300,
+        int(record.get("index") or 0),
+    )
+
+
+def order_bucket_by_op_coverage(records: list[dict[str, Any]], budget: int) -> list[dict[str, Any]]:
+    groups: dict[int, list[dict[str, Any]]] = {}
+    for record in records:
+        groups.setdefault(record_op(record), []).append(record)
+    for group in groups.values():
+        group.sort(key=structure_sort_key)
+
+    ordered_ops = sorted(groups)
+    representative_ops = ordered_ops
+    if budget > 0 and budget < len(ordered_ops):
+        representative_ops = evenly_spaced_values(ordered_ops, budget)
+
+    selected: list[dict[str, Any]] = []
+    selected_ids: set[int] = set()
+    for op in representative_ops:
+        record = groups[op][0]
+        selected.append(record)
+        selected_ids.add(id(record))
+        if budget > 0 and len(selected) >= budget:
+            return selected
+
+    leftovers = [record for record in records if id(record) not in selected_ids]
+    leftovers.sort(key=structure_sort_key)
+    for record in leftovers:
+        selected.append(record)
+        if budget > 0 and len(selected) >= budget:
+            break
+    return selected
+
+
+def select_df_structure_op_diverse(
+    records: list[dict[str, Any]],
+    max_records: int,
+    hook: ModuleType,
+) -> list[dict[str, Any]]:
+    enriched: list[dict[str, Any]] = []
+    for record in records:
+        copy = dict(record)
+        copy["endpoint_selection_profile"] = structure_profile(record, hook)
+        enriched.append(copy)
+
+    buckets: dict[float, list[dict[str, Any]]] = {}
+    for record in enriched:
+        d_f = record_d_f(record)
+        key = d_f if d_f is not None else 1.0e300
+        buckets.setdefault(key, []).append(record)
+
+    selected: list[dict[str, Any]] = []
+    for d_f in sorted(buckets):
+        if max_records > 0 and len(selected) >= max_records:
+            break
+        remaining = max_records - len(selected) if max_records > 0 else 0
+        bucket_order = order_bucket_by_op_coverage(buckets[d_f], remaining)
+        selected.extend(bucket_order)
+        if max_records > 0 and len(selected) >= max_records:
+            selected = selected[:max_records]
+            break
+    return selected
+
+
 def select_records(
     records: list[dict[str, Any]],
     max_records: int,
@@ -263,6 +336,11 @@ def select_records(
             raise ValueError("df-structure selection requires a structure hook")
         selected = select_structure_best(selected, max_records, structure_hook, d_f_first=True)
         return selected
+    elif selection == "df-structure-op-diverse":
+        if structure_hook is None:
+            raise ValueError("df-structure-op-diverse selection requires a structure hook")
+        selected = select_df_structure_op_diverse(selected, max_records, structure_hook)
+        return selected
     elif selection != "input-order":
         raise ValueError(f"unknown selection policy: {selection}")
     if max_records > 0:
@@ -277,6 +355,18 @@ def exit_counts(records: list[dict[str, Any]]) -> dict[str, int]:
             key = "timeout" if probe.get("timed_out") else str(probe.get("exit_code"))
             counts[key] += 1
     return dict(sorted(counts.items()))
+
+
+def endpoint_variant_input_path(record: dict[str, Any], run_dir: Path, suffix: str) -> Path:
+    source = Path(str(record["path"]))
+    if not suffix:
+        return source
+    index = int(record.get("index") or 0)
+    inputs_dir = run_dir / "endpoint_inputs"
+    inputs_dir.mkdir(parents=True, exist_ok=True)
+    staged = inputs_dir / f"variant_{index:06d}{suffix}"
+    shutil.copy2(source, staged)
+    return staged
 
 
 def summarize(
@@ -340,10 +430,14 @@ def summarize(
         "endpoint_replays": args.endpoint_replays,
         "endpoint_timeout": args.endpoint_timeout,
         "endpoint_sanitizer_exit_code": args.endpoint_sanitizer_exit_code,
+        "endpoint_variant_suffix": args.endpoint_variant_suffix,
+        "endpoint_variant_inputs_dir": str(args.run_dir.resolve() / "endpoint_inputs")
+        if args.endpoint_variant_suffix
+        else None,
         "selection": args.selection,
         "max_records": args.max_records,
         "d_f_max": args.d_f_max,
-        "structure_hook": str(args.structure_hook) if args.selection in {"structure-best", "df-structure"} else None,
+        "structure_hook": str(args.structure_hook) if args.selection in STRUCTURE_SELECTIONS else None,
         "structure_profiled_records": len(structure_profiles),
         "structure_score_min": min(structure_scores) if structure_scores else None,
         "structure_score_max": max(structure_scores) if structure_scores else None,
@@ -371,7 +465,7 @@ def build_replay(args: argparse.Namespace) -> dict[str, Any]:
     all_records = read_records(records_path)
     structure_hook = (
         load_structure_hook(args.structure_hook)
-        if args.selection in {"structure-best", "df-structure"}
+        if args.selection in STRUCTURE_SELECTIONS
         else None
     )
     selected = select_records(
@@ -386,8 +480,9 @@ def build_replay(args: argparse.Namespace) -> dict[str, Any]:
 
     for record in selected:
         index = int(record.get("index") or 0)
+        endpoint_input = endpoint_variant_input_path(record, run_dir, args.endpoint_variant_suffix)
         probes = sweep.run_endpoint_probes(
-            input_path=str(record["path"]),
+            input_path=str(endpoint_input),
             kind="variant",
             log_prefix=f"variant_{index:06d}",
             endpoint_cmd=endpoint_cmd,
@@ -398,6 +493,8 @@ def build_replay(args: argparse.Namespace) -> dict[str, Any]:
             sanitizer_exit_code=args.endpoint_sanitizer_exit_code,
         )
         enriched_record = dict(record)
+        if endpoint_input != Path(str(record["path"])):
+            enriched_record["endpoint_input_path"] = str(endpoint_input)
         enriched_record["endpoint_probes"] = [asdict(probe) for probe in probes]
         enriched_record["endpoint_replay_source"] = "FORMTRIG_TYPED_RETAIN"
         enriched.append(enriched_record)
@@ -444,12 +541,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--endpoint-timeout", type=float, default=5.0)
     parser.add_argument("--endpoint-replays", type=int, default=1)
     parser.add_argument("--endpoint-sanitizer-exit-code", type=int, default=86)
+    parser.add_argument(
+        "--endpoint-variant-suffix",
+        default="",
+        help="Optional suffix used when staging retained variant inputs before endpoint replay.",
+    )
     parser.add_argument("--endpoint-positive-control", type=Path)
     parser.add_argument("--max-records", type=int, default=0, help="0 means replay every selected record.")
     parser.add_argument("--d-f-max", type=float)
     parser.add_argument(
         "--selection",
-        choices=("input-order", "best-d-f", "op-diverse", "structure-best", "df-structure"),
+        choices=(
+            "input-order",
+            "best-d-f",
+            "op-diverse",
+            "structure-best",
+            "df-structure",
+            "df-structure-op-diverse",
+        ),
         default="input-order",
     )
     parser.add_argument("--structure-hook", type=Path, default=DEFAULT_STRUCTURE_HOOK)
@@ -463,6 +572,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--endpoint-replays must be positive")
     if args.max_records < 0:
         parser.error("--max-records must be non-negative")
+    if args.endpoint_variant_suffix and not args.endpoint_variant_suffix.startswith("."):
+        parser.error("--endpoint-variant-suffix must be empty or start with '.'")
 
     result = build_replay(args)
     run_dir = args.run_dir.resolve()

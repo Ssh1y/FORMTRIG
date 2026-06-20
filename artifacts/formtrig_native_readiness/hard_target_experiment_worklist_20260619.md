@@ -82,18 +82,17 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - Endpoint metrics: FORMTRIG endpoint ASAN/double-free success after repair, first _T / terminal-crash wall-clock time after repair, retained variant endpoint signature overlap with positive control, same_object lifecycle alias relation observed at runtime
 - Claim boundary: This is a repair target. Existing evidence supports parser-frontier guidance and endpoint-proximity diagnostics, but not FORMTRIG endpoint speedup or hard SOTA-pain until the alias/terminal gap closes.
 - Blocking issue:
-- latest B7 relation endpoint gate with df-structure still produced terminal _T=0 and ASAN/double-free=0; release->reassign same-object equality is observed, but cleanup GF_BitStream->original points to a different value. The new import-safe extractor typed ops repair the prior nal_type_49 endpoint-signature gap in direct probes (12/16 files reached nal_type_49_not_handled), so the next evidence is a full typedops52 B7 gate before matched baselines; if ASAN/double-free remains 0, remaining work is cleanup ownership/free closure.
+- latest B7 relation endpoint gate with df-structure-op-diverse plus .hevc endpoint staging still produced terminal _T=0 and ASAN/double-free=0; release->reassign same-object equality is observed, but cleanup GF_BitStream->original points to a different value. Endpoint replay now carries op48/op49/op51 into the standard gate and restores HEVC/type49 proximity, so the remaining blocker is cleanup ownership/free closure, not retained selection or importer routing.
 - Mechanism evidence required after benefit:
 - same_object object identity across lifecycle_event and use endpoints
 - endpoint ASAN/double-free or equivalent alias/free terminal proof
 - D_F_spec_lifted reaches the replay pre-abort distance and remains non-terminal until endpoint
 - typed mutation provenance for endpoint-scale VPS/SPS/PPS/slice/access-unit construction
 - Current primary benefits:
-- GPAC now has stable TC-rooted pre-trigger guidance, typed-retained endpoint packaging, a positive retained-selection repair, and a concrete endpoint-signature repair. The full df-structure B7 gate saved 41 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 224 typed candidates, and improved retained replay coverage from 38 to 60 HEVC-import files and from 6 to 11 L-HEVC import files. The follow-up import-safe extractor ops probe produced HEVC import in 16/16 files, L-HEVC import in 12/16, and nal_type_49_not_handled in 12/16. This is still mechanism/selection/probe evidence only; endpoint closure is missing.
+- GPAC now has stable TC-rooted pre-trigger guidance, typed-retained endpoint packaging, retained-selection repair, and endpoint importer-routing repair. The latest full B7 gate saved 22 non-trigger progress entries, observed D_F_spec_lifted movement 2..5, retained 221 typed candidates, selected op48/op49/op51 under df-structure-op-diverse, and replayed 128/128 HEVC-import files with 71 L-HEVC files and 59 nal_type_49_not_handled files. This is stronger mechanism/proximity evidence, but endpoint closure is still missing because ASAN/double-free remains 0.
 - Post-unblock commands or steps:
-- rerun `scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1` with typedops52 import-safe extractor ops
 - repair cleanup GF_BitStream->original ownership so it equals the release/reassign sample-data pointer
-- repair double-free closure if the typedops52 gate reaches nal_type_49 but still does not trigger ASAN
+- rerun `scripts/run_gpac3403_b7_relation_endpoint_gate.sh --duration 600 --reps 1 --jobs 1` after cleanup/free alias repair
 - require ASAN/double-free or equivalent alias/free proof before matched baselines
 - only then run matched 600s/7200s faithful baselines
 - Evidence paths:
@@ -136,6 +135,14 @@ No main-budget FORMTRIG task is runnable without a gate/blocker being cleared.
 - artifacts/formtrig_native_readiness/gpac3403_b7_import_safe_extractor_ops_probe_20260620.json
 - artifacts/formtrig_native_readiness/gpac3403_b7_import_safe_extractor_ops_probe_20260620.md
 - artifacts/formtrig_native_readiness/raw/gpac3403_b7_import_safe_extractor_ops_probe_20260620T001443Z/summary.json
+- artifacts/formtrig_native_readiness/gpac3403_b7_typedops52_selection_gap_20260620.json
+- artifacts/formtrig_native_readiness/gpac3403_b7_typedops52_selection_gap_20260620.md
+- artifacts/formtrig_native_readiness/gpac3403_b7_endpoint_selection_suffix_repair_20260620.json
+- artifacts/formtrig_native_readiness/gpac3403_b7_endpoint_selection_suffix_repair_20260620.md
+- artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620.json
+- artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620.md
+- artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620T004121Z/runs/formtrig_rep1/typed_retained_endpoint_replay_summary.json
+- artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620T004121Z/runs/formtrig_rep1/typed_retained_audit_package.json
 - artifacts/formtrig_native_readiness/raw/gpac3403_b7_df_structure_endpoint_replay_20260619T234445Z/typed_retained_endpoint_replay_summary.json
 - artifacts/formtrig_native_readiness/raw/gpac3403_b7_df_structure_endpoint_replay_20260619T234445Z/endpoint_signature_audit.json
 - artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_20260619T231431Z/alias_relation_audit.json

@@ -1,0 +1,58 @@
+{
+  "schema": "formtrig_gpac3403_b7_endpoint_selection_suffix_repair_summary_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-20T00:42:25Z",
+  "source_full_gate": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_typedops52_20260620T002044Z",
+  "replay_only_raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_typedops52_df_structure_op_diverse_hevc_replay_20260620T004004Z",
+  "changed_components": [
+    "tools/replay_gpac3403_typed_retained_endpoint.py",
+    "scripts/run_gpac3403_typedops36_matched_longrun.sh",
+    "scripts/run_gpac3403_b7_relation_endpoint_gate.sh"
+  ],
+  "repair": {
+    "selection": "df-structure-op-diverse",
+    "endpoint_variant_suffix": ".hevc",
+    "behavior": "Keep D_F bucket priority, but cover retained operator ids within a bucket before filling by structure score; stage retained variants with .hevc names for GPAC HEVC importer routing."
+  },
+  "replay_only_result": {
+    "selected_records": 128,
+    "replayed_records": 128,
+    "selected_d_f_distribution": {
+      "2": 55,
+      "5": 73
+    },
+    "selected_import_safe_extractor_ops": {
+      "48": 1,
+      "49": 1,
+      "50": 0,
+      "51": 1
+    },
+    "structural_type49_selected_records": 67,
+    "endpoint_exit_code_counts": {
+      "0": 124,
+      "1": 4
+    },
+    "track_importing_hevc_files": 124,
+    "hevc_import_files": 128,
+    "lhevc_import_files": 71,
+    "nal_type_49_not_handled_files": 59,
+    "filter_not_found_files": 0,
+    "asan_double_free_files": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_sanitizer_crashes": 0,
+    "positive_control_native_crashes": 1,
+    "positive_control_sanitizer_crashes": 0
+  },
+  "delta_vs_source_full_gate_endpoint_replay": {
+    "selected_op48_delta": 1,
+    "selected_op49_delta": 1,
+    "selected_op51_delta": 1,
+    "track_importing_hevc_files_delta": 69,
+    "hevc_import_files_delta": 73,
+    "lhevc_import_files_delta": 61,
+    "nal_type_49_not_handled_files_delta": 59,
+    "filter_not_found_files_delta": -73,
+    "asan_double_free_files_delta": 0
+  },
+  "claim_boundary": "Replay-only validation shows the endpoint-selection and importer-routing repairs are real and should be used in the next full B7 gate. It still does not prove GPAC_3403 endpoint closure because ASAN/double-free remains 0."
+}

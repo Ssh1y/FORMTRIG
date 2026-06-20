@@ -134,6 +134,53 @@ class ReplayGpac3403TypedRetainedEndpointTest(unittest.TestCase):
         self.assertTrue(variant_stderr_exists)
         self.assertTrue(positive_stderr_exists)
 
+    def test_endpoint_variant_suffix_stages_retained_input_with_importer_extension(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = Path(tmp) / "run"
+            run_dir.mkdir()
+            candidate = run_dir / "candidate.bin"
+            candidate.write_bytes(b"candidate")
+            (run_dir / "typed_retained_records.jsonl").write_text(
+                json.dumps({"index": 2, "path": str(candidate), "d_f_spec_lifted": 1.0}) + "\n",
+                encoding="utf-8",
+            )
+            endpoint_code = (
+                "import sys; "
+                "sys.exit(0 if sys.argv[-1].endswith('.hevc') else 7)"
+            )
+            endpoint_cmd = f"{shlex.quote(sys.executable)} -c {shlex.quote(endpoint_code)} @@"
+            summary = run_dir / "summary.json"
+            enriched = run_dir / "endpoint_records.jsonl"
+
+            subprocess.run(
+                [
+                    "python3",
+                    str(TOOL),
+                    "--run-dir",
+                    str(run_dir),
+                    "--endpoint-cmd",
+                    endpoint_cmd,
+                    "--endpoint-variant-suffix",
+                    ".hevc",
+                    "--out-summary",
+                    str(summary),
+                    "--out-records-jsonl",
+                    str(enriched),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+
+            report = json.loads(summary.read_text(encoding="utf-8"))
+            rows = [json.loads(line) for line in enriched.read_text(encoding="utf-8").splitlines()]
+
+        self.assertEqual(report["endpoint_variant_suffix"], ".hevc")
+        self.assertEqual(report["endpoint_exit_code_counts"]["0"], 1)
+        self.assertEqual(rows[0]["path"], str(candidate))
+        self.assertTrue(rows[0]["endpoint_input_path"].endswith(".hevc"))
+
     def test_op_diverse_selection_spreads_across_retained_operator_ids(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir = Path(tmp) / "run"
@@ -366,6 +413,97 @@ class ReplayGpac3403TypedRetainedEndpointTest(unittest.TestCase):
         self.assertEqual(rows[0]["index"], 1)
         self.assertEqual(rows[0]["d_f_spec_lifted"], 2.0)
         self.assertGreater(rows[0]["endpoint_selection_profile"]["score"], 0)
+
+    def test_df_structure_op_diverse_keeps_high_df_import_safe_ops_replayable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = Path(tmp) / "run"
+            run_dir.mkdir()
+            records = run_dir / "typed_retained_records.jsonl"
+            rows_to_write = []
+
+            for index, op in enumerate([24, 25, 26]):
+                candidate = run_dir / f"low_df_{op}.hevc"
+                candidate.write_bytes(
+                    hevc_nalu(32, 0, b"\x80" * 8)
+                    + hevc_nalu(33, 0, b"\x80" * 8)
+                    + hevc_nalu(34, 0, b"\x80" * 8)
+                )
+                rows_to_write.append(
+                    {
+                        "index": index,
+                        "path": str(candidate),
+                        "d_f_spec_lifted": 2.0,
+                        "op": op,
+                        "sample": 0,
+                    }
+                )
+
+            for offset, op in enumerate([44, 45, 46, 47, 48, 49, 50, 51], start=3):
+                candidate = run_dir / f"high_df_{op}.hevc"
+                candidate.write_bytes(
+                    b"".join(
+                        [
+                            hevc_nalu(32, 0, b"\x80" * 16),
+                            hevc_nalu(33, 0, b"\x80" * 16),
+                            hevc_nalu(34, 7, b"\x80" * 16),
+                            hevc_nalu(49, 7, b"\x80" * 16),
+                            hevc_nalu(16, 14, b"\x80" * 16),
+                            hevc_nalu(op % 32, 14, b"\x80" * 16),
+                        ]
+                    )
+                )
+                rows_to_write.append(
+                    {
+                        "index": offset,
+                        "path": str(candidate),
+                        "d_f_spec_lifted": 5.0,
+                        "op": op,
+                        "sample": 0,
+                    }
+                )
+
+            records.write_text(
+                "\n".join(json.dumps(row) for row in rows_to_write) + "\n",
+                encoding="utf-8",
+            )
+            endpoint_code = "import sys; sys.exit(0)"
+            endpoint_cmd = f"{shlex.quote(sys.executable)} -c {shlex.quote(endpoint_code)} @@"
+            summary = run_dir / "summary.json"
+            enriched = run_dir / "endpoint_records.jsonl"
+
+            subprocess.run(
+                [
+                    "python3",
+                    str(TOOL),
+                    "--run-dir",
+                    str(run_dir),
+                    "--endpoint-cmd",
+                    endpoint_cmd,
+                    "--selection",
+                    "df-structure-op-diverse",
+                    "--max-records",
+                    "8",
+                    "--out-summary",
+                    str(summary),
+                    "--out-records-jsonl",
+                    str(enriched),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+
+            report = json.loads(summary.read_text(encoding="utf-8"))
+            replayed = [json.loads(line) for line in enriched.read_text(encoding="utf-8").splitlines()]
+
+        replayed_ops = [row["op"] for row in replayed]
+        self.assertEqual(report["selection"], "df-structure-op-diverse")
+        self.assertEqual(report["replayed_records"], 8)
+        self.assertEqual(replayed_ops[:3], [24, 25, 26])
+        self.assertTrue({48, 49, 51}.issubset(replayed_ops))
+        for row in replayed:
+            self.assertGreater(row["endpoint_selection_profile"]["score"], 0)
 
 
 if __name__ == "__main__":

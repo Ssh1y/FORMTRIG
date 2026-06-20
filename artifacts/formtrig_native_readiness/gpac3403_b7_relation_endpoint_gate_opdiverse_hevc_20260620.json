@@ -1,0 +1,117 @@
+{
+  "schema": "formtrig_gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_summary_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-20T00:53:30Z",
+  "raw_run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620T004121Z",
+  "runner": "scripts/run_gpac3403_b7_relation_endpoint_gate.sh",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b7_relation_value_candidate.yml",
+  "gate": {
+    "duration_s": 600,
+    "status": "pass",
+    "execs_done": 2892,
+    "execs_per_sec": 4.82,
+    "reached_execs": 2893,
+    "terminal_triggered_execs": 0,
+    "queued_progress": 22,
+    "accepted_non_trigger": 22,
+    "saved_non_trigger": 22,
+    "saved_triggered": 0,
+    "spec_lifted_events": 1922,
+    "d_f_spec_lifted_min": 2,
+    "d_f_spec_lifted_max": 5,
+    "pretrigger_lift_guidance_ready": true,
+    "non_trigger_candidate_lift_delta": true,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed"
+  },
+  "retained_candidates": {
+    "records": 221,
+    "existing_inputs": 221,
+    "d_f_distribution": {
+      "2": 55,
+      "5": 166
+    },
+    "import_safe_extractor_ops_retained": {
+      "48": 5,
+      "49": 5,
+      "50": 0,
+      "51": 5
+    }
+  },
+  "endpoint_replay": {
+    "selection": "df-structure-op-diverse",
+    "endpoint_variant_suffix": ".hevc",
+    "selected_records": 128,
+    "selected_d_f_distribution": {
+      "2": 55,
+      "5": 73
+    },
+    "selected_import_safe_extractor_ops": {
+      "48": 1,
+      "49": 1,
+      "50": 0,
+      "51": 1
+    },
+    "structural_type49_selected_records": 67,
+    "endpoint_exit_code_counts": {
+      "0": 124,
+      "1": 4
+    },
+    "track_importing_hevc_files": 124,
+    "hevc_import_files": 128,
+    "lhevc_import_files": 71,
+    "nal_type_49_not_handled_files": 59,
+    "filter_not_found_files": 0,
+    "asan_double_free_files": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_timeouts": 0,
+    "positive_control_native_crashes": 1,
+    "positive_control_sanitizer_crashes": 0,
+    "positive_control_asan_double_free_files": 1,
+    "positive_control_signatures_absent_from_variants": [
+      "asan_double_free"
+    ]
+  },
+  "alias_relation_audit": {
+    "status": "release_reassign_alias_observed_terminal_cleanup_missing",
+    "complete_alias_free_relation": false,
+    "release_reassign_alias_observed": true,
+    "release_reassign_alias_records": 19,
+    "cleanup_value_records": 19,
+    "complete_alias_free_relation_records": 0,
+    "best_record": {
+      "release_values": [
+        94534924543152
+      ],
+      "same_object_values": [
+        94534924543152
+      ],
+      "cleanup_values": [
+        94534924514768
+      ],
+      "release_same_object_matches": [
+        94534924543152
+      ],
+      "release_cleanup_matches": [],
+      "same_object_cleanup_matches": [],
+      "d_f_spec_lifted": 2,
+      "component_count": 12
+    }
+  },
+  "delta_vs_typedops52_selection_gap_gate": {
+    "previous_summary": "artifacts/formtrig_native_readiness/gpac3403_b7_typedops52_selection_gap_20260620.json",
+    "selected_op48_delta": 1,
+    "selected_op49_delta": 1,
+    "selected_op51_delta": 1,
+    "track_importing_hevc_files_delta": 69,
+    "hevc_import_files_delta": 73,
+    "lhevc_import_files_delta": 61,
+    "nal_type_49_not_handled_files_delta": 59,
+    "filter_not_found_files_delta": -73,
+    "asan_double_free_files_delta": 0,
+    "terminal_triggered_delta": 0
+  },
+  "interpretation": "The standard B7 FORMTRIG gate now carries retained import-safe extractor ops into endpoint replay and restores HEVC/type49 endpoint proximity under the real 600s loop. The remaining blocker is not endpoint selection or importer routing; it is cleanup ownership/free closure.",
+  "claim_boundary": "This is a stronger GPAC_3403 mechanism/proximity result, not endpoint success and not matched-baseline performance evidence. Do not promote GPAC_3403 to baseline comparison until ASAN/double-free or an equivalent alias/free terminal proof is observed."
+}

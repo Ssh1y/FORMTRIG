@@ -393,8 +393,18 @@ The next endpoint-signature repair is also in place as a direct probe:
 `artifacts/formtrig_native_readiness/gpac3403_b7_import_safe_extractor_ops_probe_20260620.json`.
 It adds bounded import-safe extractor typed ops 48..51; direct MP4Box replay
 keeps HEVC import in 16/16 variants, L-HEVC import in 12/16, and reaches
-`nal_type_49_not_handled` in 12/16, but ASAN/double-free remains 0. The required
-next evidence is a full B7 typedops52 gate before any matched baselines.
+`nal_type_49_not_handled` in 12/16, but ASAN/double-free remains 0. The full
+typedops52 follow-up exposed two endpoint-validation bugs:
+`artifacts/formtrig_native_readiness/gpac3403_b7_typedops52_selection_gap_20260620.json`
+shows op48/op49/op51 were retained but not selected, and `.bin` retained paths
+sent many candidates to `Filter not found`. Both are now repaired by
+`df-structure-op-diverse` endpoint selection and `.hevc` staging. The standard
+600s gate at
+`artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620.json`
+selects op48/op49/op51, replays 128/128 HEVC-import variants, reaches
+71 L-HEVC imports and 59 `nal_type_49_not_handled` files, and eliminates
+`Filter not found`. ASAN/double-free remains 0, so the next repair is cleanup
+ownership/free alias closure, not matched baselines.
 Typed-retained endpoint packages now embed the alias relation audit verdict, so
 future GPAC evidence packages cannot claim endpoint closure from parser/import
 signatures alone. New hard-pain budget should
@@ -1395,8 +1405,12 @@ ownership mutation，再进入 matched baselines。完整 B7 `df-structure` gate
 从 38/6 提高到 60/11 HEVC/L-HEVC import files，但没有触发 ASAN/double-free，
 所以这只是 selection 侧正向修复。随后新增的 import-safe extractor typed ops
 48..51 在 direct endpoint probe 中达到 16/16 HEVC import、12/16 L-HEVC import、
-12/16 `nal_type_49_not_handled`，但 ASAN/double-free 仍为 0；下一步要跑完整 B7
-typedops52 gate 验证这些 ops 能否进入 FORMTRIG retained loop。GPAC retained endpoint package 会自动
+12/16 `nal_type_49_not_handled`。完整 B7 typedops52 gate 随后证明旧 replay
+存在两个工程断点：op48/op49/op51 retained 但未被 `df-structure` 选中，且 `.bin`
+retained path 会让 GPAC 落到 `Filter not found`。现在 `df-structure-op-diverse`
+和 `.hevc` staging 已在标准 600s gate 中生效：128/128 HEVC import、71/128
+L-HEVC import、59/128 `nal_type_49_not_handled`、`Filter not found=0`。但
+ASAN/double-free 仍为 0，下一步要修 cleanup ownership/free alias closure。GPAC retained endpoint package 会自动
 嵌入 alias relation audit，避免把 parser/import 近邻当作 endpoint 闭环。
 最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。

@@ -23,6 +23,7 @@ typed_retain_endpoint_timeout="5"
 typed_retain_endpoint_replays="1"
 typed_retain_endpoint_max_records="0"
 typed_retain_endpoint_selection="best-d-f"
+typed_retain_endpoint_variant_suffix=""
 typed_retain_endpoint_cmd=""
 typed_retain_endpoint_positive_control=""
 seed_preflight="require"
@@ -80,8 +81,11 @@ options:
                           max retained records to endpoint replay, 0 means all,
                           default 0
   --typed-retain-endpoint-selection MODE
-                          input-order|best-d-f|op-diverse|structure-best|df-structure,
+                          input-order|best-d-f|op-diverse|structure-best|df-structure|df-structure-op-diverse,
                           default best-d-f
+  --typed-retain-endpoint-variant-suffix SUFFIX
+                          optional suffix used when staging retained endpoint
+                          inputs, e.g. .hevc for GPAC HEVC importer routing
   --typed-retain-endpoint-cmd CMD
                           endpoint replay command; use @@ for retained input,
                           default FORMTRIG MP4Box -cat @@ white.mp4 -out /dev/null
@@ -368,6 +372,9 @@ summarize_typed_retained_one() {
       --out-summary "$run_out/typed_retained_endpoint_replay_summary.json"
       --out-records-jsonl "$run_out/typed_retained_endpoint_records.jsonl"
     )
+    if [[ -n "$typed_retain_endpoint_variant_suffix" ]]; then
+      replay_args+=(--endpoint-variant-suffix "$typed_retain_endpoint_variant_suffix")
+    fi
     if [[ "$typed_retain_endpoint_max_records" != "0" ]]; then
       replay_args+=(--max-records "$typed_retain_endpoint_max_records")
     fi
@@ -413,6 +420,7 @@ write_metadata() {
   "typed_retain_endpoint_replays": $typed_retain_endpoint_replays,
   "typed_retain_endpoint_max_records": $typed_retain_endpoint_max_records,
   "typed_retain_endpoint_selection": "$typed_retain_endpoint_selection",
+  "typed_retain_endpoint_variant_suffix": $(json_escape "$typed_retain_endpoint_variant_suffix"),
   "typed_retain_endpoint_cmd": $(json_escape "$typed_retain_endpoint_cmd"),
   "typed_retain_endpoint_positive_control": $(json_escape "$typed_retain_endpoint_positive_control"),
   "typed_ops": $typed_ops,
@@ -497,6 +505,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --typed-retain-endpoint-selection)
       typed_retain_endpoint_selection="${2:-}"
+      shift 2
+      ;;
+    --typed-retain-endpoint-variant-suffix)
+      typed_retain_endpoint_variant_suffix="${2:-}"
       shift 2
       ;;
     --typed-retain-endpoint-cmd)
@@ -623,6 +635,10 @@ if ! [[ "$typed_retain_endpoint_max_records" =~ ^[0-9]+$ ]]; then
   echo "typed retain endpoint max records must be a non-negative integer" >&2
   exit 2
 fi
+if [[ -n "$typed_retain_endpoint_variant_suffix" && "$typed_retain_endpoint_variant_suffix" != .* ]]; then
+  echo "--typed-retain-endpoint-variant-suffix must be empty or start with '.': $typed_retain_endpoint_variant_suffix" >&2
+  exit 2
+fi
 case "$typed_retain_endpoint_replay" in
   off|on)
     ;;
@@ -632,10 +648,10 @@ case "$typed_retain_endpoint_replay" in
     ;;
 esac
 case "$typed_retain_endpoint_selection" in
-  input-order|best-d-f|op-diverse|structure-best|df-structure)
+  input-order|best-d-f|op-diverse|structure-best|df-structure|df-structure-op-diverse)
     ;;
   *)
-    echo "--typed-retain-endpoint-selection must be input-order, best-d-f, op-diverse, structure-best, or df-structure: $typed_retain_endpoint_selection" >&2
+    echo "--typed-retain-endpoint-selection must be input-order, best-d-f, op-diverse, structure-best, df-structure, or df-structure-op-diverse: $typed_retain_endpoint_selection" >&2
     exit 2
     ;;
 esac

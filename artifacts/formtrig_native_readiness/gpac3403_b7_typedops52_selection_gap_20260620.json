@@ -1,0 +1,76 @@
+{
+  "schema": "formtrig_gpac3403_b7_typedops52_selection_gap_summary_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-20T00:42:25Z",
+  "raw_run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_typedops52_20260620T002044Z",
+  "runner": "scripts/run_gpac3403_b7_relation_endpoint_gate.sh",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b7_relation_value_candidate.yml",
+  "gate": {
+    "duration_s": 600,
+    "status": "pass",
+    "execs_done": 2846,
+    "execs_per_sec": 4.74,
+    "reached_execs": 2846,
+    "terminal_triggered_execs": 0,
+    "queued_progress": 22,
+    "accepted_non_trigger": 22,
+    "saved_non_trigger": 22,
+    "saved_triggered": 0,
+    "spec_lifted_events": 1941,
+    "d_f_spec_lifted_min": 2,
+    "d_f_spec_lifted_max": 5,
+    "pretrigger_lift_guidance_ready": true,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed"
+  },
+  "retained_candidates": {
+    "records": 221,
+    "existing_inputs": 221,
+    "d_f_distribution": {
+      "2": 55,
+      "5": 166
+    },
+    "import_safe_extractor_ops_retained": {
+      "48": 5,
+      "49": 5,
+      "50": 0,
+      "51": 5
+    }
+  },
+  "endpoint_replay": {
+    "selection": "df-structure",
+    "endpoint_variant_suffix": null,
+    "selected_records": 128,
+    "selected_d_f_distribution": {
+      "2": 55,
+      "5": 73
+    },
+    "selected_import_safe_extractor_ops": {
+      "48": 0,
+      "49": 0,
+      "50": 0,
+      "51": 0
+    },
+    "structural_type49_selected_records": 73,
+    "endpoint_exit_code_counts": {
+      "0": 55,
+      "1": 73
+    },
+    "track_importing_hevc_files": 55,
+    "hevc_import_files": 55,
+    "lhevc_import_files": 10,
+    "nal_type_49_not_handled_files": 0,
+    "filter_not_found_files": 73,
+    "asan_double_free_files": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_sanitizer_crashes": 0,
+    "positive_control_native_crashes": 1,
+    "positive_control_sanitizer_crashes": 0
+  },
+  "diagnosis": {
+    "selection_gap": "The full typedops52 gate retained op48/op49/op51 candidates, but df-structure selected zero of them for endpoint replay.",
+    "suffix_gap": "Retained HEVC candidates were replayed with .bin paths; GPAC routed many selected variants to Filter not found before the HEVC importer.",
+    "blocker_after_this_gate": "Repair endpoint replay selection and HEVC importer routing before spending matched-baseline budget.",
+    "claim_boundary": "This is a strict pre-trigger guidance pass and a useful negative diagnostic, not GPAC_3403 endpoint closure: terminal _T, ASAN/double-free, and cleanup alias/free closure remain absent."
+  }
+}
