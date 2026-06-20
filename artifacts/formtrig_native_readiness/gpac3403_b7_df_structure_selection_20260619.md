@@ -32,3 +32,12 @@ Claim boundary: this is endpoint-selection repair, not endpoint success.
 GPAC_3403 still has `_T=0` and ASAN/double-free=0 in these replays. Matched
 baselines remain blocked until the B7 relation gate either closes the
 alias/free relation or reaches ASAN/double-free.
+
+## Full Gate Confirmation
+
+The standard B7 gate now uses `df-structure` and confirms the same direction:
+`artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_dfstructure_20260619.json`.
+It passes strict pre-trigger guidance, saves 41 non-trigger progress entries,
+and replays 128 df-structure-selected endpoint variants with 60 HEVC import files
+and 11 L-HEVC import files. It still has `_T=0`, ASAN/double-free=0, and the
+same cleanup alias/free blocker.

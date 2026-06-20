@@ -1,0 +1,93 @@
+{
+  "schema": "formtrig_gpac3403_b7_relation_endpoint_gate_summary_v1",
+  "target_id": "GPAC_3403",
+  "generated_at_utc": "2026-06-19T23:59:00Z",
+  "raw_run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_dfstructure_20260619T234925Z",
+  "runner": "scripts/run_gpac3403_b7_relation_endpoint_gate.sh",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b7_relation_value_candidate.yml",
+  "duration_s": 601,
+  "gate_status": "pass",
+  "endpoint_selection": "df-structure",
+  "formtrig": {
+    "execs_done": 2902,
+    "execs_per_sec": 4.83,
+    "reached_execs": 2903,
+    "terminal_triggered_execs": 0,
+    "queued_progress": 41,
+    "accepted_non_trigger": 41,
+    "saved_non_trigger": 41,
+    "typed_execs": 224,
+    "typed_finds": 38,
+    "spec_lifted_events": 1701,
+    "d_f_spec_lifted_min": 2,
+    "d_f_spec_lifted_max": 5,
+    "pretrigger_lift_guidance_ready": true,
+    "non_trigger_candidate_lift_delta": true,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed"
+  },
+  "typed_retained": {
+    "retained_records": 224,
+    "existing_inputs": 224,
+    "endpoint_replayed_variants": 128,
+    "structure_profiled_records": 128,
+    "structure_score_min": 309,
+    "structure_score_max": 22012,
+    "endpoint_sanitizer_crashes": 0,
+    "endpoint_native_crashes": 0,
+    "endpoint_timeouts": 0,
+    "positive_control_native_crashes": 1,
+    "positive_control_sanitizer_crashes": 0
+  },
+  "endpoint_signature": {
+    "variant_hevc_import_files": 60,
+    "variant_hevc_samples_max": 8,
+    "variant_hevc_nalus_max": 26,
+    "variant_lhevc_import_files": 11,
+    "variant_asan_double_free_files": 0,
+    "positive_control_hevc_samples_max": 172,
+    "positive_control_hevc_nalus_max": 413,
+    "positive_control_lhevc_slices": {
+      "i_slices": 30,
+      "p_slices": 2,
+      "b_slices": 87
+    },
+    "positive_control_asan_double_free_files": 1,
+    "positive_control_signatures_absent_from_variants": [
+      "nal_type_49_not_handled",
+      "asan_double_free"
+    ]
+  },
+  "alias_relation_audit": {
+    "status": "release_reassign_alias_observed_terminal_cleanup_missing",
+    "complete_alias_free_relation": false,
+    "release_reassign_alias_observed": true,
+    "best_record": {
+      "release_values": [
+        104535513085104
+      ],
+      "same_object_values": [
+        104535513085104
+      ],
+      "cleanup_values": [
+        104535513056720
+      ],
+      "release_same_object_matches": [
+        104535513085104
+      ],
+      "release_cleanup_matches": [],
+      "same_object_cleanup_matches": [],
+      "d_f_spec_lifted": 2,
+      "component_count": 12
+    }
+  },
+  "delta_vs_op_diverse_gate": {
+    "previous_summary": "artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_20260619.json",
+    "saved_non_trigger_delta": 6,
+    "hevc_import_files_delta": 22,
+    "lhevc_import_files_delta": 5,
+    "endpoint_terminal_delta": 0,
+    "alias_verdict_changed": false
+  },
+  "claim_boundary": "The df-structure gate confirms a positive retained-selection repair inside the full B7 gate, but still does not prove GPAC_3403 endpoint closure: terminal _T remains 0, ASAN/double-free remains 0, and cleanup GF_BitStream->original still differs from the release/reassign pointer."
+}

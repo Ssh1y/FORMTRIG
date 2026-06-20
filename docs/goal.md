@@ -1428,11 +1428,13 @@ campaign-progress alias audit 证明 release/sample->data 与 reassign buffer �
 指针，retained endpoint replay 的最大 import scale 只有 8 samples / 26 NALUs，
 低于正控制 172 / 413。因此下一步不是直接 matched baselines，而是修
 relation-aware retained selection 和 cleanup ownership mutation。第一步 selection
-repair 已完成：`artifacts/formtrig_native_readiness/gpac3403_b7_df_structure_selection_20260619.json`
+repair 已完成并在完整 B7 gate 中确认：`artifacts/formtrig_native_readiness/gpac3403_b7_df_structure_selection_20260619.json`
 证明纯 structure-best 是负例（HEVC import files 从 38 降到 5），而
-`df-structure` 保持 `D_F_spec_lifted` 优先、结构作为同层 tie-breaker，把 retained
-endpoint replay 覆盖提升到 60 个 HEVC import files / 11 个 L-HEVC import files，
-但仍没有 ASAN/double-free。typed-retained endpoint package 现在会自动嵌入 alias
+`artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_dfstructure_20260619.json`
+证明 `df-structure` 保持 `D_F_spec_lifted` 优先、结构作为同层 tie-breaker，在完整
+gate 中把 retained endpoint replay 覆盖提升到 60 个 HEVC import files / 11 个
+L-HEVC import files，saved non-trigger progress 也从 35 增加到 41；但仍没有
+ASAN/double-free。typed-retained endpoint package 现在会自动嵌入 alias
 relation audit verdict，防止只凭 parser/import signature 误判 GPAC endpoint 闭环。
 只有 B7 gate 出现 ASAN/double-free 或等价 alias/free proof 后，GPAC 才能升到 matched baselines。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
 core real-CVE 正例；LIBXML2 只能保留为 native pipeline / BindingSpec /

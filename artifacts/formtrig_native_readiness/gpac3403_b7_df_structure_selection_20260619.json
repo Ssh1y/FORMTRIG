@@ -83,6 +83,16 @@
       ]
     }
   ],
+  "full_gate_confirmation": {
+    "summary": "artifacts/formtrig_native_readiness/gpac3403_b7_relation_endpoint_gate_dfstructure_20260619.json",
+    "raw_run_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_dfstructure_20260619T234925Z",
+    "saved_non_trigger": 41,
+    "variant_hevc_import_files": 60,
+    "variant_lhevc_import_files": 11,
+    "terminal_triggered_execs": 0,
+    "asan_double_free_files": 0,
+    "alias_status": "release_reassign_alias_observed_terminal_cleanup_missing"
+  },
   "interpretation": "Pure structure maximization is a negative selection policy because large malformed candidates are rejected before useful GPAC import behavior. D_F-first structure ranking preserves FORMTRIG's lifted objective priority and uses HEVC structure only as a tie-breaker, improving retained endpoint import coverage from 38 to 60 HEVC-import files and from 6 to 11 L-HEVC-import files without claiming endpoint closure.",
   "claim_boundary": "This is a retained endpoint selection repair, not a new terminal success. GPAC_3403 still has terminal _T=0 and ASAN/double-free=0 under these replays; matched baselines remain blocked until the B7 gate closes alias/free or reaches ASAN/double-free."
 }
