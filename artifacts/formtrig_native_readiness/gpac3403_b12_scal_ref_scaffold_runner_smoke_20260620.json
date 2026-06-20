@@ -1,0 +1,64 @@
+{
+  "schema": "formtrig_gpac3403_b12_scal_ref_scaffold_runner_smoke_v1",
+  "target": "GPAC_3403",
+  "date_utc": "2026-06-20",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_runner_smoke_20260620T024736Z",
+  "runner": "scripts/run_gpac3403_b12_scal_ref_scaffold_matched.sh",
+  "status": "execute_smoke_passed",
+  "configuration": {
+    "mode": "execute",
+    "duration_s": 5,
+    "reps": 1,
+    "arms": "formtrig",
+    "baselines": "",
+    "seed_format": "mp4-scal-ref-scaffold",
+    "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b10_extractor_return_candidate.yml",
+    "mutation_hook_override": "scripts/formtrig_hooks/mp4_box_structure_hook.py",
+    "typed_ops": 64,
+    "typed_mutation_max": 256,
+    "typed_retain_max": 128,
+    "typed_retain_mode": "all"
+  },
+  "gate": {
+    "status": "pass",
+    "run_time": 5,
+    "execs_done": 78,
+    "execs_per_sec": 15.26,
+    "reached": 79,
+    "terminal_triggered": 0,
+    "queued_progress": 3,
+    "accepted_non_trigger": 3,
+    "saved_non_trigger": 3,
+    "saved_triggered": 0,
+    "spec_lifted": 40,
+    "heuristic_lifted": 0,
+    "manual_lifted": 0,
+    "experiment_ready": true,
+    "pretrigger_lift_guidance_ready": true,
+    "non_trigger_candidate_lift_delta": true,
+    "lift_delta_only_on_triggered": false,
+    "binding_signal_status": "pass",
+    "binding_signal_diagnosis": "role_signal_progress_observed"
+  },
+  "mutation_hook": {
+    "enabled": true,
+    "source": "cli_override",
+    "sha256": "2238d1be6586e8569d50c9e9146ee603f3199f39efc76b3be27f853a87bff4c0"
+  },
+  "typed_retained_audit": {
+    "retained_records": 15,
+    "records_jsonl_lines": 15,
+    "structure_profiled_candidates": 15,
+    "d_f_spec_lifted_count": 15,
+    "d_f_spec_lifted_min": 3.0,
+    "d_f_spec_lifted_max": 6.0,
+    "alias_relation_status": "release_reassign_alias_observed_terminal_cleanup_missing",
+    "alias_release_reassign_observed": true,
+    "alias_relation_complete": false
+  },
+  "verdict": {
+    "summary": "The B12 scaffold wrapper successfully generated a SCAL-reference MP4 seed corpus, launched a native FORMTRIG campaign with the B10 extractor-return BindingSpec and the MP4 structure hook, and passed the strict pre-trigger gate in a 5s smoke run.",
+    "claim_boundary": "This is runner/readiness evidence and pre-trigger guidance evidence. It is not endpoint success: terminal_triggered is 0 and the retained-candidate audit says the alias/free relation is not terminal-complete.",
+    "next_action": "Run a longer scaffold campaign with endpoint replay enabled, then add matched baseline arms with the same MP4 scaffold corpus once the FORMTRIG R2T path is no longer only pre-trigger progress."
+  }
+}

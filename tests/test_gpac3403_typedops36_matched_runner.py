@@ -178,6 +178,61 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertIn("GPAC_3403.native_b7_relation_value_candidate.yml", runner)
             self.assertIn("GPAC_3403.poc", runner)
 
+    def test_b12_scal_ref_scaffold_wrapper_uses_mp4_seed_and_hook(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "gpac3403_b12_scaffold"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_gpac3403_b12_scal_ref_scaffold_matched.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "30",
+                    "--reps",
+                    "1",
+                    "--arms",
+                    "formtrig,aflplusplus_vanilla",
+                    "--baselines",
+                    "aflplusplus_vanilla",
+                    "--out",
+                    str(out_dir),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual([record["arm"] for record in records], ["formtrig", "aflplusplus_vanilla"])
+            self.assertTrue(all(record["seed_format"] == "mp4-scal-ref-scaffold" for record in records))
+            self.assertTrue(
+                all(record["mutation_hook_override"].endswith("mp4_box_structure_hook.py") for record in records)
+            )
+            self.assertTrue(all(record["typed_ops"] == 64 for record in records))
+            self.assertTrue(all(record["typed_mutation_max"] == 256 for record in records))
+            self.assertTrue(all(record["typed_retain_max"] == 128 for record in records))
+            self.assertTrue(all(record["duration_s"] == 30 for record in records))
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["seed_format"], "mp4-scal-ref-scaffold")
+            self.assertIn("gpac3403_b12_scal_ref_scaffold_20260620/corpus", metadata["seed_dir"])
+            self.assertIn("GPAC_3403.native_b10_extractor_return_candidate.yml", metadata["binding_spec"])
+            self.assertTrue(metadata["mutation_hook_override"].endswith("mp4_box_structure_hook.py"))
+            self.assertEqual(metadata["typed_ops"], 64)
+            self.assertEqual(metadata["typed_mutation_max"], 256)
+            self.assertEqual(metadata["typed_retain_max"], 128)
+            self.assertEqual(metadata["typed_retain_mode"], "all")
+
+            commands = {record["arm"]: record["command"] for record in records}
+            self.assertIn("--mutation-hook", commands["formtrig"])
+            self.assertIn("mp4_box_structure_hook.py", commands["formtrig"])
+            self.assertIn("GPAC_3403.native_b10_extractor_return_candidate.yml", commands["formtrig"])
+            self.assertIn(metadata["seed_dir"], commands["formtrig"])
+            self.assertIn(metadata["seed_dir"], commands["aflplusplus_vanilla"])
+
     def test_dry_run_supports_nohook_ablation(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "gpac3403_nohook"

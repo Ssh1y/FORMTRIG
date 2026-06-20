@@ -26,6 +26,8 @@ typed_retain_endpoint_selection="best-d-f"
 typed_retain_endpoint_variant_suffix=""
 typed_retain_endpoint_cmd=""
 typed_retain_endpoint_positive_control=""
+mutation_hook_override=""
+seed_format="hevc"
 seed_preflight="require"
 seed_preflight_max="1"
 seed_preflight_timeout="2"
@@ -93,6 +95,8 @@ options:
                           optional positive-control input replayed through the
                           same endpoint command
   --seed-dir DIR          HEVC RNT seed corpus
+  --seed-format LABEL     seed corpus format label for metadata, default hevc
+  --mutation-hook FILE    override FORMTRIG external typed mutation hook
   --binding-spec FILE     FORMTRIG BindingSpec
   --site-map FILE         FORMTRIG native site map
   --white-mp4 FILE        second MP4Box -cat input, default GPAC white.mp4
@@ -196,6 +200,11 @@ record_plan() {
     printf '"typed_schedule":'
     json_escape "$typed_schedule"
     printf ',"typed_mutation_max":%s,' "$typed_mutation_max"
+    printf '"seed_format":'
+    json_escape "$seed_format"
+    printf ',"mutation_hook_override":'
+    json_escape "$mutation_hook_override"
+    printf ','
     printf '"typed_retain_max":%s,"typed_retain_mode":' "$typed_retain_max"
     json_escape "$typed_retain_mode"
     printf ',"command":'
@@ -275,6 +284,9 @@ formtrig_command_array() {
   )
   case "$arm" in
     formtrig)
+      if [[ -n "$mutation_hook_override" ]]; then
+        FORMTRIG_CMD+=(--mutation-hook "$mutation_hook_override")
+      fi
       ;;
     formtrig_nohook)
       FORMTRIG_CMD+=(--no-mutation-hook)
@@ -415,6 +427,7 @@ write_metadata() {
   "mode": "$mode",
   "reps": $reps,
   "seed_dir": "$seed_dir",
+  "seed_format": "$seed_format",
   "seed_preflight": "$seed_preflight",
   "site_map": "$site_map",
   "target_id": "$target_id",
@@ -434,6 +447,7 @@ write_metadata() {
   "typed_retain_endpoint_variant_suffix": $(json_escape "$typed_retain_endpoint_variant_suffix"),
   "typed_retain_endpoint_cmd": $(json_escape "$typed_retain_endpoint_cmd"),
   "typed_retain_endpoint_positive_control": $(json_escape "$typed_retain_endpoint_positive_control"),
+  "mutation_hook_override": $(json_escape "$mutation_hook_override"),
   "typed_ops": $typed_ops,
   "white_mp4": "$white_mp4"
 }
@@ -532,6 +546,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --seed-dir)
       seed_dir="${2:-}"
+      shift 2
+      ;;
+    --seed-format)
+      seed_format="${2:-}"
+      shift 2
+      ;;
+    --mutation-hook)
+      mutation_hook_override="${2:-}"
       shift 2
       ;;
     --binding-spec)
@@ -671,6 +693,9 @@ seed_dir="$(abs_path "$seed_dir")"
 binding_spec="$(abs_path "$binding_spec")"
 white_mp4="$(abs_path "$white_mp4")"
 afl_fuzz="$(abs_path "$afl_fuzz")"
+if [[ -n "$mutation_hook_override" && "$mutation_hook_override" != /* ]]; then
+  mutation_hook_override="$(abs_path "$mutation_hook_override")"
+fi
 if [[ "$site_map" != /* ]]; then site_map="$(abs_path "$site_map")"; fi
 if [[ "$formtrig_binary" != /* ]]; then formtrig_binary="$(abs_path "$formtrig_binary")"; fi
 if [[ "$plain_binary" != /* ]]; then plain_binary="$(abs_path "$plain_binary")"; fi
@@ -699,6 +724,9 @@ write_metadata
 if [[ "$mode" == "execute" ]]; then
   require_path "$seed_dir"
   require_path "$binding_spec"
+  if [[ -n "$mutation_hook_override" ]]; then
+    require_path "$mutation_hook_override"
+  fi
   require_path "$site_map"
   require_path "$white_mp4"
   require_path "$formtrig_binary"
