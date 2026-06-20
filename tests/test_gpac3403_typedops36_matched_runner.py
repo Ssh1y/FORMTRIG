@@ -279,6 +279,44 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertIn("--typed-retain-endpoint-replay on", runner)
             self.assertIn("--typed-retain-endpoint-selection best-d-f", runner)
 
+    def test_b13_scal_ref_payload_gate_uses_gpac_payload_hook(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "gpac3403_b13_payload"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_gpac3403_b13_scal_ref_payload_endpoint_gate.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "15",
+                    "--out",
+                    str(out_dir),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual([record["arm"] for record in records], ["formtrig"])
+            self.assertEqual(records[0]["typed_op_start"], 52)
+            self.assertTrue(records[0]["mutation_hook_override"].endswith("gpac_scal_ref_mp4_hook.py"))
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["typed_op_start"], 52)
+            self.assertEqual(metadata["typed_schedule"], "op-first")
+            self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")
+            self.assertTrue(metadata["mutation_hook_override"].endswith("gpac_scal_ref_mp4_hook.py"))
+
+            runner = (
+                REPO_ROOT / "scripts" / "run_gpac3403_b13_scal_ref_payload_endpoint_gate.sh"
+            ).read_text(encoding="utf-8")
+            self.assertIn("FORMTRIG_GPAC3403_HEVC_SAMPLE_BIAS", runner)
+            self.assertIn("gpac_scal_ref_mp4_hook.py", runner)
+
     def test_dry_run_supports_nohook_ablation(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "gpac3403_nohook"

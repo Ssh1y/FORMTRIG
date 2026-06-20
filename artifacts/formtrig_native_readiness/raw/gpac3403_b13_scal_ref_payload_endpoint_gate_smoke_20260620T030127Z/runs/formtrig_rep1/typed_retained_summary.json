@@ -1,0 +1,185 @@
+{
+  "best_by_d_f": [
+    {
+      "atom_id": 1,
+      "component_kind": 3,
+      "d_f_spec_lifted": 4.0,
+      "hook_used": true,
+      "index": 1,
+      "off": 0,
+      "op": 53,
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:53,ci:0,ri:0,si:0.bin",
+      "role_name": "root_observe",
+      "sample": 0,
+      "sha256": "b3b713a7322200b2ba8b760cf16a40567ab26201986426a695c2cf728d5415ca",
+      "size": 52467,
+      "source_queue_id": 0,
+      "span": 256,
+      "stage_cur": 1,
+      "start": 0
+    },
+    {
+      "atom_id": 1,
+      "component_kind": 3,
+      "d_f_spec_lifted": 4.0,
+      "hook_used": true,
+      "index": 2,
+      "off": 0,
+      "op": 56,
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000004,op:56,ci:0,ri:0,si:0.bin",
+      "role_name": "root_observe",
+      "sample": 0,
+      "sha256": "59250c77ef9781365af2c8f81ffa9d84510678cfaf51e3899fc7a4376014c977",
+      "size": 55549,
+      "source_queue_id": 0,
+      "span": 256,
+      "stage_cur": 4,
+      "start": 0
+    },
+    {
+      "atom_id": 1,
+      "component_kind": 3,
+      "d_f_spec_lifted": 4.0,
+      "hook_used": true,
+      "index": 3,
+      "off": 0,
+      "op": 57,
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/id:000003,src:000000,stage:000005,op:57,ci:0,ri:0,si:0.bin",
+      "role_name": "root_observe",
+      "sample": 0,
+      "sha256": "c9731ca3f70e984c52d932726a666acf2ae64884424a810d1c0863669d9568d0",
+      "size": 59521,
+      "source_queue_id": 0,
+      "span": 256,
+      "stage_cur": 5,
+      "start": 0
+    },
+    {
+      "atom_id": 1,
+      "component_kind": 3,
+      "d_f_spec_lifted": null,
+      "hook_used": true,
+      "index": 0,
+      "off": 0,
+      "op": 52,
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/id:000000,src:000000,stage:000000,op:52,ci:0,ri:0,si:0.bin",
+      "role_name": "root_observe",
+      "sample": 0,
+      "sha256": "47e2b0f567ac02488480fe8d25e71dfd2af42c98c74f0e448f6e723c783b3907",
+      "size": 61126,
+      "source_queue_id": 0,
+      "span": 256,
+      "stage_cur": 0,
+      "start": 0
+    }
+  ],
+  "component_kinds": {
+    "3": 4
+  },
+  "d_f_spec_lifted": {
+    "count": 3,
+    "max": 4.0,
+    "min": 4.0,
+    "unique": [
+      4.0
+    ]
+  },
+  "existing_inputs": 4,
+  "hook_used_records": 4,
+  "largest_by_size": [
+    {
+      "atom_id": 1,
+      "component_kind": 3,
+      "d_f_spec_lifted": null,
+      "hook_used": true,
+      "index": 0,
+      "off": 0,
+      "op": 52,
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/id:000000,src:000000,stage:000000,op:52,ci:0,ri:0,si:0.bin",
+      "role_name": "root_observe",
+      "sample": 0,
+      "sha256": "47e2b0f567ac02488480fe8d25e71dfd2af42c98c74f0e448f6e723c783b3907",
+      "size": 61126,
+      "source_queue_id": 0,
+      "span": 256,
+      "stage_cur": 0,
+      "start": 0
+    },
+    {
+      "atom_id": 1,
+      "component_kind": 3,
+      "d_f_spec_lifted": 4.0,
+      "hook_used": true,
+      "index": 3,
+      "off": 0,
+      "op": 57,
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/id:000003,src:000000,stage:000005,op:57,ci:0,ri:0,si:0.bin",
+      "role_name": "root_observe",
+      "sample": 0,
+      "sha256": "c9731ca3f70e984c52d932726a666acf2ae64884424a810d1c0863669d9568d0",
+      "size": 59521,
+      "source_queue_id": 0,
+      "span": 256,
+      "stage_cur": 5,
+      "start": 0
+    },
+    {
+      "atom_id": 1,
+      "component_kind": 3,
+      "d_f_spec_lifted": 4.0,
+      "hook_used": true,
+      "index": 2,
+      "off": 0,
+      "op": 56,
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000004,op:56,ci:0,ri:0,si:0.bin",
+      "role_name": "root_observe",
+      "sample": 0,
+      "sha256": "59250c77ef9781365af2c8f81ffa9d84510678cfaf51e3899fc7a4376014c977",
+      "size": 55549,
+      "source_queue_id": 0,
+      "span": 256,
+      "stage_cur": 4,
+      "start": 0
+    },
+    {
+      "atom_id": 1,
+      "component_kind": 3,
+      "d_f_spec_lifted": 4.0,
+      "hook_used": true,
+      "index": 1,
+      "off": 0,
+      "op": 53,
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:53,ci:0,ri:0,si:0.bin",
+      "role_name": "root_observe",
+      "sample": 0,
+      "sha256": "b3b713a7322200b2ba8b760cf16a40567ab26201986426a695c2cf728d5415ca",
+      "size": 52467,
+      "source_queue_id": 0,
+      "span": 256,
+      "stage_cur": 1,
+      "start": 0
+    }
+  ],
+  "missing_examples": [],
+  "missing_inputs": 0,
+  "missing_records_tsv": [],
+  "ops": {
+    "52": 1,
+    "53": 1,
+    "56": 1,
+    "57": 1
+  },
+  "records_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained_records.jsonl",
+  "records_tsv": [
+    "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620T030127Z/runs/formtrig_rep1/typed_retained/records.tsv"
+  ],
+  "retained_records": 4,
+  "roles": {
+    "root_observe": 4
+  },
+  "schema": "formtrig_typed_retained_candidates_v1",
+  "source_queue_ids": {
+    "0": 4
+  },
+  "total_existing_bytes": 228663
+}
