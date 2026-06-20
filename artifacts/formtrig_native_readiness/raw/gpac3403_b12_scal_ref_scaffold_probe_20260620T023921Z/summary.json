@@ -1,0 +1,71 @@
+{
+  "claim_boundary": "The preseed builds a SCAL-reference MP4 and replays without terminal crash or missing-reference diagnostics; it is a candidate scaffold, not endpoint success.",
+  "next_action": "Use this non-terminal SCAL-reference scaffold as a candidate resumed corpus only after confirming replay stability and matched-baseline seed parity.",
+  "parameters": {
+    "base_track_id": 1,
+    "enhanced_mode": "copy-base",
+    "off": 6,
+    "op": 52,
+    "ref_track_id": 2,
+    "sample": 2,
+    "span": 2975,
+    "start": 0
+  },
+  "preseed": {
+    "base_hevc": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/base.hevc",
+    "base_size": 2975,
+    "built": true,
+    "commands": {
+      "add_scal_ref": [
+        "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+        "-ref",
+        "2:scal:1",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/two_track_scal_ref.mp4"
+      ],
+      "build_base": [
+        "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+        "-add",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/base.hevc",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/two_track_scal_ref.mp4"
+      ],
+      "build_enhanced": [
+        "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+        "-add",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/enhanced.hevc",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/two_track_scal_ref.mp4"
+      ]
+    },
+    "enhanced_hevc": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/enhanced.hevc",
+    "enhanced_mode": "copy-base",
+    "enhanced_size": 2975,
+    "exit_codes": {
+      "add_scal_ref": 0,
+      "build_base": 0,
+      "build_enhanced": 0
+    },
+    "mp4": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/two_track_scal_ref.mp4"
+  },
+  "preseed_class": "reference_scaffold_candidate",
+  "replay": {
+    "command": [
+      "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+      "-cat",
+      "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/two_track_scal_ref.mp4",
+      "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+      "-out",
+      "/dev/null"
+    ],
+    "corrupt_nal_messages": 0,
+    "double_free_signature": false,
+    "exit_code": 0,
+    "native_crash": false,
+    "no_reference_track_messages": 0,
+    "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/runtime.jsonl",
+    "runtime_log_exists": true,
+    "stderr": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/replay.stderr",
+    "stdout": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/replay.stdout"
+  },
+  "schema": "formtrig_gpac3403_scal_ref_preseed_probe_v2",
+  "status": "scal_ref_preseed_no_terminal_crash",
+  "target": "GPAC_3403"
+}

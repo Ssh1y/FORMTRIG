@@ -3,9 +3,9 @@
 
 B10 narrows the GPAC_3403 repair target to process_extractor returning at the
 no-reference-track site.  This probe turns that diagnosis into an executable
-gate: generate an enhanced HEVC stream with the typed hook, import base/enhanced
-tracks into MP4, add an explicit track-2 -> track-1 SCAL reference, and replay
-the result through the GPAC concatenation endpoint.
+gate: generate an enhanced HEVC stream, import base/enhanced tracks into MP4,
+add an explicit track-2 -> track-1 SCAL reference, and replay the result through
+the GPAC concatenation endpoint.
 """
 
 from __future__ import annotations
@@ -53,16 +53,23 @@ def run_command(cmd: list[str], stdout_path: Path, stderr_path: Path, env: dict[
 
 
 def build_preseed(args: argparse.Namespace, out_dir: Path) -> dict[str, Any]:
-    hook = load_hook(args.hook)
     seed = args.seed.read_bytes()
-    enhanced = hook.mutate(
-        seed,
-        start=args.start,
-        span=args.span,
-        off=args.off,
-        op=args.op,
-        sample=args.sample,
-    )
+    if args.enhanced_mode == "mutated":
+        if args.hook is None:
+            raise RuntimeError("--hook is required when --enhanced-mode=mutated")
+        hook = load_hook(args.hook)
+        enhanced = hook.mutate(
+            seed,
+            start=args.start,
+            span=args.span,
+            off=args.off,
+            op=args.op,
+            sample=args.sample,
+        )
+    elif args.enhanced_mode == "copy-base":
+        enhanced = seed
+    else:
+        raise RuntimeError(f"unsupported enhanced mode: {args.enhanced_mode}")
 
     base_hevc = out_dir / "base.hevc"
     enhanced_hevc = out_dir / "enhanced.hevc"
@@ -99,6 +106,7 @@ def build_preseed(args: argparse.Namespace, out_dir: Path) -> dict[str, Any]:
         "mp4": str(mp4_path),
         "base_size": len(seed),
         "enhanced_size": len(enhanced),
+        "enhanced_mode": args.enhanced_mode,
         "commands": {
             "build_base": build1,
             "build_enhanced": build2,
@@ -166,27 +174,58 @@ def build_report(args: argparse.Namespace) -> dict[str, Any]:
         replay = replay_preseed(args, args.out, Path(preseed["mp4"]))
 
     status = "preseed_build_failed"
+    preseed_class = "invalid_scaffold"
     next_action = "Fix MP4Box preseed construction before endpoint replay."
+    claim_boundary = "No endpoint conclusion: the SCAL-reference MP4 preseed did not build cleanly."
     if replay:
         if replay["double_free_signature"]:
             status = "scal_ref_preseed_triggers_double_free"
+            preseed_class = "terminal_positive_control"
             next_action = (
-                "Promote SCAL-reference construction into the GPAC typed-mutation/preseed path, "
-                "then compare against faithful baselines with the same endpoint oracle."
+                "Keep this as a positive-control endpoint proof; do not use it as a fair matched "
+                "campaign seed because it already reaches the terminal crash."
+            )
+            claim_boundary = (
+                "This proves that adding the SCAL reference can close the diagnosed GPAC R2T "
+                "endpoint gap, but it is not a non-terminal scaffold for baseline comparison."
+            )
+        elif replay["native_crash"]:
+            status = "scal_ref_preseed_crashes_without_double_free_signature"
+            preseed_class = "terminal_crash_unclassified"
+            next_action = "Triage stderr/core signature before promoting this candidate."
+            claim_boundary = (
+                "The preseed causes a native crash without the expected GPAC_3403 double-free "
+                "signature, so it is not valid endpoint evidence yet."
             )
         elif replay["no_reference_track_messages"]:
             status = "scal_ref_preseed_still_has_no_reference_gaps"
+            preseed_class = "reference_scaffold_needs_alignment"
             next_action = "Inspect track IDs and per-sample extractor ref_index alignment."
+            claim_boundary = (
+                "The preseed is non-terminal, but replay still reports missing extractor target "
+                "tracks; it is not yet a clean SCAL-reference scaffold."
+            )
         else:
             status = "scal_ref_preseed_no_terminal_crash"
-            next_action = "Use B10 downstream probes to refine extractor payload offsets and lengths."
+            preseed_class = "reference_scaffold_candidate"
+            next_action = (
+                "Use this non-terminal SCAL-reference scaffold as a candidate resumed corpus only "
+                "after confirming replay stability and matched-baseline seed parity."
+            )
+            claim_boundary = (
+                "The preseed builds a SCAL-reference MP4 and replays without terminal crash or "
+                "missing-reference diagnostics; it is a candidate scaffold, not endpoint success."
+            )
 
     return {
-        "schema": "formtrig_gpac3403_scal_ref_preseed_probe_v1",
+        "schema": "formtrig_gpac3403_scal_ref_preseed_probe_v2",
         "target": "GPAC_3403",
         "status": status,
+        "preseed_class": preseed_class,
         "next_action": next_action,
+        "claim_boundary": claim_boundary,
         "parameters": {
+            "enhanced_mode": args.enhanced_mode,
             "op": args.op,
             "sample": args.sample,
             "start": args.start,
@@ -206,7 +245,9 @@ def write_markdown(report: dict[str, Any], path: Path) -> None:
         "# GPAC_3403 SCAL Reference Preseed Probe",
         "",
         f"- status: `{report['status']}`",
+        f"- preseed_class: `{report['preseed_class']}`",
         f"- next_action: {report['next_action']}",
+        f"- claim_boundary: {report['claim_boundary']}",
         "",
         "## Replay",
         "",
@@ -225,7 +266,8 @@ def write_markdown(report: dict[str, Any], path: Path) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seed", type=Path, required=True)
-    parser.add_argument("--hook", type=Path, required=True)
+    parser.add_argument("--hook", type=Path)
+    parser.add_argument("--enhanced-mode", choices=("mutated", "copy-base"), default="mutated")
     parser.add_argument("--mp4box", type=Path, required=True)
     parser.add_argument("--companion-mp4", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)

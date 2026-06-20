@@ -1,0 +1,68 @@
+{
+  "schema": "formtrig_gpac3403_b12_scal_ref_scaffold_evidence_v1",
+  "target": "GPAC_3403",
+  "date_utc": "2026-06-20",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z",
+  "supersedes_or_complements": [
+    "artifacts/formtrig_native_readiness/gpac3403_b10_extractor_return_probe_20260620.json",
+    "artifacts/formtrig_native_readiness/gpac3403_b11_scal_ref_preseed_probe_20260620.json"
+  ],
+  "probe": {
+    "status": "scal_ref_preseed_no_terminal_crash",
+    "preseed_class": "reference_scaffold_candidate",
+    "enhanced_mode": "copy-base",
+    "base_track_id": 1,
+    "ref_track_id": 2
+  },
+  "preseed": {
+    "base_size": 2975,
+    "enhanced_size": 2975,
+    "base_sha256": "a120df5b64e812e5b07c672bcb0ba2b712a346fd8d3997ab0d8e838dedc02d25",
+    "enhanced_sha256": "a120df5b64e812e5b07c672bcb0ba2b712a346fd8d3997ab0d8e838dedc02d25",
+    "mp4_sha256": "1438375b5eab0d8fa0abdaee1aa7fd2cbddd42af6bad0d67d84e27796ef6059d",
+    "build_exit_codes": {
+      "build_base": 0,
+      "build_enhanced": 0,
+      "add_scal_ref": 0
+    },
+    "scal_reference_command": [
+      "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+      "-ref",
+      "2:scal:1",
+      "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/two_track_scal_ref.mp4"
+    ]
+  },
+  "replay": {
+    "command": [
+      "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+      "-cat",
+      "artifacts/formtrig_native_readiness/raw/gpac3403_b12_scal_ref_scaffold_probe_20260620T023921Z/two_track_scal_ref.mp4",
+      "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+      "-out",
+      "/dev/null"
+    ],
+    "exit_code": 0,
+    "native_crash": false,
+    "double_free_signature": false,
+    "no_reference_track_messages": 0,
+    "corrupt_nal_messages": 0,
+    "runtime_log_exists": true
+  },
+  "runtime_evidence": {
+    "reached": true,
+    "crash_predicate": false,
+    "D_T": 1,
+    "D_F_spec_lifted": 3,
+    "uses_trigger_oracle": false,
+    "uses_target_id_specific_rule": false,
+    "uses_runtime_heuristic": false,
+    "uses_spec_lifted": true,
+    "uses_manual_target": false
+  },
+  "verdict": {
+    "status": "reference_scaffold_candidate_available",
+    "summary": "A two-track MP4 was built from the original blackwhite HEVC as both base and enhanced tracks, then annotated with track-2 -> track-1 SCAL. The GPAC -cat endpoint replays it cleanly with exit code 0, no double-free signature, no missing-reference diagnostics, and a flushed FORMTRIG runtime record showing R-not-T spec-lifted signal.",
+    "claim_boundary": "This is a non-terminal scaffold candidate for controlled resumed GPAC experiments. It is not endpoint success and should be kept separate from B11, which is a terminal positive control using the op52/sample2 enhanced payload.",
+    "next_action": "Use this scaffold to test whether FORMTRIG typed mutation can move from a valid SCAL-reference R-not-T state to the B11 terminal payload, while giving matched baselines the same scaffold when making fairness claims."
+  }
+}
