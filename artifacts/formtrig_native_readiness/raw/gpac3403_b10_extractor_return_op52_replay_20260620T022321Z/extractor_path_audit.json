@@ -1,0 +1,86 @@
+{
+  "records": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/records.jsonl",
+  "runtime_event_map": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_spec_compile_20260620/formtrig_runtime_event_map.csv",
+  "runtimes": [
+    {
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/logs/variant_000000.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 0,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 0,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/variants/variant_000000.hevc"
+    },
+    {
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/logs/variant_000001.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 1,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 1,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/variants/variant_000001.hevc"
+    },
+    {
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/logs/variant_000002.runtime.jsonl",
+      "records_with_extractor_components": 1,
+      "sample": 2,
+      "top_records": [
+        {
+          "d_f_spec_lifted": 3,
+          "error_semantics_satisfied": [],
+          "observed": [
+            "constructor_mode",
+            "extractor_loop_entry",
+            "no_reference_track_ok_return",
+            "outer_hevc_extractor_error",
+            "outer_invalid_nal_size"
+          ],
+          "ok_barriers_satisfied": [],
+          "record_index": 0,
+          "satisfied": [
+            "extractor_loop_entry"
+          ],
+          "trace_signature": "0x1805e692bdfb44c8"
+        }
+      ],
+      "totals": {
+        "constructor_mode_observed_records": 1,
+        "extractor_loop_entry_observed_records": 1,
+        "extractor_loop_entry_satisfied_records": 1,
+        "no_reference_track_ok_return_observed_records": 1,
+        "outer_hevc_extractor_error_observed_records": 1,
+        "outer_invalid_nal_size_observed_records": 1
+      },
+      "variant_index": 2,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/variants/variant_000002.hevc"
+    },
+    {
+      "op": 52,
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/logs/variant_000003.runtime.jsonl",
+      "records_with_extractor_components": 0,
+      "sample": 3,
+      "top_records": [],
+      "totals": {},
+      "variant_index": 3,
+      "variant_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z/variants/variant_000003.hevc"
+    }
+  ],
+  "schema": "formtrig_gpac3403_extractor_path_audit_v1",
+  "totals": {
+    "constructor_mode_observed_records": 1,
+    "extractor_loop_entry_observed_records": 1,
+    "extractor_loop_entry_satisfied_records": 1,
+    "no_reference_track_ok_return_observed_records": 1,
+    "outer_hevc_extractor_error_observed_records": 1,
+    "outer_invalid_nal_size_observed_records": 1,
+    "records_with_extractor_components": 1
+  },
+  "verdict": {
+    "interpretation": "process_extractor reaches the no-reference-track return site and no modeled downstream post-reference event is observed; branch outcome polarity is therefore treated as ambiguous, but the path is consistent with the GF_OK no-ref-track early return.",
+    "next_action": "Mutate toward an imported L-HEVC/SCAL reference relation, then require downstream post-reference probes before endpoint replay.",
+    "status": "extractor_returns_ok_without_reference_track_inferred"
+  }
+}

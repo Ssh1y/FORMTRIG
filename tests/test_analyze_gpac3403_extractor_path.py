@@ -34,6 +34,9 @@ def write_event_map(path: Path) -> None:
                 "negative_offset,1,compound-sequence-lifecycle,guard,8,4084452653,0000000000001008,exact,0x00000000,B4,true,ok,5,40,higher,outcome,process_extractor,isomedia/avc_ext.c,182,8,br,any",
                 "referred_size_ok,1,compound-sequence-lifecycle,guard,8,2977846854,0000000000001009,exact,0x00000000,B4,true,ok,5,41,higher,outcome,process_extractor,isomedia/avc_ext.c,207,8,br,any",
                 "size_too_large_ok,1,compound-sequence-lifecycle,opposite_producer,8,3416563163,000000000000100a,exact,0x00000000,B4,true,ok,6,42,higher,hit,process_extractor,isomedia/avc_ext.c,248,5,br,any",
+                "media_get_sample_error,1,compound-sequence-lifecycle,guard,8,1701736565,000000000000100b,exact,0x00000000,B4,true,ok,5,46,higher,outcome,process_extractor,isomedia/avc_ext.c,186,8,br,any",
+                "copy_loop_entry,1,compound-sequence-lifecycle,lifecycle_event,8,762906956,000000000000100c,exact,0x00000000,B4,true,ok,7,49,higher,hit,process_extractor,isomedia/avc_ext.c,209,5,br,any",
+                "size_field_too_large_ok,1,compound-sequence-lifecycle,opposite_producer,8,729204623,000000000000100d,exact,0x00000000,B4,true,ok,6,50,higher,outcome,process_extractor,isomedia/avc_ext.c,213,11,br,any",
             ]
         )
         + "\n",
@@ -95,6 +98,15 @@ class AnalyzeGpac3403ExtractorPathTest(unittest.TestCase):
         self.assertEqual(report["totals"]["extractor_loop_entry_satisfied_records"], 1)
         self.assertEqual(report["totals"]["no_reference_track_ok_return_satisfied_records"], 1)
 
+    def test_infers_ok_return_when_no_reference_site_is_observed_without_downstream_path(self):
+        report = self.build_report([component(0x1003, 1), component(0x1006, 0)])
+
+        self.assertEqual(
+            report["verdict"]["status"],
+            "extractor_returns_ok_without_reference_track_inferred",
+        )
+        self.assertEqual(report["totals"]["no_reference_track_ok_return_observed_records"], 1)
+
     def test_reports_constructor_only_when_no_error_or_ok_barrier(self):
         report = self.build_report([component(0x1003, 1), component(0x1004, 1)])
 
@@ -114,6 +126,32 @@ class AnalyzeGpac3403ExtractorPathTest(unittest.TestCase):
         self.assertEqual(report["verdict"]["status"], "extractor_error_path_satisfied")
         self.assertEqual(report["totals"]["outer_hevc_extractor_error_satisfied_records"], 1)
         self.assertEqual(report["totals"]["negative_sample_offset_error_satisfied_records"], 1)
+
+    def test_reports_reference_path_progress_without_error(self):
+        report = self.build_report(
+            [
+                component(0x1003, 1),
+                component(0x1006, 0),
+                component(0x100B, 0),
+                component(0x100C, 1),
+            ]
+        )
+
+        self.assertEqual(report["verdict"]["status"], "extractor_reference_path_progress_without_error")
+        self.assertEqual(report["totals"]["media_get_sample_error_observed_records"], 1)
+        self.assertEqual(report["totals"]["copy_loop_entry_satisfied_records"], 1)
+
+    def test_reports_non_error_skip_barrier_after_reference_track(self):
+        report = self.build_report(
+            [
+                component(0x1003, 1),
+                component(0x1006, 0),
+                component(0x100D, 1),
+            ]
+        )
+
+        self.assertEqual(report["verdict"]["status"], "extractor_non_error_skip_path_satisfied")
+        self.assertEqual(report["totals"]["size_field_too_large_ok_path_satisfied_records"], 1)
 
 
 if __name__ == "__main__":

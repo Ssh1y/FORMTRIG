@@ -1,0 +1,66 @@
+{
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b10_extractor_return_candidate.yml",
+  "compile_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_spec_compile_20260620",
+  "date_utc": "2026-06-20",
+  "extractor_path": {
+    "interpretation": "process_extractor reaches the no-reference-track return site and no modeled downstream post-reference event is observed; branch outcome polarity is therefore treated as ambiguous, but the path is consistent with the GF_OK no-ref-track early return.",
+    "next_action": "Mutate toward an imported L-HEVC/SCAL reference relation, then require downstream post-reference probes before endpoint replay.",
+    "status": "extractor_returns_ok_without_reference_track_inferred",
+    "totals": {
+      "constructor_mode_observed_records": 1,
+      "extractor_loop_entry_observed_records": 1,
+      "extractor_loop_entry_satisfied_records": 1,
+      "no_reference_track_ok_return_observed_records": 1,
+      "outer_hevc_extractor_error_observed_records": 1,
+      "outer_invalid_nal_size_observed_records": 1,
+      "records_with_extractor_components": 1
+    }
+  },
+  "post_reassign_path": {
+    "interpretation": "Inputs reach the lifecycle neighborhood but do not hit the modeled pre-detach HEVC error paths at avc_ext.c:809 or avc_ext.c:844.",
+    "next_action": "Bias typed mutation toward malformed HEVC extractor or nal_size<2 cases that remain parseable long enough to occur after sample-buffer reassign.",
+    "status": "pre_detach_error_missing",
+    "totals": {
+      "fallback_reassign_records": 0,
+      "normal_detach_absent_records": 4,
+      "pre_detach_error_observed_records": 1,
+      "pre_detach_error_records": 0,
+      "reached_records": 4,
+      "reassign_cleanup_same_records": 0,
+      "release_reassign_same_records": 4
+    }
+  },
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b10_extractor_return_op52_replay_20260620T022321Z",
+  "replay": {
+    "d_f_spec_lifted_values": [
+      3.0
+    ],
+    "duration_s": 16.886,
+    "generated_variants": 4,
+    "reached": 4,
+    "replayed_variants": 4,
+    "spec_lifted": 4,
+    "timeouts": 0,
+    "triggered": 0
+  },
+  "schema": "formtrig_gpac3403_b10_extractor_return_probe_v1",
+  "static_lift_audit": {
+    "atom_id": "1",
+    "binding_tier": "B4",
+    "category": "compound-sequence-lifecycle",
+    "collapsed": "0",
+    "event_count": "34",
+    "lift_allowed": "true",
+    "location_only_count": "0",
+    "reason": "ok",
+    "roles": "0x000001fb"
+  },
+  "supersedes": "artifacts/formtrig_native_readiness/gpac3403_b9_extractor_path_probe_20260620.json",
+  "target": "GPAC_3403",
+  "verdict": {
+    "claim_boundary": "This is diagnostic repair evidence, not endpoint benefit evidence. It narrows the missing GPAC_3403 R2T step to constructing or importing a valid L-HEVC/SCAL reference relation for type49 extractors before spending long-run endpoint budget.",
+    "next_action": "Repair typed mutation toward a valid dependent/reference track relation so process_extractor progresses beyond line 154; then require B10 downstream probes such as lines 179/186/207/209/252 before endpoint replay.",
+    "status": "repair_target_identified_no_terminal_T",
+    "summary": "B10 expands B9 with internal process_extractor return/progress probes after the no-reference-track guard. The op52 minimal replay remains 4/4 reached/spec_lifted with D_F=3 and no _T. The only extractor-internal record reaches the no-reference-track return site, observes no downstream post-reference probes, and is now classified as an inferred GF_OK no-reference-track early return."
+  }
+}

@@ -19,22 +19,57 @@ SEMANTIC_BY_SITE = {
     ("process_extractor", "123", "guard"): "constructor_mode",
     ("process_extractor", "151", "guard"): "reference_track_present",
     ("process_extractor", "154", "opposite_producer"): "no_reference_track_ok_return",
+    ("process_extractor", "167", "guard"): "missing_ref_track_box_error",
+    ("process_extractor", "171", "guard"): "sample_alloc_error",
+    ("process_extractor", "175", "guard"): "bitstream_alloc_error",
+    ("process_extractor", "179", "guard"): "find_entry_error",
+    ("process_extractor", "180", "lifecycle_event"): "prev_sample_fallback",
     ("process_extractor", "181", "guard"): "missing_reference_sample_error",
     ("process_extractor", "182", "guard"): "negative_sample_offset_error",
+    ("process_extractor", "186", "guard"): "media_get_sample_error",
+    ("process_extractor", "187", "lifecycle_event"): "zero_alloc_size_repair",
     ("process_extractor", "207", "guard"): "referred_size_ok",
+    ("process_extractor", "209", "lifecycle_event"): "copy_loop_entry",
+    ("process_extractor", "213", "opposite_producer"): "size_field_too_large_ok_path",
+    ("process_extractor", "218", "lifecycle_event"): "available_clamp",
+    ("process_extractor", "237", "opposite_producer"): "copy_size_too_large_ok_path",
     ("process_extractor", "248", "opposite_producer"): "referred_size_too_large_ok_path",
+    ("process_extractor", "252", "lifecycle_event"): "hevc_iteration_tail",
 }
 
 ERROR_SEMANTICS = {
     "outer_hevc_extractor_error",
     "outer_invalid_nal_size",
+    "missing_ref_track_box_error",
+    "sample_alloc_error",
+    "bitstream_alloc_error",
+    "find_entry_error",
     "missing_reference_sample_error",
     "negative_sample_offset_error",
+    "media_get_sample_error",
 }
 
 OK_BARRIER_SEMANTICS = {
     "no_reference_track_ok_return",
+    "size_field_too_large_ok_path",
+    "copy_size_too_large_ok_path",
     "referred_size_too_large_ok_path",
+}
+
+POST_REFERENCE_PROGRESS_SEMANTICS = {
+    "find_entry_error",
+    "prev_sample_fallback",
+    "missing_reference_sample_error",
+    "negative_sample_offset_error",
+    "media_get_sample_error",
+    "zero_alloc_size_repair",
+    "referred_size_ok",
+    "copy_loop_entry",
+    "available_clamp",
+    "size_field_too_large_ok_path",
+    "copy_size_too_large_ok_path",
+    "referred_size_too_large_ok_path",
+    "hevc_iteration_tail",
 }
 
 
@@ -205,6 +240,31 @@ def diagnose(totals: Counter[str]) -> dict[str, str]:
             "status": "extractor_returns_ok_without_reference_track",
             "interpretation": "process_extractor is reached, but the reference-track lookup fails and returns GF_OK.",
             "next_action": "Mutate toward an imported L-HEVC/SCAL reference relation that gives type49 a valid target track.",
+        }
+    if (
+        totals.get("no_reference_track_ok_return_observed_records", 0)
+        and not any(totals.get(f"{name}_observed_records", 0) for name in POST_REFERENCE_PROGRESS_SEMANTICS)
+    ):
+        return {
+            "status": "extractor_returns_ok_without_reference_track_inferred",
+            "interpretation": (
+                "process_extractor reaches the no-reference-track return site and no modeled downstream "
+                "post-reference event is observed; branch outcome polarity is therefore treated as ambiguous, "
+                "but the path is consistent with the GF_OK no-ref-track early return."
+            ),
+            "next_action": "Mutate toward an imported L-HEVC/SCAL reference relation, then require downstream post-reference probes before endpoint replay.",
+        }
+    if any(totals.get(f"{name}_satisfied_records", 0) for name in OK_BARRIER_SEMANTICS):
+        return {
+            "status": "extractor_non_error_skip_path_satisfied",
+            "interpretation": "process_extractor reaches a modeled non-error skip path after reference-track resolution.",
+            "next_action": "Bias extractor payload sizes/offsets away from OK skip barriers and toward the modeled error-return guards.",
+        }
+    if any(totals.get(f"{name}_observed_records", 0) for name in POST_REFERENCE_PROGRESS_SEMANTICS):
+        return {
+            "status": "extractor_reference_path_progress_without_error",
+            "interpretation": "process_extractor progresses beyond reference-track lookup, but no modeled error return is satisfied.",
+            "next_action": "Use the deepest observed post-reference event to add operand-distance guidance for data_offset/data_length/sample_offset.",
         }
     if totals.get("constructor_mode_satisfied_records", 0):
         return {
