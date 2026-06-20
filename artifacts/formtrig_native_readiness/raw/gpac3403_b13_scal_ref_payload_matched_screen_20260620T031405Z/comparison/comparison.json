@@ -1,0 +1,221 @@
+{
+  "analysis": {
+    "baseline_groups": [
+      {
+        "baseline": "aflplusplus_cmplog",
+        "budget": 5,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "min_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      },
+      {
+        "baseline": "aflplusplus_vanilla",
+        "budget": 5,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "min_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      },
+      {
+        "baseline": "redqueen_operand",
+        "budget": 5,
+        "median_terminal_count": 0,
+        "median_trigger_execs": null,
+        "median_trigger_time_s": null,
+        "min_trigger_time_s": null,
+        "reps": 1,
+        "success_rate": 0.0,
+        "successes": 0
+      }
+    ],
+    "best_formtrig_trigger_time_s": 2.369,
+    "experiment_strength": {
+      "acceptable_baseline_fastest_trigger_threshold_s": 600.0,
+      "baseline_guidance_gap": {
+        "required_evidence": [
+          "baseline-visible TC signal is flat or binary before _T",
+          "accepted non-trigger improvement under the baseline-visible signal is absent",
+          "matched repeated endpoint runs are late, missing, or high-variance"
+        ],
+        "required_for_hard_sota_pain": true,
+        "status": "not_measured"
+      },
+      "best_baseline_family_median_trigger_time_s": null,
+      "early_baseline_family_median_threshold_s": 60.0,
+      "hard_baseline_fastest_trigger_threshold_s": 1800.0,
+      "main_claim_strength": "hard_endpoint_gap_candidate",
+      "reasons": [
+        "matched_baselines_do_not_trigger"
+      ],
+      "recommended_design_actions": [
+        "promote to replicated long-run or cross-target confirmation if harness fidelity passes"
+      ]
+    },
+    "fastest_baseline_family_median_trigger_time_s": null,
+    "fastest_baseline_trigger_time_s": null,
+    "matched_baseline_count": 3,
+    "missing_required_baselines": [],
+    "next_steps": [],
+    "reasons": [
+      "formtrig_strict_pretrigger_guidance_present",
+      "formtrig_terminal_oracle_present",
+      "formtrig_endpoint_where_matched_baselines_do_not_trigger"
+    ],
+    "tte_speedup_over_fastest_baseline": null,
+    "tte_speedup_over_fastest_baseline_family_median": null,
+    "verdict": "positive_endpoint_matched_comparison"
+  },
+  "baseline_rows": [
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_cmplog",
+      "binding_signal_status": null,
+      "budget": 5,
+      "execs_done": 127,
+      "execs_per_sec": "25.16",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 0,
+      "rep": 1,
+      "run_time": 5,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "matched",
+      "source_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/aflplusplus_cmplog_rep1/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "GPAC_3403",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "aflplusplus_vanilla",
+      "binding_signal_status": null,
+      "budget": 5,
+      "execs_done": 0,
+      "execs_per_sec": null,
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 0,
+      "rep": 1,
+      "run_time": 2,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "matched",
+      "source_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/aflplusplus_vanilla_rep1/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "GPAC_3403",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    },
+    {
+      "accepted_non_trigger": null,
+      "arm": "baseline",
+      "baseline": "redqueen_operand",
+      "binding_signal_status": null,
+      "budget": 5,
+      "execs_done": 127,
+      "execs_per_sec": "25.00",
+      "heuristic_lifted": null,
+      "magma_triggered": 0,
+      "manual_lifted": null,
+      "reached": 0,
+      "rep": 1,
+      "run_time": 5,
+      "saved_crashes": 0,
+      "saved_hangs": 0,
+      "saved_non_trigger": null,
+      "source_label": "matched",
+      "source_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/redqueen_operand_rep1/run_record.json",
+      "spec_lifted": null,
+      "strict_pretrigger_guidance": false,
+      "success": false,
+      "target_id": "GPAC_3403",
+      "terminal_count": 0,
+      "trigger_execs": null,
+      "trigger_time_kind": null,
+      "trigger_time_s": null
+    }
+  ],
+  "benefit_readout": {
+    "blocked_claims": [
+      "baseline no-guidance proof is not measured: hard SOTA-pain claims require flat/binary pre-_T baseline TC signal and late, missing, or high-variance baseline _T"
+    ],
+    "design_evidence": [
+      "strict_pretrigger_guidance",
+      "formtrig_terminal_oracle_success",
+      "matched_budget_endpoint_success",
+      "baseline_guidance_gap_required"
+    ],
+    "endpoint_observations": [
+      "FORMTRIG terminal oracle success is observed",
+      "FORMTRIG first `_T` upper bound is recorded at 2.369s"
+    ],
+    "mechanism_benefits": [
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "observed_benefits": [
+      "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget",
+      "FORMTRIG terminal oracle success is observed",
+      "FORMTRIG first `_T` upper bound is recorded at 2.369s",
+      "binary or sparse trigger feedback was lifted into accepted non-trigger search progress"
+    ],
+    "primary_benefits": [
+      "FORMTRIG reaches terminal success where matched baselines do not trigger in this budget"
+    ],
+    "summary": "current package supports a matched-budget primary endpoint benefit"
+  },
+  "comparison_id": "gpac3403_typedops64_matched_5s_1rep_20260620T031407Z",
+  "formtrig_runs": [
+    {
+      "accepted_non_trigger": 3,
+      "arm": "formtrig",
+      "binding_signal_diagnosis": "role_signal_progress_observed",
+      "binding_signal_status": "pass",
+      "budget": 5,
+      "execs_done": 32,
+      "execs_per_sec": "2.56",
+      "gate_reasons": "ok",
+      "gate_status": "pass",
+      "heuristic_lifted": 0,
+      "manual_lifted": 0,
+      "out_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/fuzzer_out/default",
+      "reached": 32,
+      "rep": null,
+      "run_time": 12,
+      "saved_non_trigger": 3,
+      "source_label": "typedops64",
+      "source_path": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/formtrig_gate/gate_summary.csv",
+      "spec_lifted": 11,
+      "strict_pretrigger_guidance": true,
+      "success": true,
+      "target_id": "GPAC_3403",
+      "terminal_count": 1,
+      "trigger_execs": 8,
+      "trigger_time_kind": "afl_crash_filename_exact",
+      "trigger_time_s": 2.369
+    }
+  ],
+  "target_id": "GPAC_3403"
+}

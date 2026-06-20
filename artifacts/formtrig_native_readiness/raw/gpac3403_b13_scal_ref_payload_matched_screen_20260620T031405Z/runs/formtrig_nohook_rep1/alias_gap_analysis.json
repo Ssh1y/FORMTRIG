@@ -1,0 +1,601 @@
+{
+  "binding_count": 34,
+  "lift_spec": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_nohook_rep1/fuzzer_out/.formtrig/formtrig_lift.normalized",
+  "runtime_count": 1,
+  "runtimes": [
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 14,
+          "value": 108384546165424
+        },
+        {
+          "count": 2,
+          "value": 108384546191584
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 2,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 2,
+          "value": -5344
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 11,
+          "value": "frontier_reject"
+        },
+        {
+          "count": 8,
+          "value": "typed_retain"
+        },
+        {
+          "count": 2,
+          "value": "saved_progress"
+        },
+        {
+          "count": 1,
+          "value": "typed_stage_start"
+        }
+      ],
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_nohook_rep1/fuzzer_out/default/formtrig_progress.jsonl",
+      "reason_distribution": [
+        {
+          "count": 8,
+          "value": "candidate_not_queued"
+        },
+        {
+          "count": 8,
+          "value": "dominated_by_existing_frontier"
+        },
+        {
+          "count": 3,
+          "value": "not_replay_stable"
+        },
+        {
+          "count": 1,
+          "value": "frontier_empty_seed"
+        },
+        {
+          "count": 1,
+          "value": "planned"
+        },
+        {
+          "count": 1,
+          "value": "root_aligned_state_transition"
+        }
+      ],
+      "record_count": 22,
+      "record_status_distribution": [
+        {
+          "count": 20,
+          "value": "missing_same_object_value"
+        },
+        {
+          "count": 2,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 16,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 2,
+        "release_reassign_alias_records": 2,
+        "release_reassign_with_cleanup_records": 2
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 2,
+          "value": 108384546196928
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": -5344,
+        "present": true,
+        "records": 2
+      },
+      "status": "stable_nonzero_cleanup_offset",
+      "top_records": [
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -5344
+          ],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546191584
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 14,
+          "d_f_lifted": 3,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 7,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 5344,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 1,
+          "reason": "not_replay_stable",
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            108384546196928
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            108384546196928
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            108384546196928
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "1a0ae4fc8210f67a"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -5344
+          ],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546191584
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 14,
+          "d_f_lifted": 3,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": "typed_stage_start",
+          "execs_done": 7,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 5344,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 1,
+          "reason": "planned",
+          "record_index": 1,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            108384546196928
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            108384546196928
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            108384546196928
+          ],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "1a0ae4fc8210f67a"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 15,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 2,
+          "reason": "not_replay_stable",
+          "record_index": 2,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "a03a623833b1ebed"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "saved_progress",
+          "execs_done": 15,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 1,
+          "queued_items": 2,
+          "reason": "frontier_empty_seed",
+          "record_index": 3,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "a03a623833b1ebed"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 15,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 2,
+          "reason": "candidate_not_queued",
+          "record_index": 4,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "a03a623833b1ebed"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 16,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 2,
+          "reason": "dominated_by_existing_frontier",
+          "record_index": 5,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "70f3f3124b53b428"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 16,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 2,
+          "reason": "candidate_not_queued",
+          "record_index": 6,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "70f3f3124b53b428"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 24,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 3,
+          "reason": "dominated_by_existing_frontier",
+          "record_index": 7,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "e3c006292cace410"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 24,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 3,
+          "reason": "dominated_by_existing_frontier",
+          "record_index": 8,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "e3c006292cace410"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 24,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 3,
+          "reason": "candidate_not_queued",
+          "record_index": 9,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "e3c006292cace410"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 25,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 3,
+          "reason": "dominated_by_existing_frontier",
+          "record_index": 10,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "70f3f3124b53b428"
+        },
+        {
+          "actionable_components": 3,
+          "cleanup_branch_observed": false,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            108384546165424
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 6,
+          "d_f_lifted": 5,
+          "d_f_spec_lifted": 5,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 25,
+          "hot_ranges": 0,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 3,
+          "reason": "candidate_not_queued",
+          "record_index": 11,
+          "release_branch_observed": false,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [],
+          "release_values": [],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [],
+          "same_object_values": [],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "missing_same_object_value",
+          "target_hit_count": 1,
+          "trace_signature": "70f3f3124b53b428"
+        }
+      ],
+      "unique_cleanup_values": 2,
+      "unique_release_same_object_values": 1
+    }
+  ],
+  "schema": "formtrig_gpac3403_alias_gap_analysis_v1",
+  "verdict": {
+    "claim_boundary": "Pointer deltas are runtime diagnostics only. They must not be used as input-level optimization objectives because allocator addresses are not stable semantic trigger-state features.",
+    "complete_alias_free_relation": false,
+    "interpretation": "Release and reassign-buffer pointers match, but cleanup consistently frees a different dynamic bitstream buffer. This narrows the blocker to lifecycle ownership closure, not HEVC importer routing or retained-candidate selection.",
+    "next_action": "Repair typed mutation or BindingSpec correlation so the final GF_BitStream cleanup object is the same sample buffer that gf_isom_sample_del releases.",
+    "stable_nonzero_cleanup_offsets": [
+      -5344
+    ],
+    "status": "stable_nonzero_cleanup_offset"
+  }
+}

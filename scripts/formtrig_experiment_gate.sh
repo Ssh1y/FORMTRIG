@@ -4,6 +4,7 @@ set -euo pipefail
 suite="formtrig_native"
 out_dir=""
 min_runtime=0
+budget_sec=""
 require_terminal=0
 terminal_oracle_only=0
 declare -a runs=()
@@ -19,6 +20,7 @@ default/ or the default/ directory itself.
 options:
   --suite NAME          label written to outputs
   --min-runtime SEC     require fuzzer_stats run_time >= SEC
+  --budget-sec SEC      planned campaign budget written to outputs
   --require-terminal    require terminal_triggered_execs > 0
   --terminal-oracle-only
                         validate terminal oracle accounting only; this does not
@@ -177,6 +179,10 @@ while [[ $# -gt 0 ]]; do
       min_runtime="${2:-}"
       shift 2
       ;;
+    --budget-sec)
+      budget_sec="${2:-}"
+      shift 2
+      ;;
     --require-terminal)
       require_terminal=1
       shift
@@ -210,6 +216,10 @@ if ! command -v jq >/dev/null 2>&1; then
   echo "missing required command: jq" >&2
   exit 2
 fi
+if [[ -n "$budget_sec" && ! "$budget_sec" =~ ^[0-9]+$ ]]; then
+  echo "--budget-sec must be a non-negative integer: $budget_sec" >&2
+  exit 2
+fi
 
 mkdir -p "$out_dir"
 out_dir="$(abs_path "$out_dir")"
@@ -217,7 +227,7 @@ summary_csv="$out_dir/gate_summary.csv"
 summary_jsonl="$out_dir/gate_summary.jsonl"
 report_md="$out_dir/gate_report.md"
 
-printf 'suite,run,status,reasons,run_time,execs_done,execs_per_sec,reached,terminal_triggered,first_terminal_time_s,first_terminal_time_kind,first_terminal_execs,queued_progress,accepted_non_trigger,saved_non_trigger,saved_triggered,spec_lifted,heuristic_lifted,manual_lifted,experiment_ready,pretrigger_lift_guidance_ready,non_trigger_candidate_lift_delta,lift_delta_only_on_triggered,binding_signal_status,binding_signal_diagnosis,out_dir\n' \
+printf 'suite,run,status,reasons,budget,run_time,execs_done,execs_per_sec,reached,terminal_triggered,first_terminal_time_s,first_terminal_time_kind,first_terminal_execs,queued_progress,accepted_non_trigger,saved_non_trigger,saved_triggered,spec_lifted,heuristic_lifted,manual_lifted,experiment_ready,pretrigger_lift_guidance_ready,non_trigger_candidate_lift_delta,lift_delta_only_on_triggered,binding_signal_status,binding_signal_diagnosis,out_dir\n' \
   > "$summary_csv"
 : > "$summary_jsonl"
 
@@ -389,6 +399,7 @@ for run_spec in "${runs[@]}"; do
     csv_escape "$label"; printf ','
     csv_escape "$status"; printf ','
     csv_escape "$reasons"; printf ','
+    printf '%s,' "${budget_sec:-}"
     printf '%s,%s,%s,%s,%s,' \
       "$run_time" "$execs_done" "$execs_per_sec" "$reached" \
       "$terminal_triggered"
@@ -417,6 +428,12 @@ for run_spec in "${runs[@]}"; do
     json_escape "$status"
     printf ',"reasons":'
     json_escape "$reasons"
+    printf ',"budget":'
+    if [[ -n "$budget_sec" && "$budget_sec" != "null" ]]; then
+      printf '%s' "$budget_sec"
+    else
+      printf 'null'
+    fi
     printf ',"run_time":%s,"execs_done":%s,"execs_per_sec":' \
       "$run_time" "$execs_done"
     json_escape "$execs_per_sec"
@@ -469,12 +486,13 @@ done
     printf -- '- Mode: `strict_pretrigger`\n'
   fi
   printf -- '- Require terminal: `%s`\n' "$require_terminal"
+  printf -- '- Budget: `%s`\n' "${budget_sec:-NA}"
   printf -- '- Minimum runtime: `%s`\n\n' "$min_runtime"
   printf '## Summary\n\n'
   printf '| run | status | reasons | run_time | exec/s | reached | terminal | accepted_non_trigger | saved_non_trigger |\n'
   printf '| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |\n'
   tail -n +2 "$summary_csv" | while IFS=, read -r _suite run status reasons \
-      run_time _execs_done execs_per_sec reached terminal _first_time \
+      _budget run_time _execs_done execs_per_sec reached terminal _first_time \
       _first_kind _first_execs _queued accepted saved _saved_triggered _spec _heur \
       _manual _ready _pre _delta _only _binding_status _binding_diag _out; do
     run="${run%\"}"; run="${run#\"}"

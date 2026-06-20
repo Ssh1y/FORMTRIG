@@ -1,0 +1,665 @@
+{
+  "binding_count": 34,
+  "lift_spec": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/fuzzer_out/.formtrig/formtrig_lift.normalized",
+  "runtime_count": 1,
+  "runtimes": [
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 3,
+          "value": 97945748851472
+        },
+        {
+          "count": 3,
+          "value": 97945748851632
+        },
+        {
+          "count": 3,
+          "value": 97945748858720
+        },
+        {
+          "count": 2,
+          "value": 97945748846816
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 3,
+          "value": 4
+        },
+        {
+          "count": 2,
+          "value": 3
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 3,
+          "value": -20640
+        },
+        {
+          "count": 2,
+          "value": -5344
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 4,
+          "value": "frontier_reject"
+        },
+        {
+          "count": 4,
+          "value": "typed_retain"
+        },
+        {
+          "count": 3,
+          "value": "saved_progress"
+        },
+        {
+          "count": 1,
+          "value": "typed_stage_start"
+        }
+      ],
+      "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_progress.jsonl",
+      "reason_distribution": [
+        {
+          "count": 4,
+          "value": "candidate_not_queued"
+        },
+        {
+          "count": 4,
+          "value": "not_replay_stable"
+        },
+        {
+          "count": 2,
+          "value": "root_aligned_state_transition"
+        },
+        {
+          "count": 1,
+          "value": "frontier_empty_seed"
+        },
+        {
+          "count": 1,
+          "value": "planned"
+        }
+      ],
+      "record_count": 12,
+      "record_status_distribution": [
+        {
+          "count": 6,
+          "value": "cleanup_original_differs_from_reassigned_buffer"
+        },
+        {
+          "count": 5,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        },
+        {
+          "count": 1,
+          "value": "missing_same_object_value"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 11,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 5,
+        "release_reassign_alias_records": 5,
+        "release_reassign_with_cleanup_records": 5
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 3,
+          "value": 97945748879360
+        },
+        {
+          "count": 2,
+          "value": 97945748852160
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": null,
+        "present": false,
+        "records": 0
+      },
+      "status": "variable_cleanup_alias_gap",
+      "top_records": [
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -5344
+          ],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748846816
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 14,
+          "d_f_lifted": 3,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 7,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 5344,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 1,
+          "reason": "not_replay_stable",
+          "record_index": 0,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            97945748852160
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748852160
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748852160
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "8c1e0a7ae1d1ce69"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -5344
+          ],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748846816
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 14,
+          "d_f_lifted": 3,
+          "d_f_spec_lifted": 3,
+          "dynamic_root_observed": true,
+          "event": "typed_stage_start",
+          "execs_done": 7,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 5344,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 1,
+          "reason": "planned",
+          "record_index": 1,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            97945748852160
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748852160
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748852160
+          ],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "8c1e0a7ae1d1ce69"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -20640
+          ],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748858720
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 24,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 20640,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 3,
+          "reason": "not_replay_stable",
+          "record_index": 6,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            97945748879360
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748879360
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748879360
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "a42c3be58f74049c"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -20640
+          ],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748858720
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "saved_progress",
+          "execs_done": 24,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 20640,
+          "observed_source_flags": 2,
+          "queue_id": 2,
+          "queued_items": 3,
+          "reason": "root_aligned_state_transition",
+          "record_index": 7,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            97945748879360
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748879360
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748879360
+          ],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "a42c3be58f74049c"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -20640
+          ],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748858720
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 24,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 20640,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 3,
+          "reason": "candidate_not_queued",
+          "record_index": 8,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            97945748879360
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748879360
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748879360
+          ],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "a42c3be58f74049c"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748851472
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 16,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 2,
+          "reason": "not_replay_stable",
+          "record_index": 3,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748872496
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748872080
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "cleanup_original_differs_from_reassigned_buffer",
+          "target_hit_count": 1,
+          "trace_signature": "932e75abdba91e5c"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748851472
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "saved_progress",
+          "execs_done": 16,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 1,
+          "queued_items": 2,
+          "reason": "frontier_empty_seed",
+          "record_index": 4,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748872496
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748872080
+          ],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "cleanup_original_differs_from_reassigned_buffer",
+          "target_hit_count": 1,
+          "trace_signature": "932e75abdba91e5c"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748851472
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 16,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 2,
+          "reason": "candidate_not_queued",
+          "record_index": 5,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748872496
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748872080
+          ],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "cleanup_original_differs_from_reassigned_buffer",
+          "target_hit_count": 1,
+          "trace_signature": "932e75abdba91e5c"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748851632
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 32,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 4,
+          "reason": "not_replay_stable",
+          "record_index": 9,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748872656
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748872240
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "cleanup_original_differs_from_reassigned_buffer",
+          "target_hit_count": 1,
+          "trace_signature": "6769417fe601f9a4"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748851632
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "saved_progress",
+          "execs_done": 32,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 3,
+          "queued_items": 4,
+          "reason": "root_aligned_state_transition",
+          "record_index": 10,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748872656
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748872240
+          ],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "cleanup_original_differs_from_reassigned_buffer",
+          "target_hit_count": 1,
+          "trace_signature": "6769417fe601f9a4"
+        },
+        {
+          "actionable_components": 9,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [],
+          "cleanup_value_sources": [
+            14372008074599078516
+          ],
+          "cleanup_values": [
+            97945748851632
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 16,
+          "d_f_lifted": 4,
+          "d_f_spec_lifted": 4,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 32,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": null,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 4,
+          "reason": "candidate_not_queued",
+          "record_index": 11,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            97945748872656
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            420290807543657019
+          ],
+          "same_object_values": [
+            97945748872240
+          ],
+          "source_flags": 2,
+          "stable": 1,
+          "status": "cleanup_original_differs_from_reassigned_buffer",
+          "target_hit_count": 1,
+          "trace_signature": "6769417fe601f9a4"
+        }
+      ],
+      "unique_cleanup_values": 4,
+      "unique_release_same_object_values": 2
+    }
+  ],
+  "schema": "formtrig_gpac3403_alias_gap_analysis_v1",
+  "verdict": {
+    "claim_boundary": "Pointer deltas are runtime diagnostics only. They must not be used as input-level optimization objectives because allocator addresses are not stable semantic trigger-state features.",
+    "complete_alias_free_relation": false,
+    "interpretation": "Alias and cleanup values are both observed, but their difference is not stable or zero. More object/lifecycle correlation is needed before endpoint spending.",
+    "next_action": "Add object-context instrumentation or split records by sample/lifecycle context.",
+    "stable_nonzero_cleanup_offsets": [],
+    "status": "variable_cleanup_alias_gap"
+  }
+}

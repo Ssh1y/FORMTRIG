@@ -800,6 +800,7 @@ for arm in $(split_list "$arms"); do
         "$repo_root/scripts/formtrig_experiment_gate.sh"
         --suite "GPAC_3403_${arm}_typedops${typed_ops}_${duration}s"
         --out "$gate_out"
+        --budget-sec "$duration"
         --min-runtime "$duration"
       )
       for rep in $(seq 1 "$reps"); do

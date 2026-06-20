@@ -1,0 +1,131 @@
+{
+  "schema": "formtrig_native_readiness_result_v1",
+  "target_id": "GPAC_3403",
+  "artifact_id": "gpac3403_b13_scal_ref_payload_matched_screen_20260620",
+  "created_utc": "2026-06-20T03:14:07Z",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z",
+  "category": "compound-sequence-lifecycle",
+  "seed_format": "mp4-scal-ref-scaffold",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b10_extractor_return_candidate.yml",
+  "formtrig_design_path": [
+    "spec_lifted_D_F",
+    "dominance_frontier",
+    "typed_mutation",
+    "gpac_scal_ref_mp4_payload_hook",
+    "endpoint_replay"
+  ],
+  "campaign": {
+    "duration_s": 5,
+    "reps": 1,
+    "arms": [
+      "formtrig",
+      "formtrig_nohook",
+      "aflplusplus_vanilla",
+      "aflplusplus_cmplog",
+      "redqueen_operand"
+    ],
+    "baselines": [
+      "aflplusplus_vanilla",
+      "aflplusplus_cmplog",
+      "redqueen_operand"
+    ],
+    "timeout_oracle": "-t 5000+",
+    "typed_ops": 64,
+    "typed_op_start": 52,
+    "typed_schedule": "op-first",
+    "typed_mutation_max": 256,
+    "typed_retain_mode": "all",
+    "typed_retain_endpoint_selection": "best-d-f"
+  },
+  "comparison": {
+    "verdict": "positive_endpoint_matched_comparison",
+    "main_claim_strength": "hard_endpoint_gap_candidate",
+    "matched_baseline_count": 3,
+    "baseline_no_guidance_proof_status": "not_measured"
+  },
+  "formtrig": {
+    "budget_s": 5,
+    "run_time_s": 12,
+    "terminal_triggered": 1,
+    "first_terminal_time_s": 2.369,
+    "first_terminal_time_kind": "afl_crash_filename_exact",
+    "first_terminal_execs": 8,
+    "execs_done": 32,
+    "reached": 32,
+    "accepted_non_trigger": 3,
+    "saved_non_trigger": 3,
+    "spec_lifted": 11,
+    "strict_pretrigger_guidance": true,
+    "endpoint_replayed_variants": 4,
+    "endpoint_native_crashes": 1,
+    "endpoint_exit_code_counts": {
+      "-6": 1,
+      "1": 3
+    },
+    "positive_control_native_crashes": 1
+  },
+  "formtrig_nohook": {
+    "budget_s": 5,
+    "run_time_s": 6,
+    "terminal_triggered": 0,
+    "execs_done": 43,
+    "reached": 44,
+    "accepted_non_trigger": 2,
+    "saved_non_trigger": 2,
+    "spec_lifted": 22,
+    "strict_pretrigger_guidance": true,
+    "endpoint_replayed_variants": 8,
+    "endpoint_native_crashes": 0,
+    "endpoint_exit_code_counts": {
+      "1": 8
+    },
+    "positive_control_native_crashes": 1
+  },
+  "baselines": [
+    {
+      "name": "aflplusplus_vanilla",
+      "budget_s": 5,
+      "success": false,
+      "trigger_time_s": null,
+      "run_time_s": 2,
+      "execs_done": 0,
+      "note": "startup/preflight weak datapoint in this short smoke; do not use alone as baseline pain evidence"
+    },
+    {
+      "name": "aflplusplus_cmplog",
+      "budget_s": 5,
+      "success": false,
+      "trigger_time_s": null,
+      "run_time_s": 5,
+      "execs_done": 127
+    },
+    {
+      "name": "redqueen_operand",
+      "budget_s": 5,
+      "success": false,
+      "trigger_time_s": null,
+      "run_time_s": 5,
+      "execs_done": 127
+    }
+  ],
+  "evidence_assessment": {
+    "supported": [
+      "B13 closes the B12 SCAL-reference R2T gap in a target-specific GPAC payload-hook smoke",
+      "FORMTRIG produces strict pre-trigger lifted guidance and reaches endpoint _T in the same 5s planned budget",
+      "nohook reaches lifted non-trigger progress but does not replay to endpoint _T in this smoke",
+      "CmpLog and Redqueen/operand baselines do not trigger in this 5s smoke"
+    ],
+    "not_supported": [
+      "final hard SOTA-pain claim",
+      "baseline no-guidance proof",
+      "replicated success-rate or TTE statistics",
+      "target-independent general FORMTRIG claim"
+    ],
+    "required_next": [
+      "repeat B13 matched screen with more reps and longer budgets",
+      "measure baseline-visible pre-_T binary flatness or endpoint high variance",
+      "run nohook and generic-hook ablations at the same repeated budget",
+      "treat this target-specific hook as repair evidence unless generic mechanisms reproduce the benefit"
+    ]
+  }
+}

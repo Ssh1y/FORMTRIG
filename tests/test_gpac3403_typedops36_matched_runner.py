@@ -85,6 +85,11 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             self.assertIn("AFL_NO_AFFINITY=1", plan)
             self.assertIn("ASAN_OPTIONS=abort_on_error=1", plan)
 
+            runner = (
+                REPO_ROOT / "scripts" / "run_gpac3403_typedops36_matched_longrun.sh"
+            ).read_text(encoding="utf-8")
+            self.assertIn('--budget-sec "$duration"', runner)
+
     def test_typedops40_wrapper_enables_access_unit_ops(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "gpac3403_typedops40"
@@ -316,6 +321,60 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             ).read_text(encoding="utf-8")
             self.assertIn("FORMTRIG_GPAC3403_HEVC_SAMPLE_BIAS", runner)
             self.assertIn("gpac_scal_ref_mp4_hook.py", runner)
+
+    def test_b13_matched_screen_includes_baselines_and_nohook(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "gpac3403_b13_matched"
+            subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "scripts" / "run_gpac3403_b13_scal_ref_payload_matched_screen.sh"),
+                    "--mode",
+                    "dry-run",
+                    "--duration",
+                    "15",
+                    "--out",
+                    str(out_dir),
+                ],
+                cwd=REPO_ROOT,
+                check=True,
+            )
+
+            records = [
+                json.loads(line)
+                for line in (out_dir / "run_plan.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual(
+                [record["arm"] for record in records],
+                [
+                    "formtrig",
+                    "formtrig_nohook",
+                    "aflplusplus_vanilla",
+                    "aflplusplus_cmplog",
+                    "redqueen_operand",
+                ],
+            )
+            self.assertTrue(all(record["seed_format"] == "mp4-scal-ref-scaffold" for record in records))
+            self.assertTrue(all(record["duration_s"] == 15 for record in records))
+
+            metadata = json.loads((out_dir / "run_metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(
+                metadata["arms"],
+                "formtrig,formtrig_nohook,aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand",
+            )
+            self.assertEqual(
+                metadata["baselines"],
+                "aflplusplus_vanilla,aflplusplus_cmplog,redqueen_operand",
+            )
+            self.assertEqual(metadata["typed_op_start"], 52)
+            self.assertTrue(metadata["mutation_hook_override"].endswith("gpac_scal_ref_mp4_hook.py"))
+            self.assertEqual(metadata["typed_retain_endpoint_replay"], "on")
+
+            commands = {record["arm"]: record["command"] for record in records}
+            self.assertIn("--mutation-hook", commands["formtrig"])
+            self.assertIn("--no-mutation-hook", commands["formtrig_nohook"])
+            self.assertIn("--cmplog-binary", commands["aflplusplus_cmplog"])
+            self.assertIn("--cmplog-binary", commands["redqueen_operand"])
 
     def test_dry_run_supports_nohook_ablation(self):
         with tempfile.TemporaryDirectory() as tmp:

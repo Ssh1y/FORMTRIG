@@ -196,6 +196,8 @@ class LibarchiveMatchedRunnerTest(unittest.TestCase):
                     "bash",
                     str(REPO_ROOT / "scripts" / "formtrig_experiment_gate.sh"),
                     "--terminal-oracle-only",
+                    "--budget-sec",
+                    "60",
                     "--out",
                     str(gate_out),
                     "--run",
@@ -207,6 +209,7 @@ class LibarchiveMatchedRunnerTest(unittest.TestCase):
 
             with (gate_out / "gate_summary.csv").open(newline="", encoding="utf-8") as handle:
                 row = next(csv.DictReader(handle))
+            self.assertEqual(row["budget"], "60")
             self.assertEqual(row["first_terminal_time_s"], "1.22")
             self.assertEqual(row["first_terminal_time_kind"], "afl_crash_filename_exact")
             self.assertEqual(row["first_terminal_execs"], "32")

@@ -1,0 +1,1037 @@
+{
+  "alias_relation_audit": {
+    "available": true,
+    "lift_spec": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/fuzzer_out/.formtrig/formtrig_lift.normalized",
+    "report": {
+      "binding_count": 34,
+      "lift_spec": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/fuzzer_out/.formtrig/formtrig_lift.normalized",
+      "runtime_count": 1,
+      "runtimes": [
+        {
+          "best_record": {
+            "cleanup_branch_observed": true,
+            "cleanup_values": [
+              97945748858720
+            ],
+            "complete_alias_free_relation": false,
+            "component_count": 16,
+            "d_f_spec_lifted": 4,
+            "dynamic_root_observed": true,
+            "reached": true,
+            "release_branch_observed": true,
+            "release_cleanup_matches": [],
+            "release_same_object_matches": [
+              97945748879360
+            ],
+            "release_values": [
+              97945748879360
+            ],
+            "same_object_cleanup_matches": [],
+            "same_object_values": [
+              97945748879360
+            ],
+            "status": "release_reassign_alias_without_cleanup_free_alias",
+            "target_hit_count": 1
+          },
+          "cleanup_value_records": 11,
+          "complete_alias_free_relation_records": 0,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_progress.jsonl",
+          "record_count": 12,
+          "record_statuses": [
+            "cleanup_original_differs_from_reassigned_buffer",
+            "missing_same_object_value",
+            "release_reassign_alias_without_cleanup_free_alias"
+          ],
+          "release_reassign_alias_records": 5,
+          "status": "release_reassign_alias_observed_cleanup_differs"
+        }
+      ],
+      "schema": "formtrig_gpac3403_alias_relation_audit_v1",
+      "verdict": {
+        "complete_alias_free_relation": false,
+        "interpretation": "The sample release and reassign-buffer values match, but no runtime record proves the later GF_BitStream->original cleanup free uses the same pointer.",
+        "release_reassign_alias_observed": true,
+        "status": "release_reassign_alias_observed_terminal_cleanup_missing"
+      }
+    },
+    "runtime_jsonl": [
+      "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_progress.jsonl"
+    ]
+  },
+  "endpoint_audit": {
+    "available": true,
+    "logs_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs",
+    "report": {
+      "contrast": {
+        "positive_control_files": 1,
+        "positive_control_signatures_absent_from_variants": [],
+        "positive_signatures": [
+          "asan_double_free"
+        ],
+        "top_variants_by_positive_overlap": [
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 1,
+            "matched_positive_signatures": [
+              "asan_double_free"
+            ],
+            "matched_values": {},
+            "missing_positive_signature_count": 0,
+            "missing_positive_signatures": [],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs/variant_000000.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 0,
+            "weighted_match_score": 100,
+            "weighted_missing_score": 0
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs/variant_000001.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 1,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs/variant_000002.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 2,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          },
+          {
+            "extra_values": {},
+            "extra_variant_signatures": [],
+            "matched_positive_signature_count": 0,
+            "matched_positive_signatures": [],
+            "matched_values": {},
+            "missing_positive_signature_count": 1,
+            "missing_positive_signatures": [
+              "asan_double_free"
+            ],
+            "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs/variant_000003.endpoint_1.stderr",
+            "rep": 1,
+            "variant_index": 3,
+            "weighted_match_score": 0,
+            "weighted_missing_score": 100
+          }
+        ],
+        "variant_files": 4,
+        "weighted_positive_signature_total": 100
+      },
+      "logs_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs",
+      "positive_control": {
+        "files": 1,
+        "metrics": {
+          "asan_double_free_examples": [
+            "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs/positive_control.endpoint_1.stderr"
+          ],
+          "asan_double_free_files": 1,
+          "hevc_import_files": 0,
+          "hevc_import_observations": 0,
+          "hevc_nalus_max": null,
+          "hevc_samples_max": null,
+          "hevc_top_samples": [],
+          "lhevc_import_files": 0,
+          "lhevc_import_observations": 0,
+          "lhevc_top_slices": []
+        },
+        "signatures": {
+          "asan": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "asan_double_free": {
+            "examples": [
+              "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs/positive_control.endpoint_1.stderr"
+            ],
+            "files": 1,
+            "occurrences": 1,
+            "top_values": []
+          },
+          "failed_vps_extensions": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "hevc_import_results": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "layers_only_4": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "lhevc_import_results": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "nal_type_32_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "nal_type_49_not_handled": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "picture_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "sequence_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "track_importing_hevc": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "video_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "vps_max_layer_id": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "wrong_output_layer_sets": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          }
+        }
+      },
+      "records": null,
+      "schema": "formtrig_gpac3403_endpoint_signature_audit_v2",
+      "summary": {
+        "d_f_spec_lifted_max": 4.0,
+        "d_f_spec_lifted_min": 4.0,
+        "duration_s": 2.455,
+        "endpoint_native_crashes": 1,
+        "endpoint_replayed_variants": 4,
+        "endpoint_sanitizer_crashes": 0,
+        "endpoint_timeouts": 0
+      },
+      "variant": {
+        "files": 4,
+        "metrics": {
+          "asan_double_free_examples": [
+            "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs/variant_000000.endpoint_1.stderr"
+          ],
+          "asan_double_free_files": 1,
+          "hevc_import_files": 0,
+          "hevc_import_observations": 0,
+          "hevc_nalus_max": null,
+          "hevc_samples_max": null,
+          "hevc_top_samples": [],
+          "lhevc_import_files": 0,
+          "lhevc_import_observations": 0,
+          "lhevc_top_slices": []
+        },
+        "signatures": {
+          "asan": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "asan_double_free": {
+            "examples": [
+              "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/logs/variant_000000.endpoint_1.stderr"
+            ],
+            "files": 1,
+            "occurrences": 1,
+            "top_values": []
+          },
+          "failed_vps_extensions": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "hevc_import_results": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "layers_only_4": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "lhevc_import_results": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "nal_type_32_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "nal_type_49_not_handled": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "picture_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "sequence_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "track_importing_hevc": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "video_param_set_error": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "vps_max_layer_id": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          },
+          "wrong_output_layer_sets": {
+            "examples": [],
+            "files": 0,
+            "occurrences": 0,
+            "top_values": []
+          }
+        }
+      }
+    },
+    "stderr_files": 5
+  },
+  "evidence_assessment": {
+    "alias_relation_complete": false,
+    "alias_relation_status": "release_reassign_alias_observed_terminal_cleanup_missing",
+    "alias_release_reassign_observed": true,
+    "claim_boundary": "Typed-retained candidates have structure and endpoint evidence; compare variant signatures against positive-control gaps before claiming R2T progress. Alias/free relation audit is not terminal-complete; do not claim GPAC_3403 endpoint R2T closure from this package.",
+    "d_f_spec_lifted_count": 3,
+    "d_f_spec_lifted_max": 4.0,
+    "d_f_spec_lifted_min": 4.0,
+    "endpoint_positive_control_files": 1,
+    "endpoint_variant_files": 4,
+    "existing_inputs": 4,
+    "positive_control_signatures_absent_from_variants": [],
+    "records_jsonl_lines": 4,
+    "retained_records": 4,
+    "structure_profiled_candidates": 4
+  },
+  "records_jsonl_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained_endpoint_records.jsonl",
+  "run_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1",
+  "schema": "formtrig_gpac3403_typed_retained_audit_package_v1",
+  "structure_audit": {
+    "available": true,
+    "mode": "records_only",
+    "variant_summary": {
+      "best_by_d_f": [
+        {
+          "d_f_spec_lifted": 4.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 1,
+          "layer_counts": {
+            "0": 157,
+            "13": 3,
+            "14": 1,
+            "46": 1,
+            "56": 1
+          },
+          "max_layer": 56,
+          "op": 53,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:53,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 52467,
+          "total_nalus": 163,
+          "triggered": null,
+          "type_counts": {
+            "0": 134,
+            "10": 1,
+            "15": 1,
+            "18": 1,
+            "40": 1,
+            "42": 1,
+            "49": 1,
+            "52": 1,
+            "58": 1,
+            "6": 19,
+            "7": 1,
+            "8": 1
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            6,
+            7,
+            8,
+            10,
+            15,
+            18,
+            40,
+            42,
+            49,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 4.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 2,
+          "layer_counts": {
+            "0": 149,
+            "13": 2,
+            "14": 2,
+            "46": 1,
+            "56": 1
+          },
+          "max_layer": 56,
+          "op": 56,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000004,op:56,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 55549,
+          "total_nalus": 155,
+          "triggered": null,
+          "type_counts": {
+            "0": 130,
+            "15": 1,
+            "21": 2,
+            "25": 1,
+            "33": 1,
+            "40": 1,
+            "42": 1,
+            "52": 1,
+            "54": 1,
+            "58": 1,
+            "6": 13,
+            "7": 1,
+            "8": 1
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            6,
+            7,
+            8,
+            15,
+            21,
+            25,
+            33,
+            40,
+            42,
+            52,
+            54,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 4.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 3,
+          "layer_counts": {
+            "0": 154,
+            "13": 2,
+            "14": 1,
+            "32": 1,
+            "46": 1,
+            "56": 1
+          },
+          "max_layer": 56,
+          "op": 57,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000003,src:000000,stage:000005,op:57,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 59521,
+          "total_nalus": 160,
+          "triggered": null,
+          "type_counts": {
+            "0": 128,
+            "10": 1,
+            "15": 1,
+            "21": 3,
+            "40": 1,
+            "42": 1,
+            "52": 1,
+            "58": 1,
+            "6": 21,
+            "7": 1,
+            "8": 1
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            32,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            6,
+            7,
+            8,
+            10,
+            15,
+            21,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": null,
+          "endpoint_exit_code": -6,
+          "endpoint_sanitizer_crash": false,
+          "index": 0,
+          "layer_counts": {
+            "0": 351,
+            "13": 2,
+            "14": 2,
+            "42": 1,
+            "46": 1,
+            "56": 1
+          },
+          "max_layer": 56,
+          "op": 52,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000000,src:000000,stage:000000,op:52,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 61126,
+          "total_nalus": 358,
+          "triggered": null,
+          "type_counts": {
+            "0": 334,
+            "15": 1,
+            "28": 1,
+            "40": 1,
+            "42": 1,
+            "50": 1,
+            "52": 1,
+            "58": 1,
+            "6": 15,
+            "7": 1,
+            "8": 1
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            42,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            6,
+            7,
+            8,
+            15,
+            28,
+            40,
+            42,
+            50,
+            52,
+            58
+          ]
+        }
+      ],
+      "endpoint_sanitizer_crashes": 0,
+      "largest_by_nalus": [
+        {
+          "d_f_spec_lifted": null,
+          "endpoint_exit_code": -6,
+          "endpoint_sanitizer_crash": false,
+          "index": 0,
+          "layer_counts": {
+            "0": 351,
+            "13": 2,
+            "14": 2,
+            "42": 1,
+            "46": 1,
+            "56": 1
+          },
+          "max_layer": 56,
+          "op": 52,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000000,src:000000,stage:000000,op:52,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 61126,
+          "total_nalus": 358,
+          "triggered": null,
+          "type_counts": {
+            "0": 334,
+            "15": 1,
+            "28": 1,
+            "40": 1,
+            "42": 1,
+            "50": 1,
+            "52": 1,
+            "58": 1,
+            "6": 15,
+            "7": 1,
+            "8": 1
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            42,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            6,
+            7,
+            8,
+            15,
+            28,
+            40,
+            42,
+            50,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 4.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 1,
+          "layer_counts": {
+            "0": 157,
+            "13": 3,
+            "14": 1,
+            "46": 1,
+            "56": 1
+          },
+          "max_layer": 56,
+          "op": 53,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:53,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 52467,
+          "total_nalus": 163,
+          "triggered": null,
+          "type_counts": {
+            "0": 134,
+            "10": 1,
+            "15": 1,
+            "18": 1,
+            "40": 1,
+            "42": 1,
+            "49": 1,
+            "52": 1,
+            "58": 1,
+            "6": 19,
+            "7": 1,
+            "8": 1
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            6,
+            7,
+            8,
+            10,
+            15,
+            18,
+            40,
+            42,
+            49,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 4.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 3,
+          "layer_counts": {
+            "0": 154,
+            "13": 2,
+            "14": 1,
+            "32": 1,
+            "46": 1,
+            "56": 1
+          },
+          "max_layer": 56,
+          "op": 57,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000003,src:000000,stage:000005,op:57,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 59521,
+          "total_nalus": 160,
+          "triggered": null,
+          "type_counts": {
+            "0": 128,
+            "10": 1,
+            "15": 1,
+            "21": 3,
+            "40": 1,
+            "42": 1,
+            "52": 1,
+            "58": 1,
+            "6": 21,
+            "7": 1,
+            "8": 1
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            32,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            6,
+            7,
+            8,
+            10,
+            15,
+            21,
+            40,
+            42,
+            52,
+            58
+          ]
+        },
+        {
+          "d_f_spec_lifted": 4.0,
+          "endpoint_exit_code": 1,
+          "endpoint_sanitizer_crash": false,
+          "index": 2,
+          "layer_counts": {
+            "0": 149,
+            "13": 2,
+            "14": 2,
+            "46": 1,
+            "56": 1
+          },
+          "max_layer": 56,
+          "op": 56,
+          "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000004,op:56,ci:0,ri:0,si:0.bin",
+          "reached": null,
+          "sample": 0,
+          "size": 55549,
+          "total_nalus": 155,
+          "triggered": null,
+          "type_counts": {
+            "0": 130,
+            "15": 1,
+            "21": 2,
+            "25": 1,
+            "33": 1,
+            "40": 1,
+            "42": 1,
+            "52": 1,
+            "54": 1,
+            "58": 1,
+            "6": 13,
+            "7": 1,
+            "8": 1
+          },
+          "unique_layers": [
+            0,
+            13,
+            14,
+            46,
+            56
+          ],
+          "unique_types": [
+            0,
+            6,
+            7,
+            8,
+            15,
+            21,
+            25,
+            33,
+            40,
+            42,
+            52,
+            54,
+            58
+          ]
+        }
+      ],
+      "profiled_count": 4,
+      "record_count": 4,
+      "records_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained_endpoint_records.jsonl"
+    }
+  },
+  "typed_retained": {
+    "available": true,
+    "best_by_d_f": [
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 4.0,
+        "hook_used": true,
+        "index": 1,
+        "off": 0,
+        "op": 53,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:53,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "f35822253eb63516cb41d0273b161b83fc5ad119cd3d4e59ba64ac3b51c08db0",
+        "size": 52467,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 1,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 4.0,
+        "hook_used": true,
+        "index": 2,
+        "off": 0,
+        "op": 56,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000004,op:56,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "882fbc01ba08fd3b784d9beebc25e1b19069bcdd535771599fe60f6cc9e4ac2f",
+        "size": 55549,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 4,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 4.0,
+        "hook_used": true,
+        "index": 3,
+        "off": 0,
+        "op": 57,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000003,src:000000,stage:000005,op:57,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "46f1fa12c43bb04edd58be10db3506cf9ed5d8749accea1797755ee065ec9add",
+        "size": 59521,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 5,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": null,
+        "hook_used": true,
+        "index": 0,
+        "off": 0,
+        "op": 52,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000000,src:000000,stage:000000,op:52,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "202d590bbcd3f47bbecb46b9c5e3de2c4bbd778c39e6b0684e9071449149c1c1",
+        "size": 61126,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 0,
+        "start": 0
+      }
+    ],
+    "component_kinds": {
+      "3": 4
+    },
+    "d_f_spec_lifted": {
+      "count": 3,
+      "max": 4.0,
+      "min": 4.0,
+      "unique": [
+        4.0
+      ]
+    },
+    "existing_inputs": 4,
+    "hook_used_records": 4,
+    "largest_by_size": [
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": null,
+        "hook_used": true,
+        "index": 0,
+        "off": 0,
+        "op": 52,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000000,src:000000,stage:000000,op:52,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "202d590bbcd3f47bbecb46b9c5e3de2c4bbd778c39e6b0684e9071449149c1c1",
+        "size": 61126,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 0,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 4.0,
+        "hook_used": true,
+        "index": 3,
+        "off": 0,
+        "op": 57,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000003,src:000000,stage:000005,op:57,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "46f1fa12c43bb04edd58be10db3506cf9ed5d8749accea1797755ee065ec9add",
+        "size": 59521,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 5,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 4.0,
+        "hook_used": true,
+        "index": 2,
+        "off": 0,
+        "op": 56,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000002,src:000000,stage:000004,op:56,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "882fbc01ba08fd3b784d9beebc25e1b19069bcdd535771599fe60f6cc9e4ac2f",
+        "size": 55549,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 4,
+        "start": 0
+      },
+      {
+        "atom_id": 1,
+        "component_kind": 3,
+        "d_f_spec_lifted": 4.0,
+        "hook_used": true,
+        "index": 1,
+        "off": 0,
+        "op": 53,
+        "path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/id:000001,src:000000,stage:000001,op:53,ci:0,ri:0,si:0.bin",
+        "role_name": "root_observe",
+        "sample": 0,
+        "sha256": "f35822253eb63516cb41d0273b161b83fc5ad119cd3d4e59ba64ac3b51c08db0",
+        "size": 52467,
+        "source_queue_id": 0,
+        "span": 256,
+        "stage_cur": 1,
+        "start": 0
+      }
+    ],
+    "missing_examples": [],
+    "missing_inputs": 0,
+    "missing_records_tsv": [],
+    "ops": {
+      "52": 1,
+      "53": 1,
+      "56": 1,
+      "57": 1
+    },
+    "records_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained_records.jsonl",
+    "records_tsv": [
+      "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained/records.tsv"
+    ],
+    "retained_records": 4,
+    "roles": {
+      "root_observe": 4
+    },
+    "schema": "formtrig_typed_retained_candidates_v1",
+    "source_queue_ids": {
+      "0": 4
+    },
+    "total_existing_bytes": 228663
+  },
+  "typed_summary_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/formtrig_rep1/typed_retained_summary.json"
+}
