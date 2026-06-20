@@ -1,5 +1,4 @@
 arm	source_label	target_id	budget	run_time	rep	success	terminal_count	trigger_time_s	trigger_time_kind	trigger_execs	execs_done	execs_per_sec	reached	accepted_non_trigger	saved_non_trigger	spec_lifted	heuristic_lifted	manual_lifted	strict_pretrigger_guidance	binding_signal_status	source_path
 formtrig	typedops64	GPAC_3403	5	12		true	1	2.369	afl_crash_filename_exact	8	32	2.56	32	3	3	11	0	0	true	pass	artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/formtrig_gate/gate_summary.csv
 baseline	matched	GPAC_3403	5	5	1	false	0				127	25.16	0						false		artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/aflplusplus_cmplog_rep1/run_record.json
-baseline	matched	GPAC_3403	5	2	1	false	0				0		0						false		artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/aflplusplus_vanilla_rep1/run_record.json
 baseline	matched	GPAC_3403	5	5	1	false	0				127	25.00	0						false		artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/redqueen_operand_rep1/run_record.json

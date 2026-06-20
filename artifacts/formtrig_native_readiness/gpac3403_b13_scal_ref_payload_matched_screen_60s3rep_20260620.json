@@ -1,0 +1,181 @@
+{
+  "schema": "formtrig_native_readiness_result_v1",
+  "target_id": "GPAC_3403",
+  "artifact_id": "gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620",
+  "created_utc": "2026-06-20T03:27:30Z",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z",
+  "category": "compound-sequence-lifecycle",
+  "seed_format": "mp4-scal-ref-scaffold",
+  "binding_spec": "artifacts/binding_specs/GPAC_3403.native_b10_extractor_return_candidate.yml",
+  "campaign": {
+    "duration_s": 60,
+    "reps": 3,
+    "arms": [
+      "formtrig",
+      "formtrig_nohook",
+      "aflplusplus_vanilla",
+      "aflplusplus_cmplog",
+      "redqueen_operand"
+    ],
+    "timeout_oracle": "-t 5000+",
+    "typed_ops": 64,
+    "typed_op_start": 52,
+    "typed_schedule": "op-first",
+    "typed_mutation_max": 256,
+    "typed_retain_mode": "all"
+  },
+  "comparison": {
+    "verdict": "incomplete_required_baseline_set",
+    "main_claim_strength": "incomplete_matched_evidence",
+    "matched_valid_baseline_runs": 5,
+    "missing_required_baselines": [
+      "redqueen_operand"
+    ],
+    "baseline_no_guidance_proof_status": "not_required_for_current_strength"
+  },
+  "formtrig_hook": {
+    "successes": 3,
+    "reps": 3,
+    "first_terminal_time_s": [
+      2.39,
+      2.422,
+      2.605
+    ],
+    "first_terminal_execs": [
+      8,
+      8,
+      8
+    ],
+    "terminal_triggered_counts": [
+      2,
+      2,
+      2
+    ],
+    "execs_done": [
+      147,
+      147,
+      147
+    ],
+    "accepted_non_trigger": [
+      5,
+      5,
+      5
+    ],
+    "saved_non_trigger": [
+      5,
+      5,
+      5
+    ],
+    "spec_lifted": [
+      70,
+      70,
+      70
+    ],
+    "endpoint_native_crashes": [
+      1,
+      1,
+      1
+    ],
+    "endpoint_replayed_variants": [
+      28,
+      28,
+      28
+    ]
+  },
+  "formtrig_nohook": {
+    "successes": 2,
+    "reps": 3,
+    "first_terminal_time_s": [
+      29.633,
+      49.938,
+      null
+    ],
+    "first_terminal_execs": [
+      720,
+      1801,
+      null
+    ],
+    "terminal_triggered_counts": [
+      4,
+      1,
+      0
+    ],
+    "execs_done": [
+      1899,
+      2118,
+      1622
+    ],
+    "accepted_non_trigger": [
+      17,
+      14,
+      14
+    ],
+    "saved_non_trigger": [
+      17,
+      14,
+      14
+    ],
+    "spec_lifted": [
+      1233,
+      1551,
+      1020
+    ],
+    "endpoint_native_crashes": [
+      0,
+      0,
+      0
+    ],
+    "endpoint_replayed_variants": [
+      32,
+      32,
+      32
+    ]
+  },
+  "baseline_validity": {
+    "aflplusplus_vanilla": {
+      "valid_reps": 3,
+      "invalid_reps": 0,
+      "successes": 0,
+      "execs_done": [
+        1174,
+        971,
+        940
+      ]
+    },
+    "aflplusplus_cmplog": {
+      "valid_reps": 2,
+      "invalid_reps": 1,
+      "successes": 0,
+      "execs_done_valid": [
+        949,
+        1257
+      ],
+      "invalid_reason": "one CmpLog rep aborted early with AFL++ cmplog forkserver signal 11"
+    },
+    "redqueen_operand": {
+      "valid_reps": 0,
+      "invalid_reps": 3,
+      "successes": 0,
+      "invalid_reason": "all Redqueen/operand reps aborted early with AFL++ cmplog forkserver signal 11"
+    }
+  },
+  "evidence_assessment": {
+    "supported": [
+      "target-specific GPAC payload hook reaches endpoint _T in 3/3 reps within about 2.4-2.6s and 8 execs",
+      "nohook FORMTRIG also has lifted non-trigger progress and reaches _T in 2/3 reps, but much later in this screen",
+      "vanilla AFL++ has 3 valid 60s reps with no endpoint trigger",
+      "FORMTRIG-hook retained endpoint replay crashes natively in all 3 reps, while nohook retained endpoint replay has 0 native crashes"
+    ],
+    "not_supported": [
+      "complete required baseline set",
+      "hard SOTA-pain claim",
+      "baseline no-guidance proof",
+      "target-independent general FORMTRIG claim"
+    ],
+    "required_next": [
+      "repair or rerun CmpLog/Redqueen baseline startup failures before using this as matched SOTA evidence",
+      "add baseline-visible pre-_T flatness/high-variance measurement",
+      "run longer or repeated nohook/generic-hook ablations to separate generic FORMTRIG benefit from target-specific hook repair"
+    ]
+  }
+}

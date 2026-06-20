@@ -1,0 +1,46 @@
+{
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "equivalence_note": "This local adapter is the AFL++ Redqueen/CmpLog implementation path. It is not evidence for the original Redqueen artifact unless a separate paper-equivalence mapping is added.",
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ Redqueen/CmpLog mode with a matching cmplog binary",
+    "information_budget": "AFL++ Redqueen/CmpLog operand observations and substitutions; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "AFL++ value-profile/operand-substitution machinery",
+    "paper_anchors": [
+      "related_papers/Redqueen.pdf",
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:Redqueen",
+      "paper/notes/CITATION_TODO.md:Redqueen"
+    ],
+    "scope": "AFL++ Redqueen-style operand baseline; not a substitute for the original Redqueen artifact unless separately mapped"
+  },
+  "elapsed_s": 2.0931369090103544,
+  "resolved_cmd": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/corpus",
+    "-o",
+    "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/redqueen_operand_rep2/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "60",
+    "-c",
+    "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "returncode": 1,
+  "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/redqueen_operand_rep2/run_record.json",
+  "status": "complete"
+}

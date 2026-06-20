@@ -1,8 +1,10 @@
 {
   "groups": [
     {
+      "attempted_reps": 1,
       "baseline": "aflplusplus_cmplog",
       "budget": 5,
+      "invalid_reps": 0,
       "max_magma_triggered": 0,
       "median_execs_done": 127,
       "median_magma_triggered": 0,
@@ -14,21 +16,25 @@
       "target_id": "GPAC_3403"
     },
     {
+      "attempted_reps": 1,
       "baseline": "aflplusplus_vanilla",
       "budget": 5,
-      "max_magma_triggered": 0,
-      "median_execs_done": 0,
-      "median_magma_triggered": 0,
+      "invalid_reps": 1,
+      "max_magma_triggered": null,
+      "median_execs_done": null,
+      "median_magma_triggered": null,
       "median_trigger_time_s": null,
       "min_trigger_time_s": null,
-      "reps": 1,
+      "reps": 0,
       "success_rate": 0.0,
       "successes": 0,
       "target_id": "GPAC_3403"
     },
     {
+      "attempted_reps": 1,
       "baseline": "redqueen_operand",
       "budget": 5,
+      "invalid_reps": 0,
       "max_magma_triggered": 0,
       "median_execs_done": 127,
       "median_magma_triggered": 0,
@@ -53,6 +59,7 @@
       "magma_snapshot_count": null,
       "magma_triggered": 0,
       "rep": 1,
+      "returncode": 0,
       "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/aflplusplus_cmplog_rep1/run_record.json",
       "run_time": 5,
       "saved_crashes": 0,
@@ -60,7 +67,8 @@
       "success": false,
       "target_id": "GPAC_3403",
       "trigger_time_kind": null,
-      "trigger_time_s": null
+      "trigger_time_s": null,
+      "valid_run": true
     },
     {
       "baseline": "aflplusplus_vanilla",
@@ -74,6 +82,7 @@
       "magma_snapshot_count": null,
       "magma_triggered": 0,
       "rep": 1,
+      "returncode": 1,
       "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/aflplusplus_vanilla_rep1/run_record.json",
       "run_time": 2,
       "saved_crashes": 0,
@@ -81,7 +90,8 @@
       "success": false,
       "target_id": "GPAC_3403",
       "trigger_time_kind": null,
-      "trigger_time_s": null
+      "trigger_time_s": null,
+      "valid_run": false
     },
     {
       "baseline": "redqueen_operand",
@@ -95,6 +105,7 @@
       "magma_snapshot_count": null,
       "magma_triggered": 0,
       "rep": 1,
+      "returncode": 0,
       "run_record": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_20260620T031405Z/runs/redqueen_operand_rep1/run_record.json",
       "run_time": 5,
       "saved_crashes": 0,
@@ -102,7 +113,8 @@
       "success": false,
       "target_id": "GPAC_3403",
       "trigger_time_kind": null,
-      "trigger_time_s": null
+      "trigger_time_s": null,
+      "valid_run": true
     }
   ]
 }

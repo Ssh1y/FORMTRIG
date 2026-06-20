@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "source": "cli_override",
+  "path": "/home/cwh/FORMTRIG/scripts/formtrig_hooks/gpac_scal_ref_mp4_hook.py",
+  "sha256": "acc060f3c77541d097199f3ed6f2adad906fe842f49c8885081cc7b37a183a97"
+}

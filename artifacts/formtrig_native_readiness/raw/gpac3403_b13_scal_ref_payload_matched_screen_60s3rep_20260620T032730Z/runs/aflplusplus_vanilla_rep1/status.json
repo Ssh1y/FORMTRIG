@@ -1,0 +1,42 @@
+{
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/afl-fuzz"
+    ],
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "information_budget": "coverage feedback only; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "elapsed_s": 61.005007057014154,
+  "resolved_cmd": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/corpus",
+    "-o",
+    "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/aflplusplus_vanilla_rep1/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "60",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "returncode": 0,
+  "run_record": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/aflplusplus_vanilla_rep1/run_record.json",
+  "status": "complete"
+}

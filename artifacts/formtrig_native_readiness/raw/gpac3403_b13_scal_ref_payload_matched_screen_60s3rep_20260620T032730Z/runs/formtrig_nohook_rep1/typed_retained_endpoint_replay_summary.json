@@ -1,0 +1,60 @@
+{
+  "d_f_max": null,
+  "d_f_spec_lifted_max": 5.0,
+  "d_f_spec_lifted_min": 5.0,
+  "duration_s": 1.817,
+  "endpoint_cmd": [
+    "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "endpoint_env_keys": [],
+  "endpoint_exit_code_counts": {
+    "1": 32
+  },
+  "endpoint_native_crashes": 0,
+  "endpoint_probe_runs": 32,
+  "endpoint_replayed_variants": 32,
+  "endpoint_replays": 1,
+  "endpoint_sanitizer_crashes": 0,
+  "endpoint_sanitizer_exit_code": 86,
+  "endpoint_timeout": 5.0,
+  "endpoint_timeouts": 0,
+  "endpoint_variant_inputs_dir": null,
+  "endpoint_variant_suffix": "",
+  "existing_inputs": 128,
+  "input_records": 128,
+  "logs_dir": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/formtrig_nohook_rep1/logs",
+  "max_records": 32,
+  "positive_control": [
+    {
+      "exit_code": -6,
+      "input": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/positive_control_raw/two_track_scal_ref.mp4",
+      "kind": "positive_control",
+      "native_crash": true,
+      "rep": 1,
+      "sanitizer_crash": false,
+      "stderr_log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/formtrig_nohook_rep1/logs/positive_control.endpoint_1.stderr",
+      "stderr_sha256": "ffcdba04fadaa6ffc7bae5d6dbfc2fd70f822c579a462daab2a2b96ab6a6814c",
+      "stdout_log": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/formtrig_nohook_rep1/logs/positive_control.endpoint_1.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  ],
+  "positive_control_native_crashes": 1,
+  "positive_control_probe_runs": 1,
+  "positive_control_sanitizer_crashes": 0,
+  "records_jsonl": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/formtrig_nohook_rep1/typed_retained_records.jsonl",
+  "replayed_records": 32,
+  "schema": "formtrig_gpac3403_typed_retained_endpoint_replay_v1",
+  "selected_records": 32,
+  "selection": "best-d-f",
+  "skipped_missing_inputs": 0,
+  "structure_hook": null,
+  "structure_profiled_records": 0,
+  "structure_score_max": null,
+  "structure_score_min": null
+}

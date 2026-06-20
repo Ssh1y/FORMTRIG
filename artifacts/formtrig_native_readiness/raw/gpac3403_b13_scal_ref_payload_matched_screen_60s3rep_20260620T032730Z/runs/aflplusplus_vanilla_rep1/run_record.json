@@ -1,0 +1,64 @@
+{
+  "baseline": "aflplusplus_vanilla",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/afl-fuzz"
+    ],
+    "faithfulness": "accepted_executable_control",
+    "implementation": "local AFL++ afl-fuzz artifact",
+    "information_budget": "coverage feedback only; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "coverage-guided AFL++ execution without FORMTRIG lifted D_F or BindingSpec semantics",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "coverage/reach-only control, not a post-reach TC-distance method"
+  },
+  "budget": 60,
+  "command_line": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/corpus",
+    "-o",
+    "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/aflplusplus_vanilla_rep1/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "60",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "config_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/aflplusplus_vanilla_rep1/run_config.json",
+  "first_crash": null,
+  "fuzzer_stats": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/aflplusplus_vanilla_rep1/fuzzer_out/default/fuzzer_stats",
+  "last_crash_time_s": null,
+  "magma_monitor": null,
+  "run_id": "GPAC_3403:aflplusplus_vanilla:rep1",
+  "seed_set_id": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/corpus",
+  "stats": {
+    "corpus_count": 1,
+    "execs_done": 1174,
+    "execs_per_sec": "19.55",
+    "magma_reached": 0,
+    "magma_triggered": 0,
+    "run_time": 60,
+    "saved_crashes": 0,
+    "saved_hangs": 0
+  },
+  "success": false,
+  "target_id": "GPAC_3403",
+  "tc_category": "compound-sequence-lifecycle",
+  "timeout": true,
+  "trigger_execs": null,
+  "trigger_time_kind": null,
+  "trigger_time_s": null
+}

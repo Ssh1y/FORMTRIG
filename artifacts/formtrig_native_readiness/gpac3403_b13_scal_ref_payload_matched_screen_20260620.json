@@ -38,10 +38,13 @@
     "typed_retain_endpoint_selection": "best-d-f"
   },
   "comparison": {
-    "verdict": "positive_endpoint_matched_comparison",
-    "main_claim_strength": "hard_endpoint_gap_candidate",
-    "matched_baseline_count": 3,
-    "baseline_no_guidance_proof_status": "not_measured"
+    "verdict": "incomplete_required_baseline_set",
+    "main_claim_strength": "incomplete_matched_evidence",
+    "matched_valid_baseline_runs": 2,
+    "missing_required_baselines": [
+      "aflplusplus_vanilla"
+    ],
+    "baseline_no_guidance_proof_status": "not_required_for_current_strength"
   },
   "formtrig": {
     "budget_s": 5,
@@ -89,7 +92,9 @@
       "trigger_time_s": null,
       "run_time_s": 2,
       "execs_done": 0,
-      "note": "startup/preflight weak datapoint in this short smoke; do not use alone as baseline pain evidence"
+      "valid_run": false,
+      "returncode": 1,
+      "note": "invalid startup/preflight datapoint in this short smoke; do not count as a matched no-trigger baseline"
     },
     {
       "name": "aflplusplus_cmplog",
@@ -97,7 +102,9 @@
       "success": false,
       "trigger_time_s": null,
       "run_time_s": 5,
-      "execs_done": 127
+      "execs_done": 127,
+      "valid_run": true,
+      "returncode": 0
     },
     {
       "name": "redqueen_operand",
@@ -105,7 +112,9 @@
       "success": false,
       "trigger_time_s": null,
       "run_time_s": 5,
-      "execs_done": 127
+      "execs_done": 127,
+      "valid_run": true,
+      "returncode": 0
     }
   ],
   "evidence_assessment": {
@@ -113,9 +122,10 @@
       "B13 closes the B12 SCAL-reference R2T gap in a target-specific GPAC payload-hook smoke",
       "FORMTRIG produces strict pre-trigger lifted guidance and reaches endpoint _T in the same 5s planned budget",
       "nohook reaches lifted non-trigger progress but does not replay to endpoint _T in this smoke",
-      "CmpLog and Redqueen/operand baselines do not trigger in this 5s smoke"
+      "CmpLog and Redqueen/operand valid baseline reps do not trigger in this 5s smoke"
     ],
     "not_supported": [
+      "complete required baseline set",
       "final hard SOTA-pain claim",
       "baseline no-guidance proof",
       "replicated success-rate or TTE statistics",

@@ -17,6 +17,8 @@ FIELDS = [
     "baseline",
     "budget",
     "rep",
+    "valid_run",
+    "returncode",
     "success",
     "trigger_time_s",
     "trigger_time_kind",
@@ -37,6 +39,15 @@ FIELDS = [
 def read_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def read_json_if_exists(path: Path) -> Any:
+    if not path.is_file():
+        return {}
+    try:
+        return read_json(path)
+    except json.JSONDecodeError:
+        return {}
 
 
 def numeric(value: Any) -> int | float | None:
@@ -78,6 +89,9 @@ def infer_rep(record: dict[str, Any]) -> int | None:
 
 def flatten_record(path: Path) -> dict[str, Any]:
     record = read_json(path)
+    status = read_json_if_exists(path.parent / "status.json")
+    returncode = numeric(status.get("returncode")) if isinstance(status, dict) else None
+    valid_run = returncode is None or returncode in (0, 124)
     stats = record.get("stats") if isinstance(record.get("stats"), dict) else {}
     monitor = (
         record.get("magma_monitor")
@@ -99,7 +113,9 @@ def flatten_record(path: Path) -> dict[str, Any]:
         "baseline": record.get("baseline"),
         "budget": record.get("budget"),
         "rep": infer_rep(record),
-        "success": bool(record.get("success")),
+        "valid_run": valid_run,
+        "returncode": returncode,
+        "success": bool(record.get("success")) and valid_run,
         "trigger_time_s": record.get("trigger_time_s"),
         "trigger_time_kind": record.get("trigger_time_kind"),
         "run_time": stats.get("run_time"),
@@ -128,7 +144,8 @@ def median(values: list[float]) -> float | int | None:
 
 
 def summarize_group(rows: list[dict[str, Any]]) -> dict[str, Any]:
-    successes = [row for row in rows if row["success"]]
+    valid_rows = [row for row in rows if row.get("valid_run", True)]
+    successes = [row for row in valid_rows if row["success"]]
     trigger_times = [
         float(value)
         for row in successes
@@ -136,21 +153,23 @@ def summarize_group(rows: list[dict[str, Any]]) -> dict[str, Any]:
     ]
     magma_t = [
         int(value)
-        for row in rows
+        for row in valid_rows
         if isinstance(value := numeric(row.get("magma_triggered")), int)
     ]
     execs = [
         int(value)
-        for row in rows
+        for row in valid_rows
         if isinstance(value := numeric(row.get("execs_done")), int)
     ]
     return {
         "baseline": rows[0].get("baseline"),
         "budget": rows[0].get("budget"),
         "target_id": rows[0].get("target_id"),
-        "reps": len(rows),
+        "attempted_reps": len(rows),
+        "invalid_reps": len(rows) - len(valid_rows),
+        "reps": len(valid_rows),
         "successes": len(successes),
-        "success_rate": len(successes) / len(rows) if rows else 0.0,
+        "success_rate": len(successes) / len(valid_rows) if valid_rows else 0.0,
         "min_trigger_time_s": median([min(trigger_times)]) if trigger_times else None,
         "median_trigger_time_s": median(trigger_times),
         "max_magma_triggered": max(magma_t) if magma_t else None,

@@ -508,6 +508,8 @@ def load_baseline_rows(items: list[str], target_id: str) -> list[dict[str, Any]]
         for raw in data.get("records", []):
             if raw.get("target_id") != target_id:
                 continue
+            if raw.get("valid_run") is False:
+                continue
             row = {
                 "arm": "baseline",
                 "source_label": label,
@@ -859,6 +861,28 @@ def classify_evidence(
         best_baseline_tte=best_baseline_tte,
         best_baseline_family_median_tte=best_baseline_family_median_tte,
     )
+    if (missing_required or low_rep_groups) and strength["main_claim_strength"] in HARD_SOTA_STRENGTHS:
+        incomplete_reasons = list(strength["reasons"])
+        incomplete_actions = list(strength["recommended_design_actions"])
+        if missing_required:
+            incomplete_reasons.append("required_baseline_families_missing")
+            incomplete_actions.append(
+                "complete the required faithful baseline set before hard SOTA-pain claims"
+            )
+        if low_rep_groups:
+            incomplete_reasons.append("matched_baseline_replication_incomplete")
+            incomplete_actions.append(
+                "complete the requested repetitions before hard SOTA-pain claims"
+            )
+        strength = {
+            **strength,
+            "main_claim_strength": "incomplete_matched_evidence",
+            "baseline_guidance_gap": baseline_guidance_gap_requirement(
+                "incomplete_matched_evidence"
+            ),
+            "reasons": incomplete_reasons,
+            "recommended_design_actions": incomplete_actions,
+        }
     if strength["main_claim_strength"] in {
         "not_hard_pain_baseline_fast_enough",
         "moderate_speedup_needs_unacceptable_baseline_cost",

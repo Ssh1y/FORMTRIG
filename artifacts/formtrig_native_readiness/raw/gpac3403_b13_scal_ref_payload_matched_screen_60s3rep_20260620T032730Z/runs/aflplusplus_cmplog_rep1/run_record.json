@@ -1,0 +1,67 @@
+{
+  "baseline": "aflplusplus_cmplog",
+  "baseline_contract": {
+    "artifact_anchors": [
+      "experiments/aflplusplus/AFLplusplus@f596a297c4de",
+      "experiments/aflplusplus/AFLplusplus/instrumentation/README.cmplog.md",
+      "experiments/aflplusplus/AFLplusplus/src/afl-fuzz-redqueen.c"
+    ],
+    "faithfulness": "accepted_executable_artifact",
+    "implementation": "local AFL++ CmpLog instrumentation plus matching cmplog binary",
+    "information_budget": "AFL++ CmpLog operand map and normal AFL++ feedback; no FORMTRIG lifted D_F, BindingSpec roles, or typed mutation registry",
+    "mechanism": "comparison operand logging and comparison-guided mutation from AFL++",
+    "paper_anchors": [
+      "related_papers/AFL++ CMPLOG.pdf",
+      "paper/notes/RELATED_PAPER_ARTIFACTS.md:AFL++ CmpLog",
+      "paper/notes/TC_GAP_CAPABILITY_MATRIX.md:AFL++ CmpLog"
+    ],
+    "scope": "faithful AFL++ CmpLog baseline for visible scalar/string comparison feedback"
+  },
+  "budget": 60,
+  "command_line": [
+    "/home/cwh/FORMTRIG/experiments/aflplusplus/AFLplusplus/afl-fuzz",
+    "-i",
+    "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/corpus",
+    "-o",
+    "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/aflplusplus_cmplog_rep1/fuzzer_out",
+    "-m",
+    "none",
+    "-V",
+    "60",
+    "-c",
+    "/tmp/formtrig_gpac3403_aflpp_cmplog_asan_src/bin/gcc/MP4Box",
+    "-t",
+    "5000+",
+    "--",
+    "/tmp/formtrig_gpac3403_aflpp_plain_asan_src/bin/gcc/MP4Box",
+    "-cat",
+    "@@",
+    "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+    "-out",
+    "/dev/null"
+  ],
+  "config_path": "/home/cwh/FORMTRIG/artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_20260620T032730Z/runs/aflplusplus_cmplog_rep1/run_config.json",
+  "first_crash": null,
+  "fuzzer_stats": null,
+  "last_crash_time_s": null,
+  "magma_monitor": null,
+  "run_id": "GPAC_3403:aflplusplus_cmplog:rep1",
+  "seed_set_id": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/corpus",
+  "stats": {
+    "corpus_count": 0,
+    "execs_done": 0,
+    "execs_per_sec": null,
+    "magma_reached": 0,
+    "magma_triggered": 0,
+    "run_time": 1,
+    "saved_crashes": 0,
+    "saved_hangs": 0
+  },
+  "success": false,
+  "target_id": "GPAC_3403",
+  "tc_category": "compound-sequence-lifecycle",
+  "timeout": false,
+  "trigger_execs": null,
+  "trigger_time_kind": null,
+  "trigger_time_s": null
+}

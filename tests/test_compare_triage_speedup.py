@@ -10,12 +10,50 @@ from tools.compare_formtrig_baselines import (
     apply_baseline_guidance_gap,
     benefit_readout,
     classify_evidence,
+    load_baseline_rows,
     load_formtrig_rows,
 )
 from tools.triage_formtrig_targets import package_row, target_rows
 
 
 class SpeedupClassificationTest(unittest.TestCase):
+    def test_load_baseline_rows_skips_invalid_runs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            summary = Path(tmp) / "baseline_summary.json"
+            summary.write_text(
+                json.dumps(
+                    {
+                        "records": [
+                            {
+                                "target_id": "GPAC_3403",
+                                "baseline": "aflplusplus_vanilla",
+                                "budget": 60,
+                                "rep": 1,
+                                "valid_run": True,
+                                "success": False,
+                                "execs_done": 1200,
+                            },
+                            {
+                                "target_id": "GPAC_3403",
+                                "baseline": "aflplusplus_cmplog",
+                                "budget": 60,
+                                "rep": 1,
+                                "valid_run": False,
+                                "returncode": 1,
+                                "success": False,
+                                "execs_done": 0,
+                            },
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            rows = load_baseline_rows([f"matched={summary}"], "GPAC_3403")
+
+        self.assertEqual([row["baseline"] for row in rows], ["aflplusplus_vanilla"])
+
     def test_endpoint_benefit_does_not_require_strict_pretrigger_gate(self):
         formtrig_rows = [
             {
@@ -53,7 +91,7 @@ class SpeedupClassificationTest(unittest.TestCase):
             formtrig_rows,
             baseline_rows,
             tolerance=0,
-            min_reps=2,
+            min_reps=1,
             required_baselines=[
                 "aflplusplus_vanilla",
                 "aflplusplus_cmplog",
@@ -61,7 +99,7 @@ class SpeedupClassificationTest(unittest.TestCase):
             ],
         )
 
-        self.assertEqual(analysis["verdict"], "positive_endpoint_but_under_replicated")
+        self.assertEqual(analysis["verdict"], "positive_endpoint_matched_comparison")
         self.assertIn(
             "formtrig_endpoint_where_matched_baselines_do_not_trigger",
             analysis["reasons"],
@@ -88,6 +126,46 @@ class SpeedupClassificationTest(unittest.TestCase):
         self.assertIn("baseline_guidance_gap_required", readout["design_evidence"])
         self.assertTrue(
             any("baseline no-guidance proof" in claim for claim in readout["blocked_claims"])
+        )
+
+    def test_incomplete_required_baseline_set_downgrades_hard_strength(self):
+        analysis = classify_evidence(
+            formtrig_rows=[
+                {
+                    "budget": 60,
+                    "strict_pretrigger_guidance": True,
+                    "terminal_count": 1,
+                    "trigger_time_s": 2.0,
+                }
+            ],
+            baseline_rows=[
+                {
+                    "source_label": "matched",
+                    "baseline": "aflplusplus_vanilla",
+                    "budget": 60,
+                    "rep": 1,
+                    "success": False,
+                    "terminal_count": 0,
+                }
+            ],
+            tolerance=0,
+            min_reps=3,
+            required_baselines=[
+                "aflplusplus_vanilla",
+                "aflplusplus_cmplog",
+                "redqueen_operand",
+            ],
+        )
+
+        self.assertEqual(analysis["verdict"], "incomplete_required_baseline_set")
+        self.assertEqual(
+            analysis["experiment_strength"]["main_claim_strength"],
+            "incomplete_matched_evidence",
+        )
+        self.assertFalse(
+            analysis["experiment_strength"]["baseline_guidance_gap"][
+                "required_for_hard_sota_pain"
+            ]
         )
 
     def test_measured_guidance_gap_unblocks_hard_endpoint_readout(self):

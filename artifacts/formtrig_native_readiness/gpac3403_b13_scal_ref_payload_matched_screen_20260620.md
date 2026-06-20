@@ -15,12 +15,13 @@ as endpoint-readiness and repair evidence, not as final hard SOTA-pain proof.
 
 ## Benefit Readout
 
-Tool-generated comparison after planned-budget normalization:
+Tool-generated comparison after planned-budget normalization and invalid-run
+filtering:
 
-- verdict: `positive_endpoint_matched_comparison`
-- main claim strength: `hard_endpoint_gap_candidate`
-- matched baselines: `3`
-- baseline no-guidance proof: `not_measured`
+- verdict: `incomplete_required_baseline_set`
+- main claim strength: `incomplete_matched_evidence`
+- valid matched baseline runs: `2`
+- missing required baseline family: `aflplusplus_vanilla`
 
 FORMTRIG with the GPAC payload hook:
 
@@ -47,7 +48,7 @@ Baselines:
 
 | arm | budget | success | execs | note |
 | --- | ---: | --- | ---: | --- |
-| AFL++ vanilla | 5s | false | 0 | weak startup/preflight datapoint in this smoke |
+| AFL++ vanilla | 5s | invalid | 0 | startup/preflight failure; not counted as a baseline no-trigger rep |
 | AFL++ CmpLog | 5s | false | 127 | no endpoint crash |
 | Redqueen/operand | 5s | false | 127 | no endpoint crash |
 
@@ -60,10 +61,12 @@ Supported:
 - FORMTRIG records strict pre-trigger lifted guidance before endpoint success.
 - Nohook retains lifted non-trigger progress but does not replay to endpoint
   `_T` in this smoke.
-- CmpLog and Redqueen/operand do not trigger in the same planned 5s smoke.
+- CmpLog and Redqueen/operand valid reps do not trigger in the same planned 5s
+  smoke.
 
 Not supported yet:
 
+- complete required baseline set
 - final hard SOTA-pain claim
 - baseline no-guidance proof
 - repeated-run success-rate or TTE statistics
