@@ -28,7 +28,13 @@ ACCESS_UNIT_VCL_TYPES = [0, 1, 5, 14, 16, 21]
 HIGH_VPS_MAX_LAYER_IDS = [4, 7, 9, 16, 31, 50, 63]
 ENDPOINT_SCALE_LAYER_IDS = [4, 7, 1, 16, 50, 31, 36, 37, 0, 22, 14, 46]
 ENDPOINT_SCALE_VCL_TYPES = [0, 0, 0, 16, 0, 21, 0, 1, 0, 14, 0, 5]
-OP_SELECTOR_COUNT = 52
+POC_SHAPE_TYPES = (
+    [32, 34, 0, 34, 33, 14, 34, 33, 5, 0, 34, 33, 21, 34, 33, 0]
+    + [34, 0, 16, 34, 0, 16, 34, 21, 0, 34, 16, 0, 34, 49]
+    + [0, 34, 0, 16, 0, 34]
+)
+POC_SHAPE_LAYERS = [22, 4, 1, 4, 36, 0, 0, 0, 46, 1, 4, 36, 31, 4, 37, 1, 4, 7, 16, 4, 50, 16, 4, 31, 0, 4, 16, 0, 4, 50]
+OP_SELECTOR_COUNT = 56
 
 
 @dataclass(frozen=True)
@@ -643,6 +649,107 @@ def import_safe_extractor_train(
     return b"".join(chunks)
 
 
+def poc_shape_payload(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    nal_type: int,
+    sample: int,
+    malformed_parameters: bool,
+) -> bytes:
+    if nal_type == 32:
+        if sample % 5 == 0:
+            return output_layer_set_vps_payload(sample)
+        return high_max_layer_vps_payload(sample)
+    if nal_type == 33:
+        if malformed_parameters and sample % 3 == 0:
+            return stress_payload(b"\x80", sample, min_len=8)
+        return clone_payload_for_type(data, nalus, 33, anchor, sample)
+    if nal_type == 34:
+        if malformed_parameters:
+            return stress_payload(bytes([(0x80 | (sample & 0x1F))]), sample, min_len=4 + (sample % 5))
+        return clone_payload_for_type(data, nalus, 34, anchor, sample)
+    if nal_type == 49:
+        return extractor_payload(sample)
+    if nal_type in (0, 1, 5, 14, 16, 21):
+        return access_unit_slice_payload(data, nalus, anchor, sample, rewrite_seed=True)
+    return payload_for_type(data, nalus, nal_type, anchor, sample)
+
+
+def poc_shape_lifecycle_train(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    cycles: int,
+    malformed_parameters: bool,
+    include_prefix_noise: bool,
+) -> bytes:
+    chunks = []
+    if include_prefix_noise:
+        noise = bytes(((0x7F + sample + index * 17) & 0xFF) for index in range(40))
+        chunks.append(noise)
+    for cycle in range(cycles):
+        for index, nal_type in enumerate(POC_SHAPE_TYPES):
+            local_sample = sample + cycle * len(POC_SHAPE_TYPES) + index
+            layer = POC_SHAPE_LAYERS[(sample + cycle + index) % len(POC_SHAPE_LAYERS)]
+            payload = poc_shape_payload(
+                data,
+                nalus,
+                anchor,
+                nal_type,
+                local_sample,
+                malformed_parameters=malformed_parameters,
+            )
+            chunks.append(make_nalu(nal_type, payload, layer))
+        if cycle % 2 == 0:
+            chunks.append(make_nalu(32, output_layer_set_vps_payload(sample + cycle), 0))
+        if cycle % 3 == 0:
+            chunks.append(make_nalu(49, extractor_payload(sample + cycle), 50))
+    return b"".join(chunks)
+
+
+def sample_preserving_poc_shape_train(
+    data: bytes,
+    nalus: list[Nalu],
+    anchor: Nalu,
+    sample: int,
+    base_units: int,
+    tail_cycles: int,
+    malformed_parameters: bool,
+    dense_prefix: bool,
+    high_vps_stride: int,
+) -> bytes:
+    prefix = import_safe_extractor_train(
+        data,
+        nalus,
+        anchor,
+        sample + 3,
+        repetitions=4 + (sample % 3),
+        extractor_count=2 + (sample % 2),
+        vcl_count=4,
+    )
+    access_units = endpoint_scale_access_unit_train(
+        data,
+        nalus,
+        anchor,
+        sample,
+        units=base_units,
+        dense_prefix=dense_prefix,
+        high_vps_stride=high_vps_stride,
+    )
+    tail = poc_shape_lifecycle_train(
+        data,
+        nalus,
+        anchor,
+        sample + 11,
+        cycles=tail_cycles,
+        malformed_parameters=malformed_parameters,
+        include_prefix_noise=False,
+    )
+    return prefix + access_units + tail
+
+
 def extractor_payload(sample: int) -> bytes:
     pattern = bytes(
         [
@@ -1100,6 +1207,62 @@ def mutate(data: bytes, start: int, span: int, off: int, op: int, sample: int) -
             vcl_count=4,
         )
         out = data[: anchor.start] + train + data[anchor.start : anchor.end] + data[anchor.start :]
+    elif selector == 52:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = sample_preserving_poc_shape_train(
+            data,
+            nalus,
+            anchor,
+            sample,
+            base_units=112,
+            tail_cycles=5,
+            malformed_parameters=False,
+            dense_prefix=False,
+            high_vps_stride=8,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 53:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = sample_preserving_poc_shape_train(
+            data,
+            nalus,
+            anchor,
+            sample + 5,
+            base_units=96,
+            tail_cycles=5,
+            malformed_parameters=True,
+            dense_prefix=False,
+            high_vps_stride=9,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 54:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = sample_preserving_poc_shape_train(
+            data,
+            nalus,
+            anchor,
+            sample + 9,
+            base_units=144,
+            tail_cycles=2,
+            malformed_parameters=True,
+            dense_prefix=True,
+            high_vps_stride=11,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
+    elif selector == 55:
+        anchor = first_slice_or_anchor(data, nalus, nalu)
+        train = sample_preserving_poc_shape_train(
+            data,
+            nalus,
+            anchor,
+            sample + 13,
+            base_units=192,
+            tail_cycles=2,
+            malformed_parameters=False,
+            dense_prefix=True,
+            high_vps_stride=10,
+        )
+        out = data[: anchor.start] + train + data[anchor.start :]
 
     out = out[:MAX_OUTPUT_LEN]
     return out if out and out != data else (data + make_nalu(INTERESTING_TYPES[sample % len(INTERESTING_TYPES)], layer=1))[:MAX_OUTPUT_LEN]

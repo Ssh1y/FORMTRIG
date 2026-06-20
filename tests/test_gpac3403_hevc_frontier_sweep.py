@@ -128,6 +128,39 @@ class Gpac3403HevcFrontierSweepTest(unittest.TestCase):
         self.assertGreaterEqual(max(profile[3] for profile in profiles), 8)
         self.assertGreaterEqual(max(profile[4] for profile in profiles), 50)
 
+    def test_poc_shape_operator_window_generates_gp3403_type_mix(self):
+        sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_poc_shape")
+        hook = load_module(HOOK_PATH, "hevc_annexb_structure_hook_for_poc_shape")
+        seed = sample_hevc()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            variants = sweep.generate_variants(
+                hook=hook,
+                seed=seed,
+                ranges=[(0, len(seed))],
+                max_variants=8,
+                op_start=52,
+                op_count=4,
+                sample_count=2,
+                variants_dir=Path(tmp),
+                schedule="round_robin",
+            )
+
+            profiles = []
+            for variant in variants:
+                data = Path(variant.path).read_bytes()
+                nalus = hook.parse_nalus(data)
+                types = [hook.nalu_type(data, nalu) for nalu in nalus]
+                layers = [hook.layer_id(data, nalu) for nalu in nalus]
+                profiles.append((variant.op, len(nalus), types.count(0), types.count(34), types.count(49), max(layers)))
+
+        self.assertEqual({52, 53, 54, 55}, {profile[0] for profile in profiles})
+        self.assertGreaterEqual(max(profile[1] for profile in profiles), 390)
+        self.assertGreaterEqual(max(profile[2] for profile in profiles), 120)
+        self.assertGreaterEqual(max(profile[3] for profile in profiles), 120)
+        self.assertGreaterEqual(max(profile[4] for profile in profiles), 2)
+        self.assertGreaterEqual(max(profile[5] for profile in profiles), 50)
+
     def test_summary_counts_trigger_and_same_object(self):
         sweep = load_module(SWEEP_PATH, "gpac3403_hevc_frontier_sweep_summary")
         records = [
