@@ -691,8 +691,12 @@ def real_cve_readiness_rejects(row: dict[str, Any]) -> bool:
     readiness = real_cve_readiness_for(row)
     if not readiness:
         return False
+    reject_statuses = {
+        "control_or_negative",
+        "endpoint_closure_demoted_control",
+    }
     return (
-        str(readiness.get("readiness") or "") == "control_or_negative"
+        str(readiness.get("readiness") or "") in reject_statuses
         or readiness.get("core_evidence_allowed") is False
     )
 
@@ -702,6 +706,31 @@ def real_cve_readiness_skip_reason(row: dict[str, Any]) -> str:
     status = str(readiness.get("readiness") or "unknown")
     blockers = str(readiness.get("blockers") or readiness.get("next_action") or "")
     return f"real_cve_readiness_{status}: {blockers}".rstrip(": ")
+
+
+def display_sota_pain_class(
+    row: dict[str, Any],
+    target_triage: dict[str, dict[str, Any]],
+) -> str:
+    readiness = real_cve_readiness_for(row)
+    if str(readiness.get("readiness") or "") == "endpoint_closure_demoted_control":
+        return "endpoint_closure_demoted_control"
+    return sota_pain_class(target_triage.get(target_id_for(row)))
+
+
+def display_sota_pain_evidence(
+    row: dict[str, Any],
+    target_triage: dict[str, dict[str, Any]],
+) -> str:
+    readiness = real_cve_readiness_for(row)
+    if str(readiness.get("readiness") or "") == "endpoint_closure_demoted_control":
+        return str(
+            readiness.get("current_benefit")
+            or readiness.get("readiness_delta_status")
+            or readiness.get("next_action")
+            or ""
+        )
+    return sota_pain_evidence(target_triage.get(target_id_for(row)))
 
 
 def real_cve_readiness_paths(row: dict[str, Any]) -> list[str]:
@@ -2295,12 +2324,8 @@ def build_worklist(
                 if real_cve_readiness_rejects(row)
                 else "control_or_negative_not_main_budget"
             ),
-            "sota_pain_class": sota_pain_class(
-                target_triage.get(target_id_for(row))
-            ),
-            "sota_pain_evidence": sota_pain_evidence(
-                target_triage.get(target_id_for(row))
-            ),
+            "sota_pain_class": display_sota_pain_class(row, target_triage),
+            "sota_pain_evidence": display_sota_pain_evidence(row, target_triage),
             "next_action": harness_admissibility_next_action(
                 harness_admissibilities.get(target_id_for(row))
             )

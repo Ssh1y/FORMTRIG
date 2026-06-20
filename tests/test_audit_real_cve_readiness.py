@@ -6,9 +6,14 @@ from pathlib import Path
 from tools.audit_real_cve_readiness import (
     binding_validation_has_complete_role_graph,
     binding_validation_limitations,
+    endpoint_demoted_delta,
     harness_admissibility_blocker,
     harness_admissibility_records,
     harness_rejects_core_evidence,
+    readiness_delta_benefit,
+    readiness_delta_next_action,
+    readiness_delta_records,
+    readiness_delta_status,
     short_gate_benefit,
     short_gate_comparison,
 )
@@ -136,6 +141,38 @@ class RealCveReadinessAuditTest(unittest.TestCase):
 
         self.assertTrue(binding_validation_has_complete_role_graph(records))
         self.assertEqual(limitations, [])
+
+    def test_readiness_delta_records_endpoint_demoted_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "gpac3403_b13_readiness_delta_20260620.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "schema": "formtrig_real_cve_readiness_delta_v1",
+                        "target_id": "GPAC_3403",
+                        "created_utc": "2026-06-20T04:55:00Z",
+                        "delta_status": "endpoint_closure_observed_but_demoted_for_hard_pain",
+                        "hard_pain_demotion_evidence": {
+                            "reason": "strong baselines triggered within the acceptable threshold"
+                        },
+                        "readiness_implication": {
+                            "next_action": "keep B13 as control evidence"
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            records = readiness_delta_records("GPAC_3403", root=root)
+
+        self.assertEqual(len(records), 1)
+        self.assertIn("endpoint_closure_observed", readiness_delta_status(records))
+        delta = endpoint_demoted_delta(records)
+        self.assertIsNotNone(delta)
+        self.assertIn("strong baselines", readiness_delta_benefit(delta))
+        self.assertEqual(readiness_delta_next_action(delta), "keep B13 as control evidence")
 
 
 if __name__ == "__main__":

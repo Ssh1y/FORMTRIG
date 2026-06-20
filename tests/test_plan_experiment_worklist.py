@@ -1216,6 +1216,76 @@ class ExperimentWorklistTest(unittest.TestCase):
             self.assertIn("real_cve_readiness_control_or_negative", skipped["reason"])
             self.assertEqual(skipped["next_action"], "keep as control/sanity evidence")
 
+    def test_endpoint_closure_demoted_control_is_skipped_from_main_budget(self):
+        planner = load_planner()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            queue_path = root / "queue.json"
+            comparison_root = root / "comparisons"
+            readiness_path = root / "real_cve_readiness.json"
+            comparison_root.mkdir()
+            queue_path.write_text(
+                json.dumps(
+                    {
+                        "top_targets": [
+                            {
+                                "rank": 4,
+                                "target_id": "GPAC_3403",
+                                "source": "real_cve",
+                                "project": "gpac",
+                                "primary_category": "compound-sequence-lifecycle",
+                                "secondary_category": "",
+                                "lane": "binding_spec_first",
+                                "status": "needs_short_discovery",
+                                "existing_disposition": "",
+                                "blockers": "",
+                                "source_evidence": "cve.json",
+                            }
+                        ]
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            readiness_path.write_text(
+                json.dumps(
+                    {
+                        "targets": {
+                            "GPAC_3403": {
+                                "target_id": "GPAC_3403",
+                                "readiness": "endpoint_closure_demoted_control",
+                                "core_evidence_allowed": True,
+                                "next_action": "keep B13 as control evidence",
+                            }
+                        }
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            payload = planner.build_worklist(
+                queue_path,
+                comparison_root,
+                harness_admissibility_root=None,
+                real_cve_readiness_path=readiness_path,
+                limit=10,
+                use_all_targets=False,
+                short_duration_s=600,
+                longrun_duration_s=7200,
+                jobs=2,
+                reps=1,
+                longrun_reps=3,
+            )
+
+            self.assertEqual(payload["task_count"], 0)
+            self.assertEqual(payload["skipped_control_count"], 1)
+            skipped = payload["skipped_controls"][0]
+            self.assertEqual(skipped["target_id"], "GPAC_3403")
+            self.assertIn("real_cve_readiness_endpoint_closure_demoted_control", skipped["reason"])
+            self.assertEqual(skipped["sota_pain_class"], "endpoint_closure_demoted_control")
+            self.assertEqual(skipped["next_action"], "keep B13 as control evidence")
+
     def test_real_cve_lifecycle_alias_gap_blocks_gpac_longrun(self):
         planner = load_planner()
         with tempfile.TemporaryDirectory() as tmp:

@@ -44,6 +44,8 @@ FIELDS = [
     "source_locations",
     "current_speedup_package",
     "current_benefit",
+    "readiness_delta_status",
+    "readiness_delta_evidence",
     "harness_admissibility_status",
     "core_evidence_allowed",
     "blockers",
@@ -271,6 +273,79 @@ def harness_admissibility_blocker(records: list[dict[str, Any]]) -> str:
             path = record.get("_path") or ""
             summary = record.get("summary") or "core evidence is not allowed by harness admissibility audit"
             return f"harness admissibility rejects core evidence: {status}@{path}: {summary}"
+    return ""
+
+
+def readiness_delta_records(
+    target_id: str,
+    root: Path = Path("artifacts/formtrig_native_readiness"),
+) -> list[dict[str, Any]]:
+    if not root.exists():
+        return []
+    records: list[dict[str, Any]] = []
+    for path in sorted(root.rglob("*readiness_delta*.json")):
+        try:
+            record = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        if str(record.get("schema") or "") != "formtrig_real_cve_readiness_delta_v1":
+            continue
+        if str(record.get("target_id") or record.get("target") or "") != target_id:
+            continue
+        record["_path"] = str(path)
+        records.append(record)
+    return records
+
+
+def readiness_delta_status(records: list[dict[str, Any]]) -> str:
+    statuses = []
+    for record in records:
+        status = str(record.get("delta_status") or "unknown")
+        path = record.get("_path")
+        statuses.append(f"{status}@{path}" if path else status)
+    return "; ".join(statuses)
+
+
+def endpoint_demoted_delta(records: list[dict[str, Any]]) -> dict[str, Any] | None:
+    candidates = [
+        record
+        for record in records
+        if str(record.get("delta_status") or "")
+        == "endpoint_closure_observed_but_demoted_for_hard_pain"
+    ]
+    if not candidates:
+        return None
+    candidates.sort(
+        key=lambda record: (
+            str(record.get("created_utc") or ""),
+            str(record.get("_path") or ""),
+        ),
+        reverse=True,
+    )
+    return candidates[0]
+
+
+def readiness_delta_benefit(record: dict[str, Any] | None) -> str:
+    if not record:
+        return ""
+    implication = record.get("readiness_implication")
+    if not isinstance(implication, dict):
+        implication = {}
+    demotion = record.get("hard_pain_demotion_evidence")
+    if not isinstance(demotion, dict):
+        demotion = {}
+    reason = demotion.get("reason") or implication.get("new_statement")
+    if reason:
+        return f"readiness delta: {reason}"
+    return "readiness delta recorded"
+
+
+def readiness_delta_next_action(record: dict[str, Any] | None) -> str:
+    if not record:
+        return ""
+    implication = record.get("readiness_implication")
+    if isinstance(implication, dict):
+        return str(implication.get("next_action") or "")
     return ""
 
 
@@ -505,11 +580,14 @@ def audit_target(
     discovery: dict[str, Any],
     binding_spec_dir: Path,
     comparison_root: Path,
+    readiness_delta_root: Path = Path("artifacts/formtrig_native_readiness"),
 ) -> dict[str, Any]:
     project = str(cve.get("project") or discovery.get("project") or "")
     category = str(cve.get("initial_tc_category") or discovery.get("primary_category") or "")
     existing_disposition = str(discovery.get("existing_disposition") or "")
     harness_records = harness_admissibility_records(target_id)
+    readiness_deltas = readiness_delta_records(target_id, readiness_delta_root)
+    endpoint_delta = endpoint_demoted_delta(readiness_deltas)
     harness_rejected = harness_rejects_core_evidence(harness_records)
     demoted = (
         discovery.get("lane") == "control_or_negative"
@@ -547,6 +625,7 @@ def audit_target(
     comparison_count = len(comparisons)
     best_speedup = speedup_comparison(comparisons)
     best_short_gate = short_gate_comparison(comparisons)
+    delta_benefit = readiness_delta_benefit(endpoint_delta)
     has_10m_speedup = bool(
         best_speedup and isinstance(best_speedup.get("longrun_10m_confirmation"), dict)
     )
@@ -611,6 +690,14 @@ def audit_target(
                 "Redqueen-path runs for the speedup package"
             )
             priority = 8
+        elif endpoint_delta:
+            readiness = "endpoint_closure_demoted_control"
+            next_action = readiness_delta_next_action(endpoint_delta) or (
+                "keep the endpoint-closure package as control/ablation evidence; "
+                "do not spend main hard-pain budget without a farther seedbank or "
+                "less endpoint-revealing harness"
+            )
+            priority = 14
         elif best_short_gate:
             readiness = "short_gate_triaged"
             if complete_role_graph_validated:
@@ -699,7 +786,16 @@ def audit_target(
         "native_dt_values": ",".join(native_dt_values),
         "source_locations": "; ".join(source_locations),
         "current_speedup_package": best_speedup.get("_path", "") if best_speedup else "",
-        "current_benefit": speedup_benefit(best_speedup) or short_gate_benefit(best_short_gate),
+        "current_benefit": "; ".join(
+            part
+            for part in (
+                speedup_benefit(best_speedup) or short_gate_benefit(best_short_gate),
+                delta_benefit,
+            )
+            if part
+        ),
+        "readiness_delta_status": readiness_delta_status(readiness_deltas),
+        "readiness_delta_evidence": endpoint_delta.get("_path", "") if endpoint_delta else "",
         "harness_admissibility_status": harness_admissibility_status(harness_records),
         "core_evidence_allowed": not harness_rejected if harness_records else True,
         "blockers": "; ".join(blockers + binding_limitations),
@@ -713,6 +809,7 @@ def audit_target(
             "binding_validation_records": [record.get("_path", "") for record in validation_records],
             "comparison_records": [record.get("_path", "") for record in comparisons],
             "harness_admissibility_records": [record.get("_path", "") for record in harness_records],
+            "readiness_delta_records": [record.get("_path", "") for record in readiness_deltas],
             "atom": str(atom_path),
             "tcir": str(tcir_path),
             "trigger_graph": str(trigger_graph_path),
@@ -804,6 +901,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--discovery", type=Path, default=Path("artifacts/formtrig_native_readiness/hard_target_discovery_queue_20260616.json"))
     parser.add_argument("--binding-spec-dir", type=Path, default=Path("artifacts/binding_specs"))
     parser.add_argument("--comparison-root", type=Path, default=Path("artifacts/formtrig_native_readiness/comparisons"))
+    parser.add_argument(
+        "--readiness-delta-root",
+        type=Path,
+        default=Path("artifacts/formtrig_native_readiness"),
+        help="root scanned for *readiness_delta*.json records",
+    )
     parser.add_argument("--target-id", action="append", default=[])
     parser.add_argument("--out-json", required=True, type=Path)
     parser.add_argument("--out-csv", required=True, type=Path)
@@ -830,6 +933,7 @@ def main() -> int:
             discovery.get(target_id, {}),
             args.binding_spec_dir,
             args.comparison_root,
+            args.readiness_delta_root,
         )
         for target_id in target_ids
         if target_id in cves
@@ -844,6 +948,7 @@ def main() -> int:
             "discovery": str(args.discovery),
             "binding_spec_dir": str(args.binding_spec_dir),
             "comparison_root": str(args.comparison_root),
+            "readiness_delta_root": str(args.readiness_delta_root),
         },
         "target_count": len(rows),
         "targets": rows,

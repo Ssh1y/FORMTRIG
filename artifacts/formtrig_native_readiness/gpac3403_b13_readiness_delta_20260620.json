@@ -1,0 +1,75 @@
+{
+  "schema": "formtrig_real_cve_readiness_delta_v1",
+  "target_id": "GPAC_3403",
+  "created_utc": "2026-06-20T04:55:00Z",
+  "base_readiness": "artifacts/formtrig_native_readiness/real_cve_readiness_20260619.json",
+  "delta_status": "endpoint_closure_observed_but_demoted_for_hard_pain",
+  "reason_for_delta": "The 2026-06-19 readiness file says GPAC_3403 endpoint closure is absent. The B13 SCAL-reference payload path now has endpoint closure, but the 600s matched screen shows strong baselines can also trigger within the acceptable threshold.",
+  "endpoint_closure_evidence": {
+    "smoke": {
+      "artifact": "artifacts/formtrig_native_readiness/gpac3403_b13_scal_ref_payload_endpoint_gate_smoke_20260620.json",
+      "status": "scaffold_to_terminal_smoke_success",
+      "first_terminal_time_s": 2.401,
+      "first_terminal_execs": 8,
+      "accepted_non_trigger": 3,
+      "saved_non_trigger": 3,
+      "endpoint_native_crashes": 1,
+      "stderr_signature": "free(): double free detected in tcache 2"
+    },
+    "matched_60s_repaired_baselines": {
+      "artifact": "artifacts/formtrig_native_readiness/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_repaired_baselines_20260620.json",
+      "formtrig_hook_successes": 3,
+      "formtrig_hook_reps": 3,
+      "formtrig_first_terminal_time_s": [
+        2.39,
+        2.422,
+        2.605
+      ],
+      "baseline_successes_in_60s": {
+        "aflplusplus_vanilla": "0/3 valid",
+        "aflplusplus_cmplog": "0/3 valid",
+        "redqueen_operand": "0/3 valid"
+      },
+      "baseline_no_guidance_proof_status": "under_budgeted"
+    }
+  },
+  "hard_pain_demotion_evidence": {
+    "artifact": "artifacts/formtrig_native_readiness/gpac3403_b13_600s_fast_baseline_demotes_hard_pain_20260620.json",
+    "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b13_scal_ref_payload_matched_screen_600s3rep_20260620",
+    "status": "demoted",
+    "reason": "At least two strong faithful baselines triggered within the 600s acceptable threshold on the first completed repetition.",
+    "fast_baselines": {
+      "redqueen_operand": {
+        "first_trigger_time_s": 203.212,
+        "first_trigger_execs": 3045,
+        "saved_crashes": 4
+      },
+      "aflplusplus_cmplog": {
+        "first_trigger_time_s": 207.984,
+        "first_trigger_execs": 3073,
+        "saved_crashes": 7
+      }
+    }
+  },
+  "readiness_implication": {
+    "old_statement_superseded": "endpoint closure is absent",
+    "new_statement": "B13 endpoint closure is present for the target-specific SCAL payload hook, but B13 is demoted from hard SOTA-pain evidence because strong baselines trigger within the acceptable threshold.",
+    "use_as": [
+      "native endpoint-readiness evidence",
+      "target-specific repair-hook evidence",
+      "speedup/control evidence",
+      "baseline-runner regression evidence for startup retry fairness"
+    ],
+    "do_not_use_as": [
+      "main hard SOTA-pain proof",
+      "target-independent FORMTRIG generality proof",
+      "completed 600s x3 matched comparison"
+    ],
+    "next_action": "Keep B13 out of the main hard-pain budget unless a farther seedbank or less endpoint-revealing harness is constructed. For GPAC_3403 main real-CVE evidence, either repair the generic B7/B10 lifecycle alias path to terminal endpoint without a target-specific payload shortcut, or use B13 only as a control/ablation case."
+  },
+  "planner_note": {
+    "do_not_overwrite_base_readiness": true,
+    "reason": "The current audit_real_cve_readiness generator does not preserve the hand-curated GPAC diagnostic fields from real_cve_readiness_20260619.",
+    "required_followup": "Teach the readiness/worklist generator to ingest this delta or top-level formtrig_native_readiness_result_v1 artifacts before producing the next canonical 20260620 readiness file."
+  }
+}
