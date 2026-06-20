@@ -391,6 +391,17 @@ summarize_typed_retained_one() {
     "${package_args[@]}" \
     --out "$run_out/typed_retained_audit_package.json" \
     > "$run_out/typed_retained_audit_package.stdout"
+
+  local alias_lift_spec="$run_out/fuzzer_out/.formtrig/formtrig_lift.normalized"
+  local alias_runtime_jsonl="$run_out/fuzzer_out/default/formtrig_progress.jsonl"
+  if [[ -f "$alias_lift_spec" && -f "$alias_runtime_jsonl" ]]; then
+    python3 "$repo_root/tools/analyze_gpac3403_alias_gap.py" \
+      --lift-spec "$alias_lift_spec" \
+      --runtime-jsonl "$alias_runtime_jsonl" \
+      --out-json "$run_out/alias_gap_analysis.json" \
+      --out-md "$run_out/alias_gap_analysis.md" \
+      > "$run_out/alias_gap_analysis.stdout"
+  fi
 }
 
 write_metadata() {

@@ -1450,9 +1450,19 @@ probe 中 16/16 保持 HEVC import，12/16 保持 L-HEVC import，12/16 达到
 selected op48/op49/op51 = 1/1/1，128/128 HEVC import，71/128 L-HEVC import，
 59/128 `nal_type_49_not_handled`，`Filter not found=0`。但 `_T=0`、
 ASAN/double-free=0，positive-control 唯一缺失签名仍是 `asan_double_free`。
+新增的
+`artifacts/formtrig_native_readiness/gpac3403_b7_alias_gap_analysis_20260620.json`
+把这个 blocker 进一步量化：19 条 runtime record 同时有 release=reassign 和
+cleanup pointer value，但 complete alias/free records 仍为 0；这 19 条全部在
+`D_F_spec_lifted=2`，release/reassign 有 4 个不同指针，cleanup 有 3 个不同指针，
+delta 分布为 -28384 x11、-33984 x4、-34816 x2、9440 x2。结论不是 selection
+失败，也不是 `.hevc` importer routing 失败，而是 sample/lifecycle correlation
+gap：FORMTRIG 已到达 ownership 机制附近，但尚未让最终 `GF_BitStream->original`
+cleanup 与同一个 `gf_isom_sample_del` release/reassign sample buffer 闭合。
 因此下一步不是 selection 或 importer routing，而是 cleanup ownership/free
-closure。typed-retained endpoint package 现在会自动嵌入 alias
-relation audit verdict，防止只凭 parser/import signature 误判 GPAC endpoint 闭环。
+closure。typed-retained endpoint package 现在会自动嵌入 alias relation audit；
+B7 runner 也会自动产出 alias-gap analysis，防止只凭 parser/import signature
+误判 GPAC endpoint 闭环。
 只有 B7 gate 出现 ASAN/double-free 或等价 alias/free proof 后，GPAC 才能升到 matched baselines。下一轮主预算不是继续跑 PHP003，也不是继续把 LIBXML2_1107 当
 core real-CVE 正例；LIBXML2 只能保留为 native pipeline / BindingSpec /
 crash-accounting sanity evidence。主预算应围绕 PDF003 的 cross-target hard

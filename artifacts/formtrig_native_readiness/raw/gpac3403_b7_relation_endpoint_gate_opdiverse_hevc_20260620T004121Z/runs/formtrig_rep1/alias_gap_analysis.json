@@ -1,0 +1,767 @@
+{
+  "binding_count": 11,
+  "lift_spec": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620T004121Z/runs/formtrig_rep1/fuzzer_out/.formtrig/formtrig_lift.normalized",
+  "runtime_count": 1,
+  "runtimes": [
+    {
+      "cleanup_value_histogram": [
+        {
+          "count": 13,
+          "value": 94534924514768
+        },
+        {
+          "count": 4,
+          "value": 94534924594704
+        },
+        {
+          "count": 2,
+          "value": 94534924224448
+        }
+      ],
+      "d_f_spec_lifted_for_alias_cleanup": [
+        {
+          "count": 19,
+          "value": 2
+        }
+      ],
+      "delta_histogram": [
+        {
+          "count": 11,
+          "value": -28384
+        },
+        {
+          "count": 4,
+          "value": -33984
+        },
+        {
+          "count": 2,
+          "value": -34816
+        },
+        {
+          "count": 2,
+          "value": 9440
+        }
+      ],
+      "event_distribution": [
+        {
+          "count": 1673,
+          "value": "frontier_reject"
+        },
+        {
+          "count": 221,
+          "value": "typed_retain"
+        },
+        {
+          "count": 22,
+          "value": "saved_progress"
+        },
+        {
+          "count": 4,
+          "value": "stability_confirmed"
+        },
+        {
+          "count": 1,
+          "value": "typed_stage_end"
+        },
+        {
+          "count": 1,
+          "value": "typed_stage_start"
+        }
+      ],
+      "path": "artifacts/formtrig_native_readiness/raw/gpac3403_b7_relation_endpoint_gate_opdiverse_hevc_20260620T004121Z/runs/formtrig_rep1/fuzzer_out/default/formtrig_progress.jsonl",
+      "reason_distribution": [
+        {
+          "count": 1636,
+          "value": "dominated_by_existing_frontier"
+        },
+        {
+          "count": 221,
+          "value": "candidate_not_queued"
+        },
+        {
+          "count": 23,
+          "value": "not_replay_stable"
+        },
+        {
+          "count": 21,
+          "value": "root_aligned_state_transition"
+        },
+        {
+          "count": 14,
+          "value": "high_priority_regression"
+        },
+        {
+          "count": 4,
+          "value": "progress_replay_stable"
+        },
+        {
+          "count": 1,
+          "value": "completed"
+        },
+        {
+          "count": 1,
+          "value": "frontier_empty_seed"
+        },
+        {
+          "count": 1,
+          "value": "planned"
+        }
+      ],
+      "record_count": 1922,
+      "record_status_distribution": [
+        {
+          "count": 1903,
+          "value": "missing_same_object_value"
+        },
+        {
+          "count": 19,
+          "value": "release_reassign_alias_without_cleanup_free_alias"
+        }
+      ],
+      "relation_counts": {
+        "cleanup_value_records": 19,
+        "complete_alias_free_relation_records": 0,
+        "nonzero_cleanup_delta_records": 19,
+        "release_reassign_alias_records": 19,
+        "release_reassign_with_cleanup_records": 19
+      },
+      "release_same_object_value_histogram": [
+        {
+          "count": 11,
+          "value": 94534924543152
+        },
+        {
+          "count": 4,
+          "value": 94534924628688
+        },
+        {
+          "count": 2,
+          "value": 94534924259264
+        },
+        {
+          "count": 2,
+          "value": 94534924505328
+        }
+      ],
+      "stable_cleanup_offset": {
+        "delta": null,
+        "present": false,
+        "records": 0
+      },
+      "status": "variable_cleanup_alias_gap",
+      "top_records": [
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            9440
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 1028,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 9440,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 83,
+          "reason": "high_priority_regression",
+          "record_index": 746,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924505328
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924505328
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924505328
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "06a82f6462325794"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            9440
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 1028,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 9440,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 83,
+          "reason": "high_priority_regression",
+          "record_index": 747,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924505328
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924505328
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924505328
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "06a82f6462325794"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 296,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 36,
+          "reason": "high_priority_regression",
+          "record_index": 112,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "053017bf88e381c7"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 296,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 36,
+          "reason": "high_priority_regression",
+          "record_index": 113,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "053017bf88e381c7"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 296,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 36,
+          "reason": "candidate_not_queued",
+          "record_index": 114,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "053017bf88e381c7"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 383,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 42,
+          "reason": "high_priority_regression",
+          "record_index": 209,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "a6b98e765bcb37e4"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 383,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 42,
+          "reason": "candidate_not_queued",
+          "record_index": 210,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "a6b98e765bcb37e4"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 428,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 42,
+          "reason": "high_priority_regression",
+          "record_index": 299,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "45902b8353bba59d"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 428,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 42,
+          "reason": "candidate_not_queued",
+          "record_index": 300,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "45902b8353bba59d"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 473,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 42,
+          "reason": "high_priority_regression",
+          "record_index": 389,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "062715b1ae6e1431"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "typed_retain",
+          "execs_done": 473,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 42,
+          "reason": "candidate_not_queued",
+          "record_index": 390,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "062715b1ae6e1431"
+        },
+        {
+          "actionable_components": 8,
+          "cleanup_branch_observed": true,
+          "cleanup_minus_alias_deltas": [
+            -28384
+          ],
+          "cleanup_value_sources": [
+            12413499707626772947
+          ],
+          "cleanup_values": [
+            94534924514768
+          ],
+          "complete_alias_free_relation": false,
+          "component_count": 12,
+          "d_f_lifted": 2,
+          "d_f_spec_lifted": 2,
+          "dynamic_root_observed": true,
+          "event": "frontier_reject",
+          "execs_done": 518,
+          "hot_ranges": 2,
+          "min_abs_cleanup_delta": 28384,
+          "observed_source_flags": 2,
+          "queue_id": 0,
+          "queued_items": 42,
+          "reason": "high_priority_regression",
+          "record_index": 479,
+          "release_branch_observed": true,
+          "release_cleanup_matches": [],
+          "release_same_object_matches": [
+            94534924543152
+          ],
+          "release_value_sources": [
+            5230050182219911150
+          ],
+          "release_values": [
+            94534924543152
+          ],
+          "same_object_cleanup_matches": [],
+          "same_object_sources": [
+            104584250345830336
+          ],
+          "same_object_values": [
+            94534924543152
+          ],
+          "source_flags": 2,
+          "stable": 0,
+          "status": "release_reassign_alias_without_cleanup_free_alias",
+          "target_hit_count": 1,
+          "trace_signature": "6e02897d2ae33ce8"
+        }
+      ],
+      "unique_cleanup_values": 3,
+      "unique_release_same_object_values": 4
+    }
+  ],
+  "schema": "formtrig_gpac3403_alias_gap_analysis_v1",
+  "verdict": {
+    "claim_boundary": "Pointer deltas are runtime diagnostics only. They must not be used as input-level optimization objectives because allocator addresses are not stable semantic trigger-state features.",
+    "complete_alias_free_relation": false,
+    "interpretation": "Alias and cleanup values are both observed, but their difference is not stable or zero. More object/lifecycle correlation is needed before endpoint spending.",
+    "next_action": "Add object-context instrumentation or split records by sample/lifecycle context.",
+    "stable_nonzero_cleanup_offsets": [],
+    "status": "variable_cleanup_alias_gap"
+  }
+}

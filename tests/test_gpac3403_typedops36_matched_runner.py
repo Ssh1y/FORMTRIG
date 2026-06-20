@@ -288,6 +288,8 @@ class Gpac3403TypedOps36MatchedRunnerTest(unittest.TestCase):
             ).read_text(encoding="utf-8")
             self.assertIn("replay_gpac3403_typed_retained_endpoint.py", runner)
             self.assertIn("package_gpac3403_typed_retained_audit.py", runner)
+            self.assertIn("analyze_gpac3403_alias_gap.py", runner)
+            self.assertIn("alias_gap_analysis.json", runner)
             self.assertIn("typed_retained_endpoint_records.jsonl", runner)
             self.assertIn("typed_retained_audit_package.json", runner)
 

@@ -405,9 +405,20 @@ selects op48/op49/op51, replays 128/128 HEVC-import variants, reaches
 71 L-HEVC imports and 59 `nal_type_49_not_handled` files, and eliminates
 `Filter not found`. ASAN/double-free remains 0, so the next repair is cleanup
 ownership/free alias closure, not matched baselines.
-Typed-retained endpoint packages now embed the alias relation audit verdict, so
-future GPAC evidence packages cannot claim endpoint closure from parser/import
-signatures alone. New hard-pain budget should
+The follow-up alias-gap analysis
+`artifacts/formtrig_native_readiness/gpac3403_b7_alias_gap_analysis_20260620.json`
+quantifies that closure gap: 19 runtime records have both release=reassign and
+cleanup pointer values, all at `D_F_spec_lifted=2`, but 0 records prove
+release=reassign=cleanup. The run observes 4 distinct release/reassign pointers
+and 3 distinct cleanup pointers, with delta buckets -28384 x11, -33984 x4,
+-34816 x2, and 9440 x2. Treat this as a sample/lifecycle correlation gap:
+FORMTRIG reaches the ownership machinery, but the final `GF_BitStream->original`
+cleanup is not aligned with the same sample buffer released by
+`gf_isom_sample_del`.
+Typed-retained endpoint packages now embed the alias relation audit verdict, and
+the GPAC B7 runner now emits `alias_gap_analysis.json/md`, so future GPAC
+evidence packages cannot claim endpoint closure from parser/import signatures
+alone. New hard-pain budget should
 go to cross-target evidence after PDF003, to GPAC_3403 lifecycle-alias repair, or
 to a replacement real-CVE target whose input naturally drives parser state. Do
 not spend main budget on another PHP003 rerun or on
@@ -1398,8 +1409,8 @@ LIBXML2_1107 当主正例，因为它的 harness 暴露了 allocation-failure kn
 现在有真实 CVE parser-frontier guidance，但 lifecycle alias audit 证明它还不是
 endpoint 正例；B7 relation endpoint gate 已经证明 strict pre-trigger guidance 和
 release->reassign alias observation，但 601s 内 `_T=0`、ASAN/double-free=0，cleanup
-GF_BitStream->original 尚未同指针，retained replay 的最大 import scale 也只有
-8 samples / 26 NALUs：下一步要先修 relation-aware retained selection 和 cleanup
+GF_BitStream->original 尚未同指针，selection 修复前的 retained replay 最大
+import scale 也只有 8 samples / 26 NALUs：下一步要先修 relation-aware retained selection 和 cleanup
 ownership mutation，再进入 matched baselines。完整 B7 `df-structure` gate 已经
 把 saved non-trigger progress 从 35 提高到 41，并把 retained endpoint replay 覆盖
 从 38/6 提高到 60/11 HEVC/L-HEVC import files，但没有触发 ASAN/double-free，
@@ -1410,7 +1421,12 @@ ownership mutation，再进入 matched baselines。完整 B7 `df-structure` gate
 retained path 会让 GPAC 落到 `Filter not found`。现在 `df-structure-op-diverse`
 和 `.hevc` staging 已在标准 600s gate 中生效：128/128 HEVC import、71/128
 L-HEVC import、59/128 `nal_type_49_not_handled`、`Filter not found=0`。但
-ASAN/double-free 仍为 0，下一步要修 cleanup ownership/free alias closure。GPAC retained endpoint package 会自动
-嵌入 alias relation audit，避免把 parser/import 近邻当作 endpoint 闭环。
+ASAN/double-free 仍为 0。新增 alias-gap analysis 证明 19 条记录同时有
+release=reassign 和 cleanup pointer value，但 0 条 release=reassign=cleanup；
+release/reassign 指针有 4 个不同值，cleanup 指针有 3 个不同值，全部落在
+`D_F_spec_lifted=2`。下一步要修 sample/lifecycle correlation 和 cleanup
+ownership/free alias closure。GPAC retained endpoint package 会自动嵌入 alias
+relation audit，B7 runner 会自动产出 `alias_gap_analysis.json/md`，避免把
+parser/import 近邻当作 endpoint 闭环。
 最终仍必须让输入自然驱动 parser state / lifecycle / structure，并在
 matched baselines 下证明 hard R2T pain 和 FORMTRIG 收益。
