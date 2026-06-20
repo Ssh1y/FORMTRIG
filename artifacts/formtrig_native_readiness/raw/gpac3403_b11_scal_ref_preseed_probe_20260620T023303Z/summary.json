@@ -1,0 +1,67 @@
+{
+  "next_action": "Promote SCAL-reference construction into the GPAC typed-mutation/preseed path, then compare against faithful baselines with the same endpoint oracle.",
+  "parameters": {
+    "base_track_id": 1,
+    "off": 6,
+    "op": 52,
+    "ref_track_id": 2,
+    "sample": 2,
+    "span": 2975,
+    "start": 0
+  },
+  "preseed": {
+    "base_hevc": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/base.hevc",
+    "base_size": 2975,
+    "built": true,
+    "commands": {
+      "add_scal_ref": [
+        "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+        "-ref",
+        "2:scal:1",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/two_track_scal_ref.mp4"
+      ],
+      "build_base": [
+        "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+        "-add",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/base.hevc",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/two_track_scal_ref.mp4"
+      ],
+      "build_enhanced": [
+        "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+        "-add",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/enhanced.hevc",
+        "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/two_track_scal_ref.mp4"
+      ]
+    },
+    "enhanced_hevc": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/enhanced.hevc",
+    "enhanced_size": 53220,
+    "exit_codes": {
+      "add_scal_ref": 0,
+      "build_base": 0,
+      "build_enhanced": 0
+    },
+    "mp4": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/two_track_scal_ref.mp4"
+  },
+  "replay": {
+    "command": [
+      "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+      "-cat",
+      "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/two_track_scal_ref.mp4",
+      "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+      "-out",
+      "/dev/null"
+    ],
+    "corrupt_nal_messages": 2,
+    "double_free_signature": true,
+    "exit_code": -6,
+    "native_crash": true,
+    "no_reference_track_messages": 3,
+    "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/runtime.jsonl",
+    "runtime_log_exists": false,
+    "stderr": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/replay.stderr",
+    "stdout": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/replay.stdout"
+  },
+  "schema": "formtrig_gpac3403_scal_ref_preseed_probe_v1",
+  "status": "scal_ref_preseed_triggers_double_free",
+  "target": "GPAC_3403"
+}

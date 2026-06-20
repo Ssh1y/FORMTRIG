@@ -1,0 +1,49 @@
+{
+  "b10_blocker_status": "extractor_returns_ok_without_reference_track_inferred",
+  "date_utc": "2026-06-20",
+  "preseed": {
+    "base_size": 2975,
+    "build_exit_codes": {
+      "add_scal_ref": 0,
+      "build_base": 0,
+      "build_enhanced": 0
+    },
+    "enhanced_size": 53220,
+    "scal_reference_command": [
+      "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+      "-ref",
+      "2:scal:1",
+      "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/two_track_scal_ref.mp4"
+    ]
+  },
+  "probe_status": "scal_ref_preseed_triggers_double_free",
+  "raw_dir": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z",
+  "replay": {
+    "command": [
+      "/tmp/formtrig_gpac3403_src/bin/gcc/MP4Box",
+      "-cat",
+      "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/two_track_scal_ref.mp4",
+      "/home/cwh/FORMTRIG/benchmarks/cve_seeds/gpac/white.mp4",
+      "-out",
+      "/dev/null"
+    ],
+    "corrupt_nal_messages": 2,
+    "double_free_signature": true,
+    "exit_code": -6,
+    "native_crash": true,
+    "no_reference_track_messages": 3,
+    "runtime_log": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/runtime.jsonl",
+    "runtime_log_exists": false,
+    "stderr": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/replay.stderr",
+    "stdout": "artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/replay.stdout"
+  },
+  "schema": "formtrig_gpac3403_b11_scal_ref_preseed_evidence_v1",
+  "supersedes_blocker": "artifacts/formtrig_native_readiness/gpac3403_b10_extractor_return_probe_20260620.json",
+  "target": "GPAC_3403",
+  "verdict": {
+    "claim_boundary": "This is a repair/positive-control endpoint proof for the GPAC R2T gap, not yet a FORMTRIG fuzzing campaign result. No FORMTRIG runtime JSONL was flushed before abort, so the current evidence is endpoint/native-crash evidence plus the B10 diagnostic chain.",
+    "next_action": "Promote SCAL-reference preseed construction into a controlled GPAC typed-mutation or seed-preparation stage, then run matched FORMTRIG/baseline campaigns with this endpoint oracle.",
+    "status": "reference_relation_closes_gpac3403_r2t_endpoint_gap",
+    "summary": "B10 showed the typed HEVC path entering process_extractor but stopping at the no-reference-track return site. B11 constructs a two-track MP4 preseed from the same typed op52/sample2 HEVC mutation, adds an explicit track-2 -> track-1 SCAL reference, and replays it through the GPAC -cat endpoint. The replay aborts with SIGABRT/subprocess return -6 and stderr contains the glibc double-free signature."
+  }
+}

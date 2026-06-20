@@ -1,0 +1,13 @@
+[31mCouldn't find any modules in lib path /tmp/formtrig_gpac3403_src/bin/gcc/gpac
+[0m[33mCouldn't find any modules in HOME path (app path /home/cwh/.gpac/modules)
+[0m[33m[Core] default modules directory not found
+[0m[31mCouldn't find any modules in lib path /tmp/formtrig_gpac3403_src/bin/gcc/gpac
+[0m[33mCouldn't find any modules in HOME path (app path /home/cwh/.gpac/modules)
+[0m[37mAppending file artifacts/formtrig_native_readiness/raw/gpac3403_b11_scal_ref_preseed_probe_20260620T023303Z/two_track_scal_ref.mp4
+[0m[37mNo suitable destination track found - creating new one (type vide)
+[0mAppending: |                    | (00/100)[32mISOBMF: Extractor target track is not present in file - skipping.
+[0m[32mISOBMF: Extractor target track is not present in file - skipping.
+[0m[33mSample 2 (size 1592) rewrite: corrupted NAL Unit (size 3801131501)
+[0mAppending: |                    | (01/100)Appending: |                    | (02/100)Appending: |                    | (03/100)Appending: |                    | (04/100)[32mISOBMF: Extractor target track is not present in file - skipping.
+[0m[33mSample 20 (size 216) rewrite: corrupted NAL Unit (size 2147483648)
+[0mAppending: |=                   | (05/100)Appending: |=                   | (06/100)Appending: |=                   | (07/100)Appending: |=                   | (08/100)Appending: |=                   | (09/100)Appending: |==                  | (10/100)Appending: |==                  | (11/100)free(): double free detected in tcache 2
