@@ -240,6 +240,77 @@ class SpeedupClassificationTest(unittest.TestCase):
             any("baseline no-guidance proof" in claim for claim in readout["blocked_claims"])
         )
 
+    def test_under_budgeted_guidance_gap_blocks_hard_endpoint_readout_precisely(self):
+        formtrig_rows = [
+            {
+                "budget": 60,
+                "strict_pretrigger_guidance": True,
+                "terminal_count": 2,
+                "trigger_time_s": 2.4,
+            }
+            for _ in range(3)
+        ]
+        baseline_rows = []
+        for baseline in (
+            "aflplusplus_vanilla",
+            "aflplusplus_cmplog",
+            "redqueen_operand",
+        ):
+            for rep in range(3):
+                baseline_rows.append(
+                    {
+                        "source_label": "matched",
+                        "baseline": baseline,
+                        "budget": 60,
+                        "rep": rep + 1,
+                        "success": False,
+                        "terminal_count": 0,
+                    }
+                )
+
+        analysis = classify_evidence(
+            formtrig_rows,
+            baseline_rows,
+            tolerance=0,
+            min_reps=3,
+            required_baselines=[
+                "aflplusplus_vanilla",
+                "aflplusplus_cmplog",
+                "redqueen_operand",
+            ],
+        )
+        apply_baseline_guidance_gap(
+            analysis,
+            {
+                "analysis_id": "synthetic_under_budgeted_gap",
+                "target_id": "GPAC_3403",
+                "analysis": {
+                    "status": "under_budgeted",
+                    "interpretation": "baseline runs are shorter than the acceptable trigger threshold",
+                    "pretrigger_binary_flat_measured": True,
+                    "pretrigger_binary_flat_pass": True,
+                    "endpoint_cost_pass": False,
+                    "reasons": [
+                        "baseline_budget_below_acceptable_threshold",
+                        "pretrigger_binary_oracle_flat_before_T",
+                    ],
+                    "baseline_groups": [],
+                },
+            },
+            Path("gap.json"),
+            target_id="GPAC_3403",
+        )
+
+        readout = benefit_readout(formtrig_rows, analysis)
+
+        self.assertIn("baseline_guidance_gap_required", readout["design_evidence"])
+        self.assertTrue(
+            any("under-budgeted" in claim for claim in readout["blocked_claims"])
+        )
+        self.assertFalse(
+            any("not measured" in claim for claim in readout["blocked_claims"])
+        )
+
     def test_formtrig_rows_use_exact_progress_queue_trigger_time(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

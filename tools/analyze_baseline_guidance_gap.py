@@ -23,9 +23,12 @@ RUN_FIELDS = [
     "baseline",
     "budget",
     "rep",
+    "valid_run",
+    "returncode",
     "success",
     "trigger_time_s",
     "terminal_count",
+    "reach_evidence_kind",
     "first_reach_time_s",
     "first_reach_count",
     "first_trigger_time_s",
@@ -40,6 +43,7 @@ RUN_FIELDS = [
     "pretrigger_binary_reason",
     "reach_to_trigger_gap_s",
     "live_snapshot",
+    "post_reach_seed_contract",
     "run_record",
 ]
 
@@ -92,6 +96,111 @@ def parse_labeled_path(value: str) -> tuple[str, Path]:
 
 def split_list(value: str) -> list[str]:
     return [part for part in value.replace(",", " ").split() if part]
+
+
+def load_seed_contracts(items: list[str]) -> dict[str, dict[str, Any]]:
+    contracts: dict[str, dict[str, Any]] = {}
+    for item in items:
+        _, path = parse_labeled_path(item)
+        if not path.exists():
+            raise SystemExit(f"post-reach seed contract does not exist: {path}")
+        payload = read_json(path)
+        seed_sets = payload.get("seed_sets") if isinstance(payload, dict) else None
+        records = seed_sets if isinstance(seed_sets, list) else [payload]
+        for record in records:
+            if not isinstance(record, dict):
+                continue
+            enriched = {**record, "contract_path": str(path)}
+            ids = contract_seed_set_ids(record)
+            for seed_set_id in ids:
+                contracts[seed_set_id] = enriched
+    return contracts
+
+
+def contract_seed_set_ids(record: dict[str, Any]) -> list[str]:
+    values: list[str] = []
+    for key in ("seed_set_id", "seed_dir", "seed_corpus"):
+        value = record.get(key)
+        if value:
+            values.append(str(value))
+    for value in record.get("seed_set_ids") or []:
+        if value:
+            values.append(str(value))
+    return values
+
+
+def matching_seed_contract(
+    raw: dict[str, Any],
+    record: dict[str, Any],
+    seed_contracts: dict[str, dict[str, Any]],
+) -> dict[str, Any] | None:
+    if not seed_contracts:
+        return None
+    candidates = [
+        raw.get("seed_set_id"),
+        record.get("seed_set_id"),
+    ]
+    for candidate in candidates:
+        if candidate is None:
+            continue
+        matched = seed_contracts.get(str(candidate))
+        if matched is not None:
+            return matched
+    return None
+
+
+def contract_proves_rnt(contract: dict[str, Any] | None, target_id: str) -> bool:
+    if not contract:
+        return False
+    contract_target = str(contract.get("target_id") or contract.get("target") or "")
+    if contract_target and target_id and contract_target != target_id:
+        return False
+    if bool_value(contract.get("rnt")):
+        return True
+
+    evidence = contract.get("replay_evidence")
+    if not isinstance(evidence, dict):
+        evidence = contract.get("seed_readiness") if isinstance(contract.get("seed_readiness"), dict) else {}
+    reached = bool_value(
+        contract.get("reached")
+        if "reached" in contract
+        else evidence.get("reached")
+    )
+    triggered = bool_value(
+        contract.get("triggered")
+        if "triggered" in contract
+        else evidence.get("triggered")
+    )
+    terminal = any(
+        bool_value(value)
+        for value in (
+            contract.get("terminal_triggered"),
+            contract.get("crash_predicate"),
+            contract.get("native_crash"),
+            contract.get("double_free_signature"),
+            evidence.get("terminal_triggered"),
+            evidence.get("crash_predicate"),
+            evidence.get("native_crash"),
+            evidence.get("double_free_signature"),
+        )
+    )
+    return reached and not triggered and not terminal
+
+
+def contract_seed_count(contract: dict[str, Any] | None) -> int:
+    if not contract:
+        return 0
+    for key in ("seed_count", "rnt_seed_count"):
+        parsed = numeric(contract.get(key))
+        if parsed is not None:
+            return int(parsed)
+    seeds = contract.get("seeds")
+    if isinstance(seeds, list):
+        return len(seeds)
+    sha256s = contract.get("sha256s")
+    if isinstance(sha256s, list):
+        return len(sha256s)
+    return 1 if contract_proves_rnt(contract, str(contract.get("target_id") or "")) else 0
 
 
 def terminal_count(row: dict[str, Any]) -> int:
@@ -282,20 +391,35 @@ def pretrigger_binary_flatness(monitor: dict[str, Any]) -> tuple[bool | None, st
     return False, "no_R_without_T_monitor_snapshot"
 
 
-def run_row(source_label: str, raw: dict[str, Any], summary_path: Path) -> dict[str, Any]:
+def run_row(
+    source_label: str,
+    raw: dict[str, Any],
+    summary_path: Path,
+    seed_contracts: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     record = load_run_record(raw.get("run_record"))
     monitor = record.get("magma_monitor") if isinstance(record.get("magma_monitor"), dict) else {}
     if not monitor and isinstance(raw.get("magma_monitor"), dict):
         monitor = raw["magma_monitor"]
     bug_id = str(raw.get("target_id") or record.get("target_id") or monitor.get("bug_id") or "")
+    contract = matching_seed_contract(raw, record, seed_contracts or {})
+    contract_rnt = contract_proves_rnt(contract, bug_id)
+    seed_count = contract_seed_count(contract) if contract_rnt else 0
 
     flat, flat_reason = pretrigger_binary_flatness(monitor)
+    reach_evidence_kind = "magma_monitor" if monitor else "none"
+    if flat is None and contract_rnt:
+        flat = True
+        flat_reason = "post_reach_seed_contract_rnt_binary_false"
+        reach_evidence_kind = "post_reach_seed_contract"
     first_reach_time = monitor_snapshot_field(monitor, "first_reach", "time_s")
     first_trigger_time = monitor_snapshot_field(monitor, "first_trigger", "time_s")
     if first_trigger_time is None:
         first_trigger_time = raw.get("magma_first_trigger_time_s")
     if first_reach_time is None:
         first_reach_time = raw.get("magma_first_reach_time_s")
+    if first_reach_time is None and contract_rnt:
+        first_reach_time = 0
 
     trigger_time = numeric(raw.get("trigger_time_s"))
     if trigger_time is None:
@@ -311,6 +435,19 @@ def run_row(source_label: str, raw: dict[str, Any], summary_path: Path) -> dict[
         bug_id=bug_id,
         run_time_s=raw.get("run_time") or stats.get("run_time"),
     )
+    if not monitor and contract_rnt:
+        trigger_count = terminal_count(raw)
+        run_time_s = numeric(raw.get("run_time") or stats.get("run_time"))
+        observation_end = trigger_time if trigger_time is not None else run_time_s
+        post_reach = {
+            "latest_reached": seed_count,
+            "latest_triggered": trigger_count,
+            "reached_without_trigger_count": max(0, seed_count - trigger_count),
+            "post_reach_observation_time_s": observation_end,
+            "zero_trigger_reached_snapshots": 1 if trigger_count == 0 else 0,
+            "empirical_trigger_rate_per_reach": None,
+            "rule_of_three_trigger_rate_95_upper_bound": None,
+        }
 
     return {
         "source_label": source_label,
@@ -318,11 +455,17 @@ def run_row(source_label: str, raw: dict[str, Any], summary_path: Path) -> dict[
         "baseline": str(raw.get("baseline") or record.get("baseline") or ""),
         "budget": int_value(raw.get("budget") or record.get("budget")),
         "rep": raw.get("rep") or record.get("rep") or "",
+        "valid_run": bool_value(raw.get("valid_run")) if "valid_run" in raw else True,
+        "returncode": raw.get("returncode"),
         "success": bool_value(raw.get("success") if "success" in raw else record.get("success")),
         "trigger_time_s": trigger_time,
         "terminal_count": terminal_count(raw),
+        "reach_evidence_kind": reach_evidence_kind,
         "first_reach_time_s": numeric(first_reach_time),
-        "first_reach_count": int_value(monitor_snapshot_field(monitor, "first_reach", "reached")),
+        "first_reach_count": int_value(
+            monitor_snapshot_field(monitor, "first_reach", "reached"),
+            seed_count,
+        ),
         "first_trigger_time_s": numeric(first_trigger_time),
         "latest_reached": post_reach["latest_reached"],
         "latest_triggered": post_reach["latest_triggered"],
@@ -337,12 +480,16 @@ def run_row(source_label: str, raw: dict[str, Any], summary_path: Path) -> dict[
         "pretrigger_binary_reason": flat_reason,
         "reach_to_trigger_gap_s": gap,
         "live_snapshot": bool_value(raw.get("live_snapshot")),
+        "post_reach_seed_contract": str(contract.get("contract_path")) if contract else "",
         "run_record": str(raw.get("run_record") or ""),
         "summary_path": str(summary_path),
     }
 
 
-def load_baseline_rows(items: list[str]) -> list[dict[str, Any]]:
+def load_baseline_rows(
+    items: list[str],
+    seed_contracts: dict[str, dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for item in items:
         label, path = parse_labeled_path(item)
@@ -354,7 +501,7 @@ def load_baseline_rows(items: list[str]) -> list[dict[str, Any]]:
             raise SystemExit(f"baseline summary has no records list: {path}")
         for raw in records:
             if isinstance(raw, dict):
-                rows.append(run_row(label, raw, path))
+                rows.append(run_row(label, raw, path, seed_contracts))
     return rows
 
 
@@ -393,12 +540,24 @@ def group_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "total_reached": total_reached,
                 "total_triggered": total_triggered,
                 "total_reached_without_trigger": total_reached_without_trigger,
+                "reach_evidence_kinds": sorted(
+                    {
+                        str(row.get("reach_evidence_kind"))
+                        for row in selected
+                        if row.get("reach_evidence_kind")
+                    }
+                ),
                 "aggregate_empirical_trigger_rate_per_reach": (
-                    total_triggered / total_reached if total_reached > 0 else None
+                    total_triggered / total_reached
+                    if total_reached > 0
+                    and all(row.get("reach_evidence_kind") == "magma_monitor" for row in selected)
+                    else None
                 ),
                 "zero_trigger_rule_of_three_95_upper_bound_per_reach": (
                     3.0 / total_reached
-                    if total_reached > 0 and total_triggered == 0
+                    if total_reached > 0
+                    and total_triggered == 0
+                    and all(row.get("reach_evidence_kind") == "magma_monitor" for row in selected)
                     else None
                 ),
                 "zero_trigger_runs": sum(
@@ -431,13 +590,25 @@ def target_analysis(
     hard_trigger_s: float,
     variance_trigger_s: float,
 ) -> dict[str, Any]:
-    groups = group_rows(rows)
+    valid_rows = [row for row in rows if row.get("valid_run") is not False]
+    invalid_rows = [row for row in rows if row.get("valid_run") is False]
+    groups = group_rows(valid_rows)
     required = set(required_baselines)
     considered = [group for group in groups if not required or group["baseline"] in required]
-    considered_rows = [row for row in rows if not required or row["baseline"] in required]
+    considered_rows = [
+        row for row in valid_rows if not required or row["baseline"] in required
+    ]
+    invalid_considered_rows = [
+        row for row in invalid_rows if not required or row["baseline"] in required
+    ]
     missing_required = sorted(required - {group["baseline"] for group in groups})
     low_rep_groups = [
         group["baseline"] for group in considered if int_value(group.get("reps")) < min_reps
+    ]
+    under_budget_groups = [
+        group["baseline"]
+        for group in considered
+        if numeric(group.get("budget")) is None or float(group["budget"]) < acceptable_trigger_s
     ]
 
     all_flat = bool(considered) and all(
@@ -468,15 +639,23 @@ def target_analysis(
         and float(group["trigger_time_range_s"]) >= variance_trigger_s
         for group in considered
     )
+    all_considered_budget_sufficient = bool(considered) and not under_budget_groups
     endpoint_cost_pass = (
-        not fastest_disqualifies and bool(considered) and (not successful_ttes or any_missing or any_late_median or any_high_variance)
+        not fastest_disqualifies
+        and all_considered_budget_sufficient
+        and bool(considered)
+        and (not successful_ttes or any_missing or any_late_median or any_high_variance)
     )
 
     reasons: list[str] = []
+    if invalid_considered_rows:
+        reasons.append("invalid_baseline_runs_excluded")
     if missing_required:
         reasons.append("missing_required_baselines")
     if low_rep_groups:
         reasons.append("low_replication")
+    if under_budget_groups:
+        reasons.append("baseline_budget_below_acceptable_threshold")
     if not all_flat_measured:
         reasons.append("pretrigger_binary_flatness_not_measured_for_all_runs")
     elif all_flat:
@@ -504,6 +683,8 @@ def target_analysis(
         status = "fail_not_flat"
     elif has_live_snapshot:
         status = "live_snapshot_only"
+    elif under_budget_groups:
+        status = "under_budgeted"
     elif endpoint_cost_pass:
         status = "measured_pass"
     else:
@@ -518,6 +699,8 @@ def target_analysis(
         "variance_trigger_threshold_s": variance_trigger_s,
         "baseline_groups": groups,
         "considered_baseline_count": len(considered),
+        "invalid_baseline_runs_excluded": len(invalid_considered_rows),
+        "under_budget_baselines": under_budget_groups,
         "fastest_successful_baseline_trigger_time_s": fastest,
         "pretrigger_binary_flat_pass": all_flat,
         "pretrigger_binary_flat_measured": all_flat_measured,
@@ -537,6 +720,7 @@ def interpretation_for_status(status: str) -> str:
         "fail_not_flat": "the available monitor evidence does not show a flat pre-_T binary oracle",
         "not_measured": "baseline pre-_T binary flatness is not measured for all required runs",
         "under_replicated": "baseline no-guidance evidence needs more repetitions",
+        "under_budgeted": "baseline runs are shorter than the acceptable trigger threshold, so missing triggers only support a short-screen gap",
         "incomplete_required_baselines": "one or more required baseline families are missing",
         "live_snapshot_only": "live baseline evidence is provisional and cannot support a final hard-pain claim",
     }.get(status, "unknown baseline guidance-gap status")
@@ -578,6 +762,8 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
         f"- pre-trigger binary flatness pass: `{analysis['pretrigger_binary_flat_pass']}`",
         f"- endpoint cost pass: `{analysis['endpoint_cost_pass']}`",
         f"- live snapshot input: `{analysis.get('live_snapshot_input', False)}`",
+        f"- invalid baseline runs excluded: `{analysis.get('invalid_baseline_runs_excluded', 0)}`",
+        f"- under-budget baselines: `{', '.join(analysis.get('under_budget_baselines') or []) or 'none'}`",
         "",
         "## Reasons",
         "",
@@ -620,15 +806,17 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
             "",
             "The rates below are descriptive evidence for the matched runs, not a proof that all baseline mutations are independent Bernoulli trials.",
             "When a baseline has many reached executions and zero trigger executions, the rule-of-three column gives an approximate 95% upper bound for a per-reached-execution hit rate under an independent random-hit model.",
+            "For real-CVE post-reach seed contracts without a Magma monitor, reached counts are seed-start evidence only; per-execution random-hit bounds are intentionally left blank.",
             "",
-            "| baseline | reached without T | zero-T reached runs | median post-reach window | total post-reach window |",
-            "| --- | ---: | ---: | ---: | ---: |",
+            "| baseline | reach evidence | reached without T | zero-T reached runs | median post-reach window | total post-reach window |",
+            "| --- | --- | ---: | ---: | ---: | ---: |",
         ]
     )
     for group in analysis["baseline_groups"]:
         lines.append(
-            "| {baseline} | {without_t} | {zero_runs}/{reps} runs | {median_window} | {total_window} |".format(
+            "| {baseline} | {reach_kind} | {without_t} | {zero_runs}/{reps} runs | {median_window} | {total_window} |".format(
                 baseline=group["baseline"],
+                reach_kind=", ".join(group.get("reach_evidence_kinds") or []),
                 without_t=group.get("total_reached_without_trigger", 0),
                 zero_runs=group.get("zero_trigger_runs", 0),
                 reps=group["reps"],
@@ -642,6 +830,7 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
             "## Claim Boundary",
             "",
             "This analysis uses monitor-visible binary `_T` flatness and endpoint timing only.",
+            "For non-Magma real-CVE runs, post-reach seed contracts can prove that the campaign starts from `_R=true,_T=false`; they do not replace longer endpoint budgets.",
             "It does not prove that every internal baseline heuristic is random; it tests whether the current matched evidence is strong enough for a hard binary-TC SOTA-pain claim.",
             "",
         ]
@@ -673,6 +862,12 @@ def parse_args() -> argparse.Namespace:
         default=[],
         help="LABEL=path/to/summary.json; repeatable",
     )
+    parser.add_argument(
+        "--post-reach-seed-contract",
+        action="append",
+        default=[],
+        help="optional LABEL=path/to/contract.json proving non-Magma seed corpora start RNT",
+    )
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--required-baselines", default="")
     parser.add_argument("--min-reps", type=int, default=3)
@@ -684,9 +879,10 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    seed_contracts = load_seed_contracts(args.post_reach_seed_contract)
     rows = [
         row
-        for row in load_baseline_rows(args.baseline_summary)
+        for row in load_baseline_rows(args.baseline_summary, seed_contracts=seed_contracts)
         if row["target_id"] == args.target_id
     ]
     required = split_list(args.required_baselines)

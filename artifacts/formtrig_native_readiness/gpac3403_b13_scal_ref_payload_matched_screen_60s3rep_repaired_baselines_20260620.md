@@ -20,7 +20,9 @@ evidence.
 - main claim strength: `hard_endpoint_gap_candidate`
 - matched valid baseline runs: `9`
 - missing required baselines: none
-- baseline no-guidance proof: `not_measured`
+- baseline no-guidance proof: `under_budgeted`
+- baseline guidance gap:
+  `artifacts/formtrig_native_readiness/baseline_guidance_gap/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_repaired_baselines_20260620/baseline_guidance_gap.json`
 
 FORMTRIG with GPAC payload hook:
 
@@ -53,6 +55,9 @@ Supported:
 - FORMTRIG-hook has a clean 3/3 early endpoint result at about 2.4-2.6s.
 - All required baseline families now have 3 valid 60s reps with no endpoint
   trigger.
+- Post-reach seed contracts show pre-`_T` binary flatness for all valid
+  baseline runs: every baseline starts from `_R=true,_T=false`, and the binary
+  endpoint oracle remains false before any terminal hit.
 - Nohook FORMTRIG is materially slower and less reliable on this screen.
 - Baseline startup failures are handled as infrastructure noise, not as
   performance evidence.
@@ -60,8 +65,9 @@ Supported:
 Still not supported:
 
 - hard SOTA-pain final claim
-- baseline-visible pre-`_T` flatness/no-guidance proof
+- long-budget baseline no-guidance proof: the current matched baseline runs are
+  only 60s, below the 600s acceptable trigger threshold
 - target-independent generality
 
-Next step: measure baseline-visible pre-`_T` flatness and absence of accepted
-non-trigger improvement, then repeat longer or on another hard target.
+Next step: repeat the B13 matched baseline screen at or beyond the 600s
+acceptable trigger threshold, or move this proof path to another hard target.

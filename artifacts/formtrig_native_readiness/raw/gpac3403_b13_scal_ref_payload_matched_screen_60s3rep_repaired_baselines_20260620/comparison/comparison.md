@@ -20,7 +20,7 @@ Mechanism benefits:
 - binary or sparse trigger feedback was lifted into accepted non-trigger search progress
 
 Blocked or not-yet-supported statements:
-- baseline no-guidance proof is not measured: hard SOTA-pain claims require flat/binary pre-_T baseline TC signal and late, missing, or high-variance baseline _T
+- baseline no-guidance proof is under-budgeted: flat/binary pre-_T evidence is present, but the matched runs are shorter than the acceptable trigger threshold
 
 Design evidence used for attribution:
 - `strict_pretrigger_guidance`
@@ -37,18 +37,23 @@ Design evidence used for attribution:
   - promote to replicated long-run or cross-target confirmation if harness fidelity passes
 - baseline no-guidance proof:
   - required for hard SOTA-pain: `true`
-  - status: `not_measured`
+  - status: `under_budgeted`
   - required evidence: baseline-visible TC signal is flat or binary before _T
   - required evidence: accepted non-trigger improvement under the baseline-visible signal is absent
   - required evidence: matched repeated endpoint runs are late, missing, or high-variance
+  - source: `artifacts/formtrig_native_readiness/baseline_guidance_gap/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_repaired_baselines_20260620/baseline_guidance_gap.json`
+  - interpretation: baseline runs are shorter than the acceptable trigger threshold, so missing triggers only support a short-screen gap
 
 ## FORMTRIG Runs
 
 | label | budget | terminal | strict pre-trigger | execs | reached | spec lifted |
 | --- | ---: | ---: | --- | ---: | ---: | ---: |
-| typedops64 | 60 | 2 | true | 147 | 146 | 70 |
-| typedops64 | 60 | 2 | true | 147 | 146 | 70 |
-| typedops64 | 60 | 2 | true | 147 | 146 | 70 |
+| formtrig | 60 | 2 | true | 147 | 146 | 70 |
+| formtrig | 60 | 2 | true | 147 | 146 | 70 |
+| formtrig | 60 | 2 | true | 147 | 146 | 70 |
+| formtrig_nohook | 60 | 4 | true | 1899 | 1896 | 1233 |
+| formtrig_nohook | 60 | 1 | true | 2118 | 2118 | 1551 |
+| formtrig_nohook | 60 | 0 | true | 1622 | 1623 | 1020 |
 
 ## Matched Baseline Groups
 

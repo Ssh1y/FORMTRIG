@@ -24,7 +24,8 @@
     "main_claim_strength": "hard_endpoint_gap_candidate",
     "matched_valid_baseline_runs": 9,
     "missing_required_baselines": [],
-    "baseline_no_guidance_proof_status": "not_measured"
+    "baseline_no_guidance_proof_status": "under_budgeted",
+    "baseline_guidance_gap": "artifacts/formtrig_native_readiness/baseline_guidance_gap/gpac3403_b13_scal_ref_payload_matched_screen_60s3rep_repaired_baselines_20260620/baseline_guidance_gap.json"
   },
   "formtrig_hook": {
     "successes": 3,
@@ -116,17 +117,17 @@
     "supported": [
       "FORMTRIG with the GPAC payload hook reaches endpoint _T in 3/3 reps within about 2.4-2.6s and 8 execs",
       "all three required baseline families have 3 valid 60s reps and 0 endpoint triggers",
+      "post-reach seed contracts measure pre-_T binary flatness for all valid baseline runs",
       "nohook FORMTRIG is slower and less reliable than the hook arm in this screen",
       "startup-only baseline failures are filtered and retried rather than counted as no-trigger evidence"
     ],
     "not_supported": [
-      "baseline-visible pre-_T flatness/no-guidance proof",
+      "long-budget baseline no-guidance proof: the current matched baseline runs are only 60s, below the 600s acceptable trigger threshold",
       "hard SOTA-pain final claim",
       "target-independent FORMTRIG generality"
     ],
     "required_next": [
-      "measure baseline-visible pre-_T binary flatness and accepted non-trigger absence",
-      "repeat at longer budget or on additional targets to check whether baselines eventually catch up",
+      "repeat the B13 matched baseline screen at or beyond the 600s acceptable trigger threshold, or move to another hard target",
       "add generic-hook/nohook attribution before presenting the GPAC payload hook as a general FORMTRIG mechanism"
     ]
   }

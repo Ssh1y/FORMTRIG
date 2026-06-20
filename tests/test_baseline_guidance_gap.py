@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.analyze_baseline_guidance_gap import (
     load_baseline_rows,
+    load_seed_contracts,
     target_analysis,
     write_run_tsv,
 )
@@ -68,6 +69,41 @@ class BaselineGuidanceGapTest(unittest.TestCase):
                     "success": success,
                     "target_id": target_id,
                     "trigger_time_s": first_trigger_time,
+                }
+            ),
+            encoding="utf-8",
+        )
+        return path
+
+    def write_non_magma_run_record(
+        self,
+        root: Path,
+        *,
+        name: str,
+        baseline: str,
+        seed_set_id: str,
+        target_id: str = "TGT",
+        budget: int = 600,
+        run_time: int = 600,
+        success: bool = False,
+    ) -> Path:
+        path = root / f"{name}.json"
+        path.write_text(
+            json.dumps(
+                {
+                    "baseline": baseline,
+                    "budget": budget,
+                    "magma_monitor": None,
+                    "seed_set_id": seed_set_id,
+                    "stats": {
+                        "run_time": run_time,
+                        "execs_done": 1000,
+                        "saved_crashes": 0,
+                        "saved_hangs": 0,
+                    },
+                    "success": success,
+                    "target_id": target_id,
+                    "trigger_time_s": None,
                 }
             ),
             encoding="utf-8",
@@ -242,6 +278,199 @@ class BaselineGuidanceGapTest(unittest.TestCase):
         self.assertEqual(analysis["status"], "not_measured")
         self.assertFalse(analysis["pretrigger_binary_flat_measured"])
         self.assertIn("pretrigger_binary_flatness_not_measured_for_all_runs", analysis["reasons"])
+
+    def test_post_reach_seed_contract_marks_non_magma_binary_flatness(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            seed_dir = str(root / "rnt_seeds")
+            run_record = self.write_non_magma_run_record(
+                root,
+                name="vanilla",
+                baseline="aflplusplus_vanilla",
+                seed_set_id=seed_dir,
+            )
+            summary = self.write_summary(
+                root,
+                [
+                    {
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 600,
+                        "rep": 1,
+                        "run_record": str(run_record),
+                        "success": False,
+                        "target_id": "TGT",
+                        "trigger_time_s": None,
+                        "valid_run": True,
+                    }
+                ],
+            )
+            contract = root / "seed_contract.json"
+            contract.write_text(
+                json.dumps(
+                    {
+                        "schema": "formtrig_post_reach_seed_contract_v1",
+                        "target_id": "TGT",
+                        "seed_sets": [
+                            {
+                                "seed_set_id": seed_dir,
+                                "seed_count": 1,
+                                "rnt": True,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            rows = load_baseline_rows(
+                [f"matched={summary}"],
+                seed_contracts=load_seed_contracts([str(contract)]),
+            )
+            analysis = target_analysis(
+                rows,
+                required_baselines=["aflplusplus_vanilla"],
+                min_reps=1,
+                acceptable_trigger_s=600,
+                hard_trigger_s=1800,
+                variance_trigger_s=1800,
+            )
+
+        self.assertEqual(analysis["status"], "measured_pass")
+        self.assertTrue(analysis["pretrigger_binary_flat_measured"])
+        self.assertTrue(analysis["pretrigger_binary_flat_pass"])
+        self.assertEqual(rows[0]["pretrigger_binary_reason"], "post_reach_seed_contract_rnt_binary_false")
+        self.assertEqual(rows[0]["reach_evidence_kind"], "post_reach_seed_contract")
+        self.assertIsNone(analysis["baseline_groups"][0]["aggregate_empirical_trigger_rate_per_reach"])
+
+    def test_under_acceptable_budget_does_not_prove_endpoint_cost(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            seed_dir = str(root / "rnt_seeds")
+            records = []
+            for rep in range(1, 4):
+                run_record = self.write_non_magma_run_record(
+                    root,
+                    name=f"vanilla_{rep}",
+                    baseline="aflplusplus_vanilla",
+                    seed_set_id=seed_dir,
+                    budget=60,
+                    run_time=60,
+                )
+                records.append(
+                    {
+                        "baseline": "aflplusplus_vanilla",
+                        "budget": 60,
+                        "rep": rep,
+                        "run_record": str(run_record),
+                        "success": False,
+                        "target_id": "TGT",
+                        "trigger_time_s": None,
+                        "valid_run": True,
+                    }
+                )
+            summary = self.write_summary(root, records)
+            contract = root / "seed_contract.json"
+            contract.write_text(
+                json.dumps(
+                    {
+                        "target_id": "TGT",
+                        "seed_sets": [{"seed_set_id": seed_dir, "seed_count": 1, "rnt": True}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            rows = load_baseline_rows(
+                [f"matched={summary}"],
+                seed_contracts=load_seed_contracts([str(contract)]),
+            )
+            analysis = target_analysis(
+                rows,
+                required_baselines=["aflplusplus_vanilla"],
+                min_reps=3,
+                acceptable_trigger_s=600,
+                hard_trigger_s=1800,
+                variance_trigger_s=1800,
+            )
+
+        self.assertEqual(analysis["status"], "under_budgeted")
+        self.assertTrue(analysis["pretrigger_binary_flat_pass"])
+        self.assertFalse(analysis["endpoint_cost_pass"])
+        self.assertEqual(analysis["under_budget_baselines"], ["aflplusplus_vanilla"])
+        self.assertIn("baseline_budget_below_acceptable_threshold", analysis["reasons"])
+
+    def test_invalid_runs_are_excluded_from_replication(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            seed_dir = str(root / "rnt_seeds")
+            valid_record = self.write_non_magma_run_record(
+                root,
+                name="valid",
+                baseline="aflplusplus_cmplog",
+                seed_set_id=seed_dir,
+                budget=7200,
+                run_time=7200,
+            )
+            invalid_record = self.write_non_magma_run_record(
+                root,
+                name="invalid",
+                baseline="aflplusplus_cmplog",
+                seed_set_id=seed_dir,
+                budget=7200,
+                run_time=0,
+            )
+            summary = self.write_summary(
+                root,
+                [
+                    {
+                        "baseline": "aflplusplus_cmplog",
+                        "budget": 7200,
+                        "rep": 1,
+                        "run_record": str(valid_record),
+                        "success": False,
+                        "target_id": "TGT",
+                        "valid_run": True,
+                    },
+                    {
+                        "baseline": "aflplusplus_cmplog",
+                        "budget": 7200,
+                        "rep": 2,
+                        "returncode": 1,
+                        "run_record": str(invalid_record),
+                        "success": False,
+                        "target_id": "TGT",
+                        "valid_run": False,
+                    },
+                ],
+            )
+            contract = root / "seed_contract.json"
+            contract.write_text(
+                json.dumps(
+                    {
+                        "target_id": "TGT",
+                        "seed_sets": [{"seed_set_id": seed_dir, "seed_count": 1, "rnt": True}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            rows = load_baseline_rows(
+                [f"matched={summary}"],
+                seed_contracts=load_seed_contracts([str(contract)]),
+            )
+            analysis = target_analysis(
+                rows,
+                required_baselines=["aflplusplus_cmplog"],
+                min_reps=2,
+                acceptable_trigger_s=600,
+                hard_trigger_s=1800,
+                variance_trigger_s=1800,
+            )
+
+        self.assertEqual(analysis["status"], "under_replicated")
+        self.assertEqual(analysis["baseline_groups"][0]["reps"], 1)
+        self.assertEqual(analysis["invalid_baseline_runs_excluded"], 1)
+        self.assertIn("invalid_baseline_runs_excluded", analysis["reasons"])
 
     def test_run_tsv_uses_explicit_na_for_missing_trailing_fields(self):
         with tempfile.TemporaryDirectory() as tmp:

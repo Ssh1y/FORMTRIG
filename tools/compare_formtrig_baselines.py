@@ -1024,9 +1024,21 @@ def benefit_readout(
             and gap.get("required_for_hard_sota_pain")
             and gap.get("status") != "measured_pass"
         ):
-            blocked_claims.append(
-                "baseline no-guidance proof is not measured: hard SOTA-pain claims require flat/binary pre-_T baseline TC signal and late, missing, or high-variance baseline _T"
-            )
+            status = gap.get("status")
+            interpretation = gap.get("interpretation")
+            if status == "under_budgeted":
+                blocked_claims.append(
+                    "baseline no-guidance proof is under-budgeted: flat/binary pre-_T evidence is present, but the matched runs are shorter than the acceptable trigger threshold"
+                )
+            elif status == "not_measured":
+                blocked_claims.append(
+                    "baseline no-guidance proof is not measured: hard SOTA-pain claims require flat/binary pre-_T baseline TC signal and late, missing, or high-variance baseline _T"
+                )
+            else:
+                blocked_claims.append(
+                    "baseline no-guidance proof gate is not satisfied"
+                    + (f" ({status}: {interpretation})" if interpretation else f" ({status})")
+                )
             design_evidence.append("baseline_guidance_gap_required")
         elif (
             isinstance(gap, dict)

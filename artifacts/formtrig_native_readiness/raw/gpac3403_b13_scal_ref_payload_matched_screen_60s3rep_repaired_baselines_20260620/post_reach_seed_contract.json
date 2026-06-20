@@ -1,0 +1,63 @@
+{
+  "schema": "formtrig_post_reach_seed_contract_v1",
+  "target_id": "GPAC_3403",
+  "created_utc": "2026-06-20T04:30:00Z",
+  "purpose": "Prove that the non-Magma GPAC_3403 B13 matched baseline seed corpora start from reached-but-not-terminal state, so binary endpoint _T is false at campaign start.",
+  "seed_sets": [
+    {
+      "seed_set_id": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/corpus",
+      "seed_count": 1,
+      "sha256s": [
+        "1521ab4e32209f96f1bb2a0f34db884cde94a9dc093d0018540a0eacaaf14ce7"
+      ],
+      "rnt": true,
+      "reached": true,
+      "triggered": false,
+      "terminal_triggered": false,
+      "runtime_evidence": {
+        "runtime_log": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/scaffold_raw/runtime.jsonl",
+        "reached": true,
+        "crash_predicate": false,
+        "D_T": 1,
+        "D_F_spec_lifted": 3,
+        "uses_spec_lifted": true,
+        "uses_trigger_oracle": false
+      },
+      "endpoint_replay_evidence": {
+        "summary": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T032730Z/scaffold_raw/summary.json",
+        "status": "scal_ref_preseed_no_terminal_crash",
+        "exit_code": 0,
+        "native_crash": false,
+        "double_free_signature": false
+      }
+    },
+    {
+      "seed_set_id": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T034936Z/corpus",
+      "seed_count": 1,
+      "sha256s": [
+        "f31c5f7a502c4987e6f85e80fb38579d7bb9e24dedc2c5f6f0522b0d0d9447fa"
+      ],
+      "rnt": true,
+      "reached": true,
+      "triggered": false,
+      "terminal_triggered": false,
+      "runtime_evidence": {
+        "runtime_log": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T034936Z/scaffold_raw/runtime.jsonl",
+        "reached": true,
+        "crash_predicate": false,
+        "D_T": 1,
+        "D_F_spec_lifted": 3,
+        "uses_spec_lifted": true,
+        "uses_trigger_oracle": false
+      },
+      "endpoint_replay_evidence": {
+        "summary": "/tmp/formtrig_gpac3403_b12_scal_ref_endpoint_20260620T034936Z/scaffold_raw/summary.json",
+        "status": "scal_ref_preseed_no_terminal_crash",
+        "exit_code": 0,
+        "native_crash": false,
+        "double_free_signature": false
+      }
+    }
+  ],
+  "claim_boundary": "This contract proves only the campaign starting seed state for non-Magma GPAC_3403 runs. It does not prove that every baseline mutation remains reached, and it does not turn a 60s no-trigger screen into a long-budget hard SOTA-pain result."
+}
